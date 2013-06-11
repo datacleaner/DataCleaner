@@ -3,10 +3,11 @@
   <groupId>com.hi.easydq</groupId>
   <artifactId>EasyDQ-job-wizards-DataCleaner</artifactId>
   <versioning>
-    <release>1.16</release>
+    <release>1.17</release>
     <versions>
       <version>1.16</version>
+      <version>1.17</version>
     </versions>
-    <lastUpdated>20130429074703</lastUpdated>
+    <lastUpdated>20130611123002</lastUpdated>
   </versioning>
 </metadata>

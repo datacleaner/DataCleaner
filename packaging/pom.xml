@@ -10,7 +10,7 @@
 	<name>DataCleaner packaging modules</name>
 	<properties>
 		<mainClass>org.eobjects.datacleaner.Main</mainClass>
-		<easydq.version>1.16</easydq.version>
+		<easydq.version>1.17</easydq.version>
 	</properties>
 
 	<profiles>

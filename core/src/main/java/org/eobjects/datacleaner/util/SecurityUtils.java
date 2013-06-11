@@ -23,20 +23,15 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.eobjects.analyzer.util.convert.EncodedStringConverter;
 
 /**
  * Utility methods for security concerns.
@@ -97,22 +92,9 @@ public class SecurityUtils {
      * @return a String containing the encoded password
      */
     public static String encodePassword(char[] password) {
-        if (password == null) {
-            return null;
-        }
-        try {
-            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = keyFactory.generateSecret(new PBEKeySpec(SECRET));
-            Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
-            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
-
-            byte[] bytes = pbeCipher.doFinal(new String(password).getBytes());
-
-            bytes = Base64.encodeBase64(bytes, false);
-            return new String(bytes, "UTF-8");
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to encode password", e);
-        }
+        EncodedStringConverter converter = new EncodedStringConverter();
+        String encodedPassword = converter.toString(new String(password));
+        return encodedPassword;
     }
 
     /**
@@ -126,22 +108,9 @@ public class SecurityUtils {
      *         longer periods, the encoded version is recommended.
      */
     public static String decodePassword(String encodedPassword) {
-        if (encodedPassword == null) {
-            return null;
-        }
-        try {
-            SecretKeyFactory instance = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
-            SecretKey key = instance.generateSecret(new PBEKeySpec(SECRET));
-            Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-            cipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
-
-            byte[] bytes = encodedPassword.getBytes("UTF-8");
-
-            bytes = cipher.doFinal(Base64.decodeBase64(bytes));
-            return new String(bytes);
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to decode password", e);
-        }
+        EncodedStringConverter converter = new EncodedStringConverter();
+        String password = converter.fromString(String.class, encodedPassword);
+        return password;
     }
 
 }

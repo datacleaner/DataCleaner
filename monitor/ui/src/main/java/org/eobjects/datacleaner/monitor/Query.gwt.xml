@@ -23,13 +23,14 @@
 <module rename-to='query'>
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+	
+	<inherits name="org.eobjects.datacleaner.monitor.Widgets"/>
 
 	<entry-point
 		class='org.eobjects.datacleaner.monitor.query.QueryEntryPoint' />
 
 	<source path='query' />
 	<source path='shared' />
-	<source path='util' />
 	
 	<stylesheet src="shared.css" />
 	<stylesheet src="query.css" />

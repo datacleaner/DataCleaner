@@ -15,13 +15,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
-				<configuration>
-					<compileSourcesArtifacts>
-						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-api</artifact>
-						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-services</artifact>
-						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-widgets</artifact>
-					</compileSourcesArtifacts>
-				</configuration>
 				<executions>
 					<execution>
 						<!-- GWT plugin, used to compile JavaScript -->
@@ -132,12 +125,12 @@
 		<!-- DataCleaner monitor dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor-services</artifactId>
+			<artifactId>DataCleaner-monitor-widgets</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor-widgets</artifactId>
+			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

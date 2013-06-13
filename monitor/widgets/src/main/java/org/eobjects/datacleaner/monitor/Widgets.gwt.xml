@@ -20,26 +20,13 @@
     Boston, MA  02110-1301  USA
 
 -->
-<module rename-to='dashboard'>
+<module>
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name='com.google.gwt.user.theme.clean.Clean' />
-	<inherits name="com.google.gwt.i18n.I18N"/>
 	
-	<inherits name="org.eobjects.datacleaner.monitor.Widgets"/>
-	
-	<inherits name="com.googlecode.gflot.GFlot" />
-	<set-property name="gflot.load.flot.text" value="ENABLED" />
-	<set-property name="gflot.load.canvas2image" value="ENABLED" />
+	<inherits name='org.eobjects.datacleaner.monitor.Api' />
+	<inherits name='org.eobjects.datacleaner.monitor.Services' />
 
-	<entry-point
-		class='org.eobjects.datacleaner.monitor.dashboard.DashboardEntryPoint' />
-
-	<source path='dashboard' />
 	<source path='shared' />
+	<source path='util' />
 	
-	<stylesheet src="shared.css" />
-	<stylesheet src="dashboard.css" />
-	
-	<public path="resources" />
-
 </module>

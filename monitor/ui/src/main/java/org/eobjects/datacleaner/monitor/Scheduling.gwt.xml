@@ -25,13 +25,14 @@
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="com.google.gwt.json.JSON" />
+	
+	<inherits name="org.eobjects.datacleaner.monitor.Widgets"/>
 
 	<entry-point
 		class='org.eobjects.datacleaner.monitor.scheduling.SchedulingEntryPoint' />
 
 	<source path='scheduling' />
 	<source path='shared' />
-	<source path='util' />
 	
 	<stylesheet src="shared.css" />
 	<stylesheet src="scheduling.css" />

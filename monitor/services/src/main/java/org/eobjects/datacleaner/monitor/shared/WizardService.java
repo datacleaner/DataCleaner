@@ -40,7 +40,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * components that allow the user to create job as per some wizard UI.
  */
 @RemoteServiceRelativePath("../gwtrpc/wizardService")
-public interface WizardService extends RemoteService {
+public interface WizardService extends WizardNavigationService, RemoteService {
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale);
@@ -59,10 +59,12 @@ public interface WizardService extends RemoteService {
     public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
             throws IllegalArgumentException;
 
+    @Override
     @RolesAllowed({ SecurityRoles.JOB_EDITOR, SecurityRoles.CONFIGURATION_EDITOR })
     public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException;
 
+    @Override
     @RolesAllowed({ SecurityRoles.JOB_EDITOR, SecurityRoles.CONFIGURATION_EDITOR })
     public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
 }

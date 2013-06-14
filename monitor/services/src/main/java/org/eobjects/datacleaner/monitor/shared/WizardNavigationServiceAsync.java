@@ -22,40 +22,20 @@ package org.eobjects.datacleaner.monitor.shared;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Async variant of {@link WizardService}
+ * Async variant of {@link WizardNavigationService}
  */
-public interface WizardServiceAsync extends WizardNavigationServiceAsync {
+public interface WizardNavigationServiceAsync {
 
-    void getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale,
-            AsyncCallback<List<WizardIdentifier>> callback);
-
-    void getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore, String locale,
-            AsyncCallback<List<WizardIdentifier>> callback);
-
-    void getDatastoreWizardIdentifiers(TenantIdentifier tenant, String locale,
-            AsyncCallback<List<WizardIdentifier>> callback);
-
-    void startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard, DatastoreIdentifier selectedDatastore,
-            String locale, AsyncCallback<WizardPage> callback);
-
-    void startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale,
-            AsyncCallback<WizardPage> callback);
-
-    @Override
     void cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             AsyncCallback<Boolean> callback);
 
-    @Override
     void nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters, AsyncCallback<WizardPage> callback);
-
 }

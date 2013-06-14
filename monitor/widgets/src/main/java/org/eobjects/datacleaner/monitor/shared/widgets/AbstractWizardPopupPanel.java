@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
-import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.WizardNavigationServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
@@ -42,9 +42,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 /**
  * Abstract wizard popup panel, mainly intended for code reuse.
  */
-public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
+public abstract class AbstractWizardPopupPanel<S extends WizardNavigationServiceAsync> extends DCPopupPanel {
 
-    protected final WizardServiceAsync _service;
+    protected final S _service;
     protected final TenantIdentifier _tenant;
     private final LoadingIndicator _loadingIndicator;
     private final WizardProgressBar _progressBar;
@@ -56,7 +56,7 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
     private HandlerRegistration _clickRegistration;
     private WizardPanel _currentPanel;
 
-    public AbstractWizardPopupPanel(String heading, WizardServiceAsync service, TenantIdentifier tenant) {
+    public AbstractWizardPopupPanel(String heading, S service, TenantIdentifier tenant) {
         super(heading);
         setAutoHideEnabled(false);
         addStyleName("WizardPopupPanel");

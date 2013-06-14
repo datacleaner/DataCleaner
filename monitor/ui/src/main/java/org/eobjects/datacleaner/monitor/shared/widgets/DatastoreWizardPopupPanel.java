@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 /**
  * A popup for a datastore wizard.
  */
-public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
+public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardServiceAsync> {
 
     public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
         super("Register datastore", service, tenant);

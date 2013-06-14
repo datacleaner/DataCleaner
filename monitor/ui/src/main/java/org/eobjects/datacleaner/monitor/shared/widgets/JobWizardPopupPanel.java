@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 /**
  * A popup for a job wizard
  */
-public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
+public class JobWizardPopupPanel extends AbstractWizardPopupPanel<WizardServiceAsync> {
 
     private final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
 

@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.WizardNavigationServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
@@ -42,12 +42,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 final class FormWizardPanel implements WizardPanel {
 
-    private final WizardServiceAsync _service;
+    private final WizardNavigationServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final WizardPage _wizardPage;
     private final Element _form;
 
-    public FormWizardPanel(WizardServiceAsync service, TenantIdentifier tenant, WizardPage wizardPage) {
+    public FormWizardPanel(WizardNavigationServiceAsync service, TenantIdentifier tenant, WizardPage wizardPage) {
         _service = service;
         _tenant = tenant;
         _wizardPage = wizardPage;

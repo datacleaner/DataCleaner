@@ -70,9 +70,15 @@ final class FormWizardPanel implements WizardPanel {
         final HTMLPanel htmlPanel = HTMLPanel.wrap(_form);
         return htmlPanel;
     }
+    
 
     @Override
-    public void requestNextPage(AsyncCallback<WizardPage> callback) {
+    public void requestPreviousPage(final AsyncCallback<WizardPage> nextPageCallback) {
+        _service.previousPage(_tenant, getSessionIdentifier(), nextPageCallback);
+    }
+
+    @Override
+    public void requestNextPage(final AsyncCallback<WizardPage> callback) {
         final Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
 
         final FormElement formElement = FormElement.as(_form);

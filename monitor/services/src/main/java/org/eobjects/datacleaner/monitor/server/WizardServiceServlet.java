@@ -94,4 +94,9 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
             throws IllegalArgumentException {
         return _delegate.startDatastoreWizard(tenant, wizard, locale);
     }
+    
+    @Override
+    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+        return _delegate.previousPage(tenant, sessionIdentifier);
+    }
 }

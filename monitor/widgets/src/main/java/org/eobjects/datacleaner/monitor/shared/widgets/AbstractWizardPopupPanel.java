@@ -50,10 +50,16 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
     private final WizardProgressBar _progressBar;
     private final SimplePanel _targetPanel;
     private final Button _nextStepButton;
+    private final Button _previousStepButton;
 
     // always holds the current "click handler registration" of the next step
     // button
-    private HandlerRegistration _clickRegistration;
+    private HandlerRegistration _nextButtonClickRegistration;
+
+    // always holds the current "click handler registration" of the previous
+    // step
+    // button
+    private HandlerRegistration _previousButtonClickRegistration;
     private WizardPanel _currentPanel;
 
     public AbstractWizardPopupPanel(String heading, S service, TenantIdentifier tenant) {
@@ -77,7 +83,11 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
         popupContent.add(_targetPanel);
         setWidget(popupContent);
 
-        _nextStepButton = new Button("Next");
+        _previousStepButton = new Button("‹ Back");
+        _previousStepButton.setEnabled(false);
+        addButton(_previousStepButton);
+
+        _nextStepButton = new Button("Next ›");
         addButton(_nextStepButton);
         addButton(new CancelPopupButton(this));
 
@@ -135,11 +145,23 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
         _targetPanel.setWidget(w);
     }
 
-    protected final void setNextClickHandler(ClickHandler clickHandler) {
-        if (_clickRegistration != null) {
-            _clickRegistration.removeHandler();
+    protected final void setPreviousClickHandler(ClickHandler clickHandler) {
+        if (_previousButtonClickRegistration != null) {
+            _previousButtonClickRegistration.removeHandler();
         }
-        _clickRegistration = _nextStepButton.addClickHandler(clickHandler);
+        if (clickHandler == null) {
+            _previousStepButton.setEnabled(false);
+        } else {
+            _previousButtonClickRegistration = _previousStepButton.addClickHandler(clickHandler);
+            _previousStepButton.setEnabled(true);
+        }
+    }
+
+    protected final void setNextClickHandler(ClickHandler clickHandler) {
+        if (_nextButtonClickRegistration != null) {
+            _nextButtonClickRegistration.removeHandler();
+        }
+        _nextButtonClickRegistration = _nextStepButton.addClickHandler(clickHandler);
     }
 
     protected final AsyncCallback<WizardPage> createNextPageCallback() {
@@ -163,6 +185,19 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
                             _currentPanel.requestNextPage(createNextPageCallback());
                         }
                     });
+
+                    if (page.getPageIndex() > 0) {
+                        setPreviousClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                _targetPanel.setWidget(_loadingIndicator);
+                                _currentPanel.requestPreviousPage(createNextPageCallback());
+                            }
+                        });
+                    } else {
+                        setPreviousClickHandler(null);
+                    }
+
                     AbstractWizardPopupPanel.this.center();
                 }
             }

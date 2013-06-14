@@ -34,4 +34,6 @@ public interface WizardPanel extends IsWidget {
     public WizardSessionIdentifier getSessionIdentifier();
 
     public void requestNextPage(AsyncCallback<WizardPage> callback) throws DCUserInputException;
+
+    public void requestPreviousPage(AsyncCallback<WizardPage> createNextPageCallback);
 }

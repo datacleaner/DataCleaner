@@ -38,4 +38,7 @@ public interface WizardNavigationServiceAsync {
 
     void nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters, AsyncCallback<WizardPage> callback);
+
+    void previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
+            AsyncCallback<WizardPage> callback);
 }

@@ -73,6 +73,15 @@ public interface WizardDao {
      */
     public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException;
+    
+    /**
+     * Navigates to the previous page in a wizard session.
+     * 
+     * @param tenant
+     * @param sessionIdentifier
+     * @return
+     */
+    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
 
     /**
      * Creates a function representing the HTTP session of the user.

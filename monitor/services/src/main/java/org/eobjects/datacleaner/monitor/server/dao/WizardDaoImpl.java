@@ -19,7 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.server.dao;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +59,7 @@ public class WizardDaoImpl implements WizardDao {
 
     private static class WizardState {
         WizardSession session;
-        WizardPageController currentController;
+        Deque<WizardPageController> pages;
     }
 
     private final Cache<String, WizardState> _wizardStateCache;
@@ -73,13 +75,26 @@ public class WizardDaoImpl implements WizardDao {
     public <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(Class<W> wizardClass) {
         return _applicationContext.getBeansOfType(wizardClass).values();
     }
+    
+    @Override
+    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+        final String sessionId = sessionIdentifier.getSessionId();
+        final WizardState state = getWizardState(sessionId);
+        final WizardSession session = state.session;
+
+        // remove the current page from the stack of pages
+        state.pages.pollLast();
+        final WizardPageController previousPage = state.pages.getLast();
+        
+        return createPage(sessionIdentifier, previousPage, session);
+    }
 
     @Override
     public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException {
         final String sessionId = sessionIdentifier.getSessionId();
         final WizardState state = getWizardState(sessionId);
-        final WizardPageController controller = state.currentController;
+        final WizardPageController controller = state.pages.getLast();
 
         final WizardPageController nextPageController;
 
@@ -107,7 +122,7 @@ public class WizardDaoImpl implements WizardDao {
             // wizard is done.
             return createFinishPage(sessionIdentifier, wizardResult);
         } else {
-            state.currentController = nextPageController;
+            state.pages.addLast(nextPageController);
             return createPage(sessionIdentifier, nextPageController, session);
         }
     }
@@ -124,13 +139,14 @@ public class WizardDaoImpl implements WizardDao {
 
         final WizardState state = new WizardState();
         state.session = session;
-        state.currentController = firstPage;
+        state.pages = new ArrayDeque<WizardPageController>();
+        state.pages.add(firstPage);
 
         _wizardStateCache.put(sessionId, state);
 
         final WizardSessionIdentifier sessionIdentifier = new WizardSessionIdentifier(sessionId, wizardIdentifier);
 
-        return createPage(sessionIdentifier, state.currentController, session);
+        return createPage(sessionIdentifier, firstPage, session);
     }
 
     @Override

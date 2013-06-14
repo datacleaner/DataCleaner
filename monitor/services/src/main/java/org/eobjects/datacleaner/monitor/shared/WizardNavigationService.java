@@ -36,5 +36,7 @@ public interface WizardNavigationService {
     public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException;
 
+    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
+
     public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
 }

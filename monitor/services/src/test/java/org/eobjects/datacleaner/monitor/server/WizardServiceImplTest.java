@@ -134,6 +134,12 @@ public class WizardServiceImplTest extends TestCase {
         // submit second page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
         assertEquals(2, wizardPage.getPageIndex().intValue());
+        
+        // go back and forth
+        wizardPage = service.previousPage(tenant, wizardSession);
+        assertEquals(1, wizardPage.getPageIndex().intValue());
+        wizardPage = service.nextPage(tenant, wizardSession, formParameters);
+        assertEquals(2, wizardPage.getPageIndex().intValue());
 
         // now we submit a name for the job
         formParameters = new HashMap<String, List<String>>();

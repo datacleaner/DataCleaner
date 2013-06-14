@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
 		<jdbc-datastore description="DataCleaner sample database, containing an example data warehouse with orders, customers, products, employees etc." name="orderdb">
@@ -133,7 +134,18 @@
 				</rows>
 			</table>
 		</pojo-datastore>
-	</datastore-catalog>
+	<salesforce-datastore description="Connects to the web services of Salesforce.com" name="Salesforce.com">
+<username>foo</username>
+<password>bar</password>
+<security-token>baz</security-token>
+</salesforce-datastore>
+<jdbc-datastore description="" name="my pgsql">
+<url>jdbc:postgresql://&lt;hostname&gt;:5432/&lt;database&gt;</url>
+<driver>org.postgresql.Driver</driver>
+<username>foo</username>
+<password>bar</password>
+</jdbc-datastore>
+</datastore-catalog>
 
 	<reference-data-catalog>
 		<dictionaries>

@@ -196,6 +196,11 @@ public class WizardServiceImpl implements WizardService {
             Map<String, List<String>> formParameters) throws DCUserInputException {
         return _wizardDao.nextPage(tenant, sessionIdentifier, formParameters);
     }
+    
+    @Override
+    public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
+        return _wizardDao.previousPage(tenant, sessionIdentifier);
+    }
 
     @Override
     public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {

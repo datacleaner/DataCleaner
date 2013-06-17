@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
@@ -27,8 +28,6 @@ import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 
-import scala.actors.threadpool.Arrays;
-
 /**
  * Simple {@link JobEngineManager} implementation
  */
@@ -36,7 +35,6 @@ public class SimpleJobEngineManager implements JobEngineManager {
 
     private final Collection<JobEngine<?>> _jobEngines;
 
-    @SuppressWarnings("unchecked")
     public SimpleJobEngineManager(JobEngine<?>... jobEngines) {
         _jobEngines = Arrays.asList(jobEngines);
     }

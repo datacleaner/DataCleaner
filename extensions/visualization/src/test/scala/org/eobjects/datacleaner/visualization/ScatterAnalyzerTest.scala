@@ -7,6 +7,8 @@ import org.junit.Test
 import org.eobjects.analyzer.data.MockInputColumn
 import org.eobjects.analyzer.data.MockInputRow
 import org.eobjects.analyzer.storage.InMemoryRowAnnotationFactory
+import scala.collection.SortedMap
+import scala.collection.immutable.TreeMap
 
 class ScatterAnalyzerTest extends AssertionsForJUnit {
 
@@ -23,6 +25,6 @@ class ScatterAnalyzerTest extends AssertionsForJUnit {
     
     val group = analyzer.getResult.groups.head
     val str = group.annotations.map(entry => (entry._1, entry._2.getRowCount())).mkString(", ");
-    Assert.assertEquals("(1,2) -> 1, (1,1) -> 2", str);
+    Assert.assertEquals("(1,1) -> 2, (1,2) -> 1", str);
   }
 }

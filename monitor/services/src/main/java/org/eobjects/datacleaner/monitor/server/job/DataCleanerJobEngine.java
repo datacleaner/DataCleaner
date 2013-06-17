@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -71,8 +72,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import scala.actors.threadpool.Arrays;
 
 /**
  * The {@link JobEngine} implementation for DataCleaner .analysis.xml jobs.
@@ -263,7 +262,6 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         return new ArrayList<String>(suggestions);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
         if (component instanceof InputColumnSinkJob) {

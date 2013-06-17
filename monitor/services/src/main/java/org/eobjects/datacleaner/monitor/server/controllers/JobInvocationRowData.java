@@ -20,8 +20,7 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.Serializable;
-
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 
 /**
  * Bean which represents a single row of data, included in the

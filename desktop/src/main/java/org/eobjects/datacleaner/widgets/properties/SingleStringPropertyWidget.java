@@ -84,6 +84,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
         if (multiline) {
             if (mimeType != null) {
                 RSyntaxTextArea syntaxArea = new RSyntaxTextArea(8, 17);
+                syntaxArea.setTabSize(2);
                 syntaxArea.setSyntaxEditingStyle(mimeType);
                 textComponent = syntaxArea;
             } else {

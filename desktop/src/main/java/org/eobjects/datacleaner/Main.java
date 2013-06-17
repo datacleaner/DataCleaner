@@ -40,8 +40,6 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  * The main executable class of DataCleaner. This class primarily sets up
  * logging, system properties and delegates to the {@link Bootstrap} class for
  * actual application startup.
- * 
- * @author Kasper Sørensen
  */
 public final class Main {
 

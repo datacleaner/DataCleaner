@@ -129,6 +129,8 @@ public final class PropertyWidgetFactory {
 				widgetClass = MultipleStringPatternPropertyWidget.class;
 			} else if (type.isEnum()) {
 				widgetClass = MultipleEnumPropertyWidget.class;
+			} else if (type == Class.class) {
+			    widgetClass = MultipleClassesPropertyWidget.class;
 			} else if (type == char.class) {
 				widgetClass = MultipleCharPropertyWidget.class;
 			} else if (ReflectionUtils.isNumber(type)) {

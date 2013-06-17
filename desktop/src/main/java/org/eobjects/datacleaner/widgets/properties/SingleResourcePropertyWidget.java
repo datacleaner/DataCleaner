@@ -110,14 +110,18 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
 
         final Resource currentValue = getCurrentValue();
         if (currentValue == null) {
+            _otherPathTextField.setVisible(false);
             _immutableValue = null;
         } else if (currentValue instanceof FileResource) {
+            _otherPathTextField.setVisible(false);
             _filenameField.setFile(((FileResource) currentValue).getFile());
             _immutableValue = null;
         } else if (currentValue instanceof UrlResource || currentValue instanceof VfsResource
                 || currentValue instanceof ClasspathResource) {
+            _filenameField.setVisible(false);
             _immutableValue = null;
         } else {
+            _filenameField.setVisible(false);
             _immutableValue = currentValue;
         }
 

@@ -19,10 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,7 +45,13 @@ public class DCPopupPanel extends PopupPanel {
         setAutoHideEnabled(false);
         setModal(false);
         _buttonPanel = new ButtonPanel();
-        _panel = new SimplePanel();
+        
+        final int clientHeight = Window.getClientHeight();
+        final int heightMargin = 100; // represents slack for buttons, border and header
+        final int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
+        
+        _panel = new ScrollPanel();
+        _panel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
         _panel.setStyleName("DCPopupPanelContent");
 
         _outerPanel = new FlowPanel();

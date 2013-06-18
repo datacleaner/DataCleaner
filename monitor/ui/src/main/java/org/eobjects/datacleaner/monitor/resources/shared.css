@@ -125,8 +125,6 @@ a:hover {
 }
  
 .DCPopupPanelContent {
-	max-height: 600px;
-	overflow: auto;
 }
 
 .HeadingLabel {

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -34,6 +35,9 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
 
     private final SalesforceDatastoreWizardSession _session;
 
+    private String _username = "";
+    private String _password = "";
+
     public SalesforceDatastoreCredentialsPage(SalesforceDatastoreWizardSession session) {
         _session = session;
     }
@@ -44,13 +48,19 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        String username = formParameters.get("sfdc_username").get(0);
-        String password = formParameters.get("sfdc_password").get(0);
-        
-        _session.setCredentials(username, password);
-        
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+        _username = formParameters.get("sfdc_username").get(0);
+        _password = formParameters.get("sfdc_password").get(0);
+
+        _session.setCredentials(_username, _password);
+
+        if (StringUtils.isNullOrEmpty(_username)) {
+            throw new DCUserInputException("Please provide a valid username");
+        }
+        if (StringUtils.isNullOrEmpty(_password)) {
+            throw new DCUserInputException("Please provide a valid password");
+        }
+
         return new SalesforceDatastoreSecurityTokenPage(_session);
     }
 
@@ -61,7 +71,10 @@ final class SalesforceDatastoreCredentialsPage extends AbstractFreemarkerWizardP
 
     @Override
     protected Map<String, Object> getFormModel() {
-        return new HashMap<String, Object>();
+        Map<String, Object> model = new HashMap<String, Object>();
+        model.put("sfdc_username", _username);
+        model.put("sfdc_password", _password);
+        return model;
     }
 
 }

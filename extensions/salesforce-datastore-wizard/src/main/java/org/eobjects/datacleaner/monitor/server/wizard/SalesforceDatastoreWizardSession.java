@@ -21,9 +21,15 @@ package org.eobjects.datacleaner.monitor.server.wizard;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.eobjects.analyzer.connection.SalesforceDatastore;
+import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -31,6 +37,8 @@ import org.w3c.dom.Element;
  * Wizard session for Salesforce datastore wizard
  */
 final class SalesforceDatastoreWizardSession extends AbstractDatastoreWizardSession {
+
+    private static final Logger logger = LoggerFactory.getLogger(SalesforceDatastoreWizardSession.class);
 
     private String _name;
     private String _description;
@@ -67,6 +75,23 @@ final class SalesforceDatastoreWizardSession extends AbstractDatastoreWizardSess
 
     protected void setSecurityToken(String securityToken) {
         _securityToken = securityToken;
+    }
+
+    protected void testConnection() throws DCUserInputException {
+        String[] tableNames;
+        try {
+            SalesforceDatastore ds = new SalesforceDatastore("test_salesforce_datastore", _username, _password, _securityToken);
+            DatastoreConnection connection = ds.openConnection();
+            logger.debug("Test connection for Salesforce.com established: {}", connection);
+            tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
+        } catch (Exception e) {
+            logger.warn("Test connection for Salesforce.com failed", e);
+            String message = StringUtils.isNullOrEmpty(e.getMessage()) ? "Unknown error" : e.getMessage();
+            throw new DCUserInputException("Failed to verify connection: " + message);
+        }
+        if (tableNames.length == 0) {
+            throw new DCUserInputException("No tables/entities found in this Salesforce.com instance. This suggests an error.");
+        }
     }
 
     @Override

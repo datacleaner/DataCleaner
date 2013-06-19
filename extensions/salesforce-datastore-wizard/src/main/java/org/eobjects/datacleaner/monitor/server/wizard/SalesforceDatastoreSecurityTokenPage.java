@@ -44,23 +44,35 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        String securityToken = formParameters.get("sfdc_security_token").get(0);
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
 
+        String securityToken = formParameters.get("sfdc_security_token").get(0);
         _session.setSecurityToken(securityToken);
 
-        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1,
-                "Salesforce.com", "Connects to the web services of Salesforce.com") {
+        final boolean verifyConnection = getBoolean(formParameters, "verify_connection");
+        if (verifyConnection) {
+            _session.testConnection();
+        }
+
+        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1, "Salesforce.com",
+                "Connects to the web services of Salesforce.com") {
 
             @Override
             protected WizardPageController nextPageController(String name, String description) {
                 _session.setName(name);
                 _session.setDescription(description);
-                
+
                 return null;
             }
         };
+    }
+
+    private boolean getBoolean(Map<String, List<String>> formParameters, String key) {
+        List<String> list = formParameters.get(key);
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+        return "true".equals(list.get(0));
     }
 
     @Override

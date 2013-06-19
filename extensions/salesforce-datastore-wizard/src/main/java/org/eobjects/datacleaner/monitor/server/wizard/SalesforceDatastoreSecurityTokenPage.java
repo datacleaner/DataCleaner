@@ -67,14 +67,6 @@ final class SalesforceDatastoreSecurityTokenPage extends AbstractFreemarkerWizar
         };
     }
 
-    private boolean getBoolean(Map<String, List<String>> formParameters, String key) {
-        List<String> list = formParameters.get(key);
-        if (list == null || list.isEmpty()) {
-            return false;
-        }
-        return "true".equals(list.get(0));
-    }
-
     @Override
     protected String getTemplateFilename() {
         return "SalesforceDatastoreSecurityTokenPage.html";

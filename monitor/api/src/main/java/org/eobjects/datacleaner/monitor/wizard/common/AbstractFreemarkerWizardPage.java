@@ -38,7 +38,7 @@ import freemarker.template.Template;
  * Abstract {@link WizardPageController} which uses Freemarker to render the
  * form contents.
  */
-public abstract class AbstractFreemarkerWizardPage implements WizardPageController {
+public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage implements WizardPageController {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFreemarkerWizardPage.class);
 

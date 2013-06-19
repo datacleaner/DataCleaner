@@ -41,6 +41,8 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     private final Datastore _datastore;
     private final Integer _pageIndex;
+    
+    private String _selectedTableName = "";
 
     public SelectTableWizardPage(JobWizardContext context, Integer pageIndex) {
         this(context.getSourceDatastore(), pageIndex);
@@ -49,6 +51,14 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     public SelectTableWizardPage(Datastore datastore, Integer pageIndex) {
         _datastore = datastore;
         _pageIndex = pageIndex;
+    }
+    
+    public String getSelectedTableName() {
+        return _selectedTableName;
+    }
+    
+    public void setSelectedTableName(String selectedTableName) {
+        _selectedTableName = selectedTableName;
     }
 
     @Override
@@ -74,6 +84,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("promptText", getPromptText());
+        map.put("selectedTableName", _selectedTableName);
         final DatastoreConnection con = _datastore.openConnection();
         try {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
@@ -97,10 +108,10 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
-        final String tableName = formParameters.get("tableName").get(0);
+        _selectedTableName = getString(formParameters, "tableName");
         final DatastoreConnection con = _datastore.openConnection();
         try {
-            final Table selectedTable = con.getSchemaNavigator().convertToTable(tableName);
+            final Table selectedTable = con.getSchemaNavigator().convertToTable(_selectedTableName);
             return nextPageController(selectedTable);
         } finally {
             con.close();

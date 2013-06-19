@@ -39,8 +39,10 @@ public class SelectTableWizardPageTest extends TestCase {
 
     public void testGetFormInnerHtml() throws Exception {
         final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>();
-        final SimpleTableDef tableDef = new SimpleTableDef("tab", new String[] { "col1", "col2", "col3" });
-        tableDataProviders.add(new ArrayTableDataProvider(tableDef, new ArrayList<Object[]>()));
+        final SimpleTableDef tableDef1 = new SimpleTableDef("tab", new String[] { "col1", "col2", "col3" });
+        final SimpleTableDef tableDef2 = new SimpleTableDef("le", new String[] { "col1", "col2", "col3" });
+        tableDataProviders.add(new ArrayTableDataProvider(tableDef1, new ArrayList<Object[]>()));
+        tableDataProviders.add(new ArrayTableDataProvider(tableDef2, new ArrayList<Object[]>()));
         final Datastore datastore = new PojoDatastore("my_pojo_ds", tableDataProviders);
 
         final JobWizardContext context = EasyMock.createMock(JobWizardContext.class);
@@ -56,15 +58,29 @@ public class SelectTableWizardPageTest extends TestCase {
                 throw new IllegalStateException("Should not happen in this test");
             }
         };
-        final String formInnerHtml = page.getFormInnerHtml();
+        final String formInnerHtml1 = page.getFormInnerHtml();
         assertEquals("<div>\n" + 
         		"    <p>Please select the source table of the job:</p>\n" + 
         		"    <select name=\"tableName\">\n" + 
         		"            <optgroup label=\"my_pojo_ds\">\n" + 
-        		"                    <option value=\"my_pojo_ds.tab\">tab</option>\n" + 
+        		"                    <option value=\"my_pojo_ds.le\">le</option>\n" +
+                "                    <option value=\"my_pojo_ds.tab\">tab</option>\n" + 
         		"            </optgroup>\n" + 
         		"    </select>\n" + 
-        		"</div>", formInnerHtml.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
+        		"</div>", formInnerHtml1.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
+        
+        page.setSelectedTableName("tab");
+        
+        final String formInnerHtml2 = page.getFormInnerHtml();
+        assertEquals("<div>\n" + 
+                "    <p>Please select the source table of the job:</p>\n" + 
+                "    <select name=\"tableName\">\n" + 
+                "            <optgroup label=\"my_pojo_ds\">\n" + 
+                "                    <option value=\"my_pojo_ds.le\">le</option>\n" +
+                "                    <option value=\"my_pojo_ds.tab\" selected=\"selected\">tab</option>\n" + 
+                "            </optgroup>\n" + 
+                "    </select>\n" + 
+                "</div>", formInnerHtml2.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
 
         EasyMock.verify(context);
     }

@@ -31,7 +31,7 @@ import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPa
  * Configuration page for Carte connection
  */
 abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPage {
-    
+
     private final int _pageIndex;
 
     public PentahoCarteConfigurationPage(int pageIndex) {
@@ -44,10 +44,9 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        final String hostname = formParameters.get("hostname").get(0);
-        final String portStr = formParameters.get("port").get(0);
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+        final String hostname = getString(formParameters, "hostname");
+        final String portStr = getString(formParameters, "port");
         final int port;
         try {
             port = Integer.parseInt(portStr);
@@ -55,13 +54,12 @@ abstract class PentahoCarteConfigurationPage extends AbstractFreemarkerWizardPag
             throw new DCUserInputException("Not a valid port number: " + portStr);
         }
 
-        final String username = formParameters.get("username").get(0);
-        final String password = formParameters.get("password").get(0);
+        final String username = getString(formParameters, "username");
+        final String password = getString(formParameters, "password");
         return nextPageController(hostname, port, username, password);
     }
 
-    protected abstract WizardPageController nextPageController(String hostname, int port, String username,
-            String password);
+    protected abstract WizardPageController nextPageController(String hostname, int port, String username, String password);
 
     @Override
     protected String getTemplateFilename() {

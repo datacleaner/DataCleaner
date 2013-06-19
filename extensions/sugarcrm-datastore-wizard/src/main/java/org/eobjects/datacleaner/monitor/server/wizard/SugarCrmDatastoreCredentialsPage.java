@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -48,6 +49,13 @@ final class SugarCrmDatastoreCredentialsPage extends AbstractFreemarkerWizardPag
             throws DCUserInputException {
         String username = formParameters.get("sugarcrm_username").get(0);
         String password = formParameters.get("sugarcrm_password").get(0);
+        
+        if (StringUtils.isNullOrEmpty(username)) {
+            throw new DCUserInputException("Please provide a valid username.");
+        }
+        if (StringUtils.isNullOrEmpty(password)) {
+            throw new DCUserInputException("Please provide a valid password.");
+        }
 
         _session.setCredentials(username, password);
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -32,16 +33,20 @@ import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPa
  */
 public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizardPage {
 
+    private String _baseUrl = "http://localhost/sugarcrm";
+
     @Override
     public Integer getPageIndex() {
         return 0;
     }
 
     @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException {
-        String baseUrl = formParameters.get("baseUrl").get(0);
-        return nextPageController(baseUrl);
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) throws DCUserInputException {
+        _baseUrl = getString(formParameters, "baseUrl");
+        if (StringUtils.isNullOrEmpty(_baseUrl)) {
+            throw new DCUserInputException("Please provide a valid base URL.");
+        }
+        return nextPageController(_baseUrl);
     }
 
     /**
@@ -60,7 +65,7 @@ public abstract class SugarCrmBaseUrlWizardPage extends AbstractFreemarkerWizard
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("baseUrl", "http://localhost/sugarcrm");
+        map.put("baseUrl", _baseUrl);
         return map;
     }
 

@@ -40,6 +40,10 @@ public interface UserPreferences {
     public void addLoginChangeListener(LoginChangeListener listener);
 
     public void removeLoginChangeListener(LoginChangeListener listener);
+    
+    public File getExtensionsDirectory();
+    
+    public void setExtensionsDirectory(File directory);
 
     public File getOpenDatastoreDirectory();
 

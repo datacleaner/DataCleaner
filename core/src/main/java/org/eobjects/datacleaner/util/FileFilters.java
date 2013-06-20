@@ -25,65 +25,66 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * Contains commonly used file filters.
- * 
- * @author Kasper Sørensen
  */
 public final class FileFilters {
 
-	private FileFilters() {
-		// prevent instantiation
-	}
+    private FileFilters() {
+        // prevent instantiation
+    }
 
-	public static final FileFilter ALL = new FileFilter() {
+    public static final FileFilter ALL = new FileFilter() {
 
-		@Override
-		public boolean accept(File f) {
-			return true;
-		}
+        @Override
+        public boolean accept(File f) {
+            return true;
+        }
 
-		@Override
-		public String getDescription() {
-			return "All files";
-		}
-	};
+        @Override
+        public String getDescription() {
+            return "All files";
+        }
+    };
 
-	public static FileFilter combined(final String description, final FileFilter... fileFilters) {
-		return new FileFilter() {
-			@Override
-			public boolean accept(File f) {
-				for (FileFilter fileFilter : fileFilters) {
-					if (fileFilter.accept(f)) {
-						return true;
-					}
-				}
-				return false;
-			}
+    public static FileFilter combined(final String description, final FileFilter... fileFilters) {
+        return new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                for (FileFilter fileFilter : fileFilters) {
+                    if (fileFilter.accept(f)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
 
-			@Override
-			public String getDescription() {
-				return description;
-			}
-		};
-	}
+            @Override
+            public String getDescription() {
+                return description;
+            }
+        };
+    }
 
-	public static final ExtensionFilter CSV = new ExtensionFilter("Comma-separated files (.csv)", ".csv");
-	public static final ExtensionFilter TSV = new ExtensionFilter("Tab-separated files (.tsv)", ".tsv");
-	public static final ExtensionFilter DAT = new ExtensionFilter("Data files (.dat)", ".dat");
-	public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.txt)", ".txt");
-	public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
-	public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
-	public static final ExtensionFilter MDB = new ExtensionFilter("Access 97-2003 database (.mdb)", ".mdb");
-	public static final ExtensionFilter ACCDB = new ExtensionFilter("Access database (.accdb)", ".accdb");
-	public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
-	public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
-	public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");
+    public static final ExtensionFilter CSV = new ExtensionFilter("Comma-separated files (.csv)", ".csv");
+    public static final ExtensionFilter TSV = new ExtensionFilter("Tab-separated files (.tsv)", ".tsv");
+    public static final ExtensionFilter DAT = new ExtensionFilter("Data files (.dat)", ".dat");
+    public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.txt)", ".txt");
+    public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
+    public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
+    public static final ExtensionFilter MDB = new ExtensionFilter("Access 97-2003 database (.mdb)", ".mdb");
+    public static final ExtensionFilter ACCDB = new ExtensionFilter("Access database (.accdb)", ".accdb");
+    public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
+    public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
+    public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");
 
-	public static final ExtensionFilter JAR = new ExtensionFilter("Java Archive (.jar)", ".jar");
-	public static final ExtensionFilter HTML = new ExtensionFilter("HTML web page (.html)", ".html");
+    public static final ExtensionFilter JAR = new ExtensionFilter("Java Archive (.jar)", ".jar");
+    public static final ExtensionFilter HTML = new ExtensionFilter("HTML web page (.html)", ".html");
 
-	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
-	public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter("Analysis result (.analysis.result.dat)", ".analysis.result.dat");
-	public static final ExtensionFilter ANALYSIS_TIMELINE_XML = new ExtensionFilter("Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
-	public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML = new ExtensionFilter("Analysis job execution log (.analysis.execution.log.xml)", ".analysis.execution.log.xml");
-
+    public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)",
+            ".analysis.xml");
+    public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter(
+            "Analysis result (.analysis.result.dat)", ".analysis.result.dat");
+    public static final ExtensionFilter ANALYSIS_TIMELINE_XML = new ExtensionFilter(
+            "Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
+    public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML = new ExtensionFilter(
+            "Analysis job execution log (.analysis.execution.log.xml)", ".analysis.execution.log.xml");
 }

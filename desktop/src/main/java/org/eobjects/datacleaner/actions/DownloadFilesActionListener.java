@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
 /**
  * ActionListener and SwingWorker implementation for handling download of a
  * file. The progress will be displayed in a new window.
- * 
- * @author Kasper Sørensen
  */
 public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task> implements ActionListener {
 
@@ -115,12 +113,7 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
 
     private static FileObject createTargetDirectory(UserPreferences userPreferences) {
         final File localDirectory = userPreferences.getSaveDownloadedFilesDirectory();
-        try {
-            return VFSUtils.getFileSystemManager().toFileObject(localDirectory);
-        } catch (FileSystemException e) {
-            // should never happen
-            throw new IllegalStateException(e);
-        }
+        return VFSUtils.toFileObject(localDirectory);
     }
 
     public static String[] createTargetFilenames(String[] urls) {

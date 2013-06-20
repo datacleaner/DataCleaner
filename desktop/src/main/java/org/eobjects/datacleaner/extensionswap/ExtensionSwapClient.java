@@ -104,10 +104,12 @@ public final class ExtensionSwapClient {
         if (!StringUtils.isNullOrEmpty(username)) {
             url = url + "?username=" + username;
         }
+
         String filename = extensionSwapPackage.getId() + ".jar";
+        FileObject targetDirectory = VFSUtils.toFileObject(_userPreferences.getExtensionsDirectory());
         WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_httpClient);
         DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-                new String[] { filename }, listener, _windowContext, httpClient, _userPreferences);
+                targetDirectory, new String[] { filename }, listener, _windowContext, httpClient);
         actionListener.actionPerformed(null);
     }
 

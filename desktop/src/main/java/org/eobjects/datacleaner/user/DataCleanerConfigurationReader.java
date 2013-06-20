@@ -19,8 +19,13 @@
  */
 package org.eobjects.datacleaner.user;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -32,6 +37,8 @@ import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
 import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.storage.InMemoryStorageProvider;
+import org.eobjects.datacleaner.extensions.ExtensionReader;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.LazyRef;
@@ -64,10 +71,8 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         // the configuration (some custom elements may refer to classes
         // within the extensions)
         UserPreferences userPreferences = _userPreferencesRef.get();
-        final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
-        for (ExtensionPackage extensionPackage : extensionPackages) {
-            extensionPackage.loadExtension();
-        }
+
+        loadExtensions(userPreferences);
 
         // load the configuration file
         final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
@@ -86,7 +91,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
             InputStream inputStream = null;
             try {
                 inputStream = _configurationFile.getContent().getInputStream();
-                
+
                 c = configurationReader.create(inputStream);
                 logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
             } catch (Exception e) {
@@ -114,6 +119,79 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         }
 
         return c;
+    }
+
+    private void loadExtensions(UserPreferences userPreferences) {
+        final String dumpInstallKey = "org.eobjects.datacleaner.extension.dumpinstall";
+        final File extensionsDirectory = userPreferences.getExtensionsDirectory();
+
+        final Set<String> extensionFilenames = new HashSet<String>();
+        final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
+        for (Iterator<ExtensionPackage> it = extensionPackages.iterator(); it.hasNext();) {
+            final ExtensionPackage extensionPackage = (ExtensionPackage) it.next();
+
+            // some extensions may be installed simply by "dumping" a JAR in the
+            // extension folder. Such installs will have this key registered.
+            final boolean dumpInstalled = "true".equals(extensionPackage.getAdditionalProperties().get(dumpInstallKey));
+            boolean remove = false;
+
+            final File[] files = extensionPackage.getFiles();
+            for (File file : files) {
+                if (dumpInstalled && !file.exists()) {
+                    // file has been removed, we'll remove this extension
+                    remove = true;
+                    break;
+                } else {
+                    final File directory = file.getParentFile();
+                    if (extensionsDirectory.equals(directory)) {
+                        extensionFilenames.add(file.getName());
+                    }
+                }
+            }
+
+            if (remove) {
+                it.remove();
+            } else {
+                extensionPackage.loadExtension();
+            }
+        }
+
+        // Read all JAR files in the 'extensions' directory and register those
+        // that are not already loaded.
+        final File[] jarFiles = extensionsDirectory.listFiles(FileFilters.JAR);
+        for (File file : jarFiles) {
+            final String filename = file.getName();
+            if (!extensionFilenames.contains(filename)) {
+                logger.info("Adding extension from 'extension' folder: {}", file.getName());
+                ExtensionReader reader = new ExtensionReader();
+                ExtensionPackage extension = reader.readExternalExtension(file);
+                userPreferences.addExtensionPackage(extension);
+                extension.getAdditionalProperties().put(dumpInstallKey, "true");
+                extension.loadExtension();
+            }
+        }
+
+        // List directories and treat each sub directory with JAR files as
+        // an extension
+        final File[] subDirectories = extensionsDirectory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory();
+            }
+        });
+        for (File subDirectory : subDirectories) {
+            final String directoryName = subDirectory.getName();
+            if (!extensionFilenames.contains(directoryName)) {
+                logger.info("Adding extension from 'extension' folder: {}", directoryName);
+                ExtensionReader reader = new ExtensionReader();
+                ExtensionPackage extension = reader.readExternalExtension(subDirectory);
+                if (extension != null) {
+                    userPreferences.addExtensionPackage(extension);
+                    extension.getAdditionalProperties().put(dumpInstallKey, "true");
+                    extension.loadExtension();
+                }
+            }
+        }
     }
 
     private AnalyzerBeansConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {

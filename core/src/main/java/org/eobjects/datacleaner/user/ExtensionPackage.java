@@ -28,6 +28,7 @@ import java.util.Map;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,9 +123,16 @@ public final class ExtensionPackage implements Serializable, HasName {
             // classloader which is a child of the previous extension's
             // classloader. This mechanism ensures that classes occurring in
             // several extensions are only loaded once.
-            _latestClassLoader = ClassLoaderUtils.createClassLoader(_files, _latestClassLoader);
+            _latestClassLoader = ClassLoaderUtils.createClassLoader(getJarFiles(), _latestClassLoader);
             _classLoader = _latestClassLoader;
         }
+    }
+    
+    private File[] getJarFiles() {
+        if (_files.length == 1 && _files[0].isDirectory()) {
+            return _files[0].listFiles(FileFilters.JAR);
+        }
+        return _files;
     }
 
     public ExtensionPackage loadDescriptors(DescriptorProvider descriptorProvider) throws IllegalStateException {
@@ -146,7 +154,7 @@ public final class ExtensionPackage implements Serializable, HasName {
             }
 
             if (_scanPackage != null) {
-                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
+                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, getJarFiles());
             }
 
             _loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;

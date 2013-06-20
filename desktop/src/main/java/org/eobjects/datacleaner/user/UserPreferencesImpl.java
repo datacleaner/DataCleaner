@@ -87,6 +87,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private File analysisJobDirectory;
     private File saveDatastoreDirectory;
     private File saveDownloadedFilesDirectory;
+    private File extensionsDirectory;
 
     private MonitorConnection monitorConnection;
 
@@ -184,7 +185,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getOpenDatastoreDirectory() {
         if (openDatastoreDirectory == null) {
-            openDatastoreDirectory = new File(".");
+            openDatastoreDirectory = VFSUtils.toFile(DataCleanerHome.get());
         }
         return openDatastoreDirectory;
     }
@@ -197,7 +198,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getConfiguredFileDirectory() {
         if (configuredFileDirectory == null) {
-            configuredFileDirectory = new File(".");
+            configuredFileDirectory = VFSUtils.toFile(DataCleanerHome.get());
         }
         return configuredFileDirectory;
     }
@@ -210,7 +211,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getAnalysisJobDirectory() {
         if (analysisJobDirectory == null) {
-            analysisJobDirectory = new File(".");
+            analysisJobDirectory = getRelativeDirectory("jobs");
         }
         return analysisJobDirectory;
     }
@@ -223,9 +224,18 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getSaveDatastoreDirectory() {
         if (saveDatastoreDirectory == null) {
-            saveDatastoreDirectory = new File("datastores");
+            saveDatastoreDirectory = getRelativeDirectory("datastores");
         }
         return saveDatastoreDirectory;
+    }
+
+    private File getRelativeDirectory(String name) {
+        File dataCleanerHome = VFSUtils.toFile(DataCleanerHome.get());
+        File directory = new File(dataCleanerHome, name);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        return directory;
     }
 
     @Override
@@ -453,7 +463,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getSaveDownloadedFilesDirectory() {
         if (saveDownloadedFilesDirectory == null) {
-            saveDownloadedFilesDirectory = new File(".");
+            saveDownloadedFilesDirectory = VFSUtils.toFile(DataCleanerHome.get());
         }
         return saveDownloadedFilesDirectory;
     }
@@ -461,6 +471,19 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setSaveDownloadedFilesDirectory(File directory) {
         this.saveDownloadedFilesDirectory = directory;
+    }
+    
+    @Override
+    public File getExtensionsDirectory() {
+        if (extensionsDirectory == null) {
+            extensionsDirectory = getRelativeDirectory("extensions");
+        }
+        return extensionsDirectory;
+    }
+    
+    @Override
+    public void setExtensionsDirectory(File directory) {
+        this.extensionsDirectory = directory;
     }
 
     @Override

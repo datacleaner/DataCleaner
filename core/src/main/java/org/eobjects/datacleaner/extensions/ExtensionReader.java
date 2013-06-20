@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.user.ExtensionPackage;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
@@ -81,13 +82,38 @@ public class ExtensionReader {
         return null;
     }
 
+    public ExtensionPackage readExternalExtension(File fileOrDirectory) {
+        if (fileOrDirectory == null) {
+            return null;
+        }
+        if (!fileOrDirectory.isDirectory()) {
+            return readExternalExtension(new File[] { fileOrDirectory });
+        }
+
+        return readExternalExtension(fileOrDirectory.getName(), new File[] { fileOrDirectory });
+    }
+
     public ExtensionPackage readExternalExtension(File[] files) {
         return readExternalExtension(null, files);
     }
 
-    public ExtensionPackage readExternalExtension(String name, File[] files) {
+    public ExtensionPackage readExternalExtension(String name, final File[] files) {
+        final boolean autoDetectPackage;
+        final File[] jarFiles;
+        if (files.length == 1 && files[0].isDirectory()) {
+            jarFiles = files[0].listFiles(FileFilters.JAR);
+            autoDetectPackage = false;
+        } else {
+            jarFiles = files;
+            autoDetectPackage = true;
+        }
+
+        if (jarFiles.length == 0) {
+            return null;
+        }
+
         // check if any of the files has an extension descriptor file
-        for (File file : files) {
+        for (File file : jarFiles) {
             if (file.getName().toLowerCase().endsWith(".jar")) {
                 try {
                     JarFile jarFile = new JarFile(file);
@@ -97,7 +123,7 @@ public class ExtensionReader {
                     } else {
                         final InputStream inputStream = jarFile.getInputStream(entry);
                         try {
-                            final ExtensionPackage extension = readExtension(name, inputStream, files);
+                            final ExtensionPackage extension = readExtension(name, inputStream, jarFiles);
                             return extension;
                         } finally {
                             FileHelper.safeClose(inputStream);
@@ -123,7 +149,7 @@ public class ExtensionReader {
         } else {
             extensionName = name;
         }
-        final String packageName = autoDetectPackageName(files[0]);
+        final String packageName = (autoDetectPackage ? autoDetectPackageName(jarFiles[0]) : "");
         final ExtensionPackage extension = new ExtensionPackage(extensionName, packageName, true, files);
 
         return extension;
@@ -158,12 +184,12 @@ public class ExtensionReader {
         if (!StringUtils.isNullOrEmpty(icon)) {
             extensionPackage.getAdditionalProperties().put("icon", icon);
         }
-        
+
         final String url = HttpXmlUtils.getChildNodeText(documentElement, "url");
         if (!StringUtils.isNullOrEmpty(url)) {
             extensionPackage.getAdditionalProperties().put("url", url);
         }
-        
+
         final String author = HttpXmlUtils.getChildNodeText(documentElement, "author");
         if (!StringUtils.isNullOrEmpty(url)) {
             extensionPackage.getAdditionalProperties().put("author", author);

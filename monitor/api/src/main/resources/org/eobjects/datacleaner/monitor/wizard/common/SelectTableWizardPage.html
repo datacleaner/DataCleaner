@@ -4,7 +4,7 @@
 		<#list schemas as schema>
 			<optgroup label="${schema.name}">
 				<#list schema.tableNames as tableName>
-				<#if (selectedTableName)?? && selectedTableName == tableName>
+				<#if (selectedTableName)?? && selectedTableName == (schema.name + "." + tableName)>
 					<option value="${schema.name}.${tableName}" selected="selected">${tableName}</option>
 				<#else>
 					<option value="${schema.name}.${tableName}">${tableName}</option>

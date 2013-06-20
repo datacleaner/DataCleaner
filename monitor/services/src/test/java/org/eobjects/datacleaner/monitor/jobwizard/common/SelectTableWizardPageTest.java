@@ -69,7 +69,7 @@ public class SelectTableWizardPageTest extends TestCase {
         		"    </select>\n" + 
         		"</div>", formInnerHtml1.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
         
-        page.setSelectedTableName("tab");
+        page.setSelectedTableName("my_pojo_ds.tab");
         
         final String formInnerHtml2 = page.getFormInnerHtml();
         assertEquals("<div>\n" + 

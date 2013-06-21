@@ -19,19 +19,13 @@
  */
 package org.eobjects.datacleaner.lucene;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.eobjects.analyzer.beans.api.Categorized;
@@ -43,16 +37,11 @@ import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.TransformerBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @TransformerBean("Search Lucene index (return map)")
 @Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the search result as a map, which can then be post-processed eg. using the 'data structures' transformation options.")
 @Categorized(LuceneSearchCategory.class)
 public class SearchToMapTransformer implements LuceneTransformer<Object> {
-
-    private static final Logger logger = LoggerFactory.getLogger(SearchToMapTransformer.class);
 
     @Configured
     @Description("Column containing search term(s) to fire.")
@@ -84,29 +73,13 @@ public class SearchToMapTransformer implements LuceneTransformer<Object> {
 
         final String searchText = row.getValue(searchInput);
 
-        if (StringUtils.isNullOrEmpty(searchText)) {
-            return result;
-        }
-
-        final Query query;
-        try {
-            final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
-            final QueryParser queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
-            query = queryParser.parse(searchText);
-        } catch (ParseException e) {
-            logger.error("An error occurred while parsing query: " + searchText, e);
+        TopDocs searchResult = SearchHelper.search(indexSearcher, searchText);
+        if (searchResult == null) {
             result[1] = -1;
             return result;
         }
 
-        final TopDocs searchResult;
-        try {
-            searchResult = indexSearcher.search(query, 1);
-        } catch (IOException e) {
-            throw new IllegalStateException("Searching index threw exception", e);
-        }
-
-        if (searchResult == null || searchResult.totalHits == 0) {
+        if (searchResult.totalHits == 0) {
             return result;
         }
 

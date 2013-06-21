@@ -51,13 +51,20 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
     private final SearchIndexCatalog _catalog;
     private final UserPreferences _userPreferences;
     private final DCComboBox<String> _comboBox;
+    private final SearchIndex _existingSearchIndex;
 
     public ConfigureSearchIndicesDialog(WindowContext windowContext, SearchIndexCatalog catalog,
             UserPreferences userPreferences, DCComboBox<String> comboBox) {
+        this(windowContext, catalog, userPreferences, comboBox, null);
+    }
+
+    public ConfigureSearchIndicesDialog(WindowContext windowContext, SearchIndexCatalog catalog,
+            UserPreferences userPreferences, DCComboBox<String> comboBox, SearchIndex searchIndex) {
         super(windowContext, Images.BANNER_IMAGE);
         _catalog = catalog;
         _userPreferences = userPreferences;
         _comboBox = comboBox;
+        _existingSearchIndex = searchIndex;
     }
 
     @Override
@@ -77,16 +84,19 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final ConfigureSearchIndexPanel createSearchIndexPanel = new ConfigureSearchIndexPanel(_userPreferences);
+        final ConfigureSearchIndexPanel configureSearchIndexPanel = new ConfigureSearchIndexPanel(_userPreferences, _existingSearchIndex);
 
         final ImageIcon saveIcon = ImageManager.getInstance().getImageIcon("images/actions/save.png");
         final JButton saveButton = WidgetFactory.createButton("Save", saveIcon);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                final SearchIndex searchIndex = createSearchIndexPanel.createSearchIndex();
+                final SearchIndex searchIndex = configureSearchIndexPanel.createSearchIndex();
                 if (searchIndex == null) {
                     return;
+                }
+                if (_existingSearchIndex != null) {
+                    _catalog.removeSearchIndex(_existingSearchIndex);
                 }
                 _catalog.addSearchIndex(searchIndex);
                 _comboBox.setSelectedItem(searchIndex.getName());
@@ -96,7 +106,7 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
         final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
         tabbedPane.addTab("Configure search index", ImageManager.getInstance().getImageIcon(IconUtils.MENU_OPTIONS),
-                createSearchIndexPanel);
+                configureSearchIndexPanel);
         tabbedPane.setUnclosableTab(0);
 
         final JToolBar toolBar = WidgetFactory.createToolBar();

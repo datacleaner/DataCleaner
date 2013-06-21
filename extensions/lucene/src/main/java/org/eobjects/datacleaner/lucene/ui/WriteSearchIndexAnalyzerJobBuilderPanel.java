@@ -77,7 +77,7 @@ public class WriteSearchIndexAnalyzerJobBuilderPanel extends AnalyzerJobBuilderP
         } else if (propertyDescriptor == _fieldNamesProperty) {
             return _mappedFieldsPropertyWidget.getMappedStringsPropertyWidget();
         } else if (propertyDescriptor.getBaseType() == SearchIndex.class) {
-            return new SearchIndexPropertyWidget(beanJobBuilder, propertyDescriptor, _catalog, _windowContext, _userPreferences);
+            return new SingleSearchIndexPropertyWidget(beanJobBuilder, propertyDescriptor, _catalog, _windowContext, _userPreferences);
         }
         return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
     }

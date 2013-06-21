@@ -19,14 +19,18 @@
  */
 package org.eobjects.datacleaner.lucene.ui;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.lucene.LuceneTransformer;
 import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
-import org.eobjects.datacleaner.lucene.LuceneTransformer;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -40,24 +44,34 @@ public class LuceneTransformerJobBuilderPanel extends TransformerJobBuilderPanel
 
     private static final long serialVersionUID = 1L;
 
-    private final SearchIndexCatalog _catalog;
-    private final UserPreferences _userPreferences;
+    private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _propertyWidgets;
 
     public LuceneTransformerJobBuilderPanel(TransformerJobBuilder<LuceneTransformer<?>> tjb,
             PropertyWidgetFactory propertyWidgetFactory, SearchIndexCatalog catalog, WindowContext windowContext,
             AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
         super(Images.WATERMARK_IMAGE, 95, 95, tjb, windowContext, propertyWidgetFactory, configuration);
 
-        _catalog = catalog;
-        _userPreferences = userPreferences;
+        _propertyWidgets = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+
+        final Set<ConfiguredPropertyDescriptor> searchIndexProperties = tjb.getDescriptor()
+                .getConfiguredPropertiesByType(SearchIndex.class, true);
+        for (ConfiguredPropertyDescriptor property : searchIndexProperties) {
+            PropertyWidget<?> widget;
+            if (property.isArray()) {
+                widget = new MultipleSearchIndicesPropertyWidget(tjb, property, catalog);
+            } else {
+                widget = new SingleSearchIndexPropertyWidget(tjb, property, catalog, windowContext, userPreferences);
+            }
+            _propertyWidgets.put(property, widget);
+        }
     }
 
     @Override
     protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
-        if (propertyDescriptor.getBaseType() == SearchIndex.class) {
-            return new SearchIndexPropertyWidget(beanJobBuilder, propertyDescriptor, _catalog, getWindowContext(),
-                    _userPreferences);
+        PropertyWidget<?> widget = _propertyWidgets.get(propertyDescriptor);
+        if (widget != null) {
+            return widget;
         }
         return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
     }

@@ -50,10 +50,10 @@ public class ConfigureSearchIndexPanel extends DCPanel {
     private final JRadioButton _storageDatastoreFolderRadio;
     private final JRadioButton _storageTempFolderRadio;
 
-    public ConfigureSearchIndexPanel(final UserPreferences userPreferences) {
+    public ConfigureSearchIndexPanel(final UserPreferences userPreferences, SearchIndex existingSearchIndex) {
         super(Images.WATERMARK_IMAGE, 95, 10);
         _userPreferences = userPreferences;
-        
+
         setTitledBorder("Search index properties");
 
         _nameTextField = WidgetFactory.createTextField("Search index name");
@@ -83,7 +83,21 @@ public class ConfigureSearchIndexPanel extends DCPanel {
         final ButtonGroup group = new ButtonGroup();
         group.add(_storageDatastoreFolderRadio);
         group.add(_storageTempFolderRadio);
-        
+
+        if (existingSearchIndex != null) {
+            _nameTextField.setEnabled(false);
+            _nameTextField.setText(existingSearchIndex.getName());
+            _descriptionTextField.setText(existingSearchIndex.getDescription());
+            
+            if (existingSearchIndex instanceof FileSystemSearchIndex) {
+                File file = ((FileSystemSearchIndex) existingSearchIndex).getFile();
+                if (FileHelper.getTempDir().equals(file)) {
+                    _storageTempFolderRadio.setSelected(true);
+                }
+                _storageDatastoreFolderRadio.setEnabled(false);
+                _storageTempFolderRadio.setEnabled(false);
+            }
+        }
     }
 
     public SearchIndex createSearchIndex() {

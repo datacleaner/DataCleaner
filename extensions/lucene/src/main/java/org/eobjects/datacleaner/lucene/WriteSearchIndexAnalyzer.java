@@ -30,6 +30,7 @@ import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.writers.WriteBuffer;
 import org.eobjects.analyzer.beans.writers.WriteBufferSizeOption;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
 import org.eobjects.analyzer.connection.Datastore;
@@ -38,7 +39,7 @@ import org.eobjects.analyzer.data.InputRow;
 
 @AnalyzerBean("Write to Lucene index")
 @Description("Writes data to a Lucene index, making it searchable at a later stage.")
-@Categorized(LuceneSearchCategory.class)
+@Categorized(WriteDataCategory.class)
 public class WriteSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
 
     @Configured(order = 1, value = "Value(s) and field name(s) in index")

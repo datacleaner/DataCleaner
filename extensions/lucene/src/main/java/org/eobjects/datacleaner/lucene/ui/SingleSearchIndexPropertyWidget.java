@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.lucene.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -38,7 +40,6 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCComboBox;
-import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
@@ -47,20 +48,27 @@ import org.jdesktop.swingx.HorizontalLayout;
 /**
  * A {@link PropertyWidget} for selecting a {@link SearchIndex} in a combobox.
  */
-public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchIndex> implements SearchIndexListener {
+public class SingleSearchIndexPropertyWidget extends AbstractPropertyWidget<SearchIndex> implements SearchIndexListener {
+
+    public static interface Listener {
+        public void onSearchIndexSelected(SearchIndex searchIndex);
+    }
 
     private final DCComboBox<String> _comboBox;
     private final JButton _removeButton;
     private final JButton _createButton;
+    private final JButton _editButton;
     private final SearchIndexCatalog _catalog;
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
+    private final List<Listener> _listeners;
 
-    public SearchIndexPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public SingleSearchIndexPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor, SearchIndexCatalog catalog, WindowContext windowContext,
             UserPreferences userPreferences) {
         super(beanJobBuilder, propertyDescriptor);
 
+        _listeners = new ArrayList<SingleSearchIndexPropertyWidget.Listener>();
         _catalog = catalog;
         _windowContext = windowContext;
         _userPreferences = userPreferences;
@@ -68,10 +76,10 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
         final String[] names = catalog.getSearchIndexNames();
         _comboBox = new DCComboBox<String>(names);
         _comboBox.setRenderer(new DCListCellRenderer());
-        
-        final ImageIcon createIcon = ImageManager.getInstance().getImageIcon("images/search_index.png",
+
+        final ImageIcon indexIcon = ImageManager.getInstance().getImageIcon("images/search_index.png",
                 IconUtils.ICON_SIZE_MEDIUM, getClass().getClassLoader());
-        _createButton = new JButton("Create index", createIcon);
+        _createButton = new JButton("Create", indexIcon);
         _createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,7 +88,20 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
                 dialog.open();
             }
         });
-        
+
+        _editButton = new JButton("Edit", indexIcon);
+        _editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final SearchIndex searchIndex = getValue();
+                if (searchIndex != null) {
+                    final ConfigureSearchIndicesDialog dialog = new ConfigureSearchIndicesDialog(_windowContext,
+                            _catalog, _userPreferences, _comboBox, searchIndex);
+                    dialog.open();
+                }
+            }
+        });
+
         _removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
         _removeButton.addActionListener(new ActionListener() {
             @Override
@@ -97,12 +118,15 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
             }
         });
 
-        _comboBox.addListener(new Listener<String>() {
+        _comboBox.addListener(new DCComboBox.Listener<String>() {
             @Override
             public void onItemSelected(String item) {
                 boolean itemSelected = item != null;
                 _removeButton.setEnabled(itemSelected);
+                _editButton.setEnabled(itemSelected);
                 fireValueChanged();
+                SearchIndex searchIndex = _catalog.getSearchIndex(item);
+                notifyListeners(searchIndex);
             }
         });
 
@@ -111,6 +135,7 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
             _comboBox.setSelectedItem(currentValue.getName());
         } else {
             _comboBox.setSelectedItem(null);
+            _editButton.setEnabled(false);
             _removeButton.setEnabled(false);
         }
 
@@ -120,8 +145,24 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
         panel.add(Box.createHorizontalStrut(4));
         panel.add(_createButton);
         panel.add(Box.createHorizontalStrut(4));
+        panel.add(_editButton);
+        panel.add(Box.createHorizontalStrut(4));
         panel.add(_removeButton);
         add(panel);
+    }
+    
+    public void addListener(Listener listener) {
+        _listeners.add(listener);
+    }
+    
+    public void removeListener(Listener listener) {
+        _listeners.remove(listener);
+    }
+
+    private void notifyListeners(SearchIndex item) {
+        for (Listener listener : _listeners) {
+            listener.onSearchIndexSelected(item);
+        }
     }
 
     @Override

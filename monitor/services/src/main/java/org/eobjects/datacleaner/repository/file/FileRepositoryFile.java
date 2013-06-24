@@ -147,7 +147,9 @@ public final class FileRepositoryFile implements RepositoryFile {
         }
 
         try {
-            writeCallback.run(outputStream);
+            if (writeCallback != null) {
+                writeCallback.run(outputStream);
+            }
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;

@@ -104,6 +104,8 @@ public class RepositoryZipController {
 
     protected void decompress(final ZipInputStream zipInputStream, final RepositoryFolder rootFolder)
             throws IOException {
+        deleteChildren(rootFolder);
+        
         for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
             final String entryName = entry.getName();
             if (entry.isDirectory()) {
@@ -133,6 +135,19 @@ public class RepositoryZipController {
                 }
 
             }
+        }
+    }
+
+    private void deleteChildren(RepositoryFolder folder) {
+        List<RepositoryFile> files = folder.getFiles();
+        for (RepositoryFile file : files) {
+            file.delete();
+        }
+        
+        List<RepositoryFolder> folders = folder.getFolders();
+        for (RepositoryFolder subFolder : folders) {
+            deleteChildren(subFolder);
+            subFolder.delete();
         }
     }
 

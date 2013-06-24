@@ -53,6 +53,10 @@ public class RepositoryZipControllerTest extends TestCase {
         FileUtils.deleteDirectory(targetRepoFolder);
         targetRepoFolder.mkdirs();
         RepositoryFolder targetFolder = new FileRepository(targetRepoFolder).createFolder("tenant1");
+        targetFolder.createFolder("foobar_removeMe");
+        targetFolder.createFile("Yes_remove_me.too", null);
+        
+        
         controller.decompress(zipInputStream, targetFolder);
 
         assertFoldersSimilar(sourceFolder, targetFolder);

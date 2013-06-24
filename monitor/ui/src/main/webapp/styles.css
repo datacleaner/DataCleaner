@@ -642,6 +642,8 @@ button.LaunchButton {
 	background-color: #f4f4d3;
 	border: 1px solid #a0a0a0;
 	float: right;
+	clear: right;
+	margin-top: 4px;
 	background-image: url("images/repository_file.png");
 	background-repeat: no-repeat;
 	padding: 10px;

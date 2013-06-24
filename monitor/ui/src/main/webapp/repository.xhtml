@@ -39,6 +39,23 @@
 				</form>
 			</h:panelGroup>
 			
+			<h:panelGroup rendered="#{user.admin}"
+				styleClass="uploadConfigurationPanel">
+				<h3>Repository backup + restore</h3>
+				<p>
+					Download <a href="repository/#{user.tenant}/zip">the repository as a .zip file</a>.
+				</p>
+				<p>
+					Restore repository using zip file:
+				</p>
+				<form action="repository/#{user.tenant}/zip" method="post"
+					enctype="multipart/form-data">
+					<input type="file" name="file" /> <input type="submit"
+						value="Upload"
+						onclick="return confirmUpload('repository')" />
+				</form>
+			</h:panelGroup>
+			
 			<h2>Jobs</h2>
 			<ul class="repositoryView">
 				<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">

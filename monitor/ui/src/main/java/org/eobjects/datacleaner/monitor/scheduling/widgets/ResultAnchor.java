@@ -44,7 +44,7 @@ public class ResultAnchor extends Anchor {
 
     public void setResult(ExecutionLog executionLog, String text) {
         final String resultId = executionLog.getResultId();
-        if (resultId == null) {
+        if (resultId == null || !executionLog.isResultPersisted()) {
             setEnabled(false);
             setText("");
         } else {

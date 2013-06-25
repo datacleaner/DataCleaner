@@ -23,6 +23,7 @@
 					type="string" />
 				<element ref="schedule:schedule" minOccurs="1" maxOccurs="1" />
 				<element name="log-output" type="string" />
+				<element name="result-persisted" minOccurs="0" maxOccurs="1" type="boolean" />
 			</sequence>
 		</complexType>
 	</element>

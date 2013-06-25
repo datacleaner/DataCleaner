@@ -29,6 +29,12 @@ public interface ExecutionLogger {
 
     public void setStatusFailed(Object component, Object data, Throwable error);
 
+    /**
+     * Notifies the logger that the job has finished successfully, optionally
+     * with a persistent result as payload.
+     * 
+     * @param result
+     */
     public void setStatusSuccess(Object result);
 
     /**

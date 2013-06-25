@@ -34,7 +34,7 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
  * Reader of {@link ExecutionLog} objects.
  */
 public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
-    
+
     public JaxbExecutionLogReader() {
         super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
@@ -73,6 +73,10 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.dat
 
         executionLog.setTriggeredBy(jaxbExecutionLog.getTriggeredBy());
         executionLog.setLogOutput(jaxbExecutionLog.getLogOutput());
+        
+        Boolean resultPersisted = jaxbExecutionLog.isResultPersisted();
+        resultPersisted = (resultPersisted == null) ? true : resultPersisted;
+        executionLog.setResultPersisted(resultPersisted.booleanValue());
 
         final JaxbScheduleReader reader = new JaxbScheduleReader();
         final ScheduleDefinition schedule = reader.createSchedule(jaxbExecutionLog.getSchedule(), null, tenant, null,

@@ -19,11 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.BeanConfiguration;
@@ -34,9 +32,6 @@ import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
 import org.springframework.stereotype.Component;
 
 /**
@@ -107,33 +102,11 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
             return;
         }
 
-        if (result != null) {
-            try {
-                executionLogger.log("Saving job result.");
-                serializeResult(result, context, execution);
-            } catch (Exception e) {
-                executionLogger
-                        .log("Failed to save job result! Execution of the job was succesfull, but the result was not persisted.");
-                executionLogger.setStatusFailed(null, result, e);
-                return;
-            }
+        final Boolean persistResult = jobContext.getCustomJavaComponentJob().isPersistResult();
+        if (persistResult == null || persistResult.booleanValue()) {
+            executionLogger.setStatusSuccess(result);
+        } else {
+            executionLogger.setStatusSuccess(null);
         }
-        executionLogger.setStatusSuccess(result);
-    }
-
-    private void serializeResult(final Serializable result, TenantContext context, ExecutionLog execution) {
-        if (result == null) {
-            return;
-        }
-
-        final RepositoryFolder resultFolder = context.getResultFolder();
-        final String resultFilename = execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
-
-        resultFolder.createFile(resultFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                SerializationUtils.serialize(result, out);
-            }
-        });
     }
 }

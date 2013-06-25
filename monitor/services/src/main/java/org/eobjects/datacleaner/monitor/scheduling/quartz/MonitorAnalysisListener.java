@@ -78,19 +78,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         final AnalysisResult result = new SimpleAnalysisResult(_results);
 
-        writeResult(result);
-
         _executionLogger.setStatusSuccess(result);
-    }
-
-    private void writeResult(final AnalysisResult result) {
-        _resultFolder.createFile(_resultFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final ObjectOutputStream oos = new ObjectOutputStream(out);
-                oos.writeObject(result);
-            }
-        });
     }
 
     /**

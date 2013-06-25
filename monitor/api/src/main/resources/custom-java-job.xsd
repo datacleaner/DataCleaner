@@ -11,6 +11,7 @@
 			<element name="properties" minOccurs="0" maxOccurs="1"
 				type="custom:propertiesType" />
 			<element name="group-name" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="persist-result" minOccurs="0" maxOccurs="1" type="boolean" />
 		</all>
 	</complexType>
 

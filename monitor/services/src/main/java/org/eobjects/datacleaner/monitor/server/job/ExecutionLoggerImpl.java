@@ -21,10 +21,12 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
 import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
@@ -50,10 +52,12 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
     private final StringBuilder _log;
     private final JaxbExecutionLogWriter _executionLogWriter;
     private final RepositoryFile _logFile;
+    private final RepositoryFolder _resultFolder;
 
     public ExecutionLoggerImpl(ExecutionLog execution, RepositoryFolder resultFolder,
             ApplicationEventPublisher eventPublisher) {
         _execution = execution;
+        _resultFolder = resultFolder;
         _eventPublisher = eventPublisher;
         _executionLogWriter = new JaxbExecutionLogWriter();
 
@@ -61,7 +65,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
         final String resultId = execution.getResultId();
         final String logFilename = resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
-        
+
         final RepositoryFile existingLogFile = resultFolder.getFile(logFilename);
         if (existingLogFile == null) {
             _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
@@ -132,6 +136,24 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void setStatusSuccess(Object result) {
+        if (result == null) {
+            _execution.setResultPersisted(false);
+        } else if (result instanceof Serializable) {
+            try {
+                log("Saving job result.");
+                serializeResult((Serializable)result);
+                _execution.setResultPersisted(true);
+            } catch (Exception e) {
+                log("Failed to save job result! Execution of the job was succesfull, but the result was not persisted.");
+                _execution.setResultPersisted(false);
+                setStatusFailed(null, result, e);
+                return;
+            }
+        } else {
+            log("Job returned in non persistent result: " + result);
+            _execution.setResultPersisted(true);
+        }
+
         log("Job execution SUCCESS");
         _execution.setJobEndDate(new Date());
         _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
@@ -141,6 +163,17 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
         if (_eventPublisher != null) {
             _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution, result));
         }
+    }
+
+    private void serializeResult(final Serializable result) {
+        final String resultFilename = _execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+
+        _resultFolder.createFile(resultFilename, new Action<OutputStream>() {
+            @Override
+            public void run(OutputStream out) throws Exception {
+                SerializationUtils.serialize(result, out);
+            }
+        });
     }
 
     @Override

@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.pentaho;
 
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +34,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
@@ -57,8 +55,6 @@ import org.eobjects.datacleaner.monitor.server.DefaultMetricValues;
 import org.eobjects.datacleaner.monitor.server.job.AbstractJobEngine;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
@@ -214,14 +210,6 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
 
                     final String documentString = createDocumentString(doc);
                     final PentahoJobResult result = new PentahoJobResult(documentString);
-
-                    final String resultFilename = execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
-                    tenantContext.getResultFolder().createFile(resultFilename, new Action<OutputStream>() {
-                        @Override
-                        public void run(OutputStream out) throws Exception {
-                            SerializationUtils.serialize(result, out);
-                        }
-                    });
 
                     executionLogger.setStatusSuccess(result);
                     return false;

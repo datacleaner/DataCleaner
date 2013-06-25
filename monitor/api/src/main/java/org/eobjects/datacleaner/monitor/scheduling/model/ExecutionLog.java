@@ -40,16 +40,19 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     private Date _jobEndDate;
 
     private String _triggeredBy;
+    private boolean _resultPersisted;
 
     // no-args constructor
     public ExecutionLog() {
         super();
+        _resultPersisted = false;
     }
 
     public ExecutionLog(ScheduleDefinition schedule, TriggerType triggerType) {
         super(createResultId(schedule), triggerType);
         _schedule = schedule;
         _job = (schedule == null ? null : schedule.getJob());
+        _resultPersisted = false;
     }
 
     private static String createResultId(ScheduleDefinition schedule) {
@@ -93,6 +96,14 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
 
     public void setTriggeredBy(String triggeredBy) {
         _triggeredBy = triggeredBy;
+    }
+    
+    public boolean isResultPersisted() {
+        return _resultPersisted;
+    }
+    
+    public void setResultPersisted(boolean resultPersisted) {
+        _resultPersisted = resultPersisted;
     }
 
     @Override

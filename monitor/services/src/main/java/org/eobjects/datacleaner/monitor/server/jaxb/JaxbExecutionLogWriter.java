@@ -53,6 +53,7 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.dat
         result.setTriggerType(createTriggerType(executionLog.getTriggerType()));
         result.setTriggeredBy(executionLog.getTriggeredBy());
         result.setLogOutput(executionLog.getLogOutput());
+        result.setResultPersisted(executionLog.isResultPersisted());
 
         final JaxbScheduleWriter scheduleWriter = new JaxbScheduleWriter();
         final Schedule schedule = scheduleWriter.createSchedule(executionLog.getSchedule());

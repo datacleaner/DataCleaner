@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=DataCleaner
-Comment=DataCleaner open source data quality
-Exec=datacleaner
-Icon=datacleaner.png
-Terminal=0
-Type=Application
-Encoding=UTF-8
-Categories=Database;System;

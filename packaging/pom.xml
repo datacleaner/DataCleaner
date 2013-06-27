@@ -22,7 +22,6 @@
 			<modules>
 				<module>desktop-app</module>
 				<module>webapp</module>
-				<module>documentation</module>
 				<module>jnlp</module>
 			</modules>
 		</profile>

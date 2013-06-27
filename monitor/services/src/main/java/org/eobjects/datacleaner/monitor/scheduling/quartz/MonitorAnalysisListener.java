@@ -19,8 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,11 +39,8 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.Action;
 
 /**
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
@@ -55,17 +50,10 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
     private final Map<ComponentJob, AnalyzerResult> _results;
     private final ExecutionLogger _executionLogger;
-    private final String _resultFilename;
-    private RepositoryFolder _resultFolder;
 
-    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder,
-            ExecutionLogger executionLogger) {
+    public MonitorAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
         _executionLogger = executionLogger;
-        _resultFolder = resultFolder;
-
         _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
-        final String resultId = execution.getResultId();
-        _resultFilename = resultId + FileFilters.ANALYSIS_RESULT_SER.getExtension();
     }
 
     @Override

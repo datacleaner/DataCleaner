@@ -36,7 +36,7 @@ abstract class SelectFieldGroupsPage(pageIndex: Int) extends WizardPageControlle
     try {
       return Integer.parseInt(fieldGroupsStr);
     } catch {
-      case _ =>
+      case _ : Throwable =>
         throw new DCUserInputException("Please provide a valid number of field groups");
     }
   }

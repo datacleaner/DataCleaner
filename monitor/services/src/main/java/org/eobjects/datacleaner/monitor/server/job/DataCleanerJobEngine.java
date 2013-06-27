@@ -64,7 +64,6 @@ import org.eobjects.datacleaner.monitor.server.MetricValueUtils;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Resource;
 import org.eobjects.metamodel.util.ResourceException;
@@ -115,9 +114,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception {
-        final RepositoryFolder resultFolder = context.getResultFolder();
-
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, executionLogger);
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, executionLogger);
 
         final DataCleanerJobContext job = (DataCleanerJobContext) context.getJob(execution.getJob());
         if (job == null) {

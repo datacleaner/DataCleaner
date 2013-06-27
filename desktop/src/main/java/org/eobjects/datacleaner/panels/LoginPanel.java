@@ -219,7 +219,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 
 			int y = 0;
 			final String loginInfo = "Thank you for using DataCleaner. We kindly ask you to identify yourself by "
-					+ "providing us with your eobjects.org user credentials.<br><br>"
+					+ "providing us with your datacleaner.org user credentials.<br><br>"
 					+ "If you are not registered yet, we hope that you will do so now, giving "
 					+ "the DataCleaner development community a better sense of it's users and audience.<br><br>"
 					+ "By logging in, you also accept transmitting very simple usage statistics to the DataCleaner "

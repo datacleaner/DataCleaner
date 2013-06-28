@@ -223,8 +223,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     String columnPath = job.getSourceColumnPaths().get(0);
                     Column column = con.getDataContext().getColumnByQualifiedLabel(columnPath);
                     schema = column.getTable().getSchema();
-                    usageSchema.setName(schema.getName());
                 }
+                usageSchema.setName(schema.getName());
                 String[] tableNames = schema.getTableNames();
                 for (String tableName : tableNames) {
                     usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(

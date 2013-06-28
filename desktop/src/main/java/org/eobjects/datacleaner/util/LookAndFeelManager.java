@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jgoodies.looks.LookUtils;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
 /**
@@ -63,6 +64,8 @@ public final class LookAndFeelManager {
 		} catch (UnsupportedLookAndFeelException e) {
 			throw new IllegalStateException(e);
 		}
+		
+		UIManager.put("ClassLoader", LookUtils.class.getClassLoader());
 
 		Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
 

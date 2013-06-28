@@ -18,7 +18,7 @@
 	</parent>
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>3.5.2-SNAPSHOT</version>
+	<version>3.5.2</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
@@ -122,13 +122,13 @@
 	</licenses>
 	<scm>
 		<connection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
+			scm:svn:http://eobjects.org/svn/DataCleaner/tags/DataCleaner-3.5.2
 		</connection>
 		<developerConnection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
+			scm:svn:http://eobjects.org/svn/DataCleaner/tags/DataCleaner-3.5.2
 		</developerConnection>
 		<url>
-			http://eobjects.org/svn/DataCleaner/trunk/ 
+			http://eobjects.org/svn/DataCleaner/tags/DataCleaner-3.5.2 
 		</url>
 	</scm>
 	<distributionManagement>

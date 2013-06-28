@@ -54,7 +54,7 @@ public final class ResourceManager {
 
 	public List<URL> getUrls(String path, ClassLoader... classLoaders) {
 		if (classLoaders == null || classLoaders.length == 0) {
-			classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader() };
+			classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
 		} else {
 		    if (logger.isDebugEnabled()) {
 		        logger.debug("Custom classloaders specified: {}", Arrays.toString(classLoaders));
@@ -71,7 +71,12 @@ public final class ResourceManager {
 			for (ClassLoader classLoader : classLoaders) {
 				Enumeration<URL> resources = classLoader.getResources(path);
 				while (resources.hasMoreElements()) {
-					result.add(resources.nextElement());
+					URL element = resources.nextElement();
+					if (element == null) {
+					    logger.warn("ClassLoader {} returned a null URL resource for path '{}'", classLoader, path);
+					} else {
+					    result.add(element);
+					}
 				}
 			}
 		} catch (IOException e) {

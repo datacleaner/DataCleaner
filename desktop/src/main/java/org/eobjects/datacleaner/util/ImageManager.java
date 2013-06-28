@@ -67,6 +67,7 @@ public final class ImageManager {
 
 			if (url == null) {
 				logger.warn("Image path ({}) could not be resolved", imagePath);
+				throw new IllegalArgumentException("Could not read image: '" + imagePath + "' (url could not be resolved)");
 			} else {
 				logger.debug("Image path ({}) resolved to url: {}", imagePath, url);
 			}

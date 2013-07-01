@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.util.StringUtils;
@@ -38,6 +39,8 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -47,18 +50,22 @@ import org.springframework.context.ApplicationEventPublisher;
  */
 public class ExecutionLoggerImpl implements ExecutionLogger {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExecutionLoggerImpl.class);
+
     private final ApplicationEventPublisher _eventPublisher;
     private final ExecutionLog _execution;
     private final StringBuilder _log;
     private final JaxbExecutionLogWriter _executionLogWriter;
     private final RepositoryFile _logFile;
     private final RepositoryFolder _resultFolder;
+    private final AtomicBoolean _erronuous;
 
     public ExecutionLoggerImpl(ExecutionLog execution, RepositoryFolder resultFolder,
             ApplicationEventPublisher eventPublisher) {
         _execution = execution;
         _resultFolder = resultFolder;
         _eventPublisher = eventPublisher;
+        _erronuous = new AtomicBoolean(false);
         _executionLogWriter = new JaxbExecutionLogWriter();
 
         _log = new StringBuilder();
@@ -91,46 +98,56 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void setStatusFailed(Object component, Object data, Throwable throwable) {
-        _execution.setJobEndDate(new Date());
-        _execution.setExecutionStatus(ExecutionStatus.FAILURE);
+        boolean erronuousBefore = _erronuous.getAndSet(true);
+        if (erronuousBefore) {
+            // don't report another error
+            if (throwable != null) {
+                logger.error(
+                        "More than one error was reported, but only the first will be put into the user-log. This error was also reported: "
+                                + throwable.getMessage(), throwable);
+            }
+        } else {
+            _execution.setJobEndDate(new Date());
+            _execution.setExecutionStatus(ExecutionStatus.FAILURE);
 
-        final StringWriter stringWriter = new StringWriter();
-        stringWriter.write("Job execution FAILURE");
+            final StringWriter stringWriter = new StringWriter();
+            stringWriter.write("Job execution FAILURE");
 
-        if (throwable != null && !StringUtils.isNullOrEmpty(throwable.getMessage())) {
-            stringWriter.write("\n - ");
-            stringWriter.write(throwable.getMessage());
-            stringWriter.write(" (");
-            stringWriter.write(throwable.getClass().getSimpleName());
-            stringWriter.write(")");
-        }
+            if (throwable != null && !StringUtils.isNullOrEmpty(throwable.getMessage())) {
+                stringWriter.write("\n - ");
+                stringWriter.write(throwable.getMessage());
+                stringWriter.write(" (");
+                stringWriter.write(throwable.getClass().getSimpleName());
+                stringWriter.write(")");
+            }
 
-        if (component != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Failure component: " + component);
-        }
+            if (component != null) {
+                stringWriter.write('\n');
+                stringWriter.write(" - Failure component: " + component);
+            }
 
-        if (data != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Failure input data: " + data);
-        }
+            if (data != null) {
+                stringWriter.write('\n');
+                stringWriter.write(" - Failure input data: " + data);
+            }
 
-        if (throwable != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Exception stacktrace of failure condition:");
-            stringWriter.write('\n');
-            final PrintWriter printWriter = new PrintWriter(stringWriter);
-            throwable.printStackTrace(printWriter);
-            printWriter.flush();
-        }
+            if (throwable != null) {
+                stringWriter.write('\n');
+                stringWriter.write(" - Exception stacktrace of failure condition:");
+                stringWriter.write('\n');
+                final PrintWriter printWriter = new PrintWriter(stringWriter);
+                throwable.printStackTrace(printWriter);
+                printWriter.flush();
+            }
 
-        stringWriter.write("\nCheck the server logs for more details, warnings and debug information.");
+            stringWriter.write("\nCheck the server logs for more details, warnings and debug information.");
 
-        log(stringWriter.toString());
-        flushLog();
+            log(stringWriter.toString());
+            flushLog();
 
-        if (_eventPublisher != null) {
-            _eventPublisher.publishEvent(new JobFailedEvent(this, _execution, component, data, throwable));
+            if (_eventPublisher != null) {
+                _eventPublisher.publishEvent(new JobFailedEvent(this, _execution, component, data, throwable));
+            }
         }
     }
 
@@ -141,7 +158,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
         } else if (result instanceof Serializable) {
             try {
                 log("Saving job result.");
-                serializeResult((Serializable)result);
+                serializeResult((Serializable) result);
                 _execution.setResultPersisted(true);
             } catch (Exception e) {
                 log("Failed to save job result! Execution of the job was succesfull, but the result was not persisted.");

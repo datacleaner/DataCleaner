@@ -92,6 +92,9 @@ public class SecurityUtils {
      * @return a String containing the encoded password
      */
     public static String encodePassword(char[] password) {
+        if (password == null) {
+            return null;
+        }
         EncodedStringConverter converter = new EncodedStringConverter();
         String encodedPassword = converter.toString(new String(password));
         return encodedPassword;
@@ -108,6 +111,9 @@ public class SecurityUtils {
      *         longer periods, the encoded version is recommended.
      */
     public static String decodePassword(String encodedPassword) {
+        if (encodedPassword == null) {
+            return null;
+        }
         EncodedStringConverter converter = new EncodedStringConverter();
         String password = converter.fromString(String.class, encodedPassword);
         return password;

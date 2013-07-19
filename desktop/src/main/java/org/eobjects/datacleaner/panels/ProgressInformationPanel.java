@@ -130,7 +130,10 @@ public class ProgressInformationPanel extends DCPanel {
 		StringWriter stringWriter = new StringWriter();
 		stringWriter.append("\nERROR: ");
 		stringWriter.append(string);
-		if (throwable instanceof PreviousErrorsExistException) {
+		if (throwable == null) {
+		    stringWriter.append('\n');
+		    stringWriter.append("(No stack trace provided)");
+		} else if (throwable instanceof PreviousErrorsExistException) {
 			stringWriter.append(' ');
 			stringWriter.append(throwable.getMessage());
 		} else {

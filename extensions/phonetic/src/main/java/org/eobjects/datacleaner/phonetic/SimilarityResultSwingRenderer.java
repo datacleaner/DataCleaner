@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.result;
+package org.eobjects.datacleaner.phonetic;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -36,12 +36,11 @@ import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
-import org.eobjects.analyzer.result.SimilarityGroup;
-import org.eobjects.analyzer.result.SimilarityResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 

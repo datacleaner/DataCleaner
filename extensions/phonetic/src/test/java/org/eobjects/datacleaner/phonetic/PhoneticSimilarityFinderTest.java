@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.data.MockInputColumn;
 import org.eobjects.analyzer.data.MockInputRow;
-import org.eobjects.analyzer.result.SimilarityResult;
 
 public class PhoneticSimilarityFinderTest extends TestCase {
 

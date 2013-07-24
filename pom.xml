@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -7,7 +8,7 @@
 		<slf4j.version>1.7.4</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.3</httpcomponents.version>
-		<analyzerbeans.version>0.32</analyzerbeans.version>
+		<analyzerbeans.version>0.33-SNAPSHOT</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -27,10 +28,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
-		<module>desktop</module>
-		<module>monitor</module>
-		<module>extensions</module>
-		<module>documentation</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -39,10 +36,30 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<modules>
+				<module>core</module>
+				<module>desktop</module>
+				<module>monitor</module>
+				<module>extensions</module>
+				<module>documentation</module>
+			</modules>
 		</profile>
 		<profile>
 			<!-- Quick profile for skipping certain optional build operations -->
 			<id>quick</id>
+			<modules>
+				<module>core</module>
+				<module>desktop</module>
+				<module>monitor</module>
+				<module>extensions</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>desktop</id>
+			<modules>
+				<module>core</module>
+				<module>desktop</module>
+			</modules>
 		</profile>
 	</profiles>
 	<organization>
@@ -441,9 +458,9 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-			    <groupId>com.google.guava</groupId>
-			    <artifactId>guava</artifactId>
-			    <version>14.0.1</version>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>14.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eobjects.analyzerbeans</groupId>

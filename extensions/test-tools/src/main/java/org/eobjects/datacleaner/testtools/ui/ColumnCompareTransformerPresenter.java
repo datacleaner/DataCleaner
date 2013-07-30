@@ -38,14 +38,6 @@ public class ColumnCompareTransformerPresenter extends TransformerJobBuilderPane
         _testColumnsPropertyWidget = new MultipleMappedInputColumnsPropertyWidget(
                 transformerJobBuilder, _testColumnsProperty,
                 _referenceColumnsProperty);
-//        {
-//            @Override
-//            protected namePart getSuggestedValue(InputColumn<?> inputColumn) {
-//                return StructuredInputHelper.findInitialKnowledgeType(
-//                        inputColumn.getName(), NamePart.class,
-//                        NamePart.Representation);
-//            }
-//        };
     }
 
     @Override

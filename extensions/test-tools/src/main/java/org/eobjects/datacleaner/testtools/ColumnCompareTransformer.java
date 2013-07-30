@@ -20,7 +20,7 @@ public class ColumnCompareTransformer implements Transformer<Object> {
 
     @Inject
     @Configured
-    @Description("Select the columns that should be checkt and provide the reference column")
+    @Description("Select the columns that should be checked and provide the reference column.")
     InputColumn<String>[] testColumns;
 
     @Inject

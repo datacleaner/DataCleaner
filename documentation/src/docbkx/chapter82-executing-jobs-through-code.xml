@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	id="chapter_executing_jobs_through_code" xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Executing jobs through code</title>
+
+	<chapterinfo>
+		<abstract>
+			<para>
+				In this chapter we will go through one of the most common
+				use-cases for integrating DataCleaner into your own application;
+				Executing a DataCleaner job through code.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section id="section_development_executing_job_steps">
+		<title>Overview of steps and options</title>
+		<para>There's a couple of variants of this story - What kind of
+			configuration options do you want? Would you like to build the job
+			programmatically, or have it somewhere on disk as a .analysis.xml
+			file? Will you be doing any processing of the result, or will the
+			job
+			itself contain all the necesary logic.
+		</para>
+		<para>The various steps and options are depicted in the diagram below.
+			In the following sections we'll go through each of the 4
+			steps/columns in the diagram:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="dev_job_execution_overview.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+	</section>
+
+	<section id="section_development_configuration_configuration">
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="dev_job_execution_configuration.png"
+					format="PNG" scalefit="1" align="right" />
+			</imageobject>
+		</mediaobject>
+		<title>Step 1: Configuration</title>
+		<para>
+			The configuration for DataCleaner is represented in the class
+			<emphasis>AnalyzerBeansConfiguration,</emphasis>
+			named after the underlying processing framework called
+			<emphasis>AnalyzerBeans.</emphasis>
+			You need a AnalyzerBeansConfiguration as a prerequisite for most of
+			the coming operations.
+		</para>
+		<para>
+			The easiest and probably most convenient option for acquiring an
+			AnalyzerBeansConfiguration instance is to load it from a file,
+			typically named conf.xml (See the
+			<link linkend="chapter_configuration_file">Configuration file</link>
+			chapter for more details on this file format). To load the file, use
+			the JaxbConfigurationReader class, like this:
+		</para>
+		<programlisting language="java">
+			InputStream&#160;inputStream&#160;=&#160;new&#160;FileInputStream("conf.xml");
+			JaxbConfigurationReader&#160;configurationReader&#160;=&#160;new&#160;JaxbConfigurationReader();
+			AnalyzerBeansConfiguration&#160;configuration&#160;=&#160;configurationReader.read(inputStream);
+		</programlisting>
+		<para>Alternatively, you can build the configuration programmatically,
+			through code. This is typically more cumbersome, but in some cases
+			also quite useful if the configuration is to be build dynamically or
+			something like that.
+		</para>
+		<para>Here's an example where we configure
+			AnalyzerBeans with 2 example
+			datastores and a threadpool of 10
+			threads:
+		</para>
+		<programlisting language="java">
+			Datastore&#160;datastore1&#160;=&#160;new&#160;CsvDatastore("my&#160;CSV&#160;file",&#160;"some_data.csv");
+			boolean&#160;multipleConnections&#160;=&#160;true
+			Datastore&#160;datastore2&#160;=&#160;new&#160;JdbcDatastore("my&#160;database",
+			&#160;&#160;&#160;&#160;"jdbc:vendor://localhost/database",&#160;"com.database.Driver",
+			&#160;&#160;&#160;&#160;"username",&#160;"password",&#160;multipleConnections);
+
+			AnalyzerBeansConfigurationImpl&#160;configuration&#160;=&#160;new&#160;AnalyzerBeansConfigurationImpl();
+			configuration&#160;=&#160;configuration.replace(new&#160;MultiThreadedTaskRunner(10));
+			configuration&#160;=&#160;configuration.replace(new&#160;DatastoreCatalogImpl(datastore1,&#160;datastore2));
+		</programlisting>
+		<para>
+			Either way we do it, we now have an
+			<emphasis>AnalyzerBeansConfiguration</emphasis>
+			with the variable name 'configuration'. Then we can proceed to
+			defining the job to run.
+		</para>
+	</section>
+
+	<section id="section_development_configuration_job">
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="dev_job_execution_job.png"
+					format="PNG" scalefit="1" align="right" />
+			</imageobject>
+		</mediaobject>
+		<title>Step 2: Job</title>
+		<para>Like with the configuration, we can choose to either load the
+			job we want to run from a file, or build it programmatically.
+		</para>
+		<para>Let's start by simply loading a job from a file. We'll need to
+			use the JaxbJobReader class:
+		</para>
+		<programlisting language="java">
+			InputStream&#160;inputStream&#160;=&#160;new&#160;FileInputStream("my_job.analysis.xml");
+			JaxbJobReader&#160;jobReader&#160;=&#160;new&#160;JaxbJobReader(configuration);
+			AnalysisJob&#160;analysisJob&#160;=&#160;jobReader.read(inputStream);
+		</programlisting>
+		<para>
+			Note that this is the 'vanilla' case. You can also use the
+			JaxbJobReader to read metadata about a job, and even to read a job
+			'as a template', which makes it possible to instantiate the job with
+			certain replacements. For an example of how this functionality is
+			used in DataCleaner's desktop application, see the
+			<link linkend="template_jobs">template jobs</link>
+			section.
+		</para>
+		<para>
+			The other way of producing a job is to build it
+			programmatically. This is quite involved process that varies quite a
+			lot depending on what kind of job you want to build. But the API has
+			been designed to make it as easy as possible.
+		</para>
+		<para>To give an overview of the API, consider this list of important
+			classes:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>AnalysisJobBuilder</emphasis>
+					:
+					Represents a mutable job that is being built. This builder object
+					contains source columns of the job, and all the components that
+					consume source columns (or sometimes transformed columns).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>TransformerJobBuilder</emphasis>
+					,
+					<emphasis>FilterJobBuilder</emphasis>
+					, and
+					<emphasis>AnalyzerJobBuilder</emphasis>
+					:
+					, represents mutable components of the job that is being built.
+					These can each have configuration properties, filter requirements,
+					input and output columns.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<tip>
+			<para>Be aware of the unfortunate similarity between the
+				'AnalyzerJobBuilder' class name and the 'AnalysisJobBuilder' class
+				name. To rid the confusion, remember that the 'analysis' represents
+				the full scope of the job, whereas an 'analyzer' is just a single
+				active part ('component') of the job.
+			</para>
+		</tip>
+
+		<para>Let's see an example of building a job programmatically. And to
+			ensure that we don't miss important insights, we'll make it a fairly
+			non-trivial job with both fiters, transformers and analyzers. The job
+			will encompass:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>Three source columns from the datastore 'my database': Name,
+					Age and Company_name.
+				</para>
+			</listitem>
+			<listitem>
+				<para>All records where 'Company_name' is null will be inserted into
+					the
+					datastore called 'my CSV file'. In the CSV file the columns are
+					called 'fullname' and 'age_years'.
+				</para>
+			</listitem>
+			<listitem>
+				<para>All records where 'Company_name' isn't null will 1) have their
+					working address looked up in another table of the database, and 2)
+					the name and the working address will be passed on to a 'Pattern
+					finder' analyzer.
+				</para>
+			</listitem>
+		</orderedlist>
+		<programlisting language="java">
+			Datastore&#160;myDatabase&#160;=&#160;configuration.getDatastoreCatalog().getDatastore("my&#160;database");
+			Datastore&#160;myCsvFile&#160;=&#160;configuration.getDatastoreCatalog().getDatastore("my&#160;CSV&#160;file");
+
+			AnalysisJobBuilder&#160;builder&#160;=&#160;new&#160;AnalysisJobBuilder(configuration);
+			builder.setDatastore(myDatabase);
+			builder.addSourceColumns("public.persons.Name","public.persons.Age","public.persons.Company_name")
+
+			InputColumn&lt;?&gt;&#160;nameColumn&#160;=&#160;builder.getSourceColumnByName("Name");
+			InputColumn&lt;?&gt;&#160;ageColumn&#160;=&#160;builder.getSourceColumnByName("Age");
+			InputColumn&lt;?&gt;&#160;companyColumn&#160;=&#160;builder.getSourceColumnByName("Company_name");
+
+			//&#160;add&#160;a&#160;filter&#160;to&#160;check&#160;for&#160;null&#160;'company'
+			FilterJobBuilder&lt;NullCheckFilter&gt;&#160;nullCheckBuilder&#160;=&#160;builder.addFilter(NullCheckFilter.class);
+			nullCheckBuilder.addInputColumn(companyColumn);
+
+			//&#160;add&#160;a&#160;InsertIntoTable&#160;analyzer&#160;to&#160;write&#160;the&#160;records&#160;without&#160;a&#160;company&#160;to&#160;the&#160;csv&#160;file
+			AnalyzerJobBuilder&lt;InsertIntoTableAnalyzer&gt;&#160;insertBuilder&#160;=&#160;builder.addAnalyzer(InsertIntoTableAnalyzer.class);
+			insertBuilder.addInputColumns(nameColumn,&#160;ageColumn);
+			insertBuilder.setConfiguredProperty("Datastore",&#160;myCsvFile);
+			insertBuilder.setConfiguredProperty("Columns",&#160;new&#160;String[]&#160;{"fullname","age_years"});
+			insertBuilder.setRequirement(nullCheckBuilder.getOutcome(NullCheckFilter.Category.NULL));
+
+			//&#160;add&#160;a&#160;lookup&#160;for&#160;the&#160;company&#160;working&#160;address
+			&#160;&#160;&#160;&#160;TransformerJobBuilder&lt;TableLookupTransformer&gt;&#160;lookupBuilder&#160;=
+			builder.addTransformer(TableLookupTransformer.class);
+			lookupBuilder.addInputColumn(companyColumn);
+			lookupBuilder.setConfiguredProperty("Datastore",&#160;myDatabase);
+			lookupBuilder.setConfiguredProperty("Schema&#160;name",&#160;"public");
+			lookupBuilder.setConfiguredProperty("Table&#160;name",&#160;"companies");
+			lookupBuilder.setConfiguredProperty("Condition&#160;columns",&#160;new&#160;String[]&#160;{"name"});
+			lookupBuilder.setConfiguredProperty("Output&#160;columns",&#160;new&#160;String[]&#160;{"address"});
+			lookupBuilder.setRequirement(nullCheckBuilder.getOutcome(NullCheckFilter.Category.NOT_NULL));
+
+			//&#160;reference&#160;the&#160;'working&#160;address'&#160;column&#160;and&#160;give&#160;it&#160;a&#160;proper&#160;name
+			MutableInputColumn&lt;?&gt;&#160;addressColumn&#160;=&#160;lookupBuilder.getOutputColumns().get(0);
+			addressColumn.setName("Working&#160;address");
+
+			//&#160;add&#160;the&#160;Pattern&#160;finder&#160;analyzer
+			PatternFinder&#160;patternFinder&#160;=&#160;jobBuilder.addAnalyzer(PatternFinder.class);
+			patternFinder.addInputColumns(nameColumn,&#160;addressColumn);
+
+			//&#160;validate&#160;and&#160;produce&#160;to&#160;AnalysisJob
+			AnalysisJob&#160;analysisJob&#160;=&#160;jobBuilder.toAnalysisJob();
+		</programlisting>
+
+		<para>Things to note from this example:</para>
+		<orderedlist>
+			<listitem>
+				<para>Notice how the filter requirements are set up using the
+					.setRequirement(...) method on the succeeding components.
+				</para>
+			</listitem>
+			<listitem>
+				<para>There aren't any explicit filter requirements set on the
+					'Pattern finder' analyzer. This isn't necesary since it depends on
+					a transformed input column ('Working address') which itself has the
+					requirement. DataCleaner will figure out the transitive
+					requirements automatically.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					One piece of 'magic' is how to set the properties of the components
+					correctly. We can see that we call
+					<emphasis>.setConfiguredProperty(String,Object)</emphasis>
+					, but not how to figure out
+					what to pass as arguments. There are two
+					proper ways to figure this out...
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>You can use DataCleaner's command line to list all
+							components of a specific type, e.g.:
+						</para>
+						<programlisting>
+							&gt;&#160;DataCleaner-console.exe&#160;-list&#160;ANALYZERS
+							...
+							name:&#160;Insert&#160;into&#160;table
+							&#160;-&#160;Consumes&#160;2&#160;named&#160;inputs
+							&#160;&#160;&#160;Input&#160;columns:&#160;Additional&#160;error&#160;log&#160;values&#160;(type:&#160;Object)
+							&#160;&#160;&#160;Input&#160;columns:&#160;Values&#160;(type:&#160;Object)
+							&#160;-&#160;Property:&#160;name=Column&#160;names,&#160;type=String,&#160;required=true
+							&#160;-&#160;Property:&#160;name=Datastore,&#160;type=UpdateableDatastore,&#160;required=true
+							...
+						</programlisting>
+					</listitem>
+					<listitem>
+						<para>
+							Or you can simply open up the component class in an IDE to
+							inspect it's @Configured properties. For instance, if we look at
+							<emphasis>InsertIntoTableAnalyzer.java</emphasis>
+							we'll see:
+						</para>
+						<programlisting language="java">
+							...
+
+							@Inject
+							@Configured
+							@Description("Names&#160;of&#160;columns&#160;in&#160;the&#160;target&#160;table.")
+							@ColumnProperty
+							String[]&#160;columnNames;
+
+							@Inject
+							@Configured
+							@Description("Datastore&#160;to&#160;write&#160;to")
+							UpdateableDatastore&#160;datastore;
+
+							...
+						</programlisting>
+						<para>From these fields we can infer that there will be two
+							configured properties, 'Column names' and 'Datastore'.
+						</para>
+					</listitem>
+				</orderedlist>
+			</listitem>
+		</orderedlist>
+
+		<para>
+			Either way we do it, we now have an
+			<emphasis>AnalysisJob</emphasis>
+			with the variable name 'analysisJob'. Then we can proceed to
+			actually
+			executing the job.
+		</para>
+
+	</section>
+
+	<section id="section_development_configuration_execution">
+		<mediaobject>
+			<imageobject>
+				<imagedata align="right" fileref="dev_job_execution_execution.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<title>Step 3: Execution</title>
+		<para>Executing the job is one of the easiest steps, but obviously
+			there are options available beyond the 'vanilla' scenario.
+		</para>
+		<para>The simple scenario of running the job is to use the plain
+			AnalysisRunnerImpl class, like this:
+		</para>
+		<programlisting language="java">
+			AnalysisRunner&#160;runner&#160;=&#160;new&#160;AnalysisRunnerImpl(configuration);
+			AnalysisResultFuture&#160;resultFuture&#160;=&#160;runner.run(analysisJob);
+		</programlisting>
+		<para>
+			This will return a
+			<emphasis>AnalysisResultFuture</emphasis>
+			, which under most circumstances represents a still-running job. Your
+			application can continue to do other work in the background, or it
+			can decide to block by calling
+			<emphasis>.await()</emphasis>
+			.
+		</para>
+		<para>Here's a typical example of handling the result future:</para>
+		<programlisting language="java">
+			//&#160;block&#160;until&#160;the&#160;job&#160;has&#160;finished
+			resultFuture.await();
+
+			if&#160;(resultFuture.isSuccessful())&#160;{
+			&#160;&#160;&#160;&#160;//&#160;do&#160;something&#160;with&#160;the&#160;successful&#160;result
+			&#160;&#160;&#160;&#160;handleResult(resultFuture);
+			}&#160;else&#160;{
+			&#160;&#160;&#160;&#160;List&lt;Throwable&gt;&#160;errors&#160;=&#160;resultFuture.getErrors();
+			&#160;&#160;&#160;&#160;for&#160;(Throable&#160;error&#160;:&#160;errors)&#160;{
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;logger.error("An&#160;error&#160;occurred&#160;while&#160;executing&#160;job",&#160;error);
+			&#160;&#160;&#160;&#160;}
+			&#160;&#160;&#160;&#160;//&#160;usually&#160;the&#160;first&#160;error&#160;that&#160;occurred&#160;is&#160;the&#160;culprit,&#160;so&#160;we'll&#160;throw&#160;that&#160;one
+			&#160;&#160;&#160;&#160;throw&#160;errors.get(0);
+			}
+		</programlisting>
+
+		<para>You might ask what kind of errors will happen while executing a
+			DataCleaner job? The answer is that it can be a lot of things, for
+			instance:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>The connection to the source database or resource may fail
+					somehow.
+				</para>
+			</listitem>
+			<listitem>
+				<para>One of the components in the job may throw an unexpected
+					exception.
+				</para>
+			</listitem>
+			<listitem>
+				<para>One of the components may throw an exception because it's
+					configuration is incomplete or invalid (although this will in most
+					cases be detected while building the AnalysisJob instance).
+				</para>
+			</listitem>
+			<listitem>
+				<para>If you're writing data to another datastore, that may also
+					fail for whatever datastore-dependent reasons.
+				</para>
+			</listitem>
+			<listitem>
+				<para>If your job is doing something stupid like a Value
+					Distribution of a billion unique IDs, then you'll run out of
+					memory.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<para>Let's now assume that your job has executed succesfully. We'll
+			now look at how you can post-process results and how to save/load
+			them to/from a file.
+		</para>
+	</section>
+
+	<section id="section_development_configuration_result">
+		<mediaobject>
+			<imageobject>
+				<imagedata  fileref="dev_job_execution_result.png"
+					format="PNG" scalefit="1" align="right" />
+			</imageobject>
+		</mediaobject>
+		<title>Step 4: Result</title>
+
+		<para>
+			Great, now we have an
+			<emphasis>AnalysisResultFuture</emphasis>
+			, and we've determined that it was successful. What can we do with
+			it?
+		</para>
+
+		<para>
+			The results of each analyzer of the job are available through the
+			'AnalysisResult' interface, which AnalysisResultFuture implements.
+			Note that the analyzer result types are very different from each
+			other. For instance, the 'Insert into table' analyzer produces a
+			<emphasis>WriteDataResult</emphasis>
+			, while the 'Pattern finder' produces a
+			<emphasis>PatternFinderResult</emphasis>
+			. Let's see how you can extract information from them:
+		</para>
+		<programlisting language="java">
+			//&#160;demonstrate&#160;the&#160;the&#160;result
+			//&#160;future&#160;implements&#160;the&#160;AnalysisResult&#160;interface,&#160;which&#160;is&#160;sufficient
+			//&#160;for&#160;all&#160;the&#160;followin&#160;operations
+			AnalysisResult&#160;analysisResult&#160;=&#160;resultFuture;
+			List&lt;AnalyzerResult&gt;&#160;results&#160;=&#160;analysisResult.getResults();
+			for&#160;(AnalyzerResult&#160;result&#160;:&#160;results)&#160;{
+
+			&#160;&#160;if&#160;(result&#160;instanceof&#160;WriteDataResult)&#160;{
+			&#160;&#160;&#160;&#160;WriteDataResult&#160;writeDataResult&#160;=&#160;(WriteDataResult)result;
+			&#160;&#160;&#160;&#160;System.out.println("Inserted&#160;"&#160;+&#160;writeDataResult.getWrittenRowCount()&#160;+&#160;"&#160;records");
+			&#160;&#160;}
+
+			&#160;&#160;if&#160;(result&#160;instanceof&#160;PatternFinderResult)&#160;{
+			&#160;&#160;&#160;&#160;PatternFinderResult&#160;patternFinderResult&#160;=&#160;(PatternFinderResult)result;
+			&#160;&#160;&#160;&#160;int&#160;matches&#160;=&#160;patternFinderResult.getMatchCount("Aaaaa&#160;Aaaaa")
+			&#160;&#160;&#160;&#160;int&#160;total&#160;=&#160;patternFinderResult.getTotalCount();
+			&#160;&#160;&#160;&#160;System.out.println("There&#160;where&#160;"&#160;+&#160;matches&#160;+&#160;"&#160;matches&#160;out&#160;of&#160;"&#160;+&#160;total&#160;+&#160;"&#160;for&#160;our&#160;standard&#160;pattern.");
+			&#160;&#160;}
+			}
+		</programlisting>
+
+		<para>As you can see, how you handle the result depends a lot on what
+			type of result is produced.
+		</para>
+
+		<para>For generic handling of results, including all the possible
+			result extensions that might occur, DataCleaner employs a renderer
+			framework which selects a result renderer according to type and
+			precedence. If you need such generic functionality, take a look at
+			the classes RendererBean, RendererFactory, Renderer and
+			RenderingFormat.
+		</para>
+
+		<para>
+			One common requirement is to persisting it. We recommend doing
+			this
+			by means of Java's serialization, since analysis results are
+			polymorphic and it's structure may be dependent on extensions. You
+			can also device a more "structured" persistance scheme, but beware
+			that it will require quite some stability in terms of which analyzers
+			you add to your jobs.
+		</para>
+		<para>
+			So let's see how we use Java serialization. But
+			unfortunately
+			<emphasis>AnalysisResultFuture</emphasis>
+			isn't serializable! There is however a class which shares the
+			interface 'AnalysisResult' with 'AnalysisResultFuture', that is
+			serializable, Namely 'SimpleAnalysisResult'. Let's see how to use it
+			and serialize our result to a .analysis.result.dat file, (which
+			DataCleaner can read):
+		</para>
+		<programlisting language="java">
+			//&#160;make&#160;the&#160;result&#160;serializeable
+			AnalysisResult&#160;analysisResult&#160;=&#160;resultFuture;
+			analysisResult&#160;=&#160;new&#160;SimpleAnalysisResult(analysisResult.getResultMap());
+			ObjectOutputStream&#160;oos&#160;=&#160;new&#160;ObjectOutputStream(new&#160;FileOutputStream("my_result.analysis.result.dat"));
+			oos.writeObject(analysisResult);
+			oos.close();
+		</programlisting>
+		<para>And now let's, for example sake, also load our file by
+			deserializing it. For this we need to use the
+			ChangeAwareObjectInputStream class, which ensures backwards
+			compatible deserialization of objects:
+		</para>
+		<programlisting language="java">
+			ObjectInputStream&#160;ois&#160;=&#160;new&#160;ChangeAwareObjectInputStream(new&#160;FileInputStream("my_result.analysis.result.dat"));
+			AnalysisResult&#160;analysisResult&#160;=&#160;(AnalysisResult)&#160;ois.readObject();
+		</programlisting>
+		<para>Now the result is restored and you can further work with it.</para>
+	</section>
+
+</chapter>

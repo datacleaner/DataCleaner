@@ -199,6 +199,7 @@ body>div {
 }
 
 pre.programlisting {
+	clear: both;
 	font-family: 'Lucida Console', monospace;
 	font-size: 0.8em;
 	margin: 10px;

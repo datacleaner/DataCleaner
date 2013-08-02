@@ -94,6 +94,7 @@
 			<title>Developer's guide</title>
 		</partinfo>
 		<xi:include href="chapter81-architecture.xml" />
+		<xi:include href="chapter82-executing-jobs-through-code.xml" />
 		<xi:include href="chapter82-developer-resources.xml" />
 		<xi:include href="chapter83-extension-packaging.xml" />
 		<xi:include href="chapter84-embedding-datacleaner.xml" />

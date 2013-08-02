@@ -26,7 +26,7 @@
 
 		<para>
 			DataCleaner uses the
-			<link xl:href="http://metamodel.eobjects.org">MetaModel framework</link>
+			<link xl:href="http://metamodel.incubator.apache.org">Apache MetaModel framework</link>
 			for data access. From DataCleaner's perspective, MetaModel provides a
 			number of features:
 		</para>

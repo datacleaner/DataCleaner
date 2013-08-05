@@ -52,6 +52,8 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCCheckBox;
+import org.eobjects.datacleaner.widgets.OutputColumnVisibilityButton;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -108,12 +110,13 @@ public final class ColumnListTable extends DCPanel {
             previewButton.setToolTipText("Preview table rows");
             previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
                     .getDatastore(), _columns));
-            
+
             final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
             queryButton.setToolTipText("Ad-hoc query");
-            queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns));
+            queryButton
+                    .addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns));
 
-           final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
             removeButton.setToolTipText("Remove table from source");
             removeButton.addActionListener(new ActionListener() {
                 @Override
@@ -159,7 +162,6 @@ public final class ColumnListTable extends DCPanel {
         TableModel model = new DefaultTableModel(headers, _columns.size());
         int i = 0;
         for (final InputColumn<?> column : _columns) {
-            final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_SMALL);
             if (column instanceof MutableInputColumn<?>) {
                 final JXTextField textField = WidgetFactory.createTextField("Column name");
                 textField.setText(column.getName());
@@ -180,14 +182,29 @@ public final class ColumnListTable extends DCPanel {
                 });
 
                 final JButton resetButton = getResetButton(textField, mutableInputColumn);
+                final DCCheckBox<MutableInputColumn<?>> visibilityButton = getVisibilityButton(mutableInputColumn);
+
+                mutableInputColumn.addListener(new MutableInputColumn.Listener() {
+                    @Override
+                    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
+                        textField.setText(newName);
+                    }
+
+                    @Override
+                    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
+                        visibilityButton.setSelected(!hidden);
+                    }
+                });
+
                 final DCPanel panel = new DCPanel();
                 panel.setLayout(new HorizontalLayout(4));
-                panel.add(new JLabel(icon));
+                panel.add(visibilityButton);
                 panel.add(textField);
                 panel.add(resetButton);
 
                 model.setValueAt(panel, i, 0);
             } else {
+                final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);
                 model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
             }
 
@@ -221,6 +238,10 @@ public final class ColumnListTable extends DCPanel {
         columnExt.setMinWidth(26);
         columnExt.setMaxWidth(80);
         columnExt.setPreferredWidth(30);
+    }
+
+    private DCCheckBox<MutableInputColumn<?>> getVisibilityButton(MutableInputColumn<?> mutableInputColumn) {
+        return new OutputColumnVisibilityButton(mutableInputColumn);
     }
 
     private JButton getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {

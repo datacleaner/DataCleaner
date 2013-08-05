@@ -76,7 +76,7 @@ import org.jdesktop.swingx.VerticalLayout;
  * @author Kasper Sørensen
  */
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
-        SourceColumnChangeListener, TransformerChangeListener {
+        SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     // border for the button panel and search box to make them "indented"
     // similar to the check boxes.
@@ -433,6 +433,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         JComponent decoration = decorateCheckBox(cb);
         _checkBoxDecorations.put(cb, decoration);
         add(decoration);
+        
+        if (col instanceof MutableInputColumn) {
+            ((MutableInputColumn<?>) col).addListener(this);
+        }
     }
 
     private void removeAvailableInputColumn(InputColumn<?> col) {
@@ -489,5 +493,27 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     public DCPanel getButtonPanel() {
         return _buttonPanel;
+    }
+
+    @Override
+    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
+        DCCheckBox<InputColumn<?>> checkBox = getCheckBoxes().get(inputColumn);
+        if (checkBox == null) {
+            return;
+        }
+        checkBox.setText(newName);
+    }
+
+    @Override
+    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
+        final DCCheckBox<InputColumn<?>> checkBox = getCheckBoxes().get(inputColumn);
+        if (checkBox == null) {
+            return;
+        }
+        final JComponent decoration = getCheckBoxDecorations().get(checkBox);
+        if (decoration == null) {
+            return;
+        }
+        decoration.setVisible(!hidden);
     }
 }

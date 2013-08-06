@@ -432,11 +432,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         _checkBoxes.put(col, cb);
         JComponent decoration = decorateCheckBox(cb);
         _checkBoxDecorations.put(cb, decoration);
-        add(decoration);
         
         if (col instanceof MutableInputColumn) {
-            ((MutableInputColumn<?>) col).addListener(this);
+            MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) col;
+            mutableInputColumn.addListener(this);
+            if (mutableInputColumn.isHidden()) {
+                decoration.setVisible(false);
+            }
         }
+        
+        add(decoration);
     }
 
     private void removeAvailableInputColumn(InputColumn<?> col) {
@@ -448,6 +453,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             }
             final JComponent decoration = _checkBoxDecorations.remove(checkBox);
             remove(decoration);
+        }
+
+        if (col instanceof MutableInputColumn) {
+            ((MutableInputColumn<?>) col).removeListener(this);
         }
 
         if (valueChanged) {
@@ -508,6 +517,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
         final DCCheckBox<InputColumn<?>> checkBox = getCheckBoxes().get(inputColumn);
         if (checkBox == null) {
+            return;
+        }
+        if (checkBox.isSelected()) {
+            // don't hide columns that are selected
             return;
         }
         final JComponent decoration = getCheckBoxDecorations().get(checkBox);

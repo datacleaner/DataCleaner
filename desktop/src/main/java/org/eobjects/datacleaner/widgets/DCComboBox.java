@@ -35,8 +35,6 @@ import javax.swing.JComboBox;
  * mechanism (the JComboBox can be quite confusing because of the cycle of
  * {@link ActionListener}s and {@link ItemListener}s).
  * 
- * @author Kasper Sørensen
- * 
  * @param <E>
  *            the type of element in the combo
  */
@@ -138,5 +136,21 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
         for (Listener<E> listener : _listeners) {
             listener.onItemSelected(item);
         }
+    }
+
+    public boolean containsItem(E item) {
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            Object anItem = getItemAt(i);
+            if (anItem == null) {
+                if (item == null) {
+                    return true;
+                }
+            } else if (anItem.equals(item)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -28,33 +28,24 @@ import org.eobjects.datacleaner.util.ImageManager;
  * A toggle button for the visibility of a {@link MutableInputColumn}.
  */
 public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<?>> implements
-        MutableInputColumn.Listener, DCCheckBox.Listener<MutableInputColumn<?>> {
+        DCCheckBox.Listener<MutableInputColumn<?>> {
 
     private static final long serialVersionUID = 1L;
-    
-    private static final Icon SELECTED_ICON = ImageManager.getInstance().getImageIcon("images/widgets/output_column_visibility_visible.png");
-    private static final Icon NOT_SELECTED_ICON = ImageManager.getInstance().getImageIcon("images/widgets/output_column_visibility_hidden.png");
+
+    private static final Icon SELECTED_ICON = ImageManager.getInstance().getImageIcon(
+            "images/widgets/output_column_visibility_visible.png");
+    private static final Icon NOT_SELECTED_ICON = ImageManager.getInstance().getImageIcon(
+            "images/widgets/output_column_visibility_hidden.png");
 
     public OutputColumnVisibilityButton(MutableInputColumn<?> column) {
         super(null, !column.isHidden());
-
         setValue(column);
-        column.addListener(this);
         addListener(this);
-        
+
         setIcon(NOT_SELECTED_ICON);
         setSelectedIcon(SELECTED_ICON);
-        
+
         setToolTipText("Toggle visibility of this column to other components");
-    }
-
-    @Override
-    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
-        setSelected(!hidden);
-    }
-
-    @Override
-    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
     }
 
     @Override

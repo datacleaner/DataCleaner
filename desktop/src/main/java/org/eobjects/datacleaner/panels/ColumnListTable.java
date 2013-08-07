@@ -23,16 +23,18 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
@@ -42,8 +44,6 @@ import javax.swing.table.TableModel;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QueryActionListener;
@@ -52,13 +52,10 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.DCCheckBox;
-import org.eobjects.datacleaner.widgets.OutputColumnVisibilityButton;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
-import org.jdesktop.swingx.HorizontalLayout;
-import org.jdesktop.swingx.JXTextField;
+import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
@@ -70,12 +67,13 @@ public final class ColumnListTable extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String[] headers = new String[] { "Name", "Type", "" };
+
     private final ImageManager imageManager = ImageManager.getInstance();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Table _table;
     private final DCTable _columnTable;
 
-    private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
+    private final SortedMap<InputColumn<?>, JComponent> _columns = new TreeMap<InputColumn<?>, JComponent>();
 
     private final WindowContext _windowContext;
 
@@ -109,12 +107,12 @@ public final class ColumnListTable extends DCPanel {
             final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
             previewButton.setToolTipText("Preview table rows");
             previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-                    .getDatastore(), _columns));
+                    .getDatastore(), _columns.keySet()));
 
             final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
             queryButton.setToolTipText("Ad-hoc query");
-            queryButton
-                    .addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns));
+            queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns
+                    .keySet()));
 
             final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
             removeButton.setToolTipText("Remove table from source");
@@ -152,7 +150,7 @@ public final class ColumnListTable extends DCPanel {
 
         if (columns != null) {
             for (InputColumn<?> column : columns) {
-                _columns.add(column);
+                addColumn(column, false);
             }
         }
         updateComponents();
@@ -161,52 +159,10 @@ public final class ColumnListTable extends DCPanel {
     private void updateComponents() {
         TableModel model = new DefaultTableModel(headers, _columns.size());
         int i = 0;
-        for (final InputColumn<?> column : _columns) {
-            if (column instanceof MutableInputColumn<?>) {
-                final JXTextField textField = WidgetFactory.createTextField("Column name");
-                textField.setText(column.getName());
-                final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
-                textField.addFocusListener(new FocusAdapter() {
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (!mutableInputColumn.getName().equals(textField.getText())) {
-                            mutableInputColumn.setName(textField.getText());
-
-                            TransformerJobBuilder<?> tjb = _analysisJobBuilder
-                                    .getOriginatingTransformer(mutableInputColumn);
-                            if (tjb != null) {
-                                tjb.onOutputChanged();
-                            }
-                        }
-                    }
-                });
-
-                final JButton resetButton = getResetButton(textField, mutableInputColumn);
-                final DCCheckBox<MutableInputColumn<?>> visibilityButton = getVisibilityButton(mutableInputColumn);
-
-                mutableInputColumn.addListener(new MutableInputColumn.Listener() {
-                    @Override
-                    public void onNameChanged(MutableInputColumn<?> inputColumn, String oldName, String newName) {
-                        textField.setText(newName);
-                    }
-
-                    @Override
-                    public void onVisibilityChanged(MutableInputColumn<?> inputColumn, boolean hidden) {
-                        visibilityButton.setSelected(!hidden);
-                    }
-                });
-
-                final DCPanel panel = new DCPanel();
-                panel.setLayout(new HorizontalLayout(4));
-                panel.add(visibilityButton);
-                panel.add(textField);
-                panel.add(resetButton);
-
-                model.setValueAt(panel, i, 0);
-            } else {
-                final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);
-                model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
-            }
+        for (final Entry<InputColumn<?>, JComponent> entry : _columns.entrySet()) {
+            final InputColumn<?> column = entry.getKey();
+            final JComponent panel = entry.getValue();
+            model.setValueAt(panel, i, 0);
 
             final Class<?> dataType = column.getDataType();
             final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
@@ -240,21 +196,18 @@ public final class ColumnListTable extends DCPanel {
         columnExt.setPreferredWidth(30);
     }
 
-    private DCCheckBox<MutableInputColumn<?>> getVisibilityButton(MutableInputColumn<?> mutableInputColumn) {
-        return new OutputColumnVisibilityButton(mutableInputColumn);
-    }
+    protected JComponent createComponentForColumn(InputColumn<?> column) {
+        if (column instanceof MutableInputColumn<?>) {
+            final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 
-    private JButton getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {
-        JButton button = WidgetFactory.createSmallButton("images/actions/reset.png");
-        button.setToolTipText("Reset output column name");
-        button.addActionListener(new ActionListener() {
+            final MutableInputColumnListPanel panel = new MutableInputColumnListPanel(_analysisJobBuilder,
+                    mutableInputColumn);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textField.setText(mutableInputColumn.getInitialName());
-            }
-        });
-        return button;
+            return panel;
+        }
+
+        final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);
+        return new JLabel(column.getName(), icon, JLabel.LEFT);
     }
 
     public Table getTable() {
@@ -262,20 +215,49 @@ public final class ColumnListTable extends DCPanel {
     }
 
     public void addColumn(InputColumn<?> column) {
-        _columns.add(column);
-        updateComponents();
+        addColumn(column, true);
+    }
+
+    public void addColumn(InputColumn<?> column, boolean updatePanel) {
+        if (_columns.containsKey(column)) {
+            return;
+        }
+        _columns.put(column, createComponentForColumn(column));
+        if (updatePanel) {
+            updateComponents();
+        }
     }
 
     public void removeColumn(InputColumn<?> column) {
-        _columns.remove(column);
-        updateComponents();
+        removeColumn(column, true);
+    }
+
+    public void removeColumn(InputColumn<?> column, boolean updatePanel) {
+        if (!_columns.containsKey(column)) {
+            return;
+        }
+        JComponent panel = _columns.remove(column);
+        if (panel instanceof Closeable) {
+            FileHelper.safeClose(panel);
+        }
+        if (updatePanel) {
+            updateComponents();
+        }
     }
 
     public void setColumns(List<? extends InputColumn<?>> columns) {
-        _columns.clear();
-        for (InputColumn<?> column : columns) {
-            _columns.add(column);
+        final List<InputColumn<?>> copyOfOldList = new ArrayList<InputColumn<?>>(_columns.keySet());
+        for (InputColumn<?> column : copyOfOldList) {
+            removeColumn(column, false);
         }
+
+        assert _columns.isEmpty();
+        _columns.clear();
+
+        for (InputColumn<?> column : columns) {
+            addColumn(column, false);
+        }
+
         updateComponents();
     }
 

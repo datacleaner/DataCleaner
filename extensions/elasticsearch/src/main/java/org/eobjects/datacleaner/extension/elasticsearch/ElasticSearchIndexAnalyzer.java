@@ -36,6 +36,7 @@ import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Initialize;
+import org.eobjects.analyzer.beans.api.NumberProperty;
 import org.eobjects.analyzer.beans.writers.WriteBuffer;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
@@ -44,8 +45,6 @@ import org.eobjects.analyzer.data.InputRow;
 
 @AnalyzerBean("ElasticSearch indexer")
 public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
-
-    private static final int BULK_SIZE = 200;
 
     @Configured
     String[] clusterHosts = { "localhost:9200" };
@@ -71,6 +70,10 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
     @Configured
     boolean createIndex = false;
 
+    @Configured
+    @NumberProperty(negative = false, zero = false)
+    int bulkIndexSize = 2000;
+
     private ElasticSearchClientFactory _clientFactory;
     private AtomicInteger _counter;
     private WriteBuffer _writeBuffer;
@@ -80,8 +83,8 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
         _clientFactory = new ElasticSearchClientFactory(clusterHosts, clusterName);
 
         _counter = new AtomicInteger(0);
-        _writeBuffer = new WriteBuffer(BULK_SIZE, new ElasticSearchIndexFlushAction(_clientFactory, fields, indexName,
-                documentType));
+        _writeBuffer = new WriteBuffer(bulkIndexSize, new ElasticSearchIndexFlushAction(_clientFactory, fields,
+                indexName, documentType));
     }
 
     public IndexDeleteByQueryResponse truncateIndex() throws InterruptedException, ExecutionException {

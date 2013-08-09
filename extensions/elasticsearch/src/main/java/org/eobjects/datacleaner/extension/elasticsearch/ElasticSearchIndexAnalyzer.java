@@ -19,19 +19,8 @@
  */
 package org.eobjects.datacleaner.extension.elasticsearch;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.elasticsearch.action.ActionFuture;
-import org.elasticsearch.action.ListenableActionFuture;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.count.CountRequest;
-import org.elasticsearch.action.count.CountResponse;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
-import org.elasticsearch.action.deletebyquery.IndexDeleteByQueryResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.MatchAllQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
@@ -47,7 +36,7 @@ import org.eobjects.analyzer.data.InputRow;
 public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
 
     @Configured
-    String[] clusterHosts = { "localhost:9200" };
+    String[] clusterHosts = { "localhost:9300" };
 
     @Configured
     String clusterName = "elasticsearch";
@@ -87,20 +76,6 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
                 indexName, documentType));
     }
 
-    public IndexDeleteByQueryResponse truncateIndex() throws InterruptedException, ExecutionException {
-        Client client = _clientFactory.create();
-        try {
-            QueryBuilder queryBuilder = new MatchAllQueryBuilder();
-            ListenableActionFuture<DeleteByQueryResponse> response = client.prepareDeleteByQuery(indexName)
-                    .setTypes(documentType).setQuery(queryBuilder).execute();
-            DeleteByQueryResponse deleteByQueryResponse = response.get();
-            IndexDeleteByQueryResponse indexResult = deleteByQueryResponse.getIndex(indexName);
-            return indexResult;
-        } finally {
-            client.close();
-        }
-    }
-
     @Override
     public void run(InputRow row, int distinctCount) {
         final Object[] record = new Object[values.length + 1];
@@ -119,29 +94,7 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
         _writeBuffer.flushBuffer();
 
         final int indexCount = _counter.get();
-        if (indexCount > 0) {
-            // refresh after all the bulks have run
-            final Client client = _clientFactory.create();
-            try {
-                client.admin().indices().refresh(new RefreshRequest(indexName)).actionGet();
-            } finally {
-                client.close();
-            }
-        }
-
         final WriteDataResult result = new WriteDataResultImpl(indexCount, 0, 0);
         return result;
     }
-
-    public long getDocumentCount() throws Exception {
-        Client client = _clientFactory.create();
-        try {
-            ActionFuture<CountResponse> response = client.count(new CountRequest(indexName).types(documentType));
-            CountResponse countResponse = response.get();
-            return countResponse.getCount();
-        } finally {
-            client.close();
-        }
-    }
-
 }

@@ -35,7 +35,6 @@
 			</activation>
 			<modules>
 				<module>sample</module>
-				<module>lucene</module>
 				<module>phonetic</module>
 				<module>test-tools</module>
 				<module>network-tools</module>
@@ -49,6 +48,8 @@
 				<module>quick-analysis-wizard</module>
 				<module>copy-data-wizard</module>
 				<module>completeness-analysis-wizard</module>
+				<module>lucene</module>
+				<module>elasticsearch</module>
 			</modules>
 		</profile>
 		<profile>

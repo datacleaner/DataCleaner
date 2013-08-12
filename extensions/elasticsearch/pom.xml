@@ -7,7 +7,7 @@
 		<version>3.5.4-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<lucene.version>4.0.0</lucene.version>
+		<elasticsearch.version>0.90.3</elasticsearch.version>
 	</properties>
 	<artifactId>DataCleaner-elasticsearch</artifactId>
 	<packaging>jar</packaging>
@@ -15,14 +15,12 @@
 	<build>
 		<plugins>
 			<plugin>
-				<!-- Assemble the jar file including all it's dependencies. This is nescesary 
-					for DataCleaner to load them all collectively. -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<descriptors>
+						<descriptor>src/main/assembly/elasticsearch.xml</descriptor>
+					</descriptors>
 				</configuration>
 				<executions>
 					<execution>
@@ -49,7 +47,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.90.3</version>
+			<version>${elasticsearch.version}</version>
 		</dependency>
 
 		<!-- Test dependencies -->

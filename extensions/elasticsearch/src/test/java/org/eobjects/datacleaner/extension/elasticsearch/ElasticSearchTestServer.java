@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.extension.elasticsearch;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.elasticsearch.action.ActionFuture;
@@ -30,6 +31,7 @@ import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.action.deletebyquery.IndexDeleteByQueryResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -114,5 +116,17 @@ public class ElasticSearchTestServer {
         _node.close();
 
         System.out.println("--- ElasticSearchTestServer closed ---");
+    }
+
+    public void addDocument(String id, Map<?,?> map) {
+        final IndexRequest indexRequest = new IndexRequest(INDEX_NAME, DOCUMENT_TYPE, id).source(map);
+        Client client = getClient();
+        try {
+            client.index(indexRequest).actionGet();
+            
+            client.admin().indices().refresh(new RefreshRequest(INDEX_NAME)).actionGet();
+        } finally {
+            client.close();
+        }
     }
 }

@@ -113,6 +113,10 @@
 			<artifactId>geronimo-annotation_1.1_spec</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
 
 		<!-- Freemarker (for Wizard plugins) -->
 		<dependency>

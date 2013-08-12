@@ -133,6 +133,12 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- Logging -->
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-classic</artifactId>
+		</dependency>
 
 		<!-- GWT -->
 		<dependency>

@@ -61,6 +61,13 @@
 				<module>desktop</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>monitor</id>
+			<modules>
+				<module>core</module>
+				<module>monitor</module>
+			</modules>
+		</profile>
 	</profiles>
 	<organization>
 		<name>Human Inference</name>

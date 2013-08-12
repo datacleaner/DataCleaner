@@ -93,8 +93,10 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
                 final CustomJobCallback callback = new CustomJobCallbackImpl(context, executionLogger);
                 result = customJob.execute(callback);
                 executionLogger.log("Succesfully executed job instance, closing");
-            } finally {
-                lifeCycleHelper.close(descriptor, customJob);
+                lifeCycleHelper.close(descriptor, customJob, true);
+            } catch (Exception e) {
+                lifeCycleHelper.close(descriptor, customJob, false);
+                throw e;
             }
 
         } catch (Exception e) {

@@ -199,9 +199,11 @@ public class ExecuteJob extends AbstractQuartzJob {
         lifeCycleHelper.initialize(descriptor, variableProvider);
         try {
             final Map<String, String> variableOverrides = variableProvider.provideValues(job, execution);
+            lifeCycleHelper.close(descriptor, variableProvider, true);
             return variableOverrides;
-        } finally {
-            lifeCycleHelper.close(descriptor, variableProvider);
+        } catch (RuntimeException e) {
+            lifeCycleHelper.close(descriptor, variableProvider, false);
+            throw e;
         }
     }
 }

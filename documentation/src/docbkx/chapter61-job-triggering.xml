@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  id="monitor_job_triggering"
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
@@ -17,84 +17,128 @@
 		</abstract>
 	</chapterinfo>
 
-	<para>
-		The web service is reachable by this HTTP URL:
-	</para>
+	<section id="monitor_job_triggering">
+		<title>Trigger service</title>
 
-	<programlisting>
-		/DataCleaner-monitor/repository/{tenant}/jobs/{job}.trigger
-	</programlisting>
+		<para>
+			The web service is reachable by this HTTP URL:
+		</para>
 
-	<para>
-		The response from the trigger web service is a JSON document that
-		looks like this:
-	</para>
+		<programlisting>
+			/DataCleaner-monitor/repository/{tenant}/jobs/{job}.trigger
+		</programlisting>
 
-	<programlisting>
-		{
-		&#160;&#160;"status":"PENDING",
-		&#160;&#160;"logOutput":null,
-		&#160;&#160;"endDate":null,
-		&#160;&#160;"beginDate":null,
-		&#160;&#160;"resultId":"Customer&#160;completeness-1349876418933",
-		&#160;&#160;"triggeredBy":"admin"
-		}
-	</programlisting>
+		<para>
+			The response from the trigger web service is a JSON document
+			that
+			looks like this:
+		</para>
 
-	<para>
-		Optionally you can also add these parameters:
-	</para>
+		<programlisting>
+			{
+			&#160;&#160;"status":"PENDING",
+			&#160;&#160;"logOutput":null,
+			&#160;&#160;"endDate":null,
+			&#160;&#160;"beginDate":null,
+			&#160;&#160;"resultId":"Customer&#160;completeness-1349876418933",
+			&#160;&#160;"triggeredBy":"admin"
+			}
+		</programlisting>
 
-	<table>
-		<title>Job triggering HTTP parameters</title>
-		<tgroup cols="2">
-			<thead>
-				<row>
-					<entry>Parameter</entry>
-					<entry>Description</entry>
-				</row>
-			</thead>
-			<tbody>
-				<row>
-					<entry>block</entry>
-					<entry>Set to 'true' if the server should wait until the job has
-						executed before responding. This will ensure that the client is
-						able to read a 'status' which is either 'SUCCESS' or 'FAILURE'
-						(unless a timeout occurs).
-					</entry>
-				</row>
-				<row>
-					<entry>timeoutMillis</entry>
-					<entry>To be used in combination with 'block'. Set this to the max
-						number of milliseconds to wait before responding.
-					</entry>
-				</row>
-			</tbody>
-		</tgroup>
-	</table>
+		<para>
+			Optionally you can also add these parameters:
+		</para>
 
-	<para>
-		Using these parameters, a typical response will look like this:
-	</para>
+		<table>
+			<title>Job triggering HTTP parameters</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Parameter</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>block</entry>
+						<entry>Set to 'true' if the server should wait until the job has
+							executed before responding. This will ensure that the client is
+							able to read a 'status' which is either 'SUCCESS' or 'FAILURE'
+							(unless a timeout occurs).
+						</entry>
+					</row>
+					<row>
+						<entry>timeoutMillis</entry>
+						<entry>To be used in combination with 'block'. Set this to the max
+							number of milliseconds to wait before responding.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
 
-	<programlisting>
-		{
-		&#160;&#160;"status":"SUCCESS",
-		&#160;&#160;"logOutput":
-		&#160;&#160;&#160;&#160;"2012-10-10&#160;16:04:02&#160;-&#160;Job&#160;execution&#160;BEGIN\n
-		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;BEGIN\n
-		&#160;&#160;&#160;&#160;&#160;-&#160;Query:&#160;SELECT&#160;\"CUSTOMERS\".\"PHONE\",&#160;\"CUSTOMERS\".\"POSTALCODE\",&#160;\"CUSTOMERS\".\"ADDRESSLINE1\",
-		&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"COUNTRY\",&#160;\"CUSTOMERS\".\"CUSTOMERNUMBER\",&#160;\"CUSTOMERS\".\"CONTACTFIRSTNAME\",&#160;\"CUSTOMERS\".\"CITY\",
-		&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"CUSTOMERNAME\",&#160;\"CUSTOMERS\".\"CONTACTLASTNAME\"&#160;FROM&#160;PUBLIC.\"CUSTOMERS\"\n
-		&#160;&#160;&#160;&#160;&#160;-&#160;Expected&#160;row&#160;count:&#160;133\n
-		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;SUCCESS\n
-		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Result&#160;gathered&#160;from&#160;analyzer:&#160;ImmutableAnalyzerJob[name=null,analyzer=Completeness&#160;analyzer]\n
-		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:03&#160;-&#160;Job&#160;execution&#160;SUCCESS",
-		&#160;&#160;"endDate":"Wed&#160;Oct&#160;10&#160;16:04:03&#160;CEST&#160;2012",
-		&#160;&#160;"beginDate":"Wed&#160;Oct&#160;10&#160;16:04:02&#160;CEST&#160;2012",
-		&#160;&#160;"resultId":"Customer&#160;completeness-1349877840924",
-		&#160;&#160;"triggeredBy":"admin"
-		}
-	</programlisting>
+		<para>
+			Using these parameters, a typical response will look like this:
+		</para>
+
+		<programlisting>
+			{
+			&#160;&#160;"status":"SUCCESS",
+			&#160;&#160;"logOutput":
+			&#160;&#160;&#160;&#160;"2012-10-10&#160;16:04:02&#160;-&#160;Job&#160;execution&#160;BEGIN\n
+			&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;BEGIN\n
+			&#160;&#160;&#160;&#160;&#160;-&#160;Query:&#160;SELECT&#160;\"CUSTOMERS\".\"PHONE\",&#160;\"CUSTOMERS\".\"POSTALCODE\",&#160;\"CUSTOMERS\".\"ADDRESSLINE1\",
+			&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"COUNTRY\",&#160;\"CUSTOMERS\".\"CUSTOMERNUMBER\",&#160;\"CUSTOMERS\".\"CONTACTFIRSTNAME\",&#160;\"CUSTOMERS\".\"CITY\",
+			&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"CUSTOMERNAME\",&#160;\"CUSTOMERS\".\"CONTACTLASTNAME\"&#160;FROM&#160;PUBLIC.\"CUSTOMERS\"\n
+			&#160;&#160;&#160;&#160;&#160;-&#160;Expected&#160;row&#160;count:&#160;133\n
+			&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;SUCCESS\n
+			&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Result&#160;gathered&#160;from&#160;analyzer:&#160;ImmutableAnalyzerJob[name=null,analyzer=Completeness&#160;analyzer]\n
+			&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:03&#160;-&#160;Job&#160;execution&#160;SUCCESS",
+			&#160;&#160;"endDate":"Wed&#160;Oct&#160;10&#160;16:04:03&#160;CEST&#160;2012",
+			&#160;&#160;"beginDate":"Wed&#160;Oct&#160;10&#160;16:04:02&#160;CEST&#160;2012",
+			&#160;&#160;"resultId":"Customer&#160;completeness-1349877840924",
+			&#160;&#160;"triggeredBy":"admin"
+			}
+		</programlisting>
+
+	</section>
+
+	<section id="monitor_poll_execution_status">
+		<title>Polling for execution status</title>
+
+		<para>Often times it is not practical to use the 'block' service
+			parameter, if the job is a long-running job. Rather then you can
+			retrieve the status of the job execution using this service URL:
+		</para>
+
+		<programlisting>
+			/DataCleaner-monitor/repository/{tenant}/logs/{resultId}
+		</programlisting>
+
+		<para>The 'resultId' part in this URL is mean to match the 'resultId'
+			coming from the responses of the trigger service.
+		</para>
+
+		<para>The response of the service will be an XML representation of the
+			execution status. For instance:
+		</para>
+
+		<programlisting>
+			&lt;ns4:execution-log&#160;xmlns="http://eobjects.org/datacleaner/schedule/1.0"&#160;xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0"&#160;xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0"&#160;xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0"&gt;
+			&#160;&#160;&lt;ns4:result-id&gt;Customer&#160;duplicates-1347004507995&lt;/ns4:result-id&gt;
+			&#160;&#160;&lt;ns4:job-begin-date&gt;2012-09-07T09:55:10.607+02:00&lt;/ns4:job-begin-date&gt;
+			&#160;&#160;&lt;ns4:job-end-date&gt;2012-09-07T09:55:19.661+02:00&lt;/ns4:job-end-date&gt;
+			&#160;&#160;&lt;ns4:execution-status&gt;SUCCESS&lt;/ns4:execution-status&gt;
+			&#160;&#160;&lt;ns4:trigger-type&gt;MANUAL&lt;/ns4:trigger-type&gt;
+			&#160;&#160;&lt;ns4:triggered-by&gt;admin&lt;/ns4:triggered-by&gt;
+			&#160;&#160;&lt;schedule&gt;
+			&#160;&#160;&lt;alerts/&gt;
+			&#160;&#160;&lt;/schedule&gt;
+			&#160;&#160;&lt;ns4:log-output&gt;
+			&#160;&#160;&#160;&#160;2012-09-07&#160;09:55:10&#160;-&#160;Job&#160;execution&#160;BEGIN&#160;2012-09-07&#160;09:55:10&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;BEGIN&#160;-&#160;Query:&#160;SELECT&#160;"CUSTOMERS"."PHONE",&#160;"CUSTOMERS"."STATE",&#160;"CUSTOMERS"."POSTALCODE",&#160;"CUSTOMERS"."ADDRESSLINE1",&#160;"CUSTOMERS"."ADDRESSLINE2",&#160;"CUSTOMERS"."COUNTRY",&#160;"CUSTOMERS"."CUSTOMERNUMBER",&#160;"CUSTOMERS"."CONTACTFIRSTNAME",&#160;"CUSTOMERS"."CITY",&#160;"CUSTOMERS"."CUSTOMERNAME",&#160;"CUSTOMERS"."CONTACTLASTNAME"&#160;FROM&#160;PUBLIC."CUSTOMERS"&#160;-&#160;Expected&#160;row&#160;count:&#160;130&#160;2012-09-07&#160;09:55:12&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;SUCCESS&#160;2012-09-07&#160;09:55:12&#160;-&#160;Result&#160;gathered&#160;from&#160;analyzer:&#160;ImmutableAnalyzerJob[name=null,analyzer=Duplicate&#160;detection]&#160;2012-09-07&#160;09:55:19&#160;-&#160;Job&#160;execution&#160;SUCCESS
+			&#160;&#160;&lt;/ns4:log-output&gt;
+			&lt;/ns4:execution-log&gt;
+		</programlisting>
+	</section>
 
 </chapter>

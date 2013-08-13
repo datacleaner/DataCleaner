@@ -67,6 +67,10 @@
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>
+							<directory>src/main/webapp/WEB-INF/lib</directory>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+						<fileset>
 							<directory>src/main/gwt-unitCache</directory>
 							<followSymlinks>false</followSymlinks>
 						</fileset>

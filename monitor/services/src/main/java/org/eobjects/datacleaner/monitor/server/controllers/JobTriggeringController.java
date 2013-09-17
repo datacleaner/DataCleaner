@@ -68,7 +68,10 @@ public class JobTriggeringController {
             while (!executionLog.isFinished() && !isTimedOut(millisWaited, timeoutMillis)) {
                 Thread.sleep(POLL_INCREMENT_MILLIS);
                 millisWaited += POLL_INCREMENT_MILLIS;
-                executionLog = _schedulingService.getExecution(tenantIdentifier, executionLog);
+                ExecutionLog updatedExecutionLog = _schedulingService.getExecution(tenantIdentifier, executionLog);
+                if (updatedExecutionLog != null) {
+                    executionLog = updatedExecutionLog;
+                }
             }
         }
 

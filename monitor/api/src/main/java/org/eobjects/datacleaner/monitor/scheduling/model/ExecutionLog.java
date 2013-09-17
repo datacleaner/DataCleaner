@@ -56,10 +56,18 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     }
 
     private static String createResultId(ScheduleDefinition schedule) {
-        if (schedule == null || schedule.getJob() == null) {
+        if (schedule == null) {
             return null;
         }
-        return schedule.getJob().getName() + "-" + new Date().getTime();
+        final JobIdentifier job = schedule.getJob();
+        return createResultId(job);
+    }
+
+    private static String createResultId(JobIdentifier job) {
+        if (job == null) {
+            return null;
+        }
+        return job.getName() + "-" + new Date().getTime();
     }
 
     public ScheduleDefinition getSchedule() {
@@ -97,11 +105,11 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     public void setTriggeredBy(String triggeredBy) {
         _triggeredBy = triggeredBy;
     }
-    
+
     public boolean isResultPersisted() {
         return _resultPersisted;
     }
-    
+
     public void setResultPersisted(boolean resultPersisted) {
         _resultPersisted = resultPersisted;
     }

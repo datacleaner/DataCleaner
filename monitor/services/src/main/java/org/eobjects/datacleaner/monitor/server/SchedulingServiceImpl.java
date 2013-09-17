@@ -484,10 +484,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (executionIdentifier == null) {
             return null;
         }
+        final String resultId = executionIdentifier.getResultId();
+        if (resultId == null) {
+            return null;
+        }
+
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
-        final String resultId = executionIdentifier.getResultId();
         final RepositoryFile file = resultFolder.getFile(resultId
                 + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
         if (file == null) {

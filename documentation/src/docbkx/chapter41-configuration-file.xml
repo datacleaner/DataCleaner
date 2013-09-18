@@ -48,7 +48,7 @@
 			edit their XML files, you can find the XML schema for this namespace
 			here:
 			<link
-				xl:href="http://eobjects.org/svn/AnalyzerBeans/trunk/src/main/resources/configuration.xsd">http://eobjects.org/svn/AnalyzerBeans/trunk/src/main/resources/configuration.xsd
+				xl:href="http://eobjects.org/svn/AnalyzerBeans/trunk/env/xml-config/src/main/resources/configuration.xsd">http://eobjects.org/svn/AnalyzerBeans/trunk/env/xml-config/src/main/resources/configuration.xsd
 			</link>
 			.
 		</para>

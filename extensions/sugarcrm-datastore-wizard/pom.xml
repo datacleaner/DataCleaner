@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-extensions</artifactId>
-		<version>3.5.5-SNAPSHOT</version>
+		<version>3.5.5</version>
 	</parent>
 	<artifactId>DataCleaner-sugarcrm-datastore-wizard</artifactId>
 	<packaging>jar</packaging>

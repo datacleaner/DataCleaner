@@ -87,11 +87,12 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
                     protected WizardPageController nextPageController(String filepath, File file) {
                         if (!filepath.toLowerCase().endsWith(".csv")) {
                             if (!filepath.toLowerCase().endsWith(".tsv")) {
-                                // only .csv and .tsv files are allowed to be
-                                // referenced on the server, for security
-                                // reasons.
-                                throw new DCUserInputException(
-                                        "For security reasons, only existing .csv and .tsv files can be referenced on the server");
+                                if (!filepath.toLowerCase().endsWith(".txt")) {
+                                    // only .csv and .tsv files are allowed to
+                                    // be referenced on the server, for security reasons.
+                                    throw new DCUserInputException(
+                                            "For security reasons, only existing .csv, .tsv or .txt files can be referenced on the server");
+                                }
                             }
                         }
 

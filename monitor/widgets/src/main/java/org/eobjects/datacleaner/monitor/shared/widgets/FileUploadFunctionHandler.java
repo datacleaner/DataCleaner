@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
+import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
@@ -72,17 +73,22 @@ public class FileUploadFunctionHandler {
 
             @Override
             public void onSubmitComplete(SubmitCompleteEvent event) {
-                GWT.log("File upload form submit complete!");
 
                 final String stringResponse = event.getResults();
-                final JSONValue jsonResponse = JSONParser.parseLenient(stringResponse);
-                final JSONArray jsonFiles = jsonResponse.isObject().get("files").isArray();
-                final JSONValue jsonFile = jsonFiles.get(0);
-                final String jsonFileStr = jsonFile.toString();
 
-                parent.setInnerHTML("<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='"
-                        + jsonFileStr + "' />");
-                rootPanel.remove(form);
+                GWT.log("File upload form submit complete! Results: " + stringResponse);
+
+                try {
+                    final JSONValue jsonResponse = JSONParser.parseLenient(stringResponse);
+                    final JSONArray jsonFiles = jsonResponse.isObject().get("files").isArray();
+                    final JSONValue jsonFile = jsonFiles.get(0);
+                    final String jsonFileStr = jsonFile.toString();
+                    parent.setInnerHTML("<p>File uploaded!</p><input type='hidden' name='" + inputName + "' value='"
+                            + jsonFileStr + "' />");
+                    rootPanel.remove(form);
+                } catch (Exception e) {
+                    ErrorHandler.showErrorDialog("Unexpected error occurred", "An error occurred when uploading the file to the server.", stringResponse);
+                }
             }
         });
 
@@ -123,6 +129,6 @@ public class FileUploadFunctionHandler {
      * javascript scope.
      */
     public static native void exportFileUploadFunction() /*-{
-                                            $wnd.uploadFile = $entry(@org.eobjects.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
-                                            }-*/;
+                                                         $wnd.uploadFile = $entry(@org.eobjects.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler::uploadFile(Ljava/lang/String;));
+                                                         }-*/;
 }

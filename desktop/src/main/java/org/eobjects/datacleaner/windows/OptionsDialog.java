@@ -25,6 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -62,12 +64,16 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
+import org.eobjects.datacleaner.widgets.tabs.Tab;
+import org.eobjects.metamodel.util.Func;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class OptionsDialog extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
+
+    public static final List<Func<OptionsDialog, Tab>> PLUGGABLE_TABS = new ArrayList<Func<OptionsDialog, Tab>>(0);
 
     private final ImageManager imageManager = ImageManager.getInstance();
     private final UserPreferences _userPreferences;
@@ -100,6 +106,13 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.setUnclosableTab(3);
         _tabbedPane.setUnclosableTab(4);
         _tabbedPane.setUnclosableTab(5);
+
+        for (Func<OptionsDialog, Tab> pluggableTabs : PLUGGABLE_TABS) {
+            final Tab tab = pluggableTabs.eval(this);
+            if (tab != null) {
+                _tabbedPane.addTab(tab);
+            }
+        }
     }
 
     public void selectDatabaseDriversTab() {
@@ -457,5 +470,17 @@ public class OptionsDialog extends AbstractWindow {
     @Override
     public Image getWindowIcon() {
         return imageManager.getImage(IconUtils.MENU_OPTIONS);
+    }
+
+    public AnalyzerBeansConfiguration getConfiguration() {
+        return _configuration;
+    }
+
+    public CloseableTabbedPane getTabbedPane() {
+        return _tabbedPane;
+    }
+
+    public UserPreferences getUserPreferences() {
+        return _userPreferences;
     }
 }

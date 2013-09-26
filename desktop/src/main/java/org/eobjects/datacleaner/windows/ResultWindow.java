@@ -26,7 +26,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -65,11 +67,15 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.Ref;
 
 public final class ResultWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
+
+    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(
+            0);
 
     private static final ImageManager imageManager = ImageManager.getInstance();
 
@@ -319,6 +325,14 @@ public final class ResultWindow extends AbstractWindow {
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
+
+        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
+            JComponent component = pluggableComponent.eval(this);
+            if (component != null) {
+                banner.add(component);
+            }
+        }
+
         banner.add(publishButton);
         banner.add(exportButton);
         banner.add(saveButton);
@@ -347,5 +361,37 @@ public final class ResultWindow extends AbstractWindow {
 
         panel.setPreferredSize(width, height);
         return panel;
+    }
+
+    public AnalysisResult getResult() {
+        return _result;
+    }
+
+    public RendererFactory getRendererFactory() {
+        return _rendererFactory;
+    }
+
+    public ProgressInformationPanel getProgressInformationPanel() {
+        return _progressInformationPanel;
+    }
+
+    public FileObject getJobFilename() {
+        return _jobFilename;
+    }
+
+    public AnalyzerBeansConfiguration getConfiguration() {
+        return _configuration;
+    }
+
+    public AnalysisJob getJob() {
+        return _job;
+    }
+
+    public UserPreferences getUserPreferences() {
+        return _userPreferences;
+    }
+
+    public Map<Object, ResultListPanel> getResultPanels() {
+        return _resultPanels;
     }
 }

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -116,6 +117,20 @@ public final class CloseableTabbedPane extends JTabbedPane {
         }
     }
 
+    public void addTab(Tab tab) {
+        final Icon icon = tab.getIcon();
+        if (icon == null) {
+            addTab(tab.getTitle(), tab.getContents());
+        } else {
+            addTab(tab.getTitle(), icon, tab.getContents());
+        }
+
+        if (!tab.isCloseable()) {
+            final int index = getTabCount() - 1;
+            setUnclosableTab(index);
+        }
+    }
+
     /**
      * Use this method to reverse the actions of {@link #setUnclosableTab(int)}
      */
@@ -176,7 +191,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
             }
         }
     }
-    
+
     @Override
     public void remove(final Component component) {
         int index = indexOfComponent(component);
@@ -337,6 +352,22 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
     public void setTabBorderColor(Color tabBorderColor) {
         _tabBorderColor = tabBorderColor;
+    }
+
+    public Tab getTab(int i) {
+        Component contents = getTabComponentAt(i);
+        String title = getTitleAt(i);
+        Icon icon = getIconAt(i);
+        boolean closeable = isCloseable(i);
+        return new Tab(title, icon, contents, closeable);
+    }
+
+    public boolean isCloseable(int i) {
+        return !isUncloseable(i);
+    }
+
+    public boolean isUncloseable(int i) {
+        return _unclosables.contains(i);
     }
 
     public Rectangle getTabBounds(int tabIndex) {

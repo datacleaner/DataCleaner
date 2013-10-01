@@ -23,13 +23,16 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
+import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -89,7 +92,8 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
                             if (!filepath.toLowerCase().endsWith(".tsv")) {
                                 if (!filepath.toLowerCase().endsWith(".txt")) {
                                     // only .csv and .tsv files are allowed to
-                                    // be referenced on the server, for security reasons.
+                                    // be referenced on the server, for security
+                                    // reasons.
                                     throw new DCUserInputException(
                                             "For security reasons, only existing .csv, .tsv or .txt files can be referenced on the server");
                                 }
@@ -139,45 +143,12 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
         final Document doc = documentBuilder.newDocument();
 
-        final Element datastoreElement = doc.createElement("csv-datastore");
-        datastoreElement.setAttribute("name", _name);
-        if (!StringUtils.isNullOrEmpty(_description)) {
-            datastoreElement.setAttribute("description", _description);
-        }
+        final Resource resource = new FileResource(_file);
+        final CsvDatastore datastore = new CsvDatastore(_name, resource, _configuration);
+        datastore.setDescription(_description);
 
-        appendElement(doc, datastoreElement, "filename", _filepath);
-        appendElement(doc, datastoreElement, "quote-char", _configuration.getQuoteChar());
-        appendElement(doc, datastoreElement, "separator-char", _configuration.getSeparatorChar());
-        appendElement(doc, datastoreElement, "escape-char", _configuration.getEscapeChar());
-        appendElement(doc, datastoreElement, "encoding", _configuration.getEncoding());
-        appendElement(doc, datastoreElement, "fail-on-inconsistencies", _configuration.isFailOnInconsistentRowLength());
-        appendElement(doc, datastoreElement, "header-line-number", _configuration.getColumnNameLineNumber());
-
-        return datastoreElement;
-    }
-
-    private void appendElement(Document doc, Element parent, String elementName, Object value) {
-        if (value == null) {
-            return;
-        }
-
-        String stringValue = value.toString();
-
-        if (value instanceof Character) {
-            final char c = ((Character) value).charValue();
-            if (c == CsvConfiguration.NOT_A_CHAR) {
-                stringValue = "NOT_A_CHAR";
-            } else if (c == '\t') {
-                stringValue = "\\t";
-            } else if (c == '\n') {
-                stringValue = "\\n";
-            } else if (c == '\r') {
-                stringValue = "\\r";
-            }
-        }
-
-        final Element element = doc.createElement(elementName);
-        element.setTextContent(stringValue);
-        parent.appendChild(element);
+        final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
+        Element element = externalizer.externalize(datastore, _filepath, doc);
+        return element;
     }
 }

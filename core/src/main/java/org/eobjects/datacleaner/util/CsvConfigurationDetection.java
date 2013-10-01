@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
@@ -30,6 +30,8 @@ import java.util.Arrays;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,18 +52,21 @@ public class CsvConfigurationDetection {
      */
     private static final int SAMPLE_BUFFER_SIZE = 128 * 1024;
 
-    private final File _file;
+    private final Resource _resource;
 
     public CsvConfigurationDetection(File file) {
-        _file = file;
+        _resource = new FileResource(file);
+    }
+    
+    public CsvConfigurationDetection(Resource resource) {
+        _resource = resource;
     }
 
     protected byte[] getSampleBuffer() {
         byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
-        FileInputStream fileInputStream = null;
+        InputStream inputStream = _resource.read();
         try {
-            fileInputStream = new FileInputStream(_file);
-            int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+            int bufferSize = inputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
             if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
                 bytes = Arrays.copyOf(bytes, bufferSize);
             }
@@ -70,7 +75,7 @@ public class CsvConfigurationDetection {
             logger.error("IOException occurred while reading sample buffer", e);
             return new byte[0];
         } finally {
-            FileHelper.safeClose(fileInputStream);
+            FileHelper.safeClose(inputStream);
         }
     }
 

@@ -23,12 +23,14 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
+import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -113,18 +115,14 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
 
     @Override
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
+        final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
         final Document doc = documentBuilder.newDocument();
-        final Element ds = doc.createElement("excel-datastore");
 
-        ds.setAttribute("name", _name);
-        if (!StringUtils.isNullOrEmpty(_description)) {
-            ds.setAttribute("description", _description);
-        }
+        final File file = new File(_filepath);
+        final ExcelDatastore datastore = new ExcelDatastore(_name, new FileResource(file), _filepath);
+        datastore.setDescription(_description);
 
-        final Element filename = doc.createElement("filename");
-        filename.setTextContent(_filepath);
-        ds.appendChild(filename);
-
+        final Element ds = externalizer.externalize(datastore, _filepath, doc);
         return ds;
     }
 

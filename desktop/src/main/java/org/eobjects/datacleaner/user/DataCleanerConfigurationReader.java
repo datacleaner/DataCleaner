@@ -159,15 +159,17 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         // Read all JAR files in the 'extensions' directory and register those
         // that are not already loaded.
         final File[] jarFiles = extensionsDirectory.listFiles(FileFilters.JAR);
-        for (File file : jarFiles) {
-            final String filename = file.getName();
-            if (!extensionFilenames.contains(filename)) {
-                logger.info("Adding extension from 'extension' folder: {}", file.getName());
-                ExtensionReader reader = new ExtensionReader();
-                ExtensionPackage extension = reader.readExternalExtension(file);
-                userPreferences.addExtensionPackage(extension);
-                extension.getAdditionalProperties().put(dumpInstallKey, "true");
-                extension.loadExtension();
+        if (jarFiles != null) {
+            for (File file : jarFiles) {
+                final String filename = file.getName();
+                if (!extensionFilenames.contains(filename)) {
+                    logger.info("Adding extension from 'extension' folder: {}", file.getName());
+                    ExtensionReader reader = new ExtensionReader();
+                    ExtensionPackage extension = reader.readExternalExtension(file);
+                    userPreferences.addExtensionPackage(extension);
+                    extension.getAdditionalProperties().put(dumpInstallKey, "true");
+                    extension.loadExtension();
+                }
             }
         }
 
@@ -179,16 +181,18 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
                 return file.isDirectory();
             }
         });
-        for (File subDirectory : subDirectories) {
-            final String directoryName = subDirectory.getName();
-            if (!extensionFilenames.contains(directoryName)) {
-                logger.info("Adding extension from 'extension' folder: {}", directoryName);
-                ExtensionReader reader = new ExtensionReader();
-                ExtensionPackage extension = reader.readExternalExtension(subDirectory);
-                if (extension != null) {
-                    userPreferences.addExtensionPackage(extension);
-                    extension.getAdditionalProperties().put(dumpInstallKey, "true");
-                    extension.loadExtension();
+        if (subDirectories != null) {
+            for (File subDirectory : subDirectories) {
+                final String directoryName = subDirectory.getName();
+                if (!extensionFilenames.contains(directoryName)) {
+                    logger.info("Adding extension from 'extension' folder: {}", directoryName);
+                    ExtensionReader reader = new ExtensionReader();
+                    ExtensionPackage extension = reader.readExternalExtension(subDirectory);
+                    if (extension != null) {
+                        userPreferences.addExtensionPackage(extension);
+                        extension.getAdditionalProperties().put(dumpInstallKey, "true");
+                        extension.loadExtension();
+                    }
                 }
             }
         }

@@ -196,6 +196,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         _firstUpdate = false;
         if (value != null && value.length > 0) {
             reorderValue(value);
+            fireValueChanged();
         }
     }
 

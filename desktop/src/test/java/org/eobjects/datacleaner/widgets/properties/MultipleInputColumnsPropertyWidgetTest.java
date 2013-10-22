@@ -26,13 +26,16 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.beans.StringAnalyzer;
+import org.eobjects.analyzer.beans.transform.ConcatenatorTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.data.ELInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.eobjects.datacleaner.actions.ReorderColumnsActionListener;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
@@ -42,160 +45,196 @@ import org.eobjects.metamodel.util.CollectionUtils;
 
 public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
-	public void testDefaultSelectAll() throws Exception {
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+    public void testDefaultSelectAll() throws Exception {
+        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
-		MutableColumn barColumn = new MutableColumn("bar", ColumnType.VARCHAR);
-		ajb.addSourceColumn(barColumn);
-		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.INTEGER));
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
+        MutableColumn barColumn = new MutableColumn("bar", ColumnType.VARCHAR);
+        ajb.addSourceColumn(barColumn);
+        ajb.addSourceColumn(new MutableColumn("baz", ColumnType.INTEGER));
 
-		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()
-				.next();
+        AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
+                .iterator().next();
 
-		MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+        MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
 
-		// initialize with null (then select all)
-		widget.initialize(null);
-		InputColumn<?>[] value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[foo], MetaModelInputColumn[bar]]", Arrays.toString(value));
+        // initialize with null (then select all)
+        widget.initialize(null);
+        InputColumn<?>[] value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[foo], MetaModelInputColumn[bar]]", Arrays.toString(value));
 
-		// add another available column
-		ajb.addSourceColumn(new MutableColumn("foobar", ColumnType.VARCHAR));
+        // add another available column
+        ajb.addSourceColumn(new MutableColumn("foobar", ColumnType.VARCHAR));
 
-		value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[foo], MetaModelInputColumn[bar]]", Arrays.toString(value));
-		assertEquals("foo,bar,foobar", getAvailableCheckBoxValues(widget));
+        value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[foo], MetaModelInputColumn[bar]]", Arrays.toString(value));
+        assertEquals("foo,bar,foobar", getAvailableCheckBoxValues(widget));
 
-		// remove a column
-		ajb.removeSourceColumn(barColumn);
+        // remove a column
+        ajb.removeSourceColumn(barColumn);
 
-		value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[foo]]", Arrays.toString(value));
-		assertEquals("foo,foobar", getAvailableCheckBoxValues(widget));
-		ajb.close();
-	}
+        value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[foo]]", Arrays.toString(value));
+        assertEquals("foo,foobar", getAvailableCheckBoxValues(widget));
+        ajb.close();
+    }
 
-	public void testAddAndRemoveExpressionColumn() throws Exception {
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+    public void testAddAndRemoveExpressionColumn() throws Exception {
+        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
 
-		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()
-				.next();
+        AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
+                .iterator().next();
 
-		// initialize with a expression column
-		MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
-		InputColumn<?>[] value = new InputColumn[] { new ELInputColumn("Hello #{name}") };
-		widget.initialize(value);
+        // initialize with a expression column
+        MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+        InputColumn<?>[] value = new InputColumn[] { new ELInputColumn("Hello #{name}") };
+        widget.initialize(value);
 
-		value = widget.getValue();
-		assertEquals("[ELInputColumn[Hello #{name}]]", Arrays.toString(value));
-		assertEquals("\"Hello #{name}\",foo,bar", getAvailableCheckBoxValues(widget));
+        value = widget.getValue();
+        assertEquals("[ELInputColumn[Hello #{name}]]", Arrays.toString(value));
+        assertEquals("\"Hello #{name}\",foo,bar", getAvailableCheckBoxValues(widget));
 
-		// select another column
-		widget.setValue(new InputColumn[] { ajb.getSourceColumnByName("bar") });
+        // select another column
+        widget.setValue(new InputColumn[] { ajb.getSourceColumnByName("bar") });
 
-		value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[bar]]", Arrays.toString(value));
-		assertEquals("\"Hello #{name}\",foo,bar", getAvailableCheckBoxValues(widget));
+        value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[bar]]", Arrays.toString(value));
+        assertEquals("\"Hello #{name}\",foo,bar", getAvailableCheckBoxValues(widget));
 
-		// simulate clicking the EL button
-		AddExpressionBasedColumnActionListener.forMultipleColumns(widget).addExpressionBasedInputColumn("Hi #{nickname}");
+        // simulate clicking the EL button
+        AddExpressionBasedColumnActionListener.forMultipleColumns(widget).addExpressionBasedInputColumn(
+                "Hi #{nickname}");
 
-		value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[bar], ELInputColumn[Hi #{nickname}]]", Arrays.toString(value));
-		assertEquals("\"Hello #{name}\",foo,bar,\"Hi #{nickname}\"", getAvailableCheckBoxValues(widget));
+        value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[bar], ELInputColumn[Hi #{nickname}]]", Arrays.toString(value));
+        assertEquals("\"Hello #{name}\",foo,bar,\"Hi #{nickname}\"", getAvailableCheckBoxValues(widget));
 
-		// add the same expression two times!
-		AddExpressionBasedColumnActionListener.forMultipleColumns(widget).addExpressionBasedInputColumn("Hi #{nickname}");
-		value = widget.getValue();
-		assertEquals("[MetaModelInputColumn[bar], ELInputColumn[Hi #{nickname}]]", Arrays.toString(value));
-		assertEquals("\"Hello #{name}\",foo,bar,\"Hi #{nickname}\"", getAvailableCheckBoxValues(widget));
-		
-		ajb.close();
-	}
+        // add the same expression two times!
+        AddExpressionBasedColumnActionListener.forMultipleColumns(widget).addExpressionBasedInputColumn(
+                "Hi #{nickname}");
+        value = widget.getValue();
+        assertEquals("[MetaModelInputColumn[bar], ELInputColumn[Hi #{nickname}]]", Arrays.toString(value));
+        assertEquals("\"Hello #{name}\",foo,bar,\"Hi #{nickname}\"", getAvailableCheckBoxValues(widget));
 
-	public void testInitializeReordered() throws Exception {
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        ajb.close();
+    }
 
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.NVARCHAR));
+    public void testInitializeReordered() throws Exception {
+        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 
-		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()
-				.next();
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("baz", ColumnType.NVARCHAR));
 
-		// initialize with "baz" + "foo"
-		MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
-		InputColumn<?>[] value = new InputColumn[] { ajb.getSourceColumnByName("baz"), ajb.getSourceColumnByName("foo") };
-		widget.initialize(value);
+        AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
+                .iterator().next();
 
-		assertEquals("baz,foo,bar", getAvailableCheckBoxValues(widget));
-		assertEquals("[MetaModelInputColumn[baz], MetaModelInputColumn[foo]]", Arrays.toString(widget.getValue()));
-		ajb.close();
-	}
+        // initialize with "baz" + "foo"
+        MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+        InputColumn<?>[] value = new InputColumn[] { ajb.getSourceColumnByName("baz"), ajb.getSourceColumnByName("foo") };
+        widget.initialize(value);
 
-	public void testReorderColumns() throws Exception {
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        assertEquals("baz,foo,bar", getAvailableCheckBoxValues(widget));
+        assertEquals("[MetaModelInputColumn[baz], MetaModelInputColumn[foo]]", Arrays.toString(widget.getValue()));
+        ajb.close();
+    }
 
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.LONGVARCHAR));
+    public void testShouldNotReorderColumnsWhenGettingAndSettingValue() throws Exception {
+        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 
-		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
-		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()
-				.next();
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
 
-		// initialize with all 3 columns + an expression
-		MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
-		InputColumn<?>[] value = CollectionUtils.array(ajb.getSourceColumns().toArray(new InputColumn[0]),
-				new ELInputColumn("Hello #{name}"));
-		widget.initialize(value);
+        final TransformerJobBuilder<ConcatenatorTransformer> transformer = ajb
+                .addTransformer(ConcatenatorTransformer.class);
+        transformer.addInputColumns(ajb.getSourceColumns());
+        final MutableInputColumn<?> transformedColumn = transformer.getOutputColumns().get(0);
+        transformedColumn.setName("baz");
 
-		assertEquals("foo,bar,baz,\"Hello #{name}\"", getAvailableCheckBoxValues(widget));
+        final AnalyzerJobBuilder<StringAnalyzer> analyzer = ajb.addAnalyzer(StringAnalyzer.class);
+        final ConfiguredPropertyDescriptor property = analyzer.getDescriptor().getConfiguredProperty("Columns");
 
-		ArrayList<InputColumn<?>> reorderedValue = new ArrayList<InputColumn<?>>(Arrays.asList(value));
-		reorderedValue.add(1, reorderedValue.remove(3));
+        // add columns in this sequence: foo, baz, bar
+        analyzer.addInputColumn(ajb.getSourceColumnByName("foo"), property);
+        analyzer.addInputColumn(transformedColumn, property);
+        analyzer.addInputColumn(ajb.getSourceColumnByName("bar"), property);
 
-		new ReorderColumnsActionListener(widget).saveReorderedValue(reorderedValue);
+        final InputColumn<?>[] propertyValue = (InputColumn<?>[]) analyzer.getConfiguredProperty(property);
 
-		assertEquals("foo,\"Hello #{name}\",bar,baz", getAvailableCheckBoxValues(widget));
-		assertEquals(
-				"[MetaModelInputColumn[foo], ELInputColumn[Hello #{name}], MetaModelInputColumn[bar], MetaModelInputColumn[baz]]",
-				Arrays.toString(widget.getValue()));
-		
-		ajb.close();
-	}
+        final MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(analyzer, property);
+        widget.onOutputChanged(transformer, transformer.getOutputColumns());
 
-	/**
-	 * Helper method to determine which checkboxes are shown
-	 * 
-	 * @param widget
-	 * @return
-	 */
-	private String getAvailableCheckBoxValues(MultipleInputColumnsPropertyWidget widget) {
-		StringBuilder sb = new StringBuilder();
-		Component[] components = widget.getWidget().getComponents();
-		for (Component component : components) {
-			if (component instanceof DCCheckBox) {
-				@SuppressWarnings("unchecked")
-				DCCheckBox<InputColumn<?>> checkBox = (DCCheckBox<InputColumn<?>>) component;
-				String name = checkBox.getValue().getName();
-				if (sb.length() > 0) {
-					sb.append(',');
-				}
-				sb.append(name);
-			}
-		}
-		return sb.toString();
-	}
+        widget.initialize(propertyValue);
+
+        assertEquals(
+                "[MetaModelInputColumn[foo], TransformedInputColumn[id=trans-0001-0002,name=baz], MetaModelInputColumn[bar]]",
+                Arrays.toString(widget.getValue()));
+        ajb.close();
+    }
+
+    public void testReorderColumns() throws Exception {
+        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+        ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
+        ajb.addSourceColumn(new MutableColumn("baz", ColumnType.LONGVARCHAR));
+
+        AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
+                .iterator().next();
+
+        // initialize with all 3 columns + an expression
+        MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
+        InputColumn<?>[] value = CollectionUtils.array(ajb.getSourceColumns().toArray(new InputColumn[0]),
+                new ELInputColumn("Hello #{name}"));
+        widget.initialize(value);
+
+        assertEquals("foo,bar,baz,\"Hello #{name}\"", getAvailableCheckBoxValues(widget));
+
+        ArrayList<InputColumn<?>> reorderedValue = new ArrayList<InputColumn<?>>(Arrays.asList(value));
+        reorderedValue.add(1, reorderedValue.remove(3));
+
+        new ReorderColumnsActionListener(widget).saveReorderedValue(reorderedValue);
+
+        assertEquals("foo,\"Hello #{name}\",bar,baz", getAvailableCheckBoxValues(widget));
+        assertEquals(
+                "[MetaModelInputColumn[foo], ELInputColumn[Hello #{name}], MetaModelInputColumn[bar], MetaModelInputColumn[baz]]",
+                Arrays.toString(widget.getValue()));
+
+        ajb.close();
+    }
+
+    /**
+     * Helper method to determine which checkboxes are shown
+     * 
+     * @param widget
+     * @return
+     */
+    private String getAvailableCheckBoxValues(MultipleInputColumnsPropertyWidget widget) {
+        StringBuilder sb = new StringBuilder();
+        Component[] components = widget.getWidget().getComponents();
+        for (Component component : components) {
+            if (component instanceof DCCheckBox) {
+                @SuppressWarnings("unchecked")
+                DCCheckBox<InputColumn<?>> checkBox = (DCCheckBox<InputColumn<?>>) component;
+                String name = checkBox.getValue().getName();
+                if (sb.length() > 0) {
+                    sb.append(',');
+                }
+                sb.append(name);
+            }
+        }
+        return sb.toString();
+    }
 }

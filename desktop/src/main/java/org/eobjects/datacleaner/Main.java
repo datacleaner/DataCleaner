@@ -88,6 +88,13 @@ public final class Main {
      *         otherwise
      */
     protected static boolean initializeLogging() {
+        // initial logging config, used before anything else
+        {
+            final URL url = Main.class.getResource("log4j-initial.xml");
+            assert url != null;
+            DOMConfigurator.configure(url);
+        }
+
         if (ClassLoaderUtils.IS_WEB_START) {
             final URL url = Main.class.getResource("log4j-jnlp.xml");
             assert url != null;

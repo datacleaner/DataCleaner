@@ -73,36 +73,45 @@ public final class DataCleanerHome {
         final String env = System.getenv("DATACLEANER_HOME");
         if (!StringUtils.isNullOrEmpty(env)) {
             candidate = manager.resolveFile(env);
+            logger.info("Resolved env. variable DATACLEANER_HOME ({}) to: {}", env, candidate);
         }
 
-        if (!isUsable(candidate)) {
-            if (ClassLoaderUtils.IS_WEB_START) {
-                // in web start, the default folder will be in user.home
-                String userHomePath = System.getProperty("user.home");
-                if (userHomePath == null) {
-                    throw new IllegalStateException("Could not determine user home directory: " + candidate);
-                }
+        if (isUsable(candidate)) {
+            return candidate;
+        }
 
-                candidate = manager.resolveFile(userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar
-                        + Version.get());
-
-            } else {
-                // in normal mode, the default folder will be in the working
-                // directory
-                candidate = manager.resolveFile(".");
+        if (ClassLoaderUtils.IS_WEB_START) {
+            // in web start, the default folder will be in user.home
+            final String userHomePath = System.getProperty("user.home");
+            if (userHomePath == null) {
+                throw new IllegalStateException("Could not determine user home directory: " + candidate);
             }
+
+            final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.get();
+            candidate = manager.resolveFile(path);
+            logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
+                    candidate);
+        } else {
+            // in normal mode, the default folder will be in the working
+            // directory
+            candidate = manager.resolveFile(".");
+            logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);
         }
 
         if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
+            logger.info("Running in sandbox mode ({}), setting {} as DATACLEANER_HOME", SystemProperties.SANDBOX,
+                    candidate);
             return candidate;
         }
 
         if (!isUsable(candidate)) {
             if (!candidate.exists()) {
+                logger.debug("DATACLEANER_HOME directory does not exist, creating: {}", candidate);
                 candidate.createFolder();
             }
 
             if (candidate.isWriteable()) {
+                logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
                 copyIfNonExisting(candidate, manager, "examples/countrycodes.csv");
                 copyIfNonExisting(candidate, manager, "examples/employees.analysis.xml");

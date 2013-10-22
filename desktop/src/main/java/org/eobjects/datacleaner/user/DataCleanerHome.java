@@ -101,6 +101,9 @@ public final class DataCleanerHome {
         if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
             logger.info("Running in sandbox mode ({}), setting {} as DATACLEANER_HOME", SystemProperties.SANDBOX,
                     candidate);
+            if (!candidate.exists()) {
+                candidate.createFolder();
+            }
             return candidate;
         }
 

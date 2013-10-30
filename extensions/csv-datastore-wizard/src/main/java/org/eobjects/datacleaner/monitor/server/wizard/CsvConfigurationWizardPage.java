@@ -81,18 +81,19 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final char separator = getChar(formParameters, "separator");
-        final char quote = formParameters.get("quote").get(0).charAt(0);
-        final char escape = formParameters.get("escape").get(0).charAt(0);
+        final char quote = getChar(formParameters, "quote");
+        final char escape = getChar(formParameters, "escape");
 
         final int headerLineNumber;
-        final String headerLineNumberStr = formParameters.get("headerLineNumber").get(0);
+
+        final String headerLineNumberStr = getString(formParameters, "headerLineNumber");
         try {
             headerLineNumber = Integer.parseInt(headerLineNumberStr);
         } catch (NumberFormatException e) {
             throw new DCUserInputException("Not a valid header line number: " + headerLineNumberStr);
         }
 
-        final String encoding = formParameters.get("encoding").get(0);
+        final String encoding = getString(formParameters, "encoding");
 
         final CsvConfiguration configuration = new CsvConfiguration(headerLineNumber, encoding, separator, quote,
                 escape, true);
@@ -102,8 +103,8 @@ public abstract class CsvConfigurationWizardPage extends AbstractFreemarkerWizar
 
     private char getChar(Map<String, List<String>> formParameters, String charType) {
         try {
-            String value = formParameters.get(charType).get(0);
-            if (value.length() == 0) {
+            String value = getString(formParameters, charType);
+            if (value == null || value.length() == 0) {
                 return CsvConfiguration.NOT_A_CHAR;
             }
             return value.charAt(0);

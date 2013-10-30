@@ -216,6 +216,9 @@ public final class ResultWindow extends AbstractWindow {
     }
 
     public void addResult(Table table, ComponentJob componentJob, AnalyzerResult result) {
+        if (table == null) {
+            return;
+        }
         ResultListPanel resultListPanel = getTableResultPanel(table);
         resultListPanel.addResult(componentJob, result);
     }

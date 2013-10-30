@@ -50,229 +50,241 @@ import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class ProgressInformationPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final JTextArea _textArea = new JTextArea();
-	private final DCPanel _progressBarPanel;
-	private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
-	private final JScrollPane _textAreaScroll;
-	private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
-	private final JButton _stopButton;
-	private final LoadingIcon _loadingIcon;
-	private final DCLabel _loadingLabel;
-	private volatile boolean _verboseLogging = false;
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
-	public ProgressInformationPanel() {
-		super();
-		setLayout(new BorderLayout());
-		_textArea.setText("--- DataCleaner progress information user-log ---");
-		_textArea.setEditable(false);
-		_textAreaScroll = WidgetUtils.scrolleable(_textArea);
-		_textAreaScroll.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+    private final ImageManager imageManager = ImageManager.getInstance();
+    private final JTextArea _textArea = new JTextArea();
+    private final DCPanel _progressBarPanel;
+    private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
+    private final JScrollPane _textAreaScroll;
+    private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
+    private final JButton _stopButton;
+    private final LoadingIcon _loadingIcon;
+    private final DCLabel _loadingLabel;
+    private volatile boolean _verboseLogging = false;
 
-		_progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
-		_progressBarPanel.setLayout(new VerticalLayout(4));
-		_progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+    public ProgressInformationPanel() {
+        super();
+        setLayout(new BorderLayout());
+        _textArea.setText("--- DataCleaner progress information user-log ---");
+        _textArea.setEditable(false);
+        _textAreaScroll = WidgetUtils.scrolleable(_textArea);
+        _textAreaScroll.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
 
-		_loadingIcon = new LoadingIcon();
-		_loadingLabel = DCLabel.bright("Preparing...");
-		_loadingLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		_progressBarPanel.add(_loadingIcon);
-		_progressBarPanel.add(_loadingLabel);
+        _progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        _progressBarPanel.setLayout(new VerticalLayout(4));
+        _progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setDividerLocation(240);
-		splitPane.setBorder(null);
-		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
-		splitPane.add(_textAreaScroll);
+        _loadingIcon = new LoadingIcon();
+        _loadingLabel = DCLabel.bright("Preparing...");
+        _loadingLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        _progressBarPanel.add(_loadingIcon);
+        _progressBarPanel.add(_loadingLabel);
 
-		final JCheckBox verboseCheckBox = new JCheckBox("Verbose logging?");
-		verboseCheckBox.setOpaque(false);
-		verboseCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_verboseLogging = verboseCheckBox.isSelected();
-			}
-		});
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setDividerLocation(240);
+        splitPane.setBorder(null);
+        splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
+        splitPane.add(_textAreaScroll);
 
-		_stopButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
-				IconUtils.ICON_SIZE_SMALL));
-		_stopButton.setMargin(new Insets(1, 1, 1, 1));
-		_stopButton.setVisible(false);
+        final JCheckBox verboseCheckBox = new JCheckBox("Verbose logging?");
+        verboseCheckBox.setOpaque(false);
+        verboseCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _verboseLogging = verboseCheckBox.isSelected();
+            }
+        });
 
-		final DCPanel bottomPanel = new DCPanel();
-		bottomPanel.setLayout(new BorderLayout());
-		bottomPanel.add(verboseCheckBox, BorderLayout.WEST);
-		bottomPanel.add(_stopButton, BorderLayout.EAST);
+        _stopButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
+                IconUtils.ICON_SIZE_SMALL));
+        _stopButton.setMargin(new Insets(1, 1, 1, 1));
+        _stopButton.setVisible(false);
 
-		add(splitPane, BorderLayout.CENTER);
-		add(bottomPanel, BorderLayout.SOUTH);
-	}
+        final DCPanel bottomPanel = new DCPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        bottomPanel.add(verboseCheckBox, BorderLayout.WEST);
+        bottomPanel.add(_stopButton, BorderLayout.EAST);
 
-	public String getTextAreaText() {
-		return _textArea.getText();
-	}
+        add(splitPane, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
 
-	public void addStopActionListener(ActionListener actionListener) {
-		_stopButton.addActionListener(actionListener);
-		_stopButton.setVisible(true);
-	}
+    public String getTextAreaText() {
+        return _textArea.getText();
+    }
 
-	public void addUserLog(String string) {
-		appendMessage("\nINFO: " + string);
-	}
+    public void addStopActionListener(ActionListener actionListener) {
+        _stopButton.addActionListener(actionListener);
+        _stopButton.setVisible(true);
+    }
 
-	public void addUserLog(String string, Throwable throwable, boolean jobFinished) {
-		StringWriter stringWriter = new StringWriter();
-		stringWriter.append("\nERROR: ");
-		stringWriter.append(string);
-		if (throwable == null) {
-		    stringWriter.append('\n');
-		    stringWriter.append("(No stack trace provided)");
-		} else if (throwable instanceof PreviousErrorsExistException) {
-			stringWriter.append(' ');
-			stringWriter.append(throwable.getMessage());
-		} else {
-			stringWriter.append('\n');
-			PrintWriter printWriter = new PrintWriter(stringWriter);
-			printStackTrace(printWriter, throwable);
-		}
-		appendMessage(stringWriter.toString());
+    private String getTimestamp() {
+        return new LocalTime().toString(DATE_TIME_FORMAT);
+//        final String now = new DateTime().toString(DATE_TIME_FORMAT);
+//        return now;
+    }
 
-		if (jobFinished) {
-			_stopButton.setEnabled(false);
-			_loadingLabel.setText("Stopped!");
-			_loadingLabel.setVisible(true);
-			_loadingIcon.setVisible(false);
-			Collection<DCProgressBar> progressBars = _progressBars.values();
-			for (DCProgressBar progressBar : progressBars) {
-				progressBar.setEnabled(false);
-				progressBar.setString("Stopped!");
-			}
-		}
-	}
+    public void addUserLog(String string) {
+        appendMessage("\n" + getTimestamp() + " INFO: " + string);
+    }
 
-	/**
-	 * Prints stacktraces to the string writer, and investigates the throwable
-	 * hierarchy to check if there's any {@link SQLException}s which also has
-	 * "next" exceptions.
-	 * 
-	 * @param stringWriter
-	 * @param throwable
-	 */
-	protected void printStackTrace(PrintWriter printWriter, Throwable throwable) {
-		throwable.printStackTrace(printWriter);
-		Throwable cause = throwable.getCause();
-		while (cause != null) {
-			if (cause instanceof SQLException) {
-				SQLException nextException = ((SQLException) cause).getNextException();
-				if (nextException != null) {
-					printWriter.print("Next exception: ");
-					printStackTrace(printWriter, nextException);
-				}
-			}
-			cause = cause.getCause();
-		}
-	}
+    public void addUserLog(String string, Throwable throwable, boolean jobFinished) {
+        StringWriter stringWriter = new StringWriter();
+        stringWriter.append("\n" + getTimestamp() + "ERROR: ");
+        stringWriter.append(string);
+        if (throwable == null) {
+            stringWriter.append('\n');
+            stringWriter.append("(No stack trace provided)");
+        } else if (throwable instanceof PreviousErrorsExistException) {
+            stringWriter.append(' ');
+            stringWriter.append(throwable.getMessage());
+        } else {
+            stringWriter.append('\n');
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            printStackTrace(printWriter, throwable);
+        }
+        appendMessage(stringWriter.toString());
 
-	private void appendMessage(final String message) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				_textArea.append(message);
+        if (jobFinished) {
+            _stopButton.setEnabled(false);
+            _loadingLabel.setText("Stopped!");
+            _loadingLabel.setVisible(true);
+            _loadingIcon.setVisible(false);
+            Collection<DCProgressBar> progressBars = _progressBars.values();
+            for (DCProgressBar progressBar : progressBars) {
+                progressBar.setEnabled(false);
+                progressBar.setString("Stopped!");
+            }
+        }
+    }
 
-				// moves the vertical scroll to the bottom
-				JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
-				verticalScrollBar.setValue(verticalScrollBar.getMaximum());
-			}
-		});
-	}
+    /**
+     * Prints stacktraces to the string writer, and investigates the throwable
+     * hierarchy to check if there's any {@link SQLException}s which also has
+     * "next" exceptions.
+     * 
+     * @param stringWriter
+     * @param throwable
+     */
+    protected void printStackTrace(PrintWriter printWriter, Throwable throwable) {
+        throwable.printStackTrace(printWriter);
+        Throwable cause = throwable.getCause();
+        while (cause != null) {
+            if (cause instanceof SQLException) {
+                SQLException nextException = ((SQLException) cause).getNextException();
+                if (nextException != null) {
+                    printWriter.print("Next exception: ");
+                    printStackTrace(printWriter, nextException);
+                }
+            }
+            cause = cause.getCause();
+        }
+    }
 
-	public void setExpectedRows(final Table table, final int expectedRows) {
-		final DCProgressBar progressBar = getProgressBar(table, expectedRows);
-		final DCLabel tableLabel = DCLabel.bright(table.getName());
-		final DCLabel rowsLabel = DCLabel.bright("Approx. " + expectedRows + " rows");
-		rowsLabel.setFont(WidgetUtils.FONT_SMALL);
+    private void appendMessage(final String message) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                _textArea.append(message);
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (_progressBarPanel) {
-					if (_progressBarPanel.getComponentCount() == 0) {
-						_progressBarPanel.add(Box.createVerticalStrut(10));
-					}
+                // moves the vertical scroll to the bottom
+                JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
+                verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+            }
+        });
+    }
 
-					_progressBarPanel.add(tableLabel);
-					_progressBarPanel.add(rowsLabel);
-					_progressBarPanel.add(progressBar);
-					_progressBarPanel.updateUI();
-				}
-			}
-		});
-	}
+    public void setExpectedRows(final Table table, final int expectedRows) {
+        final DCProgressBar progressBar = getProgressBar(table, expectedRows);
+        final DCLabel tableLabel = DCLabel.bright(table.getName());
+        final DCLabel rowsLabel = DCLabel.bright("Approx. " + expectedRows + " rows");
+        rowsLabel.setFont(WidgetUtils.FONT_SMALL);
 
-	private DCProgressBar getProgressBar(Table table, int expectedRows) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (_progressBarPanel) {
+                    if (_progressBarPanel.getComponentCount() == 0) {
+                        _progressBarPanel.add(Box.createVerticalStrut(10));
+                    }
 
-		synchronized (_progressBars) {
-			DCProgressBar progressBar = _progressBars.get(table);
-			if (progressBar == null) {
-				if (expectedRows == -1) {
-					expectedRows = Integer.MAX_VALUE;
-				}
-				progressBar = new DCProgressBar(0, expectedRows);
-				_progressBars.put(table, progressBar);
+                    _progressBarPanel.add(tableLabel);
+                    _progressBarPanel.add(rowsLabel);
+                    _progressBarPanel.add(progressBar);
+                    _progressBarPanel.updateUI();
+                }
+            }
+        });
+    }
 
-				// remove loading indicators
-				_loadingIcon.setVisible(false);
-				_loadingLabel.setVisible(false);
-			} else {
-				if (expectedRows != -1) {
-					progressBar.setMaximum(expectedRows);
-				}
-			}
-			return progressBar;
-		}
-	}
+    private DCProgressBar getProgressBar(Table table, int expectedRows) {
 
-	public void updateProgress(final Table table, final int currentRow) {
-		final DCProgressBar progressBar = getProgressBar(table, -1);
-		progressBar.setValueIfHigherAndSignificant(currentRow);
+        synchronized (_progressBars) {
+            DCProgressBar progressBar = _progressBars.get(table);
+            if (progressBar == null) {
+                if (expectedRows == -1) {
+                    expectedRows = Integer.MAX_VALUE;
+                }
+                progressBar = new DCProgressBar(0, expectedRows);
+                _progressBars.put(table, progressBar);
 
-		if (_verboseLogging) {
-			boolean log = false;
-			synchronized (_verboseCounter) {
-				Integer previousCount = _verboseCounter.get(table);
-				if (previousCount == null) {
-					previousCount = 0;
-				}
-				if (currentRow - previousCount > 1000) {
-					_verboseCounter.put(table, currentRow);
-					log = true;
-				}
-			}
-			if (log) {
-				addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
-			}
-		}
-	}
+                // remove loading indicators
+                _loadingIcon.setVisible(false);
+                _loadingLabel.setVisible(false);
+            } else {
+                if (expectedRows != -1) {
+                    progressBar.setMaximum(expectedRows);
+                }
+            }
+            return progressBar;
+        }
+    }
 
-	public void onSuccess() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				_loadingIcon.setVisible(false);
-				_loadingLabel.setVisible(false);
-				_stopButton.setEnabled(false);
-				Collection<DCProgressBar> progressBars = _progressBars.values();
-				for (DCProgressBar progressBar : progressBars) {
-					int maximum = progressBar.getMaximum();
-					progressBar.setValue(maximum);
-				}
-			}
-		});
-	}
+    public void updateProgress(final Table table, final int currentRow) {
+        final DCProgressBar progressBar = getProgressBar(table, -1);
+        progressBar.setValueIfHigherAndSignificant(currentRow);
+
+        if (_verboseLogging) {
+            boolean log = false;
+            synchronized (_verboseCounter) {
+                Integer previousCount = _verboseCounter.get(table);
+                if (previousCount == null) {
+                    previousCount = 0;
+                }
+                if (currentRow - previousCount > 1000) {
+                    _verboseCounter.put(table, currentRow);
+                    log = true;
+                }
+            }
+            if (log) {
+                addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
+            }
+        }
+    }
+
+    public void onSuccess() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                _loadingIcon.setVisible(false);
+                _loadingLabel.setVisible(false);
+                _stopButton.setEnabled(false);
+                Collection<DCProgressBar> progressBars = _progressBars.values();
+                for (DCProgressBar progressBar : progressBars) {
+                    int maximum = progressBar.getMaximum();
+                    progressBar.setValue(maximum);
+                }
+            }
+        });
+    }
 }

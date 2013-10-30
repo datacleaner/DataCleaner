@@ -46,183 +46,150 @@ import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class AnalysisRunnerSwingWorker extends
-		SwingWorker<AnalysisResultFuture, Void> implements AnalysisListener {
+public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture, Void> implements
+        AnalysisListener {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AnalysisRunnerSwingWorker.class);
-	private final AnalysisRunner _analysisRunner;
-	private final AnalysisJob _job;
-	private final ResultWindow _resultWindow;
-	private final ProgressInformationPanel _progressInformationPanel;
-	private AnalysisResultFuture _resultFuture;
+    private static final Logger logger = LoggerFactory.getLogger(AnalysisRunnerSwingWorker.class);
+    private final AnalysisRunner _analysisRunner;
+    private final AnalysisJob _job;
+    private final ResultWindow _resultWindow;
+    private final ProgressInformationPanel _progressInformationPanel;
+    private AnalysisResultFuture _resultFuture;
 
-	public AnalysisRunnerSwingWorker(AnalyzerBeansConfiguration configuration,
-			AnalysisJob job, ResultWindow resultWindow,
-			ProgressInformationPanel progressInformationPanel) {
-		_analysisRunner = new AnalysisRunnerImpl(configuration, this);
-		_job = job;
-		_resultWindow = resultWindow;
-		_progressInformationPanel = progressInformationPanel;
-	}
+    public AnalysisRunnerSwingWorker(AnalyzerBeansConfiguration configuration, AnalysisJob job,
+            ResultWindow resultWindow, ProgressInformationPanel progressInformationPanel) {
+        _analysisRunner = new AnalysisRunnerImpl(configuration, this);
+        _job = job;
+        _resultWindow = resultWindow;
+        _progressInformationPanel = progressInformationPanel;
+    }
 
-	@Override
-	protected AnalysisResultFuture doInBackground() throws Exception {
-		try {
-			_resultFuture = _analysisRunner.run(_job);
-			return _resultFuture;
-		} catch (final Exception e) {
-			logger.error(
-					"Unexpected error occurred when invoking run(...) on AnalysisRunner",
-					e);
-			errorUknown(_job, e);
-			throw e;
-		}
-	}
+    @Override
+    protected AnalysisResultFuture doInBackground() throws Exception {
+        try {
+            _resultFuture = _analysisRunner.run(_job);
+            return _resultFuture;
+        } catch (final Exception e) {
+            logger.error("Unexpected error occurred when invoking run(...) on AnalysisRunner", e);
+            errorUknown(_job, e);
+            throw e;
+        }
+    }
 
-	@Override
-	public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
-		String now = new DateTime().toString(DateTimeFormat.fullTime());
-		_progressInformationPanel.addUserLog("Job begin (" + now + ")");
-	}
+    @Override
+    public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+        _progressInformationPanel.addUserLog("Job begin");
+    }
 
-	@Override
-	public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
-		String now = new DateTime().toString(DateTimeFormat.fullTime());
-		_progressInformationPanel.addUserLog("Job success (" + now + ")");
-		_progressInformationPanel.onSuccess();
-		_resultWindow.setResult(_resultFuture);
-	}
+    @Override
+    public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+        _progressInformationPanel.addUserLog("Job success!");
+        _progressInformationPanel.onSuccess();
+        _resultWindow.setResult(_resultFuture);
+    }
 
-	@Override
-	public void rowProcessingBegin(final AnalysisJob job,
-			final RowProcessingMetrics metrics) {
-		final int expectedRows = metrics.getExpectedRows();
-		final Table table = metrics.getTable();
-		if (expectedRows == -1) {
-			_progressInformationPanel.addUserLog("Starting row processing for "
-					+ table.getQualifiedLabel());
-		} else {
-			_progressInformationPanel.addUserLog("Starting row processing for "
-					+ table.getQualifiedLabel() + " (approx. " + expectedRows
-					+ " rows)");
-			_progressInformationPanel.setExpectedRows(table, expectedRows);
-		}
-	}
+    @Override
+    public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+        final int expectedRows = metrics.getExpectedRows();
+        final Table table = metrics.getTable();
+        if (expectedRows == -1) {
+            _progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel());
+        } else {
+            _progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel()
+                    + " (approx. " + expectedRows + " rows)");
+            _progressInformationPanel.setExpectedRows(table, expectedRows);
+        }
+    }
 
-	@Override
-	public void rowProcessingProgress(AnalysisJob job,
-			final RowProcessingMetrics metrics, final int currentRow) {
-		_progressInformationPanel
-				.updateProgress(metrics.getTable(), currentRow);
-	}
+    @Override
+    public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+        _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
+    }
 
-	@Override
-	public void rowProcessingSuccess(AnalysisJob job,
-			final RowProcessingMetrics metrics) {
-		String now = new DateTime().toString(DateTimeFormat.fullTime());
-		_progressInformationPanel.addUserLog("Row processing for "
-				+ metrics.getTable().getQualifiedLabel() + " finished (" + now
-				+ "). Generating results ...");
-	}
+    @Override
+    public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+        _progressInformationPanel.addUserLog("Row processing for " + metrics.getTable().getQualifiedLabel()
+                + " finished. Generating results ...");
+    }
 
-	@Override
-	public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob,
-			AnalyzerMetrics metrics) {
-		_progressInformationPanel.addUserLog("Starting analyzer '"
-				+ LabelUtils.getLabel(analyzerJob) + "'");
-	}
+    @Override
+    public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
+        _progressInformationPanel.addUserLog("Starting analyzer '" + LabelUtils.getLabel(analyzerJob) + "'");
+    }
 
-	@Override
-	public void analyzerSuccess(AnalysisJob job, final AnalyzerJob analyzerJob,
-			final AnalyzerResult result) {
-		final List<InputColumn<?>> inputColumns = Arrays.asList(analyzerJob
-				.getInput());
-		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-		sourceColumnFinder.addSources(job);
-		Table table = null;
-		for (InputColumn<?> inputColumn : inputColumns) {
-		    table = sourceColumnFinder.findOriginatingTable(inputColumn);
-		    if (table != null) {
-		        break;
-		    }
-		}
+    @Override
+    public void analyzerSuccess(AnalysisJob job, final AnalyzerJob analyzerJob, final AnalyzerResult result) {
+        final List<InputColumn<?>> inputColumns = Arrays.asList(analyzerJob.getInput());
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(job);
 
-		assert table != null;
+        Table table = null;
+        String tableName = null;
+        for (InputColumn<?> inputColumn : inputColumns) {
+            table = sourceColumnFinder.findOriginatingTable(inputColumn);
+            if (table != null) {
+                tableName = table.getName();
+                break;
+            }
+        }
 
-		_progressInformationPanel.addUserLog("Analyzer '"
-				+ LabelUtils.getLabel(analyzerJob) + "' finished");
-		_progressInformationPanel.addUserLog("Adding result to tab of "
-				+ table.getName());
-		_resultWindow.addResult(table, analyzerJob, result);
-	}
+        assert tableName != null;
 
-	@Override
-	public void errorInFilter(AnalysisJob job, final FilterJob filterJob,
-			InputRow row, final Throwable throwable) {
-		_progressInformationPanel.addUserLog(
-				"An error occurred in the filter: "
-						+ LabelUtils.getLabel(filterJob), throwable, true);
-	}
+        _progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob) + "' finished");
+        _progressInformationPanel.addUserLog("Adding result to tab of " + tableName);
+        _resultWindow.addResult(table, analyzerJob, result);
+    }
 
-	@Override
-	public void errorInTransformer(AnalysisJob job,
-			final TransformerJob transformerJob, InputRow row,
-			final Throwable throwable) {
-		_progressInformationPanel.addUserLog(
-				"An error occurred in the transformer: "
-						+ LabelUtils.getLabel(transformerJob), throwable, true);
-	}
+    @Override
+    public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row, final Throwable throwable) {
+        _progressInformationPanel.addUserLog("An error occurred in the filter: " + LabelUtils.getLabel(filterJob),
+                throwable, true);
+    }
 
-	@Override
-	public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob,
-			InputRow row, final Throwable throwable) {
-		_progressInformationPanel.addUserLog(
-				"An error occurred in the analyzer: "
-						+ LabelUtils.getLabel(analyzerJob), throwable, true);
-	}
+    @Override
+    public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row,
+            final Throwable throwable) {
+        _progressInformationPanel.addUserLog(
+                "An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob), throwable, true);
+    }
 
-	@Override
-	public void errorUknown(AnalysisJob job, final Throwable throwable) {
-		_progressInformationPanel.addUserLog(
-				"An error occurred in the analysis job!", throwable, true);
-	}
+    @Override
+    public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row, final Throwable throwable) {
+        _progressInformationPanel.addUserLog("An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob),
+                throwable, true);
+    }
 
-	public void cancelIfRunning() {
-		if (_resultFuture != null) {
-			if (!_resultFuture.isDone()) {
-				_resultFuture.cancel();
-			}
-		}
-	}
+    @Override
+    public void errorUknown(AnalysisJob job, final Throwable throwable) {
+        _progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable, true);
+    }
 
-	@Override
-	public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob,
-			ExplorerMetrics metrics) {
-		_progressInformationPanel.addUserLog("Starting explorer '"
-				+ LabelUtils.getLabel(explorerJob) + "'");
-	}
+    public void cancelIfRunning() {
+        if (_resultFuture != null) {
+            if (!_resultFuture.isDone()) {
+                _resultFuture.cancel();
+            }
+        }
+    }
 
-	@Override
-	public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob,
-			AnalyzerResult result) {
-		_progressInformationPanel.addUserLog("Explorer '"
-				+ LabelUtils.getLabel(explorerJob) + "' finished");
-		_progressInformationPanel.addUserLog("Adding result to tab of "
-				+ explorerJob.getDescriptor().getDisplayName());
-		_resultWindow.addResult(explorerJob, result);
-	}
+    @Override
+    public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob, ExplorerMetrics metrics) {
+        _progressInformationPanel.addUserLog("Starting explorer '" + LabelUtils.getLabel(explorerJob) + "'");
+    }
 
-	@Override
-	public void errorInExplorer(AnalysisJob job, ExplorerJob explorerJob,
-			Throwable throwable) {
-		_progressInformationPanel.addUserLog(
-				"An error occurred in the explorer: "
-						+ LabelUtils.getLabel(explorerJob), throwable, true);
-	}
+    @Override
+    public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
+        _progressInformationPanel.addUserLog("Explorer '" + LabelUtils.getLabel(explorerJob) + "' finished");
+        _progressInformationPanel.addUserLog("Adding result to tab of " + explorerJob.getDescriptor().getDisplayName());
+        _resultWindow.addResult(explorerJob, result);
+    }
+
+    @Override
+    public void errorInExplorer(AnalysisJob job, ExplorerJob explorerJob, Throwable throwable) {
+        _progressInformationPanel.addUserLog("An error occurred in the explorer: " + LabelUtils.getLabel(explorerJob),
+                throwable, true);
+    }
 }

@@ -130,7 +130,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
         final DecimalFormat formatter = new DecimalFormat("###,###");
         _currentBytesLabels[index].setText(formatter.format(bytes));
         final DCProgressBar progressBar = _progressBars[index];
-        progressBar.setValueIfHigherAndSignificant((int) (bytes / 100));
+        progressBar.setValueIfGreater((int) (bytes / 100));
     }
 
     public void setExpectedSize(String filename, Long bytes) {

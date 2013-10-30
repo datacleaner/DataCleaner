@@ -42,6 +42,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
+import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -50,7 +51,6 @@ import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
-import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -66,7 +66,7 @@ public class ProgressInformationPanel extends DCPanel {
     private final DCPanel _progressBarPanel;
     private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
     private final JScrollPane _textAreaScroll;
-    private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
+    private final Map<Table, ProgressCounter> _verboseCounter = new IdentityHashMap<Table, ProgressCounter>();
     private final JButton _stopButton;
     private final LoadingIcon _loadingIcon;
     private final DCLabel _loadingLabel;
@@ -130,8 +130,8 @@ public class ProgressInformationPanel extends DCPanel {
 
     private String getTimestamp() {
         return new LocalTime().toString(DATE_TIME_FORMAT);
-//        final String now = new DateTime().toString(DATE_TIME_FORMAT);
-//        return now;
+        // final String now = new DateTime().toString(DATE_TIME_FORMAT);
+        // return now;
     }
 
     public void addUserLog(String string) {
@@ -250,26 +250,55 @@ public class ProgressInformationPanel extends DCPanel {
         }
     }
 
+    /**
+     * Informs the panel that the progress for a table is updated
+     * 
+     * @param table
+     * @param currentRow
+     */
     public void updateProgress(final Table table, final int currentRow) {
         final DCProgressBar progressBar = getProgressBar(table, -1);
-        progressBar.setValueIfHigherAndSignificant(currentRow);
+        boolean greater = progressBar.setValueIfGreater(currentRow);
+
+        if (!greater) {
+            // this may happen because of the multithreaded nature of the
+            // execution - sometimes a notification can come in later than
+            // previous notifications
+            return;
+        }
 
         if (_verboseLogging) {
-            boolean log = false;
+            final ProgressCounter counter;
             synchronized (_verboseCounter) {
-                Integer previousCount = _verboseCounter.get(table);
+                ProgressCounter previousCount = _verboseCounter.get(table);
                 if (previousCount == null) {
-                    previousCount = 0;
+                    previousCount = new ProgressCounter();
+                    _verboseCounter.put(table, previousCount);
                 }
-                if (currentRow - previousCount > 1000) {
-                    _verboseCounter.put(table, currentRow);
-                    log = true;
-                }
+                counter = previousCount;
+            }
+
+            final boolean log;
+            int previousCount = counter.get();
+            if (currentRow - previousCount > 1000) {
+                log = counter.setIfSignificantToUser(currentRow);
+            } else {
+                log = false;
             }
             if (log) {
                 addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
             }
         }
+    }
+
+    /**
+     * Informs the panel that the progress for a table has finished.
+     * 
+     * @param table
+     */
+    public void updateProgressFinished(Table table) {
+        final DCProgressBar progressBar = getProgressBar(table, -1);
+        progressBar.setValueIfGreater(progressBar.getMaximum());
     }
 
     public void onSuccess() {
@@ -282,9 +311,10 @@ public class ProgressInformationPanel extends DCPanel {
                 Collection<DCProgressBar> progressBars = _progressBars.values();
                 for (DCProgressBar progressBar : progressBars) {
                     int maximum = progressBar.getMaximum();
-                    progressBar.setValue(maximum);
+                    progressBar.setValueIfGreater(maximum);
                 }
             }
         });
     }
+
 }

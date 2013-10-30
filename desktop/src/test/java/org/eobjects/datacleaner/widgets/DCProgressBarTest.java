@@ -33,4 +33,18 @@ public class DCProgressBarTest extends TestCase {
 		assertEquals(0, bar.getBarWidth(-10));
 		assertEquals(100, bar.getBarWidth(1064564));
 	}
+	
+	public void testSetValueIfGreater() throws Exception {
+	    DCProgressBar bar = new DCProgressBar(0, 150);
+	    
+	    assertTrue(bar.setValueIfGreater(2));
+	    assertFalse(bar.setValueIfGreater(1));
+	    assertEquals(2, bar.getValue());
+	    
+	    assertTrue(bar.setValueIfGreater(10));
+	    assertFalse(bar.setValueIfGreater(9));
+	    assertFalse(bar.setValueIfGreater(8));
+	    assertFalse(bar.setValueIfGreater(1));
+	    assertEquals(10, bar.getValue());
+    }
 }

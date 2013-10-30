@@ -25,82 +25,104 @@ import java.awt.Graphics;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.WidgetUtils;
 
+/**
+ * A progress bar which behaves properly in multithreaded environments.
+ */
 public class DCProgressBar extends JProgressBar {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DCProgressBar(int min, int max) {
-		super(min, max);
-		setMinimumSize(new Dimension(10, 30));
-		setMaximumSize(new Dimension(1000, 30));
-		setOpaque(false);
-	}
+    private final ProgressCounter _value;
 
-	/**
-	 * 
-	 * @param currentRow
-	 * @return whether the new (proposed) value is higher than the current value
-	 *         and if it will introduce a visual change to the progress bar
-	 *         (assumed that the progress bar width is not changed)
-	 */
-	public void setValueIfHigherAndSignificant(final int newValue) {
-		final Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				final int currentValue = getValue();
-				if (newValue > currentValue) {
-					setValue(newValue);
-				}
-			}
-		};
-		if (SwingUtilities.isEventDispatchThread()) {
-			runnable.run();
-		} else {
-			SwingUtilities.invokeLater(runnable);
-		}
-	}
-	
-	protected int getBarWidth(final int value) {
-		final int minimum = getMinimum();
-		if (minimum > value) {
-			return 0;
-		}
+    public DCProgressBar(int min, int max) {
+        super(min, max);
+        setMinimumSize(new Dimension(10, 30));
+        setMaximumSize(new Dimension(1000, 30));
+        setOpaque(false);
+        _value = new ProgressCounter(0);
+    }
 
-		final int width = getWidth();
-		final int maximum = getMaximum();
-		if (value > maximum) {
-			return width;
-		}
+    /**
+     * Sets the value of the progress bar, if the new value is greater than the
+     * previous value.
+     * 
+     * @param newValue
+     * @return whether or not the value was greater, and thus updated
+     */
+    public boolean setValueIfGreater(final int newValue) {
+        boolean greater = _value.setIfSignificantToUser(newValue);
+        if (greater) {
+            if (SwingUtilities.isEventDispatchThread()) {
+                super.setValue(newValue);
+            } else {
+                final Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        DCProgressBar.super.setValue(newValue);
+                    }
+                };
+                SwingUtilities.invokeLater(runnable);
+            }
+        }
+        return greater;
+    }
+    
+    @Override
+    public int getValue() {
+        return _value.get();
+    }
 
-		final int adjustedMax = maximum - minimum;
-		final int adjustedValue = value - minimum;
-		final double completenessRatio = 1.0 * adjustedValue / adjustedMax;
-		final int barWidth = (int) (width * completenessRatio);
-		return barWidth;
-	}
+    /**
+     * @deprecated use {@link #setValueIfGreater(int)} instead.
+     */
+    @Deprecated
+    @Override
+    public void setValue(int newValue) {
+        setValueIfGreater(newValue);
+    }
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		final int width = getWidth();
-		final int height = getHeight();
+    protected int getBarWidth(final int value) {
+        final int minimum = getMinimum();
+        if (minimum > value) {
+            return 0;
+        }
 
-		if (isOpaque()) {
-			g.setColor(WidgetUtils.BG_COLOR_DARK);
-			g.fillRect(0, 0, width, height);
-		}
+        final int width = getWidth();
+        final int maximum = getMaximum();
+        if (value > maximum) {
+            return width;
+        }
 
-		final int barWidth = getBarWidth(getValue());
+        final int adjustedMax = maximum - minimum;
+        final int adjustedValue = value - minimum;
+        final double completenessRatio = 1.0 * adjustedValue / adjustedMax;
+        final int barWidth = (int) (width * completenessRatio);
+        return barWidth;
+    }
 
-		if (barWidth > 0) {
-			g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
-			g.fillRect(0, 0, barWidth, height / 2);
-			g.setColor(WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
-			g.fillRect(0, height / 2, barWidth, height / 2);
+    @Override
+    protected void paintComponent(Graphics g) {
+        final int width = getWidth();
+        final int height = getHeight();
 
-			g.setColor(WidgetUtils.slightlyBrighter(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
-			g.drawRect(0, 0, barWidth, height);
-		}
-	}
+        if (isOpaque()) {
+            g.setColor(WidgetUtils.BG_COLOR_DARK);
+            g.fillRect(0, 0, width, height);
+        }
+
+        final int barWidth = getBarWidth(getValue());
+
+        if (barWidth > 0) {
+            g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            g.fillRect(0, 0, barWidth, height / 2);
+            g.setColor(WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.fillRect(0, height / 2, barWidth, height / 2);
+
+            g.setColor(WidgetUtils.slightlyBrighter(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.drawRect(0, 0, barWidth, height);
+        }
+    }
 }

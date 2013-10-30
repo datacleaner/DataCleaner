@@ -106,11 +106,16 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 
     @Override
     public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+//        if (currentRow % 100 != 0) {
+//            // quickly discard too chatty updates
+//            return;
+//        }
         _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
     }
 
     @Override
     public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+        _progressInformationPanel.updateProgressFinished(metrics.getTable());
         _progressInformationPanel.addUserLog("Row processing for " + metrics.getTable().getQualifiedLabel()
                 + " finished. Generating results ...");
     }

@@ -42,9 +42,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
-import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
@@ -286,7 +286,7 @@ public class ProgressInformationPanel extends DCPanel {
                 log = false;
             }
             if (log) {
-                addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
+                addUserLog("Progress for table " + table.getQualifiedLabel() + ": " + currentRow + " rows processed");
             }
         }
     }

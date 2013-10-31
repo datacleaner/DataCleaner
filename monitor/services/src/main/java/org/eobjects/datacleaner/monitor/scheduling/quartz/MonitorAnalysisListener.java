@@ -39,6 +39,7 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Table;
 
@@ -49,11 +50,13 @@ import org.eobjects.metamodel.schema.Table;
 public class MonitorAnalysisListener implements AnalysisListener {
 
     private final Map<ComponentJob, AnalyzerResult> _results;
+    private final Map<Table, ProgressCounter> _progressCounters;
     private final ExecutionLogger _executionLogger;
 
     public MonitorAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
         _executionLogger = executionLogger;
         _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
+        _progressCounters = new ConcurrentHashMap<Table, ProgressCounter>();
     }
 
     @Override
@@ -85,8 +88,10 @@ public class MonitorAnalysisListener implements AnalysisListener {
     public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
 
+        _progressCounters.put(table, new ProgressCounter());
+
         final StringBuilder sb = new StringBuilder();
-        sb.append("Row processing of table " + table + " BEGIN");
+        sb.append("Row processing of table " + table.getQualifiedLabel() + " BEGIN");
 
         final Query query = metrics.getQuery();
         if (query != null) {
@@ -108,9 +113,19 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
     @Override
     public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
-        if (currentRow > 0 && currentRow % 1000 == 0) {
+        if (currentRow <= 0) {
+            return;
+        }
+
+        final ProgressCounter progressCounter = _progressCounters.get(metrics.getTable());
+        if (progressCounter == null) {
+            return;
+        }
+
+        if (progressCounter.setIfSignificantToUser(currentRow)) {
             final Table table = metrics.getTable();
-            _executionLogger.log("Row processing of table " + table + " progress: " + currentRow + " rows processed");
+            _executionLogger.log("Progress for table " + table.getQualifiedLabel() + ": " + currentRow
+                    + " rows processed");
             _executionLogger.flushLog();
         }
     }
@@ -118,7 +133,8 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
-        _executionLogger.log("Row processing of table " + table + " SUCCESS");
+        _executionLogger.log("Processing of table " + table.getQualifiedLabel()
+                + " finished. Generating results ...");
     }
 
     @Override

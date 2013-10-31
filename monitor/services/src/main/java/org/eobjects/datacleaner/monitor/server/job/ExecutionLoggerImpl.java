@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,6 +38,9 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,6 +53,8 @@ import org.springframework.context.ApplicationEventPublisher;
 public class ExecutionLoggerImpl implements ExecutionLogger {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecutionLoggerImpl.class);
+    
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
     private final ApplicationEventPublisher _eventPublisher;
     private final ExecutionLog _execution;
@@ -195,8 +199,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void log(String message) {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final String dateString = dateFormat.format(new Date());
+        final String dateString = new LocalTime().toString(DATE_TIME_FORMAT);
 
         synchronized (_log) {
             if (_log.length() > 0) {

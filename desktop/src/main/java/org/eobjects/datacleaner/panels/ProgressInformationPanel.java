@@ -130,8 +130,6 @@ public class ProgressInformationPanel extends DCPanel {
 
     private String getTimestamp() {
         return new LocalTime().toString(DATE_TIME_FORMAT);
-        // final String now = new DateTime().toString(DATE_TIME_FORMAT);
-        // return now;
     }
 
     public void addUserLog(String string) {
@@ -286,7 +284,7 @@ public class ProgressInformationPanel extends DCPanel {
                 log = false;
             }
             if (log) {
-                addUserLog("Progress for table " + table.getQualifiedLabel() + ": " + currentRow + " rows processed");
+                addUserLog("Progress of " + table.getName() + ": " + currentRow + " rows processed");
             }
         }
     }

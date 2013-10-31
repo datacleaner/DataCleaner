@@ -91,7 +91,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
         _progressCounters.put(table, new ProgressCounter());
 
         final StringBuilder sb = new StringBuilder();
-        sb.append("Row processing of table " + table.getQualifiedLabel() + " BEGIN");
+        sb.append("Starting processing of " + table.getName());
 
         final Query query = metrics.getQuery();
         if (query != null) {
@@ -124,7 +124,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         if (progressCounter.setIfSignificantToUser(currentRow)) {
             final Table table = metrics.getTable();
-            _executionLogger.log("Progress for table " + table.getQualifiedLabel() + ": " + currentRow
+            _executionLogger.log("Progress of " + table.getName() + ": " + currentRow
                     + " rows processed");
             _executionLogger.flushLog();
         }
@@ -133,7 +133,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
-        _executionLogger.log("Processing of table " + table.getQualifiedLabel()
+        _executionLogger.log("Processing of " + table.getName()
                 + " finished. Generating results ...");
     }
 

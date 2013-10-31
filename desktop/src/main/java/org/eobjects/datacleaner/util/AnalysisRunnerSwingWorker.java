@@ -96,9 +96,9 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
         final int expectedRows = metrics.getExpectedRows();
         final Table table = metrics.getTable();
         if (expectedRows == -1) {
-            _progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel());
+            _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
         } else {
-            _progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel()
+            _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
                     + " (approx. " + expectedRows + " rows)");
             _progressInformationPanel.setExpectedRows(table, expectedRows);
         }
@@ -116,7 +116,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
     @Override
     public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
         _progressInformationPanel.updateProgressFinished(metrics.getTable());
-        _progressInformationPanel.addUserLog("Row processing for " + metrics.getTable().getQualifiedLabel()
+        _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
                 + " finished. Generating results ...");
     }
 
@@ -141,10 +141,9 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
             }
         }
 
-        assert tableName != null;
+        assert table != null;
 
-        _progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob) + "' finished");
-        _progressInformationPanel.addUserLog("Adding result to tab of " + tableName);
+        _progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob) + "' finished, adding result to tab of " + tableName);
         _resultWindow.addResult(table, analyzerJob, result);
     }
 

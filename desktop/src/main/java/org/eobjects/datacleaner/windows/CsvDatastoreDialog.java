@@ -83,6 +83,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     private final HeaderLineComboBox _headerLineComboBox;
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
+    private final JCheckBox _multilineValuesCheckBox;
 
     private volatile boolean showPreview = true;
 
@@ -108,12 +109,19 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
         _failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
         _failOnInconsistenciesCheckBox.setOpaque(false);
         _failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        _failOnInconsistenciesCheckBox.setToolTipText("Check this checkbox to fail fast in case of inconsistent record lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
+
+        _multilineValuesCheckBox = new JCheckBox("Enable multi-line values?", false);
+        _multilineValuesCheckBox.setOpaque(false);
+        _multilineValuesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        _multilineValuesCheckBox.setToolTipText("Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
 
         _addDatastoreButton.setEnabled(false);
         showPreview = true;
 
         if (_originalDatastore != null) {
             _failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
+            _multilineValuesCheckBox.setSelected(_originalDatastore.isMultilineValues());
             _encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
 
             _headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber());
@@ -313,6 +321,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
         result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
         result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
         result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
+        result.add(new ImmutableEntry<String, JComponent>("", _multilineValuesCheckBox));
         return result;
     }
 
@@ -407,7 +416,11 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
         final Resource resource = new FileResource(filename);
         return new CsvDatastore(name, resource, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(),
-                getEncoding(), failOnInconsistentRecords, getHeaderLine());
+                getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
+    }
+    
+    public boolean isMultilineValues() {
+        return _multilineValuesCheckBox.isSelected();
     }
 
     @Override

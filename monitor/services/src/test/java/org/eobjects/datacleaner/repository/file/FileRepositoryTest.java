@@ -58,7 +58,14 @@ public class FileRepositoryTest extends TestCase {
     }
 
     public void testCreateFileWithoutContents() throws Exception {
-        Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
+        File rootFile = new File("target/example_repo");
+        rootFile.mkdirs();
+        
+        if (new File(rootFile, "foo.bar").exists()) {
+            new File(rootFile, "foo.bar").delete();
+        }
+        
+        Repository repository = new FileRepository(rootFile);
         RepositoryFile file = repository.createFile("foo.bar", null);
         assertEquals("/foo.bar", file.getQualifiedPath());
         file.delete();

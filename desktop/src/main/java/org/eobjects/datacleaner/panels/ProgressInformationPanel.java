@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.ProgressCounter;
@@ -143,9 +142,6 @@ public class ProgressInformationPanel extends DCPanel {
         if (throwable == null) {
             stringWriter.append('\n');
             stringWriter.append("(No stack trace provided)");
-        } else if (throwable instanceof PreviousErrorsExistException) {
-            stringWriter.append(' ');
-            stringWriter.append(throwable.getMessage());
         } else {
             stringWriter.append('\n');
             PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -158,7 +154,7 @@ public class ProgressInformationPanel extends DCPanel {
             _loadingLabel.setText("Stopped!");
             _loadingLabel.setVisible(true);
             _loadingIcon.setVisible(false);
-            Collection<DCProgressBar> progressBars = _progressBars.values();
+            final Collection<DCProgressBar> progressBars = _progressBars.values();
             for (DCProgressBar progressBar : progressBars) {
                 progressBar.setEnabled(false);
                 progressBar.setString("Stopped!");
@@ -287,6 +283,10 @@ public class ProgressInformationPanel extends DCPanel {
                 addUserLog("Progress of " + table.getName() + ": " + currentRow + " rows processed");
             }
         }
+    }
+
+    public void updateProgressCancelled() {
+        appendMessage("\n--- DataCleaner job cancelled at " + getTimestamp() + " ---");
     }
 
     /**

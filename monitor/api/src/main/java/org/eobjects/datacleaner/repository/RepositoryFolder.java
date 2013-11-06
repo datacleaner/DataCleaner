@@ -93,7 +93,8 @@ public interface RepositoryFolder extends RepositoryNode {
      * @param name
      *            the name of the file.
      * @param writeCallback
-     *            a callback which should define what to write to the file.
+     *            a callback which should define what to write to the file, or
+     *            null if nothing should be written.
      * @return the {@link RepositoryFile} reference to the newly created file.
      */
     public RepositoryFile createFile(String name, Action<OutputStream> writeCallback);

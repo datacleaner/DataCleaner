@@ -56,4 +56,11 @@ public class FileRepositoryTest extends TestCase {
         assertTrue(node instanceof RepositoryFile);
         assertEquals(RepositoryFile.Type.ANALYSIS_JOB, ((RepositoryFile) node).getType());
     }
+
+    public void testCreateFileWithoutContents() throws Exception {
+        Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
+        RepositoryFile file = repository.createFile("foo.bar", null);
+        assertEquals("/foo.bar", file.getQualifiedPath());
+        file.delete();
+    }
 }

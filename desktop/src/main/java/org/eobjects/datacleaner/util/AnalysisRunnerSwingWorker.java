@@ -32,6 +32,8 @@ import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
+import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
+import org.eobjects.analyzer.job.runner.AnalysisJobCancellation;
 import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
@@ -168,6 +170,13 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 
     @Override
     public void errorUknown(AnalysisJob job, final Throwable throwable) {
+        if (throwable instanceof AnalysisJobCancellation) {
+            _progressInformationPanel.updateProgressCancelled();
+            return;
+        } else if (throwable instanceof PreviousErrorsExistException) {
+            // do nothing
+            return;
+        }
         _progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable, true);
     }
 

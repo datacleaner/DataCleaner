@@ -27,11 +27,15 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple {@link JobEngineManager} implementation
  */
 public class SimpleJobEngineManager implements JobEngineManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(SimpleJobEngineManager.class);
 
     private final Collection<JobEngine<?>> _jobEngines;
 
@@ -59,7 +63,8 @@ public class SimpleJobEngineManager implements JobEngineManager {
     public <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext) {
         final Collection<JobEngine<?>> jobEngines = getJobEngines();
         for (JobEngine<?> jobEngine : jobEngines) {
-            final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(), JobEngine.class, 0);
+            final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(),
+                    JobEngine.class, 0);
             if (ReflectionUtils.is(jobContext, jobEngineTypeParameter)) {
                 return (JobEngine<? extends T>) jobEngine;
             }
@@ -74,6 +79,9 @@ public class SimpleJobEngineManager implements JobEngineManager {
             if (jobEngine.containsJob(tenantContext, jobName)) {
                 return jobEngine;
             }
+        }
+        if (jobEngines.isEmpty()) {
+            logger.warn("No job engines has been configured, thus no engine found for job: {}", jobName);
         }
         return null;
     }

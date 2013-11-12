@@ -59,6 +59,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
                 scanner.scanPackage("org.eobjects.analyzer.beans", true);
                 scanner.scanPackage("org.eobjects.analyzer.result.renderer", false);
                 scanner.scanPackage("com.hi", true);
+                scanner.scanPackage("com.neopost", true);
                 _delegate = scanner;
             } else {
                 _delegate = applicationContext.getBean(DescriptorProvider.class);

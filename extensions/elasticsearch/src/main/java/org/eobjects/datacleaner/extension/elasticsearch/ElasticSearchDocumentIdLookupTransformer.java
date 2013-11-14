@@ -19,32 +19,31 @@
  */
 package org.eobjects.datacleaner.extension.elasticsearch;
 
-import java.util.Map;
-
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.action.ActionFuture;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetRequestBuilder;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.index.get.GetField;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.beans.api.TransformerBean;
+import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.util.StringUtils;
 
-@TransformerBean("ElasticSearch full text search")
+@TransformerBean("ElasticSearch document ID lookup")
+@Description("Look up documents in ElasticSearch by providing a document ID")
 @Categorized(ElasticSearchCategory.class)
-public class ElasticSearchFullSearchTransformer implements Transformer<Object> {
+public class ElasticSearchDocumentIdLookupTransformer implements Transformer<String> {
 
     @Configured
-    InputColumn<String> searchInput;
+    InputColumn<String> documentId;
 
     @Configured
     String[] clusterHosts = { "localhost:9300" };
@@ -58,6 +57,10 @@ public class ElasticSearchFullSearchTransformer implements Transformer<Object> {
     @Configured
     String documentType;
 
+    @Configured
+    @Description("Fields to return")
+    String[] fields;
+
     private ElasticSearchClientFactory _clientFactory;
 
     @Initialize
@@ -67,37 +70,35 @@ public class ElasticSearchFullSearchTransformer implements Transformer<Object> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        String[] names = new String[] { "Document ID", "Document" };
-        Class<?>[] types = new Class[] { String.class, Map.class };
-        return new OutputColumns(names, types);
+        return new OutputColumns(fields);
     }
 
     @Override
-    public Object[] transform(InputRow row) {
-        final Object[] result = new Object[2];
+    public String[] transform(InputRow row) {
+        final String[] result = new String[fields.length];
 
-        final String input = row.getValue(searchInput);
-        if (StringUtils.isNullOrEmpty(input)) {
+        final String id = row.getValue(documentId);
+        if (StringUtils.isNullOrEmpty(id)) {
             return result;
         }
 
         final Client client = _clientFactory.create();
         try {
-            final QueryBuilder query = QueryBuilders.queryString(input);
-            final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder(client).setIndices(indexName)
-                    .setTypes(documentType).setQuery(query).setSize(1).setSearchType(SearchType.QUERY_AND_FETCH)
-                    .setExplain(true);
+            final GetRequest request = new GetRequestBuilder(client).setId(id).setType(documentType).setFields(fields)
+                    .setIndex(indexName).setOperationThreaded(false).request();
+            final ActionFuture<GetResponse> getFuture = client.get(request);
+            final GetResponse response = getFuture.actionGet();
 
-            final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-            final SearchHits hits = searchResponse.getHits();
-            if (hits.getTotalHits() == 0) {
+            if (!response.isExists()) {
                 return result;
             }
 
-            final SearchHit hit = hits.getAt(0);
-            result[0] = hit.getId();
-            result[1] = hit.sourceAsMap();
-
+            for (int i = 0; i < fields.length; i++) {
+                final String field = fields[i];
+                final GetField valueGetter = response.getField(field);
+                final Object value = valueGetter.getValue();
+                result[i] = ConvertToStringTransformer.transformValue(value);
+            }
         } finally {
             client.close();
         }

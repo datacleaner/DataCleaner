@@ -23,7 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
+import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.NumberProperty;
 import org.eobjects.analyzer.beans.writers.WriteBuffer;
@@ -33,6 +35,8 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 
 @AnalyzerBean("ElasticSearch indexer")
+@Description("Consumes records and indexes them in a ElasticSearch search index.")
+@Categorized(ElasticSearchCategory.class)
 public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
 
     @Configured

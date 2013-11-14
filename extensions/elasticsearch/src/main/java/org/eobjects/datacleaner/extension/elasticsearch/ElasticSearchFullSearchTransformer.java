@@ -31,6 +31,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.Transformer;
@@ -40,6 +41,7 @@ import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.util.StringUtils;
 
 @TransformerBean("ElasticSearch full text search")
+@Description("Performs a full text search for every record into an ElasticSearch search index.")
 @Categorized(ElasticSearchCategory.class)
 public class ElasticSearchFullSearchTransformer implements Transformer<Object> {
 

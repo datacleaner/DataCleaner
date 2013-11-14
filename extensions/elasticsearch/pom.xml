@@ -6,7 +6,7 @@
 		<version>3.5.8-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<elasticsearch.version>0.90.3</elasticsearch.version>
+		<elasticsearch.version>0.90.7</elasticsearch.version>
 	</properties>
 	<artifactId>DataCleaner-elasticsearch</artifactId>
 	<packaging>jar</packaging>

@@ -43,7 +43,7 @@ import org.eobjects.analyzer.util.StringUtils;
 public class ElasticSearchDocumentIdLookupTransformer implements Transformer<String> {
 
     @Configured
-    InputColumn<String> documentId;
+    InputColumn<?> documentId;
 
     @Configured
     String[] clusterHosts = { "localhost:9300" };
@@ -77,7 +77,7 @@ public class ElasticSearchDocumentIdLookupTransformer implements Transformer<Str
     public String[] transform(InputRow row) {
         final String[] result = new String[fields.length];
 
-        final String id = row.getValue(documentId);
+        final String id = ConvertToStringTransformer.transformValue(row.getValue(documentId));
         if (StringUtils.isNullOrEmpty(id)) {
             return result;
         }

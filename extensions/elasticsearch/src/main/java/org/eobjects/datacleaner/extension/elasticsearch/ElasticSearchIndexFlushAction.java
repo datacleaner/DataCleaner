@@ -85,6 +85,9 @@ public class ElasticSearchIndexFlushAction implements Action<Iterable<Object[]>>
             if (response.hasFailures()) {
                 throw new IllegalStateException(response.buildFailureMessage());
             }
+        } catch (Exception e) {
+            logger.error("Unexpected error occurred while flushing ElasticSearch index buffer", e);
+            throw e;
         } finally {
             client.close();
         }

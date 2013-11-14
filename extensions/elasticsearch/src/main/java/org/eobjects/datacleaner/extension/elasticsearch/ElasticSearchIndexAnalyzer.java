@@ -28,16 +28,21 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.NumberProperty;
+import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.beans.writers.WriteBuffer;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AnalyzerBean("ElasticSearch indexer")
 @Description("Consumes records and indexes them in a ElasticSearch search index.")
 @Categorized(ElasticSearchCategory.class)
 public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ElasticSearchIndexAnalyzer.class);
 
     @Configured
     String[] clusterHosts = { "localhost:9300" };
@@ -52,7 +57,7 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
     String documentType;
 
     @Configured
-    InputColumn<String> idColumn;
+    InputColumn<?> idColumn;
 
     @Configured
     String[] fields;
@@ -83,7 +88,11 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
     @Override
     public void run(InputRow row, int distinctCount) {
         final Object[] record = new Object[values.length + 1];
-        final String id = row.getValue(idColumn);
+        final String id = ConvertToStringTransformer.transformValue(row.getValue(idColumn));
+        if (id == null) {
+            logger.warn("Skipping record because ID is null: {}", row);
+            return;
+        }
         record[0] = id;
         for (int i = 0; i < values.length; i++) {
             Object value = row.getValue(values[i]);

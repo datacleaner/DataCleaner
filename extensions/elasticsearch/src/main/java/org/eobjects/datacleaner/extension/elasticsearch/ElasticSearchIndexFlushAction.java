@@ -53,9 +53,9 @@ public class ElasticSearchIndexFlushAction implements Action<Iterable<Object[]>>
 
     @Override
     public void run(Iterable<Object[]> rows) throws Exception {
-        Client client = _clientFactory.create();
+        final Client client = _clientFactory.create();
         try {
-            BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(client);
+            final BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder(client);
 
             for (Object[] row : rows) {
                 final String id = (String) row[0];
@@ -70,6 +70,7 @@ public class ElasticSearchIndexFlushAction implements Action<Iterable<Object[]>>
                 logger.debug("Indexing record ({}): {}", id, map);
                 final IndexRequest indexRequest = new IndexRequest(_indexName, _documentType, id);
                 indexRequest.source(map);
+                indexRequest.operationThreaded(false);
                 bulkRequestBuilder.add(indexRequest);
             }
 

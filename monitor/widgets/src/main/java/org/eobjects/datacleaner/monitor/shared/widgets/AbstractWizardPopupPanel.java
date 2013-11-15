@@ -181,9 +181,9 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
                     setNextClickHandler(new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
+                            _nextButtonClickRegistration.removeHandler();
                             _targetPanel.setWidget(_loadingIndicator);
                             _currentPanel.requestNextPage(createNextPageCallback());
-                            _nextButtonClickRegistration.removeHandler();
                         }
                     });
 

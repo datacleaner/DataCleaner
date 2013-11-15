@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @Description("Consumes records and indexes them in a ElasticSearch search index.")
 @Categorized(ElasticSearchCategory.class)
 public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchIndexAnalyzer.class);
 
     @Configured
@@ -109,5 +109,41 @@ public class ElasticSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
         final int indexCount = _counter.get();
         final WriteDataResult result = new WriteDataResultImpl(indexCount, 0, 0);
         return result;
+    }
+
+    public void setBulkIndexSize(int bulkIndexSize) {
+        this.bulkIndexSize = bulkIndexSize;
+    }
+
+    public void setClusterHosts(String[] clusterHosts) {
+        this.clusterHosts = clusterHosts;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
+
+    public void setCreateIndex(boolean createIndex) {
+        this.createIndex = createIndex;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
+
+    public void setFields(String[] fields) {
+        this.fields = fields;
+    }
+
+    public void setIdColumn(InputColumn<?> idColumn) {
+        this.idColumn = idColumn;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    public void setValues(InputColumn<?>[] values) {
+        this.values = values;
     }
 }

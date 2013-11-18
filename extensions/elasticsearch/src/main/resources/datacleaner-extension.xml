@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
-	<name>Elasticsearch indexing and searching</name>
-	<package>org.eobjects.datacleaner.extension.elasticsearch</package>
-	<icon>org/eobjects/datacleaner/extension/elasticsearch/ElasticSearchIndexAnalyzer.png</icon>
-</extension>

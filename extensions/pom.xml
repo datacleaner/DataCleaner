@@ -49,7 +49,6 @@
 				<module>copy-data-wizard</module>
 				<module>completeness-analysis-wizard</module>
 				<module>lucene</module>
-				<module>elasticsearch</module>
 			</modules>
 		</profile>
 		<profile>

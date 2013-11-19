@@ -46,6 +46,17 @@ public interface RepositoryFile extends RepositoryNode {
      */
     @Deprecated
     public InputStream readFile();
+    
+    /**
+     * Gets the size (in number of bytes) of this file's data. An
+     * approximated number is allowed.
+     * 
+     * If the size is not determinable without actually reading through the
+     * whole contents of the resource, -1 is returned.
+     * 
+     * @return
+     */
+    public long getSize();
 
     /**
      * Opens up an {@link OutputStream} to write to the file, and allows a

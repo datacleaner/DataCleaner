@@ -132,7 +132,7 @@ public class RepositoryFileResource implements Resource, Serializable {
 
     @Override
     public long getSize() {
-        return -1;
+        return getRepositoryFile().getSize();
     }
 
     @Override

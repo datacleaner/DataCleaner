@@ -64,6 +64,11 @@ public final class FileRepositoryFile implements RepositoryFile {
     public String getName() {
         return _file.getName();
     }
+    
+    @Override
+    public long getSize() {
+        return _file.length();
+    }
 
     @Override
     public String getQualifiedPath() {

@@ -96,6 +96,11 @@ public class RepositoryFileResourceTest extends TestCase {
             public long getLastModified() {
                 throw new UnsupportedOperationException();
             }
+
+            @Override
+            public long getSize() {
+                return contents.length;
+            }
         };
 
         RepositoryFileResource resource = new RepositoryFileResource(file);

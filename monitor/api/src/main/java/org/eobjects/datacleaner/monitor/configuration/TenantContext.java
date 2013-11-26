@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -42,7 +41,7 @@ public interface TenantContext {
 
     public JobContext getJob(JobIdentifier jobIdentifier);
 
-    public ResultContext getLatestResult(MetricJobContext job);
+    public ResultContext getLatestResult(JobContext job);
 
     public ResultContext getResult(String resultFileName);
 

@@ -31,7 +31,6 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -215,7 +214,7 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public ResultContext getLatestResult(MetricJobContext job) {
+    public ResultContext getLatestResult(JobContext job) {
         final String jobName = job.getName();
         final RepositoryFolder resultFolder = getResultFolder();
         final RepositoryFile resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);

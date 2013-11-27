@@ -142,10 +142,15 @@ public final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public void writeFile(Action<OutputStream> writeCallback) {
+        writeFile(writeCallback, false);
+    }
+    
+    @Override
+    public void writeFile(Action<OutputStream> writeCallback, boolean append) {
         final FileOutputStream fileOutputStream;
         final OutputStream outputStream;
         try {
-            fileOutputStream = new FileOutputStream(_file);
+            fileOutputStream = new FileOutputStream(_file, append);
             outputStream = new BufferedOutputStream(fileOutputStream);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);

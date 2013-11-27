@@ -41,9 +41,18 @@ public interface RepositoryFolder extends RepositoryNode {
      * 
      * @param name
      *            the name of the (sub)folder.
-     * @return a (sub)folder of this folder, by name.
+     * @return a (sub)folder of this folder, or null if it does not exist.
      */
     public RepositoryFolder getFolder(String name);
+
+    /**
+     * Gets or creates a (sub) folder of this folder.
+     * 
+     * @param name
+     *            the name of the (sub)folder.
+     * @return a (sub) folder of this folder
+     */
+    public RepositoryFolder getOrCreateFolder(String name);
 
     /**
      * Gets files in this folder.
@@ -105,6 +114,9 @@ public interface RepositoryFolder extends RepositoryNode {
      * @param name
      *            the name of the folder.
      * @return the resulting {@link RepositoryFolder} object.
+     * 
+     * @throws IllegalArgumentException
+     *             if a folder with this name already exists.
      */
-    public RepositoryFolder createFolder(String name);
+    public RepositoryFolder createFolder(String name) throws IllegalArgumentException;
 }

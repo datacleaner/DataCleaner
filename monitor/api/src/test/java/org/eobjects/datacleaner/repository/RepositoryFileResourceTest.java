@@ -64,8 +64,16 @@ public class RepositoryFileResourceTest extends TestCase {
 
             @Override
             public void writeFile(Action<OutputStream> writeCallback) {
+                writeFile(writeCallback, false);
+            }
+
+            @Override
+            public void writeFile(Action<OutputStream> writeCallback, boolean append) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 try {
+                    if (append && contents != null) {
+                        out.write(contents);
+                    }
                     writeCallback.run(out);
                 } catch (Exception e) {
                     throw new UnsupportedOperationException();

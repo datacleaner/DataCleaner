@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 
 import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.Resource;
 import org.eobjects.metamodel.util.ResourceException;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class RepositoryFileResource implements Resource, Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFileResource.class);
 
     private final SerializableRef<RepositoryFile> _fileRef;
@@ -153,27 +152,7 @@ public class RepositoryFileResource implements Resource, Serializable {
 
     @Override
     public void append(final Action<OutputStream> appendAction) throws ResourceException {
-        // since RepositoryFile does not have an append operation, but are
-        // generally small files, we do a "read and then write" style append
-        // where we hold the file's contents in memory. This is not going to be
-        // great for performance, but retains functionality and interface
-        // compatibility.
-
-        final RepositoryFile file = getRepositoryFile();
-        final byte[] bytes = file.readFile(new Func<InputStream, byte[]>() {
-            @Override
-            public byte[] eval(InputStream in) {
-                return FileHelper.readAsBytes(in);
-            }
-        });
-
-        file.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                out.write(bytes);
-                appendAction.run(out);
-            }
-        });
+        getRepositoryFile().writeFile(appendAction, true);
     }
 
     @Override

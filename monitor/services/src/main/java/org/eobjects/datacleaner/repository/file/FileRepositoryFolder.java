@@ -223,4 +223,13 @@ public class FileRepositoryFolder implements RepositoryFolder {
         }
         return new FileRepositoryFolder(this, file);
     }
+
+    @Override
+    public RepositoryFolder getOrCreateFolder(String name) {
+        final File file = new File(_file, name);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        return new FileRepositoryFolder(this, file);
+    }
 }

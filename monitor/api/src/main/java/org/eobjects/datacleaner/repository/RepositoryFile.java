@@ -46,10 +46,10 @@ public interface RepositoryFile extends RepositoryNode {
      */
     @Deprecated
     public InputStream readFile();
-    
+
     /**
-     * Gets the size (in number of bytes) of this file's data. An
-     * approximated number is allowed.
+     * Gets the size (in number of bytes) of this file's data. An approximated
+     * number is allowed.
      * 
      * If the size is not determinable without actually reading through the
      * whole contents of the resource, -1 is returned.
@@ -66,6 +66,17 @@ public interface RepositoryFile extends RepositoryNode {
      *            a callback which should define what to write to the file.
      */
     public void writeFile(Action<OutputStream> writeCallback);
+
+    /**
+     * Opens up an {@link OutputStream} to write to the file, and allows a
+     * callback to perform writing actions on it.
+     * 
+     * @param writeCallback
+     * @param append
+     *            whether or not to append to the existing content (if any) of
+     *            the file.
+     */
+    public void writeFile(Action<OutputStream> writeCallback, boolean append);
 
     /**
      * Opens up an {@link InputStream} to read from the file, and allows a

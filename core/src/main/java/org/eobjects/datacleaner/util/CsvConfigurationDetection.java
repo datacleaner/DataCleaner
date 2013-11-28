@@ -29,8 +29,13 @@ import java.util.Arrays;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.csv.CsvConfiguration;
+import org.eobjects.metamodel.csv.CsvDataContext;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.data.Row;
+import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.InMemoryResource;
 import org.eobjects.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +62,7 @@ public class CsvConfigurationDetection {
     public CsvConfigurationDetection(File file) {
         _resource = new FileResource(file);
     }
-    
+
     public CsvConfigurationDetection(Resource resource) {
         _resource = resource;
     }
@@ -208,8 +213,39 @@ public class CsvConfigurationDetection {
             }
         }
 
+        // detect if multi line values occur
+        boolean multiline = false;
+        final CsvConfiguration multiLineConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
+                encoding, separatorChar, quoteChar, escapeChar, false, true);
+        try {
+            final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
+                    System.currentTimeMillis()), multiLineConfiguration);
+            Table table = testDataContext.getDefaultSchema().getTable(0);
+            DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute();
+            try {
+                while (dataSet.next()) {
+                    final Row row = dataSet.getRow();
+                    final Object[] values = row.getValues();
+                    for (Object value : values) {
+                        if (value != null && value instanceof String) {
+                            if (((String) value).indexOf('\n') != -1) {
+                                // found a multi line value
+                                multiline = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                dataSet.close();
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to detect multiline property of CsvConfiguration, defaulting to 'true'", e);
+            return multiLineConfiguration;
+        }
+
         return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, encoding, separatorChar, quoteChar,
-                escapeChar, true);
+                escapeChar, false, multiline);
     }
 
     protected char[] readSampleBuffer(byte[] bytes, final String charSet) throws IllegalStateException {

@@ -904,6 +904,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+        FilterJobBuilderPresenter presenter = _filterPresenters.get(filterJobBuilder);
+        if (presenter != null) {
+            presenter.onRequirementChanged();
+        }
     }
 
     @Override

@@ -39,11 +39,6 @@ public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPrese
 	public TransformerJobBuilder<?> getJobBuilder();
 
 	/**
-	 * Invoked when the requirement for this transformer changes.
-	 */
-	public void onRequirementChanged();
-
-	/**
 	 * Invoked when the output columns of this transformer changes.
 	 * 
 	 * @param outputColumns

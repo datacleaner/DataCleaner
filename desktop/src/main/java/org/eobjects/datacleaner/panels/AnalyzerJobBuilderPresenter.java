@@ -35,8 +35,4 @@ public interface AnalyzerJobBuilderPresenter extends ComponentJobBuilderPresente
 	@Override
 	public AnalyzerJobBuilder<?> getJobBuilder();
 
-	/**
-	 * Invoked when the requirement for this transformer changes.
-	 */
-	public void onRequirementChanged();
 }

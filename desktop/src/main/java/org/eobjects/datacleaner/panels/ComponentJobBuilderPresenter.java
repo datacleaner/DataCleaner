@@ -61,4 +61,9 @@ public interface ComponentJobBuilderPresenter {
 	 * Invoked when a configured property changes.
 	 */
 	public void onConfigurationChanged();
+	
+    /**
+     * Invoked when the requirement for this component changes.
+     */
+    public void onRequirementChanged();
 }

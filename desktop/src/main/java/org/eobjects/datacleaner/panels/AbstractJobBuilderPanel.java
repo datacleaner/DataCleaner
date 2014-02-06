@@ -52,234 +52,250 @@ import org.jdesktop.swingx.JXTaskPane;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final DCTaskPaneContainer _taskPaneContainer;
-	private final PropertyWidgetFactory _propertyWidgetFactory;
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-	private final BeanDescriptor<?> _descriptor;
-	private final ChangeRequirementButton _requirementButton;
-	private final DCPanel _visualizationPanel;
+    private final ImageManager imageManager = ImageManager.getInstance();
+    private final DCTaskPaneContainer _taskPaneContainer;
+    private final PropertyWidgetFactory _propertyWidgetFactory;
+    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+    private final BeanDescriptor<?> _descriptor;
+    private final ChangeRequirementButton _requirementButton;
+    private final DCPanel _visualizationPanel;
+    private final JComponent _buttonPanel;
 
-	protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			PropertyWidgetFactory propertyWidgetFactory) {
-		this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
-	}
+    protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            PropertyWidgetFactory propertyWidgetFactory) {
+        this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
+    }
 
-	protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-			int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			PropertyWidgetFactory propertyWidgetFactory) {
-		super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
-				WidgetUtils.BG_COLOR_BRIGHTEST);
-		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-		_beanJobBuilder = beanJobBuilder;
-		_descriptor = beanJobBuilder.getDescriptor();
-		_propertyWidgetFactory = propertyWidgetFactory;
+    protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            PropertyWidgetFactory propertyWidgetFactory) {
+        this(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, beanJobBuilder,
+                propertyWidgetFactory, true);
+    }
 
-		_visualizationPanel = new DCPanel();
-		_visualizationPanel.setLayout(new BorderLayout());
+    protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            PropertyWidgetFactory propertyWidgetFactory, boolean displayRequirementButton) {
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
+                WidgetUtils.BG_COLOR_BRIGHTEST);
+        _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+        _beanJobBuilder = beanJobBuilder;
+        _descriptor = beanJobBuilder.getDescriptor();
+        _propertyWidgetFactory = propertyWidgetFactory;
 
-		setLayout(new BorderLayout());
-		
-		final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
+        _visualizationPanel = new DCPanel();
+        _visualizationPanel.setLayout(new BorderLayout());
+
+        setLayout(new BorderLayout());
+
+        final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
         add(scrolleable, BorderLayout.CENTER);
 
-		if (beanJobBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
-			_requirementButton = new ChangeRequirementButton(
-					(AbstractBeanWithInputColumnsBuilder<?, ?, ?>) beanJobBuilder);
-		} else {
-			_requirementButton = null;
-		}
+        if (displayRequirementButton && beanJobBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
+            _requirementButton = new ChangeRequirementButton(
+                    (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) beanJobBuilder);
+        } else {
+            _requirementButton = null;
+        }
 
-		JComponent buttonPanel = createTopButtonPanel();
-		add(buttonPanel, BorderLayout.NORTH);
-	}
+        _buttonPanel = createTopButtonPanel();
+        add(_buttonPanel, BorderLayout.NORTH);
+    }
 
-	protected JComponent createTopButtonPanel() {
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		if (_requirementButton != null) {
-			buttonPanel.add(_requirementButton);
-		}
-		return buttonPanel;
-	}
+    public void addToButtonPanel(JComponent component) {
+        _buttonPanel.add(component);
+    }
 
-	public ChangeRequirementButton getRequirementButton() {
-		return _requirementButton;
-	}
+    protected JComponent createTopButtonPanel() {
+        final DCPanel buttonPanel = new DCPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
+        if (_requirementButton != null) {
+            buttonPanel.add(_requirementButton);
+        }
+        return buttonPanel;
+    }
 
-	protected DCTaskPaneContainer getTaskPaneContainer() {
-		return _taskPaneContainer;
-	}
+    public ChangeRequirementButton getRequirementButton() {
+        return _requirementButton;
+    }
 
-	@Override
-	public final JComponent createJComponent() {
-		init();
-		JComponent decorate = decorate(this);
-		buildVisualizationTaskPane();
-		return decorate;
-	}
+    protected DCTaskPaneContainer getTaskPaneContainer() {
+        return _taskPaneContainer;
+    }
 
-	@Override
-	public AbstractBeanJobBuilder<?, ?, ?> getJobBuilder() {
-		return _beanJobBuilder;
-	}
+    @Override
+    public final JComponent createJComponent() {
+        init();
+        JComponent decorate = decorate(this);
+        buildVisualizationTaskPane();
+        return decorate;
+    }
 
-	/**
-	 * Can be implemented by subclasses to intercept the created JComponent
-	 * before returning.
-	 * 
-	 * @param panel
-	 * @return
-	 */
-	protected JComponent decorate(DCPanel panel) {
-		return panel;
-	}
+    @Override
+    public AbstractBeanJobBuilder<?, ?, ?> getJobBuilder() {
+        return _beanJobBuilder;
+    }
 
-	private final void init() {
-		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
-		for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
-			buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
-					propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
-					propertyTaskPane.getTitle(), _beanJobBuilder, propertyTaskPane.isExpanded());
-		}
-	}
+    /**
+     * Can be implemented by subclasses to intercept the created JComponent
+     * before returning.
+     * 
+     * @param panel
+     * @return
+     */
+    protected JComponent decorate(DCPanel panel) {
+        return panel;
+    }
 
-	private void buildVisualizationTaskPane() {
-		if (!showContextVisualization()) {
-			return;
-		}
-		ImageIcon icon = imageManager.getImageIcon("images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
-		addTaskPane(icon, "Context visualization", _visualizationPanel);
-	}
+    private final void init() {
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
+        for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
+            buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
+                    propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
+                    propertyTaskPane.getTitle(), getJobBuilder(), propertyTaskPane.isExpanded());
+        }
+    }
 
-	protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-		Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
-				_descriptor.getConfiguredProperties());
+    private void buildVisualizationTaskPane() {
+        if (!showContextVisualization()) {
+            return;
+        }
+        ImageIcon icon = imageManager.getImageIcon("images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
+        addTaskPane(icon, "Context visualization", _visualizationPanel);
+    }
 
-		List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-		List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-		List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
-		for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
-			boolean required = propertyDescriptor.isRequired();
-			if (required && propertyDescriptor.isInputColumn()) {
-				inputProperties.add(propertyDescriptor);
-			} else if (required) {
-				requiredProperties.add(propertyDescriptor);
-			} else {
-				optionalProperties.add(propertyDescriptor);
-			}
-		}
+    protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
+        Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
+                _descriptor.getConfiguredProperties());
 
-		final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
-		result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
-		result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
-		result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
-				"images/actions/edit.png", optionalProperties, false));
+        List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        List<ConfiguredPropertyDescriptor> optionalProperties = new ArrayList<ConfiguredPropertyDescriptor>();
+        for (ConfiguredPropertyDescriptor propertyDescriptor : configuredProperties) {
+            boolean required = propertyDescriptor.isRequired();
+            if (required && propertyDescriptor.isInputColumn()) {
+                inputProperties.add(propertyDescriptor);
+            } else if (required) {
+                requiredProperties.add(propertyDescriptor);
+            } else {
+                optionalProperties.add(propertyDescriptor);
+            }
+        }
 
-		return result;
-	}
+        final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
+        result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
+        result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
+        result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
+                "images/actions/edit.png", optionalProperties, false));
 
-	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		buildTaskPane(properties, icon, title, beanJobBuilder, true);
-	}
+        return result;
+    }
 
-	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, boolean expanded) {
-		if (!properties.isEmpty()) {
-			final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
+    protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+        buildTaskPane(properties, icon, title, beanJobBuilder, true);
+    }
 
-				private static final long serialVersionUID = 1L;
+    protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, boolean expanded) {
+        if (!properties.isEmpty()) {
+            final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
 
-				@Override
-				protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-					PropertyWidget<?> propertyWidget = createPropertyWidget(_beanJobBuilder, propertyDescriptor);
-					getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
-					return propertyWidget;
-				}
-			};
-			panel.addProperties(properties);
+                private static final long serialVersionUID = 1L;
 
-			if (!panel.isEmpty()) {
-				addTaskPane(icon, title, panel, expanded);
-			}
-		}
-	}
+                @Override
+                protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+                    PropertyWidget<?> propertyWidget = createPropertyWidget(getJobBuilder(), propertyDescriptor);
+                    getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
+                    return propertyWidget;
+                }
+            };
+            panel.addProperties(properties);
 
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		return getPropertyWidgetFactory().create(propertyDescriptor);
-	}
+            if (!panel.isEmpty()) {
+                addTaskPane(icon, title, panel, expanded);
+            }
+        }
+    }
 
-	protected void addTaskPane(Icon icon, String title, JComponent content) {
-		addTaskPane(icon, title, content, true);
-	}
+    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        return getPropertyWidgetFactory().create(propertyDescriptor);
+    }
 
-	protected void addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
-		JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
-		taskPane.add(content);
-		if (!expanded) {
-			taskPane.setCollapsed(true);
-		}
-		_taskPaneContainer.add(taskPane);
-	}
+    protected void addTaskPane(Icon icon, String title, JComponent content) {
+        addTaskPane(icon, title, content, true);
+    }
 
-	public final void applyPropertyValues() {
-		applyPropertyValues(true);
-	}
+    protected void addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
+        JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
+        taskPane.add(content);
+        if (!expanded) {
+            taskPane.setCollapsed(true);
+        }
+        _taskPaneContainer.add(taskPane);
+    }
 
-	/**
-	 * @param errorAware
-	 *            defines whether or not the method should throw an exception in
-	 *            case some of the applied properties are missing or errornous
-	 */
-	public final void applyPropertyValues(boolean errorAware) {
-		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
-			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
-			if (propertyWidget.isSet()) {
-				Object value = propertyWidget.getValue();
-				setConfiguredProperty(propertyDescriptor, value);
-			} else {
-				if (errorAware && propertyDescriptor.isRequired()) {
-					throw new UnconfiguredConfiguredPropertyException(_beanJobBuilder, propertyDescriptor);
-				}
-			}
-		}
-	}
+    public final void applyPropertyValues() {
+        applyPropertyValues(true);
+    }
 
-	public final PropertyWidgetFactory getPropertyWidgetFactory() {
-		return _propertyWidgetFactory;
-	}
+    /**
+     * @param errorAware
+     *            defines whether or not the method should throw an exception in
+     *            case some of the applied properties are missing or errornous
+     */
+    public final void applyPropertyValues(boolean errorAware) {
+        for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
+            ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
+            if (propertyWidget.isSet()) {
+                Object value = propertyWidget.getValue();
+                setConfiguredProperty(propertyDescriptor, value);
+            } else {
+                if (errorAware && propertyDescriptor.isRequired()) {
+                    throw new UnconfiguredConfiguredPropertyException(getJobBuilder(), propertyDescriptor);
+                }
+            }
+        }
+    }
 
-	public AnalysisJobBuilder getAnalysisJobBuilder() {
-		return _beanJobBuilder.getAnalysisJobBuilder();
-	}
+    public final PropertyWidgetFactory getPropertyWidgetFactory() {
+        return _propertyWidgetFactory;
+    }
 
-	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
-		_beanJobBuilder.setConfiguredProperty(propertyDescriptor, value);
-	}
+    public AnalysisJobBuilder getAnalysisJobBuilder() {
+        return getJobBuilder().getAnalysisJobBuilder();
+    }
 
-	public void onConfigurationChanged() {
-		getPropertyWidgetFactory().onConfigurationChanged();
+    protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
+        getJobBuilder().setConfiguredProperty(propertyDescriptor, value);
+    }
 
-		if (showContextVisualization()) {
-			final AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
-			_visualizationPanel.removeAll();
-			if (jobBuilder.isConfigured()) {
-				JComponent visualization = VisualizeJobGraph.create(jobBuilder);
-				_visualizationPanel.add(visualization, BorderLayout.CENTER);
-			}
-			_visualizationPanel.updateUI();
-		}
-	}
+    @Override
+    public void onConfigurationChanged() {
+        getPropertyWidgetFactory().onConfigurationChanged();
 
-	public void onRequirementChanged() {
-		_requirementButton.updateText();
-	}
+        if (showContextVisualization()) {
+            final AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
+            _visualizationPanel.removeAll();
+            if (jobBuilder.isConfigured()) {
+                JComponent visualization = VisualizeJobGraph.create(jobBuilder);
+                _visualizationPanel.add(visualization, BorderLayout.CENTER);
+            }
+            _visualizationPanel.updateUI();
+        }
+    }
 
-	protected boolean showContextVisualization() {
-		return true;
-	}
+    @Override
+    public void onRequirementChanged() {
+        if (_requirementButton != null) {
+            _requirementButton.updateText();
+        }
+    }
+
+    protected boolean showContextVisualization() {
+        return true;
+    }
 }

@@ -35,8 +35,4 @@ public interface FilterJobBuilderPresenter extends ComponentJobBuilderPresenter 
 	@Override
 	public FilterJobBuilder<?, ?> getJobBuilder();
 
-	/**
-	 * Invoked when the requirement for this filter changes.
-	 */
-	public void onRequirementChanged();
 }

@@ -814,7 +814,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 .getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
         final TransformerJobBuilderPresenter presenter = (TransformerJobBuilderPresenter) renderer
                 .render(transformerJobBuilder);
-
+        
         _transformerPresenters.put(transformerJobBuilder, presenter);
         JComponent comp = presenter.createJComponent();
         _tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),

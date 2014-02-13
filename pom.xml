@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sshwagon.version>2.3</sshwagon.version>
-		<javadoc.version>2.9</javadoc.version>
-		<slf4j.version>1.7.4</slf4j.version>
+		<sshwagon.version>2.6</sshwagon.version>
+		<javadoc.version>2.9.1</javadoc.version>
+		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.11</junit.version>
-		<httpcomponents.version>4.2.3</httpcomponents.version>
+		<httpcomponents.version>4.3.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<analyzerbeans.version>0.38-SNAPSHOT</analyzerbeans.version>
 	</properties>
@@ -15,7 +15,7 @@
 		<!-- See https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide -->
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
-		<version>7</version>
+		<version>9</version>
 	</parent>
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
@@ -280,6 +280,9 @@
 								<bannedDependencies>
 									<excludes>
 										<exclude>commons-logging:commons-logging</exclude>
+										<exclude>com.google.collections:google-collections</exclude>
+										<exclude>javax.servlet:servlet-api:*:jar:compile</exclude>
+										<exclude>org.mortbay.jetty:servlet-api:*:*:compile</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -356,7 +359,7 @@
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
 					<artifactId>scala-maven-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.1.6</version>
 					<executions>
 						<execution>
 							<id>scala-compile-first</id>

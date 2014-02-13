@@ -7,6 +7,7 @@
 		<slf4j.version>1.7.4</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.3</httpcomponents.version>
+		<guava.version>16.0.1</guava.version>
 		<analyzerbeans.version>0.38-SNAPSHOT</analyzerbeans.version>
 	</properties>
 	<parent>
@@ -488,11 +489,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>16.0</version>
-			</dependency>
-			<dependency>
 				<groupId>org.eobjects.analyzerbeans</groupId>
 				<artifactId>AnalyzerBeans-core</artifactId>
 				<version>${analyzerbeans.version}</version>
@@ -533,7 +529,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>

@@ -58,11 +58,14 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
 			((AbstractOutputWriterAnalyzer) analyzer).configureForTransformedData(analysisJobBuilder,
 					_transformerJobBuilder.getDescriptor());
 		}
-		List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
-		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-		analyzerJobBuilder.clearInputColumns();
-		analyzerJobBuilder.addInputColumns(inputColumns);
-		analyzerJobBuilder.addInputColumns(outputColumns);
+		
+		if (analyzerJobBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
+		    List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
+		    List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
+		    analyzerJobBuilder.clearInputColumns();
+		    analyzerJobBuilder.addInputColumns(inputColumns);
+		    analyzerJobBuilder.addInputColumns(outputColumns);
+		}
 	}
 
 	@Override

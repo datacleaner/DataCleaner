@@ -28,6 +28,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
@@ -39,86 +40,97 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
+/**
+ * Specialization of {@link AbstractJobBuilderPanel} for {@link Transformer}s.
+ * 
+ * This panel will show the transformers configuration properties as well as
+ * output columns, a "write data" button, a preview button and a context
+ * visualization.
+ */
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
-	private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
+    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
-	private final TransformerJobBuilder<?> _transformerJobBuilder;
-	private final ColumnListTable _outputColumnsTable;
-	private final JButton _previewButton;
-	private final JButton _writeDataButton;
-	private final WindowContext _windowContext;
+    private final TransformerJobBuilder<?> _transformerJobBuilder;
+    private final ColumnListTable _outputColumnsTable;
+    private final JButton _previewButton;
+    private final JButton _writeDataButton;
+    private final WindowContext _windowContext;
 
-	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
-		this(WATERMARK_IMAGE, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
-	}
+    public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+            PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+        this(WATERMARK_IMAGE, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
+    }
 
-	protected TransformerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-			int watermarkVerticalPosition, TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
-		super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
-				propertyWidgetFactory);
-		_transformerJobBuilder = transformerJobBuilder;
-		_windowContext = windowContext;
+    protected TransformerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+            PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
+                propertyWidgetFactory);
+        _transformerJobBuilder = transformerJobBuilder;
+        _windowContext = windowContext;
 
-		final List<MutableInputColumn<?>> outputColumns;
-		if (_transformerJobBuilder.isConfigured()) {
-			outputColumns = _transformerJobBuilder.getOutputColumns();
-		} else {
-			outputColumns = new ArrayList<MutableInputColumn<?>>(0);
-		}
-		_outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
+        final List<MutableInputColumn<?>> outputColumns;
+        if (_transformerJobBuilder.isConfigured()) {
+            outputColumns = _transformerJobBuilder.getOutputColumns();
+        } else {
+            outputColumns = new ArrayList<MutableInputColumn<?>>(0);
+        }
+        _outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
 
-		_writeDataButton = new JButton("Write data",
-				imageManager.getImageIcon("images/component-types/type_output_writer.png"));
-		_writeDataButton
-				.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_transformerJobBuilder));
+        _writeDataButton = new JButton("Write data",
+                imageManager.getImageIcon("images/component-types/type_output_writer.png"));
+        _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(
+                _transformerJobBuilder));
 
-		_previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
-		_previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-				getAnalysisJobBuilder(), _transformerJobBuilder, configuration));
+        _previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
+        int previewRows = getPreviewRows();
+        _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
+                getAnalysisJobBuilder(), _transformerJobBuilder, configuration, previewRows));
 
+        final DCPanel bottomButtonPanel = new DCPanel();
+        bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
+        bottomButtonPanel.add(_writeDataButton);
+        bottomButtonPanel.add(_previewButton);
+        _outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
+    }
 
-		final DCPanel bottomButtonPanel = new DCPanel();
-		bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		bottomButtonPanel.add(_writeDataButton);
-		bottomButtonPanel.add(_previewButton);
-		_outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
-	}
+    protected int getPreviewRows() {
+        return PreviewTransformedDataActionListener.DEFAULT_PREVIEW_ROWS;
+    }
 
-	public WindowContext getWindowContext() {
-		return _windowContext;
-	}
+    public WindowContext getWindowContext() {
+        return _windowContext;
+    }
 
-	@Override
-	protected JComponent decorate(DCPanel panel) {
-		JComponent result = super.decorate(panel);
-		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
-				_outputColumnsTable);
-		return result;
-	}
+    @Override
+    protected JComponent decorate(DCPanel panel) {
+        JComponent result = super.decorate(panel);
+        addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
+                _outputColumnsTable);
+        return result;
+    }
 
-	public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
-		_outputColumnsTable.setColumns(outputColumns);
-	}
+    public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
+        _outputColumnsTable.setColumns(outputColumns);
+    }
 
-	@Override
-	public TransformerJobBuilder<?> getJobBuilder() {
-		return _transformerJobBuilder;
-	}
+    @Override
+    public TransformerJobBuilder<?> getJobBuilder() {
+        return _transformerJobBuilder;
+    }
 
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
-	}
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
+    }
 
-	@Override
-	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
-		_outputColumnsTable.setColumns(outputColumns);
-	}
+    @Override
+    public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
+        _outputColumnsTable.setColumns(outputColumns);
+    }
 }

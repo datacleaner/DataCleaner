@@ -54,123 +54,130 @@ import org.slf4j.LoggerFactory;
 /**
  * ActionListener responsible for previewing transformed data in a
  * {@link DataSetWindow}.
- * 
- * @author Kasper Sørensen
  */
 public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
 
-	private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(PreviewTransformedDataActionListener.class);
 
-	public static final int DEFAULT_PREVIEW_ROWS = 200;
+    public static final int DEFAULT_PREVIEW_ROWS = 200;
 
-	private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final TransformerJobBuilder<?> _transformerJobBuilder;
-	private final WindowContext _windowContext;
-	private final AnalyzerBeansConfiguration _configuration;
+    private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final TransformerJobBuilder<?> _transformerJobBuilder;
+    private final WindowContext _windowContext;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final int _previewRows;
 
-	public PreviewTransformedDataActionListener(WindowContext windowContext,
-			TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
-			TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
-		_windowContext = windowContext;
-		_transformerJobBuilderPresenter = transformerJobBuilderPresenter;
-		_analysisJobBuilder = analysisJobBuilder;
-		_transformerJobBuilder = transformerJobBuilder;
-		_configuration = configuration;
-	}
+    public PreviewTransformedDataActionListener(WindowContext windowContext,
+            TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
+            TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
+        this(windowContext, transformerJobBuilderPresenter, analysisJobBuilder, transformerJobBuilder, configuration,
+                DEFAULT_PREVIEW_ROWS);
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
-		window.setVisible(true);
-	}
+    public PreviewTransformedDataActionListener(WindowContext windowContext,
+            TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
+            TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration, int previewRows) {
+        _windowContext = windowContext;
+        _transformerJobBuilderPresenter = transformerJobBuilderPresenter;
+        _analysisJobBuilder = analysisJobBuilder;
+        _transformerJobBuilder = transformerJobBuilder;
+        _configuration = configuration;
+        _previewRows = previewRows;
+    }
 
-	@Override
-	public TableModel call() throws Exception {
-		if (_transformerJobBuilderPresenter != null) {
-			_transformerJobBuilderPresenter.applyPropertyValues();
-		}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
+        window.setVisible(true);
+    }
 
-		final AnalysisJobBuilder ajb = copy(_analysisJobBuilder);
+    @Override
+    public TableModel call() throws Exception {
+        if (_transformerJobBuilderPresenter != null) {
+            _transformerJobBuilderPresenter.applyPropertyValues();
+        }
 
-		TransformerJobBuilder<?> tjb = findTransformerJobBuilder(ajb, _transformerJobBuilder);
+        final AnalysisJobBuilder ajb = copy(_analysisJobBuilder);
 
-		// remove all analyzers, except the dummy
-		ajb.removeAllAnalyzers();
+        TransformerJobBuilder<?> tjb = findTransformerJobBuilder(ajb, _transformerJobBuilder);
 
-		// add the result collector (a dummy analyzer)
-		final AnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
-				.addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
-				.addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
+        // remove all analyzers, except the dummy
+        ajb.removeAllAnalyzers();
 
-		if (tjb.getRequirement() != null) {
-			rowCollector.setRequirement(tjb.getRequirement());
-		}
+        // add the result collector (a dummy analyzer)
+        final AnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
+                .addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
+                .addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
 
-		// add a max rows filter
-		final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
-		maxRowFilter.getConfigurableBean().setMaxRows(DEFAULT_PREVIEW_ROWS);
-		ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
+        if (tjb.getRequirement() != null) {
+            rowCollector.setRequirement(tjb.getRequirement());
+        }
 
-		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-		sourceColumnFinder.addSources(ajb);
+        // add a max rows filter
+        final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
+        maxRowFilter.getConfigurableBean().setMaxRows(_previewRows);
+        ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
-		final String[] columnNames = new String[rowCollector.getInputColumns().size()];
-		for (int i = 0; i < columnNames.length; i++) {
-			columnNames[i] = rowCollector.getInputColumns().get(i).getName();
-		}
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(ajb);
 
-		final AnalysisRunner runner = new AnalysisRunnerImpl(ajb.getConfiguration());
-		final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
+        final String[] columnNames = new String[rowCollector.getInputColumns().size()];
+        for (int i = 0; i < columnNames.length; i++) {
+            columnNames[i] = rowCollector.getInputColumns().get(i).getName();
+        }
 
-		resultFuture.await();
+        final AnalysisRunner runner = new AnalysisRunnerImpl(ajb.getConfiguration());
+        final AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
-		if (resultFuture.isErrornous()) {
-			List<Throwable> errors = resultFuture.getErrors();
-			Throwable firstError = errors.get(0);
-			logger.error("Error occurred while running preview data job: {}", firstError.getMessage());
-			for (Throwable throwable : errors) {
-				logger.info("Preview data error", throwable);
-			}
-			if (firstError instanceof Exception) {
-				throw (Exception) firstError;
-			}
-			throw new IllegalStateException(firstError);
-		}
+        resultFuture.await();
 
-		final List<AnalyzerResult> results = resultFuture.getResults();
-		assert results.size() == 1;
+        if (resultFuture.isErrornous()) {
+            List<Throwable> errors = resultFuture.getErrors();
+            Throwable firstError = errors.get(0);
+            logger.error("Error occurred while running preview data job: {}", firstError.getMessage());
+            for (Throwable throwable : errors) {
+                logger.info("Preview data error", throwable);
+            }
+            if (firstError instanceof Exception) {
+                throw (Exception) firstError;
+            }
+            throw new IllegalStateException(firstError);
+        }
 
-		final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) results.get(0);
+        final List<AnalyzerResult> results = resultFuture.getResults();
+        assert results.size() == 1;
 
-		final List<Object[]> rows = result.getList();
-		final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
-		int rowIndex = 0;
-		for (Object[] row : rows) {
-			for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
-				tableModel.setValueAt(row[columnIndex], rowIndex, columnIndex);
-			}
-			rowIndex++;
-		}
+        final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) results.get(0);
 
-		return tableModel;
-	}
+        final List<Object[]> rows = result.getList();
+        final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
+        int rowIndex = 0;
+        for (Object[] row : rows) {
+            for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
+                tableModel.setValueAt(row[columnIndex], rowIndex, columnIndex);
+            }
+            rowIndex++;
+        }
 
-	private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
-			TransformerJobBuilder<?> transformerJobBuilder) {
-		int transformerIndex = _analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
-		return ajb.getTransformerJobBuilders().get(transformerIndex);
-	}
+        return tableModel;
+    }
 
-	private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
-		// the easiest way to copy a job is by writing and reading it using the
-		// JAXB reader/writers.
-		final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
+    private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
+            TransformerJobBuilder<?> transformerJobBuilder) {
+        int transformerIndex = _analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
+        return ajb.getTransformerJobBuilders().get(transformerIndex);
+    }
 
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		new JaxbJobWriter(_configuration).write(analysisJob, baos);
-		AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(baos
-				.toByteArray()));
-		return ajb;
-	}
+    private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
+        // the easiest/safest way to copy a job is by writing and reading it
+        // using the JAXB reader/writers.
+        final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new JaxbJobWriter(_configuration).write(analysisJob, baos);
+        AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(baos
+                .toByteArray()));
+        return ajb;
+    }
 }

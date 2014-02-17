@@ -88,51 +88,59 @@ public final class Main {
      *         otherwise
      */
     protected static boolean initializeLogging() {
-        // initial logging config, used before anything else
-        {
-            final URL url = Main.class.getResource("log4j-initial.xml");
-            assert url != null;
-            DOMConfigurator.configure(url);
-        }
-
-        if (ClassLoaderUtils.IS_WEB_START) {
-            final URL url = Main.class.getResource("log4j-jnlp.xml");
-            assert url != null;
-            println("Using JNLP log configuration: " + url);
-            DOMConfigurator.configure(url);
-            return true;
-        }
-
-        final FileObject dataCleanerHome = DataCleanerHome.get();
-
         try {
-            final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
-            if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
-                println("Using custom log configuration: " + xmlConfigurationFile);
-                DOMConfigurator.configure(xmlConfigurationFile.getURL());
+
+            // initial logging config, used before anything else
+            {
+                final URL url = Main.class.getResource("log4j-initial.xml");
+                assert url != null;
+                DOMConfigurator.configure(url);
+            }
+
+            if (ClassLoaderUtils.IS_WEB_START) {
+                final URL url = Main.class.getResource("log4j-jnlp.xml");
+                assert url != null;
+                println("Using JNLP log configuration: " + url);
+                DOMConfigurator.configure(url);
                 return true;
             }
-        } catch (FileSystemException e) {
-            // no xml logging found, ignore
-        }
 
-        try {
-            final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
-            if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
-                println("Using custom log configuration: " + propertiesConfigurationFile);
-                PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
-                return true;
+            final FileObject dataCleanerHome = DataCleanerHome.get();
+
+            try {
+                final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
+                if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
+                    println("Using custom log configuration: " + xmlConfigurationFile);
+                    DOMConfigurator.configure(xmlConfigurationFile.getURL());
+                    return true;
+                }
+            } catch (FileSystemException e) {
+                // no xml logging found, ignore
             }
-        } catch (FileSystemException e) {
-            // no xml logging found, ignore
-        }
 
-        // fall back to default log4j.xml file in classpath
-        final URL url = Main.class.getResource("log4j-default.xml");
-        assert url != null;
-        println("Using default log configuration: " + url);
-        DOMConfigurator.configure(url);
-        return false;
+            try {
+                final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
+                if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
+                    println("Using custom log configuration: " + propertiesConfigurationFile);
+                    PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
+                    return true;
+                }
+            } catch (FileSystemException e) {
+                // no xml logging found, ignore
+            }
+
+            // fall back to default log4j.xml file in classpath
+            final URL url = Main.class.getResource("log4j-default.xml");
+            assert url != null;
+            println("Using default log configuration: " + url);
+            DOMConfigurator.configure(url);
+            return false;
+
+        } catch (NoClassDefFoundError e) {
+            // can happen if log4j is not on the classpath
+            println("Failed to initialize logging, class not found: " + e.getMessage());
+            return false;
+        }
     }
 
     /**

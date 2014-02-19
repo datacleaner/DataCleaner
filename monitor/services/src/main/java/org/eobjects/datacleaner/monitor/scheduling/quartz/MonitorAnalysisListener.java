@@ -40,6 +40,7 @@ import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.util.ProgressCounter;
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Table;
 
@@ -99,12 +100,15 @@ public class MonitorAnalysisListener implements AnalysisListener {
             sb.append(" - Query: ");
             sb.append(query.toSql());
         }
-
-        final int expectedRows = metrics.getExpectedRows();
-        if (expectedRows != -1) {
-            sb.append('\n');
-            sb.append(" - Expected row count: ");
-            sb.append(expectedRows);
+        
+        final String enableRowCount = System.getProperty(SystemProperties.MONITOR_LOG_ROWCOUNT);
+        if (enableRowCount == null || !enableRowCount.equalsIgnoreCase("false")) {
+	        final int expectedRows = metrics.getExpectedRows();
+	        if (expectedRows != -1) {
+	            sb.append('\n');
+	            sb.append(" - Expected row count: ");
+	            sb.append(expectedRows);
+	        }
         }
 
         _executionLogger.log(sb.toString());

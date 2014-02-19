@@ -86,5 +86,9 @@ public class SystemProperties {
      * Property for the CAS server url, eg. "https://localhost:8443/cas"
      */
     public static final String MONITOR_CAS_URL = "datacleaner.monitor.security.casserverurl";
-
+    
+    /**
+     * Property for disabling expected row count in userlogs"
+     */
+    public static final String MONITOR_LOG_ROWCOUNT = "datacleaner.userlog.rowcount";
 }

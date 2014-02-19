@@ -97,21 +97,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private final Repository _repository;
     private final TenantContextFactory _tenantContextFactory;
     private final Scheduler _scheduler;
+    private final SchedulingServiceConfiguration _schedulingServiceConfiguration;
 
     private ApplicationContext _applicationContext;
 
     /**
-     * Alternative constructor, mainly for testing purposes. Will create a local
-     * in-memory scheduler.
+     * Creates a default single-node scheduler
      * 
-     * @param repository
-     * @param tenantContextFactory
+     * @return
      */
-    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
-        this(repository, tenantContextFactory, createScheduler());
-    }
-
-    private static Scheduler createScheduler() {
+    public static Scheduler createDefaultScheduler() {
         try {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             Scheduler scheduler = factory.getScheduler();
@@ -125,14 +120,25 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     /**
+     * @param repository
+     * @param tenantContextFactory
+     * @param schedulingServiceConfiguration
+     */
+    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
+        this(repository, tenantContextFactory, createDefaultScheduler(), new SchedulingServiceConfiguration());
+    }
+
+    /**
      * Default constructor.
      * 
      * @param repository
      * @param tenantContextFactory
      * @param scheduler
+     * @param schedulingServiceConfiguration
      */
     @Autowired
-    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler) {
+    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler,
+            SchedulingServiceConfiguration schedulingServiceConfiguration) {
         if (repository == null) {
             throw new IllegalArgumentException("Repository cannot be null");
         }
@@ -142,30 +148,42 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (scheduler == null) {
             throw new IllegalArgumentException("Quartz scheduler cannot be null");
         }
+        if (schedulingServiceConfiguration == null) {
+            throw new IllegalArgumentException("SchedulingServiceConfiguration cannot be null");
+        }
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;
         _scheduler = scheduler;
+        _schedulingServiceConfiguration = schedulingServiceConfiguration;
     }
 
     public Scheduler getScheduler() {
         return _scheduler;
     }
 
-    @PostConstruct
+    public SchedulingServiceConfiguration get_schedulingServiceConfiguration() {
+        return _schedulingServiceConfiguration;
+    }
+
+    @PostConstruct()
     public void initialize() {
-        final List<RepositoryFolder> tenantFolders = _repository.getFolders();
-        for (RepositoryFolder tenantFolder : tenantFolders) {
-            final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
-            final String tenantId = tenant.getId();
-
-            final List<ScheduleDefinition> schedules = getSchedules(tenant);
-            logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
-
-            for (ScheduleDefinition schedule : schedules) {
-                initializeSchedule(schedule);
+        // initialize tenants by scanning tenant folders
+        if (_schedulingServiceConfiguration.isTenantInitialization()) {
+            final List<RepositoryFolder> tenantFolders = _repository.getFolders();
+            for (RepositoryFolder tenantFolder : tenantFolders) {
+                final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
+                final String tenantId = tenant.getId();
+                
+                final List<ScheduleDefinition> schedules = getSchedules(tenant);
+                logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
+                
+                for (ScheduleDefinition schedule : schedules) {
+                    initializeSchedule(schedule);
+                }
             }
         }
 
+        // start scheduler
         try {
             if (!_scheduler.isStarted()) {
                 _scheduler.start();
@@ -174,7 +192,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalStateException("Failed to start scheduler", e);
         }
 
-        logTriggers();
+        if (_schedulingServiceConfiguration.isTenantInitialization()) {
+            logTriggers();
+        }
 
         logger.info("Schedule initialization done!");
     }
@@ -419,7 +439,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 final String username = authentication.getName();
                 execution.setTriggeredBy(username);
             }
-            
+
             // save the initial result log file
             final RepositoryFolder resultFolder = _tenantContextFactory.getContext(tenant).getResultFolder();
             final ExecutionLogger executionLogger = new ExecutionLoggerImpl(execution, resultFolder, null);

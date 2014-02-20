@@ -145,15 +145,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
-		</connection>
-		<developerConnection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
-		</developerConnection>
-		<url>
-			http://eobjects.org/svn/DataCleaner/trunk/ 
-		</url>
+		<url>https://github.com/datacleaner/DataCleaner</url>
+		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
+		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>

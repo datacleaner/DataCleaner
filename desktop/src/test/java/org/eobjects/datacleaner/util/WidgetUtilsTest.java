@@ -24,7 +24,8 @@ import junit.framework.TestCase;
 public class WidgetUtilsTest extends TestCase {
 
     public void testLoadFonts() throws Exception {
-        assertEquals("Open Sans",WidgetUtils.FONT_NORMAL.getName());
+    	// One space on Windows, no spaces on Mac, ? spaces on Linux
+        assertTrue(WidgetUtils.FONT_NORMAL.getName().matches("Open( *)Sans"));
         assertEquals("Ubuntu",WidgetUtils.FONT_HEADER1.getName());
     }
 }

@@ -37,7 +37,7 @@ public class FileRepositoryTest extends TestCase {
         assertEquals("", repository.getName());
         assertEquals("/", repository.getQualifiedPath());
 
-        assertEquals("/folder1", repository.getFolders().get(0).getQualifiedPath());
+        assertEquals("/folder2", repository.getFolders().get(0).getQualifiedPath());
 
         assertEquals("/file1", repository.getFile("file1").getQualifiedPath());
 

@@ -1,0 +1,6 @@
+language: java
+jdk:
+  - openjdk6
+
+after_success:
+  - mvn test

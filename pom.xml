@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -149,12 +150,6 @@
 		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
 	</scm>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>eobjects-snapshot-repo</id>
-			<url>scp://192.168.3.110/var/www/repo</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<mailingLists>
 		<mailingList>
 			<name>DataCleaner-dev mailing list</name>
@@ -239,9 +234,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-gitexe</artifactId>
+						<version>1.9</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -426,17 +429,7 @@
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.2.1</version>
 				</plugin>
-				
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.4.2</version>
-					<configuration>
-                        <mavenExecutorId>forked-path</mavenExecutorId>
-                        <useReleaseProfile>false</useReleaseProfile>
-                        <arguments>${arguments} -Psonatype-oss-release</arguments>
-                    </configuration>
-				</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -480,18 +473,6 @@
 			<url>http://repository.codehaus.org/</url>
 		</pluginRepository>
 	</pluginRepositories>
-	<repositories>
-		<repository>
-			<id>eobjects-snapshot-repo</id>
-			<url>http://repo.eobjects.org/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
@@ -573,7 +554,7 @@
 				<artifactId>httpmime</artifactId>
 				<version>${httpcomponents.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>commons-pool</groupId>
 				<artifactId>commons-pool</artifactId>

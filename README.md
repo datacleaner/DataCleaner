@@ -1,15 +1,13 @@
 DataCleaner
 ===========
 
-<div style="float: right;">
+<div>
 <img src="http://datacleaner.org/resources/dc-logo-200.png" alt="DataCleaner logo" />
 </div>
 
 The premier Open Source Data Quality solution.
 
 Powered by Human Inference, a Neopost Customer Information Management company.
-
-<div style="clear:both;"></div>
 
 ## Module structure
 
@@ -26,6 +24,12 @@ Modules are:
   * ui - the actual web user interface, based primarily on GWT and JSF
  * extensions - various extensions for DataCleaner (both desktop and/or monitor)
  * documentation - end-user reference documentation, published on http://datacleaner.org/docs
+
+## Continuous Integration
+
+There's a public build of DataCleaner that can be found on Travis CI:
+
+https://travis-ci.org/datacleaner/DataCleaner
 
 ## Where to go for end-user information?
 

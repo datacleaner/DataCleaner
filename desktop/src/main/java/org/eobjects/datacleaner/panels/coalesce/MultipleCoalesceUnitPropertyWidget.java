@@ -106,12 +106,12 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
     }
 
     public void addCoalesceUnit(CoalesceUnit unit) {
-        final CoalesceUnitPanel panel = new CoalesceUnitPanel(unit);
+        final CoalesceUnitPanel panel = new CoalesceUnitPanel(this, unit);
         _unitContainerPanel.add(panel);
     }
 
     public void addCoalesceUnit() {
-        final CoalesceUnitPanel panel = new CoalesceUnitPanel();
+        final CoalesceUnitPanel panel = new CoalesceUnitPanel(this);
         _unitContainerPanel.add(panel);
     }
 
@@ -126,7 +126,16 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
 
             @Override
             public CoalesceUnit[] getValue() {
-                return getCoalesceUnits();
+                CoalesceUnit[] units = getCoalesceUnits();
+                if (units.length == 0) {
+                    return null;
+                }
+                return units;
+            }
+
+            @Override
+            public boolean isSet() {
+                return MultipleCoalesceUnitPropertyWidget.this.isSet();
             }
 
             @Override
@@ -137,6 +146,20 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
                 setCoalesceUnits(value);
             }
         };
+    }
+
+    @Override
+    public boolean isSet() {
+        final List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
+        if (panels.isEmpty()) {
+            return false;
+        }
+        for (CoalesceUnitPanel panel : panels) {
+            if (!panel.isSet()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<CoalesceUnitPanel> getCoalesceUnitPanels() {
@@ -164,14 +187,14 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
 
     public CoalesceUnit[] getCoalesceUnits() {
         List<CoalesceUnitPanel> panels = getCoalesceUnitPanels();
-        CoalesceUnit[] result = new CoalesceUnit[panels.size()];
-        int i = 0;
+        List<CoalesceUnit> result = new ArrayList<CoalesceUnit>();
         for (CoalesceUnitPanel panel : panels) {
-            CoalesceUnit unit = panel.getCoalesceUnit();
-            result[i] = unit;
-            i++;
+            if (panel.isSet()) {
+                CoalesceUnit unit = panel.getCoalesceUnit();
+                result.add(unit);
+            }
         }
-        return result;
+        return result.toArray(new CoalesceUnit[result.size()]);
     }
 
     @Override
@@ -183,6 +206,10 @@ public class MultipleCoalesceUnitPropertyWidget extends AbstractPropertyWidget<I
         final List<InputColumn<?>> resultList = new ArrayList<InputColumn<?>>();
 
         final CoalesceUnit[] units = getCoalesceUnits();
+        if (units.length == 0) {
+            return null;
+        }
+
         for (CoalesceUnit unit : units) {
             final InputColumn<?>[] inputColumns = unit.getInputColumns(allInputColumns);
             for (final InputColumn<?> inputColumn : inputColumns) {

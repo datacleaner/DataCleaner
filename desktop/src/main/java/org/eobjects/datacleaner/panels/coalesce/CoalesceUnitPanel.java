@@ -19,25 +19,39 @@
  */
 package org.eobjects.datacleaner.panels.coalesce;
 
+import java.util.ArrayList;
+
+import javax.swing.JLabel;
+
 import org.eobjects.analyzer.beans.coalesce.CoalesceUnit;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.panels.DCPanel;
 
 public class CoalesceUnitPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
+    private final MultipleCoalesceUnitPropertyWidget _parent;
 
-    public CoalesceUnitPanel(CoalesceUnit unit) {
+    public CoalesceUnitPanel(MultipleCoalesceUnitPropertyWidget parent, CoalesceUnit unit) {
+        _parent = parent;
+        
         // TODO Auto-generated constructor stub
+        add(new JLabel("foo"));
+        
+    }
+
+    public CoalesceUnitPanel(MultipleCoalesceUnitPropertyWidget parent) {
+        this(parent, null);
     }
     
-    public CoalesceUnitPanel() {
-        // TODO Auto-generated constructor stub
+    public boolean isSet() {
+        return false;
     }
 
     public CoalesceUnit getCoalesceUnit() {
         // TODO Auto-generated method stub
-        return null;
+        ArrayList<InputColumn<?>> inputColumns = new ArrayList<InputColumn<?>>();
+        return new CoalesceUnit(inputColumns);
     }
 
-    
 }

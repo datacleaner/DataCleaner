@@ -16,12 +16,6 @@
 		<orderedlist>
 			<listitem>
 				<para>
-					<link xl:href="http://datacleaner.org/docs#webcasts">Webcast: Developing DataCleaner extensions
-					</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
 					<link
 						xl:href="http://kasper.eobjects.org/2010/09/developing-value-transformer-using.html">Tutorial: Developing a transformer</link>
 				</para>
@@ -36,12 +30,6 @@
 				<para>
 					<link
 						xl:href="http://kasper.eobjects.org/2012/04/implementing-custom-datastore-in.html">Tutorial: Implementing a custom datastore</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link
-						xl:href="http://datacleaner.org/topic/154/How-to-install-plugins-in-DataCleaner">Forum: How to install plugins in DataCleaner</link>
 				</para>
 			</listitem>
 			<listitem>
@@ -62,34 +50,16 @@
 		</orderedlist>
 	</section>
 
-	<section id="developer_issue_tracking">
-		<title>Issue tracking</title>
-		<para>
-			The development of DataCleaner is driven primarily by issues
-			registered in our issue tracking system,
-			<emphasis>trac</emphasis>
-			. In trac every member of the community has the possibility to
-			register, monitor and update issues ('tickets') that he/she
-			prioritizes.
-		</para>
-		<para>
-			<link xl:href="http://eobjects.org/trac">http://eobjects.org/trac</link>
-		</para>
-		<para>When submitting code in Subversion, it is recommended to prefix
-			the commit remarks with the ticket id, so that we can track issues
-			and their corresponding patches.</para>
-	</section>
-
 	<section id="developer_building_datacleaner">
 		<title>Building DataCleaner</title>
 
 		<para>
-			Check out the source code for AnalyzerBeans and DataCleaner from
-			subversion:
+			Get the source code for AnalyzerBeans and DataCleaner from
+			GitHub:
 		</para>
 		<programlisting>
-			&gt;&#160;svn&#160;checkout&#160;http://eobjects.org/svn/AnalyzerBeans/trunk/&#160;AnalyzerBeans
-			&gt;&#160;svn&#160;checkout&#160;http://eobjects.org/svn/DataCleaner/trunk/&#160;DataCleaner
+			&gt;&#160;git&#160;clone&#160;https://github.com/datacleaner/AnalyzerBeans.git&#160;AnalyzerBeans
+			&gt;&#160;git&#160;clone&#160;https://github.com/datacleaner/DataCleaner.git&#160;DataCleaner
 		</programlisting>
 
 		<para>
@@ -104,8 +74,8 @@
 
 		<para>Run DataCleaner</para>
 		<programlisting>
-			&gt;&#160;cd&#160;../DataCleaner/DataCleaner-packaging/target
-			&gt;&#160;java&#160;-jar&#160;DataCleaner.jar
+			&gt;&#160;cd&#160;../DataCleaner/desktop/target
+			&gt;&#160;java&#160;-jar&#160;DataCleaner-desktop-[version].jar
 		</programlisting>
 	</section>
 

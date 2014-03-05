@@ -79,7 +79,7 @@ public class CommunityEditionInformationPanel extends JPanel {
         add(text1);
         
         DCLabel text2 = DCLabel
-                .brightMultiLine("With DataCleaner professional edition you also get additional goodies; such as national identifier checks, duplicate detection and more.");
+                .brightMultiLine("With DataCleaner professional edition you also get additional goodies; such as national identifier checks, duplicate detection, DQ metric exports and more.");
         add(text2);
 
         JButton tryProfessionalButton = WidgetFactory.createButton("Try professional edition", "images/window/app-icon.png");

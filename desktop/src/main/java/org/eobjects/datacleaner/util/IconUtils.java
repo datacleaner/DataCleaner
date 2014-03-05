@@ -57,8 +57,6 @@ import org.eobjects.metamodel.schema.Column;
 /**
  * Contains utility methods concerned with icons, primarily datastore and
  * component icons.
- * 
- * @author Kasper Sørensen
  */
 public final class IconUtils {
 

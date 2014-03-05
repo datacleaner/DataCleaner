@@ -82,9 +82,12 @@ public class CommunityEditionInformationPanel extends JPanel {
                 .brightMultiLine("With DataCleaner professional edition you also get additional goodies; such as national identifier checks, duplicate detection, DQ metric exports and more.");
         add(text2);
 
+        // commented out until website update is done
+        /*
         JButton tryProfessionalButton = WidgetFactory.createButton("Try professional edition", "images/window/app-icon.png");
         tryProfessionalButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
         add(DCPanel.around(tryProfessionalButton));
+        */
         
         JButton compareEditionsButton = WidgetFactory.createButton("Compare the editions", "images/actions/website.png");
         compareEditionsButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));

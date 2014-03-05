@@ -67,24 +67,16 @@ public final class UsageLogger {
 		final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
 
 		final String action = embeddedClient == null ? "Startup" : "Startup (embedded in " + embeddedClient + ")";
-		final String username = getUsername();
+		final String username = NOT_LOGGED_IN_USERNAME;
 
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		_executorService.submit(runnable);
 	}
 
-	private String getUsername() {
-		if (_userPreferences.isLoggedIn()) {
-			return _userPreferences.getUsername();
-		} else {
-			return NOT_LOGGED_IN_USERNAME;
-		}
-	}
-
 	public void logApplicationShutdown() {
 		final String action = "Shutdown";
-		final String username = getUsername();
+		final String username = NOT_LOGGED_IN_USERNAME;
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		try {
@@ -98,12 +90,7 @@ public final class UsageLogger {
 	}
 
 	public void log(final String action) {
-		if (!_userPreferences.isLoggedIn()) {
-			logger.debug("Not logging '{}', because user is not logged in", action);
-			return;
-		}
-
-		final String username = getUsername();
+		final String username = NOT_LOGGED_IN_USERNAME;
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		_executorService.submit(runnable);
@@ -132,7 +119,8 @@ public final class UsageLogger {
 				final HttpPost req = new HttpPost("http://datacleaner.org/ws/user_action");
 				nameValuePairs.add(new BasicNameValuePair("username", _username));
 				nameValuePairs.add(new BasicNameValuePair("action", _action));
-				nameValuePairs.add(new BasicNameValuePair("version", Version.get()));
+				nameValuePairs.add(new BasicNameValuePair("version", Version.getVersion()));
+				nameValuePairs.add(new BasicNameValuePair("edition", Version.getEdition()));
 				req.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
 
 				HttpResponse resp = _userPreferences.createHttpClient().execute(req);

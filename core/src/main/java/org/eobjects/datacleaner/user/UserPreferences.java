@@ -37,10 +37,6 @@ public interface UserPreferences {
 
     public void save();
 
-    public void addLoginChangeListener(LoginChangeListener listener);
-
-    public void removeLoginChangeListener(LoginChangeListener listener);
-    
     public File getExtensionsDirectory();
     
     public void setExtensionsDirectory(File directory);
@@ -60,12 +56,6 @@ public interface UserPreferences {
     public File getSaveDatastoreDirectory();
 
     public void setSaveDatastoreDirectory(File saveDatastoreDirectory);
-
-    public void setUsername(String username);
-
-    public String getUsername();
-
-    public boolean isLoggedIn();
 
     public void addRecentJobFile(FileObject file);
 

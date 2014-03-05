@@ -62,7 +62,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
 
     private transient FileObject _userPreferencesFile;
-    private transient List<LoginChangeListener> loginChangeListeners;
 
     private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
     private List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
@@ -71,8 +70,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
     private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
     private Map<String, String> additionalProperties = new HashMap<String, String>();
-
-    private String username;
 
     private boolean proxyEnabled = false;
     private boolean proxyAuthenticationEnabled = false;
@@ -165,23 +162,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
     }
 
-    private List<LoginChangeListener> getLoginChangeListeners() {
-        if (loginChangeListeners == null) {
-            loginChangeListeners = new ArrayList<LoginChangeListener>();
-        }
-        return loginChangeListeners;
-    }
-
-    @Override
-    public void addLoginChangeListener(LoginChangeListener listener) {
-        getLoginChangeListeners().add(listener);
-    }
-
-    @Override
-    public void removeLoginChangeListener(LoginChangeListener listener) {
-        getLoginChangeListeners().add(listener);
-    }
-
     @Override
     public File getOpenDatastoreDirectory() {
         if (openDatastoreDirectory == null) {
@@ -241,26 +221,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setSaveDatastoreDirectory(File saveDatastoreDirectory) {
         this.saveDatastoreDirectory = saveDatastoreDirectory;
-    }
-
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-
-        List<LoginChangeListener> listeners = getLoginChangeListeners();
-        for (LoginChangeListener listener : listeners) {
-            listener.onLoginStateChanged(isLoggedIn(), username);
-        }
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isLoggedIn() {
-        return !StringUtils.isNullOrEmpty(getUsername());
     }
 
     @Override
@@ -411,7 +371,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
         this.extensionPackages = extensionPackages;
     }
-    
+
     @Override
     public void removeExtensionPackage(ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
@@ -419,7 +379,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
         extensionPackages.remove(extensionPackage);
     }
-    
+
     @Override
     public void addExtensionPackage(ExtensionPackage extensionPackage) {
         if (extensionPackages == null) {
@@ -472,7 +432,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     public void setSaveDownloadedFilesDirectory(File directory) {
         this.saveDownloadedFilesDirectory = directory;
     }
-    
+
     @Override
     public File getExtensionsDirectory() {
         if (extensionsDirectory == null) {
@@ -480,7 +440,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
         return extensionsDirectory;
     }
-    
+
     @Override
     public void setExtensionsDirectory(File directory) {
         this.extensionsDirectory = directory;

@@ -30,8 +30,6 @@ import org.eobjects.datacleaner.util.HttpXmlUtils;
 /**
  * The default authentication service implementation, that uses the RESTful web
  * services on datacleaner.org for authentication.
- * 
- * @author Kasper Sørensen
  */
 public class DCAuthenticationService implements AuthenticationService {
 

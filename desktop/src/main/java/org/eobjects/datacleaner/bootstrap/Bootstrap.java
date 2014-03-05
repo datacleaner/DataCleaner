@@ -57,10 +57,8 @@ import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpConta
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.macos.MacOSManager;
-import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.user.MonitorConnection;
-import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
@@ -107,7 +105,7 @@ public final class Bootstrap {
     }
 
     private void runInternal() throws FileSystemException {
-        logger.info("Welcome to DataCleaner {}", Version.get());
+        logger.info("Welcome to DataCleaner {}", Version.getVersion());
 
         // determine whether to run in command line interface mode
         final boolean cliMode = _options.isCommandLineMode();
@@ -249,11 +247,6 @@ public final class Bootstrap {
             // set up HTTP service for ExtensionSwap installation
             loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);
 
-            // load regex swap regexes if logged in
-            final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
-                    (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog(), httpClient, usageLogger);
-            userPreferences.addLoginChangeListener(regexSwapHandler);
-
             final ExitActionListener exitActionListener = _options.getExitActionListener();
             if (exitActionListener != null) {
                 windowContext.addExitActionListener(exitActionListener);
@@ -358,7 +351,7 @@ public final class Bootstrap {
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
                     } finally {
                         httpClient.close();
-                        
+
                         userPreferences.setMonitorConnection(monitorConnection);
                     }
 
@@ -435,7 +428,7 @@ public final class Bootstrap {
                     configuration);
         }
         ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
-                extensionSwapClient, userPreferences, usageLogger);
+                extensionSwapClient, usageLogger);
 
         final Closeable closeableConnection = container.initialize();
         if (closeableConnection != null) {

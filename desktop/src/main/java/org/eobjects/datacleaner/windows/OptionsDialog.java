@@ -120,27 +120,6 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getGeneralTab() {
-        final String username = _userPreferences.getUsername();
-        final JXTextField usernameTextField = WidgetFactory.createTextField();
-        usernameTextField.setText(username);
-        usernameTextField.setEnabled(false);
-
-        final JButton logoutButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-        logoutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _userPreferences.setUsername(null);
-                usernameTextField.setText("");
-                logoutButton.setEnabled(false);
-            }
-        });
-        logoutButton.setEnabled(_userPreferences.isLoggedIn());
-
-        final DCPanel userRegistrationPanel = new DCPanel().setTitledBorder("User registration");
-        userRegistrationPanel.add(DCLabel.dark("Logged in as:"));
-        userRegistrationPanel.add(usernameTextField);
-        userRegistrationPanel.add(logoutButton);
-
         final FilenameTextField saveDatastoreDirectoryField = new FilenameTextField(
                 _userPreferences.getSaveDatastoreDirectory(), true);
         saveDatastoreDirectoryField.setFile(_userPreferences.getSaveDatastoreDirectory());
@@ -158,7 +137,6 @@ public class OptionsDialog extends AbstractWindow {
 
         final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
         panel.setLayout(new VerticalLayout(4));
-        panel.add(userRegistrationPanel);
         panel.add(getQuickAnalysisPanel());
         panel.add(directoriesPanel);
 

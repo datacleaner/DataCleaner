@@ -87,7 +87,7 @@ public final class DataCleanerHome {
                 throw new IllegalStateException("Could not determine user home directory: " + candidate);
             }
 
-            final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.get();
+            final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.getVersion();
             candidate = manager.resolveFile(path);
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);

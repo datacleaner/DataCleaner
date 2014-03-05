@@ -147,9 +147,9 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             logger.warn("Failed to determine parent of {}: {}", file, e.getMessage());
         }
 
-        final String author = _userPreferences.getUsername();
+        final String author = System.getProperty("user.name");
         final String jobName = null;
-        final String jobDescription = "Created with DataCleaner " + Version.get();
+        final String jobDescription = "Created with DataCleaner " + Version.getEdition() + " " + Version.getVersion();
         final String jobVersion = null;
 
         final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,

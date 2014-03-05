@@ -47,6 +47,11 @@ public class SystemProperties {
     public static final String SANDBOX = "datacleaner.sandbox";
 
     /**
+     * Identifies the name of the current DataCleaner edition
+     */
+    public static final String EDITION_NAME = "datacleaner.edition.name";
+    
+    /**
      * Property for the hostname of the DC monitor app
      */
     public static final String MONITOR_HOSTNAME = "datacleaner.monitor.hostname";

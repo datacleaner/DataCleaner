@@ -22,7 +22,10 @@ package org.eobjects.datacleaner;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.metamodel.util.FileHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * Determines and exposes the version of DataCleaner.
@@ -30,14 +33,33 @@ import org.eobjects.metamodel.util.FileHelper;
 public class Version {
 
     private static final String VERSION = determineVersion();
-    
+    private static final String EDITION = determineEdition();
+
+    public static final String EDITION_COMMUNITY = "Community edition";
+    public static final String EDITION_PROFESSIONAL = "Professional edition";
+
+    /**
+     * @return
+     * 
+     * @deprecated use {@link #getVersion()} instead
+     */
+    @Deprecated
     public static String get() {
+        return getVersion();
+    }
+
+    public static String getVersion() {
         return VERSION;
     }
-    
+
+    public static String getEdition() {
+        return EDITION;
+    }
+
     private static String determineVersion() {
         final Properties properties = new Properties();
-        InputStream inputStream = Version.class.getResourceAsStream("/META-INF/maven/org.eobjects.datacleaner/DataCleaner-core/pom.properties");
+        final InputStream inputStream = Version.class
+                .getResourceAsStream("/META-INF/maven/org.eobjects.datacleaner/DataCleaner-core/pom.properties");
         try {
             properties.load(inputStream);
         } catch (Exception e) {
@@ -47,9 +69,37 @@ public class Version {
         } finally {
             FileHelper.safeClose(inputStream);
         }
-        
+
         final String version = properties.getProperty("version");
         System.out.println("DataCleaner version: " + version);
         return version;
+    }
+
+    private static String determineEdition() {
+        String systemProperty = System.getProperty(SystemProperties.EDITION_NAME);
+        if (!Strings.isNullOrEmpty(systemProperty)) {
+            return systemProperty;
+        }
+
+        final Properties properties = new Properties();
+        final InputStream inputStream = Version.class
+                .getResourceAsStream("/META-INF/maven/com.hi.datacleaner/DataCleaner-enterprise-edition-core-components/pom.properties");
+        try {
+            properties.load(inputStream);
+        } catch (Exception e) {
+            // not a commercial edition
+            return EDITION_COMMUNITY;
+        }
+
+        final String version = properties.getProperty("version");
+        if (Strings.isNullOrEmpty(version)) {
+            return EDITION_COMMUNITY;
+        }
+
+        return EDITION_PROFESSIONAL;
+    }
+
+    public static boolean isCommunityEdition() {
+        return getEdition() == EDITION_COMMUNITY;
     }
 }

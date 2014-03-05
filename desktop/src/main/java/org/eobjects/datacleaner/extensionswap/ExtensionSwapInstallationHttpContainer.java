@@ -31,7 +31,6 @@ import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
@@ -45,118 +44,110 @@ import org.slf4j.LoggerFactory;
 /**
  * HTTP container used for the ExtensionSwap to signal that the user wants to
  * install an extension.
- * 
- * @author Kasper Sørensen
  */
 public class ExtensionSwapInstallationHttpContainer implements Container {
 
-	private static final int PORT_NUMBER = 31389;
+    private static final int PORT_NUMBER = 31389;
 
-	private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationHttpContainer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationHttpContainer.class);
 
-	private final ExtensionSwapClient _client;
-	private final UserPreferences _userPreferences;
-	private final UsageLogger _usageLogger;
+    private final ExtensionSwapClient _client;
+    private final UsageLogger _usageLogger;
 
-	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UserPreferences userPreferences,
-			UsageLogger usageLogger) {
-		_client = extensionSwapClient;
-		_userPreferences = userPreferences;
-		_usageLogger = usageLogger;
-	}
+    public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UsageLogger usageLogger) {
+        _client = extensionSwapClient;
+        _usageLogger = usageLogger;
+    }
 
-	@Override
-	public void handle(Request req, Response resp) {
-		PrintStream out = null;
-		String callback = null;
-		try {
-			out = resp.getPrintStream();
-			callback = req.getParameter("callback");
+    @Override
+    public void handle(Request req, Response resp) {
+        PrintStream out = null;
+        String callback = null;
+        try {
+            out = resp.getPrintStream();
+            callback = req.getParameter("callback");
 
-			final String extensionId = req.getParameter("extensionId");
-			if (extensionId == null) {
-				throw new IllegalArgumentException("extensionId cannot be null");
-			}
+            final String extensionId = req.getParameter("extensionId");
+            if (extensionId == null) {
+                throw new IllegalArgumentException("extensionId cannot be null");
+            }
 
-			final String username;
-			if (_userPreferences.isLoggedIn()) {
-				username = _userPreferences.getUsername();
-			} else {
-				username = req.getParameter("username");
-			}
+            final String username = req.getParameter("username");
 
-			logger.info("Initiating transfer of extension: {}", extensionId);
+            logger.info("Initiating transfer of extension: {}", extensionId);
 
-			final ExtensionSwapPackage extensionSwapPackage = _client.getExtensionSwapPackage(extensionId);
-			logger.info("Fetched ExtensionSwap package: {}", extensionSwapPackage);
+            final ExtensionSwapPackage extensionSwapPackage = _client.getExtensionSwapPackage(extensionId);
+            logger.info("Fetched ExtensionSwap package: {}", extensionSwapPackage);
 
-			if (_client.isInstalled(extensionSwapPackage)) {
-				// reject the extension because it is already installed.
-				if (callback != null && out != null) {
-					out.print(callback + "({\"success\":false,\"errorMessage\":\"This extension is already installed\"})");
-				}
-				resp.setCode(500);
-			} else {
-				// install the extension
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						displayInstallationOptions(extensionSwapPackage, username);
-					}
-				});
+            if (_client.isInstalled(extensionSwapPackage)) {
+                // reject the extension because it is already installed.
+                if (callback != null && out != null) {
+                    out.print(callback
+                            + "({\"success\":false,\"errorMessage\":\"This extension is already installed\"})");
+                }
+                resp.setCode(500);
+            } else {
+                // install the extension
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayInstallationOptions(extensionSwapPackage, username);
+                    }
+                });
 
-				if (callback != null) {
-					out.print(callback + "({\"success\":true})");
-				}
-				resp.setCode(200);
-			}
+                if (callback != null) {
+                    out.print(callback + "({\"success\":true})");
+                }
+                resp.setCode(200);
+            }
 
-		} catch (InvalidHttpResponseException e) {
-			if (callback != null && out != null) {
-				out.print(callback + "({\"success\":false,\"errorMessage\":\"Could not retrieve extension details\"})");
-			}
-			resp.setCode(500);
-		} catch (IOException e) {
-			logger.error("IOException occurred while processing HTTP request", e);
-			resp.setCode(400);
-		} finally {
-			FileHelper.safeClose(out);
-		}
-	}
+        } catch (InvalidHttpResponseException e) {
+            if (callback != null && out != null) {
+                out.print(callback + "({\"success\":false,\"errorMessage\":\"Could not retrieve extension details\"})");
+            }
+            resp.setCode(500);
+        } catch (IOException e) {
+            logger.error("IOException occurred while processing HTTP request", e);
+            resp.setCode(400);
+        } finally {
+            FileHelper.safeClose(out);
+        }
+    }
 
-	private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
-		_usageLogger.log("Extension install: " + extensionSwapPackage.getId());
+    private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
+        _usageLogger.log("Extension install: " + extensionSwapPackage.getId());
 
-		final String title = "Install DataCleaner extension?";
-		final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'";
+        final String title = "Install DataCleaner extension?";
+        final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName()
+                + "'";
 
-		final Component window = (Component) DCWindowContext.getAnyWindow();
-		final int confirmation = JOptionPane.showConfirmDialog(window, message, title, JOptionPane.YES_NO_OPTION);
-		if (confirmation == JOptionPane.YES_OPTION) {
-			_client.registerExtensionPackage(extensionSwapPackage, username);
-		}
-	}
+        final Component window = (Component) DCWindowContext.getAnyWindow();
+        final int confirmation = JOptionPane.showConfirmDialog(window, message, title, JOptionPane.YES_NO_OPTION);
+        if (confirmation == JOptionPane.YES_OPTION) {
+            _client.registerExtensionPackage(extensionSwapPackage, username);
+        }
+    }
 
-	/**
-	 * Initializes the extension swap installation HTTP service
-	 * 
-	 * @param client
-	 *            the client to use
-	 * @return a closable that can be invoked in case the service is to be shut
-	 *         down
-	 */
-	public Closeable initialize() {
-		try {
-			Connection connection = new SocketConnection(this);
-			SocketAddress address = new InetSocketAddress(PORT_NUMBER);
-			connection.connect(address);
-			logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);
-			return connection;
-		} catch (IOException e) {
-			logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
-					+ ". Automatic installations of extensions will not be available.", e);
-			return null;
-		}
-	}
+    /**
+     * Initializes the extension swap installation HTTP service
+     * 
+     * @param client
+     *            the client to use
+     * @return a closable that can be invoked in case the service is to be shut
+     *         down
+     */
+    public Closeable initialize() {
+        try {
+            Connection connection = new SocketConnection(this);
+            SocketAddress address = new InetSocketAddress(PORT_NUMBER);
+            connection.connect(address);
+            logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);
+            return connection;
+        } catch (IOException e) {
+            logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
+                    + ". Automatic installations of extensions will not be available.", e);
+            return null;
+        }
+    }
 
 }

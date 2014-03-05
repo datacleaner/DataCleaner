@@ -43,12 +43,6 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-    /**
-     * @deprecated use {@link Version#get()} instead.
-     */
-    @Deprecated
-    public static final String VERSION = Version.get();
-
     public static void main(String[] args) {
         initializeSystemProperties(args);
 

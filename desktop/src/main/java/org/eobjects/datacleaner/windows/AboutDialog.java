@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.Box;
@@ -233,7 +234,7 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	private JComponent getAboutPanel() {
-		final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.get());
+		final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getVersion());
 		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final ImageManager imageManager = ImageManager.getInstance();
@@ -267,12 +268,16 @@ public class AboutDialog extends AbstractDialog {
 		final DCPanel contentPanel = new DCPanel();
 		contentPanel.setLayout(new VerticalLayout());
 		contentPanel.add(headerLabel);
-		contentPanel.add(DCLabel.dark("Copyright (C) 2013 Human Inference"));
+		contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Human Inference"));
 		contentPanel.add(Box.createVerticalStrut(20));
 		contentPanel.add(DCPanel.around(humanInferenceButton));
-		contentPanel.add(Box.createVerticalStrut(20));
-		contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
-		contentPanel.add(DCLabel.dark("(see Licensing tab)."));
+		
+		if (Version.isCommunityEdition()) {
+		    contentPanel.add(Box.createVerticalStrut(20));
+		    contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
+		    contentPanel.add(DCLabel.dark("(see Licensing tab)."));
+		} 
+		
 		contentPanel.add(Box.createVerticalStrut(30));
 		contentPanel.add(DCLabel.dark("Java runtime information:"));
 		contentPanel.add(DCLabel.dark("  " + System.getProperty("java.vm.name")));

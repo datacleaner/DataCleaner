@@ -102,7 +102,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPersistentSizedPanel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
-import org.eobjects.datacleaner.widgets.LoginStatusLabel;
+import org.eobjects.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -379,7 +379,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         boolean success = false;
 
         if (_datastore == null) {
-            setStatusLabelText("Welcome to DataCleaner " + Version.get());
+            setStatusLabelText("Welcome to DataCleaner " + Version.getVersion());
             _statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
         } else {
             try {
@@ -616,8 +616,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
-        final LoginStatusLabel loggedInStatusLabel = _injectorWithGlassPane.getInstance(LoginStatusLabel.class);
-        statusBar.add(loggedInStatusLabel);
+        LicenceAndEditionStatusLabel statusLabel = _injectorWithGlassPane
+                .getInstance(LicenceAndEditionStatusLabel.class);
+        statusBar.add(statusLabel);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());

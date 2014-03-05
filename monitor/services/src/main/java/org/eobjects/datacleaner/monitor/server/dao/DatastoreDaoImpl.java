@@ -167,6 +167,8 @@ public class DatastoreDaoImpl implements DatastoreDao {
                 out.flush();
             }
         });
+        
+        tenantContext.onConfigurationChanged();
 
         String datastoreName = datastoreElement.getAttribute("name");
         if (datastoreName == null) {

@@ -58,4 +58,9 @@ public interface TenantContext {
     public AnalyzerBeansConfiguration getConfiguration();
 
     public boolean containsJob(String jobName);
+
+    /**
+     * Notification method callable by external components if a circumstance in the configuration changes.
+     */
+    public void onConfigurationChanged();
 }

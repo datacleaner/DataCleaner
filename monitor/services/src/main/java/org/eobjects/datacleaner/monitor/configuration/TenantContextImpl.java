@@ -256,4 +256,11 @@ public class TenantContextImpl implements TenantContext {
         return _configurationCache.getConfigurationFile();
     }
 
+    @Override
+    public void onConfigurationChanged() {
+        logger.debug("onConfigurationChanged() invoked on tenant: {}", _tenantId);
+        _configurationCache.clearCache();
+        _jobCache.invalidateAll();
+    }
+
 }

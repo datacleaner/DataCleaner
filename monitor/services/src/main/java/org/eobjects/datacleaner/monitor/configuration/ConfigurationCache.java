@@ -173,4 +173,9 @@ final class ConfigurationCache {
         File file = new File(filename);
         return file.isAbsolute();
     }
+
+    public void clearCache() {
+        _configuration = null;
+        _lastModifiedCache = -1;
+    }
 }

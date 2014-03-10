@@ -93,7 +93,13 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
         if (extensions != null && extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
             for (String extension : extensions) {
-                FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", "." + extension);
+                String extensionWithDot;
+                if (extension.startsWith(".")) {
+                    extensionWithDot = extension;
+                } else {
+                    extensionWithDot = "." + extension;
+                }
+                FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", extensionWithDot);
                 filters.add(filter);
                 _filenameField.addChoosableFileFilter(filter);
             }

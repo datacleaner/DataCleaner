@@ -161,7 +161,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return _scheduler;
     }
 
-    public SchedulingServiceConfiguration get_schedulingServiceConfiguration() {
+    public SchedulingServiceConfiguration getSchedulingServiceConfiguration() {
         return _schedulingServiceConfiguration;
     }
 

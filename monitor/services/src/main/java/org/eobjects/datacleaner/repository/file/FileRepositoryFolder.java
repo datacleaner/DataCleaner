@@ -24,14 +24,20 @@ import java.io.FileFilter;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.eobjects.datacleaner.repository.RepositoryNode;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.ToStringComparator;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * {@link RepositoryFolder} implementation based on a local directory.
@@ -41,9 +47,11 @@ public class FileRepositoryFolder implements RepositoryFolder {
     private static final long serialVersionUID = 1L;
 
     private final File _file;
-    private final RepositoryFolder _parent;
+    private final FileRepositoryFolder _parent;
 
-    public FileRepositoryFolder(RepositoryFolder parent, File file) {
+    private transient LoadingCache<File, RepositoryNode> _childCache;
+
+    public FileRepositoryFolder(FileRepositoryFolder parent, File file) {
         if (file == null) {
             throw new IllegalArgumentException("File cannot be null");
         }
@@ -52,6 +60,22 @@ public class FileRepositoryFolder implements RepositoryFolder {
         }
         _parent = parent;
         _file = file;
+    }
+
+    private LoadingCache<File, RepositoryNode> getChildCache() {
+        if (_childCache == null) {
+            _childCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS)
+                    .build(new CacheLoader<File, RepositoryNode>() {
+                        @Override
+                        public RepositoryNode load(File key) throws Exception {
+                            if (key.isDirectory()) {
+                                return new FileRepositoryFolder(FileRepositoryFolder.this, key);
+                            }
+                            return new FileRepositoryFile(FileRepositoryFolder.this, key);
+                        }
+                    });
+        }
+        return _childCache;
     }
 
     public File getFile() {
@@ -91,7 +115,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         return CollectionUtils.map(directories, new Func<File, RepositoryFolder>() {
             @Override
             public RepositoryFolder eval(File directory) {
-                return new FileRepositoryFolder(FileRepositoryFolder.this, directory);
+                return (RepositoryFolder) getChildCache().getUnchecked(directory);
             }
         });
     }
@@ -108,7 +132,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
             return null;
         }
 
-        return new FileRepositoryFile(this, latestFile);
+        return (RepositoryFile) getChildCache().getUnchecked(latestFile);
     }
 
     @Override
@@ -118,7 +142,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
             @Override
             public RepositoryFile eval(File file) {
-                return new FileRepositoryFile(FileRepositoryFolder.this, file);
+                return (RepositoryFile) getChildCache().getUnchecked(file);
             }
         });
     }
@@ -165,7 +189,8 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!file.isFile()) {
             return null;
         }
-        return new FileRepositoryFile(this, file);
+
+        return (RepositoryFile) getChildCache().getUnchecked(file);
     }
 
     @Override
@@ -178,7 +203,8 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!file.exists() || file.isHidden() || !file.isDirectory()) {
             return null;
         }
-        return new FileRepositoryFolder(this, file);
+
+        return (RepositoryFolder) getChildCache().getUnchecked(file);
     }
 
     @Override
@@ -197,7 +223,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
             throw new IllegalArgumentException("A file with the name '" + name + "' already exists");
         }
 
-        RepositoryFile repositoryFile = new FileRepositoryFile(this, file);
+        RepositoryFile repositoryFile = (RepositoryFile) getChildCache().getUnchecked(file);
         repositoryFile.writeFile(writeCallback);
 
         return repositoryFile;
@@ -209,6 +235,16 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!success) {
             throw new IllegalStateException("Could not delete directory: " + _file);
         }
+        _parent.onDeleted(_file);
+    }
+
+    /**
+     * Notification method invoked when a child file has been deleted.
+     * 
+     * @param file
+     */
+    protected void onDeleted(File file) {
+        getChildCache().invalidate(file);
     }
 
     @Override
@@ -221,7 +257,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!result) {
             throw new IllegalStateException("Failed to create directory '" + name + "' within " + _file);
         }
-        return new FileRepositoryFolder(this, file);
+        return (RepositoryFolder) getChildCache().getUnchecked(file);
     }
 
     @Override
@@ -230,6 +266,6 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!file.exists()) {
             file.mkdir();
         }
-        return new FileRepositoryFolder(this, file);
+        return (RepositoryFolder) getChildCache().getUnchecked(file);
     }
 }

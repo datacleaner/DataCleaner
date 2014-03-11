@@ -27,6 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -47,12 +50,14 @@ public final class FileRepositoryFile implements RepositoryFile {
 
     private static final long serialVersionUID = 1L;
 
+    private final ReadWriteLock _lock;
     private final FileRepositoryFolder _parent;
     private final File _file;
 
     public FileRepositoryFile(FileRepositoryFolder parent, File file) {
         _parent = parent;
         _file = file;
+        _lock = new ReentrantReadWriteLock();
     }
 
     @Override
@@ -64,7 +69,7 @@ public final class FileRepositoryFile implements RepositoryFile {
     public String getName() {
         return _file.getName();
     }
-    
+
     @Override
     public long getSize() {
         return _file.length();
@@ -95,48 +100,60 @@ public final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public void readFile(Action<InputStream> readCallback) {
-        final FileInputStream fileInputStream;
-        final InputStream inputStream;
+        Lock readLock = _lock.readLock();
+        readLock.lock();
         try {
-            fileInputStream = new FileInputStream(_file);
-            inputStream = new BufferedInputStream(fileInputStream);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-
-        try {
-            readCallback.run(inputStream);
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
+            final FileInputStream fileInputStream;
+            final InputStream inputStream;
+            try {
+                fileInputStream = new FileInputStream(_file);
+                inputStream = new BufferedInputStream(fileInputStream);
+            } catch (FileNotFoundException e) {
+                throw new IllegalStateException(e);
             }
-            throw new IllegalStateException("Error occurred while reading from file", e);
+
+            try {
+                readCallback.run(inputStream);
+            } catch (Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new IllegalStateException("Error occurred while reading from file", e);
+            } finally {
+                FileHelper.safeClose(inputStream, fileInputStream);
+            }
         } finally {
-            FileHelper.safeClose(inputStream, fileInputStream);
+            readLock.unlock();
         }
     }
 
     @Override
     public <E> E readFile(Func<InputStream, E> readCallback) {
-        final FileInputStream fileInputStream;
-        final InputStream inputStream;
+        Lock readLock = _lock.readLock();
+        readLock.lock();
         try {
-            fileInputStream = new FileInputStream(_file);
-            inputStream = new BufferedInputStream(fileInputStream);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
-
-        try {
-            final E result = readCallback.eval(inputStream);
-            return result;
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
+            final FileInputStream fileInputStream;
+            final InputStream inputStream;
+            try {
+                fileInputStream = new FileInputStream(_file);
+                inputStream = new BufferedInputStream(fileInputStream);
+            } catch (FileNotFoundException e) {
+                throw new IllegalStateException(e);
             }
-            throw new IllegalStateException("Error occurred while writing to file", e);
+
+            try {
+                final E result = readCallback.eval(inputStream);
+                return result;
+            } catch (Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new IllegalStateException("Error occurred while writing to file", e);
+            } finally {
+                FileHelper.safeClose(inputStream, fileInputStream);
+            }
         } finally {
-            FileHelper.safeClose(inputStream, fileInputStream);
+            readLock.unlock();
         }
     }
 
@@ -144,29 +161,36 @@ public final class FileRepositoryFile implements RepositoryFile {
     public void writeFile(Action<OutputStream> writeCallback) {
         writeFile(writeCallback, false);
     }
-    
+
     @Override
     public void writeFile(Action<OutputStream> writeCallback, boolean append) {
-        final FileOutputStream fileOutputStream;
-        final OutputStream outputStream;
+        Lock writeLock = _lock.writeLock();
+        writeLock.lock();
         try {
-            fileOutputStream = new FileOutputStream(_file, append);
-            outputStream = new BufferedOutputStream(fileOutputStream);
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
+            final FileOutputStream fileOutputStream;
+            final OutputStream outputStream;
+            try {
+                fileOutputStream = new FileOutputStream(_file, append);
+                outputStream = new BufferedOutputStream(fileOutputStream);
+            } catch (FileNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
 
-        try {
-            if (writeCallback != null) {
-                writeCallback.run(outputStream);
+            try {
+                if (writeCallback != null) {
+                    writeCallback.run(outputStream);
+                }
+            } catch (Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new IllegalStateException("Error occurred while writing to file", e);
+            } finally {
+                FileHelper.safeClose(outputStream, fileOutputStream);
             }
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IllegalStateException("Error occurred while writing to file", e);
+
         } finally {
-            FileHelper.safeClose(outputStream, fileOutputStream);
+            writeLock.unlock();
         }
     }
 
@@ -194,6 +218,7 @@ public final class FileRepositoryFile implements RepositoryFile {
         if (!success) {
             throw new IllegalStateException("Could not delete file: " + _file);
         }
+        _parent.onDeleted(_file);
     }
 
     @Override

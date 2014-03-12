@@ -34,7 +34,6 @@ import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.BeanConfiguration;
-import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.ImmutableAnalyzerJob;
 import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
@@ -62,27 +61,27 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
     }
 
     @Override
-    public Collection<InputColumn<?>> getSourceColumns() {
+    public List<InputColumn<?>> getSourceColumns() {
         return _delegateJob.getSourceColumns();
     }
 
     @Override
-    public Collection<TransformerJob> getTransformerJobs() {
+    public List<TransformerJob> getTransformerJobs() {
         return _delegateJob.getTransformerJobs();
     }
 
     @Override
-    public Collection<FilterJob> getFilterJobs() {
+    public List<FilterJob> getFilterJobs() {
         return _delegateJob.getFilterJobs();
     }
 
     @Override
-    public Collection<MergedOutcomeJob> getMergedOutcomeJobs() {
+    public List<MergedOutcomeJob> getMergedOutcomeJobs() {
         return _delegateJob.getMergedOutcomeJobs();
     }
 
     @Override
-    public Collection<AnalyzerJob> getAnalyzerJobs() {
+    public List<AnalyzerJob> getAnalyzerJobs() {
         // create a single analyzer for picking up records
 
         final AnalyzerBeanDescriptor<?> descriptor = Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class);
@@ -103,11 +102,6 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
 
         final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, beanConfiguration, null);
         return Arrays.asList(analyzerJob);
-    }
-
-    @Override
-    public Collection<ExplorerJob> getExplorerJobs() {
-        return _delegateJob.getExplorerJobs();
     }
 
 }

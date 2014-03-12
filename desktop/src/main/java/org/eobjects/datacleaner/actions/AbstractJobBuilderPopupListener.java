@@ -29,7 +29,6 @@ import javax.swing.JPopupMenu;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -78,8 +77,6 @@ public abstract class AbstractJobBuilderPopupListener {
 					_analysisJobBuilder.removeTransformer((TransformerJobBuilder<?>) _jobBuilder);
 				} else if (_jobBuilder instanceof FilterJobBuilder) {
 					_analysisJobBuilder.removeFilter((FilterJobBuilder<?, ?>) _jobBuilder);
-				} else if (_jobBuilder instanceof ExplorerJobBuilder) {
-					_analysisJobBuilder.removeExplorer((ExplorerJobBuilder<?>) _jobBuilder);
 				} else {
 					throw new IllegalStateException("Unexpected component type: " + _jobBuilder);
 				}

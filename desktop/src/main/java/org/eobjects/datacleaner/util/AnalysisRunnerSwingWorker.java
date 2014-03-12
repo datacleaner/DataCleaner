@@ -29,7 +29,6 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
@@ -40,7 +39,6 @@ import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
-import org.eobjects.analyzer.job.runner.ExplorerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.LabelUtils;
@@ -186,23 +184,5 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
                 _resultFuture.cancel();
             }
         }
-    }
-
-    @Override
-    public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob, ExplorerMetrics metrics) {
-        _progressInformationPanel.addUserLog("Starting explorer '" + LabelUtils.getLabel(explorerJob) + "'");
-    }
-
-    @Override
-    public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
-        _progressInformationPanel.addUserLog("Explorer '" + LabelUtils.getLabel(explorerJob) + "' finished");
-        _progressInformationPanel.addUserLog("Adding result to tab of " + explorerJob.getDescriptor().getDisplayName());
-        _resultWindow.addResult(explorerJob, result);
-    }
-
-    @Override
-    public void errorInExplorer(AnalysisJob job, ExplorerJob explorerJob, Throwable throwable) {
-        _progressInformationPanel.addUserLog("An error occurred in the explorer: " + LabelUtils.getLabel(explorerJob),
-                throwable, true);
     }
 }

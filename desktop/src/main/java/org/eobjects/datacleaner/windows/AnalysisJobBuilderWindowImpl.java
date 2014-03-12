@@ -35,7 +35,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
@@ -54,8 +53,6 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.analyzer.job.builder.ExplorerChangeListener;
-import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
@@ -125,8 +122,8 @@ import com.google.inject.Injector;
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        AnalyzerChangeListener, ExplorerChangeListener, TransformerChangeListener, FilterChangeListener,
-        SourceColumnChangeListener, TabCloseListener {
+        AnalyzerChangeListener, TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener,
+        TabCloseListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -176,7 +173,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private boolean _datastoreSelectionEnabled;
     private final MetadataPanel _metadataPanel;
 
-
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, SourceColumnsPanel sourceColumnsPanel,
@@ -219,7 +215,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _saveButton = new JButton("Save", imageManager.getImageIcon("images/actions/save.png"));
         _saveAsButton = new JButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
-        
+
         _visualizeButton = createToolbarButton("Visualize", "images/actions/visualize.png",
                 "<html><b>Visualize job</b><br/>Visualize the components of this job in a flow-chart.</html>");
         _transformButton = createToolbarButton(
@@ -560,7 +556,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         // add separator for fixed vs dynamic tabs
         _tabbedPane.addSeparator();
 
-        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider.get();
+        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider
+                .get();
         _saveButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
@@ -684,8 +681,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             onAdd((AnalyzerJobBuilder<?>) ajb);
         }
 
-        // TODO: Support for explorers
-
         onSourceColumnsChanged();
     }
 
@@ -755,17 +750,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                     return;
                 }
             }
-
-            // TODO also handle exploring analyzers
         }
         logger.info("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
-    }
-
-    @Override
-    public void onAdd(ExplorerJobBuilder<?> explorerJobBuilder) {
-        _tabbedPane.addTab(LabelUtils.getLabel(explorerJobBuilder), new JLabel("TODO: Exploring analyzer"));
-        _tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
-        updateStatusLabel();
     }
 
     @Override
@@ -795,12 +781,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
-    public void onRemove(ExplorerJobBuilder<?> explorerJobBuilder) {
-        // TODO
-        updateStatusLabel();
-    }
-
-    @Override
     public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder) {
         AnalyzerJobBuilderPresenter presenter = _analyzerPresenters.remove(analyzerJobBuilder);
         JComponent comp = _jobBuilderTabs.remove(presenter);
@@ -815,7 +795,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 .getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
         final TransformerJobBuilderPresenter presenter = (TransformerJobBuilderPresenter) renderer
                 .render(transformerJobBuilder);
-        
+
         _transformerPresenters.put(transformerJobBuilder, presenter);
         JComponent comp = presenter.createJComponent();
         _tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
@@ -926,11 +906,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (presenter != null) {
             presenter.onRequirementChanged();
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(ExplorerJobBuilder<?> explorerJobBuilder) {
-        updateStatusLabel();
     }
 
     @Override

@@ -26,13 +26,11 @@ import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
-import org.eobjects.analyzer.job.runner.ExplorerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
@@ -100,15 +98,15 @@ public class MonitorAnalysisListener implements AnalysisListener {
             sb.append(" - Query: ");
             sb.append(query.toSql());
         }
-        
+
         final String enableRowCount = System.getProperty(SystemProperties.MONITOR_LOG_ROWCOUNT);
         if (enableRowCount == null || !enableRowCount.equalsIgnoreCase("false")) {
-	        final int expectedRows = metrics.getExpectedRows();
-	        if (expectedRows != -1) {
-	            sb.append('\n');
-	            sb.append(" - Expected row count: ");
-	            sb.append(expectedRows);
-	        }
+            final int expectedRows = metrics.getExpectedRows();
+            if (expectedRows != -1) {
+                sb.append('\n');
+                sb.append(" - Expected row count: ");
+                sb.append(expectedRows);
+            }
         }
 
         _executionLogger.log(sb.toString());
@@ -128,8 +126,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         if (progressCounter.setIfSignificantToUser(currentRow)) {
             final Table table = metrics.getTable();
-            _executionLogger.log("Progress of " + table.getName() + ": " + currentRow
-                    + " rows processed");
+            _executionLogger.log("Progress of " + table.getName() + ": " + currentRow + " rows processed");
             _executionLogger.flushLog();
         }
     }
@@ -137,8 +134,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
-        _executionLogger.log("Processing of " + table.getName()
-                + " finished. Generating results ...");
+        _executionLogger.log("Processing of " + table.getName() + " finished. Generating results ...");
     }
 
     @Override
@@ -146,20 +142,9 @@ public class MonitorAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob, ExplorerMetrics metrics) {
-    }
-
-    @Override
     public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
         _results.put(analyzerJob, result);
         _executionLogger.log("Result gathered from analyzer: " + analyzerJob);
-        _executionLogger.flushLog();
-    }
-
-    @Override
-    public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
-        _results.put(explorerJob, result);
-        _executionLogger.log("Result gathered from explorer: " + explorerJob);
         _executionLogger.flushLog();
     }
 
@@ -176,11 +161,6 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void errorInAnalyzer(AnalysisJob job, AnalyzerJob analyzerJob, InputRow row, Throwable throwable) {
         jobFailed(analyzerJob, row, throwable);
-    }
-
-    @Override
-    public void errorInExplorer(AnalysisJob job, ExplorerJob explorerJob, Throwable throwable) {
-        jobFailed(explorerJob, null, throwable);
     }
 
     @Override

@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.Collection;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
-import org.eobjects.analyzer.beans.api.Explorer;
 import org.eobjects.analyzer.beans.api.Filter;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RenderingFormat;
@@ -30,7 +29,6 @@ import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
-import org.eobjects.analyzer.descriptors.ExplorerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.RendererBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
@@ -81,21 +79,6 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<AnalyzerBeanDescriptor<?>> getAnalyzerBeanDescriptors() {
         return getDelegate().getAnalyzerBeanDescriptors();
-    }
-
-    @Override
-    public ExplorerBeanDescriptor<?> getExplorerBeanDescriptorByDisplayName(String arg0) {
-        return getDelegate().getExplorerBeanDescriptorByDisplayName(arg0);
-    }
-
-    @Override
-    public <E extends Explorer<?>> ExplorerBeanDescriptor<E> getExplorerBeanDescriptorForClass(Class<E> arg0) {
-        return getDelegate().getExplorerBeanDescriptorForClass(arg0);
-    }
-
-    @Override
-    public Collection<ExplorerBeanDescriptor<?>> getExplorerBeanDescriptors() {
-        return getDelegate().getExplorerBeanDescriptors();
     }
 
     @Override

@@ -105,8 +105,13 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public MetricValues getMetricValues(MetricJobContext job, ResultContext result,
             List<MetricIdentifier> metricIdentifiers) {
-        final DataCleanerJobContext dataCleanerJobContext = (DataCleanerJobContext) job;
-        final AnalysisJob analysisJob = dataCleanerJobContext.getAnalysisJob();
+        final AnalysisJob analysisJob;
+        if (job == null) {
+            analysisJob = null;
+        } else {
+            final DataCleanerJobContext dataCleanerJobContext = (DataCleanerJobContext) job;
+            analysisJob = dataCleanerJobContext.getAnalysisJob();
+        }
         final AnalysisResult analysisResult = result.getAnalysisResult();
         return new DefaultMetricValues(this, job, metricIdentifiers, analysisResult, analysisJob);
     }

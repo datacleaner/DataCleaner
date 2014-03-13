@@ -51,14 +51,16 @@ public class DashboardServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
-                new MockJobEngineManager());
-        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
+        MockJobEngineManager jobEngineManager = new MockJobEngineManager();
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), jobEngineManager);
+        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory, jobEngineManager);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
         final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory, resultDao);
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao, timelineDao);
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
+                timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
@@ -80,8 +82,7 @@ public class DashboardServiceImplTest extends TestCase {
 
         assertEquals("MetricGroup[Pattern finder (PRODUCTCODE)]", metricGroups.get(0).toString());
         assertEquals("MetricGroup[Value distribution (PRODUCTLINE)]", metricGroups.get(1).toString());
-        assertEquals("MetricGroup[Vendor whitelist check (PRODUCTVENDOR)]", metricGroups.get(2)
-                .toString());
+        assertEquals("MetricGroup[Vendor whitelist check (PRODUCTVENDOR)]", metricGroups.get(2).toString());
 
         List<MetricIdentifier> metrics = metricGroups.get(2).getMetrics();
         assertEquals(
@@ -128,13 +129,15 @@ public class DashboardServiceImplTest extends TestCase {
 
     public void testFormulaBasedTimeline() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
-                new MockJobEngineManager());
-        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
+        MockJobEngineManager jobEngineManager = new MockJobEngineManager();
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), jobEngineManager);
+        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory, jobEngineManager);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao, timelineDao);
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
+                timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 

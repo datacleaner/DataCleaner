@@ -24,13 +24,17 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
 import org.eobjects.datacleaner.monitor.job.MetricValues;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -39,11 +43,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class DefaultMetricValueProducer implements MetricValueProducer {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMetricValueProducer.class);
+
     private final TenantContextFactory _tenantContextFactory;
+    private final JobEngineManager _jobEngineManager;
 
     @Autowired
-    public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory) {
+    public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory, JobEngineManager jobEngineManager) {
         _tenantContextFactory = tenantContextFactory;
+        _jobEngineManager = jobEngineManager;
     }
 
     @Override
@@ -55,8 +63,14 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
 
         final String jobName = jobIdentifier.getName();
         final MetricJobContext job = (MetricJobContext) tenantContext.getJob(jobName);
-        final MetricJobEngine<? extends MetricJobContext> jobEngine = job.getJobEngine();
+        final MetricJobEngine<? extends MetricJobContext> jobEngine;
+        if (job == null) {
+            logger.warn("Job {} does not exist. Cannot resolve job engine, so defaulting to DataCleanerJobEngine.",
+                    jobName);
+            jobEngine = _jobEngineManager.getJobEngineOfType(DataCleanerJobEngine.class);
+        } else {
+            jobEngine = job.getJobEngine();
+        }
         return jobEngine.getMetricValues(job, resultContext, metricIdentifiers);
     }
-
 }

@@ -40,4 +40,6 @@ public interface JobEngineManager {
     public <T extends JobContext> JobEngine<? extends T> getJobEngine(T jobContext);
 
     public <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext);
+
+    public <E extends JobEngine<?>> E getJobEngineOfType(Class<E> class1);
 }

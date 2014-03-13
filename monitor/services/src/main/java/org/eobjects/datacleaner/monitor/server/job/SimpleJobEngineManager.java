@@ -19,8 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -84,6 +86,37 @@ public class SimpleJobEngineManager implements JobEngineManager {
             logger.warn("No job engines has been configured, thus no engine found for job: {}", jobName);
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <E extends JobEngine<?>> E getJobEngineOfType(Class<E> cls) {
+        if (cls == null) {
+            throw new IllegalArgumentException("JobEngine class cannot be null");
+        }
+        
+        Collection<JobEngine<?>> jobEngines = getJobEngines();
+        
+        for (JobEngine<?> engine : jobEngines) {
+            // look for exact matching classes
+            if (engine.getClass() == cls) {
+                return (E) engine;
+            }
+        }
+        for (JobEngine<?> engine : jobEngines) {
+            // take any sub class
+            if (ReflectionUtils.is(engine.getClass(), cls)) {
+                return (E) engine;
+            }
+        }
+        
+        // build meaningful error message
+        final List<String> types = new ArrayList<String>();
+        for (JobEngine<?> engine : jobEngines) {
+            types.add(engine.getClass().getName());
+        }
+        throw new UnsupportedOperationException("No job engine available of type: " + cls.getName()
+                + ". Available job engine types are: " + types);
     }
 
 }

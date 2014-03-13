@@ -18,6 +18,7 @@
 	<bean
 		class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
 		<constructor-arg ref="tenantContextFactory" />
+		<constructor-arg ref="jobEngineManager" />
 	</bean>
 	
 	<bean name="jobEngineManager" class="org.eobjects.datacleaner.monitor.server.job.DefaultJobEngineManager" autowire="constructor" />

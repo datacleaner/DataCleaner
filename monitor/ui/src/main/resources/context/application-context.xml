@@ -15,6 +15,7 @@
 				<value>org.eobjects.datacleaner.panels</value>
 				<value>org.eobjects.datacleaner.widgets.result</value>
 				<value>com.hi</value>
+				<value>com.neopost.cim</value>
 			</list>
 		</property>
 		<property name="numThreads" value="30" />

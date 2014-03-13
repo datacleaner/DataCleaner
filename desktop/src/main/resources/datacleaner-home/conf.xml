@@ -85,6 +85,7 @@
 		<package>org.eobjects.datacleaner.panels</package>
 		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
 		<package recursive="true">com.hi</package>
+		<package recursive="true">com.neopost</package>
 	</classpath-scanner>
 
 </configuration>

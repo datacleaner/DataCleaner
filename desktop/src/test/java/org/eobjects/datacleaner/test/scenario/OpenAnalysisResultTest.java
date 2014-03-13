@@ -56,7 +56,7 @@ public class OpenAnalysisResultTest extends TestCase {
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/all_analyzers.analysis.result.dat");
 
-        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null), null);
+        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null));
         ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 

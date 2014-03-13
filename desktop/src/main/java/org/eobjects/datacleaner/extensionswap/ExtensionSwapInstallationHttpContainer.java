@@ -52,11 +52,9 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
     private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationHttpContainer.class);
 
     private final ExtensionSwapClient _client;
-    private final UsageLogger _usageLogger;
 
     public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UsageLogger usageLogger) {
         _client = extensionSwapClient;
-        _usageLogger = usageLogger;
     }
 
     @Override
@@ -115,7 +113,6 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
     }
 
     private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
-        _usageLogger.log("Extension install: " + extensionSwapPackage.getId());
 
         final String title = "Install DataCleaner extension?";
         final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName()

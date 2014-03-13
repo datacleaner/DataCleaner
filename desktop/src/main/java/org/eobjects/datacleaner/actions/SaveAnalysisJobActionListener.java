@@ -40,7 +40,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.user.MonitorConnection;
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -63,24 +62,20 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalysisJobBuilderWindow _window;
     private final UserPreferences _userPreferences;
-    private final UsageLogger _usageLogger;
     private final AnalyzerBeansConfiguration _configuration;
 
     @Inject
     protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
+            UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
         _window = window;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
-        _usageLogger = usageLogger;
         _configuration = configuration;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         final String actionCommand = event.getActionCommand();
-
-        _usageLogger.log("Save analysis job");
 
         _window.setStatusLabelNotice();
         _window.setStatusLabelText("Saving job...");

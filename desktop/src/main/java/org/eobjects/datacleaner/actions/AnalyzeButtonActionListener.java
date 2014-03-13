@@ -38,45 +38,44 @@ import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
 
 public final class AnalyzeButtonActionListener implements ActionListener {
 
-	private final AnalyzerBeansConfiguration _configuration;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final UsageLogger _usageLogger;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final UsageLogger _usageLogger;
 
-	@Inject
-	protected AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			UsageLogger usageLogger) {
-		_configuration = configuration;
-		_analysisJobBuilder = analysisJobBuilder;
-		_usageLogger = usageLogger;
-	}
+    @Inject
+    protected AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration,
+            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+        _configuration = configuration;
+        _analysisJobBuilder = analysisJobBuilder;
+        _usageLogger = usageLogger;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
-				.getAnalyzerBeanDescriptors();
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+                .getAnalyzerBeanDescriptors();
 
-		final JPopupMenu popup = new DescriptorPopupMenu<AnalyzerBeanDescriptor<?>>(descriptors) {
+        final JPopupMenu popup = new DescriptorPopupMenu<AnalyzerBeanDescriptor<?>>(descriptors) {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
-				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-				menuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
-						_analysisJobBuilder.addAnalyzer(analyzerClass);
+            @Override
+            protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
+                JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+                menuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
+                        _analysisJobBuilder.addAnalyzer(analyzerClass);
+                        _usageLogger.logComponentUsage(descriptor);
+                    }
+                });
 
-						_usageLogger.log("Add analyzer: " + descriptor.getDisplayName());
-					}
-				});
+                return menuItem;
+            }
+        };
 
-				return menuItem;
-			}
-		};
-
-		Component source = (Component) e.getSource();
-		popup.show(source, 0, source.getHeight());
-	}
+        Component source = (Component) e.getSource();
+        popup.show(source, 0, source.getHeight());
+    }
 }

@@ -40,7 +40,6 @@ import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.ExtensionPackage;
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
@@ -70,24 +69,20 @@ public class OpenAnalysisJobActionListener implements ActionListener {
     private final WindowContext _windowContext;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
-    private final UsageLogger _usageLogger;
 
     @Inject
     public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
             AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
-            UserPreferences userPreferences, UsageLogger usageLogger) {
+            UserPreferences userPreferences) {
         _parentWindow = parentWindow;
         _configuration = configuration;
         _windowContext = windowContext;
         _parentModule = parentModule;
         _userPreferences = userPreferences;
-        _usageLogger = usageLogger;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        _usageLogger.log("Open analysis job");
-
         DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 
         OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
@@ -109,7 +104,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
     public static Injector open(FileObject file, AnalyzerBeansConfiguration configuration, Injector injector) {
         final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
         final OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
-                configuration, null, injector.getInstance(DCModule.class), userPreferences, null);
+                configuration, null, injector.getInstance(DCModule.class), userPreferences);
         return openAnalysisJobActionListener.openAnalysisJob(file);
     }
 
@@ -120,7 +115,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             Injector injector = openAnalysisJob(file);
             final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
             window.open();
-            
+
             if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
                 _parentWindow.close();
             }
@@ -140,7 +135,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        
+
         final File file = VFSUtils.toFile(fileObject);
         if (file != null) {
             _userPreferences.setAnalysisJobDirectory(file.getParentFile());

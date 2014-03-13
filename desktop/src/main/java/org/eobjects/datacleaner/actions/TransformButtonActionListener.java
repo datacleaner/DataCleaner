@@ -42,63 +42,52 @@ import org.eobjects.metamodel.util.CollectionUtils;
 
 public final class TransformButtonActionListener implements ActionListener {
 
-	private final AnalyzerBeansConfiguration _configuration;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final UsageLogger _usageLogger;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final UsageLogger _usageLogger;
 
-	@Inject
-	protected TransformButtonActionListener(
-			AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
-		_configuration = configuration;
-		_analysisJobBuilder = analysisJobBuilder;
-		_usageLogger = usageLogger;
-	}
+    @Inject
+    protected TransformButtonActionListener(AnalyzerBeansConfiguration configuration,
+            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+        _configuration = configuration;
+        _analysisJobBuilder = analysisJobBuilder;
+        _usageLogger = usageLogger;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-		final DescriptorProvider descriptorProvider = _configuration
-				.getDescriptorProvider();
-		final Collection<FilterBeanDescriptor<?, ?>> filterBeanDescriptors = descriptorProvider
-				.getFilterBeanDescriptors();
-		final Collection<TransformerBeanDescriptor<?>> transformerBeanDescritpors = descriptorProvider
-				.getTransformerBeanDescriptors();
-		final List<BeanDescriptor<?>> descriptors = CollectionUtils
-				.<BeanDescriptor<?>> concat(false, filterBeanDescriptors,
-						transformerBeanDescritpors);
+        final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
+        final Collection<FilterBeanDescriptor<?, ?>> filterBeanDescriptors = descriptorProvider
+                .getFilterBeanDescriptors();
+        final Collection<TransformerBeanDescriptor<?>> transformerBeanDescritpors = descriptorProvider
+                .getTransformerBeanDescriptors();
+        final List<BeanDescriptor<?>> descriptors = CollectionUtils.<BeanDescriptor<?>> concat(false,
+                filterBeanDescriptors, transformerBeanDescritpors);
 
-		final JPopupMenu popup = new DescriptorPopupMenu<BeanDescriptor<?>>(
-				descriptors) {
-			private static final long serialVersionUID = 1L;
+        final JPopupMenu popup = new DescriptorPopupMenu<BeanDescriptor<?>>(descriptors) {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			protected JMenuItem createMenuItem(
-					final BeanDescriptor<?> descriptor) {
-				final DescriptorMenuItem menuItem = new DescriptorMenuItem(
-						descriptor);
-				menuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (descriptor instanceof TransformerBeanDescriptor) {
-							_analysisJobBuilder
-									.addTransformer((TransformerBeanDescriptor<?>) descriptor);
-							_usageLogger.log("Add transformer: "
-									+ descriptor.getDisplayName());
-						} else if (descriptor instanceof FilterBeanDescriptor) {
-							_analysisJobBuilder
-									.addFilter((FilterBeanDescriptor<?, ?>) descriptor);
-							_usageLogger.log("Add filter: "
-									+ descriptor.getDisplayName());
-						}
-					}
-				});
-				return menuItem;
-			}
-		};
+            @Override
+            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+                final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
+                menuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (descriptor instanceof TransformerBeanDescriptor) {
+                            _analysisJobBuilder.addTransformer((TransformerBeanDescriptor<?>) descriptor);
+                        } else if (descriptor instanceof FilterBeanDescriptor) {
+                            _analysisJobBuilder.addFilter((FilterBeanDescriptor<?, ?>) descriptor);
+                        }
+                        _usageLogger.logComponentUsage(descriptor);
+                    }
+                });
+                return menuItem;
+            }
+        };
 
-		Component source = (Component) e.getSource();
-		popup.show(source, 0, source.getHeight());
+        Component source = (Component) e.getSource();
+        popup.show(source, 0, source.getHeight());
 
-	}
+    }
 }

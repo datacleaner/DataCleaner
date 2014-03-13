@@ -58,16 +58,14 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
         private static final long serialVersionUID = 1L;
         private final AnnotatedRowsResult _result;
-        private final UsageLogger _usageLogger;
         private final UserPreferences _userPreferences;
         private final DatastoreCatalog _datastoreCatalog;
         private final DCTable _table;
 
-        public AnnotatedRowResultPanel(final AnnotatedRowsResult result, final UsageLogger usageLogger,
-                final UserPreferences userPreferences, final DatastoreCatalog datastoreCatalog) {
+        public AnnotatedRowResultPanel(final AnnotatedRowsResult result, final UserPreferences userPreferences,
+                final DatastoreCatalog datastoreCatalog) {
             super();
             _result = result;
-            _usageLogger = usageLogger;
             _userPreferences = userPreferences;
             _datastoreCatalog = datastoreCatalog;
 
@@ -89,7 +87,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             } else {
                 descriptionText = "Records";
             }
-            
+
             final int annotatedRowCount = result.getAnnotation().getRowCount();
             final DCLabel label = DCLabel.dark(descriptionText + " (" + result.getAnnotatedRowCount() + ")");
             label.setFont(WidgetUtils.FONT_HEADER1);
@@ -100,7 +98,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
                 comboBox.addListener(new Listener<String>() {
                     @Override
-                    public void onItemSelected(String item) {   
+                    public void onItemSelected(String item) {
                         if (item == VIEWS[0]) {
                             applyDetailedView();
                         } else {
@@ -119,11 +117,11 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
                     "images/actions/save.png", IconUtils.ICON_SIZE_MEDIUM));
             saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(),
-                    result.getRows(), _userPreferences, _datastoreCatalog, _usageLogger));
+                    result.getRows(), _userPreferences, _datastoreCatalog));
             buttonToolBar.add(saveToFileButton);
 
             add(buttonToolBar);
-            
+
             if (annotatedRowCount == 0) {
                 final DCLabel noRecordsLabel = DCLabel.dark("No records to display.");
                 noRecordsLabel.setBorder(new EmptyBorder(0, 4, 0, 0));
@@ -184,8 +182,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
     @Override
     public AnnotatedRowResultPanel render(final AnnotatedRowsResult result) {
-        AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, usageLogger, userPreferences,
-                datastoreCatalog);
+        AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
         return panel;
     }
 }

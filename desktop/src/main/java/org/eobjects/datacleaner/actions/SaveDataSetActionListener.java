@@ -41,7 +41,6 @@ import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -54,15 +53,13 @@ public class SaveDataSetActionListener implements ActionListener {
 	private final InputRow[] _rows;
 	private final UserPreferences _userPreferences;
 	private final DatastoreCatalog _datastoreCatalog;
-	private final UsageLogger _usageLogger;
 
 	public SaveDataSetActionListener(List<InputColumn<?>> inputColumns, InputRow[] rows, UserPreferences userPreferences,
-			DatastoreCatalog datastoreCatalog, UsageLogger usageLogger) {
+			DatastoreCatalog datastoreCatalog) {
 		_inputColumns = inputColumns;
 		_rows = rows;
 		_userPreferences = userPreferences;
 		_datastoreCatalog = datastoreCatalog;
-		_usageLogger = usageLogger;
 	}
 
 	private void performWrite(OutputWriter writer) {
@@ -89,8 +86,6 @@ public class SaveDataSetActionListener implements ActionListener {
 						_userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, "DATASET",
 						_inputColumns.toArray(new InputColumn[0]));
 				performWrite(writer);
-
-				_usageLogger.log("Save DataSet as datastore");
 			}
 		});
 
@@ -112,8 +107,6 @@ public class SaveDataSetActionListener implements ActionListener {
 
 					File dir = selectedFile.getParentFile();
 					_userPreferences.setAnalysisJobDirectory(dir);
-
-					_usageLogger.log("Save DataSet as CSV file");
 				}
 			}
 		});

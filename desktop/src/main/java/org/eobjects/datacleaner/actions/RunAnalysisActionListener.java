@@ -25,38 +25,36 @@ import java.awt.event.ActionListener;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
+/**
+ * Action listener invoked when the user chooses to run/execute an analysis job
+ */
 public class RunAnalysisActionListener implements ActionListener {
 
-	private final Provider<ResultWindow> _resultWindowProvider;
-	private final UsageLogger _usageLogger;
+    private final Provider<ResultWindow> _resultWindowProvider;
 
-	private long lastClickTime = 0;
+    private long lastClickTime = 0;
 
-	@Inject
-	protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider, UsageLogger usageLogger) {
-		_resultWindowProvider = resultWindowProvider;
-		_usageLogger = usageLogger;
-	}
+    @Inject
+    protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider) {
+        _resultWindowProvider = resultWindowProvider;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		synchronized (RunAnalysisActionListener.class) {
-			long thisClickTime = System.currentTimeMillis();
-			if (thisClickTime - lastClickTime < 1000) {
-				// prevent that double clicks fire two analysis runs!
-				return;
-			}
-			lastClickTime = thisClickTime;
-		}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        synchronized (RunAnalysisActionListener.class) {
+            long thisClickTime = System.currentTimeMillis();
+            if (thisClickTime - lastClickTime < 1000) {
+                // prevent that double clicks fire two analysis runs!
+                return;
+            }
+            lastClickTime = thisClickTime;
+        }
 
-		_usageLogger.log("Run analysis");
-
-		ResultWindow window = _resultWindowProvider.get();
-		window.setVisible(true);
-		window.startAnalysis();
-	}
+        ResultWindow window = _resultWindowProvider.get();
+        window.setVisible(true);
+        window.startAnalysis();
+    }
 
 }

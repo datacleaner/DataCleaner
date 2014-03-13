@@ -47,10 +47,16 @@ public class SystemProperties {
     public static final String SANDBOX = "datacleaner.sandbox";
 
     /**
+     * Property used for keeping the license key for commercial DataCleaner
+     * editions.
+     */
+    public static final String LICENSE_KEY = "datacleaner.license.key";
+
+    /**
      * Identifies the name of the current DataCleaner edition
      */
     public static final String EDITION_NAME = "datacleaner.edition.name";
-    
+
     /**
      * Property for the hostname of the DC monitor app
      */
@@ -91,7 +97,7 @@ public class SystemProperties {
      * Property for the CAS server url, eg. "https://localhost:8443/cas"
      */
     public static final String MONITOR_CAS_URL = "datacleaner.monitor.security.casserverurl";
-    
+
     /**
      * Property for disabling expected row count in userlogs"
      */

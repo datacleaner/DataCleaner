@@ -19,9 +19,6 @@
  */
 package org.eobjects.datacleaner.user;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +32,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.util.SystemProperties;
@@ -89,7 +87,8 @@ public final class UsageLogger {
     }
 
     public void logApplicationShutdown() {
-        log("Shutdown", null);
+        final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
+        log("Shutdown", embeddedClient);
 
         // order the executor service to shut down.
         _executorService.shutdown();
@@ -125,6 +124,7 @@ public final class UsageLogger {
                 nameValuePairs.add(new BasicNameValuePair("detail", _detail));
                 nameValuePairs.add(new BasicNameValuePair("version", Version.getVersion()));
                 nameValuePairs.add(new BasicNameValuePair("edition", Version.getEdition()));
+                nameValuePairs.add(new BasicNameValuePair("license_key", Version.getLicenseKey()));
                 nameValuePairs.add(new BasicNameValuePair("os_name", _osName));
                 nameValuePairs.add(new BasicNameValuePair("os_arch", _osArch));
                 nameValuePairs.add(new BasicNameValuePair("country", _country));
@@ -133,11 +133,16 @@ public final class UsageLogger {
                 nameValuePairs.add(new BasicNameValuePair("java_vendor", _javaVendor));
                 req.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
 
-                HttpResponse resp = _userPreferences.createHttpClient().execute(req);
-                InputStream content = resp.getEntity().getContent();
-                String line = new BufferedReader(new InputStreamReader(content)).readLine();
-                assert "success".equals(line);
-                logger.debug("Usage logger response: {}", line);
+                final HttpResponse resp = _userPreferences.createHttpClient().execute(req);
+             
+                final String responseText = EntityUtils.toString(resp.getEntity());
+                final String firstLine = responseText.split("\n")[0];
+                
+                if ("success".equals(firstLine)) {
+                    logger.debug("Usage logger response successful: {}", responseText);
+                } else {
+                    logger.debug("Usage logger response unsuccessful: {}", responseText);
+                }
             } catch (Exception e) {
                 logger.warn("Could not dispatch usage log for action: {} ({})", _action, e.getMessage());
                 logger.debug("Error occurred while dispatching usage log", e);

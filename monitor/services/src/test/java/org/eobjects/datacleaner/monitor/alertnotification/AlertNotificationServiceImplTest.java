@@ -34,7 +34,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.metamodel.util.Ref;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class AlertNotificationServiceImplTest extends TestCase {
@@ -46,7 +45,7 @@ public class AlertNotificationServiceImplTest extends TestCase {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
+        final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
         final AlertNotificationServiceImpl alertNotificationService = (AlertNotificationServiceImpl) applicationContext
                 .getBean(AlertNotificationService.class);
         alertNotificationService.getAlertNotifiers().add(new AlertNotifier() {
@@ -67,6 +66,8 @@ public class AlertNotificationServiceImplTest extends TestCase {
         alertNotificationService.notifySubscribers(execution);
 
         assertEquals(1, counter.get());
+     
+        applicationContext.close();
     }
 
     public void testIsBeyondThreshold() throws Exception {

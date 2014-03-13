@@ -56,6 +56,10 @@ public class Version {
         return EDITION;
     }
 
+    public static String getLicenseKey() {
+        return System.getProperty(SystemProperties.LICENSE_KEY);
+    }
+
     private static String determineVersion() {
         final Properties properties = new Properties();
         final InputStream inputStream = Version.class

@@ -57,7 +57,8 @@ public class PingController {
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("tenant", tenant);
-        map.put("version", Version.get());
+        map.put("version", Version.getVersion());
+        map.put("edition", Version.getEdition());
         map.put("ping", "pong");
         map.put("configuration_check", (configuration == null ? "invalid" : "valid"));
 

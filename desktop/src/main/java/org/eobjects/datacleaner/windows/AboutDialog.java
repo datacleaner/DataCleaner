@@ -77,293 +77,299 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
  */
 public class AboutDialog extends AbstractDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static class LicensedProject {
-		public String name;
-		public String websiteUrl;
-		public String license;
-	}
+    public static class LicensedProject {
+        public String name;
+        public String websiteUrl;
+        public String license;
+    }
 
-	private static final ResourceManager resourceManager = ResourceManager.getInstance();
-	private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ResourceManager resourceManager = ResourceManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.getInstance();
 
-	public AboutDialog(WindowContext windowContext) {
-		super(windowContext);
-	}
+    public AboutDialog(WindowContext windowContext) {
+        super(windowContext);
+    }
 
-	@Override
-	public void toFront() {
-		super.toFront();
-	}
+    @Override
+    public void toFront() {
+        super.toFront();
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "About DataCleaner";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "About DataCleaner";
+    }
 
-	@Override
-	protected int getDialogWidth() {
-		return 600;
-	}
+    @Override
+    protected int getDialogWidth() {
+        return 600;
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	@Override
-	protected JComponent getDialogContent() {
-		CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
+    @Override
+    protected JComponent getDialogContent() {
+        CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 
-		tabbedPane.addTab("About DataCleaner",
-				imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
-				"About DataCleaner");
-		tabbedPane.setUnclosableTab(0);
+        tabbedPane.addTab("About DataCleaner",
+                imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
+                "About DataCleaner");
+        tabbedPane.setUnclosableTab(0);
 
-		tabbedPane.addTab("Licensing", imageManager.getImageIcon("images/menu/license.png"), getLicensingPanel(),
-				"Licensing");
-		tabbedPane.setUnclosableTab(1);
+        tabbedPane.addTab("Licensing", imageManager.getImageIcon("images/menu/license.png"), getLicensingPanel(),
+                "Licensing");
+        tabbedPane.setUnclosableTab(1);
 
-		tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
+        tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
 
-		return tabbedPane;
-	}
+        return tabbedPane;
+    }
 
-	private JComponent getLicensingPanel() {
-		final String dcLicense = getLicense("lgpl");
+    private JComponent getLicensingPanel() {
+        final String dcLicense = getLicense("lgpl");
 
-		final DCLabel licenseHeader = DCLabel.dark("");
-		licenseHeader.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel licenseHeader = DCLabel.dark("");
+        licenseHeader.setFont(WidgetUtils.FONT_HEADER1);
 
-		final DCLabel licenseLabel = DCLabel.darkMultiLine("");
-		licenseLabel.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		licenseLabel.setFont(WidgetUtils.FONT_MONOSPACE);
-		licenseLabel.setOpaque(true);
+        final DCLabel licenseLabel = DCLabel.darkMultiLine("");
+        licenseLabel.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        licenseLabel.setFont(WidgetUtils.FONT_MONOSPACE);
+        licenseLabel.setOpaque(true);
 
-		final JButton dcLicenseButton = WidgetFactory.createSmallButton("images/menu/license.png");
-		dcLicenseButton.setToolTipText("DataCleaner's license: GNU LGPL");
-		dcLicenseButton.addActionListener(new ActionListener() {
+        final JButton dcLicenseButton = WidgetFactory.createSmallButton("images/menu/license.png");
+        dcLicenseButton.setToolTipText("DataCleaner's license: GNU LGPL");
+        dcLicenseButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				licenseHeader.setText("Displaying license of DataCleaner");
-				licenseLabel.setText(dcLicense);
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                licenseHeader.setText("Displaying license of DataCleaner");
+                licenseLabel.setText(dcLicense);
+            }
+        });
 
-		final JComboBox librariesComboBox = new JComboBox();
-		final JButton visitProjectButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
+        final JComboBox librariesComboBox = new JComboBox();
+        final JButton visitProjectButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
 
-		librariesComboBox.setRenderer(new DCListCellRenderer() {
+        librariesComboBox.setRenderer(new DCListCellRenderer() {
 
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				if (value instanceof LicensedProject) {
-					LicensedProject project = (LicensedProject) value;
-					String name = project.name;
-					return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
-				} else if (value instanceof String) {
-					return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				}
-				throw new UnsupportedOperationException();
-			}
-		});
-		librariesComboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				Object item = e.getItem();
-				if (item instanceof LicensedProject) {
-					visitProjectButton.setEnabled(true);
-					LicensedProject project = (LicensedProject) item;
-					licenseLabel.setText(project.license);
-					licenseHeader.setText("Displaying license of " + project.name + "");
-				} else {
-					visitProjectButton.setEnabled(false);
-					licenseHeader.setText("Displaying license of DataCleaner");
-					licenseLabel.setText(dcLicense);
-				}
-			}
-		});
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                if (value instanceof LicensedProject) {
+                    LicensedProject project = (LicensedProject) value;
+                    String name = project.name;
+                    return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
+                } else if (value instanceof String) {
+                    return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                }
+                throw new UnsupportedOperationException();
+            }
+        });
+        librariesComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                Object item = e.getItem();
+                if (item instanceof LicensedProject) {
+                    visitProjectButton.setEnabled(true);
+                    LicensedProject project = (LicensedProject) item;
+                    licenseLabel.setText(project.license);
+                    licenseHeader.setText("Displaying license of " + project.name + "");
+                } else {
+                    visitProjectButton.setEnabled(false);
+                    licenseHeader.setText("Displaying license of DataCleaner");
+                    licenseLabel.setText(dcLicense);
+                }
+            }
+        });
 
-		visitProjectButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Object item = librariesComboBox.getSelectedItem();
-				LicensedProject project = (LicensedProject) item;
-				String websiteUrl = project.websiteUrl;
-				if (!StringUtils.isNullOrEmpty(websiteUrl)) {
-					new OpenBrowserAction(websiteUrl).actionPerformed(e);
-				}
-			}
-		});
+        visitProjectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object item = librariesComboBox.getSelectedItem();
+                LicensedProject project = (LicensedProject) item;
+                String websiteUrl = project.websiteUrl;
+                if (!StringUtils.isNullOrEmpty(websiteUrl)) {
+                    new OpenBrowserAction(websiteUrl).actionPerformed(e);
+                }
+            }
+        });
 
-		librariesComboBox.addItem("- select project -");
-		final List<LicensedProject> licensedProjects = getLicensedProjects();
-		for (LicensedProject licensedProject : licensedProjects) {
-			librariesComboBox.addItem(licensedProject);
-		}
+        librariesComboBox.addItem("- select project -");
+        final List<LicensedProject> licensedProjects = getLicensedProjects();
+        for (LicensedProject licensedProject : licensedProjects) {
+            librariesComboBox.addItem(licensedProject);
+        }
 
-		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(DCLabel.dark("DataCleaners license: "));
-		toolBar.add(dcLicenseButton);
-		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(DCLabel.dark("Included libraries: "));
-		toolBar.add(librariesComboBox);
-		toolBar.add(visitProjectButton);
+        final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(DCLabel.dark("DataCleaners license: "));
+        toolBar.add(dcLicenseButton);
+        toolBar.add(WidgetFactory.createToolBarSeparator());
+        toolBar.add(DCLabel.dark("Included libraries: "));
+        toolBar.add(librariesComboBox);
+        toolBar.add(visitProjectButton);
 
-		final JScrollPane licenseLabelScroll = WidgetUtils.scrolleable(licenseLabel);
-		licenseLabelScroll.setBorder(new CompoundBorder(new EmptyBorder(10, 0, 10, 0), WidgetUtils.BORDER_THIN));
+        final JScrollPane licenseLabelScroll = WidgetUtils.scrolleable(licenseLabel);
+        licenseLabelScroll.setBorder(new CompoundBorder(new EmptyBorder(10, 0, 10, 0), WidgetUtils.BORDER_THIN));
 
-		final DCPanel headerPanel = new DCPanel();
-		headerPanel.setLayout(new VerticalLayout());
-		headerPanel.add(toolBar);
-		headerPanel.add(Box.createVerticalStrut(20));
-		headerPanel.add(licenseHeader);
+        final DCPanel headerPanel = new DCPanel();
+        headerPanel.setLayout(new VerticalLayout());
+        headerPanel.add(toolBar);
+        headerPanel.add(Box.createVerticalStrut(20));
+        headerPanel.add(licenseHeader);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		panel.setLayout(new BorderLayout());
-		panel.add(headerPanel, BorderLayout.NORTH);
-		panel.add(licenseLabelScroll, BorderLayout.CENTER);
+        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        panel.setBorder(new EmptyBorder(4, 4, 4, 4));
+        panel.setLayout(new BorderLayout());
+        panel.add(headerPanel, BorderLayout.NORTH);
+        panel.add(licenseLabelScroll, BorderLayout.CENTER);
 
-		return panel;
-	}
+        return panel;
+    }
 
-	private JComponent getAboutPanel() {
-		final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getVersion());
-		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
+    private JComponent getAboutPanel() {
+        final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getVersion());
 
-		final ImageManager imageManager = ImageManager.getInstance();
+        headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
-		datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
-		datacleanerButton.setToolTipText("Visit the DataCleaner website");
-		datacleanerButton.setBorder(null);
+        final ImageManager imageManager = ImageManager.getInstance();
 
-		final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));
-		bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
-		bloggerButton.setToolTipText("Follow along at our blog");
-		bloggerButton.setBorder(null);
+        final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
+        datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
+        datacleanerButton.setToolTipText("Visit the DataCleaner website");
+        datacleanerButton.setBorder(null);
 
-		final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
-		linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
-		linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
-		linkedInButton.setBorder(null);
+        final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));
+        bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
+        bloggerButton.setToolTipText("Follow along at our blog");
+        bloggerButton.setBorder(null);
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new HorizontalLayout());
-		buttonPanel.add(datacleanerButton);
-		buttonPanel.add(Box.createHorizontalStrut(10));
-		buttonPanel.add(bloggerButton);
-		buttonPanel.add(Box.createHorizontalStrut(10));
-		buttonPanel.add(linkedInButton);
+        final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
+        linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
+        linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
+        linkedInButton.setBorder(null);
 
-		final HumanInferenceToolbarButton humanInferenceButton = new HumanInferenceToolbarButton(
-				imageManager.getImageIcon("images/powered-by-human-inference-bright.png"));
+        final DCPanel buttonPanel = new DCPanel();
+        buttonPanel.setLayout(new HorizontalLayout());
+        buttonPanel.add(datacleanerButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(bloggerButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(linkedInButton);
 
-		final DCPanel contentPanel = new DCPanel();
-		contentPanel.setLayout(new VerticalLayout());
-		contentPanel.add(headerLabel);
-		contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Human Inference"));
-		contentPanel.add(Box.createVerticalStrut(20));
-		contentPanel.add(DCPanel.around(humanInferenceButton));
-		
-		if (Version.isCommunityEdition()) {
-		    contentPanel.add(Box.createVerticalStrut(20));
-		    contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
-		    contentPanel.add(DCLabel.dark("(see Licensing tab)."));
-		} 
-		
-		contentPanel.add(Box.createVerticalStrut(30));
-		contentPanel.add(DCLabel.dark("Java runtime information:"));
-		contentPanel.add(DCLabel.dark("  " + System.getProperty("java.vm.name")));
-		contentPanel.add(DCLabel.dark("  by " + System.getProperty("java.vm.vendor")));
-		contentPanel.add(DCLabel.dark("  version " + System.getProperty("java.runtime.version")));
-		contentPanel.add(Box.createVerticalStrut(30));
-		contentPanel.add(buttonPanel);
+        final HumanInferenceToolbarButton humanInferenceButton = new HumanInferenceToolbarButton(
+                imageManager.getImageIcon("images/powered-by-human-inference-bright.png"));
 
-		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,
-				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		mainPanel.setLayout(new VerticalLayout());
-		mainPanel.add(contentPanel);
+        final DCPanel contentPanel = new DCPanel();
+        contentPanel.setLayout(new VerticalLayout());
+        contentPanel.add(headerLabel);
+        contentPanel.add(DCLabel
+                .dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Human Inference"));
+        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(DCPanel.around(humanInferenceButton));
 
-		return mainPanel;
-	}
+        if (Version.isCommunityEdition()) {
+            contentPanel.add(Box.createVerticalStrut(20));
+            contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
+            contentPanel.add(DCLabel.dark("(see Licensing tab)."));
+        } else {
+            final String licenseKey = Version.getLicenseKey();
+            contentPanel.add(Box.createVerticalStrut(20));
+            contentPanel.add(DCLabel.dark("License key: " + licenseKey));
+        }
 
-	@Override
-	public String getWindowTitle() {
-		return "About DataCleaner | DataCleaner";
-	}
+        contentPanel.add(Box.createVerticalStrut(30));
+        contentPanel.add(DCLabel.dark("Java runtime information:"));
+        contentPanel.add(DCLabel.dark("  " + System.getProperty("java.vm.name")));
+        contentPanel.add(DCLabel.dark("  by " + System.getProperty("java.vm.vendor")));
+        contentPanel.add(DCLabel.dark("  version " + System.getProperty("java.runtime.version")));
+        contentPanel.add(Box.createVerticalStrut(30));
+        contentPanel.add(buttonPanel);
 
-	public static List<LicensedProject> getLicensedProjects() {
-		final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
-		final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
-		if (url == null) {
-			throw new IllegalStateException("Could not find dependencies file");
-		}
-		try {
-			DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
-			Table table = dc.getDefaultSchema().getTables()[0];
-			Column projectColumn = table.getColumnByName("Project");
-			Column websiteColumn = table.getColumnByName("Website");
-			Column licenseColumn = table.getColumnByName("License");
-			Query q = dc.query().from(table).select(table.getColumns()).orderBy(projectColumn).asc().toQuery();
-			DataSet ds = dc.executeQuery(q);
-			while (ds.next()) {
-				final LicensedProject licensedProject = new LicensedProject();
-				final Row row = ds.getRow();
-				final String licenseName = row.getValue(licenseColumn).toString();
+        final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,
+                WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        mainPanel.setLayout(new VerticalLayout());
+        mainPanel.add(contentPanel);
 
-				licensedProject.name = row.getValue(projectColumn).toString();
-				licensedProject.websiteUrl = row.getValue(websiteColumn).toString();
-				licensedProject.license = getLicense(licenseName);
+        return mainPanel;
+    }
 
-				result.add(licensedProject);
-			}
+    @Override
+    public String getWindowTitle() {
+        return "About DataCleaner | DataCleaner";
+    }
 
-		} catch (IOException e) {
-			throw new IllegalStateException("Error occurred while reading dependencies file", e);
-		}
+    public static List<LicensedProject> getLicensedProjects() {
+        final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
+        final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
+        if (url == null) {
+            throw new IllegalStateException("Could not find dependencies file");
+        }
+        try {
+            DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
+            Table table = dc.getDefaultSchema().getTables()[0];
+            Column projectColumn = table.getColumnByName("Project");
+            Column websiteColumn = table.getColumnByName("Website");
+            Column licenseColumn = table.getColumnByName("License");
+            Query q = dc.query().from(table).select(table.getColumns()).orderBy(projectColumn).asc().toQuery();
+            DataSet ds = dc.executeQuery(q);
+            while (ds.next()) {
+                final LicensedProject licensedProject = new LicensedProject();
+                final Row row = ds.getRow();
+                final String licenseName = row.getValue(licenseColumn).toString();
 
-		return result;
-	}
+                licensedProject.name = row.getValue(projectColumn).toString();
+                licensedProject.websiteUrl = row.getValue(websiteColumn).toString();
+                licensedProject.license = getLicense(licenseName);
 
-	public static String getLicense(final String licenseName) {
-		URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
-		if (url == null) {
-			throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
-		}
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
-			final StringBuilder sb = new StringBuilder();
-			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-				if (sb.length() != 0) {
-					sb.append('\n');
-				}
-				sb.append(line);
-			}
+                result.add(licensedProject);
+            }
 
-			return sb.toString();
-		} catch (Exception e) {
-			throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-			}
-		}
-	}
+        } catch (IOException e) {
+            throw new IllegalStateException("Error occurred while reading dependencies file", e);
+        }
 
-	public static void main(String[] args) {
-		new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
-	}
+        return result;
+    }
+
+    public static String getLicense(final String licenseName) {
+        URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
+        if (url == null) {
+            throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
+        }
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
+            final StringBuilder sb = new StringBuilder();
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                if (sb.length() != 0) {
+                    sb.append('\n');
+                }
+                sb.append(line);
+            }
+
+            return sb.toString();
+        } catch (Exception e) {
+            throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // do nothing
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
+    }
 }

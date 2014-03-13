@@ -44,13 +44,17 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
 public final class Main {
 
     public static void main(String[] args) {
+        main(args, true, true);
+    }
+    
+    public static void main(String[] args, boolean initializeSystemProperties, boolean initializeLogging) {
         initializeSystemProperties(args);
 
         initializeLogging();
 
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
         final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-        bootstrap.run();
+        bootstrap.run();        
     }
 
     /**

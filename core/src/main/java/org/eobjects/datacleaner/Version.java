@@ -32,8 +32,15 @@ import com.google.common.base.Strings;
  */
 public class Version {
 
-    private static final String VERSION = determineVersion();
-    private static final String EDITION = determineEdition();
+    private static final String VERSION;
+    private static final String EDITION;
+
+    static {
+        VERSION = determineVersion();
+        EDITION = determineEdition();
+
+        System.out.println("DataCleaner " + EDITION + " version: " + VERSION);
+    }
 
     public static final String EDITION_COMMUNITY = "Community edition";
     public static final String EDITION_PROFESSIONAL = "Professional edition";
@@ -75,7 +82,6 @@ public class Version {
         }
 
         final String version = properties.getProperty("version");
-        System.out.println("DataCleaner version: " + version);
         return version;
     }
 

@@ -154,8 +154,10 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
         int rowIndex = 0;
         for (Object[] row : rows) {
-            for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
-                tableModel.setValueAt(row[columnIndex], rowIndex, columnIndex);
+            if (row != null) {
+                for (int columnIndex = 0; columnIndex < row.length; columnIndex++) {
+                    tableModel.setValueAt(row[columnIndex], rowIndex, columnIndex);
+                }
             }
             rowIndex++;
         }

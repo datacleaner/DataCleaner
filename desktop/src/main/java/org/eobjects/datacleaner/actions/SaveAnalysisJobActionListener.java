@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class SaveAnalysisJobActionListener implements ActionListener {
 
+    private static final String LABEL_TEXT_SAVING_JOB = "Saving job...";
+
     public static final String ACTION_COMMAND_SAVE_AS = "SAVE_AS";
 
     private static final Logger logger = LoggerFactory.getLogger(SaveAnalysisJobActionListener.class);
@@ -78,17 +80,36 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
         final String actionCommand = event.getActionCommand();
 
         _window.setStatusLabelNotice();
-        _window.setStatusLabelText("Saving job...");
+        _window.setStatusLabelText(LABEL_TEXT_SAVING_JOB);
 
         AnalysisJob analysisJob = null;
         try {
             _window.applyPropertyValues();
             analysisJob = _analysisJobBuilder.toAnalysisJob();
         } catch (Exception e) {
-            WidgetUtils.showErrorMessage("Errors in job",
-                    "Please fix the errors that exist in the job before saving it:\n\n" + _window.getStatusLabelText(),
-                    e);
-            return;
+            if ("No Analyzers in job".equals(e.getMessage())) {
+                // TODO: Have a better way to diagnose this issue
+                int result = JOptionPane
+                        .showConfirmDialog(
+                                _window.toComponent(),
+                                "You job does not have any analyzer components in it, and is thus 'incomplete'. Do you want to save it anyway?",
+                                "No analyzers in job", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (result == JOptionPane.YES_OPTION) {
+                    analysisJob = _analysisJobBuilder.toAnalysisJob(false);
+                } else {
+                    return;
+                }
+            } else {
+                String detail = _window.getStatusLabelText();
+                if (LABEL_TEXT_SAVING_JOB.equals(detail)) {
+                    detail = e.getMessage();
+                }
+                WidgetUtils.showErrorMessage(
+                        "Errors in job",
+                        "Please fix the errors that exist in the job before saving it:\n\n"
+                                + detail, e);
+                return;
+            }
         }
 
         final FileObject existingFile = _window.getJobFile();

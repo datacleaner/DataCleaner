@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
@@ -33,8 +35,6 @@ import org.eobjects.analyzer.result.AnalyzerResult;
  * A dummy analyzer used by the Preview Data button (
  * {@link PreviewTransformedDataActionListener}) to collect values from the
  * previewed records.
- * 
- * @author Kasper Sørensen
  */
 @AnalyzerBean("Preview transformed data collector")
 public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransformedDataAnalyzer>, AnalyzerResult {
@@ -44,19 +44,16 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
     @Configured
     InputColumn<?>[] columns;
 
-    private final List<Object[]> list = new ArrayList<Object[]>();
+    private BlockingQueue<Object[]> rows = new LinkedBlockingQueue<Object[]>();
 
     @Override
     public void run(InputRow row, int distinctCount) {
-        Object[] result = new Object[columns.length];
-        for (int i = 0; i < columns.length; i++) {
-            result[i] = row.getValue(columns[i]);
-        }
-        list.add(result);
+        List<Object> result= row.getValues(columns);
+        rows.add(result.toArray(new Object[result.size()]));
     }
 
     public List<Object[]> getList() {
-        return list;
+        return new ArrayList<Object[]>(rows);
     }
 
     public InputColumn<?>[] getColumns() {

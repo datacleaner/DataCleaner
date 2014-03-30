@@ -32,8 +32,14 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
 
 	private final String _desc;
 	private final String _extension;
-
+    private final boolean _includeDirectories;
+	
 	public ExtensionFilter(String desc, String extension) {
+	    this(desc, extension, true);
+	}
+
+	public ExtensionFilter(String desc, String extension, boolean includeDirectories) {
+	    _includeDirectories = includeDirectories;
 		_desc = desc;
 		_extension = extension.toLowerCase();
 	}
@@ -41,7 +47,7 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
 	@Override
 	public boolean accept(File f) {
 		if (f.isDirectory()) {
-			return true;
+			return _includeDirectories;
 		}
 		String fileName = f.getAbsolutePath();
 		if (fileName.length() < _extension.length()) {
@@ -53,7 +59,12 @@ public class ExtensionFilter extends FileFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {
-        final String extension = name.substring(name.length() - _extension.length());
+        final int startIndex = name.length() - _extension.length();
+        if (startIndex < 0) {
+            return false;
+        }
+        
+        final String extension = name.substring(startIndex);
         if (extension.equalsIgnoreCase(_extension)) {
             return true;
         }

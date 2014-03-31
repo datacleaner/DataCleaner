@@ -43,7 +43,6 @@ import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
 import org.eobjects.analyzer.configuration.jaxb.Configuration;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextImpl;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.Func;
@@ -169,9 +168,7 @@ public class DatastoreDaoImpl implements DatastoreDao {
             }
         });
 
-        if (tenantContext instanceof TenantContextImpl)
-            tenantContext.onConfigurationChanged();
-        else logger.warn("tenant Context is not an instance of TenantContextImpl");
+        tenantContext.onConfigurationChanged();
 
         String datastoreName = datastoreElement.getAttribute("name");
         if (datastoreName == null) {

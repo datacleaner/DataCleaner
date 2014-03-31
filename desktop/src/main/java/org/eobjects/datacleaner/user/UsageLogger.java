@@ -23,10 +23,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 
+import org.apache.commons.math.random.RandomData;
+import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -40,15 +43,19 @@ import org.eobjects.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * Class that handles remote logging of usage data
  */
 public final class UsageLogger {
 
+    private static long sessionId = -1;
+
     // Special username used for anonymous entries. This is the only
     // non-existing username that is allowed on server side.
     private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(UsageLogger.class);
 
     private final Charset charset = Charset.forName("UTF-8");
@@ -117,9 +124,15 @@ public final class UsageLogger {
         @Override
         public void run() {
             try {
+                Map<String, String> additionalProperties = _userPreferences.getAdditionalProperties();
+                long deploymentId = getDeploymentId(additionalProperties);
+                long sessionId = getSessionId();
+
                 final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 final HttpPost req = new HttpPost("http://datacleaner.org/ws/user_action");
                 nameValuePairs.add(new BasicNameValuePair("username", NOT_LOGGED_IN_USERNAME));
+                nameValuePairs.add(new BasicNameValuePair("deployment", "" + deploymentId));
+                nameValuePairs.add(new BasicNameValuePair("session", "" + sessionId));
                 nameValuePairs.add(new BasicNameValuePair("action", _action));
                 nameValuePairs.add(new BasicNameValuePair("detail", _detail));
                 nameValuePairs.add(new BasicNameValuePair("version", Version.getVersion()));
@@ -134,10 +147,10 @@ public final class UsageLogger {
                 req.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
 
                 final HttpResponse resp = _userPreferences.createHttpClient().execute(req);
-             
+
                 final String responseText = EntityUtils.toString(resp.getEntity());
                 final String firstLine = responseText.split("\n")[0];
-                
+
                 if ("success".equals(firstLine)) {
                     logger.debug("Usage logger response successful: {}", responseText);
                 } else {
@@ -152,5 +165,27 @@ public final class UsageLogger {
 
     public void logComponentUsage(ComponentDescriptor<?> descriptor) {
         log("Add component", descriptor.getDisplayName());
+    }
+
+    private long getSessionId() {
+        if (sessionId == -1) {
+            RandomData rd = new RandomDataImpl();
+            sessionId = rd.nextLong(1, Long.MAX_VALUE);
+        }
+        return sessionId;
+    }
+
+    private long getDeploymentId(Map<String, String> additionalProperties) {
+        String deploymentId = additionalProperties.get("datacleaner.usage.deployment_id");
+        if (Strings.isNullOrEmpty(deploymentId)) {
+            RandomData rd = new RandomDataImpl();
+            deploymentId = "" + rd.nextLong(1, Long.MAX_VALUE);
+            additionalProperties.put("datacleaner.usage.deployment_id", deploymentId);
+        }
+        try {
+            return Long.parseLong(deploymentId);
+        } catch (NumberFormatException e) {
+            return -1l;
+        }
     }
 }

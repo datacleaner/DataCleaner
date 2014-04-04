@@ -34,7 +34,7 @@ public interface RepositoryFile extends RepositoryNode {
      * Represents the main file types in the repository.
      */
     public static enum Type {
-        ANALYSIS_JOB, ANALYSIS_RESULT, TIMELINE_SPEC, OTHER;
+        ANALYSIS_JOB, ANALYSIS_RESULT, TIMELINE_SPEC, METADATA, OTHER;
     }
 
     /**

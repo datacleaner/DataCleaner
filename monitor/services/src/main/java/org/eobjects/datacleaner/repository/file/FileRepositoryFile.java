@@ -202,6 +202,9 @@ public final class FileRepositoryFile implements RepositoryFile {
             return Type.ANALYSIS_RESULT;
         } else if (getName().endsWith(FileFilters.ANALYSIS_TIMELINE_XML.getExtension())) {
             return Type.TIMELINE_SPEC;
+        } else if (getName().endsWith(FileFilters.METADATA_ORGANIZATION.getExtension()) ||
+                getName().endsWith(FileFilters.METADATA_PERSON.getExtension())) {
+            return Type.METADATA;
         }
 
         return Type.OTHER;

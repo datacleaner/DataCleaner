@@ -53,6 +53,7 @@ public class TenantContextImpl implements TenantContext {
     private static final String PATH_TIMELINES = "timelines";
     private static final String PATH_JOBS = "jobs";
     private static final String PATH_RESULTS = "results";
+    private static final String PATH_METADATA = "metadata";
     private static final String EXTENSION_RESULT = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
     private final String _tenantId;
@@ -261,6 +262,16 @@ public class TenantContextImpl implements TenantContext {
         logger.debug("onConfigurationChanged() invoked on tenant: {}", _tenantId);
         _configurationCache.clearCache();
         _jobCache.invalidateAll();
+    }
+
+    @Override
+    public RepositoryFolder getMetadataFolder() {
+        final RepositoryFolder tenantFolder = getTenantRootFolder();
+        final RepositoryFolder metadataFolder = tenantFolder.getFolder(PATH_METADATA);
+        if (metadataFolder == null) {
+            throw new IllegalArgumentException("No metadata folder for tenant: " + _tenantId);
+        }
+        return metadataFolder;
     }
 
 }

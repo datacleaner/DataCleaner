@@ -53,6 +53,8 @@ public interface TenantContext {
 
     public RepositoryFolder getTimelineFolder();
 
+    public RepositoryFolder getMetadataFolder();
+
     public RepositoryFile getConfigurationFile();
 
     public AnalyzerBeansConfiguration getConfiguration();

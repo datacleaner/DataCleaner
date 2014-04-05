@@ -122,7 +122,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             }
 
             result._userPreferencesFile = userPreferencesFile;
-
+            result.refreshProxySettings();
             return result;
         } catch (InvalidClassException e) {
             logger.warn("User preferences file version does not match application version: {}", e.getMessage());
@@ -297,6 +297,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyEnabled(boolean proxyEnabled) {
         this.proxyEnabled = proxyEnabled;
+        refreshProxySettings();
     }
 
     @Override
@@ -307,6 +308,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyHostname(String proxyHostname) {
         this.proxyHostname = proxyHostname;
+        refreshProxySettings();
     }
 
     @Override
@@ -317,6 +319,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
+        refreshProxySettings();
     }
 
     @Override
@@ -327,6 +330,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyUsername(String proxyUsername) {
         this.proxyUsername = proxyUsername;
+        refreshProxySettings();
     }
 
     @Override
@@ -337,6 +341,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
+        refreshProxySettings();
     }
 
     @Override
@@ -347,6 +352,58 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
         this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
+        refreshProxySettings();
+    }
+
+    private void refreshProxySettings() {
+        if (System.getProperty("http.proxyHost") != null) {
+            if (!"true".equals(System.getProperty("http.proxy.setByDataCleaner"))) {
+                // proxy was already configured by command line
+                return;
+            }
+        }
+
+        System.setProperty("http.proxy.setByDataCleaner", "true");
+
+        String proxyHost = getProxyHostname();
+        int proxyPort = getProxyPort();
+        String username = getProxyUsername();
+        String password = getProxyPassword();
+
+        if (isProxyEnabled() && proxyHost != null) {
+            logger.debug("Setting proxy host={}, port={}", proxyHost, proxyPort);
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("http.proxyPort", "" + proxyPort);
+            System.setProperty("https.proxyHost", proxyHost);
+            System.setProperty("https.proxyPort", "" + proxyPort);
+            if (isProxyAuthenticationEnabled() && username != null && password != null) {
+                logger.debug("Setting proxy username={}, password", username);
+
+                System.setProperty("http.proxyUser", username);
+                System.setProperty("http.proxyPassword", password);
+                System.setProperty("https.proxyUser", username);
+                System.setProperty("https.proxyPassword", password);
+            } else {
+                logger.debug("Clearing proxy username, password");
+
+                System.clearProperty("http.proxyUser");
+                System.clearProperty("http.proxyPassword");
+                System.clearProperty("https.proxyUser");
+                System.clearProperty("https.proxyPassword");
+            }
+        } else {
+            logger.debug("Clearing proxy host, port, username, password");
+
+            System.clearProperty("http.proxyHost");
+            System.clearProperty("http.proxyPort");
+            System.clearProperty("https.proxyHost");
+            System.clearProperty("https.proxyPort");
+
+            System.clearProperty("http.proxyUser");
+            System.clearProperty("http.proxyPassword");
+            System.clearProperty("https.proxyUser");
+            System.clearProperty("https.proxyPassword");
+        }
     }
 
     @Override

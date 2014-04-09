@@ -61,6 +61,37 @@ public class UserPreferencesImplTest extends TestCase {
         assertEquals("SimpleDictionary[name=my dictionary]", dictionaries.get(0).toString());
     }
 
+    public void testCreateHttpClientWithoutNtCredentials() throws Exception {
+        UserPreferencesImpl up = new UserPreferencesImpl(null);
+        up.setProxyHostname("host");
+        up.setProxyPort(1234);
+        up.setProxyUsername("bar");
+        up.setProxyPassword("baz");
+        up.setProxyEnabled(true);
+        up.setProxyAuthenticationEnabled(true);
+
+        DefaultHttpClient httpClient = (DefaultHttpClient) up.createHttpClient();
+
+        String computername = InetAddress.getLocalHost().getHostName();
+        assertNotNull(computername);
+        assertTrue(computername.length() > 1);
+
+        AuthScope authScope;
+        Credentials credentials;
+
+        authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        assertEquals("[principal: bar][workstation: " + computername.toUpperCase() + "]", credentials.toString());
+
+        authScope = new AuthScope("host", 1234);
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        assertEquals("[principal: bar]", credentials.toString());
+
+        authScope = new AuthScope("anotherhost", AuthScope.ANY_PORT);
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        assertNull(credentials);
+    }
+
     public void testCreateHttpClientWithNtCredentials() throws Exception {
         UserPreferencesImpl up = new UserPreferencesImpl(null);
         up.setProxyHostname("host");
@@ -76,8 +107,19 @@ public class UserPreferencesImplTest extends TestCase {
         assertNotNull(computername);
         assertTrue(computername.length() > 1);
 
-        AuthScope authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
-        Credentials credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        AuthScope authScope;
+        Credentials credentials;
+
+        authScope = new AuthScope("host", 1234, AuthScope.ANY_REALM, "ntlm");
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
         assertEquals("[principal: FOO/bar][workstation: " + computername.toUpperCase() + "]", credentials.toString());
+
+        authScope = new AuthScope("host", 1234);
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        assertEquals("[principal: FOO\\bar]", credentials.toString());
+        
+        authScope = new AuthScope("anotherhost", AuthScope.ANY_PORT);
+        credentials = httpClient.getCredentialsProvider().getCredentials(authScope);
+        assertNull(credentials);
     }
 }

@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.eobjects.datacleaner.repository.Repository;
+import org.eobjects.datacleaner.repository.AbstractRepositoryNode;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.RepositoryNode;
@@ -42,7 +42,7 @@ import com.google.common.cache.LoadingCache;
 /**
  * {@link RepositoryFolder} implementation based on a local directory.
  */
-public class FileRepositoryFolder implements RepositoryFolder {
+public class FileRepositoryFolder extends AbstractRepositoryNode implements RepositoryFolder {
 
     private static final long serialVersionUID = 1L;
 
@@ -90,14 +90,6 @@ public class FileRepositoryFolder implements RepositoryFolder {
     @Override
     public String getName() {
         return _file.getName();
-    }
-
-    @Override
-    public String getQualifiedPath() {
-        if (_parent == null || _parent instanceof Repository) {
-            return "/" + getName();
-        }
-        return _parent.getQualifiedPath() + "/" + getName();
     }
 
     @Override
@@ -205,11 +197,6 @@ public class FileRepositoryFolder implements RepositoryFolder {
         }
 
         return (RepositoryFolder) getChildCache().getUnchecked(file);
-    }
-
-    @Override
-    public String toString() {
-        return getQualifiedPath();
     }
 
     @Override

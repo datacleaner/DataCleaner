@@ -27,20 +27,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,14 +45,9 @@ import com.google.common.cache.LoadingCache;
 /**
  * Default implementation of {@link TenantContext}.
  */
-public class TenantContextImpl implements TenantContext {
+public class TenantContextImpl extends AbstractTenantContext implements TenantContext {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantContextImpl.class);
-
-    private static final String PATH_TIMELINES = "timelines";
-    private static final String PATH_JOBS = "jobs";
-    private static final String PATH_RESULTS = "results";
-    private static final String EXTENSION_RESULT = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
     private final String _tenantId;
     private final Repository _repository;
@@ -130,11 +119,6 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public JobContext getJob(String jobName) {
-        return getJob(new JobIdentifier(jobName));
-    }
-
-    @Override
     public JobContext getJob(JobIdentifier jobIdentifier) throws IllegalArgumentException {
         if (jobIdentifier == null) {
             throw new IllegalArgumentException("JobIdentifier cannot be null");
@@ -174,112 +158,16 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public RepositoryFolder getJobFolder() {
-        final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
-        if (jobsFolder == null) {
-            throw new IllegalArgumentException("No job folder for tenant: " + _tenantId);
-        }
-        return jobsFolder;
-    }
-
-    @Override
     public String getTenantId() {
         return _tenantId;
     }
-
+    
     @Override
-    public RepositoryFolder getResultFolder() {
-        final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
-        if (resultsFolder == null) {
-            throw new IllegalArgumentException("No result folder for tenant: " + _tenantId);
-        }
-        return resultsFolder;
-    }
-
-    @Override
-    public RepositoryFolder getTimelineFolder() {
-        final RepositoryFolder tenantFolder = getTenantRootFolder();
-        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
-        if (timelinesFolder == null) {
-            throw new IllegalArgumentException("No timeline folder for tenant: " + _tenantId);
-        }
-        return timelinesFolder;
-    }
-
-    @Override
-    public boolean containsJob(String jobName) {
-        try {
-            JobContext job = getJob(jobName);
-            return job != null;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public ResultContext getLatestResult(JobContext job) {
-        final String jobName = job.getName();
-        final RepositoryFolder resultFolder = getResultFolder();
-        final RepositoryFile resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
-        return getResult(resultFile);
-    }
-
-    private ResultContext getResult(RepositoryFile resultFile) {
+    protected ResultContext getResult(RepositoryFile resultFile) {
         if (resultFile == null) {
             return null;
         }
         return new DefaultResultContext(this, resultFile);
-    }
-
-    @Override
-    public ResultContext getResult(String resultFilename) {
-        if (StringUtils.isNullOrEmpty(resultFilename)) {
-            return null;
-        }
-        if (!resultFilename.endsWith(EXTENSION_RESULT)) {
-            resultFilename = resultFilename + EXTENSION_RESULT;
-        }
-
-        final RepositoryFolder resultFolder = getResultFolder();
-
-        final RepositoryFile resultFile;
-        if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0,
-                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
-            resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
-        } else {
-            resultFile = resultFolder.getFile(resultFilename);
-        }
-
-        return getResult(resultFile);
-    }
-
-    @Override
-    public Datastore getDatastore(DatastoreIdentifier datastoreIdentifier) {
-        if (datastoreIdentifier == null) {
-            return null;
-        }
-        final String name = datastoreIdentifier.getName();
-        if (name == null) {
-            return null;
-        }
-        final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
-        return datastoreCatalog.getDatastore(name);
-    }
-
-    @Override
-    public List<DatastoreIdentifier> getDatastores() {
-        final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
-        final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
-
-        return CollectionUtils.map(datastoreNames, new Func<String, DatastoreIdentifier>() {
-            @Override
-            public DatastoreIdentifier eval(String name) {
-                return new DatastoreIdentifier(name);
-            }
-        });
     }
 
     @Override

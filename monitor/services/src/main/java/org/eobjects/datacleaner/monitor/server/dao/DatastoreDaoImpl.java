@@ -38,10 +38,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
 import org.eobjects.analyzer.configuration.jaxb.Configuration;
+import org.eobjects.analyzer.connection.CsvDatastore;
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
@@ -122,6 +126,24 @@ public class DatastoreDaoImpl implements DatastoreDao {
             }
             throw new IllegalStateException("Failed to parse datastore element: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException {
+        final Element element;
+        final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
+        if (datastore instanceof CsvDatastore) {
+            CsvDatastore csvDatastore = (CsvDatastore) datastore;
+            element = externalizer.externalize(csvDatastore, csvDatastore.getFilename());
+        } else if (datastore instanceof ExcelDatastore) {
+            ExcelDatastore excelDatastore = (ExcelDatastore) datastore;
+            element = externalizer.externalize(excelDatastore, excelDatastore.getFilename());
+        } else {
+            throw new UnsupportedOperationException("The datastore type '" + datastore.getClass().getName()
+                    + "' is not supported for automatic XML serialization");
+        }
+        String result = addDatastore(tenantContext, element);
+        return result;
     }
 
     @Override

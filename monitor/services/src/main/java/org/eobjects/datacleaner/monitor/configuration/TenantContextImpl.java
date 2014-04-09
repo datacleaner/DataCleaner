@@ -27,15 +27,20 @@ import java.util.concurrent.TimeUnit;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,6 +254,32 @@ public class TenantContextImpl implements TenantContext {
         }
 
         return getResult(resultFile);
+    }
+
+    @Override
+    public Datastore getDatastore(DatastoreIdentifier datastoreIdentifier) {
+        if (datastoreIdentifier == null) {
+            return null;
+        }
+        final String name = datastoreIdentifier.getName();
+        if (name == null) {
+            return null;
+        }
+        final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
+        return datastoreCatalog.getDatastore(name);
+    }
+
+    @Override
+    public List<DatastoreIdentifier> getDatastores() {
+        final DatastoreCatalog datastoreCatalog = getConfiguration().getDatastoreCatalog();
+        final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+
+        return CollectionUtils.map(datastoreNames, new Func<String, DatastoreIdentifier>() {
+            @Override
+            public DatastoreIdentifier eval(String name) {
+                return new DatastoreIdentifier(name);
+            }
+        });
     }
 
     @Override

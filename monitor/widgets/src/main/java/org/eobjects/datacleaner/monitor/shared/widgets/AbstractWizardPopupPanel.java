@@ -60,7 +60,7 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
     // step
     // button
     private HandlerRegistration _previousButtonClickRegistration;
-    private WizardPanel _currentPanel;
+    private WizardClientController _currentPanel;
 
     public AbstractWizardPopupPanel(String heading, S service, TenantIdentifier tenant) {
         super(heading);
@@ -174,7 +174,7 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
                     _progressBar.setSteps(page.getExpectedPageCount() + getStepsBeforeWizardPages());
                     _progressBar.setProgress(page.getPageIndex() + getStepsBeforeWizardPages());
 
-                    _currentPanel = new FormWizardPanel(_service, _tenant, page);
+                    _currentPanel = new FormWizardClientController(_service, _tenant, page);
 
                     _targetPanel.setWidget(_currentPanel);
 

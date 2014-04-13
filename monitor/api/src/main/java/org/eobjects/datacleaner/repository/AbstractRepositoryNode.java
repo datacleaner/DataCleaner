@@ -31,13 +31,21 @@ public abstract class AbstractRepositoryNode implements RepositoryNode {
         return getQualifiedPath().compareTo(o.getQualifiedPath());
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * This implementation of the method can be used as a reference. It uses the
+     * parent's qualified path and appends '/' and this node's own name to it.
+     * Can also be overridden by subclasses in case a more effective way is
+     * possible.
+     */
     @Override
-    public final String getQualifiedPath() {
+    public String getQualifiedPath() {
         RepositoryFolder parent = getParent();
         if (parent == null || parent instanceof Repository) {
-            return "/" + getName();
+            return '/' + getName();
         }
-        return parent.getQualifiedPath() + "/" + getName();
+        return parent.getQualifiedPath() + '/' + getName();
     }
 
     @Override

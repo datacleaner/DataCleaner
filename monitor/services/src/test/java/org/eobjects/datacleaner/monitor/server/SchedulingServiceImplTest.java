@@ -83,12 +83,16 @@ public class SchedulingServiceImplTest extends TestCase {
 
         try {
             assertEquals("[tenant1, tenant2]", scheduler.getTriggerGroupNames().toString());
-            assertEquals("[tenant1.random_number_generation]", scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant1")).toString());
-            assertEquals("[tenant2.another_random_job]", scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant2")).toString());
+            assertEquals("[tenant1.random_number_generation]",
+                    scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant1")).toString());
+            assertEquals("[tenant2.another_random_job]",
+                    scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant2")).toString());
 
             assertEquals("[tenant1, tenant2]", scheduler.getJobGroupNames().toString());
-            assertEquals("[tenant1.random_number_generation]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant1")).toString());
-            assertEquals("[tenant2.another_random_job]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2")).toString());
+            assertEquals("[tenant1.random_number_generation]",
+                    scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant1")).toString());
+            assertEquals("[tenant2.another_random_job]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2"))
+                    .toString());
 
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -102,7 +106,8 @@ public class SchedulingServiceImplTest extends TestCase {
             ScheduleDefinition randomNumberGenerationSchedule = schedules.get(4);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());
 
-            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger(new TriggerKey("random_number_generation", "tenant1"));
+            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger(new TriggerKey("random_number_generation",
+                    "tenant1"));
             assertEquals("0 0 * * * ?", trigger.getCronExpression());
 
             File[] files = resultDirectory.listFiles(filenameFilter);
@@ -178,15 +183,14 @@ public class SchedulingServiceImplTest extends TestCase {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(callTime);
-        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+        if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            cal.set(Calendar.MILLISECOND, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.add(Calendar.DAY_OF_MONTH, 1);
+            assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(callTime));
         }
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-
-        assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(callTime));
 
         callTime = DateUtils.get(2012, Month.MARCH, 21);
         assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));

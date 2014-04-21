@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,89 +39,100 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 
-	private final SimplePanel _contentPanel;
-	private final ButtonPanel _buttonPanel;
-	private FlowPanel _wizardFlowPanel;
+    private final SimplePanel _contentPanel;
+    private final ButtonPanel _buttonPanel;
+    private FlowPanel _wizardFlowPanel;
+    private RootPanel wizardRootPanel ;
+    
+    public SimpleWizardPanel(String htmlDivNameToShowWizardIn) {
+        super();
+        _buttonPanel = new ButtonPanel();
+        setAppearance();
+        _contentPanel = getContentPanel();
+        _wizardFlowPanel = getWizardFlowPanel();
+        super.setWidget(_wizardFlowPanel);
+        wizardRootPanel = RootPanel.get(htmlDivNameToShowWizardIn);
+	wizardRootPanel.add(_wizardFlowPanel) ;
+    }
 
-	public SimpleWizardPanel() {
-		super();
-		_buttonPanel = new ButtonPanel();
-		setAppearance();
-		_contentPanel = getContentPanel();
-		_wizardFlowPanel = getWizardFlowPanel();
-		super.setWidget(_wizardFlowPanel);
-	}
+    private FlowPanel getWizardFlowPanel() {
+        FlowPanel wizardFlowPanel = new FlowPanel();
+        wizardFlowPanel.add(_contentPanel);
+        wizardFlowPanel.add(_buttonPanel);
+        wizardFlowPanel.setVisible(true);
+        return wizardFlowPanel;
+    }
 
-	private FlowPanel getWizardFlowPanel() {
-		FlowPanel wizardFlowPanel = new FlowPanel();
-		wizardFlowPanel.add(_contentPanel);
-		wizardFlowPanel.add(_buttonPanel);
-		wizardFlowPanel.setVisible(true);
-		return wizardFlowPanel;
-	}
+    private SimplePanel getContentPanel() {
+        int clientHeight = Window.getClientHeight();
+        int heightMargin = 100;
+        int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
+        SimplePanel contentPanel = new ScrollPanel();
+        contentPanel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
+        contentPanel.setStyleName("PopupWizardPanelContent");
+        return contentPanel;
+    }
 
-	private SimplePanel getContentPanel() {
-		int clientHeight = Window.getClientHeight();
-		int heightMargin = 100;
-		int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
-		SimplePanel contentPanel = new ScrollPanel();
-		contentPanel.getElement().getStyle()
-				.setProperty("maxHeight", maxHeight + "px");
-		contentPanel.setStyleName("PopupWizardPanelContent");
-		return contentPanel;
-	}
+    private void setAppearance() {
+        addStyleName("SimpleWizardPanel");
+    }
 
-	private void setAppearance() {
-		addStyleName("SimpleWizardPanel");
-	}
+    public void setHeader(String header) {
+        final Widget firstWidget = _wizardFlowPanel.getWidget(0);
+        if (firstWidget instanceof HeadingLabel) {
+            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            headingLabel.setText(header);
+        } else {
+            HeadingLabel headingLabel = new HeadingLabel(header);
+            _wizardFlowPanel.insert(headingLabel, 0);
+        }
+    }
 
-	public void setHeader(String header) {
-		final Widget firstWidget = _wizardFlowPanel.getWidget(0);
-		if (firstWidget instanceof HeadingLabel) {
-			HeadingLabel headingLabel = (HeadingLabel) firstWidget;
-			headingLabel.setText(header);
-		} else {
-			HeadingLabel headingLabel = new HeadingLabel(header);
-			_wizardFlowPanel.insert(headingLabel, 0);
-		}
-	}
+    public void addButton(Button button) {
+        getButtonPanel().addButton(button);
+    }
 
-	public void addButton(Button button) {
-		getButtonPanel().addButton(button);
-	}
+    public void removeButton(Button button) {
+        getButtonPanel().removeButton(button);
+    }
 
-	public void removeButton(Button button) {
-		getButtonPanel().removeButton(button);
-	}
+    public ButtonPanel getButtonPanel() {
+        return _buttonPanel;
+    }
 
-	public ButtonPanel getButtonPanel() {
-		return _buttonPanel;
-	}
+    public void removeButtons() {
+        getButtonPanel().clear();
+    }
 
-	public void removeButtons() {
-		getButtonPanel().clear();
-	}
+    @Override
+    public void setWidget(Widget w) {
+        _contentPanel.setWidget(w);
+    }
 
-	@Override
-	public void setWidget(Widget w) {
-		_contentPanel.setWidget(w);
-	}
+    @Override
+    public void setWidget(IsWidget w) {
+        _contentPanel.setWidget(w);
+    }
 
-	@Override
-	public void setWidget(IsWidget w) {
-		_contentPanel.setWidget(w);
-	}
+    @Override
+    public void addWizardCloseHandler(CloseHandler<? extends Widget> closeHandler) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void addWizardCloseHandler(
-			CloseHandler<? extends Widget> closeHandler) {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public SimplePanel getInstance() {
+        return this;
+    }
 
-	@Override
-	public SimplePanel getInstance() {
-		return this;
-	}
+    @Override
+    public void center() {
+        // do nothing
+    }
+
+    @Override
+    public void hideWizard() {
+        _wizardFlowPanel.setVisible(false) ;
+    }
 
 }

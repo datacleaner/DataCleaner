@@ -39,99 +39,101 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 
-	private final SimplePanel _contentPanel;
-	private final ButtonPanel _buttonPanel;
-	private final FlowPanel _wizardFlowPanel;
+    private final SimplePanel _contentPanel;
+    private final ButtonPanel _buttonPanel;
+    private final FlowPanel _wizardFlowPanel;
 
-	public PopupWizardPanel() {
-		super();
-		setAppearance();
-		_buttonPanel = new ButtonPanel();
-		_contentPanel = getContentPanel();
-		_wizardFlowPanel = getWizardFlowPanel();
-		super.setWidget(_wizardFlowPanel);
-	}
+    public PopupWizardPanel() {
+        super();
+        setAppearance();
+        _buttonPanel = new ButtonPanel();
+        _contentPanel = getContentPanel();
+        _wizardFlowPanel = getWizardFlowPanel();
+        super.setWidget(_wizardFlowPanel);
+    }
 
-	private FlowPanel getWizardFlowPanel() {
-		FlowPanel wizardFlowPanel = new FlowPanel();
-		wizardFlowPanel.add(_contentPanel);
-		wizardFlowPanel.add(_buttonPanel);
-		return wizardFlowPanel;
-	}
+    private FlowPanel getWizardFlowPanel() {
+        FlowPanel wizardFlowPanel = new FlowPanel();
+        wizardFlowPanel.add(_contentPanel);
+        wizardFlowPanel.add(_buttonPanel);
+        return wizardFlowPanel;
+    }
 
-	private SimplePanel getContentPanel() {
-		int clientHeight = Window.getClientHeight();
-		int heightMargin = 100;
-		int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
-		SimplePanel contentPanel = new ScrollPanel();
-		contentPanel.getElement().getStyle()
-				.setProperty("maxHeight", maxHeight + "px");
-		contentPanel.setStyleName("PopupWizardPanelContent");
-		return contentPanel;
-	}
+    private SimplePanel getContentPanel() {
+        int clientHeight = Window.getClientHeight();
+        int heightMargin = 100;
+        int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
+        SimplePanel contentPanel = new ScrollPanel();
+        contentPanel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
+        contentPanel.setStyleName("PopupWizardPanelContent");
+        return contentPanel;
+    }
 
-	private void setAppearance() {
-		addStyleName("PopupWizardPanel");
-		setGlassEnabled(true);
-		setAutoHideEnabled(false);
-		setModal(false);
-		center();
-		show();
-	}
+    private void setAppearance() {
+        addStyleName("PopupWizardPanel");
+        setGlassEnabled(true);
+        setAutoHideEnabled(false);
+        setModal(false);
+        center();
+        show();
+    }
 
-	public PopupWizardPanel(String heading) {
-		this();
-		if (heading != null) {
-			_wizardFlowPanel.add(new HeadingLabel(heading));
-		}
-	}
+    public PopupWizardPanel(String heading) {
+        this();
+        if (heading != null) {
+            _wizardFlowPanel.add(new HeadingLabel(heading));
+        }
+    }
 
-	public void setHeader(String header) {
-		final Widget firstWidget = _wizardFlowPanel.getWidget(0);
-		if (firstWidget instanceof HeadingLabel) {
-			HeadingLabel headingLabel = (HeadingLabel) firstWidget;
-			headingLabel.setText(header);
-		} else {
-			HeadingLabel headingLabel = new HeadingLabel(header);
-			_wizardFlowPanel.insert(headingLabel, 0);
-		}
-	}
+    public void setHeader(String header) {
+        final Widget firstWidget = _wizardFlowPanel.getWidget(0);
+        if (firstWidget instanceof HeadingLabel) {
+            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            headingLabel.setText(header);
+        } else {
+            HeadingLabel headingLabel = new HeadingLabel(header);
+            _wizardFlowPanel.insert(headingLabel, 0);
+        }
+    }
 
-	public void addButton(Button button) {
-		getButtonPanel().addButton(button);
-	}
+    public void addButton(Button button) {
+        getButtonPanel().addButton(button);
+    }
 
-	public void removeButton(Button button) {
-		getButtonPanel().removeButton(button);
-	}
+    public void removeButton(Button button) {
+        getButtonPanel().removeButton(button);
+    }
 
-	public ButtonPanel getButtonPanel() {
-		return _buttonPanel;
-	}
+    public ButtonPanel getButtonPanel() {
+        return _buttonPanel;
+    }
 
-	public void removeButtons() {
-		getButtonPanel().clear();
-	}
+    public void removeButtons() {
+        getButtonPanel().clear();
+    }
 
-	@Override
-	public void setWidget(Widget w) {
-		_contentPanel.setWidget(w);
-	}
+    @Override
+    public void setWidget(Widget w) {
+        _contentPanel.setWidget(w);
+    }
 
-	@Override
-	public void setWidget(IsWidget w) {
-		_contentPanel.setWidget(w);
-	}
+    @Override
+    public void setWidget(IsWidget w) {
+        _contentPanel.setWidget(w);
+    }
 
-	@Override
-	public Widget getInstance() {
-		return this;
-	}
+    @Override
+    public Widget getInstance() {
+        return this;
+    }
 
-	@Override
-	public void addWizardCloseHandler(
-			CloseHandler<? extends Widget> closeHandler) {
-		addCloseHandler((CloseHandler<PopupPanel>) closeHandler);
-	}
+    @Override
+    public void addWizardCloseHandler(CloseHandler<? extends Widget> closeHandler) {
+        addCloseHandler((CloseHandler<PopupPanel>) closeHandler);
+    }
 
+    @Override
+    public void hideWizard() {
+        this.setVisible(false);
+    }
 }

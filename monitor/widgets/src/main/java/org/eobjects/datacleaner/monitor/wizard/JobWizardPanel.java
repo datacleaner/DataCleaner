@@ -41,7 +41,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -92,7 +91,6 @@ public class JobWizardPanel extends AbstractWizardController<WizardNavigationSer
 
     @Override
     protected void wizardFinished(final String jobName) {
-    	Window.alert("finished");
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -163,13 +161,11 @@ public class JobWizardPanel extends AbstractWizardController<WizardNavigationSer
             contentPanel.add(schedulingAnchor);
         }
 
-        Window.alert("7");
 
         setContent(contentPanel);
         getWizardPanel().getButtonPanel().clear();
         getWizardPanel().addButton(button);
         getWizardPanel().center();
-        Window.alert("8");
     }
 	
 }

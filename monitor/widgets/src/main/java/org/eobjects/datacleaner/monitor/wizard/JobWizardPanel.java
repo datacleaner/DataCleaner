@@ -20,17 +20,28 @@
 
 package org.eobjects.datacleaner.monitor.wizard;
 
+import java.util.List;
+
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.widgets.TriggerJobClickHandler;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.WizardNavigationServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.WizardService;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -39,9 +50,16 @@ import com.google.gwt.user.client.ui.Label;
 public class JobWizardPanel extends AbstractWizardController<WizardNavigationServiceAsync> {
 
     private final static WizardServiceAsync service = GWT.create(WizardService.class);
+    final SchedulingServiceAsync schedulingServiceAsync = GWT.create(SchedulingService.class);
+	private String tenantName;
+	private ScheduleDefinition scheduleDefinitionForJob = null ;
+
+
 
     public JobWizardPanel(String tenantName, String panelType, String datastoreName, String wizardDisplayName, String htmlDivNameToShowWizardIn) {
         super("Build job: " + wizardDisplayName, service, tenantName, panelType, htmlDivNameToShowWizardIn);
+        
+        this.tenantName = tenantName ;
 
         WizardIdentifier wizardIdentifier = createAndReturnWizardIdentifier(wizardDisplayName);
         DatastoreIdentifier datastoreIdentifier = createAndReturnDatastoreIdentifier(datastoreName);
@@ -73,7 +91,8 @@ public class JobWizardPanel extends AbstractWizardController<WizardNavigationSer
     }
 
     @Override
-    protected void wizardFinished(String jobName) {
+    protected void wizardFinished(final String jobName) {
+    	Window.alert("finished");
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -92,19 +111,33 @@ public class JobWizardPanel extends AbstractWizardController<WizardNavigationSer
             contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
         }
         contentPanel.add(new Label("Close the dialog to return, or click one of the links below to start using the job."));
-
+        
         if (jobName != null) {
+            ClientConfig clientConfig = new DictionaryClientConfig();
+        	
             final String encodedJobName = URL.encodeQueryString(jobName);
 
-            final Anchor triggerAnchor = new Anchor("Run this job now");
-            triggerAnchor.addStyleName("TriggerJob");
-            triggerAnchor.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + encodedJobName);
-                    Urls.assign(url);
-                }
-            });
+            if (clientConfig.isScheduleEditor()) {
+            	final Anchor triggerAnchor = new Anchor("Run this job now");
+            	triggerAnchor.addStyleName("TriggerJob");
+            	
+                schedulingServiceAsync.getSchedules(clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
+                    @Override
+                    public void onSuccess(List<ScheduleDefinition> result) {
+                        for (ScheduleDefinition scheduleDefinition : result) {
+                        	if(scheduleDefinition.getJob().getName().equals(jobName)) {
+                        		scheduleDefinitionForJob = scheduleDefinition ;
+                        		TriggerJobClickHandler triggerJobClickHandler = new TriggerJobClickHandler(schedulingServiceAsync, new TenantIdentifier(tenantName), scheduleDefinitionForJob);
+                        		triggerAnchor.addClickHandler(triggerJobClickHandler);
+                        		contentPanel.add(triggerAnchor);
+                        	}
+                        }
+                    }
+                });
+            
+            	
+            }
+            
 
             final Anchor monitorAnchor = new Anchor("Monitor this job's metrics on the dashboard");
             monitorAnchor.addStyleName("MonitorJob");
@@ -126,15 +159,17 @@ public class JobWizardPanel extends AbstractWizardController<WizardNavigationSer
                 }
             });
 
-            contentPanel.add(triggerAnchor);
             contentPanel.add(monitorAnchor);
             contentPanel.add(schedulingAnchor);
         }
+
+        Window.alert("7");
 
         setContent(contentPanel);
         getWizardPanel().getButtonPanel().clear();
         getWizardPanel().addButton(button);
         getWizardPanel().center();
+        Window.alert("8");
     }
-
+	
 }

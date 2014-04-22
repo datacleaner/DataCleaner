@@ -30,5 +30,6 @@
 	<source path='shared' />
 	<source path='util' />
 	<source path='wizard' />
+	<source path='scheduling' />
 	
 </module>

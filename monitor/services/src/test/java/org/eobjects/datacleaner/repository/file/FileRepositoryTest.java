@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.repository.file;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import org.eobjects.datacleaner.repository.Repository;
@@ -37,7 +38,9 @@ public class FileRepositoryTest extends TestCase {
         assertEquals("", repository.getName());
         assertEquals("/", repository.getQualifiedPath());
 
-        assertEquals("/folder1", repository.getFolders().get(0).getQualifiedPath());
+        List<RepositoryFolder> folders = repository.getFolders();
+        Collections.sort(folders);
+        assertEquals("/folder1", folders.get(0).getQualifiedPath());
 
         assertEquals("/file1", repository.getFile("file1").getQualifiedPath());
 

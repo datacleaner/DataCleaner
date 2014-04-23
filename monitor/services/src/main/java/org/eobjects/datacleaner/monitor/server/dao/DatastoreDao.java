@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server.dao;
 
 import java.io.Reader;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.w3c.dom.Element;
 
@@ -45,6 +46,21 @@ public interface DatastoreDao {
      * @return the name of the datastore that was added
      */
     public String addDatastore(TenantContext tenantContext, Element datastoreElement);
+
+    /**
+     * Adds a datastore to a tenant's configuration, if possible using standard
+     * XML serialization mechanims.
+     * 
+     * Beware that not all datastore types are supported to be saved using this
+     * method. Refer to {@link #addDatastore(TenantContext, Element)} to be
+     * completely safe.
+     * 
+     * @param tenantContext
+     * @param datastore
+     * @return
+     * @throws UnsupportedOperationException
+     */
+    public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException;
 
     /**
      * Removes a datastore from a tenant's configuration

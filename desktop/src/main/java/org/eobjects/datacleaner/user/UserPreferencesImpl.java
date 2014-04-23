@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
@@ -51,6 +53,8 @@ import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Main implementation of {@link UserPreferences}.
@@ -519,9 +523,32 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
                 if (isProxyAuthenticationEnabled()) {
                     final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
-                    final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getProxyUsername(),
+                    final String proxyUsername = getProxyUsername();
+                    final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxyUsername,
                             getProxyPassword());
                     httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+
+                    final int backslashIndex = proxyUsername.lastIndexOf('\\');
+                    final String ntUsername;
+                    final String ntDomain;
+                    if (backslashIndex != -1) {
+                        ntUsername = proxyUsername.substring(backslashIndex + 1);
+                        ntDomain = proxyUsername.substring(0, backslashIndex);
+                    } else {
+                        ntUsername = proxyUsername;
+                        ntDomain = System.getProperty("datacleaner.proxy.domain");
+                    }
+
+                    String workstation = System.getProperty("datacleaner.proxy.workstation");
+                    if (Strings.isNullOrEmpty(workstation)) {
+                        String computername = InetAddress.getLocalHost().getHostName();
+                        workstation = computername;
+                    }
+
+                    NTCredentials ntCredentials = new NTCredentials(ntUsername, getProxyPassword(), workstation,
+                            ntDomain);
+                    AuthScope ntAuthScope = new AuthScope(proxyHostname, proxyPort, AuthScope.ANY_REALM, "ntlm");
+                    httpClient.getCredentialsProvider().setCredentials(ntAuthScope, ntCredentials);
                 }
             } catch (Exception e) {
                 // ignore proxy creation and return http client without it

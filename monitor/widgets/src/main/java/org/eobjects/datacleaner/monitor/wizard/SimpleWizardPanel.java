@@ -64,12 +64,8 @@ public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
     }
 
     private SimplePanel getContentPanel() {
-        int clientHeight = Window.getClientHeight();
-        int heightMargin = 100;
-        int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
         SimplePanel contentPanel = new ScrollPanel();
-        contentPanel.getElement().getStyle().setProperty("maxHeight", maxHeight + "px");
-        contentPanel.setStyleName("PopupWizardPanelContent");
+        contentPanel.setStyleName("SimpleWizardPanelContent");
         return contentPanel;
     }
 

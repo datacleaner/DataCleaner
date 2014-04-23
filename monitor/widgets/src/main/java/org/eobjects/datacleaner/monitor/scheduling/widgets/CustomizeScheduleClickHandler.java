@@ -61,7 +61,9 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
                 _service.updateSchedule(_tenant, updatedSchedule, new DCAsyncCallback<ScheduleDefinition>() {
                     @Override
                     public void onSuccess(ScheduleDefinition result) {
-                        _schedulePanel.updateScheduleWidgets();
+                    	if(_schedulePanel!=null) {
+                    		_schedulePanel.updateScheduleWidgets();
+                    	}
                         popup.hide();
                     }
                 });

@@ -27,7 +27,7 @@ import org.eobjects.metamodel.util.HasName;
  * Represents an abstract node (typically a {@link RepositoryFile} or
  * {@link RepositoryFolder}) in the {@link Repository}.
  */
-public interface RepositoryNode extends Serializable, HasName {
+public interface RepositoryNode extends Serializable, HasName, Comparable<RepositoryNode> {
 
     /**
      * Gets the parent folder of this node.

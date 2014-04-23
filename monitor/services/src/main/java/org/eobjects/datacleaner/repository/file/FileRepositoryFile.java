@@ -31,7 +31,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.eobjects.datacleaner.repository.Repository;
+import org.eobjects.datacleaner.repository.AbstractRepositoryNode;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link RepositoryFile} implementation based on a local file.
  */
-public final class FileRepositoryFile implements RepositoryFile {
+public final class FileRepositoryFile extends AbstractRepositoryNode implements RepositoryFile {
 
     private static final Logger logger = LoggerFactory.getLogger(FileRepositoryFile.class);
 
@@ -73,14 +73,6 @@ public final class FileRepositoryFile implements RepositoryFile {
     @Override
     public long getSize() {
         return _file.length();
-    }
-
-    @Override
-    public String getQualifiedPath() {
-        if (_parent == null || _parent instanceof Repository) {
-            return "/" + getName();
-        }
-        return _parent.getQualifiedPath() + "/" + getName();
     }
 
     /**
@@ -208,34 +200,12 @@ public final class FileRepositoryFile implements RepositoryFile {
     }
 
     @Override
-    public String toString() {
-        return getQualifiedPath();
-    }
-
-    @Override
     public void delete() throws IllegalStateException {
         final boolean success = _file.delete();
         if (!success) {
             throw new IllegalStateException("Could not delete file: " + _file);
         }
         _parent.onDeleted(_file);
-    }
-
-    @Override
-    public int hashCode() {
-        return getQualifiedPath().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof RepositoryFile) {
-            String otherQualifiedPath = ((RepositoryFile) obj).getQualifiedPath();
-            return getQualifiedPath().equals(otherQualifiedPath);
-        }
-        return false;
     }
 
     @Override

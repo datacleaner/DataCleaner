@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.server;
 import java.util.List;
 
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -59,22 +58,15 @@ public class DatastoreServiceImpl implements DatastoreService {
 
     @Override
     public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant) {
-        final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
-        final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
-
-        return CollectionUtils.map(datastoreNames, new Func<String, DatastoreIdentifier>() {
-            @Override
-            public DatastoreIdentifier eval(String name) {
-                return new DatastoreIdentifier(name);
-            }
-        });
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        return tenantContext.getDatastores();
     }
 
     @Override
     public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastoreId)
             throws DatastoreConnectionException {
-        final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
-        final Datastore datastore = datastoreCatalog.getDatastore(datastoreId.getName());
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Datastore datastore = tenantContext.getDatastore(datastoreId);
         if (datastore == null) {
             return null;
         }
@@ -96,8 +88,8 @@ public class DatastoreServiceImpl implements DatastoreService {
     @Override
     public List<SchemaIdentifier> getSchemas(final TenantIdentifier tenant, final DatastoreIdentifier datastoreId)
             throws DatastoreConnectionException {
-        final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
-        final Datastore datastore = datastoreCatalog.getDatastore(datastoreId.getName());
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Datastore datastore = tenantContext.getDatastore(datastoreId);
         if (datastore == null) {
             return null;
         }
@@ -125,9 +117,8 @@ public class DatastoreServiceImpl implements DatastoreService {
 
     @Override
     public List<TableIdentifier> getTables(final TenantIdentifier tenant, final SchemaIdentifier schemaId) {
-        final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
-        final String datastoreName = schemaId.getDatastore().getName();
-        final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Datastore datastore = tenantContext.getDatastore(schemaId.getDatastore());
         if (datastore == null) {
             return null;
         }
@@ -150,10 +141,11 @@ public class DatastoreServiceImpl implements DatastoreService {
 
     @Override
     public List<ColumnIdentifier> getColumns(final TenantIdentifier tenant, final TableIdentifier tableId) {
-        final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
         final SchemaIdentifier schemaId = tableId.getSchema();
-        final String datastoreName = schemaId.getDatastore().getName();
-        final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final Datastore datastore = tenantContext.getDatastore(schemaId.getDatastore());
+        
         if (datastore == null) {
             return null;
         }
@@ -174,11 +166,4 @@ public class DatastoreServiceImpl implements DatastoreService {
             con.close();
         }
     }
-
-    private DatastoreCatalog getDatastoreCatalog(TenantIdentifier tenant) {
-        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final DatastoreCatalog datastoreCatalog = tenantContext.getConfiguration().getDatastoreCatalog();
-        return datastoreCatalog;
-    }
-
 }

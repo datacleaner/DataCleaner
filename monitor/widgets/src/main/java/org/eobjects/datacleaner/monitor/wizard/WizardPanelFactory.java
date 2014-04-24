@@ -25,7 +25,8 @@ package org.eobjects.datacleaner.monitor.wizard;
  */
 public class WizardPanelFactory {
 
-	public static WizardPanel getWizardPanel(String panelType, String htmlDivNameToShowWizardIn) {
+	public static WizardPanel getWizardPanel(String panelType,
+			String htmlDivNameToShowWizardIn) {
 
 		if (panelType != null && panelType.equals("inline")) {
 			return new SimpleWizardPanel(htmlDivNameToShowWizardIn);

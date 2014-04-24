@@ -35,6 +35,7 @@ import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
@@ -46,119 +47,143 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
-public class JobWizardPanel extends AbstractWizardController<WizardNavigationServiceAsync> {
+public class JobWizardPanel extends
+		AbstractWizardController<WizardNavigationServiceAsync> {
 
-    private final static WizardServiceAsync service = GWT.create(WizardService.class);
-    final SchedulingServiceAsync schedulingServiceAsync = GWT.create(SchedulingService.class);
+	private final static WizardServiceAsync service = GWT
+			.create(WizardService.class);
+	final SchedulingServiceAsync schedulingServiceAsync = GWT
+			.create(SchedulingService.class);
 	private TenantIdentifier tenant;
-	private ScheduleDefinition scheduleDefinitionForJob = null ;
+	private ScheduleDefinition scheduleDefinitionForJob = null;
 	private ClientConfig clientConfig = new DictionaryClientConfig();
-	private JobWizardPanel jobWizardPanel ;
+	private JobWizardPanel jobWizardPanel;
 
+	public JobWizardPanel(String tenantName, String panelType,
+			String datastoreName, String wizardDisplayName,
+			String htmlDivNameToShowWizardIn) {
+		super("Build job: " + wizardDisplayName, service, tenantName,
+				panelType, htmlDivNameToShowWizardIn);
+		this.tenant = new TenantIdentifier(tenantName);
 
-    public JobWizardPanel(String tenantName, String panelType, String datastoreName, String wizardDisplayName, String htmlDivNameToShowWizardIn) {
-        super("Build job: " + wizardDisplayName, service, tenantName, panelType, htmlDivNameToShowWizardIn);
-        this.tenant = new TenantIdentifier(tenantName) ;
+		WizardIdentifier wizardIdentifier = createAndReturnWizardIdentifier(wizardDisplayName);
+		DatastoreIdentifier datastoreIdentifier = createAndReturnDatastoreIdentifier(datastoreName);
+		startWizard(wizardIdentifier, datastoreIdentifier);
+	}
 
-        WizardIdentifier wizardIdentifier = createAndReturnWizardIdentifier(wizardDisplayName);
-        DatastoreIdentifier datastoreIdentifier = createAndReturnDatastoreIdentifier(datastoreName);
-        startWizard(wizardIdentifier, datastoreIdentifier);
-    }
+	private DatastoreIdentifier createAndReturnDatastoreIdentifier(
+			String datastoreName) {
+		DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier();
+		datastoreIdentifier.setName(datastoreName);
+		return datastoreIdentifier;
+	}
 
-    private DatastoreIdentifier createAndReturnDatastoreIdentifier(String datastoreName) {
-        DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier();
-        datastoreIdentifier.setName(datastoreName);
-        return datastoreIdentifier;
-    }
+	private WizardIdentifier createAndReturnWizardIdentifier(
+			String wizardDisplayName) {
+		WizardIdentifier wizardIdentifier = new WizardIdentifier();
+		wizardIdentifier.setDisplayName(wizardDisplayName);
+		return wizardIdentifier;
+	}
 
-    private WizardIdentifier createAndReturnWizardIdentifier(String wizardDisplayName) {
-        WizardIdentifier wizardIdentifier = new WizardIdentifier();
-        wizardIdentifier.setDisplayName(wizardDisplayName);
-        return wizardIdentifier;
-    }
+	private void startWizard(WizardIdentifier wizard,
+			DatastoreIdentifier datastore) {
+		setLoading();
+		service.startJobWizard(_tenant, wizard, datastore, getLocaleName(),
+				createNextPageCallback());
+		return;
+	}
 
-    private void startWizard(WizardIdentifier wizard, DatastoreIdentifier datastore) {
-        setLoading();
-        service.startJobWizard(_tenant, wizard, datastore, getLocaleName(), createNextPageCallback());
-        return;
-    }
+	@Override
+	protected int getStepsBeforeWizardPages() {
+		return 0;
+	}
 
-    @Override
-    protected int getStepsBeforeWizardPages() {
-        return 0;
-    }
+	@Override
+	protected void wizardFinished(final String jobName) {
+		final Button button = new Button("Close");
+		button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// full page refresh.
+				final String url = Urls
+						.createRelativeUrl("index_admin.jsf#/dashboard");
+				Urls.assign(url);
+			}
+		});
 
-    @Override
-    protected void wizardFinished(final String jobName) {
-        final Button button = new Button("Close");
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // full page refresh.
-                final String url = Urls.createRelativeUrl("scheduling.jsf");
-                Urls.assign(url);
-            }
-        });
+		final FlowPanel contentPanel = new FlowPanel();
+		contentPanel.addStyleName("WizardFinishedPanel");
+		final LoadingIndicator loadingIndicator = new LoadingIndicator();
+		contentPanel.add(loadingIndicator);
+		if (jobName == null) {
+			contentPanel.add(new Label("Job created! Wizard finished."));
+		} else {
+			contentPanel.add(new Label("Job '" + jobName
+					+ "' created! Wizard finished."));
+		}
+		contentPanel
+				.add(new Label(
+						"Close the dialog to return, or click one of the links below to start using the job."));
 
-        final FlowPanel contentPanel = new FlowPanel();
-        contentPanel.addStyleName("WizardFinishedPanel");
-        if (jobName == null) {
-            contentPanel.add(new Label("Job created! Wizard finished."));
-        } else {
-            contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
-        }
-        contentPanel.add(new Label("Close the dialog to return, or click one of the links below to start using the job."));
-        
-        if (jobName != null) {
+		if (jobName != null) {
 
-        	jobWizardPanel = this ;
-            if (clientConfig.isScheduleEditor()) {
-            	getSchedule(new Runnable() {
-					
+			jobWizardPanel = this;
+			if (clientConfig.isScheduleEditor()) {
+				getSchedule(new Runnable() {
 
 					@Override
 					public void run() {
-						final Anchor triggerAnchor = new Anchor("Run this job now");
-		            	triggerAnchor.addStyleName("TriggerJob");
-                		ClickHandler triggerJobClickHandler = new TriggerJobClickHandler(schedulingServiceAsync, tenant, scheduleDefinitionForJob);
-                		ClickHandler removeWizardClickHandlerForTriggerJob = new RemoveWizardClickHandler(triggerJobClickHandler, jobWizardPanel);
-                		triggerAnchor.addClickHandler(removeWizardClickHandlerForTriggerJob);
-                		contentPanel.add(triggerAnchor);
+						final Anchor triggerAnchor = new Anchor(
+								"Run this job now");
+						triggerAnchor.addStyleName("TriggerJob");
+						ClickHandler triggerJobClickHandler = new TriggerJobClickHandler(
+								schedulingServiceAsync, tenant,
+								scheduleDefinitionForJob);
+						ClickHandler removeWizardClickHandlerForTriggerJob = new RemoveWizardClickHandler(
+								triggerJobClickHandler, jobWizardPanel);
+						triggerAnchor.addClickHandler(removeWizardClickHandlerForTriggerJob);
+						contentPanel.add(triggerAnchor);
 
-                		 final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
-                         schedulingAnchor.addStyleName("ScheduleJob");
-                         ClickHandler customizeScheduleClickHandler = new CustomizeScheduleClickHandler(null, schedulingServiceAsync, tenant, scheduleDefinitionForJob) ;
-                         ClickHandler removeWizardClickHandlerForCustomizeSchedule = new RemoveWizardClickHandler(customizeScheduleClickHandler, jobWizardPanel);
-                         schedulingAnchor.addClickHandler(removeWizardClickHandlerForCustomizeSchedule);
-                		
-                         contentPanel.add(schedulingAnchor);
+						final Anchor schedulingAnchor = new Anchor(
+								"Set up a job schedule");
+						schedulingAnchor.addStyleName("ScheduleJob");
+						ClickHandler customizeScheduleClickHandler = new CustomizeScheduleClickHandler(
+								null, schedulingServiceAsync, tenant,
+								scheduleDefinitionForJob);
+						ClickHandler removeWizardClickHandlerForCustomizeSchedule = new RemoveWizardClickHandler(
+								customizeScheduleClickHandler, jobWizardPanel);
+						schedulingAnchor
+								.addClickHandler(removeWizardClickHandlerForCustomizeSchedule);
 
+						contentPanel.add(schedulingAnchor);
+						contentPanel.remove(loadingIndicator);
 					}
 				}, jobName);
-        }
+			}
 
+			setContent(contentPanel);
+			getWizardPanel().getButtonPanel().clear();
+			getWizardPanel().addButton(button);
+			// getWizardPanel().center();
+		}
 
-        setContent(contentPanel);
-        getWizardPanel().getButtonPanel().clear();
-        getWizardPanel().addButton(button);
-        getWizardPanel().center();
-        }
-        
-    }
-    
-    private void getSchedule(final Runnable runnable, final String jobName) {
-        schedulingServiceAsync.getSchedules(clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
-            @Override
-            public void onSuccess(List<ScheduleDefinition> result) {
-                for (ScheduleDefinition scheduleDefinition : result) {
-                	if(scheduleDefinition.getJob().getName().equals(jobName)) {
-                		scheduleDefinitionForJob = scheduleDefinition ;
-                		runnable.run();
-                	}
-                }
-            }
-        });
-    	
-    }
-	
+	}
+
+	private void getSchedule(final Runnable runnable, final String jobName) {
+		schedulingServiceAsync.getSchedules(clientConfig.getTenant(),
+				new DCAsyncCallback<List<ScheduleDefinition>>() {
+					@Override
+					public void onSuccess(List<ScheduleDefinition> result) {
+						for (ScheduleDefinition scheduleDefinition : result) {
+							if (scheduleDefinition.getJob().getName()
+									.equals(jobName)) {
+								scheduleDefinitionForJob = scheduleDefinition;
+								runnable.run();
+							}
+						}
+					}
+				});
+
+	}
+
 }

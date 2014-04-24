@@ -39,96 +39,97 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 
-    private final SimplePanel _contentPanel;
-    private final ButtonPanel _buttonPanel;
-    private FlowPanel _wizardFlowPanel;
-    private RootPanel wizardRootPanel ;
-    
-    public SimpleWizardPanel(String htmlDivNameToShowWizardIn) {
-        super();
-        _buttonPanel = new ButtonPanel();
-        setAppearance();
-        _contentPanel = getContentPanel();
-        _wizardFlowPanel = getWizardFlowPanel();
-        super.setWidget(_wizardFlowPanel);
-        wizardRootPanel = RootPanel.get(htmlDivNameToShowWizardIn);
-	wizardRootPanel.add(_wizardFlowPanel) ;
-    }
+	private final SimplePanel _contentPanel;
+	private final ButtonPanel _buttonPanel;
+	private FlowPanel _wizardFlowPanel;
+	private RootPanel wizardRootPanel;
 
-    private FlowPanel getWizardFlowPanel() {
-        FlowPanel wizardFlowPanel = new FlowPanel();
-        wizardFlowPanel.add(_contentPanel);
-        wizardFlowPanel.add(_buttonPanel);
-        wizardFlowPanel.setVisible(true);
-        return wizardFlowPanel;
-    }
+	public SimpleWizardPanel(String htmlDivNameToShowWizardIn) {
+		super();
+		_buttonPanel = new ButtonPanel();
+		setAppearance();
+		_contentPanel = getContentPanel();
+		_wizardFlowPanel = getWizardFlowPanel();
+		super.setWidget(_wizardFlowPanel);
+		wizardRootPanel = RootPanel.get(htmlDivNameToShowWizardIn);
+		wizardRootPanel.add(_wizardFlowPanel);
+	}
 
-    private SimplePanel getContentPanel() {
-        SimplePanel contentPanel = new ScrollPanel();
-        contentPanel.setStyleName("SimpleWizardPanelContent");
-        return contentPanel;
-    }
+	private FlowPanel getWizardFlowPanel() {
+		FlowPanel wizardFlowPanel = new FlowPanel();
+		wizardFlowPanel.add(_contentPanel);
+		wizardFlowPanel.add(_buttonPanel);
+		wizardFlowPanel.setVisible(true);
+		return wizardFlowPanel;
+	}
 
-    private void setAppearance() {
-        addStyleName("SimpleWizardPanel");
-    }
+	private SimplePanel getContentPanel() {
+		SimplePanel contentPanel = new ScrollPanel();
+		contentPanel.setStyleName("SimpleWizardPanelContent");
+		return contentPanel;
+	}
 
-    public void setHeader(String header) {
-        final Widget firstWidget = _wizardFlowPanel.getWidget(0);
-        if (firstWidget instanceof HeadingLabel) {
-            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
-            headingLabel.setText(header);
-        } else {
-            HeadingLabel headingLabel = new HeadingLabel(header);
-            _wizardFlowPanel.insert(headingLabel, 0);
-        }
-    }
+	private void setAppearance() {
+		addStyleName("SimpleWizardPanel");
+	}
 
-    public void addButton(Button button) {
-        getButtonPanel().addButton(button);
-    }
+	public void setHeader(String header) {
+		final Widget firstWidget = _wizardFlowPanel.getWidget(0);
+		if (firstWidget instanceof HeadingLabel) {
+			HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+			headingLabel.setText(header);
+		} else {
+			HeadingLabel headingLabel = new HeadingLabel(header);
+			_wizardFlowPanel.insert(headingLabel, 0);
+		}
+	}
 
-    public void removeButton(Button button) {
-        getButtonPanel().removeButton(button);
-    }
+	public void addButton(Button button) {
+		getButtonPanel().addButton(button);
+	}
 
-    public ButtonPanel getButtonPanel() {
-        return _buttonPanel;
-    }
+	public void removeButton(Button button) {
+		getButtonPanel().removeButton(button);
+	}
 
-    public void removeButtons() {
-        getButtonPanel().clear();
-    }
+	public ButtonPanel getButtonPanel() {
+		return _buttonPanel;
+	}
 
-    @Override
-    public void setWidget(Widget w) {
-        _contentPanel.setWidget(w);
-    }
+	public void removeButtons() {
+		getButtonPanel().clear();
+	}
 
-    @Override
-    public void setWidget(IsWidget w) {
-        _contentPanel.setWidget(w);
-    }
+	@Override
+	public void setWidget(Widget w) {
+		_contentPanel.setWidget(w);
+	}
 
-    @Override
-    public void addWizardCloseHandler(CloseHandler<? extends Widget> closeHandler) {
-        // TODO Auto-generated method stub
+	@Override
+	public void setWidget(IsWidget w) {
+		_contentPanel.setWidget(w);
+	}
 
-    }
+	@Override
+	public void addWizardCloseHandler(
+			CloseHandler<? extends Widget> closeHandler) {
+		// TODO Auto-generated method stub
 
-    @Override
-    public SimplePanel getInstance() {
-        return this;
-    }
+	}
 
-    @Override
-    public void center() {
-        // do nothing
-    }
+	@Override
+	public SimplePanel getInstance() {
+		return this;
+	}
 
-    @Override
-    public void hideWizard() {
-        _wizardFlowPanel.setVisible(false) ;
-    }
+	@Override
+	public void center() {
+		// do nothing
+	}
+
+	@Override
+	public void hideWizard() {
+		_wizardFlowPanel.setVisible(false);
+	}
 
 }

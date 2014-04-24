@@ -173,10 +173,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             for (RepositoryFolder tenantFolder : tenantFolders) {
                 final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
                 final String tenantId = tenant.getId();
-                
+
                 final List<ScheduleDefinition> schedules = getSchedules(tenant);
                 logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
-                
+
                 for (ScheduleDefinition schedule : schedules) {
                     initializeSchedule(schedule);
                 }
@@ -381,12 +381,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final CronExpression cronExpression;
 
         try {
+            // CRON expression: Sec Min Hr DoM M DoW (Y)
+
             if ("@yearly".equals(scheduleExpression) || "@annually".equals(scheduleExpression)) {
                 cronExpression = new CronExpression("0 0 0 1 1 ? *");
             } else if ("@monthly".equals(scheduleExpression)) {
                 cronExpression = new CronExpression("0 0 0 1 * ?");
             } else if ("@weekly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * ? * 1");
+                cronExpression = new CronExpression("0 0 0 ? * 1");
             } else if ("@daily".equals(scheduleExpression)) {
                 cronExpression = new CronExpression("0 0 0 * * ?");
             } else if ("@hourly".equals(scheduleExpression)) {

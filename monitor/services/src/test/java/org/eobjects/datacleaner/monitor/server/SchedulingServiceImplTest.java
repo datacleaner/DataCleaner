@@ -184,12 +184,16 @@ public class SchedulingServiceImplTest extends TestCase {
         Calendar cal = Calendar.getInstance();
         cal.setTime(callTime);
         if (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
             cal.set(Calendar.MILLISECOND, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-            assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(callTime));
+            while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+                cal.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            Date time = cal.getTime();
+            assertEquals(time, dailyExpr.getNextValidTimeAfter(callTime));
         }
 
         callTime = DateUtils.get(2012, Month.MARCH, 21);
@@ -199,7 +203,7 @@ public class SchedulingServiceImplTest extends TestCase {
         assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 25);
-        assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
+        assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
 
         callTime = DateUtils.get(2012, Month.MARCH, 26);
         assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));

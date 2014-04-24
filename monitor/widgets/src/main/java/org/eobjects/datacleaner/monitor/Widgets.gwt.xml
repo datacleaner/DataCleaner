@@ -22,11 +22,14 @@
 -->
 <module>
 	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.json.JSON" />
 	
 	<inherits name='org.eobjects.datacleaner.monitor.Api' />
 	<inherits name='org.eobjects.datacleaner.monitor.Services' />
 
 	<source path='shared' />
 	<source path='util' />
+	<source path='wizard' />
+	<source path='scheduling' />
 	
 </module>

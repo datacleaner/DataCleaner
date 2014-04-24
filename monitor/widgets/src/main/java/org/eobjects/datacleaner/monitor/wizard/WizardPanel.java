@@ -86,7 +86,7 @@ public interface WizardPanel {
 	public void addStyleName(String string);
 
 	/**
-	 * Add close handler for the wizard popup
+	 * Add close handler for the wizard panel
 	 * 
 	 * @param closeHandler
 	 */
@@ -100,4 +100,14 @@ public interface WizardPanel {
 	 */
 	public Widget getInstance();
 
+	/**
+	 * If this is implemented as a GWT PopupPanel, then calls the method
+	 * center() in the PopupPanel class, else does nothing
+	 */
+	public void center();
+
+	/**
+	 * Hides the wizard
+	 */
+	public void hideWizard();
 }

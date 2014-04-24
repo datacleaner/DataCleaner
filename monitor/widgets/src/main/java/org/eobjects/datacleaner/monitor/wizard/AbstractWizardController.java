@@ -73,16 +73,18 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 	private WizardClientController _currentController;
 
 	public AbstractWizardController(String heading, S service,
-			TenantIdentifier tenant, String panelType) {
+			String tenantName, String panelType,
+			String htmlDivNameToShowWizardIn) {
 
-		_wizardPanel = WizardPanelFactory.getWizardPanel(panelType);
+		_wizardPanel = WizardPanelFactory.getWizardPanel(panelType,
+				htmlDivNameToShowWizardIn);
 		// _wizardPanelwidget.setAutoHideEnabled(false);
 		_wizardPanel.setHeader(heading);
 
 		FileUploadFunctionHandler.exportFileUploadFunction();
 
 		_service = service;
-		_tenant = tenant;
+		_tenant = new TenantIdentifier(tenantName);
 
 		_loadingIndicator = new LoadingIndicator();
 		_progressBar = new WizardProgressBar();
@@ -106,7 +108,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
 			@Override
 			public void onClick(ClickEvent event) {
-				_wizardPanel.setVisible(false);
+				_wizardPanel.hideWizard();
 			}
 		});
 		_wizardPanel.addButton(cancelButton);

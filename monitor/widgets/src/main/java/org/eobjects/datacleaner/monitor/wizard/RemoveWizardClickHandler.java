@@ -17,22 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+
 package org.eobjects.datacleaner.monitor.wizard;
 
-/**
- * This class decides the type of panel to be used on the basis of panelType
- * 
- */
-public class WizardPanelFactory {
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 
-	public static WizardPanel getWizardPanel(String panelType,
-			String htmlDivNameToShowWizardIn) {
+public class RemoveWizardClickHandler implements ClickHandler {
 
-		if (panelType != null && panelType.equals("inline")) {
-			return new SimpleWizardPanel(htmlDivNameToShowWizardIn);
-		}
-		return new PopupWizardPanel();
+	private ClickHandler clickHandler;
+	private JobWizardPanel jobWizardPanel;
 
+	public RemoveWizardClickHandler(ClickHandler clickHandler,
+			JobWizardPanel jobWizardPanel) {
+		this.clickHandler = clickHandler;
+		this.jobWizardPanel = jobWizardPanel;
+	}
+
+	@Override
+	public void onClick(ClickEvent event) {
+		jobWizardPanel.getWizardPanel().hideWizard();
+		clickHandler.onClick(event);
 	}
 
 }

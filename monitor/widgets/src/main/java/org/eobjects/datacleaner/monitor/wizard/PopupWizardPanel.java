@@ -45,11 +45,11 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 
 	public PopupWizardPanel() {
 		super();
-		setAppearance();
 		_buttonPanel = new ButtonPanel();
 		_contentPanel = getContentPanel();
 		_wizardFlowPanel = getWizardFlowPanel();
 		super.setWidget(_wizardFlowPanel);
+		setAppearance();
 	}
 
 	private FlowPanel getWizardFlowPanel() {
@@ -71,11 +71,11 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 	}
 
 	private void setAppearance() {
-		addStyleName("PopupWizardPanel");
 		setGlassEnabled(true);
 		setAutoHideEnabled(false);
 		setModal(false);
 		center();
+		addStyleName("PopupWizardPanel");
 		show();
 	}
 
@@ -134,4 +134,8 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 		addCloseHandler((CloseHandler<PopupPanel>) closeHandler);
 	}
 
+	@Override
+	public void hideWizard() {
+		this.setVisible(false);
+	}
 }

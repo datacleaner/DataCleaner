@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,14 +42,17 @@ public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 	private final SimplePanel _contentPanel;
 	private final ButtonPanel _buttonPanel;
 	private FlowPanel _wizardFlowPanel;
+	private RootPanel wizardRootPanel;
 
-	public SimpleWizardPanel() {
+	public SimpleWizardPanel(String htmlDivNameToShowWizardIn) {
 		super();
 		_buttonPanel = new ButtonPanel();
 		setAppearance();
 		_contentPanel = getContentPanel();
 		_wizardFlowPanel = getWizardFlowPanel();
 		super.setWidget(_wizardFlowPanel);
+		wizardRootPanel = RootPanel.get(htmlDivNameToShowWizardIn);
+		wizardRootPanel.add(_wizardFlowPanel);
 	}
 
 	private FlowPanel getWizardFlowPanel() {
@@ -60,13 +64,8 @@ public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 	}
 
 	private SimplePanel getContentPanel() {
-		int clientHeight = Window.getClientHeight();
-		int heightMargin = 100;
-		int maxHeight = (int) ((clientHeight - heightMargin) * 0.90);
 		SimplePanel contentPanel = new ScrollPanel();
-		contentPanel.getElement().getStyle()
-				.setProperty("maxHeight", maxHeight + "px");
-		contentPanel.setStyleName("PopupWizardPanelContent");
+		contentPanel.setStyleName("SimpleWizardPanelContent");
 		return contentPanel;
 	}
 
@@ -121,6 +120,16 @@ public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 	@Override
 	public SimplePanel getInstance() {
 		return this;
+	}
+
+	@Override
+	public void center() {
+		// do nothing
+	}
+
+	@Override
+	public void hideWizard() {
+		_wizardFlowPanel.setVisible(false);
 	}
 
 }

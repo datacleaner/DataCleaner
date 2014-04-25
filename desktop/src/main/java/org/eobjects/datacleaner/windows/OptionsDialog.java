@@ -405,6 +405,7 @@ public class OptionsDialog extends AbstractWindow {
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                _userPreferences.save();
                 OptionsDialog.this.dispose();
             }
         });

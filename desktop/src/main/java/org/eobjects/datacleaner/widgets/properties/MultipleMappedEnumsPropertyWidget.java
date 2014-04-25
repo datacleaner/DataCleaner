@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
+import javax.swing.ListCellRenderer;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -90,21 +91,39 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         }
     }
 
+    /**
+     * Produces a list of available enum values for a particular input column.
+     * 
+     * @param inputColumn
+     * @param mappedEnumsProperty
+     * @return
+     */
+    protected E[] getEnumConstants(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor mappedEnumsProperty) {
+        @SuppressWarnings("unchecked")
+        final E[] enumConstants = (E[]) mappedEnumsProperty.getBaseType().getEnumConstants();
+        return enumConstants;
+    }
+
     @Override
     protected boolean isAllInputColumnsSelectedIfNoValueExist() {
         return false;
     }
 
-    private DCComboBox<E> createComboBox(InputColumn<?> inputColumn, E mappedEnum) {
+    /**
+     * Creates a combobox for a particular input column.
+     * 
+     * @param inputColumn
+     * @param mappedEnum
+     * @return
+     */
+    protected DCComboBox<E> createComboBox(InputColumn<?> inputColumn, E mappedEnum) {
         if (mappedEnum == null && inputColumn != null) {
             mappedEnum = getSuggestedValue(inputColumn);
         }
 
-        @SuppressWarnings("unchecked")
-        final E[] enumConstants = (E[]) _mappedEnumsProperty.getBaseType().getEnumConstants();
-
+        final E[] enumConstants = getEnumConstants(inputColumn, _mappedEnumsProperty);
         final DCComboBox<E> comboBox = new DCComboBox<E>(enumConstants);
-        comboBox.setRenderer(new EnumComboBoxListRenderer());
+        comboBox.setRenderer(getComboBoxRenderer(inputColumn, _mappedEnumComboBoxes, enumConstants));
         _mappedEnumComboBoxes.put(inputColumn, comboBox);
         if (mappedEnum != null) {
             comboBox.setEditable(true);
@@ -120,6 +139,26 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         return comboBox;
     }
 
+    /**
+     * Gets the renderer of items in the comboboxes presenting the enum values.
+     * 
+     * @param enumConstants
+     * @param mappedEnumComboBoxes
+     * @param inputColumn
+     * 
+     * @return
+     */
+    protected ListCellRenderer getComboBoxRenderer(InputColumn<?> inputColumn,
+            WeakHashMap<InputColumn<?>, DCComboBox<E>> mappedEnumComboBoxes, E[] enumConstants) {
+        return new EnumComboBoxListRenderer();
+    }
+
+    /**
+     * Gets the suggested/pre-filled value for a particular input column.
+     * 
+     * @param inputColumn
+     * @return
+     */
     protected E getSuggestedValue(InputColumn<?> inputColumn) {
         return null;
     }

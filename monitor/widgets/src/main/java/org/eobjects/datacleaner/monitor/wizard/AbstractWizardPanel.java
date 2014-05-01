@@ -24,51 +24,40 @@ import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Inline panel used by wizards. It creates {@link SimplePanel} on which
- * elements can be added and controlled through wizard framework
+ * Abstract {@link WizardPanel} implementation.
  */
-public class SimpleWizardPanel implements WizardPanel {
+public abstract class AbstractWizardPanel implements WizardPanel {
 
-    private final SimplePanel _contentPanel;
+    private final FlowPanel _parentPanel;
     private final ButtonPanel _buttonPanel;
-    private FlowPanel _wizardFlowPanel;
-    private RootPanel wizardRootPanel;
+    private final SimplePanel _contentPanel;
 
-    public SimpleWizardPanel() {
-        super();
+    public AbstractWizardPanel() {
+        _parentPanel = new FlowPanel();
+        _contentPanel = createContentPanel();
         _buttonPanel = new ButtonPanel();
-        _contentPanel = getContentPanel();
-        _wizardFlowPanel = getWizardFlowPanel();
     }
 
-    private FlowPanel getWizardFlowPanel() {
-        FlowPanel wizardFlowPanel = new FlowPanel();
-        wizardFlowPanel.add(_contentPanel);
-        wizardFlowPanel.add(_buttonPanel);
-        wizardFlowPanel.addStyleName("SimpleWizardPanel");
-        return wizardFlowPanel;
+    protected abstract SimplePanel createContentPanel();
+
+    @Override
+    public Widget getWizardWidget() {
+        return _parentPanel;
     }
 
-    private SimplePanel getContentPanel() {
-        SimplePanel contentPanel = new ScrollPanel();
-        contentPanel.setStyleName("SimpleWizardPanelContent");
-        return contentPanel;
-    }
-
+    @Override
     public void setHeader(String header) {
-        final Widget firstWidget = _wizardFlowPanel.getWidget(0);
+        final Widget firstWidget = _parentPanel.getWidget(0);
         if (firstWidget instanceof HeadingLabel) {
             HeadingLabel headingLabel = (HeadingLabel) firstWidget;
             headingLabel.setText(header);
         } else {
             HeadingLabel headingLabel = new HeadingLabel(header);
-            _wizardFlowPanel.insert(headingLabel, 0);
+            _parentPanel.insert(headingLabel, 0);
         }
     }
 
@@ -81,29 +70,12 @@ public class SimpleWizardPanel implements WizardPanel {
     public void setContent(IsWidget w) {
         _contentPanel.setWidget(w);
     }
-
-    @Override
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler) {
-        // do nothing
+    
+    protected Widget getContent() {
+        return _contentPanel.getWidget();
     }
-
-    @Override
-    public void hideWizard() {
-        _wizardFlowPanel.setVisible(false);
-        redirectToAnotherPage();
-    }
-
-    public static native void redirectToAnotherPage() /*-{
-                                                      $doc.redirectToAnotherPage();
-                                                      }-*/;
-
-    @Override
-    public void showWizard() {
-        _wizardFlowPanel.setVisible(true);
-    }
-
-    @Override
-    public Widget getWizardWidget() {
-        return _wizardFlowPanel;
+    
+    protected SimplePanel getContentPanel() {
+        return _contentPanel;
     }
 }

@@ -28,16 +28,24 @@ public class WizardIdentifier implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String displayName;
+    private String _displayName;
     private int _expectedPageCount;
     private boolean _datastoreConsumer;
 
+    public WizardIdentifier(String displayName) {
+        this();
+        _displayName = displayName;
+    }
+    
+    public WizardIdentifier() {
+    }
+
     public String getDisplayName() {
-        return displayName;
+        return _displayName;
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this._displayName = displayName;
     }
 
     public int getExpectedPageCount() {
@@ -58,6 +66,6 @@ public class WizardIdentifier implements Serializable {
 
     @Override
     public String toString() {
-        return "JobWizardIdentifier[" + displayName + "]";
+        return "JobWizardIdentifier[" + _displayName + "]";
     }
 }

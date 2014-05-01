@@ -20,30 +20,9 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 /**
- * A factory class for {@link WizardPanel} objects.
+ * Handler/listener interface for handling the event of a closed wizard.
  */
-public class WizardPanelFactory {
+public interface WizardCloseHandler {
 
-    private WizardPanelFactory() {
-        // prevent instantiation
-    }
-
-    /**
-     * Creates a {@link WizardPanel}.
-     * 
-     * @param htmlDivId
-     *            the ID of a HTML DIV element in which the wizard should run.
-     *            If null or empty, the wizard will be displayed in a popup.
-     * @return
-     */
-    public static WizardPanel createWizardPanel(String htmlDivId) {
-        if (htmlDivId != null && !"".equals(htmlDivId)) {
-            SimpleWizardPanel wizardPanel = new SimpleWizardPanel();
-            RootWizardPanelWrapper wrapper = new RootWizardPanelWrapper(wizardPanel, htmlDivId);
-            return wrapper;
-        }
-        return new PopupWizardPanel();
-
-    }
-
+    public void onWizardClosed();
 }

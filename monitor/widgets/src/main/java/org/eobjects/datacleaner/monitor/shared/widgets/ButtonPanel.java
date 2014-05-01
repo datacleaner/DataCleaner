@@ -31,12 +31,29 @@ public class ButtonPanel extends FlowPanel {
         super();
         addStyleName("ButtonPanel");
     }
-    
+
+    /**
+     * Adds a button to this {@link ButtonPanel}
+     * 
+     * @param button
+     */
     public void addButton(Button button) {
         add(button);
     }
 
+    /**
+     * Removes a button from this {@link ButtonPanel}
+     * 
+     * @param button
+     */
     public void removeButton(Button button) {
         remove(button);
+    }
+
+    /**
+     * Removes all buttons from this {@link ButtonPanel}.
+     */
+    public void removeAllButtons() {
+        clear();
     }
 }

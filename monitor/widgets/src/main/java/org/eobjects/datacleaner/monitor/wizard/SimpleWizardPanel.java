@@ -25,7 +25,6 @@ import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,7 +39,6 @@ public class SimpleWizardPanel implements WizardPanel {
     private final ButtonPanel _buttonPanel;
     private final WizardProgressBar _progressBar;
     private FlowPanel _wizardFlowPanel;
-    private RootPanel wizardRootPanel;
 
     public SimpleWizardPanel() {
         super();
@@ -89,12 +87,7 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public void hideWizard() {
         _wizardFlowPanel.setVisible(false);
-        redirectToAnotherPage();
     }
-
-    public static native void redirectToAnotherPage() /*-{
-                                                      $doc.redirectToAnotherPage();
-                                                      }-*/;
 
     @Override
     public void showWizard() {

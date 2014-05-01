@@ -101,11 +101,12 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
      */
     public void cancelWizard() {
         _wizardPanel.hideWizard();
-
+        
         if (_currentController == null) {
             // wizard never started, or already ended
             return;
         }
+        
 
         final WizardSessionIdentifier sessionIdentifier = _currentController.getSessionIdentifier();
         if (sessionIdentifier == null) {
@@ -120,6 +121,8 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
                 assert result.booleanValue();
             }
         });
+
+        JavaScriptCallbacks.onWizardCancelled();
     }
 
     /**

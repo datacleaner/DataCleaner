@@ -108,7 +108,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                redirectToAnotherPage();
+                JavaScriptCallbacks.onWizardFinished();
             }
         });
 
@@ -160,10 +160,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         }
 
     }
-
-    public static native void redirectToAnotherPage() /*-{
-                                                      $doc.redirectToAnotherPage();
-                                                      }-*/;
 
     private void getSchedule(final Runnable runnable, final String jobName) {
         schedulingServiceAsync.getSchedules(clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {

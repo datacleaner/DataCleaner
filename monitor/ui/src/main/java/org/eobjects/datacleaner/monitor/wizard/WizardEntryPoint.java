@@ -20,14 +20,7 @@
 
 package org.eobjects.datacleaner.monitor.wizard;
 
-import org.eobjects.datacleaner.monitor.shared.ClientConfig;
-import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.eobjects.datacleaner.monitor.shared.WizardService;
-import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.wizard.JobWizardController;
+import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.GWT;
 
@@ -43,39 +36,9 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      */
     @Override
     public void onModuleLoad() {
-        exportStartWizard();
+        GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
+        JavaScriptCallbacks.exposeApi();
     }
 
-    /**
-     * This method gets called by a custom javascript usually embedded in an
-     * onclick method of an HTML button
-     * 
-     * @param panelType
-     * @param datastoreName
-     * @param wizardDisplayName
-     * @param htmlDivNameToShowWizardIn
-     */
-    public static void startWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
-
-        final ClientConfig clientConfig = new DictionaryClientConfig();
-
-        final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
-        final WizardIdentifier wizardIdentifier = new WizardIdentifier(wizardDisplayName);
-        final WizardServiceAsync wizardService = GWT.create(WizardService.class);
-        final TenantIdentifier tenant = clientConfig.getTenant();
-        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
-
-        final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
-                datastoreIdentifier, wizardService);
-        controller.startWizard();
-    }
-
-    /**
-     * A native Javascript method
-     */
-    public static native void exportStartWizard() /*-{
-                                                   $wnd.startWizard =
-                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
-                                                   }-*/;
 
 }

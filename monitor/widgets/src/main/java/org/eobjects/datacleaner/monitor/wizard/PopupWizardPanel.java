@@ -20,13 +20,12 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
-import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
  * can be added and controlled through wizard framework
  * 
  */
-public class PopupWizardPanel extends PopupPanel implements WizardPanel {
+public class PopupWizardPanel extends DCPopupPanel implements WizardPanel {
 
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
@@ -44,7 +43,7 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     private final WizardProgressBar _progressBar;
 
     public PopupWizardPanel() {
-        super();
+        super("");
         _buttonPanel = new ButtonPanel();
         _progressBar = new WizardProgressBar();
         _contentPanel = getContentPanel();
@@ -79,22 +78,9 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
         addStyleName("PopupWizardPanel");
     }
 
-    public PopupWizardPanel(String heading) {
-        this();
-        if (heading != null) {
-            _wizardFlowPanel.add(new HeadingLabel(heading));
-        }
-    }
-
+    @Override
     public void setHeader(String header) {
-        final Widget firstWidget = _wizardFlowPanel.getWidget(0);
-        if (firstWidget instanceof HeadingLabel) {
-            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
-            headingLabel.setText(header);
-        } else {
-            HeadingLabel headingLabel = new HeadingLabel(header);
-            _wizardFlowPanel.insert(headingLabel, 0);
-        }
+        super.setHeader(header);
     }
 
     @Override
@@ -105,11 +91,7 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     @Override
     public void setContent(IsWidget w) {
         _contentPanel.setWidget(w);
-    }
-
-    @Override
-    public void setWidget(IsWidget w) {
-        _contentPanel.setWidget(w);
+        center();
     }
 
     @Override

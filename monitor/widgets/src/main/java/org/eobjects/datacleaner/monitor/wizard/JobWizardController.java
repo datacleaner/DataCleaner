@@ -69,6 +69,16 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _datastoreIdentifier = datastoreIdentifier;
+
+        _stepsBeforeWizardPages = 0;
+        if (wizardIdentifier == null) {
+            _stepsBeforeWizardPages++;
+        }
+        if (datastoreIdentifier == null) {
+            if (wizardIdentifier == null || wizardIdentifier.isDatastoreConsumer()) {
+                _stepsBeforeWizardPages++;
+            }
+        }
     }
 
     @Override
@@ -80,19 +90,16 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         if (_datastoreIdentifier == null) {
             if (wizardIdentifier == null || wizardIdentifier.isDatastoreConsumer()) {
-                _stepsBeforeWizardPages = 2;
                 showDatastoreSelection();
                 return;
             }
         }
 
         if (wizardIdentifier == null) {
-            _stepsBeforeWizardPages = 1;
             showWizardSelection();
             return;
         }
 
-        _stepsBeforeWizardPages = 0;
         getWizardPanel().setHeader("Build job: " + wizardIdentifier.getDisplayName());
         setLoading();
 
@@ -127,7 +134,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     private Panel createWizardFinishedContentPanel(String jobName) {
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-        contentPanel.add(_loadingIndicator);
         if (jobName == null) {
             contentPanel.add(new Label("Job created! Wizard finished."));
         } else {
@@ -137,6 +143,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         if (jobName != null) {
             if (clientConfig.isScheduleEditor()) {
+                contentPanel.add(_loadingIndicator);
                 getSchedule(new Runnable() {
                     @Override
                     public void run() {
@@ -144,7 +151,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                         final Anchor schedulingAnchor = createSchedulingAnchor();
 
                         // TODO: Previously there was a "Monitor this job's
-                        // metrics on the dashboard" anchor as well.
+                        // metrics on the dashboard" anchor as well. Add it?
 
                         contentPanel.add(triggerAnchor);
                         contentPanel.add(schedulingAnchor);

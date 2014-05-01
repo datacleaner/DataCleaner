@@ -30,6 +30,11 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
     public DatastoreWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
             WizardIdentifier wizardIdentifier, WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
+
+        _stepsBeforeWizardPages = 0;
+        if (wizardIdentifier == null) {
+            _stepsBeforeWizardPages++;
+        }
     }
 
     @Override
@@ -40,12 +45,10 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
         final WizardIdentifier wizardIdentifier = getWizardIdentifier();
 
         if (wizardIdentifier == null) {
-            _stepsBeforeWizardPages = 1;
             showWizardSelection();
             return;
         }
 
-        _stepsBeforeWizardPages = 0;
         getWizardPanel().setHeader("Register datastore: " + wizardIdentifier.getDisplayName());
         setLoading();
 

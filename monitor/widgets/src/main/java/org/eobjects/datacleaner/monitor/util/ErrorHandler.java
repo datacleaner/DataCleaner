@@ -61,7 +61,7 @@ public class ErrorHandler {
     /**
      * This method first call handleError method which is a native method to
      * call onError JS function, in case onError JS method is not present on
-     * page it simple shows an error dialog as an alert.
+     * page it simply shows an error dialog as an alert.
      * 
      * @param headerMessage
      * @param additionalDetails
@@ -115,8 +115,8 @@ public class ErrorHandler {
      * @return boolean
      */
     public static native boolean handleError(String message)/*-{
-                                                            if (typeof $wnd.onError == 'function' ){
-                                                            $wnd.onError(message);
+                                                            if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
+                                                            $wnd.datacleaner.onError(message);
                                                             return true;
                                                             }else{
                                                             return false;

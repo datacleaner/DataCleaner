@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.util;
 
 import java.util.Set;
 
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 
@@ -68,13 +69,18 @@ public class ErrorHandler {
      * @param t
      */
     public static void showErrorDialog(final String headerMessage, final String additionalDetails, final Throwable t) {
-        if (handleError(t.getMessage())) {
-            return;
-        }
+        String oneLineMessage = buildOneLineMessage(headerMessage, additionalDetails, t);
+
         if (t instanceof DCUserInputException) {
             GWT.log("User input exception", t);
-            Window.alert(t.getMessage());
+            if (JavaScriptCallbacks.onError(oneLineMessage, true)) {
+                return;
+            }
+            Window.alert(oneLineMessage);
+            return;
+        }
 
+        if (JavaScriptCallbacks.onError(oneLineMessage, false)) {
             return;
         }
 
@@ -107,21 +113,28 @@ public class ErrorHandler {
         showErrorDialog(headerMessage, details, additionalDetails);
     }
 
-    /**
-     * Native method to call Javascript onError function, in case onError method
-     * is not found on the page this method returns false.
-     * 
-     * @param message
-     * @return boolean
-     */
-    public static native boolean handleError(String message)/*-{
-                                                            if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
-                                                            $wnd.datacleaner.onError(message);
-                                                            return true;
-                                                            }else{
-                                                            return false;
-                                                            }
-                                                            }-*/;
+    private static String buildOneLineMessage(String headerMessage, String additionalDetails, Throwable t) {
+        final StringBuilder oneLineMessage = new StringBuilder();
+        if (headerMessage != null && !"".equals(headerMessage)) {
+            oneLineMessage.append(headerMessage);
+        }
+
+        if (additionalDetails != null && !"".equals(additionalDetails)) {
+            if (oneLineMessage.length() != 0) {
+                oneLineMessage.append(": ");
+            }
+            oneLineMessage.append(additionalDetails);
+        }
+
+        String exceptionMessage = t.getMessage();
+        if (exceptionMessage != null && !"".equals(exceptionMessage) && oneLineMessage.indexOf(exceptionMessage) == -1) {
+            if (oneLineMessage.length() != 0) {
+                oneLineMessage.append(": ");
+            }
+            oneLineMessage.append(exceptionMessage);
+        }
+        return oneLineMessage.toString();
+    }
 
     /**
      * Shows an error dialog

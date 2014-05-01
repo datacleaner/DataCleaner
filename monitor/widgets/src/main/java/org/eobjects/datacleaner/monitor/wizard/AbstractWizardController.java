@@ -123,7 +123,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             }
         });
 
-        JavaScriptCallbacks.onWizardCancelled();
+        JavaScriptCallbacks.onWizardCancelled(getWizardIdentifier().getDisplayName());
     }
 
     /**
@@ -142,11 +142,11 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     /**
      * Invoked when the wizard has finished.
      * 
-     * @param entityName
+     * @param resultEntityName
      *            the resulting string object of the wizard. Usually identifies
      *            the name/id of the thing that was built with the wizard.
      */
-    protected abstract void wizardFinished(String entityName);
+    protected abstract void wizardFinished(String resultEntityName);
 
     protected final void setLoading() {
         setContent(_loadingIndicator);
@@ -298,10 +298,11 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
      * 
      * @param string
      */
-    protected final void closeWizardAfterFinishing(String defaultUrlToGoTo) {
+    protected final void closeWizardAfterFinishing(String resultEntityName, String defaultUrlToGoTo) {
         getWizardPanel().hideWizard();
-        boolean callbackExecuted = JavaScriptCallbacks.onWizardFinished();
-        
+        final String displayName = getWizardIdentifier().getDisplayName();
+        boolean callbackExecuted = JavaScriptCallbacks.onWizardFinished(displayName, resultEntityName);
+
         if (!callbackExecuted && defaultUrlToGoTo != null) {
             String url = Urls.createRelativeUrl(defaultUrlToGoTo);
             Urls.assign(url);

@@ -145,7 +145,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
-                closeWizardAfterFinishing("datastores.jsf");
+                closeWizardAfterFinishing(datastoreName, "datastores.jsf");
             }
         });
 
@@ -155,7 +155,7 @@ public class DatastoreWizardController extends AbstractWizardController<WizardSe
             @Override
             public void onClick(ClickEvent event) {
                 final String htmlDivId = getWizardPanel().getCustomHtmlDivId();
-                closeWizardAfterFinishing(null);
+                closeWizardAfterFinishing(datastoreName, null);
 
                 JavaScriptCallbacks.startJobWizard(datastoreName, null, htmlDivId);
             }

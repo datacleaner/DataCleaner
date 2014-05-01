@@ -3,7 +3,6 @@
 	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript" src="datastores/datastores.nocache.js" />
 		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
 		<script type="text/javascript">
 		//<![CDATA[
@@ -12,6 +11,14 @@
 		    		return true;
 		    	}
 		    	return false;
+		    }
+		    
+		    function checkHashOnLoad() {
+		    	var hashPartOfUri = window.location.hash;
+		    	if (hashPartOfUri == "startWizard") {
+		    		datacleaner.startDatastoreWizard();
+		    		window.location.hash = "";
+		    	}
 		    }
 		//]]>
 		</script>
@@ -24,7 +31,7 @@
 			<c:if test="#{user.configurationEditor}">
 				<div>
 					<button class="gwt-Button-ImageTextButton NewDatastoreButton"
-						onclick="datacleaner.startDatastoreWizard(null, null);">Register Datastore</button>
+						onclick="datacleaner.startDatastoreWizard();">Register Datastore</button>
 				</div>
 			</c:if>
 

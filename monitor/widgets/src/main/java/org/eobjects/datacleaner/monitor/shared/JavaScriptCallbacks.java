@@ -39,29 +39,69 @@ public final class JavaScriptCallbacks {
      * Called when a wizard is finished and the user clicks a button to close
      * it.
      * 
+     * @param wizardDisplayName
+     *            the name of the wizard that finished
+     * @param wizardResultName
+     *            the name of the job or datastore that was built using a wizard
+     * 
      * @return whether or not a callback was invoked
      */
-    public static native boolean onWizardFinished() /*-{
-                                                        if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                            $wnd.datacleaner.onWizardFinished();
-                                                            return true;
-                                                        }
-                                                        return false;
-                                                    }-*/;
+    public static native boolean onWizardFinished(String wizardDisplayName, String wizardResultName) /*-{
+                                                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
+                                                                                                     $wnd.datacleaner.onWizardFinished(wizardDisplayName, wizardResultName);
+                                                                                                     return true;
+                                                                                                     }
+                                                                                                     return false;
+                                                                                                     }-*/;
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
      * 
+     * @param wizardDisplayName
+     *            the name of the wizard that was cancelled
+     * 
      * @return whether or not a callback was invoked
      */
-    public static native boolean onWizardCancelled() /*-{
-                                                                
-                                                                if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                                    $wnd.datacleaner.onWizardCancelled();
-                                                                    return true;
-                                                                }
-                                                                return false;
-                                                            }-*/;
+    public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
+                                                                             
+                                                                             if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
+                                                                             $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                             return true;
+                                                                             }
+                                                                             return false;
+                                                                             }-*/;
+
+    /**
+     * Called when the DataCleaner API has been initialized
+     * 
+     * @return
+     */
+    public static native boolean onApiInitialized() /*-{
+                                                    if ($wnd.datacleaner && $wnd.datacleaner.onApiInitialized) {
+                                                        $wnd.datacleaner.onApiInitialized();
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                    }-*/;
+
+    /**
+     * Native method to call Javascript onError function, in case onError method
+     * is not found on the page this method returns false.
+     * 
+     * @param message
+     * @param userFeedback
+     *            a boolean that is true if the error relates to the user's
+     *            input or choices. Or false if the error is unexpected or
+     *            produced by the system/code.
+     * @return boolean
+     */
+    public static native boolean onError(String message, boolean userFeedback)/*-{
+                                                                              if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
+                                                                              $wnd.datacleaner.onError(message, userFeedback);
+                                                                              return true;
+                                                                              }
+                                                                              return false;
+                                                                              }-*/;
 
     /**
      * Exposes the DataCleaner wizard JS API.
@@ -69,6 +109,7 @@ public final class JavaScriptCallbacks {
     public static void exposeApi() {
         exportStartJobWizard();
         exportStartDatastoreWizard();
+        onApiInitialized();
     }
 
     /**

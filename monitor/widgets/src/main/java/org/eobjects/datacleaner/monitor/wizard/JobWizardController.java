@@ -119,7 +119,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                closeWizardAfterFinishing("scheduling.jsf");
+                closeWizardAfterFinishing(jobName, "scheduling.jsf");
             }
         });
 
@@ -131,7 +131,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
     }
 
-    private Panel createWizardFinishedContentPanel(String jobName) {
+    private Panel createWizardFinishedContentPanel(final String jobName) {
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
         if (jobName == null) {
@@ -147,8 +147,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                 getSchedule(new Runnable() {
                     @Override
                     public void run() {
-                        final Anchor triggerAnchor = createTriggerAnchor();
-                        final Anchor schedulingAnchor = createSchedulingAnchor();
+                        final Anchor triggerAnchor = createTriggerAnchor(jobName);
+                        final Anchor schedulingAnchor = createSchedulingAnchor(jobName);
 
                         // TODO: Previously there was a "Monitor this job's
                         // metrics on the dashboard" anchor as well. Add it?
@@ -164,22 +164,22 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         return contentPanel;
     }
 
-    protected Anchor createSchedulingAnchor() {
+    protected Anchor createSchedulingAnchor(String jobName) {
         final Anchor anchor = new Anchor("Set up a job schedule");
         anchor.addStyleName("ScheduleJob");
         ClickHandler clickHandler = new CustomizeScheduleClickHandler(null, schedulingService, getTenant(),
                 _scheduleDefinitionForJob);
-        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
+        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this, jobName);
         anchor.addClickHandler(clickHandler);
         return anchor;
     }
 
-    protected Anchor createTriggerAnchor() {
+    protected Anchor createTriggerAnchor(String jobName) {
         Anchor anchor = new Anchor("Run this job now");
         anchor.addStyleName("TriggerJob");
         ClickHandler clickHandler = new TriggerJobClickHandler(schedulingService, getTenant(),
                 _scheduleDefinitionForJob);
-        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
+        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this, jobName);
         anchor.addClickHandler(clickHandler);
         return anchor;
     }

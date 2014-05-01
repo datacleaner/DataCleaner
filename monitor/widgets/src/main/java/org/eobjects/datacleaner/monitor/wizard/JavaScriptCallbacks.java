@@ -32,7 +32,7 @@ import com.google.gwt.core.client.GWT;
 public final class JavaScriptCallbacks {
 
     /**
-     * Called when a wizard is finished
+     * Called when a wizard is finished and the user clicks a button to close it.
      */
     public static native void onWizardFinished() /*-{
                                                         if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
@@ -41,7 +41,7 @@ public final class JavaScriptCallbacks {
                                                     }-*/;
 
     /**
-     * Called when a wizard is closed
+     * Called when a wizard is closed/cancelled before finishing it.
      */
     public static native void onWizardCancelled() /*-{
                                                                 

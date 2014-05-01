@@ -31,6 +31,13 @@ import com.google.gwt.user.client.ui.Widget;
 public interface WizardPanel {
 
     /**
+     * Adds a style class to the {@link WizardPanel}.
+     * 
+     * @param styleClass
+     */
+    public void addStyleClass(String styleClass);
+
+    /**
      * Sets header for the wizard on the top of the panel
      * 
      * @param header
@@ -81,4 +88,11 @@ public interface WizardPanel {
      * Hides the wizard
      */
     public void hideWizard();
+
+    /**
+     * Requests the wizard panel to refresh it's UI. This is typically called
+     * because some of the existing content has changed, and the UI may need to
+     * adapt (center dialogs, repack frames etc.)
+     */
+    public void refreshUI();
 }

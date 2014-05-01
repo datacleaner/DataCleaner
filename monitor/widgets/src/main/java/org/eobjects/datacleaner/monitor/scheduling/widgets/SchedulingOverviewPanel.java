@@ -27,8 +27,8 @@ import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
-import org.eobjects.datacleaner.monitor.shared.widgets.CreateJobButton;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.wizard.JavaScriptCallbacks;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
@@ -65,13 +65,10 @@ public class SchedulingOverviewPanel extends Composite {
         final ButtonPanel buttonPanel = new ButtonPanel();
         
         if (_clientConfig.isJobEditor()) {
-            final CreateJobButton newJobButton = new CreateJobButton(_clientConfig.getTenant());
-            buttonPanel.add(newJobButton);
-            
             final String token = History.getToken();
             if ("startWizard".equals(token)) {
                 History.newItem("");
-                newJobButton.startWizard();
+                JavaScriptCallbacks.startJobWizard(null, null, null);
             }
         }
         

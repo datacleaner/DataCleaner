@@ -80,6 +80,9 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
     @Override
     protected void startWizard() {
+        getWizardPanel().addStyleClass("JobWizardPanel");
+        getWizardPanel().showWizard();
+
         final WizardIdentifier wizardIdentifier = getWizardIdentifier();
 
         if (_datastoreIdentifier == null) {
@@ -98,8 +101,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
         _stepsBeforeWizardPages = 0;
         getWizardPanel().setHeader("Build job: " + wizardIdentifier.getDisplayName());
-
         setLoading();
+
         WizardServiceAsync wizardService = getWizardService();
         wizardService.startJobWizard(getTenant(), wizardIdentifier, _datastoreIdentifier, getLocaleName(),
                 createNextPageCallback());
@@ -184,6 +187,8 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     }
 
     protected void showDatastoreSelection() {
+        getWizardPanel().setHeader("Build job");
+
         final FlowPanel outerPanel = new FlowPanel();
         outerPanel.setStyleName("InitialSelectionOuterPanel");
         final List<RadioButton> datastoreRadios = new ArrayList<RadioButton>();
@@ -256,8 +261,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             radios.add(radio);
         }
 
-        // TODO: Significant?
-        // center();
+        getWizardPanel().refreshUI();
     }
 
     private void showDatastoreSelection(final Panel outerPanel, final List<RadioButton> radios) {
@@ -292,8 +296,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             panel.add(radio);
         }
 
-        // TODO: Significant?
-        // center();
+        getWizardPanel().refreshUI();
     }
 
     protected void showWizardSelection() {

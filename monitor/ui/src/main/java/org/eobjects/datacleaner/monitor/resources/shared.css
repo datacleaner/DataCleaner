@@ -187,13 +187,13 @@ div.center {
 /**
  * Styling for the wizards
  */
-.WizardPopupPanel .DCPopupPanelContent {
+.PopupWizardPanel .DCPopupPanelContent {
 	min-height: 300px;
 	min-width: 500px;
 	max-width: 700px;
 }
 
-.WizardPopupPanel table {
+.WizardPanel table {
 	margin-left: auto;
 	margin-right: auto;
 	width: 90%;
@@ -202,49 +202,49 @@ div.center {
 	border: 1px solid #ddd;
 }
 
-.WizardPopupPanel table th {
+.WizardPanel table th {
 	background-color: #5594DD;
 	color: white;
 	font-weight: normal;
 	padding: 4px;
 }
 
-.WizardPopupPanel table td {
+.WizardPanel table td {
 	padding: 2px;
 }
 
-.WizardPopupPanel .gwt-RadioButton {
+.WizardPanel .gwt-RadioButton {
 	display: block;
 	margin: 6px;
 	margin-left: 20px;
 }
 
-.WizardPopupPanel .gwt-RadioButton label {
+.WizardPanel .gwt-RadioButton label {
 	padding-left: 6px;
 	color: #5594DD;
 }
 
-.WizardPopupPanel .NameLabel {
+.WizardPanel .NameLabel {
 	margin-top: 20px;
 }
 
-.WizardPopupPanel .NameTextBox {
+.WizardPanel .NameTextBox {
 	margin: 20px;
 	margin-top: 5px;
 }
 
-.WizardPopupPanel .HeadingLabel {
+.WizardPanel .HeadingLabel {
 	padding-left: 26px;
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
 }
 
-.JobWizardPopupPanel .HeadingLabel {
+.JobWizardPanel .HeadingLabel {
 	background-image: url("job.png");
 }
 
-.DatastoreWizardPopupPanel .HeadingLabel {
+.DatastoreWizardPanel .HeadingLabel {
 	background-image: url("datastore.png");
 }
 

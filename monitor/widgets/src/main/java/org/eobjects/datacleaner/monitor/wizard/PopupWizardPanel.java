@@ -75,9 +75,8 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
         setGlassEnabled(true);
         setAutoHideEnabled(false);
         setModal(false);
-        center();
+        addStyleName("WizardPanel");
         addStyleName("PopupWizardPanel");
-        show();
     }
 
     public PopupWizardPanel(String heading) {
@@ -115,12 +114,13 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 
     @Override
     public void hideWizard() {
-        setVisible(false);
+        hide();
     }
 
     @Override
     public void showWizard() {
-        setVisible(true);
+        center();
+        show();
     }
 
     @Override
@@ -131,5 +131,15 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     @Override
     public WizardProgressBar getProgressBar() {
         return _progressBar;
+    }
+
+    @Override
+    public void refreshUI() {
+        center();
+    }
+
+    @Override
+    public void addStyleClass(String styleClass) {
+        super.addStyleName(styleClass);
     }
 }

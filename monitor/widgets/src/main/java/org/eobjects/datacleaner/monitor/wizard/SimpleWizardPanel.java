@@ -54,6 +54,7 @@ public class SimpleWizardPanel implements WizardPanel {
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
         wizardFlowPanel.addStyleName("SimpleWizardPanel");
+        wizardFlowPanel.addStyleName("WizardPanel");
         return wizardFlowPanel;
     }
 
@@ -102,5 +103,15 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public WizardProgressBar getProgressBar() {
         return _progressBar;
+    }
+    
+    @Override
+    public void refreshUI() {
+        // do nothing
+    }
+
+    @Override
+    public void addStyleClass(String styleClass) {
+        getWizardWidget().addStyleName(styleClass);
     }
 }

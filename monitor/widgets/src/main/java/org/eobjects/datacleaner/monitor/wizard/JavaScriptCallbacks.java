@@ -103,6 +103,9 @@ public final class JavaScriptCallbacks {
 
         final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
                 datastoreIdentifier, wizardService);
+        
+        GWT.log("Starting wizard '" + wizardDisplayName + "'. Datastore=" + datastoreName + ", htmlDivId=" + htmlDivId);
+        
         controller.startWizard();
     }
 }

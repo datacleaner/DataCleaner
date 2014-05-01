@@ -46,7 +46,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
 
     public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
         super("Register datastore", service, tenant);
-        addStyleName("DatastoreWizardPopupPanel");
+        addStyleName("DatastoreWizardPanel");
 
         service.getDatastoreWizardIdentifiers(tenant, getLocaleName(), new DCAsyncCallback<List<WizardIdentifier>>() {
             @Override

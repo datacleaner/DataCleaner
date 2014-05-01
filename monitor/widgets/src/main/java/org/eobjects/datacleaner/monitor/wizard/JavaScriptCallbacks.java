@@ -78,7 +78,7 @@ public final class JavaScriptCallbacks {
      * @param wizardDisplayName
      * @param htmlDivNameToShowWizardIn
      */
-    public static void startWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
+    public static void startJobWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
 

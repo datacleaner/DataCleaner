@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.wizard;
 import org.eobjects.datacleaner.monitor.shared.WizardNavigationServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.FileUploadFunctionHandler;
@@ -33,15 +34,12 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
@@ -53,207 +51,220 @@ import com.google.gwt.user.client.ui.SimplePanel;
  */
 public abstract class AbstractWizardController<S extends WizardNavigationServiceAsync> {
 
-	protected final S _service;
-	protected final TenantIdentifier _tenant;
-	private final LoadingIndicator _loadingIndicator;
-	private final WizardProgressBar _progressBar;
-	private final SimplePanel _targetPanel;
-	private final Button _nextStepButton;
-	private final Button _previousStepButton;
-	private final WizardPanel _wizardPanel;
+    private final S _wizardService;
+    private final TenantIdentifier _tenant;
+    private final WizardIdentifier _wizardIdentifier;
+    private final LoadingIndicator _loadingIndicator;
+    private final WizardProgressBar _progressBar;
+    private final SimplePanel _targetPanel;
+    private final Button _nextStepButton;
+    private final Button _previousStepButton;
+    private final WizardPanel _wizardPanel;
 
-	// always holds the current "click handler registration" of the next step
-	// button
-	private HandlerRegistration _nextButtonClickRegistration;
+    // always holds the current "click handler registration" of the next step
+    // button
+    private HandlerRegistration _nextButtonClickRegistration;
 
-	// always holds the current "click handler registration" of the previous
-	// step
-	// button
-	private HandlerRegistration _previousButtonClickRegistration;
-	private WizardClientController _currentController;
+    // always holds the current "click handler registration" of the previous
+    // step
+    // button
+    private HandlerRegistration _previousButtonClickRegistration;
+    private WizardClientController _currentController;
 
-	public AbstractWizardController(String heading, S service,
-			String tenantName, String panelType,
-			String htmlDivNameToShowWizardIn) {
+    public AbstractWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
+            WizardIdentifier wizardIdentifier, S wizardService) {
+        _wizardPanel = wizardPanel;
+        _wizardIdentifier = wizardIdentifier;
 
-		_wizardPanel = WizardPanelFactory.getWizardPanel(panelType,
-				htmlDivNameToShowWizardIn);
-		// _wizardPanelwidget.setAutoHideEnabled(false);
-		_wizardPanel.setHeader(heading);
+        FileUploadFunctionHandler.exportFileUploadFunction();
 
-		FileUploadFunctionHandler.exportFileUploadFunction();
+        _wizardService = wizardService;
+        _tenant = tenant;
 
-		_service = service;
-		_tenant = new TenantIdentifier(tenantName);
+        _loadingIndicator = new LoadingIndicator();
+        _progressBar = new WizardProgressBar();
 
-		_loadingIndicator = new LoadingIndicator();
-		_progressBar = new WizardProgressBar();
+        _targetPanel = new SimplePanel();
+        _targetPanel.setWidget(_loadingIndicator);
 
-		_targetPanel = new SimplePanel();
-		_targetPanel.setWidget(_loadingIndicator);
+        final FlowPanel popupContent = new FlowPanel();
+        popupContent.add(_progressBar);
+        popupContent.add(_targetPanel);
+        _wizardPanel.setContent(popupContent);
 
-		final FlowPanel popupContent = new FlowPanel();
-		popupContent.add(_progressBar);
-		popupContent.add(_targetPanel);
-		_wizardPanel.setWidget(popupContent);
+        _previousStepButton = new Button("‹ Back");
+        _previousStepButton.setEnabled(false);
+        _wizardPanel.getButtonPanel().addButton(_previousStepButton);
 
-		_previousStepButton = new Button("‹ Back");
-		_previousStepButton.setEnabled(false);
-		_wizardPanel.addButton(_previousStepButton);
+        _nextStepButton = new Button("Next ›");
+        _wizardPanel.getButtonPanel().addButton(_nextStepButton);
+        Button cancelButton = new Button("Cancel");
+        cancelButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                _wizardPanel.hideWizard();
+            }
+        });
+        _wizardPanel.getButtonPanel().addButton(cancelButton);
 
-		_nextStepButton = new Button("Next ›");
-		_wizardPanel.addButton(_nextStepButton);
-		Button cancelButton = new Button("Cancel");
-		cancelButton.addClickHandler(new ClickHandler() {
+        _wizardPanel.addWizardCloseHandler(new WizardCloseHandler() {
+            @Override
+            public void onWizardClosed() {
+                if (_currentController == null) {
+                    // wizard ended
+                    return;
+                }
+                WizardSessionIdentifier sessionIdentifier = _currentController.getSessionIdentifier();
+                if (sessionIdentifier == null) {
+                    // session not started yet
+                    return;
+                }
+                // cancel the wizard
+                _wizardService.cancelWizard(_tenant, sessionIdentifier, new DCAsyncCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        assert result.booleanValue();
+                    }
+                });
+            }
+        });
+    }
 
-			@Override
-			public void onClick(ClickEvent event) {
-				_wizardPanel.hideWizard();
-			}
-		});
-		_wizardPanel.addButton(cancelButton);
+    protected abstract int getStepsBeforeWizardPages();
 
-		_wizardPanel.addWizardCloseHandler(new CloseHandler<PopupPanel>() {
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				if (_currentController == null) {
-					// wizard ended
-					return;
-				}
-				WizardSessionIdentifier sessionIdentifier = _currentController
-						.getSessionIdentifier();
-				if (sessionIdentifier == null) {
-					// session not started yet
-					return;
-				}
-				// cancel the wizard
-				_service.cancelWizard(_tenant, sessionIdentifier,
-						new DCAsyncCallback<Boolean>() {
-							@Override
-							public void onSuccess(Boolean result) {
-								assert result.booleanValue();
-							}
-						});
-			}
-		});
-	}
+    protected abstract void wizardFinished(String entityName);
 
-	protected abstract int getStepsBeforeWizardPages();
+    protected final void setLoading() {
+        setContent(_loadingIndicator);
+    }
 
-	protected abstract void wizardFinished(String entityName);
+    protected final void setProgress(int stepIndex) {
+        _progressBar.setProgress(stepIndex);
+    }
 
-	protected final void setLoading() {
-		setContent(_loadingIndicator);
-	}
+    protected final void setSteps(int steps) {
+        _progressBar.setSteps(steps);
+    }
 
-	protected final void setProgress(int stepIndex) {
-		_progressBar.setProgress(stepIndex);
-	}
+    protected final void setSteps(int steps, boolean indicateMore) {
+        _progressBar.setSteps(steps, indicateMore);
+    }
 
-	protected final void setSteps(int steps) {
-		_progressBar.setSteps(steps);
-	}
+    protected final void setContent(IsWidget w) {
+        _targetPanel.setWidget(w);
+    }
 
-	protected final void setSteps(int steps, boolean indicateMore) {
-		_progressBar.setSteps(steps, indicateMore);
-	}
+    protected final void setPreviousClickHandler(ClickHandler clickHandler) {
+        if (_previousButtonClickRegistration != null) {
+            _previousButtonClickRegistration.removeHandler();
+        }
+        if (clickHandler == null) {
+            _previousStepButton.setEnabled(false);
+        } else {
+            _previousButtonClickRegistration = _previousStepButton.addClickHandler(clickHandler);
+            _previousStepButton.setEnabled(true);
+        }
+    }
 
-	protected final void setContent(IsWidget w) {
-		_targetPanel.setWidget(w);
-	}
+    protected final void setNextClickHandler(ClickHandler clickHandler) {
+        if (_nextButtonClickRegistration != null) {
+            _nextButtonClickRegistration.removeHandler();
+        }
+        _nextButtonClickRegistration = _nextStepButton.addClickHandler(clickHandler);
+    }
 
-	protected final void setPreviousClickHandler(ClickHandler clickHandler) {
-		if (_previousButtonClickRegistration != null) {
-			_previousButtonClickRegistration.removeHandler();
-		}
-		if (clickHandler == null) {
-			_previousStepButton.setEnabled(false);
-		} else {
-			_previousButtonClickRegistration = _previousStepButton
-					.addClickHandler(clickHandler);
-			_previousStepButton.setEnabled(true);
-		}
-	}
+    protected final AsyncCallback<WizardPage> createNextPageCallback() {
+        return new DCAsyncCallback<WizardPage>() {
+            @Override
+            public void onSuccess(final WizardPage page) {
+                if (page.isFinished()) {
+                    wizardFinished(page.getWizardResult());
+                } else {
+                    _progressBar.setSteps(page.getExpectedPageCount() + getStepsBeforeWizardPages());
+                    _progressBar.setProgress(page.getPageIndex() + getStepsBeforeWizardPages());
 
-	protected final void setNextClickHandler(ClickHandler clickHandler) {
-		if (_nextButtonClickRegistration != null) {
-			_nextButtonClickRegistration.removeHandler();
-		}
-		_nextButtonClickRegistration = _nextStepButton
-				.addClickHandler(clickHandler);
-	}
+                    _currentController = new FormWizardClientController(_wizardService, _tenant, page);
 
-	protected final AsyncCallback<WizardPage> createNextPageCallback() {
-		return new DCAsyncCallback<WizardPage>() {
-			@Override
-			public void onSuccess(final WizardPage page) {
-				if (page.isFinished()) {
-					wizardFinished(page.getWizardResult());
-				} else {
-					_progressBar.setSteps(page.getExpectedPageCount()
-							+ getStepsBeforeWizardPages());
-					_progressBar.setProgress(page.getPageIndex()
-							+ getStepsBeforeWizardPages());
+                    _targetPanel.setWidget(_currentController);
 
-					_currentController = new FormWizardClientController(
-							_service, _tenant, page);
+                    setNextClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            _nextButtonClickRegistration.removeHandler();
+                            _targetPanel.setWidget(_loadingIndicator);
+                            _currentController.requestNextPage(createNextPageCallback());
+                        }
+                    });
 
-					_targetPanel.setWidget(_currentController);
+                    if (page.getPageIndex() > 0) {
+                        setPreviousClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                _targetPanel.setWidget(_loadingIndicator);
+                                _currentController.requestPreviousPage(createNextPageCallback());
+                            }
+                        });
+                    } else {
+                        setPreviousClickHandler(null);
+                    }
 
-					setNextClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							_nextButtonClickRegistration.removeHandler();
-							_targetPanel.setWidget(_loadingIndicator);
-							_currentController
-									.requestNextPage(createNextPageCallback());
-						}
-					});
+                }
+            }
 
-					if (page.getPageIndex() > 0) {
-						setPreviousClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent event) {
-								_targetPanel.setWidget(_loadingIndicator);
-								_currentController
-										.requestPreviousPage(createNextPageCallback());
-							}
-						});
-					} else {
-						setPreviousClickHandler(null);
-					}
+            @Override
+            public void onFailure(Throwable e) {
+                if (e instanceof DCUserInputException) {
+                    // restore the previous panel view
+                    _targetPanel.setWidget(_currentController);
+                }
+                super.onFailure(e);
+            }
+        };
+    }
 
-				}
-			}
+    /**
+     * Gets the {@link WizardIdentifier} of the wizard being controlled.
+     * 
+     * @return
+     */
+    public WizardIdentifier getWizardIdentifier() {
+        return _wizardIdentifier;
+    }
 
-			@Override
-			public void onFailure(Throwable e) {
-				if (e instanceof DCUserInputException) {
-					// restore the previous panel view
-					_targetPanel.setWidget(_currentController);
-				}
-				super.onFailure(e);
-			}
-		};
-	}
+    /**
+     * Gets the wizard controlling service
+     * 
+     * @return
+     */
+    public S getWizardService() {
+        return _wizardService;
+    }
 
-	/**
-	 * Gets the locale name for inclusion in many of the service requests.
-	 * 
-	 * @return
-	 */
-	protected String getLocaleName() {
-		LocaleInfo locale = LocaleInfo.getCurrentLocale();
-		String localeName = locale.getLocaleName();
-		return localeName;
-	}
+    /**
+     * Gets the locale name for inclusion in many of the service requests.
+     * 
+     * @return
+     */
+    protected String getLocaleName() {
+        LocaleInfo locale = LocaleInfo.getCurrentLocale();
+        String localeName = locale.getLocaleName();
+        return localeName;
+    }
 
-	/**
-	 * Returns the wizard panel instance
-	 * 
-	 * @return
-	 */
-	public WizardPanel getWizardPanel() {
-		return _wizardPanel;
-	}
+    /**
+     * Returns the wizard panel instance
+     * 
+     * @return
+     */
+    public WizardPanel getWizardPanel() {
+        return _wizardPanel;
+    }
+    
+    /**
+     * Gets the current tenant id.
+     * @return
+     */
+    public TenantIdentifier getTenant() {
+        return _tenant;
+    }
 }

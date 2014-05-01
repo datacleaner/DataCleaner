@@ -21,93 +21,66 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Interface for controlling panel attributed required for wizard.
- * 
+ * Interface for controlling panel attributes required for wizard.
  */
 public interface WizardPanel {
 
-	/**
-	 * Sets header for the wizard on the top of the panel
-	 * 
-	 * @param header
-	 */
-	public void setHeader(String header);
+    /**
+     * Sets header for the wizard on the top of the panel
+     * 
+     * @param header
+     */
+    public void setHeader(String header);
 
-	/**
-	 * Can be used for adding buttons on WizardPanel
-	 * 
-	 * @param button
-	 */
-	public void addButton(Button button);
+    /**
+     * Get button panel
+     * 
+     * @return ButtonPanel
+     */
+    public ButtonPanel getButtonPanel();
 
-	/**
-	 * Can be used for removing buttons from wizard Panel
-	 * 
-	 * @param button
-	 */
-	public void removeButton(Button button);
+    /**
+     * Add a widget on the wizard panel
+     * 
+     * @param w
+     */
+    public void setContent(IsWidget w);
 
-	/**
-	 * Get button panel
-	 * 
-	 * @return ButtonPanel
-	 */
-	public ButtonPanel getButtonPanel();
+    /**
+     * Gets the widget representing the complete wizard panel.
+     * 
+     * Mostly this should not be called. Rather simply use methods
+     * {@link #setContent(IsWidget)}, {@link #setHeader(String)},
+     * {@link #getButtonPanel()}, {@link #showWizard()} or {@link #hideWizard()}
+     * .
+     * 
+     * @return
+     */
+    public Widget getWizardWidget();
 
-	/**
-	 * Remove all buttons
-	 */
-	public void removeButtons();
+    /**
+     * Shows the wizard on the screen
+     * 
+     * @param b
+     */
+    public void showWizard();
 
-	/**
-	 * Add a widget on the wizard panel
-	 * 
-	 * @param w
-	 */
-	public void setWidget(Widget w);
+    /**
+     * Add close handler for the wizard panel
+     * 
+     * TODO: Shouldn't this method be moved to the controller rather than the
+     * panel?
+     * 
+     * @param closeHandler
+     */
+    public void addWizardCloseHandler(WizardCloseHandler closeHandler);
 
-	/**
-	 * Toggle visibilty of the Panel
-	 * 
-	 * @param b
-	 */
-	public void setVisible(boolean b);
-
-	/**
-	 * Add style to Panel
-	 * 
-	 * @param string
-	 */
-	public void addStyleName(String string);
-
-	/**
-	 * Add close handler for the wizard panel
-	 * 
-	 * @param closeHandler
-	 */
-	public void addWizardCloseHandler(
-			CloseHandler<? extends Widget> closeHandler);
-
-	/**
-	 * Get the instance of current Wizard
-	 * 
-	 * @return
-	 */
-	public Widget getInstance();
-
-	/**
-	 * If this is implemented as a GWT PopupPanel, then calls the method
-	 * center() in the PopupPanel class, else does nothing
-	 */
-	public void center();
-
-	/**
-	 * Hides the wizard
-	 */
-	public void hideWizard();
+    /**
+     * Hides the wizard
+     */
+    public void hideWizard();
 }

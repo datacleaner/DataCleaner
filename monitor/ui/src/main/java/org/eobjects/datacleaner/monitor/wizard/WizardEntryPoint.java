@@ -20,7 +20,16 @@
 
 package org.eobjects.datacleaner.monitor.wizard;
 
-import org.eobjects.datacleaner.monitor.wizard.JobWizardPanel;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
+import org.eobjects.datacleaner.monitor.shared.WizardService;
+import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.wizard.JobWizardController;
+
+import com.google.gwt.core.client.GWT;
 
 /**
  * The EntryPoint containing a method to launch a Job Wizard
@@ -41,15 +50,24 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      * This method gets called by a custom javascript usually embedded in an
      * onclick method of an HTML button
      * 
-     * @param tenantName
      * @param panelType
      * @param datastoreName
      * @param wizardDisplayName
      * @param htmlDivNameToShowWizardIn
      */
-    public static void startWizard(String tenantName, String panelType, String datastoreName, String wizardDisplayName,
-            String htmlDivNameToShowWizardIn) {
-        new JobWizardPanel(tenantName, panelType, datastoreName, wizardDisplayName, htmlDivNameToShowWizardIn);
+    public static void startWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
+
+        final ClientConfig clientConfig = new DictionaryClientConfig();
+
+        final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
+        final WizardIdentifier wizardIdentifier = new WizardIdentifier(wizardDisplayName);
+        final WizardServiceAsync wizardService = GWT.create(WizardService.class);
+        final TenantIdentifier tenant = clientConfig.getTenant();
+        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
+
+        final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
+                datastoreIdentifier, wizardService);
+        controller.startWizard();
     }
 
     /**
@@ -57,7 +75,7 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      */
     public static native void exportStartWizard() /*-{
                                                    $wnd.startWizard =
-                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
                                                    }-*/;
 
 }

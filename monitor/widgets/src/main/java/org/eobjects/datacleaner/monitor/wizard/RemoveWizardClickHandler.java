@@ -25,19 +25,18 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 public class RemoveWizardClickHandler implements ClickHandler {
 
-	private ClickHandler clickHandler;
-	private JobWizardPanel jobWizardPanel;
+    private ClickHandler clickHandler;
+    private JobWizardController jobWizardController;
 
-	public RemoveWizardClickHandler(ClickHandler clickHandler,
-			JobWizardPanel jobWizardPanel) {
-		this.clickHandler = clickHandler;
-		this.jobWizardPanel = jobWizardPanel;
-	}
+    public RemoveWizardClickHandler(ClickHandler clickHandler, JobWizardController jobWizardController) {
+        this.clickHandler = clickHandler;
+        this.jobWizardController = jobWizardController;
+    }
 
-	@Override
-	public void onClick(ClickEvent event) {
-		jobWizardPanel.getWizardPanel().hideWizard();
-		clickHandler.onClick(event);
-	}
+    @Override
+    public void onClick(ClickEvent event) {
+        jobWizardController.getWizardPanel().hideWizard();
+        clickHandler.onClick(event);
+    }
 
 }

@@ -20,19 +20,30 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 /**
- * This class decides the type of panel to be used on the basis of panelType
- * 
+ * A factory class for {@link WizardPanel} objects.
  */
 public class WizardPanelFactory {
 
-	public static WizardPanel getWizardPanel(String panelType,
-			String htmlDivNameToShowWizardIn) {
+    private WizardPanelFactory() {
+        // prevent instantiation
+    }
 
-		if (panelType != null && panelType.equals("inline")) {
-			return new SimpleWizardPanel(htmlDivNameToShowWizardIn);
-		}
-		return new PopupWizardPanel();
+    /**
+     * Creates a {@link WizardPanel}.
+     * 
+     * @param htmlDivId
+     *            the ID of a HTML DIV element in which the wizard should run.
+     *            If null or empty, the wizard will be displayed in a popup.
+     * @return
+     */
+    public static WizardPanel createWizardPanel(String htmlDivId) {
+        if (htmlDivId != null && !"".equals(htmlDivId)) {
+            SimpleWizardPanel wizardPanel = new SimpleWizardPanel();
+            RootWizardPanelWrapper wrapper = new RootWizardPanelWrapper(wizardPanel, htmlDivId);
+            return wrapper;
+        }
+        return new PopupWizardPanel();
 
-	}
+    }
 
 }

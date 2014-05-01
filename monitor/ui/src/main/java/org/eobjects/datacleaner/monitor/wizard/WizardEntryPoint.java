@@ -27,7 +27,7 @@ import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.wizard.JobWizardController;
+import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.GWT;
 
@@ -43,7 +43,8 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      */
     @Override
     public void onModuleLoad() {
-        exportStartWizard();
+    	GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
+        exportStartJobWizard();
     }
 
     /**
@@ -55,7 +56,7 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      * @param wizardDisplayName
      * @param htmlDivNameToShowWizardIn
      */
-    public static void startWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
+    public static void startJobWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
 
@@ -73,9 +74,15 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
     /**
      * A native Javascript method
      */
-    public static native void exportStartWizard() /*-{
-                                                   $wnd.startWizard =
-                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
-                                                   }-*/;
 
+    public static native void exportStartJobWizard() /*-{
+
+    												if (!$wnd.datacleaner) {
+  														$wnd.datacleaner = {};
+													}
+													
+                                                 	$wnd.datacleaner.startJobWizard = @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+                                                   
+                                                   }-*/;
+    
 }

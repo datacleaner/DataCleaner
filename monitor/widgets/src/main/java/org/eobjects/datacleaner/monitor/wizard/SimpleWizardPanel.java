@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.wizard.callbacks.JavaScriptCallbacks;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -38,7 +39,6 @@ public class SimpleWizardPanel implements WizardPanel {
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
     private FlowPanel _wizardFlowPanel;
-    private RootPanel wizardRootPanel;
 
     public SimpleWizardPanel() {
         super();
@@ -90,12 +90,8 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public void hideWizard() {
         _wizardFlowPanel.setVisible(false);
-        redirectToAnotherPage();
+		JavaScriptCallbacks.onSimpleWizardPanelClosed() ;
     }
-
-    public static native void redirectToAnotherPage() /*-{
-                                                      $doc.redirectToAnotherPage();
-                                                      }-*/;
 
     @Override
     public void showWizard() {

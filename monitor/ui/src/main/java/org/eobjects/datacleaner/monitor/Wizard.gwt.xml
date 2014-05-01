@@ -24,7 +24,6 @@
 
 <module rename-to="wizard">
 
-	<inherits name='com.google.gwt.user.User' />
 	<inherits name='org.eobjects.datacleaner.monitor.Widgets' />
 
 	<entry-point class="org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint" />

@@ -6,15 +6,20 @@
 		<script type="text/javascript" language="javascript" src="scheduling/scheduling.nocache.js" />
 		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
 		<script type="text/javascript">
-		//<![CDATA[
-		    function checkHashOnLoad() {
-		    	var hashPartOfUri = window.location.hash;
-		    	if (hashPartOfUri == "startWizard") {
-		    		datacleaner.startJobWizard();
-		    		window.location.hash = "";
-		    	}
-		    }
-		//]]>
+			//<![CDATA[
+			var datacleaner = {
+				onApiInitialized : function() {
+					$(document).ready(function() {
+						// check if wizard needs to start immediately
+						var hashPartOfUri = window.location.hash;
+						if (hashPartOfUri == "#startWizard") {
+							datacleaner.startJobWizard();
+							window.location.hash = "";
+						}
+					});
+				}
+			}
+			//]]>
 		</script>
 	</ui:define>
 
@@ -22,9 +27,10 @@
 		<div id="SchedulingPage">
 			<c:if test="#{user.scheduleEditor}">
 				<div>
-					<button class="gwt-Button-ImageTextButton NewJobButton"
-						onclick="datacleaner.startJobWizard();">Build job</button>
+					<button class="gwt-Button-ImageTextButton NewJobButton" onclick="datacleaner.startJobWizard();">Build job</button>
 				</div>
+				
+				<div class="spacer"></div>
 			</c:if>
 			
 			<div id="RootPanelTarget"></div>

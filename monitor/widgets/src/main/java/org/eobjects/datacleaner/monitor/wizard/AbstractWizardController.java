@@ -51,9 +51,9 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
     private final S _wizardService;
     private final TenantIdentifier _tenant;
-    private final LoadingIndicator _loadingIndicator;
     private final WizardPanel _wizardPanel;
 
+    protected final LoadingIndicator _loadingIndicator;
     private final Button _nextStepButton;
     private final Button _previousStepButton;
 

@@ -36,7 +36,6 @@ import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -61,7 +60,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     private List<WizardIdentifier> _wizards;
     private int _stepsBeforeWizardPages;
 
-    private ScheduleDefinition scheduleDefinitionForJob = null;
+    private ScheduleDefinition _scheduleDefinitionForJob = null;
 
     public JobWizardController(WizardPanel wizardPanel, TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
             DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
@@ -132,54 +131,56 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     }
 
     private Panel createWizardFinishedContentPanel(String jobName) {
-
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-
-        final LoadingIndicator loadingIndicator = new LoadingIndicator();
-        contentPanel.add(loadingIndicator);
+        contentPanel.add(_loadingIndicator);
         if (jobName == null) {
             contentPanel.add(new Label("Job created! Wizard finished."));
         } else {
             contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
         }
-        contentPanel.add(new Label("Click 'Close' return, or click one of the links below to start using the job."));
+        contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
 
         if (jobName != null) {
             if (clientConfig.isScheduleEditor()) {
                 getSchedule(new Runnable() {
                     @Override
                     public void run() {
-                        final Anchor triggerAnchor = new Anchor("Run this job now");
-                        {
-                            triggerAnchor.addStyleName("TriggerJob");
-                            ClickHandler clickHandler = new TriggerJobClickHandler(schedulingService, getTenant(),
-                                    scheduleDefinitionForJob);
-                            clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
-                            triggerAnchor.addClickHandler(clickHandler);
-                        }
+                        final Anchor triggerAnchor = createTriggerAnchor();
+                        final Anchor schedulingAnchor = createSchedulingAnchor();
 
-                        final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
-                        {
-                            schedulingAnchor.addStyleName("ScheduleJob");
-                            ClickHandler clickHandler = new CustomizeScheduleClickHandler(null, schedulingService,
-                                    getTenant(), scheduleDefinitionForJob);
-                            clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
-                            schedulingAnchor.addClickHandler(clickHandler);
-                        }
-
-                        // TODO: Previously there was a 'Monitor this job's
-                        // metrics on the dashboard' anchor as well.
+                        // TODO: Previously there was a "Monitor this job's
+                        // metrics on the dashboard" anchor as well.
 
                         contentPanel.add(triggerAnchor);
                         contentPanel.add(schedulingAnchor);
-                        contentPanel.remove(loadingIndicator);
+                        contentPanel.remove(_loadingIndicator);
                     }
                 }, jobName);
             }
         }
-        
+
         return contentPanel;
+    }
+
+    protected Anchor createSchedulingAnchor() {
+        final Anchor anchor = new Anchor("Set up a job schedule");
+        anchor.addStyleName("ScheduleJob");
+        ClickHandler clickHandler = new CustomizeScheduleClickHandler(null, schedulingService, getTenant(),
+                _scheduleDefinitionForJob);
+        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
+        anchor.addClickHandler(clickHandler);
+        return anchor;
+    }
+
+    protected Anchor createTriggerAnchor() {
+        Anchor anchor = new Anchor("Run this job now");
+        anchor.addStyleName("TriggerJob");
+        ClickHandler clickHandler = new TriggerJobClickHandler(schedulingService, getTenant(),
+                _scheduleDefinitionForJob);
+        clickHandler = new RemoveWizardClickHandler(clickHandler, JobWizardController.this);
+        anchor.addClickHandler(clickHandler);
+        return anchor;
     }
 
     protected void closeWizardAfterFinishing() {
@@ -193,7 +194,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             public void onSuccess(List<ScheduleDefinition> result) {
                 for (ScheduleDefinition scheduleDefinition : result) {
                     if (scheduleDefinition.getJob().getName().equals(jobName)) {
-                        scheduleDefinitionForJob = scheduleDefinition;
+                        _scheduleDefinitionForJob = scheduleDefinition;
                         runnable.run();
                     }
                 }

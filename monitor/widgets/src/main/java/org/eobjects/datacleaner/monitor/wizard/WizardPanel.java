@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,6 +36,13 @@ public interface WizardPanel {
      * @param header
      */
     public void setHeader(String header);
+
+    /**
+     * Gets the {@link WizardProgressBar} of this wizard panel.
+     * 
+     * @return
+     */
+    public WizardProgressBar getProgressBar();
 
     /**
      * Get button panel
@@ -68,16 +76,6 @@ public interface WizardPanel {
      * @param b
      */
     public void showWizard();
-
-    /**
-     * Add close handler for the wizard panel
-     * 
-     * TODO: Shouldn't this method be moved to the controller rather than the
-     * panel?
-     * 
-     * @param closeHandler
-     */
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler);
 
     /**
      * Hides the wizard

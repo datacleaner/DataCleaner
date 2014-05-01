@@ -21,9 +21,8 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -42,10 +41,12 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
     private final FlowPanel _wizardFlowPanel;
+    private final WizardProgressBar _progressBar;
 
     public PopupWizardPanel() {
         super();
         _buttonPanel = new ButtonPanel();
+        _progressBar = new WizardProgressBar();
         _contentPanel = getContentPanel();
         _wizardFlowPanel = getWizardFlowPanel();
         super.setWidget(_wizardFlowPanel);
@@ -54,6 +55,7 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
 
     private FlowPanel getWizardFlowPanel() {
         FlowPanel wizardFlowPanel = new FlowPanel();
+        wizardFlowPanel.add(_progressBar);
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
         return wizardFlowPanel;
@@ -112,16 +114,6 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     }
 
     @Override
-    public void addWizardCloseHandler(final WizardCloseHandler closeHandler) {
-        addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                closeHandler.onWizardClosed();
-            }
-        });
-    }
-
-    @Override
     public void hideWizard() {
         setVisible(false);
     }
@@ -134,5 +126,10 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     @Override
     public Widget getWizardWidget() {
         return this;
+    }
+
+    @Override
+    public WizardProgressBar getProgressBar() {
+        return _progressBar;
     }
 }

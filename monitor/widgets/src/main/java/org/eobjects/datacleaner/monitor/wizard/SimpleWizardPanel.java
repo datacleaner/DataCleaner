@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -37,18 +38,21 @@ public class SimpleWizardPanel implements WizardPanel {
 
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
+    private final WizardProgressBar _progressBar;
     private FlowPanel _wizardFlowPanel;
     private RootPanel wizardRootPanel;
 
     public SimpleWizardPanel() {
         super();
         _buttonPanel = new ButtonPanel();
+        _progressBar = new WizardProgressBar();
         _contentPanel = getContentPanel();
         _wizardFlowPanel = getWizardFlowPanel();
     }
 
     private FlowPanel getWizardFlowPanel() {
         FlowPanel wizardFlowPanel = new FlowPanel();
+        wizardFlowPanel.add(_progressBar);
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
         wizardFlowPanel.addStyleName("SimpleWizardPanel");
@@ -83,11 +87,6 @@ public class SimpleWizardPanel implements WizardPanel {
     }
 
     @Override
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler) {
-        // do nothing
-    }
-
-    @Override
     public void hideWizard() {
         _wizardFlowPanel.setVisible(false);
         redirectToAnotherPage();
@@ -105,5 +104,10 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public Widget getWizardWidget() {
         return _wizardFlowPanel;
+    }
+
+    @Override
+    public WizardProgressBar getProgressBar() {
+        return _progressBar;
     }
 }

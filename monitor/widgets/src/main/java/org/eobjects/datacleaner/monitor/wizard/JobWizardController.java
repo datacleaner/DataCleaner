@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
 package org.eobjects.datacleaner.monitor.wizard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.monitor.scheduling.widgets.TriggerJobClickHandle
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -43,6 +44,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
 
 public class JobWizardController extends AbstractWizardController<WizardServiceAsync> {
 
@@ -51,30 +53,53 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     private final ClientConfig clientConfig = new DictionaryClientConfig();
     private final DatastoreIdentifier _datastoreIdentifier;
     private ScheduleDefinition scheduleDefinitionForJob = null;
+    private int _stepsBeforeWizardPages;
 
     public JobWizardController(WizardPanel wizardPanel, TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
             DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
-
-        wizardPanel.setHeader("Build job: " + wizardIdentifier.getDisplayName());
-
         _datastoreIdentifier = datastoreIdentifier;
+
+        _stepsBeforeWizardPages = 0;
+        if (wizardIdentifier == null) {
+            _stepsBeforeWizardPages++;
+        }
+
+        if (_datastoreIdentifier == null) {
+            _stepsBeforeWizardPages++;
+        }
     }
 
-    /**
-     * Starts the wizard
-     */
-    public void startWizard() {
+    @Override
+    protected void startWizard() {
+        final WizardIdentifier wizardIdentifier = getWizardIdentifier();
+
+        if (_datastoreIdentifier == null) {
+            if (wizardIdentifier == null || wizardIdentifier.isDatastoreConsumer()) {
+                _stepsBeforeWizardPages = 2;
+                showDatastoreSelection();
+                return;
+            }
+        }
+
+        if (wizardIdentifier == null) {
+            _stepsBeforeWizardPages = 1;
+            showWizardSelection();
+            return;
+        }
+        
+        _stepsBeforeWizardPages = 0;
+        getWizardPanel().setHeader("Build job: " + wizardIdentifier.getDisplayName());
+
         setLoading();
         WizardServiceAsync wizardService = getWizardService();
-        wizardService.startJobWizard(getTenant(), getWizardIdentifier(), _datastoreIdentifier, getLocaleName(),
+        wizardService.startJobWizard(getTenant(), wizardIdentifier, _datastoreIdentifier, getLocaleName(),
                 createNextPageCallback());
-        return;
     }
 
     @Override
     protected int getStepsBeforeWizardPages() {
-        return 0;
+        return _stepsBeforeWizardPages;
     }
 
     @Override
@@ -104,7 +129,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
 
             if (clientConfig.isScheduleEditor()) {
                 getSchedule(new Runnable() {
-
                     @Override
                     public void run() {
                         final Anchor triggerAnchor = new Anchor("Run this job now");
@@ -133,7 +157,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             setContent(contentPanel);
             getWizardPanel().getButtonPanel().clear();
             getWizardPanel().getButtonPanel().addButton(button);
-            // getWizardPanel().center();
         }
 
     }
@@ -154,6 +177,76 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                 }
             }
         });
+    }
+    
+    protected void showDatastoreSelection() {
+        // TODO
+    }
 
+    protected void showWizardSelection() {
+        setLoading();
+
+        if (_datastoreIdentifier == null) {
+            getWizardPanel().setHeader("Build job");
+        } else {
+            getWizardPanel().setHeader("Build job: " + _datastoreIdentifier.getName());
+        }
+
+        getWizardService().getJobWizardIdentifiers(getTenant(), _datastoreIdentifier, getLocaleName(),
+                new DCAsyncCallback<List<WizardIdentifier>>() {
+                    @Override
+                    public void onSuccess(List<WizardIdentifier> wizards) {
+                        showWizardSelection(wizards);
+                    }
+                });
+    }
+
+    protected void showWizardSelection(final List<WizardIdentifier> wizards) {
+        final int progress = _stepsBeforeWizardPages - 1;
+
+        final FlowPanel panel = new FlowPanel();
+
+        panel.add(new Label("Please select the type of job to build:"));
+
+        final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
+
+        if (wizards == null || wizards.isEmpty()) {
+            panel.add(new Label("(no job wizards available)"));
+        } else {
+            for (final WizardIdentifier wizard : wizards) {
+                final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
+                radio.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
+                        setProgress(progress);
+                    }
+                });
+                panel.add(radio);
+                radios.add(radio);
+            }
+
+        }
+
+        setNextClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (int i = 0; i < radios.size(); i++) {
+                    final RadioButton radio = radios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final WizardIdentifier wizard = wizards.get(i);
+                        setWizardIdentifier(wizard);
+                        startWizard();
+                        return;
+                    }
+                }
+
+                // no job wizard is selected if we reach this point
+                throw new DCUserInputException("Please select a job type to create");
+            }
+        });
+
+        setProgress(progress);
+        setContent(panel);
     }
 }

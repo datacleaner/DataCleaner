@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -71,14 +72,14 @@ public class RootWizardPanelWrapper implements WizardPanel {
     }
 
     @Override
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler) {
-        _childWizardPanel.addWizardCloseHandler(closeHandler);
-    }
-
-    @Override
     public void hideWizard() {
         _childWizardPanel.hideWizard();
         RootPanel rootPanel = RootPanel.get(_htmlDivId);
         rootPanel.remove(getWizardWidget());
+    }
+
+    @Override
+    public WizardProgressBar getProgressBar() {
+        return _childWizardPanel.getProgressBar();
     }
 }

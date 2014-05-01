@@ -75,7 +75,7 @@ public class WizardEntryPoint implements com.google.gwt.core.client.EntryPoint {
      */
     public static native void exportStartWizard() /*-{
                                                    $wnd.startWizard =
-                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
+                                                   @org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint::startWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);
                                                    }-*/;
 
 }

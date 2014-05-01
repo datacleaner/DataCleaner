@@ -21,23 +21,45 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasName;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 
-public class ColorBox extends Composite
-        implements HasValue<String>, HasName, HasClickHandlers {
+/**
+ * Shows colors for selection.
+ */
+public class ColorBox extends Composite implements HasValue<String>, HasName, HasClickHandlers {
 
-    
-    
     public interface Images extends ClientBundle {
         ImageResource lightness();
+
         ImageResource hueSaturation();
     }
 
@@ -72,11 +94,11 @@ public class ColorBox extends Composite
             setWidget(panel);
             addStyleName("fp-cp");
 
-            DOM.setStyleAttribute(hueSaturation.getElement(), "cursor", "crosshair");
-            DOM.setStyleAttribute(lightness.getElement(), "cursor", "ns-resize");
-            DOM.setStyleAttribute(preview.getElement(), "float", "right");
-            DOM.setStyleAttribute(preview.getElement(), "cssFloat", "right");
-            DOM.setStyleAttribute(preview.getElement(), "styleFloat", "right");
+            setStyleAttribute(hueSaturation.getElement(), "cursor", "crosshair");
+            setStyleAttribute(lightness.getElement(), "cursor", "ns-resize");
+            setStyleAttribute(preview.getElement(), "float", "right");
+            setStyleAttribute(preview.getElement(), "cssFloat", "right");
+            setStyleAttribute(preview.getElement(), "styleFloat", "right");
 
             setColor();
 
@@ -182,11 +204,11 @@ public class ColorBox extends Composite
 
         private void setColor() {
             Color p = new Color(h, s, l);
-            DOM.setStyleAttribute(preview.getElement(), "backgroundColor", p.toString());
+            setStyleAttribute(preview.getElement(), "backgroundColor", p.toString());
             Color l = new Color(h, s, 0.5f);
-            DOM.setStyleAttribute(lightness.getElement(), "backgroundColor", l.toString());
+            setStyleAttribute(lightness.getElement(), "backgroundColor", l.toString());
 
-            DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", getHex());
+            setStyleAttribute(blotch.getElement(), "backgroundColor", getHex());
         }
 
         private void setHueSaturation(NativeEvent event) {
@@ -222,8 +244,7 @@ public class ColorBox extends Composite
     private Anchor blotch;
     private FlowPanel panel;
     private boolean keyPressed = false;
-    private int rx = 10,
-                ry = 20;
+    private int rx = 10, ry = 20;
 
     public ColorBox(String colorString) {
         this.panel = new FlowPanel();
@@ -247,7 +268,7 @@ public class ColorBox extends Composite
             public void onKeyPress(KeyPressEvent event) {
                 keyPressed = true;
                 popup.setHex(getValue());
-                DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
+                setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
             }
         });
 
@@ -258,7 +279,7 @@ public class ColorBox extends Composite
                 if (!popup.isShowing()) {
                     enterEditMode();
                 } else {
-                    
+
                     popup.hide();
                 }
             }
@@ -270,12 +291,12 @@ public class ColorBox extends Composite
             public void onClose(CloseEvent<PopupPanel> event) {
                 if (!keyPressed) {
                     setValue(popup.getHex());
-                    DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", popup.getHex());
+                    setStyleAttribute(blotch.getElement(), "backgroundColor", popup.getHex());
                 } else {
                     popup.setHex(getValue());
-                    DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
+                    setStyleAttribute(blotch.getElement(), "backgroundColor", getValue());
                     keyPressed = false;
-                    
+
                 }
                 popup.clicked = false;
             }
@@ -311,18 +332,17 @@ public class ColorBox extends Composite
     @Override
     public void setValue(String value) {
         textbox.setValue(value);
-        DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", value);
+        setStyleAttribute(blotch.getElement(), "backgroundColor", value);
     }
 
     @Override
     public void setValue(String value, boolean fireEvents) {
         textbox.setValue(value, fireEvents);
-        DOM.setStyleAttribute(blotch.getElement(), "backgroundColor", value);
+        setStyleAttribute(blotch.getElement(), "backgroundColor", value);
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(
-            ValueChangeHandler<String> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 
         return textbox.addValueChangeHandler(handler);
     }
@@ -343,7 +363,11 @@ public class ColorBox extends Composite
 
     @Override
     public HandlerRegistration addClickHandler(ClickHandler handler) {
-        return addHandler(handler, ClickEvent.getType());        
+        return addHandler(handler, ClickEvent.getType());
     }
 
+    private static void setStyleAttribute(@SuppressWarnings("deprecation") com.google.gwt.user.client.Element element,
+            String key, String value) {
+        element.getStyle().setProperty(key, value);
+    }
 }

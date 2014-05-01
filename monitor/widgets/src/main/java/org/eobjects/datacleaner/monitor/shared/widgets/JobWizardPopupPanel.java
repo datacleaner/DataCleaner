@@ -25,6 +25,7 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.shared.DatastoreService;
 import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -35,7 +36,6 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -234,7 +234,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel<WizardServiceA
                 }
 
                 // no job wizard is selected if we reach this point
-                Window.alert("Please select a job type to create");
+                throw new DCUserInputException("Please select a job type to create");
             }
         });
 

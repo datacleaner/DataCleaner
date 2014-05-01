@@ -20,6 +20,7 @@
 
 package org.eobjects.datacleaner.monitor.wizard;
 
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.GWT;

@@ -21,14 +21,12 @@ package org.eobjects.datacleaner.monitor.datastores;
 
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.widgets.CreateDatastoreButton;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * GWT Entry point for the datastores module
@@ -40,18 +38,12 @@ public class DatastoresEntryPoint implements EntryPoint {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
-        final TenantIdentifier tenant = clientConfig.getTenant();
-        
-        
+
         if (clientConfig.isConfigurationEditor()) {
-            final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
-            final CreateDatastoreButton button = new CreateDatastoreButton(tenant);
-            rootPanel.add(button);
-            
             String token = History.getToken();
             if ("startWizard".equals(token)) {
                 History.newItem("");
-                button.startWizard();
+                JavaScriptCallbacks.startDatastoreWizard(null, null);
             }
         }
     }

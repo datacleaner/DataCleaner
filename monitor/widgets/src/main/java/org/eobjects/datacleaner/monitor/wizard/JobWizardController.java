@@ -48,6 +48,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 
+/**
+ * Wizard controller for Job wizards
+ */
 public class JobWizardController extends AbstractWizardController<WizardServiceAsync> {
 
     private final SchedulingServiceAsync schedulingService = GWT.create(SchedulingService.class);
@@ -66,19 +69,10 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
         super(wizardPanel, tenant, wizardIdentifier, wizardService);
         _datastoreIdentifier = datastoreIdentifier;
-
-        _stepsBeforeWizardPages = 0;
-        if (wizardIdentifier == null) {
-            _stepsBeforeWizardPages++;
-        }
-
-        if (_datastoreIdentifier == null) {
-            _stepsBeforeWizardPages++;
-        }
     }
 
     @Override
-    protected void startWizard() {
+    public void startWizard() {
         getWizardPanel().addStyleClass("JobWizardPanel");
         getWizardPanel().showWizard();
 
@@ -118,7 +112,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         closeButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                closeWizardAfterFinishing();
+                closeWizardAfterFinishing("scheduling.jsf");
             }
         });
 
@@ -183,11 +177,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         return anchor;
     }
 
-    protected void closeWizardAfterFinishing() {
-        getWizardPanel().hideWizard();
-        JavaScriptCallbacks.onWizardFinished();
-    }
-
     private void getSchedule(final Runnable runnable, final String jobName) {
         schedulingService.getSchedules(getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
@@ -202,7 +191,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         });
     }
 
-    protected void showDatastoreSelection() {
+    private void showDatastoreSelection() {
         getWizardPanel().setHeader("Build job");
 
         final FlowPanel outerPanel = new FlowPanel();
@@ -315,7 +304,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         getWizardPanel().refreshUI();
     }
 
-    protected void showWizardSelection() {
+    private void showWizardSelection() {
         setLoading();
 
         if (_datastoreIdentifier == null) {
@@ -333,7 +322,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                 });
     }
 
-    protected void showWizardSelection(final List<WizardIdentifier> wizards) {
+    private void showWizardSelection(final List<WizardIdentifier> wizards) {
         final int progress = _stepsBeforeWizardPages - 1;
 
         final FlowPanel panel = new FlowPanel();

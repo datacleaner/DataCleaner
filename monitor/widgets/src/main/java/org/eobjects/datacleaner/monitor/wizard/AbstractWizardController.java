@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.wizard;
 
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.WizardNavigationServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -31,6 +32,7 @@ import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.shared.widgets.WizardClientController;
 import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -101,19 +103,18 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
      */
     public void cancelWizard() {
         _wizardPanel.hideWizard();
-        
+
         if (_currentController == null) {
             // wizard never started, or already ended
             return;
         }
-        
 
         final WizardSessionIdentifier sessionIdentifier = _currentController.getSessionIdentifier();
         if (sessionIdentifier == null) {
             // session not started yet
             return;
         }
-        
+
         // cancel the wizard on the server
         _wizardService.cancelWizard(_tenant, sessionIdentifier, new DCAsyncCallback<Boolean>() {
             @Override
@@ -128,7 +129,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     /**
      * Starts the wizard, eventually showing stuff on the UI.
      */
-    protected abstract void startWizard();
+    public abstract void startWizard();
 
     /**
      * Gets the number of steps to add before the wizard pages' steps in the
@@ -289,5 +290,21 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
      */
     public TenantIdentifier getTenant() {
         return _tenant;
+    }
+
+    /**
+     * Closes (and hides) the wizard after finishing. Call this method from any
+     * events that should hide the wizard after the job has finished.
+     * 
+     * @param string
+     */
+    protected final void closeWizardAfterFinishing(String defaultUrlToGoTo) {
+        getWizardPanel().hideWizard();
+        boolean callbackExecuted = JavaScriptCallbacks.onWizardFinished();
+        
+        if (!callbackExecuted && defaultUrlToGoTo != null) {
+            String url = Urls.createRelativeUrl(defaultUrlToGoTo);
+            Urls.assign(url);
+        }
     }
 }

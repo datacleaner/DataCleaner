@@ -38,7 +38,7 @@ public class WizardPanelFactory {
      */
     public static WizardPanel createWizardPanel(String htmlDivId) {
         if (htmlDivId != null && !"".equals(htmlDivId)) {
-            SimpleWizardPanel wizardPanel = new SimpleWizardPanel();
+            SimpleWizardPanel wizardPanel = new SimpleWizardPanel(htmlDivId);
             RootWizardPanelWrapper wrapper = new RootWizardPanelWrapper(wizardPanel, htmlDivId);
             return wrapper;
         }

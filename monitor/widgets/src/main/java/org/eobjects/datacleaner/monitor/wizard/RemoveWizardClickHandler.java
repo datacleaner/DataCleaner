@@ -35,7 +35,7 @@ public class RemoveWizardClickHandler implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
-        jobWizardController.closeWizardAfterFinishing();
+        jobWizardController.closeWizardAfterFinishing(null);
         clickHandler.onClick(event);
     }
 

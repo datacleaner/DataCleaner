@@ -1,29 +1,10 @@
-/**
- * DataCleaner (community edition)
- * Copyright (C) 2013 Human Inference
- *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this distribution; if not, write to:
- * Free Software Foundation, Inc.
- * 51 Franklin Street, Fifth Floor
- * Boston, MA  02110-1301  USA
- */
-package org.eobjects.datacleaner.monitor.shared.widgets;
+package org.eobjects.datacleaner.monitor.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -40,28 +21,52 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 
 /**
- * A popup for a datastore wizard.
+ * Wizard controller for Datastore wizards
  */
-public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardServiceAsync> {
+public class DatastoreWizardController extends AbstractWizardController<WizardServiceAsync> {
 
-    public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
-        super("Register datastore", service, tenant);
-        addStyleName("DatastoreWizardPanel");
+    private int _stepsBeforeWizardPages;
 
-        service.getDatastoreWizardIdentifiers(tenant, getLocaleName(), new DCAsyncCallback<List<WizardIdentifier>>() {
-            @Override
-            public void onSuccess(List<WizardIdentifier> wizards) {
-                showWizardSelection(wizards);
-            }
-        });
+    public DatastoreWizardController(WizardPanel wizardPanel, TenantIdentifier tenant,
+            WizardIdentifier wizardIdentifier, WizardServiceAsync wizardService) {
+        super(wizardPanel, tenant, wizardIdentifier, wizardService);
     }
 
     @Override
-    protected int getStepsBeforeWizardPages() {
-        return 1;
+    public void startWizard() {
+        getWizardPanel().addStyleClass("JobWizardPanel");
+        getWizardPanel().showWizard();
+
+        final WizardIdentifier wizardIdentifier = getWizardIdentifier();
+
+        if (wizardIdentifier == null) {
+            _stepsBeforeWizardPages = 1;
+            showWizardSelection();
+            return;
+        }
+
+        _stepsBeforeWizardPages = 0;
+        getWizardPanel().setHeader("Register datastore: " + wizardIdentifier.getDisplayName());
+        setLoading();
+
+        WizardServiceAsync wizardService = getWizardService();
+        wizardService.startDatastoreWizard(getTenant(), wizardIdentifier, getLocaleName(), createNextPageCallback());
     }
 
-    protected void showWizardSelection(final List<WizardIdentifier> wizards) {
+    private void showWizardSelection() {
+        setLoading();
+        getWizardPanel().setHeader("Register datastore");
+
+        getWizardService().getDatastoreWizardIdentifiers(getTenant(), getLocaleName(),
+                new DCAsyncCallback<List<WizardIdentifier>>() {
+                    @Override
+                    public void onSuccess(List<WizardIdentifier> wizards) {
+                        showWizardSelection(wizards);
+                    }
+                });
+    }
+
+    private void showWizardSelection(final List<WizardIdentifier> wizards) {
         final FlowPanel panel = new FlowPanel();
 
         panel.add(new Label("Please select the type of datastore to register:"));
@@ -92,9 +97,8 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
                     final RadioButton radio = radios.get(i);
                     if (radio.getValue().booleanValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
-                        setLoading();
-
-                        _service.startDatastoreWizard(_tenant, wizard, getLocaleName(), createNextPageCallback());
+                        setWizardIdentifier(wizard);
+                        startWizard();
                         return;
                     }
                 }
@@ -102,7 +106,12 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
         });
 
         setContent(panel);
-        center();
+        getWizardPanel().refreshUI();
+    }
+
+    @Override
+    protected int getStepsBeforeWizardPages() {
+        return _stepsBeforeWizardPages;
     }
 
     @Override
@@ -114,8 +123,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
-                final String url = Urls.createRelativeUrl("datastores.jsf");
-                Urls.assign(url);
+                closeWizardAfterFinishing("datastores.jsf");
             }
         });
 
@@ -124,11 +132,10 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
         jobWizardAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                hide();
-                final DatastoreIdentifier datastore = new DatastoreIdentifier(datastoreName);
-                final JobWizardPopupPanel jobWizardPopupPanel = new JobWizardPopupPanel(_service, _tenant, datastore);
-                jobWizardPopupPanel.center();
-                jobWizardPopupPanel.show();
+                final String htmlDivId = getWizardPanel().getCustomHtmlDivId();
+                closeWizardAfterFinishing(null);
+
+                JavaScriptCallbacks.startJobWizard(datastoreName, null, htmlDivId);
             }
         });
 
@@ -145,14 +152,16 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel<WizardSe
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
         contentPanel.add(new Label("Datastore '" + datastoreName + "' created! Wizard finished."));
+
         contentPanel.add(new Label(
-                "Close the dialog to return, or click one of the links below to start using the datastore."));
+                "Click 'Close' to return, or click one of the links below to start using the datastore."));
         contentPanel.add(jobWizardAnchor);
         contentPanel.add(queryAnchor);
 
         setContent(contentPanel);
-        getButtonPanel().clear();
-        addButton(button);
-        center();
+        getWizardPanel().getButtonPanel().clear();
+        getWizardPanel().getButtonPanel().addButton(button);
+        getWizardPanel().refreshUI();
     }
+
 }

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.wizard;
+package org.eobjects.datacleaner.monitor.shared;
 
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
@@ -26,28 +26,41 @@ import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.wizard.DatastoreWizardController;
+import org.eobjects.datacleaner.monitor.wizard.JobWizardController;
+import org.eobjects.datacleaner.monitor.wizard.WizardPanel;
+import org.eobjects.datacleaner.monitor.wizard.WizardPanelFactory;
 
 import com.google.gwt.core.client.GWT;
 
 public final class JavaScriptCallbacks {
 
     /**
-     * Called when a wizard is finished and the user clicks a button to close it.
+     * Called when a wizard is finished and the user clicks a button to close
+     * it.
+     * 
+     * @return whether or not a callback was invoked
      */
-    public static native void onWizardFinished() /*-{
+    public static native boolean onWizardFinished() /*-{
                                                         if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
                                                             $wnd.datacleaner.onWizardFinished();
+                                                            return true;
                                                         }
+                                                        return false;
                                                     }-*/;
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
+     * 
+     * @return whether or not a callback was invoked
      */
-    public static native void onWizardCancelled() /*-{
+    public static native boolean onWizardCancelled() /*-{
                                                                 
                                                                 if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
                                                                     $wnd.datacleaner.onWizardCancelled();
+                                                                    return true;
                                                                 }
+                                                                return false;
                                                             }-*/;
 
     /**
@@ -55,6 +68,7 @@ public final class JavaScriptCallbacks {
      */
     public static void exposeApi() {
         exportStartJobWizard();
+        exportStartDatastoreWizard();
     }
 
     /**
@@ -66,29 +80,34 @@ public final class JavaScriptCallbacks {
                                                      if (!$wnd.datacleaner) {
                                                            $wnd.datacleaner = {};
                                                      }
-                                                     $wnd.datacleaner.startJobWizard = @org.eobjects.datacleaner.monitor.wizard.JavaScriptCallbacks::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);   
+                                                     $wnd.datacleaner.startJobWizard = @org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks::startJobWizard(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;);   
                                                      }-*/;
 
     /**
-     * This method gets called by a custom javascript usually embedded in an
-     * onclick method of an HTML button
+     * Exports a JS method:
      * 
-     * @param panelType
+     * startJobWizard(datastoreName, wizardName, htmlDivId)
+     */
+    public static native void exportStartDatastoreWizard() /*-{
+                                                           if (!$wnd.datacleaner) {
+                                                           $wnd.datacleaner = {};
+                                                           }
+                                                           $wnd.datacleaner.startDatastoreWizard = @org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);   
+                                                           }-*/;
+
+    /**
+     * Starts a job wizard based on parameters given from a native JS call.
+     * 
      * @param datastoreName
      * @param wizardDisplayName
-     * @param htmlDivNameToShowWizardIn
+     * @param htmlDivId
      */
     public static void startJobWizard(final String datastoreName, final String wizardDisplayName, final String htmlDivId) {
         GWT.log("JavaScriptCallbacks.startJobWizard(" + datastoreName + "," + wizardDisplayName + "," + htmlDivId + ")");
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
 
-        final WizardIdentifier wizardIdentifier;
-        if (wizardDisplayName == null) {
-            wizardIdentifier = null;
-        } else {
-            wizardIdentifier = new WizardIdentifier(wizardDisplayName);
-        }
+        final WizardIdentifier wizardIdentifier = getWizardIdentifier(wizardDisplayName);
 
         final DatastoreIdentifier datastoreIdentifier;
         if (datastoreName == null) {
@@ -103,9 +122,44 @@ public final class JavaScriptCallbacks {
 
         final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
                 datastoreIdentifier, wizardService);
-        
-        GWT.log("Starting wizard '" + wizardDisplayName + "'. Datastore=" + datastoreName + ", htmlDivId=" + htmlDivId);
-        
+
+        GWT.log("Starting job wizard '" + wizardDisplayName + "'. Datastore=" + datastoreName + ", htmlDivId="
+                + htmlDivId);
+
         controller.startWizard();
+    }
+
+    /**
+     * Starts a datastore wizard based on parameters given from a native JS
+     * call.
+     * 
+     * @param wizardDisplayName
+     * @param htmlDivId
+     */
+    public static void startDatastoreWizard(final String wizardDisplayName, final String htmlDivId) {
+        GWT.log("JavaScriptCallbacks.startDatastoreWizard(" + wizardDisplayName + "," + htmlDivId + ")");
+
+        final ClientConfig clientConfig = new DictionaryClientConfig();
+
+        final WizardIdentifier wizardIdentifier = getWizardIdentifier(wizardDisplayName);
+
+        final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
+        final WizardServiceAsync wizardService = GWT.create(WizardService.class);
+        final TenantIdentifier tenant = clientConfig.getTenant();
+
+        final DatastoreWizardController controller = new DatastoreWizardController(wizardPanel, tenant,
+                wizardIdentifier, wizardService);
+
+        GWT.log("Starting datastore wizard '" + wizardDisplayName + "'. HtmlDivId=" + htmlDivId);
+
+        controller.startWizard();
+    }
+
+    private static WizardIdentifier getWizardIdentifier(String wizardDisplayName) {
+        if (wizardDisplayName == null || "".equals(wizardDisplayName.trim())) {
+            return null;
+        } else {
+            return new WizardIdentifier(wizardDisplayName);
+        }
     }
 }

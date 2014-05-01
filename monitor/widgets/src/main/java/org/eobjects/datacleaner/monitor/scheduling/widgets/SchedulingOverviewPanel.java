@@ -26,9 +26,9 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
-import org.eobjects.datacleaner.monitor.wizard.JavaScriptCallbacks;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;

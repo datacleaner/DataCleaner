@@ -35,13 +35,15 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SimpleWizardPanel implements WizardPanel {
 
+    private final String _htmlDivId;
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
     private final WizardProgressBar _progressBar;
     private FlowPanel _wizardFlowPanel;
 
-    public SimpleWizardPanel() {
+    public SimpleWizardPanel(String htmlDivId) {
         super();
+        _htmlDivId = htmlDivId;
         _buttonPanel = new ButtonPanel();
         _progressBar = new WizardProgressBar();
         _contentPanel = getContentPanel();
@@ -113,5 +115,10 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public void addStyleClass(String styleClass) {
         getWizardWidget().addStyleName(styleClass);
+    }
+
+    @Override
+    public String getCustomHtmlDivId() {
+        return _htmlDivId;
     }
 }

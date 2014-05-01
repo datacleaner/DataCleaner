@@ -95,4 +95,9 @@ public class RootWizardPanelWrapper implements WizardPanel {
     public void addStyleClass(String styleClass) {
         _childWizardPanel.addStyleClass(styleClass);
     }
+
+    @Override
+    public String getCustomHtmlDivId() {
+        return _childWizardPanel.getCustomHtmlDivId();
+    }
 }

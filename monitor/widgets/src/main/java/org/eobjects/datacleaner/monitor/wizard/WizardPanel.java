@@ -31,6 +31,14 @@ import com.google.gwt.user.client.ui.Widget;
 public interface WizardPanel {
 
     /**
+     * Gets the ID of the HTML element of this WizardPanel, if it can be
+     * referenced and reused for other wizard panel locations.
+     * 
+     * @return
+     */
+    public String getCustomHtmlDivId();
+
+    /**
      * Adds a style class to the {@link WizardPanel}.
      * 
      * @param styleClass

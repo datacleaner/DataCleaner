@@ -142,4 +142,9 @@ public class PopupWizardPanel extends PopupPanel implements WizardPanel {
     public void addStyleClass(String styleClass) {
         super.addStyleName(styleClass);
     }
+
+    @Override
+    public String getCustomHtmlDivId() {
+        return null;
+    }
 }

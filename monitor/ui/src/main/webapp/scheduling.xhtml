@@ -1,16 +1,15 @@
-<ui:composition template="template.xhtml"
-	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript"
-			src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" language="javascript" src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
 	</ui:define>
 
 	<ui:define name="content">
 		<div id="SchedulingPage">
+			<button class="gwt-Button-ImageTextButton NewJobButton" onclick="datacleaner.startJobWizard(null, null, null);">Build job</button>
+		
 			<div id="RootPanelTarget"></div>
 		</div>
 	</ui:define>

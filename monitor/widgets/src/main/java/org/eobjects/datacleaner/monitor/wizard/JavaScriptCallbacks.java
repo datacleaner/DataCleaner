@@ -78,15 +78,28 @@ public final class JavaScriptCallbacks {
      * @param wizardDisplayName
      * @param htmlDivNameToShowWizardIn
      */
-    public static void startJobWizard(String datastoreName, String wizardDisplayName, String htmlDivId) {
+    public static void startJobWizard(final String datastoreName, final String wizardDisplayName, final String htmlDivId) {
+        GWT.log("JavaScriptCallbacks.startJobWizard(" + datastoreName + "," + wizardDisplayName + "," + htmlDivId + ")");
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
 
+        final WizardIdentifier wizardIdentifier;
+        if (wizardDisplayName == null) {
+            wizardIdentifier = null;
+        } else {
+            wizardIdentifier = new WizardIdentifier(wizardDisplayName);
+        }
+
+        final DatastoreIdentifier datastoreIdentifier;
+        if (datastoreName == null) {
+            datastoreIdentifier = null;
+        } else {
+            datastoreIdentifier = new DatastoreIdentifier(datastoreName);
+        }
+
         final WizardPanel wizardPanel = WizardPanelFactory.createWizardPanel(htmlDivId);
-        final WizardIdentifier wizardIdentifier = new WizardIdentifier(wizardDisplayName);
         final WizardServiceAsync wizardService = GWT.create(WizardService.class);
         final TenantIdentifier tenant = clientConfig.getTenant();
-        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
 
         final JobWizardController controller = new JobWizardController(wizardPanel, tenant, wizardIdentifier,
                 datastoreIdentifier, wizardService);

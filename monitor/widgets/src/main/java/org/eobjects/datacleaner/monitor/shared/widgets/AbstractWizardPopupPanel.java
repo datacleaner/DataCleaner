@@ -81,7 +81,7 @@ public abstract class AbstractWizardPopupPanel<S extends WizardNavigationService
         final FlowPanel popupContent = new FlowPanel();
         popupContent.add(_progressBar);
         popupContent.add(_targetPanel);
-        setContent(popupContent);
+        setWidget(popupContent);
 
         _previousStepButton = new Button("‹ Back");
         _previousStepButton.setEnabled(false);

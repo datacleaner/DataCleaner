@@ -31,7 +31,10 @@ import com.google.gwt.user.client.ui.Button;
 /**
  * A button which will pop up a list of available job creation wizards, and let
  * the user start it
+ * 
+ * @deprecated replaced by a HTML button on the hostpage
  */
+@Deprecated
 public class CreateJobButton extends Button implements ClickHandler {
 
     private final WizardServiceAsync service = GWT.create(WizardService.class);

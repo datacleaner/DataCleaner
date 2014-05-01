@@ -28,6 +28,8 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.widgets.CustomizeScheduleClickHandler;
 import org.eobjects.datacleaner.monitor.scheduling.widgets.TriggerJobClickHandler;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DatastoreService;
+import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
@@ -44,16 +46,22 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class JobWizardController extends AbstractWizardController<WizardServiceAsync> {
 
-    private final SchedulingServiceAsync schedulingServiceAsync = GWT.create(SchedulingService.class);
+    private final SchedulingServiceAsync schedulingService = GWT.create(SchedulingService.class);
+    private final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
 
     private final ClientConfig clientConfig = new DictionaryClientConfig();
-    private final DatastoreIdentifier _datastoreIdentifier;
-    private ScheduleDefinition scheduleDefinitionForJob = null;
+
+    private DatastoreIdentifier _datastoreIdentifier;
+    private List<DatastoreIdentifier> _datastores;
+    private List<WizardIdentifier> _wizards;
     private int _stepsBeforeWizardPages;
+
+    private ScheduleDefinition scheduleDefinitionForJob = null;
 
     public JobWizardController(WizardPanel wizardPanel, TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
             DatastoreIdentifier datastoreIdentifier, WizardServiceAsync wizardService) {
@@ -87,7 +95,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             showWizardSelection();
             return;
         }
-        
+
         _stepsBeforeWizardPages = 0;
         getWizardPanel().setHeader("Build job: " + wizardIdentifier.getDisplayName());
 
@@ -133,7 +141,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                     public void run() {
                         final Anchor triggerAnchor = new Anchor("Run this job now");
                         triggerAnchor.addStyleName("TriggerJob");
-                        ClickHandler triggerJobClickHandler = new TriggerJobClickHandler(schedulingServiceAsync,
+                        ClickHandler triggerJobClickHandler = new TriggerJobClickHandler(schedulingService,
                                 getTenant(), scheduleDefinitionForJob);
                         ClickHandler removeWizardClickHandlerForTriggerJob = new RemoveWizardClickHandler(
                                 triggerJobClickHandler, JobWizardController.this);
@@ -143,7 +151,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
                         final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
                         schedulingAnchor.addStyleName("ScheduleJob");
                         ClickHandler customizeScheduleClickHandler = new CustomizeScheduleClickHandler(null,
-                                schedulingServiceAsync, getTenant(), scheduleDefinitionForJob);
+                                schedulingService, getTenant(), scheduleDefinitionForJob);
                         ClickHandler removeWizardClickHandlerForCustomizeSchedule = new RemoveWizardClickHandler(
                                 customizeScheduleClickHandler, JobWizardController.this);
                         schedulingAnchor.addClickHandler(removeWizardClickHandlerForCustomizeSchedule);
@@ -162,7 +170,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     }
 
     private void getSchedule(final Runnable runnable, final String jobName) {
-        schedulingServiceAsync.getSchedules(clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
+        schedulingService.getSchedules(clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
                 for (ScheduleDefinition scheduleDefinition : result) {
@@ -174,9 +182,118 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             }
         });
     }
-    
+
     protected void showDatastoreSelection() {
-        // TODO
+        final FlowPanel outerPanel = new FlowPanel();
+        outerPanel.setStyleName("InitialSelectionOuterPanel");
+        final List<RadioButton> datastoreRadios = new ArrayList<RadioButton>();
+        showDatastoreSelection(outerPanel, datastoreRadios);
+
+        final List<RadioButton> wizardRadios = new ArrayList<RadioButton>();
+        showNonDatastoreConsumingWizardSelection(outerPanel, wizardRadios);
+
+        setNextClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (int i = 0; i < datastoreRadios.size(); i++) {
+                    final RadioButton radio = datastoreRadios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        _datastoreIdentifier = _datastores.get(i);
+                        showWizardSelection();
+                        return;
+                    }
+                }
+
+                for (int i = 0; i < wizardRadios.size(); i++) {
+                    final RadioButton radio = wizardRadios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final WizardIdentifier wizard = _wizards.get(i);
+                        setWizardIdentifier(wizard);
+                        startWizard();
+                        return;
+                    }
+                }
+            }
+        });
+
+        setContent(outerPanel);
+    }
+
+    private void showNonDatastoreConsumingWizardSelection(final Panel outerPanel, final List<RadioButton> radios) {
+        final FlowPanel wizardSelectionPanel = new FlowPanel();
+        outerPanel.add(wizardSelectionPanel);
+
+        getWizardService().getNonDatastoreConsumingJobWizardIdentifiers(getTenant(), getLocaleName(),
+                new DCAsyncCallback<List<WizardIdentifier>>() {
+                    @Override
+                    public void onSuccess(List<WizardIdentifier> wizards) {
+                        _wizards = wizards;
+                        showNonDatastoreConsumingWizardSelection(wizardSelectionPanel, wizards, radios);
+                    }
+                });
+    }
+
+    private void showNonDatastoreConsumingWizardSelection(final FlowPanel panel, final List<WizardIdentifier> wizards,
+            final List<RadioButton> radios) {
+        if (wizards == null || wizards.isEmpty()) {
+            // do nothing
+            return;
+        }
+
+        panel.add(new Label("Or select a different job type ..."));
+        for (final WizardIdentifier wizard : wizards) {
+            final RadioButton radio = new RadioButton("initialSelection", wizard.getDisplayName());
+            radio.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    GWT.log("Clicked: " + wizard + " - expected " + wizard.getExpectedPageCount() + " pages");
+                    _stepsBeforeWizardPages = 1;
+                    setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages(), false);
+                    setProgress(0);
+                }
+            });
+            panel.add(radio);
+            radios.add(radio);
+        }
+
+        // TODO: Significant?
+        // center();
+    }
+
+    private void showDatastoreSelection(final Panel outerPanel, final List<RadioButton> radios) {
+        final FlowPanel datastoreSelectionPanel = new FlowPanel();
+        outerPanel.add(datastoreSelectionPanel);
+
+        datastoreService.getAvailableDatastores(getTenant(), new DCAsyncCallback<List<DatastoreIdentifier>>() {
+            @Override
+            public void onSuccess(List<DatastoreIdentifier> datastores) {
+                _datastores = datastores;
+                showDatastoreSelection(datastoreSelectionPanel, datastores, radios);
+            }
+        });
+    }
+
+    private void showDatastoreSelection(final FlowPanel panel, final List<DatastoreIdentifier> datastores,
+            final List<RadioButton> radios) {
+        panel.add(new Label("Please select the source datastore of your job ..."));
+
+        for (final DatastoreIdentifier datastore : datastores) {
+            final RadioButton radio = new RadioButton("initialSelection", datastore.getName());
+            radio.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    GWT.log("Clicked: " + datastore);
+                    _stepsBeforeWizardPages = 2;
+                    setSteps(getStepsBeforeWizardPages(), true);
+                    setProgress(0);
+                }
+            });
+            radios.add(radio);
+            panel.add(radio);
+        }
+
+        // TODO: Significant?
+        // center();
     }
 
     protected void showWizardSelection() {

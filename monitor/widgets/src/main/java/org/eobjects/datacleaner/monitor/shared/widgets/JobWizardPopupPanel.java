@@ -31,6 +31,8 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
+import org.eobjects.datacleaner.monitor.wizard.JobWizardController;
+import org.eobjects.datacleaner.monitor.wizard.PopupWizardPanel;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -45,7 +47,11 @@ import com.google.gwt.user.client.ui.RadioButton;
 
 /**
  * A popup for a job wizard
+ * 
+ * @deprecated use {@link JobWizardController} and {@link PopupWizardPanel}
+ *             instead.
  */
+@Deprecated
 public class JobWizardPopupPanel extends AbstractWizardPopupPanel<WizardServiceAsync> {
 
     private final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);

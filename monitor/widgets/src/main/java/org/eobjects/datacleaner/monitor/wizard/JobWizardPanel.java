@@ -37,7 +37,6 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
-import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -104,10 +103,7 @@ public class JobWizardPanel extends
 		button.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// full page refresh.
-				final String url = Urls
-						.createRelativeUrl("index_admin.jsf#/dashboard");
-				Urls.assign(url);
+				redirectToAnotherPage();
 			}
 		});
 
@@ -168,6 +164,10 @@ public class JobWizardPanel extends
 		}
 
 	}
+
+	public static native void redirectToAnotherPage() /*-{
+														$doc.redirectToAnotherPage();
+														}-*/;
 
 	private void getSchedule(final Runnable runnable, final String jobName) {
 		schedulingServiceAsync.getSchedules(clientConfig.getTenant(),

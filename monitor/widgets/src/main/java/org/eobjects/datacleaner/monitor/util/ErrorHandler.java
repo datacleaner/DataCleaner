@@ -59,16 +59,22 @@ public class ErrorHandler {
     }
 
     /**
-     * Shows an error dialog
+     * This method first call handleError method which is a native method to
+     * call onError JS function, in case onError JS method is not present on
+     * page it simple shows an error dialog as an alert.
      * 
      * @param headerMessage
      * @param additionalDetails
      * @param t
      */
     public static void showErrorDialog(final String headerMessage, final String additionalDetails, final Throwable t) {
+        if (handleError(t.getMessage())) {
+            return;
+        }
         if (t instanceof DCUserInputException) {
             GWT.log("User input exception", t);
             Window.alert(t.getMessage());
+
             return;
         }
 
@@ -100,6 +106,22 @@ public class ErrorHandler {
         final String details = detailsMessage + "\n\n" + t;
         showErrorDialog(headerMessage, details, additionalDetails);
     }
+
+    /**
+     * Native method to call Javascript onError function, in case onError method
+     * is not found on the page this method returns false.
+     * 
+     * @param message
+     * @return boolean
+     */
+    public static native boolean handleError(String message)/*-{
+                                                            if (typeof $wnd.onError == 'function' ){
+                                                            $wnd.onError(message);
+                                                            return true;
+                                                            }else{
+                                                            return false;
+                                                            }
+                                                            }-*/;
 
     /**
      * Shows an error dialog

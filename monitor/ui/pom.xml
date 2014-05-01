@@ -51,6 +51,10 @@
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>
+							<directory>src/main/webapp/wizard</directory>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+						<fileset>
 							<directory>src/main/webapp/scheduling</directory>
 							<followSymlinks>false</followSymlinks>
 						</fileset>

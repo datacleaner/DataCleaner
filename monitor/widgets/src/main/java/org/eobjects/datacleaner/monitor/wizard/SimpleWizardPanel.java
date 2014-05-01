@@ -130,6 +130,10 @@ public class SimpleWizardPanel extends SimplePanel implements WizardPanel {
 	@Override
 	public void hideWizard() {
 		_wizardFlowPanel.setVisible(false);
+		redirectToAnotherPage() ;
 	}
 
+	public static native void redirectToAnotherPage() /*-{
+	  $doc.redirectToAnotherPage();
+	}-*/;
 }

@@ -20,18 +20,16 @@
 package org.eobjects.datacleaner.util;
 
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.eobjects.analyzer.util.convert.EncodedStringConverter;
+import org.eobjects.analyzer.util.ws.NaiveTrustManager;
 
 /**
  * Utility methods for security concerns.
@@ -57,20 +55,7 @@ public class SecurityUtils {
         try {
             // prepare a SSL context which doesn't validate certificates
             final SSLContext sslContext = SSLContext.getInstance("SSL");
-            final TrustManager trustManager = new X509TrustManager() {
-                @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
-                }
-
-                @Override
-                public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
-                }
-            };
+            final TrustManager trustManager = new NaiveTrustManager();
             sslContext.init(null, new TrustManager[] { trustManager }, new SecureRandom());
             final SSLSocketFactory schemeSocketFactory = new SSLSocketFactory(sslContext);
             final Scheme sslScheme = new Scheme("https", 443, schemeSocketFactory);

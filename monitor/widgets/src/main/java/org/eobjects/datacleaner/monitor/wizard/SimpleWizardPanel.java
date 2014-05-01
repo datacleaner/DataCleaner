@@ -21,11 +21,9 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
-import org.eobjects.datacleaner.monitor.wizard.callbacks.JavaScriptCallbacks;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -90,7 +88,6 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public void hideWizard() {
         _wizardFlowPanel.setVisible(false);
-		JavaScriptCallbacks.onSimpleWizardPanelClosed() ;
     }
 
     @Override

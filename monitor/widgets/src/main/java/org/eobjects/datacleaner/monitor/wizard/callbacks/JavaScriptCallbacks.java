@@ -31,7 +31,7 @@ public final class JavaScriptCallbacks {
 														}
 													}-*/;
 
-	public static native void onSimpleWizardPanelClosed() /*-{
+	public static native void onWizardClosed() /*-{
 																
 																if ($wnd.datacleaner && $wnd.datacleaner.onSimpleWizardPanelClosed) {
 																	$wnd.datacleaner.onSimpleWizardPanelClosed();

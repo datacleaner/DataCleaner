@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.shared.widgets.WizardClientController;
 import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.wizard.callbacks.JavaScriptCallbacks;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -103,6 +104,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             @Override
             public void onClick(ClickEvent event) {
                 _wizardPanel.hideWizard();
+                JavaScriptCallbacks.onWizardClosed();
             }
         });
         _wizardPanel.getButtonPanel().addButton(cancelButton);

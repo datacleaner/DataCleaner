@@ -21,10 +21,10 @@ package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,23 +35,28 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SimpleWizardPanel implements WizardPanel {
 
+    private final String _htmlDivId;
     private final SimplePanel _contentPanel;
     private final ButtonPanel _buttonPanel;
+    private final WizardProgressBar _progressBar;
     private FlowPanel _wizardFlowPanel;
-    private RootPanel wizardRootPanel;
 
-    public SimpleWizardPanel() {
+    public SimpleWizardPanel(String htmlDivId) {
         super();
+        _htmlDivId = htmlDivId;
         _buttonPanel = new ButtonPanel();
+        _progressBar = new WizardProgressBar();
         _contentPanel = getContentPanel();
         _wizardFlowPanel = getWizardFlowPanel();
     }
 
     private FlowPanel getWizardFlowPanel() {
         FlowPanel wizardFlowPanel = new FlowPanel();
+        wizardFlowPanel.add(_progressBar);
         wizardFlowPanel.add(_contentPanel);
         wizardFlowPanel.add(_buttonPanel);
         wizardFlowPanel.addStyleName("SimpleWizardPanel");
+        wizardFlowPanel.addStyleName("WizardPanel");
         return wizardFlowPanel;
     }
 
@@ -83,19 +88,9 @@ public class SimpleWizardPanel implements WizardPanel {
     }
 
     @Override
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler) {
-        // do nothing
-    }
-
-    @Override
     public void hideWizard() {
         _wizardFlowPanel.setVisible(false);
-        redirectToAnotherPage();
     }
-
-    public static native void redirectToAnotherPage() /*-{
-                                                      $doc.redirectToAnotherPage();
-                                                      }-*/;
 
     @Override
     public void showWizard() {
@@ -105,5 +100,25 @@ public class SimpleWizardPanel implements WizardPanel {
     @Override
     public Widget getWizardWidget() {
         return _wizardFlowPanel;
+    }
+
+    @Override
+    public WizardProgressBar getProgressBar() {
+        return _progressBar;
+    }
+    
+    @Override
+    public void refreshUI() {
+        // do nothing
+    }
+
+    @Override
+    public void addStyleClass(String styleClass) {
+        getWizardWidget().addStyleName(styleClass);
+    }
+
+    @Override
+    public String getCustomHtmlDivId() {
+        return _htmlDivId;
     }
 }

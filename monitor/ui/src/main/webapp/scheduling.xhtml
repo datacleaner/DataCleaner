@@ -1,16 +1,38 @@
-<ui:composition template="template.xhtml"
-	xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="template.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
-		<script type="text/javascript" language="javascript"
-			src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" language="javascript" src="scheduling/scheduling.nocache.js" />
+		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
+		<script type="text/javascript">
+			//<![CDATA[
+			var datacleaner = {
+				onApiInitialized : function() {
+					$(document).ready(function() {
+						// check if wizard needs to start immediately
+						var hashPartOfUri = window.location.hash;
+						if (hashPartOfUri == "#startWizard") {
+							datacleaner.startJobWizard();
+							window.location.hash = "";
+						}
+					});
+				}
+			}
+			//]]>
+		</script>
 	</ui:define>
 
 	<ui:define name="content">
 		<div id="SchedulingPage">
+			<c:if test="#{user.scheduleEditor}">
+				<div>
+					<button class="gwt-Button-ImageTextButton NewJobButton" onclick="datacleaner.startJobWizard();">Build job</button>
+				</div>
+				
+				<div class="spacer"></div>
+			</c:if>
+			
 			<div id="RootPanelTarget"></div>
 		</div>
 	</ui:define>

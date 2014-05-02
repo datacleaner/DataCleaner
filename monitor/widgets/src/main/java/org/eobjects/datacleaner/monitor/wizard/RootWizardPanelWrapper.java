@@ -20,7 +20,9 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -67,12 +69,9 @@ public class RootWizardPanelWrapper implements WizardPanel {
     public void showWizard() {
         _childWizardPanel.showWizard();
         RootPanel rootPanel = RootPanel.get(_htmlDivId);
+        rootPanel.clear();
+        GWT.log("RootWizardPanelWrapper.show(): Found div by id '" + _htmlDivId + "': " + rootPanel);
         rootPanel.add(getWizardWidget());
-    }
-
-    @Override
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler) {
-        _childWizardPanel.addWizardCloseHandler(closeHandler);
     }
 
     @Override
@@ -80,5 +79,25 @@ public class RootWizardPanelWrapper implements WizardPanel {
         _childWizardPanel.hideWizard();
         RootPanel rootPanel = RootPanel.get(_htmlDivId);
         rootPanel.remove(getWizardWidget());
+    }
+
+    @Override
+    public WizardProgressBar getProgressBar() {
+        return _childWizardPanel.getProgressBar();
+    }
+
+    @Override
+    public void refreshUI() {
+        _childWizardPanel.refreshUI();
+    }
+
+    @Override
+    public void addStyleClass(String styleClass) {
+        _childWizardPanel.addStyleClass(styleClass);
+    }
+
+    @Override
+    public String getCustomHtmlDivId() {
+        return _childWizardPanel.getCustomHtmlDivId();
     }
 }

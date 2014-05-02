@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.wizard;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.WizardProgressBar;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,11 +31,33 @@ import com.google.gwt.user.client.ui.Widget;
 public interface WizardPanel {
 
     /**
+     * Gets the ID of the HTML element of this WizardPanel, if it can be
+     * referenced and reused for other wizard panel locations.
+     * 
+     * @return
+     */
+    public String getCustomHtmlDivId();
+
+    /**
+     * Adds a style class to the {@link WizardPanel}.
+     * 
+     * @param styleClass
+     */
+    public void addStyleClass(String styleClass);
+
+    /**
      * Sets header for the wizard on the top of the panel
      * 
      * @param header
      */
     public void setHeader(String header);
+
+    /**
+     * Gets the {@link WizardProgressBar} of this wizard panel.
+     * 
+     * @return
+     */
+    public WizardProgressBar getProgressBar();
 
     /**
      * Get button panel
@@ -70,17 +93,14 @@ public interface WizardPanel {
     public void showWizard();
 
     /**
-     * Add close handler for the wizard panel
-     * 
-     * TODO: Shouldn't this method be moved to the controller rather than the
-     * panel?
-     * 
-     * @param closeHandler
-     */
-    public void addWizardCloseHandler(WizardCloseHandler closeHandler);
-
-    /**
      * Hides the wizard
      */
     public void hideWizard();
+
+    /**
+     * Requests the wizard panel to refresh it's UI. This is typically called
+     * because some of the existing content has changed, and the UI may need to
+     * adapt (center dialogs, repack frames etc.)
+     */
+    public void refreshUI();
 }

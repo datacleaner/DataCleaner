@@ -35,6 +35,7 @@ public class WizardIdentifier implements Serializable {
     public WizardIdentifier(String displayName) {
         this();
         _displayName = displayName;
+        _datastoreConsumer = true;
     }
     
     public WizardIdentifier() {

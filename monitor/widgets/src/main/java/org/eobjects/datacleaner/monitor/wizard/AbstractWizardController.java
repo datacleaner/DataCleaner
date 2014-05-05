@@ -201,14 +201,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
                     setContent(_currentController);
 
-                    setNextClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            _nextButtonClickRegistration.removeHandler();
-                            setContent(_loadingIndicator);
-                            _currentController.requestNextPage(createNextPageCallback());
-                        }
-                    });
+                    addNextClickHandler();
 
                     if (page.getPageIndex() > 0) {
                         setPreviousClickHandler(new ClickHandler() {
@@ -225,8 +218,20 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
                 }
             }
 
+            private void addNextClickHandler() {
+                setNextClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        _nextButtonClickRegistration.removeHandler();
+                        setContent(_loadingIndicator);
+                        _currentController.requestNextPage(createNextPageCallback());
+                    }
+                });
+            }
+
             @Override
             public void onFailure(Throwable e) {
+                addNextClickHandler();
                 if (e instanceof DCUserInputException) {
                     // restore the previous panel view
                     setContent(_currentController);

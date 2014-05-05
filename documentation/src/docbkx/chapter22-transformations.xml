@@ -107,6 +107,57 @@
 		</para>
 	</section>
 
+	<section id="national_identifiers">
+		<title>
+			National identifiers
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+
+		<para>With the 'National identifiers' transformations you can validate
+			and extract useful information from common national identifiers, such
+			as social security numbers, company registrations etc.
+		</para>
+
+		<para>There are components available for a number of countries and
+			domains, see the screenshot below:
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="transformer_reference_national_identifiers.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+			Each transformation will produce a properly formatted variant of
+			the identifier, and a boolean output column which determines if a
+			particular identifier is valid or not. In addition the
+			transformations will produce the following output fields, all
+			depending on the domain and conventions applied within the country:
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>Gender of person</para>
+			</listitem>
+			<listitem>
+				<para>Birthdate</para>
+			</listitem>
+			<listitem>
+				<para>The gender of the person</para>
+			</listitem>
+			<listitem>
+				<para>The date of founding the company</para>
+			</listitem>
+		</orderedlist>
+	</section>
+
 	<section id="javascript_transformer">
 		<title>JavaScript transformer</title>
 		<para>The JavaScript transformer allows the user to define his/her own

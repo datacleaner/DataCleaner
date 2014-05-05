@@ -55,6 +55,7 @@ li {
 	margin: 0px;
 	padding: 6px;
 }
+
 li p {
 	margin: 0px;
 	padding: 0px;
@@ -93,7 +94,7 @@ table {
 /* container elements */
 body>div {
 	margin: 0px auto;
-	width: 960px;
+	width: 1000px;
 }
 
 .navheader,body>div.book:first-child {
@@ -152,6 +153,11 @@ body>div {
 	display: block;
 	padding: 7px 20px 7px 40px;
 	text-decoration: underline !important;
+}
+
+.chapter .toc dd .section, .book .toc dd dd dd .section {
+	display: none;
+	visibility: hidden;
 }
 
 .toc .section a {
@@ -239,7 +245,7 @@ pre.programlisting {
 
 .table .title {
 	display: none;
-	visibility: hidden;	
+	visibility: hidden;
 }
 
 .table table th {
@@ -265,7 +271,7 @@ pre.programlisting {
 
 #disqus_thread {
 	margin-top: 80px;
-	width: 930px;
+	width: 970px;
 	border-radius: 5px;
 	padding: 5px;
 	border: 2px solid #f5f5f5;

@@ -38,28 +38,106 @@
 			with the monitoring application, this analyzer makes it easy to track
 			which records needs additional information.
 		</para>
+		<para>Here is a screenshot of the configuration panel of the
+			Completeness analyzer:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_completeness_analyzer.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>The configuration properties of the Completeness analyzer are:</para>
+		<table>
+			<title>Completeness analyzer properties</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Values</entry>
+						<entry>Select the columns you want to evaluate with your
+							completeness analyzer. For each selected column you get to choose
+							whether the analyzer should simply do a null-check, or if it
+							should also check for blank values.</entry>
+					</row>
+					<row>
+						<entry>Evaluation mode</entry>
+						<entry>
+							This determines the mode that the completeness check runs in.
+							Here you can configure whether the analyzer should consider
+							records as "incomplete" if
+							<emphasis>any</emphasis>
+							of the selected values are null/blank, or if
+							<emphasis>all</emphasis>
+							the values need to be null/blank before the record is counted as
+							incomplete.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
 	</section>
 
-	<section id="easydq_dedup">
-		<title>EasyDQ matching and deduplication</title>
-		<para>
-			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
-			is an on-demand service for data quality functions.
-			DataCleaner
-			provides access to the EasyDQ services, including the deduplication
-			service which is used to provide
-			<emphasis>Duplicate detection</emphasis>
-			and
-			<emphasis>Inter-Dataset matching</emphasis>
-			, but the core
-			functionality is provided by Human Inference.
+	<section id="referential_integrity_analyzer">
+		<title>Referential integrity</title>
+		<para>With the 'Referential integrity' analyzer you can check that key
+			relationships between records are intact. The analyzer will work with
+			relationships within a single table, between tables and even between
+			tables of different datastores.
 		</para>
-		<para>
-			Please refer to the
-			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
-			for
-			detailed information about the services provided through EasyDQ.
+		<para>Here is a screenshot of the configuration panel of the
+			Referential integrity analyzer:
 		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_referential_integrity.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			Apply the analyzer on the table with the foreign key in the
+			relationship, and configure it to do a check on the table that holds
+			all the valid keys.
+		</para>
+		<table>
+			<title>Referential integrity properties</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Cache lookups</entry>
+						<entry>Whether or not the analyzer should speed up referential
+							integrity checking by caching previous lookup results. Whether or
+							not this will gain performance ultimately depends on the amount
+							of repetition in the keys to be checked. If all foreign key
+							values are more or less unique, it should definately be turned
+							off. But if there is a fair amount of duplication in the foreign
+							keys (e.g. orderlines referring to the same products or
+							customers), then it makes the lookups faster.
+						</entry>
+					</row>
+					<row>
+						<entry>Ignore null values</entry>
+						<entry>Defines whether or not "null" values should be ignored or
+							if they should be considered as an integrity issue. When ignored,
+							all records with null foreign key values will simply be discarded
+							by the analyzer.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+
 	</section>
 
 	<section id="boolean_analyzer">
@@ -108,11 +186,14 @@
 		</para>
 	</section>
 
-	<section id="matching_analyzer">
-		<title>Matching analyzer</title>
-		<para>The matching analyzer provides an easy means to match several
-			columns against several dictionaries and/or several string patterns.
-			The result is a matrix of match information for all columns and all
+	<section id="reference_data_matcher_analyzer">
+		<title>Reference data matcher</title>
+		<para>The 'Reference data matcher' analyzer provides an easy means to
+			match several
+			columns against several dictionaries and/or several
+			string patterns.
+			The result is a matrix of match information for all
+			columns and all
 			matched resources.
 		</para>
 	</section>
@@ -368,16 +449,19 @@
 			<listitem>
 				<para>You get a built-in validation mechanism. You expect maybe only
 					'M' and 'F' values for your 'gender' column, and everything else is
-					in a sense invalid, since it is unexpected.</para>
+					in a sense invalid, since it is unexpected.
+				</para>
 			</listitem>
 			<listitem>
 				<para>The division makes it easier to monitor specific values in the
-					data quality monitoring web application.</para>
+					data quality monitoring web application.
+				</para>
 			</listitem>
 			<listitem>
 				<para>This analyzer scales much better for large datasets, since the
 					groupings are deterministic and thus can be prepared for in the
-					batch run.</para>
+					batch run.
+				</para>
 			</listitem>
 		</orderedlist>
 	</section>

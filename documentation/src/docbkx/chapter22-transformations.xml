@@ -23,7 +23,8 @@
 			</para>
 			<para>There's quite a lot of transformations available in
 				DataCleaner,
-				more than will be feasible to describe all in detail. This chapter
+				more than will be feasible to describe all in detail.
+				This chapter
 				provides a documentation for some of the essential ones.
 			</para>
 		</abstract>
@@ -312,6 +313,25 @@
 				</tbody>
 			</tgroup>
 		</table>
+	</section>
+
+	<section id="invoke_child_analysis_job">
+		<title>Invoke child Analysis job</title>
+		<para>With this transformation it is possible to compose a job that
+			embeds functionality from another saved job.
+		</para>
+		<para>The job that is invoked will be stripped from it's analysis
+			section, which means that only transformations remain. That way you
+			can split up complex transformation flows into smaller pieces - each
+			represented as a job file.
+		</para>
+		<para>
+			To configure the transformation, select the columns from your
+			current job's source which needs to be piped into the child job. The
+			amount of columns selected needs to be the same as the amount of
+			columns defined in the child job. This will be checked automatically,
+			making it impossible to run the transformation otherwise.
+		</para>
 	</section>
 
 	<section id="easydq_transformers">

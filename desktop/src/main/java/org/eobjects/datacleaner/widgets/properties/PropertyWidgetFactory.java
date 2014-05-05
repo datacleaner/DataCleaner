@@ -29,8 +29,13 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.eobjects.analyzer.beans.api.ColumnProperty;
 import org.eobjects.analyzer.beans.api.MappedProperty;
+import org.eobjects.analyzer.beans.api.SchemaProperty;
+import org.eobjects.analyzer.beans.api.TableProperty;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.UpdateableDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.PropertyDescriptor;
@@ -40,6 +45,9 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Resource;
 
 import com.google.inject.Injector;
@@ -111,6 +119,111 @@ public final class PropertyWidgetFactory {
                 return mapping;
             }
         }
+
+        // schema structure mapping
+        if (mappedProperty.getBaseType() == String.class && !mappedToProperty.isArray()) {
+            // save the "mappedToPropertyWidget" since it may be need to be
+            // reused when there is a chain of dependencies between mapped
+            // properties
+            final PropertyWidgetMapping propertyWidgetMapping = _propertyWidgetMappings.get(mappedToProperty);
+            final PropertyWidget<?> mappedToPropertyWidget;
+            if (propertyWidgetMapping == null) {
+                mappedToPropertyWidget = null;
+            } else {
+                mappedToPropertyWidget = propertyWidgetMapping.getMapping(mappedToProperty);
+            }
+
+            // mapped schema name
+            if (mappedProperty.getAnnotation(SchemaProperty.class) != null
+                    && (mappedToProperty.getBaseType() == Datastore.class || mappedToProperty.getBaseType() == UpdateableDatastore.class)) {
+                final SchemaNamePropertyWidget schemaPropertyWidget = new SchemaNamePropertyWidget(getBeanJobBuilder(),
+                        mappedProperty);
+                final SingleDatastorePropertyWidget datastorePropertyWidget;
+                if (mappedToPropertyWidget == null) {
+                    final DatastoreCatalog datastoreCatalog = getBeanJobBuilder().getAnalysisJobBuilder()
+                            .getConfiguration().getDatastoreCatalog();
+                    datastorePropertyWidget = new SingleDatastorePropertyWidget(getBeanJobBuilder(), mappedToProperty,
+                            datastoreCatalog);
+                } else {
+                    datastorePropertyWidget = (SingleDatastorePropertyWidget) mappedToPropertyWidget;
+                }
+
+                datastorePropertyWidget.addComboListener(new DCComboBox.Listener<Datastore>() {
+                    @Override
+                    public void onItemSelected(Datastore item) {
+                        schemaPropertyWidget.setDatastore(item);
+                    }
+                });
+
+                final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
+                mapping.putMapping(mappedProperty, schemaPropertyWidget);
+                mapping.putMapping(mappedToProperty, datastorePropertyWidget);
+                return mapping;
+            }
+
+            // mapped table name
+            if (mappedProperty.getAnnotation(TableProperty.class) != null
+                    && mappedToProperty.getAnnotation(SchemaProperty.class) != null) {
+
+                final TableNamePropertyWidget tablePropertyWidget = new TableNamePropertyWidget(getBeanJobBuilder(),
+                        mappedProperty);
+                final SchemaNamePropertyWidget schemaPropertyWidget;
+                if (mappedToPropertyWidget == null) {
+                    schemaPropertyWidget = new SchemaNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
+                } else {
+                    schemaPropertyWidget = (SchemaNamePropertyWidget) mappedToPropertyWidget;
+                }
+
+                schemaPropertyWidget.addComboListener(new DCComboBox.Listener<Schema>() {
+                    @Override
+                    public void onItemSelected(Schema item) {
+                        tablePropertyWidget.setSchema(item);
+                    }
+                });
+
+                final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
+                mapping.putMapping(mappedProperty, tablePropertyWidget);
+                mapping.putMapping(mappedToProperty, schemaPropertyWidget);
+                return mapping;
+            }
+
+            // mapped column name(s)
+            if (mappedProperty.getAnnotation(ColumnProperty.class) != null
+                    && mappedToProperty.getAnnotation(TableProperty.class) != null) {
+
+                final TableNamePropertyWidget tablePropertyWidget;
+                if (mappedToPropertyWidget == null) {
+                    tablePropertyWidget = new TableNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
+                } else {
+                    tablePropertyWidget = (TableNamePropertyWidget) mappedToPropertyWidget;
+                }
+
+                if (mappedProperty.isArray()) {
+                    // multiple mapped column names
+
+                    // TODO: Not yet implemented. This case needs to take care
+                    // of the fact that usually this is then ALSO mapped to an
+                    // array of input columns.
+                } else {
+                    // mapped column name
+
+                    final ColumnNamePropertyWidget columnPropertyWidget = new ColumnNamePropertyWidget(mappedProperty,
+                            getBeanJobBuilder());
+                    tablePropertyWidget.addComboListener(new DCComboBox.Listener<Table>() {
+                        @Override
+                        public void onItemSelected(Table item) {
+                            columnPropertyWidget.setTable(item);
+                        }
+                    });
+
+                    final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
+                    mapping.putMapping(mappedProperty, columnPropertyWidget);
+                    mapping.putMapping(mappedToProperty, tablePropertyWidget);
+                    return mapping;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -150,8 +263,9 @@ public final class PropertyWidgetFactory {
      */
     public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
         final PropertyWidget<?> result;
-        
-        // first check if there is a mapping created for this property descriptor
+
+        // first check if there is a mapping created for this property
+        // descriptor
         PropertyWidget<?> propertyWidget = getMappedPropertyWidget(propertyDescriptor);
         if (propertyWidget != null) {
             result = propertyWidget;
@@ -187,11 +301,13 @@ public final class PropertyWidgetFactory {
 
                 if (propertyDescriptor.isInputColumn()) {
                     if (_beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
-                        // if there is only a single input column property, it will
+                        // if there is only a single input column property, it
+                        // will
                         // be displayed using radiobuttons.
                         widgetClass = SingleInputColumnRadioButtonPropertyWidget.class;
                     } else {
-                        // if there are multiple input column properties, they will
+                        // if there are multiple input column properties, they
+                        // will
                         // be displayed using combo boxes.
                         widgetClass = SingleInputColumnComboBoxPropertyWidget.class;
                     }

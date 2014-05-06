@@ -23,7 +23,8 @@
 			</para>
 			<para>There's quite a lot of transformations available in
 				DataCleaner,
-				more than will be feasible to describe all in detail. This chapter
+				more than will be feasible to describe all in detail.
+				This chapter
 				provides a documentation for some of the essential ones.
 			</para>
 		</abstract>
@@ -104,6 +105,57 @@
 			are values in the column that the synonym catalog is not able to
 			standardize.
 		</para>
+	</section>
+
+	<section id="national_identifiers">
+		<title>
+			National identifiers
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+
+		<para>With the 'National identifiers' transformations you can validate
+			and extract useful information from common national identifiers, such
+			as social security numbers, company registrations etc.
+		</para>
+
+		<para>There are components available for a number of countries and
+			domains, see the screenshot below:
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="transformer_reference_national_identifiers.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+			Each transformation will produce a properly formatted variant of
+			the identifier, and a boolean output column which determines if a
+			particular identifier is valid or not. In addition the
+			transformations will produce the following output fields, all
+			depending on the domain and conventions applied within the country:
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>Gender of person</para>
+			</listitem>
+			<listitem>
+				<para>Birthdate</para>
+			</listitem>
+			<listitem>
+				<para>The gender of the person</para>
+			</listitem>
+			<listitem>
+				<para>The date of founding the company</para>
+			</listitem>
+		</orderedlist>
 	</section>
 
 	<section id="javascript_transformer">
@@ -312,6 +364,25 @@
 				</tbody>
 			</tgroup>
 		</table>
+	</section>
+
+	<section id="invoke_child_analysis_job">
+		<title>Invoke child Analysis job</title>
+		<para>With this transformation it is possible to compose a job that
+			embeds functionality from another saved job.
+		</para>
+		<para>The job that is invoked will be stripped from it's analysis
+			section, which means that only transformations remain. That way you
+			can split up complex transformation flows into smaller pieces - each
+			represented as a job file.
+		</para>
+		<para>
+			To configure the transformation, select the columns from your
+			current job's source which needs to be piped into the child job. The
+			amount of columns selected needs to be the same as the amount of
+			columns defined in the child job. This will be checked automatically,
+			making it impossible to run the transformation otherwise.
+		</para>
 	</section>
 
 	<section id="easydq_transformers">

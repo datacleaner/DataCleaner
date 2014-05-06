@@ -1,8 +1,8 @@
-DataCleaner (community edition)
-Copyright (C) 2013 Human Inference
+DataCleaner
+Copyright (C) 2014 Human Inference
 
 This product includes software developed by
-the Human Inference and the DataCleaner community (http://datacleaner.org/).
+Human Inference and the DataCleaner community (http://datacleaner.org/).
 
 Please refer to the 'about' dialog for more
 info on credits, license and history.

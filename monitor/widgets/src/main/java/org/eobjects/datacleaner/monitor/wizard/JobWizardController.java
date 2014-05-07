@@ -167,7 +167,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
     }
 
     private void executeOnWizardFinishedCallback() {
-        JavaScriptCallbacks.onWizardFinished("Wizard Finished Successfully");
+        JavaScriptCallbacks.onWizardFinished();
     }
 
     protected Anchor createSchedulingAnchor(String jobName) {

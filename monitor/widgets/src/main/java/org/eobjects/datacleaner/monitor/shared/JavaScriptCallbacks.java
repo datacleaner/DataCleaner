@@ -34,18 +34,15 @@ public final class JavaScriptCallbacks {
     /**
      * Called when the wizard is finished and the last screen is shown.
      * 
-     * @param message
-     *            any message that may need to be passed to the callback
-     * 
      * @return whether or not a callback was invoked
      */
-    public static native boolean onWizardFinished(String message) /*-{
-                                                                  if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                                  $wnd.datacleaner.onWizardFinished(message);
-                                                                  return true;
-                                                                  }
-                                                                  return false;
-                                                                  }-*/;
+    public static native boolean onWizardFinished() /*-{
+                                                    if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
+                                                    $wnd.datacleaner.onWizardFinished();
+                                                    return true;
+                                                    }
+                                                    return false;
+                                                    }-*/;
 
     /**
      * Called when the wizard is closed on clicking the "Close" button.

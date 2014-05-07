@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DatastoreService;
 import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
@@ -138,6 +139,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             contentPanel.add(new Label("Job created! Wizard finished."));
         } else {
             contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
+            JavaScriptCallbacks.displaySuccessMessage("Wizard Finished Successfully");
         }
         contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
 

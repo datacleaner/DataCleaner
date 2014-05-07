@@ -46,7 +46,7 @@ public abstract class DCRequestCallback implements RequestCallback {
 
     @Override
     public void onError(Request request, Throwable exception) {
-        ErrorHandler.showErrorDialog("Server reported error", null, exception);
+        ErrorHandler.showErrorDialog("", null, exception);
     }
 
     public void onNonSuccesfullStatusCode(Request request, Response response, int statusCode, String statusText) {

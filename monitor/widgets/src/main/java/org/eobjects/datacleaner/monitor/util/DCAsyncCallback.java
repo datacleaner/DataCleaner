@@ -48,7 +48,7 @@ public abstract class DCAsyncCallback<T> implements AsyncCallback<T> {
                 return;
             }
         }
-        
+
         if (e instanceof StatusCodeException) {
             final String response = ((StatusCodeException) e).getEncodedResponse();
 
@@ -58,7 +58,7 @@ public abstract class DCAsyncCallback<T> implements AsyncCallback<T> {
 
             ErrorHandler.showErrorDialog("Server reported HTTP error: " + statusCode, response, e);
         } else {
-            ErrorHandler.showErrorDialog("Server reported error", null, e);
+            ErrorHandler.showErrorDialog("", null, e);
         }
     }
 }

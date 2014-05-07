@@ -32,8 +32,23 @@ import com.google.gwt.core.client.GWT;
 public final class JavaScriptCallbacks {
 
     /**
-     * Called when a wizard is finished and the user clicks a button to close
-     * it.
+     * Called when the wizard is finished and the last screen is shown.
+     * 
+     * @param message
+     *            any message that may need to be passed to the callback
+     * 
+     * @return whether or not a callback was invoked
+     */
+    public static native boolean onWizardFinished(String message) /*-{
+                                                                  if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
+                                                                  $wnd.datacleaner.onWizardFinished(message);
+                                                                  return true;
+                                                                  }
+                                                                  return false;
+                                                                  }-*/;
+
+    /**
+     * Called when the wizard is closed on clicking the "Close" button.
      * 
      * @param wizardDisplayName
      *            the name of the wizard that finished
@@ -42,13 +57,13 @@ public final class JavaScriptCallbacks {
      * 
      * @return whether or not a callback was invoked
      */
-    public static native boolean onWizardFinished(String wizardDisplayName, String wizardResultName) /*-{
-                                                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                                                                     $wnd.datacleaner.onWizardFinished(wizardDisplayName, wizardResultName);
-                                                                                                     return true;
-                                                                                                     }
-                                                                                                     return false;
-                                                                                                     }-*/;
+    public static native boolean onWizardPanelClosing(String wizardDisplayName, String wizardResultName) /*-{
+                                                                                                         if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
+                                                                                                         $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
+                                                                                                         return true;
+                                                                                                         }
+                                                                                                         return false;
+                                                                                                         }-*/;
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
@@ -98,23 +113,6 @@ public final class JavaScriptCallbacks {
                                                                               }
                                                                               return false;
                                                                               }-*/;
-
-    /**
-     * Native method to call Javascript displaySuccessMessage function, in case
-     * displaySuccessMessage method is not found on the page this method returns
-     * false.
-     * 
-     * @param message
-     * 
-     * @return boolean
-     */
-    public static native boolean displaySuccessMessage(String message)/*-{
-                                                                      if ($wnd.datacleaner && (typeof $wnd.datacleaner.displaySuccessMessage == 'function')){
-                                                                      $wnd.datacleaner.displaySuccessMessage(message);
-                                                                      return true;
-                                                                      }
-                                                                      return false;
-                                                                      }-*/;
 
     /**
      * Exposes the DataCleaner wizard JS API.

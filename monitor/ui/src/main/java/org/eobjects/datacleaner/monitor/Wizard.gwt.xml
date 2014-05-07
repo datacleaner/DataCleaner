@@ -31,7 +31,6 @@
 	<source path="wizard" />
 	
 	<stylesheet src="shared.css" />
-	<stylesheet src="scheduling.css" />
 	
 	<public path="resources" />
 

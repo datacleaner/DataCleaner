@@ -264,7 +264,7 @@
 	display: block;
 }
 
-.ExecutionStatusPanel .loader {
+.ExecutionStatusPanel .loader, .WizardFinishedPanel .loader {
 	width: 100%;
 	min-width: 128px;
 	background: url("job_loader.gif") no-repeat center center;

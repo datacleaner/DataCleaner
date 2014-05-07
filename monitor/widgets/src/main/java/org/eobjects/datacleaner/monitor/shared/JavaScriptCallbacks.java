@@ -19,10 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.shared;
 
-import org.eobjects.datacleaner.monitor.shared.ClientConfig;
-import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.eobjects.datacleaner.monitor.shared.WizardService;
-import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -102,6 +98,23 @@ public final class JavaScriptCallbacks {
                                                                               }
                                                                               return false;
                                                                               }-*/;
+
+    /**
+     * Native method to call Javascript displaySuccessMessage function, in case
+     * displaySuccessMessage method is not found on the page this method returns
+     * false.
+     * 
+     * @param message
+     * 
+     * @return boolean
+     */
+    public static native boolean displaySuccessMessage(String message)/*-{
+                                                                      if ($wnd.datacleaner && (typeof $wnd.datacleaner.displaySuccessMessage == 'function')){
+                                                                      $wnd.datacleaner.displaySuccessMessage(message);
+                                                                      return true;
+                                                                      }
+                                                                      return false;
+                                                                      }-*/;
 
     /**
      * Exposes the DataCleaner wizard JS API.

@@ -191,12 +191,19 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         return new DCAsyncCallback<WizardPage>() {
             @Override
             public void onSuccess(final WizardPage page) {
+                final String wizardDisplayName = _wizardIdentifier.getDisplayName();
                 if (page.isFinished()) {
-                    wizardFinished(page.getWizardResult());
+                    final String resultEntityName = page.getWizardResult();
+                    JavaScriptCallbacks.onWizardFinished(wizardDisplayName, resultEntityName);
+                    wizardFinished(resultEntityName);
                 } else {
-                    _wizardPanel.getProgressBar().setSteps(page.getExpectedPageCount() + getStepsBeforeWizardPages());
-                    _wizardPanel.getProgressBar().setProgress(page.getPageIndex() + getStepsBeforeWizardPages());
-
+                    final int steps = page.getExpectedPageCount() + getStepsBeforeWizardPages();
+                    final int stepIndex = page.getPageIndex() + getStepsBeforeWizardPages();
+                    final WizardProgressBar progressBar = _wizardPanel.getProgressBar();
+                    progressBar.setSteps(steps);
+                    progressBar.setProgress(stepIndex);
+                    
+                    JavaScriptCallbacks.onWizardProgress(wizardDisplayName, stepIndex, steps);
                     _currentController = new FormWizardClientController(_wizardService, _tenant, page);
 
                     setContent(_currentController);
@@ -306,7 +313,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     protected final void closeWizardAfterFinishing(String resultEntityName, String defaultUrlToGoTo) {
         getWizardPanel().hideWizard();
         final String displayName = getWizardIdentifier().getDisplayName();
-        boolean callbackExecuted = JavaScriptCallbacks.onWizardFinished(displayName, resultEntityName);
+        boolean callbackExecuted = JavaScriptCallbacks.onWizardPanelClosing(displayName, resultEntityName);
 
         if (!callbackExecuted && defaultUrlToGoTo != null) {
             String url = Urls.createRelativeUrl(defaultUrlToGoTo);

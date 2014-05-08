@@ -36,6 +36,7 @@ import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -123,46 +124,54 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             }
         });
 
-        Panel contentPanel = createWizardFinishedContentPanel(jobName);
-
-        setContent(contentPanel);
-        getWizardPanel().getButtonPanel().clear();
-        getWizardPanel().getButtonPanel().addButton(closeButton);
-
+        createAndShowWizardFinishedContentPanel(jobName, closeButton);
     }
 
-    private Panel createWizardFinishedContentPanel(final String jobName) {
+    private void createAndShowWizardFinishedContentPanel(final String jobName, final Button closeButton) {
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-        if (jobName == null) {
-            contentPanel.add(new Label("Job created! Wizard finished."));
-        } else {
-            contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
-        }
-        contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
 
-        if (jobName != null) {
-            if (clientConfig.isScheduleEditor()) {
-                contentPanel.add(_loadingIndicator);
-                getSchedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        final Anchor triggerAnchor = createTriggerAnchor(jobName);
-                        final Anchor schedulingAnchor = createSchedulingAnchor(jobName);
+        if (jobName != null && clientConfig.isScheduleEditor()) {
+            	 
+           	contentPanel.add(_loadingIndicator);
+            setContent(contentPanel);
+                 
+           	getSchedule(new Runnable() {
+           		
+           		@Override
+                public void run() {
+           			
+                    final Anchor triggerAnchor = createTriggerAnchor(jobName);
+                    final Anchor schedulingAnchor = createSchedulingAnchor(jobName);
 
-                        // TODO: Previously there was a "Monitor this job's
-                        // metrics on the dashboard" anchor as well. Add it?
+                    // TODO: Previously there was a "Monitor this job's
+                    // metrics on the dashboard" anchor as well. Add it?
 
-                        contentPanel.add(triggerAnchor);
-                        contentPanel.add(schedulingAnchor);
-                        contentPanel.remove(_loadingIndicator);
-                    }
-                }, jobName);
-            }
-        }
-
-        return contentPanel;
+                    contentPanel.remove(_loadingIndicator);
+                    
+                    populateContentPanel(jobName, closeButton, contentPanel);
+                    contentPanel.add(triggerAnchor);
+                    contentPanel.add(schedulingAnchor);
+                    
+               }
+          	}, jobName);
+      } else {
+         	populateContentPanel(jobName, closeButton, contentPanel);
+      }
     }
+
+	private void populateContentPanel(final String jobName,
+			final Button closeButton, final FlowPanel contentPanel) {
+		if (jobName == null) {
+		    contentPanel.add(new Label("Job created! Wizard finished."));
+		} else {
+		    contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
+		}
+		contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
+		setContent(contentPanel);
+		getWizardPanel().getButtonPanel().clear();
+		getWizardPanel().getButtonPanel().addButton(closeButton);
+	}
 
     protected Anchor createSchedulingAnchor(String jobName) {
         final Anchor anchor = new Anchor("Set up a job schedule");

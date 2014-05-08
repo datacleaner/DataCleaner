@@ -36,6 +36,41 @@ import com.google.gwt.core.client.GWT;
 public final class JavaScriptCallbacks {
 
     /**
+     * Called when the user navigates in a wizard to the next step.
+     * 
+     * @param wizardDisplayName
+     * @param stepIndex
+     *            the index of the new active step
+     * @param steps
+     *            the total number of steps in the wizard given it's current
+     *            state.
+     * @return
+     */
+    public static native boolean onWizardProgress(String wizardDisplayName, int stepIndex, int steps) /*-{
+                                                                                                      if ($wnd.datacleaner && $wnd.datacleaner.onWizardProgress) {
+                                                                                                          $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
+                                                                                                          return true;
+                                                                                                      }
+                                                                                                      return false;
+                                                                                                      }-*/;
+
+    /**
+     * Called when the wizard is finished and the last screen is shown.
+     * 
+     * @param wizardDisplayName
+     * @param resultEntityName
+     * 
+     * @return whether or not a callback was invoked
+     */
+    public static native boolean onWizardFinished(String wizardDisplayName, String resultEntityName) /*-{
+                                                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
+                                                                                                         $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
+                                                                                                         return true;
+                                                                                                     }
+                                                                                                     return false;
+                                                                                                     }-*/;
+
+    /**
      * Called when a wizard is finished and the user clicks a button to close
      * it.
      * 
@@ -46,13 +81,13 @@ public final class JavaScriptCallbacks {
      * 
      * @return whether or not a callback was invoked
      */
-    public static native boolean onWizardFinished(String wizardDisplayName, String wizardResultName) /*-{
-                                                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                                                                     $wnd.datacleaner.onWizardFinished(wizardDisplayName, wizardResultName);
-                                                                                                     return true;
-                                                                                                     }
-                                                                                                     return false;
-                                                                                                     }-*/;
+    public static native boolean onWizardPanelClosing(String wizardDisplayName, String wizardResultName) /*-{
+                                                                                                         if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
+                                                                                                             $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
+                                                                                                             return true;
+                                                                                                         }
+                                                                                                         return false;
+                                                                                                         }-*/;
 
     /**
      * Called when a wizard is closed/cancelled before finishing it.
@@ -65,8 +100,8 @@ public final class JavaScriptCallbacks {
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
                                                                              
                                                                              if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                                             $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
-                                                                             return true;
+                                                                                 $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                                 return true;
                                                                              }
                                                                              return false;
                                                                              }-*/;
@@ -97,8 +132,8 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onError(String message, boolean userFeedback)/*-{
                                                                               if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
-                                                                              $wnd.datacleaner.onError(message, userFeedback);
-                                                                              return true;
+                                                                                  $wnd.datacleaner.onError(message, userFeedback);
+                                                                                  return true;
                                                                               }
                                                                               return false;
                                                                               }-*/;
@@ -131,7 +166,7 @@ public final class JavaScriptCallbacks {
      */
     public static native void exportStartDatastoreWizard() /*-{
                                                            if (!$wnd.datacleaner) {
-                                                           $wnd.datacleaner = {};
+                                                               $wnd.datacleaner = {};
                                                            }
                                                            $wnd.datacleaner.startDatastoreWizard = @org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks::startDatastoreWizard(Ljava/lang/String;Ljava/lang/String;);   
                                                            }-*/;

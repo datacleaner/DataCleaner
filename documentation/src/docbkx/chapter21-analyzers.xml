@@ -38,28 +38,495 @@
 			with the monitoring application, this analyzer makes it easy to track
 			which records needs additional information.
 		</para>
+		<para>Here is a screenshot of the configuration panel of the
+			Completeness analyzer:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_completeness_analyzer.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>The configuration properties of the Completeness analyzer are:
+		</para>
+		<table>
+			<title>Completeness analyzer properties</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Values</entry>
+						<entry>Select the columns you want to evaluate with your
+							completeness analyzer. For each selected column you get to choose
+							whether the analyzer should simply do a null-check, or if it
+							should also check for blank values.
+						</entry>
+					</row>
+					<row>
+						<entry>Evaluation mode</entry>
+						<entry>
+							This determines the mode that the completeness check runs in.
+							Here you can configure whether the analyzer should consider
+							records as "incomplete" if
+							<emphasis>any</emphasis>
+							of the selected values are null/blank, or if
+							<emphasis>all</emphasis>
+							the values need to be null/blank before the record is counted as
+							incomplete.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
 	</section>
 
-	<section id="easydq_dedup">
-		<title>EasyDQ matching and deduplication</title>
-		<para>
-			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
-			is an on-demand service for data quality functions.
-			DataCleaner
-			provides access to the EasyDQ services, including the deduplication
-			service which is used to provide
-			<emphasis>Duplicate detection</emphasis>
-			and
-			<emphasis>Inter-Dataset matching</emphasis>
-			, but the core
-			functionality is provided by Human Inference.
+	<section id="referential_integrity_analyzer">
+		<title>Referential integrity</title>
+		<para>With the 'Referential integrity' analyzer you can check that key
+			relationships between records are intact. The analyzer will work with
+			relationships within a single table, between tables and even between
+			tables of different datastores.
 		</para>
-		<para>
-			Please refer to the
-			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
-			for
-			detailed information about the services provided through EasyDQ.
+		<para>Here is a screenshot of the configuration panel of the
+			Referential integrity analyzer:
 		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_referential_integrity.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			Apply the analyzer on the table with the foreign key in the
+			relationship, and configure it to do a check on the table that holds
+			all the valid keys.
+		</para>
+		<table>
+			<title>Referential integrity properties</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Cache lookups</entry>
+						<entry>Whether or not the analyzer should speed up referential
+							integrity checking by caching previous lookup results. Whether or
+							not this will gain performance ultimately depends on the amount
+							of repetition in the keys to be checked. If all foreign key
+							values are more or less unique, it should definately be turned
+							off. But if there is a fair amount of duplication in the foreign
+							keys (e.g. orderlines referring to the same products or
+							customers), then it makes the lookups faster.
+						</entry>
+					</row>
+					<row>
+						<entry>Ignore null values</entry>
+						<entry>Defines whether or not "null" values should be ignored or
+							if they should be considered as an integrity issue. When ignored,
+							all records with null foreign key values will simply be discarded
+							by the analyzer.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
+
+	<section id="duplicate_detection">
+		<title>
+			Duplicate detection
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+
+		<para>The 'Duplicate detection' analyzers is a package of related
+			analyzers that all has to do with fuzzy matching of duplicate
+			records
+			- records that represent the same person, organization, product or
+			other entity.
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_duplicate_detection_menu.jpg"
+					format="JPG" />
+			</imageobject>
+		</mediaobject>
+
+		<para>The main characteristics of the Duplicate detection
+			functionality are:
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>High Quality</emphasis>
+					- Quality is the hallmark of matching, our duplicate detection
+					feature delivers on this promise.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Scalable</emphasis>
+					- For large datasets Duplicate detection leverages the Hadoop
+					framework for practically unlimited scalability.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Fast and interactive</emphasis>
+					- On a single machine you can work quickly and interactively to
+					refine your duplicate detection model.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>International</emphasis>
+					- International data is supported and no regional knowledge has
+					been encoded into the deduplication engine - you provide the
+					business rules externally.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Machine Learning based</emphasis>
+					- The Duplicate detection engine is configured by examples. During
+					a series of training sessions you can refine the deduplication
+					model simply by having a conversation with the tool about what is
+					and what isn't a good example of a duplicate.
+				</para>
+			</listitem>
+		</orderedlist>
+		
+		<tip>
+			<para>Duplicate detection does work fine with raw data. But if you have dirty data and the way data is registered has a lot of variance, we suggest you first do your best to standardize the data before finding duplicates.</para>
+			<para>Standardization can be by trimming, tokenizing, removing unwanted characters, replace synonyms and things like that. Explore the transformations available in DataCleaner in order to get your data cleansed before trying to deduplicate it.</para>
+		</tip>
+
+		<para>In the following sections we will walk through how to use the
+			analyzers in the 'Duplicate detection' package.
+		</para>
+
+		<section>
+			<title>
+				Training tool
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="notice_commercial_editions_only.png"
+							format="PNG" />
+					</imageobject>
+				</inlinemediaobject>
+			</title>
+
+			<para>
+				The training tool is used by the user of Duplicate detection to
+				<emphasis>train</emphasis>
+				the Machine Learning engine. With this tool you will be shown a
+				number of potential duplicate record pairs, and determine if they
+				are duplicate or not.
+			</para>
+
+			<para>To start the Training tool, simply add the
+				analyzer and select
+				the columns that you wish to use for matching.
+				Additionally you might
+				wish to configure:
+			</para>
+
+			<table>
+				<title>Training tool properties</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Property</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>Max records for training</entry>
+							<entry>The Training tool will keep a random sample of the dataset
+								in memory to provide as training input, and an interactive user
+								experience. This number determines how many records will be
+								selected for this sample.
+							</entry>
+						</row>
+						<row>
+							<entry>Key column</entry>
+							<entry>If your dataset has a unique key, we encourage you to
+								select it using this property. Configuring the key column has
+								the benefit that if you wish to export a training reference
+								later, it can be re-applied very easily.
+							</entry>
+						</row>
+						<row>
+							<entry>Reference file</entry>
+							<entry>If you previously created a reference file in the Training
+								tool that you wish to reuse, you can select it here.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+			<para>In contrast to most other analyzers in DataCleaner which shows
+				a result screen after execution, the Training tool opens a new
+				dialog when started. The training tool dialog allows users to train
+				matching models. The top of the dialog contains a button bar. Below
+				the button bar, the training tool shows some tab buttons. By default
+				the potential duplicates will be shown. For each potential duplicate
+				you can toggle the button on the right side to determine if the pair
+				is a duplicate or not:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="analyzer_reference_training_tool.jpg"
+						format="JPG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>You do not need to classify all samples shown. Recommended
+				usage is:
+			</para>
+
+			<orderedlist>
+				<listitem>
+					<para>Classify at least 20-30 duplicate pairs or more (more is
+						better)
+					</para>
+				</listitem>
+				<listitem>
+					<para>Classify at least 20-30 unique records or more (more is
+						better)
+					</para>
+				</listitem>
+			</orderedlist>
+
+			<para>Once you've classified records you can press the 'Train model'
+				button in the upper right corner. This will refine the matching
+				model and present a new set of interesting potential duplicates. You
+				can continue this way and quite quickly have classified the required
+				amount of pairs.
+			</para>
+
+			<para>
+				All duplicate detection models may have irregularities. When
+				you ask a computer to do a complex task like matching, it may come
+				up with a model that has slight differences from your
+				classifications. You can inspect the current model's differences
+				from your classifications in the tab 'Differences'.
+			</para>
+
+			<para>
+				Every time you classify a duplicate, it is added to the
+				<emphasis>reference</emphasis>
+				of the Training session. You can inspect your complete
+				reference in
+				the tab 'Reference'.
+			</para>
+
+			<para>If you're looking for particular types of duplicate pairs, you
+				may want to go to the 'Search' tab. In this tab you will find
+				options to search for records with matching or non-matching values
+				for particular fields. This may be a very useful shortcut for
+				finding proper duplicate examples.
+			</para>
+
+			<para>Finally, the tab 'Parameters' presents buttons and sliders for
+				you to influence the Machine Learning approach. It presents the
+				following options:
+			</para>
+
+			<table>
+				<title>Training tool 'Parameters' options</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Parameter</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>Only optimize the preselection when sufficient duplicates
+								have been marked
+							</entry>
+							<entry>This will optimize the matching rules using an initial
+								model for pre-selection until sufficient pairs have been marked
+								as duplicates and uniques. This is the default value.
+							</entry>
+						</row>
+						<row>
+							<entry>Always optimize the preselection</entry>
+							<entry>This will always train pre-selection and matching rules.
+								Training both is slower, but an improved preselection has a
+								better performance during
+								duplicate detection. Training the
+								potential pair generation too early
+								might result in the exclusion
+								of some groups of duplicate pairs.
+								It is recommended to perform
+								training of the full model only after the user has
+								classified
+								varying examples of duplicates and unique records.
+							</entry>
+						</row>
+						<row>
+							<entry>Never optimize the preselection</entry>
+							<entry>This never trains the pre-selection, but only the matching
+								rules.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+
+			<para>
+				After updating the matching model, the user can continue in 2
+				ways. If
+				the user is satisfied with the model (few false positives
+				and false
+				negatives) then he can save the model and start using it in
+				duplicate detection. Otherwise, the user must start a new iteration
+				of classifying
+				more of the presented samples and refining the model
+				again.
+			</para>
+			<para>
+				Longer training set typically allows for a more advanced
+				matching model,
+				capable of handling more corner cases. The false
+				negatives and
+				false positives lists give a good impression of the
+				current state of the
+				matching model. The user should continue
+				training until the
+				differences
+				in these lists are acceptable.
+			</para>
+			<para>
+				When finishing the training, save the reference to file. The
+				reference
+				is the most important part of the Duplicate detection
+				model, since it allows you to reproduce and re-train a model based
+				on past classifications.
+			</para>
+
+			<para>To validate the training results and obtain the best model,
+				training can be repeated on a different sample.
+			</para>
+
+			<orderedlist>
+				<listitem>
+					<para>
+						Save the reference
+					</para>
+				</listitem>
+				<listitem>
+					<para>Close the training tool.</para>
+				</listitem>
+				<listitem>
+					<para>In the Training tool properties, specify the saved reference.
+					</para>
+				</listitem>
+				<listitem>
+					<para>Re-run the Training tool. A new sample will be generated. All
+						marked pairs in the saved reference are automatically included in
+						the new sample.
+					</para>
+				</listitem>
+				<listitem>
+					<para>Press the 'Train model' button in the Training tool. This
+						will train a model on the existing reference.
+					</para>
+				</listitem>
+				<listitem>
+					<para>You can view the differences (false positives, false
+						negatives) of the trained model against the records in the new
+						sample.
+					</para>
+				</listitem>
+				<listitem>
+					<para>You can review the potential duplicates to determine if a
+						category of duplicates is missing.
+					</para>
+				</listitem>
+				<listitem>
+					<para>Add more pairs to the reference as needed.</para>
+				</listitem>
+			</orderedlist>
+
+			<para>Use the 'Export model' button to save the current matching
+				model. A dialog appears which allows the user to choose the location
+				and file name for the model.
+			</para>
+
+		</section>
+
+		<section>
+			<title>
+				Finding duplicates
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="notice_commercial_editions_only.png"
+							format="PNG" />
+					</imageobject>
+				</inlinemediaobject>
+			</title>
+			<para>When the matching model is complete you are ready to find all
+				the duplicates in the dataset, usie the Duplicate Detection
+				analyzer.
+			</para>
+
+			<para>Configure the analyzer with the same input fields as your
+				Training tool. Load the matching model from the file you saved at
+				the end of your training session. When you run the job, you will see
+				a Duplicate detection result with complete groups of duplicates,
+				like this:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="analyzer_reference_duplicate_detection.jpg"
+						format="JPG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>Once you have a duplicate detection result that you wish to
+				post-process, e.g. for merging or manual inspection, you can export
+				the result by clicking one of the 'Export to staging table' or
+				'Export to Excel' buttons in the top of the result screen.
+			</para>
+
+			<para>The Duplicate detection analyzer can run stand-alone to
+				find
+				duplicates in datasets up to a half to 1 million records
+				(depending
+				on the amount of columns). For larger datasets, the
+				Duplicate
+				detection component can be used in combination with an
+				Hadoop server
+				component. This server component is a Enterprise
+				edition feature
+				only.
+			</para>
+
+		</section>
+
 	</section>
 
 	<section id="boolean_analyzer">
@@ -108,11 +575,14 @@
 		</para>
 	</section>
 
-	<section id="matching_analyzer">
-		<title>Matching analyzer</title>
-		<para>The matching analyzer provides an easy means to match several
-			columns against several dictionaries and/or several string patterns.
-			The result is a matrix of match information for all columns and all
+	<section id="reference_data_matcher_analyzer">
+		<title>Reference data matcher</title>
+		<para>The 'Reference data matcher' analyzer provides an easy means to
+			match several
+			columns against several dictionaries and/or several
+			string patterns.
+			The result is a matrix of match information for all
+			columns and all
 			matched resources.
 		</para>
 	</section>
@@ -368,16 +838,19 @@
 			<listitem>
 				<para>You get a built-in validation mechanism. You expect maybe only
 					'M' and 'F' values for your 'gender' column, and everything else is
-					in a sense invalid, since it is unexpected.</para>
+					in a sense invalid, since it is unexpected.
+				</para>
 			</listitem>
 			<listitem>
 				<para>The division makes it easier to monitor specific values in the
-					data quality monitoring web application.</para>
+					data quality monitoring web application.
+				</para>
 			</listitem>
 			<listitem>
 				<para>This analyzer scales much better for large datasets, since the
 					groupings are deterministic and thus can be prepared for in the
-					batch run.</para>
+					batch run.
+				</para>
 			</listitem>
 		</orderedlist>
 	</section>

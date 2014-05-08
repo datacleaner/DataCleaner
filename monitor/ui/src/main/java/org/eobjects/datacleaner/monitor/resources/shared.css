@@ -404,3 +404,12 @@ div.center {
 .SelectMetricPanel select {
 	width: 300px;
 }
+
+.ExecutionStatusPanel .loader, .WizardFinishedPanel .loader {
+	width: 100%;
+	min-width: 128px;
+	background: url("job_loader.gif") no-repeat center center;
+	height: 128px;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}

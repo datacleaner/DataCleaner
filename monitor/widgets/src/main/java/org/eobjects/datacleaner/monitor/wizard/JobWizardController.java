@@ -139,7 +139,7 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
             contentPanel.add(new Label("Job created! Wizard finished."));
         } else {
             contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
-            executeOnWizardFinishedCallback();
+            JavaScriptCallbacks.displaySuccessMessage("Wizard Finished Successfully");
         }
         contentPanel.add(new Label("Click 'Close' to return, or click one of the links below to start using the job."));
 
@@ -164,10 +164,6 @@ public class JobWizardController extends AbstractWizardController<WizardServiceA
         }
 
         return contentPanel;
-    }
-
-    private void executeOnWizardFinishedCallback() {
-        JavaScriptCallbacks.onWizardFinished("Wizard Finished Successfully");
     }
 
     protected Anchor createSchedulingAnchor(String jobName) {

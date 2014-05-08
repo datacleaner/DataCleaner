@@ -306,7 +306,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
     protected final void closeWizardAfterFinishing(String resultEntityName, String defaultUrlToGoTo) {
         getWizardPanel().hideWizard();
         final String displayName = getWizardIdentifier().getDisplayName();
-        boolean callbackExecuted = JavaScriptCallbacks.onWizardPanelClosing(displayName, resultEntityName);
+        boolean callbackExecuted = JavaScriptCallbacks.onWizardFinished(displayName, resultEntityName);
 
         if (!callbackExecuted && defaultUrlToGoTo != null) {
             String url = Urls.createRelativeUrl(defaultUrlToGoTo);

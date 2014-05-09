@@ -20,13 +20,9 @@
 package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-
-import com.google.common.base.Strings;
 
 /**
  * Identifies a job in the repository. The identifier is based on the name of
@@ -35,8 +31,6 @@ import com.google.common.base.Strings;
  */
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
-    private static final Pattern RESULT_ID_PATTERN = Pattern.compile("(.+)\\-([0-9]+)");
-    
     private static final long serialVersionUID = 1L;
 
     public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
@@ -111,15 +105,26 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
     }
 
     public static JobIdentifier fromResultId(String resultId) {
-        if (Strings.isNullOrEmpty(resultId)) {
+        if (resultId == null || "".equals(resultId)) {
             throw new IllegalArgumentException("Result ID cannot be null or empty string");
         }
 
-        Matcher matcher = RESULT_ID_PATTERN.matcher(resultId);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Result ID '" + resultId + "' does not match expected pattern: " + RESULT_ID_PATTERN);
+        final int lastIndexOfDash = resultId.lastIndexOf('-');
+        if (lastIndexOfDash == -1 || lastIndexOfDash == 0) {
+            throw new IllegalArgumentException("Result ID '" + resultId
+                    + "' does not match expected pattern: [jobname]-[timestamp]");
         }
-        String jobName = matcher.group(1);
+
+        final String timestamp = resultId.substring(lastIndexOfDash + 1);
+        try {
+            Long.parseLong(timestamp);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Result ID '" + resultId
+                    + "' does not match expected pattern: [jobname]-[timestamp]");
+        }
+        
+        final String jobName = resultId.substring(0, lastIndexOfDash);
+
         return new JobIdentifier(jobName);
     }
 

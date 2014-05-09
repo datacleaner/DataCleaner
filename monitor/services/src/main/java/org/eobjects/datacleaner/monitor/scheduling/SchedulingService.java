@@ -54,10 +54,14 @@ public interface SchedulingService extends RemoteService {
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog) throws DCSecurityException;
+    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException;
 
     @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
+            throws DCSecurityException;
 
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.

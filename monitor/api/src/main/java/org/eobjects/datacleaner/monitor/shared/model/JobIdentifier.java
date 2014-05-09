@@ -23,6 +23,9 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+
 import com.google.common.base.Strings;
 
 /**
@@ -118,6 +121,17 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
         }
         String jobName = matcher.group(1);
         return new JobIdentifier(jobName);
+    }
+
+    public static JobIdentifier fromExecutionIdentifier(ExecutionIdentifier executionIdentifier) {
+        if (executionIdentifier instanceof ExecutionLog) {
+            JobIdentifier job = ((ExecutionLog) executionIdentifier).getJob();
+            if (job != null) {
+                return job;
+            }
+        }
+        String resultId = executionIdentifier.getResultId();
+        return fromResultId(resultId);
     }
 
 }

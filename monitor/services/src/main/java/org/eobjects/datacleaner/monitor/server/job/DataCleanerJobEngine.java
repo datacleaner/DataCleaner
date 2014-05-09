@@ -175,6 +175,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         }
 
         try {
+            logger.info("Invoking cancel on job: {}, {}", tenantContext, execution);
             resultFuture.cancel();
             return true;
         } catch (Exception e) {

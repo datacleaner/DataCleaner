@@ -247,7 +247,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return schedules;
     }
 
-    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
+    @Override
+    public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final String jobName = jobIdentifier.getName();
@@ -412,11 +413,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog) throws DCSecurityException {
+    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog execution) throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final JobContext job = tenantContext.getJob(executionLog.getJob());
+        final JobContext job = tenantContext.getJob(execution.getJob());
         final JobEngine<?> jobEngine = job.getJobEngine();
-        final boolean result = jobEngine.cancelJob(tenantContext, executionLog);
+        final boolean result = jobEngine.cancelJob(tenantContext, execution);
         return result;
     }
 
@@ -529,8 +530,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (file == null) {
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
-
-        JobIdentifier jobIdentifier = JobIdentifier.fromResultId(resultId);
+        
+        JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);
 
         return readExecutionLogFile(file, jobIdentifier, tenant, 3);
     }
@@ -552,6 +553,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         logger.info("Failed to read execution log, returning unknown status.");
                         final ExecutionLog executionLog = new ExecutionLog(null, null);
                         executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
+                        executionLog.setJob(jobIdentifier);
                         return executionLog;
                     }
                 }

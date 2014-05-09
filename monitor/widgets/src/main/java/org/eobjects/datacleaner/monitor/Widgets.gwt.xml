@@ -30,8 +30,10 @@
 	<inherits name='org.eobjects.datacleaner.monitor.Services' />
 
 	<source path='shared' />
-	<source path='util' />
-	<source path='wizard' />
 	<source path='scheduling' />
+	<source path='util' />
+	
+	<stylesheet src="shared.css" />
+	<public path="resources" />
 	
 </module>

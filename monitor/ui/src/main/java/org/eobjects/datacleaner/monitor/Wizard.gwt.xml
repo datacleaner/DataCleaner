@@ -29,9 +29,5 @@
 	<entry-point class="org.eobjects.datacleaner.monitor.wizard.WizardEntryPoint" />
 	
 	<source path="wizard" />
-	
-	<stylesheet src="shared.css" />
-	
-	<public path="resources" />
 
 </module>

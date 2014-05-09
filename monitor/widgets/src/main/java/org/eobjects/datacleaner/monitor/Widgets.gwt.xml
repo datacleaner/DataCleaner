@@ -31,6 +31,7 @@
 
 	<source path='shared' />
 	<source path='scheduling' />
+	<source path='wizard' />
 	<source path='util' />
 	
 	<stylesheet src="shared.css" />

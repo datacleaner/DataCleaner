@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/{tenant}/logs/{result:.+}")
+@RequestMapping({"/{tenant}/logs/{result:.+}", "/{tenant}/results/{result:.+}.analysis.execution.log.xml"})
 public class ExecutionLogController {
 
     private static final String EXTENSION = FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();

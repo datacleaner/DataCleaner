@@ -40,6 +40,8 @@ public interface SchedulingServiceAsync {
             AsyncCallback<ScheduleDefinition> callback);
 
     void getLatestExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
+    
+    void cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog, AsyncCallback<Boolean> callback);
 
     void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<ExecutionIdentifier>> callback);
 

@@ -78,6 +78,19 @@ public interface JobEngine<T extends JobContext> {
             Map<String, String> variables) throws Exception;
 
     /**
+     * Requests a cancellation of a running job.
+     * 
+     * @param tenantContext
+     * @param executionLog
+     *            the executionlog of a job that is assumed to be running and
+     *            should be stopped.
+     * @return true if the job was cancelled, false if it was not or if the
+     *         state of the job is unknown, or if the {@link JobEngine} is not
+     *         capable of cancelling the job.
+     */
+    public boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog);
+
+    /**
      * Determines if a particular job is available within this job engine's jobs
      * 
      * @param tenantContext

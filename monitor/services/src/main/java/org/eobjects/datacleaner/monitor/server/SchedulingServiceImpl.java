@@ -35,6 +35,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -411,6 +412,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
+    public boolean cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog) throws DCSecurityException {
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final JobContext job = tenantContext.getJob(executionLog.getJob());
+        final JobEngine<?> jobEngine = job.getJobEngine();
+        final boolean result = jobEngine.cancelJob(tenantContext, executionLog);
+        return result;
+    }
+
+    @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
 
         final String jobNameToBeTriggered = job.getName();
@@ -471,7 +481,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             return null;
         }
 
-        return readExecutionLogFile(latestFile, tenant, 1);
+        return readExecutionLogFile(latestFile, job, tenant, 1);
     }
 
     @Override
@@ -520,18 +530,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
 
-        return readExecutionLogFile(file, tenant, 3);
+        JobIdentifier jobIdentifier = JobIdentifier.fromResultId(resultId);
+
+        return readExecutionLogFile(file, jobIdentifier, tenant, 3);
     }
 
-    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant,
-            final int retries) {
+    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final JobIdentifier jobIdentifier,
+            final TenantIdentifier tenant, final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
 
         final ExecutionLog result = file.readFile(new Func<InputStream, ExecutionLog>() {
             @Override
             public ExecutionLog eval(InputStream in) {
                 try {
-                    return reader.read(in, tenant);
+                    return reader.read(in, jobIdentifier, tenant);
                 } catch (JaxbException e) {
                     if (retries > 0) {
                         logger.debug("Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
@@ -553,7 +565,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             } catch (InterruptedException e) {
                 // do nothing
             }
-            return readExecutionLogFile(file, tenant, retries - 1);
+            return readExecutionLogFile(file, jobIdentifier, tenant, retries - 1);
         }
 
         return result;

@@ -111,4 +111,10 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
             executionLogger.setStatusSuccess(null);
         }
     }
+
+    @Override
+    public boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog) {
+        // always return false - cannot stop a custom method from running
+        return false;
+    }
 }

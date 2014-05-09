@@ -28,6 +28,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
@@ -39,14 +40,14 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.dat
         super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
-    public ExecutionLog read(InputStream inputStream, TenantIdentifier tenant) {
+    public ExecutionLog read(InputStream inputStream, JobIdentifier jobIdentifier, TenantIdentifier tenant) {
         org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
-        ExecutionLog executionLog = convert(jaxbExecutionLog, tenant);
+        ExecutionLog executionLog = convert(jaxbExecutionLog, jobIdentifier, tenant);
         return executionLog;
     }
 
     private ExecutionLog convert(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
-            TenantIdentifier tenant) {
+            JobIdentifier jobIdentifier, TenantIdentifier tenant) {
 
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId(jaxbExecutionLog.getResultId());
@@ -79,9 +80,10 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.dat
         executionLog.setResultPersisted(resultPersisted.booleanValue());
 
         final JaxbScheduleReader reader = new JaxbScheduleReader();
-        final ScheduleDefinition schedule = reader.createSchedule(jaxbExecutionLog.getSchedule(), null, tenant, null,
+        final ScheduleDefinition schedule = reader.createSchedule(jaxbExecutionLog.getSchedule(), jobIdentifier, tenant, null,
                 false);
         executionLog.setSchedule(schedule);
+        executionLog.setJob(jobIdentifier);
 
         return executionLog;
     }

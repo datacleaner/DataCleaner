@@ -20,6 +20,10 @@
 package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.google.common.base.Strings;
 
 /**
  * Identifies a job in the repository. The identifier is based on the name of
@@ -28,14 +32,16 @@ import java.io.Serializable;
  */
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
-    private static final long serialVersionUID = 1L;
+    private static final Pattern RESULT_ID_PATTERN = Pattern.compile("(.+)\\-([0-9]+)");
     
+    private static final long serialVersionUID = 1L;
+
     public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
     public static final String JOB_TYPE_CUSTOM_JOB = "CustomJob";
 
     private String _name;
     private String _type;
-    
+
     public JobIdentifier(String name, String type) {
         _name = name;
         _type = type;
@@ -99,6 +105,19 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
     @Override
     public int compareTo(JobIdentifier o) {
         return getName().compareTo(o.getName());
+    }
+
+    public static JobIdentifier fromResultId(String resultId) {
+        if (Strings.isNullOrEmpty(resultId)) {
+            throw new IllegalArgumentException("Result ID cannot be null or empty string");
+        }
+
+        Matcher matcher = RESULT_ID_PATTERN.matcher(resultId);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Result ID '" + resultId + "' does not match expected pattern: " + RESULT_ID_PATTERN);
+        }
+        String jobName = matcher.group(1);
+        return new JobIdentifier(jobName);
     }
 
 }

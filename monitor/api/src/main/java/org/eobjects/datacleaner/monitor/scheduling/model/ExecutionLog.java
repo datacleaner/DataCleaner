@@ -97,6 +97,10 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     public JobIdentifier getJob() {
         return _job;
     }
+    
+    public void setJob(JobIdentifier job) {
+        _job = job;
+    }
 
     public String getTriggeredBy() {
         return _triggeredBy;

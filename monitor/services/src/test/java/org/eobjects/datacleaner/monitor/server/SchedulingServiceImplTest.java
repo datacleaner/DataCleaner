@@ -86,8 +86,7 @@ public class SchedulingServiceImplTest extends TestCase {
     public void testCancellation() throws Exception {
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
-        // TODO: Needs a much longer running job to cancel it in time
-        final ScheduleDefinition schedule = service.getSchedule(tenant, new JobIdentifier("orderdetails_crushing"));
+        final ScheduleDefinition schedule = service.getSchedule(tenant, new JobIdentifier("waiting_job"));
         ExecutionLog execution = service.triggerExecution(tenant, schedule.getJob());
 
         assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
@@ -144,7 +143,7 @@ public class SchedulingServiceImplTest extends TestCase {
             // sort to make it deterministic
             Collections.sort(schedules);
 
-            assertEquals(5, schedules.size());
+            assertEquals(6, schedules.size());
             assertEquals(null, schedules.get(1).getCronExpression());
             ScheduleDefinition randomNumberGenerationSchedule = schedules.get(4);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());

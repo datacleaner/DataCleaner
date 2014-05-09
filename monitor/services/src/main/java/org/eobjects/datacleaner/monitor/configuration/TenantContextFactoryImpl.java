@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
-import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -42,6 +42,9 @@ import com.google.common.cache.LoadingCache;
  */
 @Component("tenantContextFactory")
 public class TenantContextFactoryImpl implements TenantContextFactory {
+
+    private static final char[] ILLEGAL_TENANT_ID_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*',
+            '\\', '<', '>', '|', '\"', ':' };
 
     private static final Logger logger = LoggerFactory.getLogger(TenantContextFactoryImpl.class);
 
@@ -100,9 +103,12 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     public TenantContext getContext(String tenantId) {
-        if (StringUtils.isNullOrEmpty(tenantId)) {
-            throw new IllegalArgumentException("Tenant cannot be null or empty string");
+        if (Strings.isNullOrEmpty(tenantId)) {
+            throw new IllegalArgumentException("Tenant ID cannot be null or empty string");
         }
+
+        tenantId = getStandardizedTenantName(tenantId);
+
         try {
             return _contexts.get(tenantId);
         } catch (ExecutionException e) {
@@ -112,5 +118,26 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
             }
             throw new IllegalStateException(e);
         }
+    }
+
+    private String getStandardizedTenantName(final String tenantId) {
+        String standardizedTenantId = tenantId.trim().toLowerCase();
+
+        for (int i = 0; i < ILLEGAL_TENANT_ID_CHARACTERS.length; i++) {
+            char c = ILLEGAL_TENANT_ID_CHARACTERS[i];
+            standardizedTenantId = org.apache.commons.lang.StringUtils.remove(standardizedTenantId, c);
+        }
+
+        if (Strings.isNullOrEmpty(standardizedTenantId)) {
+            throw new IllegalArgumentException("Tenant ID contained only invalid characters: " + tenantId);
+        }
+
+        if (logger.isInfoEnabled()) {
+            if (!tenantId.equals(standardizedTenantId)) {
+                logger.info("Tenant ID '{}' standardized into '{}'", tenantId, standardizedTenantId);
+            }
+        }
+        
+        return standardizedTenantId;
     }
 }

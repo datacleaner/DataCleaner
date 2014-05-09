@@ -148,7 +148,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     public RepositoryFolder getTenantRootFolder() {
         RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
         if (tenantFolder == null) {
-            logger.info("Creating tenant folder: {}", _tenantId);
+            logger.info("Creating tenant folder '{}' for tenant '{}'", _tenantId, _tenantId);
             tenantFolder = _repository.createFolder(_tenantId);
             tenantFolder.createFolder(PATH_JOBS);
             tenantFolder.createFolder(PATH_RESULTS);

@@ -71,7 +71,7 @@ public class TenantCheckFilter extends GenericFilterBean {
 
                     final String userTenantId = _tenantResolver.getTenantId(username);
 
-                    if (!userTenantId.equals(urlTenantId)) {
+                    if (!userTenantId.equalsIgnoreCase(urlTenantId)) {
                         final String message = "User " + username + " (" + userTenantId
                                 + ") is not authorized to access tenant: " + urlTenantId;
                         if (resp instanceof HttpServletResponse) {

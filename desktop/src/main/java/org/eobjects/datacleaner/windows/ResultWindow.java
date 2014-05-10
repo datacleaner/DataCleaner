@@ -126,17 +126,18 @@ public final class ResultWindow extends AbstractWindow {
             @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
+        final boolean running = (result == null);
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
-        _progressInformationPanel = new ProgressInformationPanel();
+        _progressInformationPanel = new ProgressInformationPanel(running);
         _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
                 _progressInformationPanel);
         _tabbedPane.setUnclosableTab(0);
 
-        if (result == null) {
+        if (running) {
             // run the job in a swing worker
             _result = null;
             _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this);

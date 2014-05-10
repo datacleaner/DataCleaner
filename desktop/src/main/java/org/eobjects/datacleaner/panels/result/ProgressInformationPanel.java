@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -49,6 +50,8 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.common.base.Stopwatch;
+
 /**
  * Panel that shows various progress information widgets within the
  * {@link ResultWindow}.
@@ -66,16 +69,21 @@ public class ProgressInformationPanel extends DCPanel {
     private static final Icon ICON_EXECUTION_LOG = imageManager.getImageIcon("images/menu/log.png",
             IconUtils.ICON_SIZE_SMALL);
 
-    private final JTextArea _executionLogTextArea = new JTextArea();
+    private final JTextArea _executionLogTextArea;
     private final DCPanel _progressBarPanel;
-    private final ConcurrentMap<Table, TableProgressInformationPanel> _tableProgressInformationPanels = new ConcurrentHashMap<Table, TableProgressInformationPanel>();
-    private final ConcurrentMap<Table, ProgressCounter> _progressTimingCounters = new ConcurrentHashMap<Table, ProgressCounter>();
+    private final ConcurrentMap<Table, TableProgressInformationPanel> _tableProgressInformationPanels;
+    private final ConcurrentMap<Table, ProgressCounter> _progressTimingCounters;
     private final JButton _cancelButton;
     private final DCTaskPaneContainer _taskPaneContainer;
+    private final Stopwatch _stopWatch;
 
-    public ProgressInformationPanel() {
+    public ProgressInformationPanel(boolean running) {
         super();
         setLayout(new BorderLayout());
+        _tableProgressInformationPanels = new ConcurrentHashMap<Table, TableProgressInformationPanel>();
+        _progressTimingCounters = new ConcurrentHashMap<Table, ProgressCounter>();
+        _stopWatch = Stopwatch.createUnstarted();
+        _executionLogTextArea = new JTextArea();
         _executionLogTextArea.setText("--- DataCleaner progress information user-log ---");
         _executionLogTextArea.setEditable(false);
 
@@ -89,7 +97,9 @@ public class ProgressInformationPanel extends DCPanel {
         executionLogTaskPane.add(_executionLogTextArea);
 
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        _taskPaneContainer.add(progressTaskPane);
+        if (running) {
+            _taskPaneContainer.add(progressTaskPane);
+        }
         _taskPaneContainer.add(executionLogTaskPane);
 
         _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
@@ -102,7 +112,9 @@ public class ProgressInformationPanel extends DCPanel {
         bottomPanel.add(_cancelButton, BorderLayout.EAST);
 
         add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        if (running) {
+            add(bottomPanel, BorderLayout.SOUTH);
+        }
     }
 
     public String getTextAreaText() {
@@ -265,7 +277,13 @@ public class ProgressInformationPanel extends DCPanel {
     }
 
     public void onSuccess() {
-        addUserLog("Job success!");
+        if (_stopWatch.isRunning()) {
+            _stopWatch.stop();
+            _stopWatch.elapsed(TimeUnit.MINUTES);
+            
+            addUserLog("Job success! Elapsed time: " + _stopWatch);
+        }
+
         _cancelButton.setEnabled(false);
         Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
@@ -276,6 +294,7 @@ public class ProgressInformationPanel extends DCPanel {
 
     public void onBegin() {
         addUserLog("Job begin");
+        _stopWatch.start();
     }
 
 }

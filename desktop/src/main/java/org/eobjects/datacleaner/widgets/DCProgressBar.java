@@ -34,15 +34,28 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 public class DCProgressBar extends JProgressBar {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final int DEFAULT_HEIGHT = 20;
 
     private final ProgressCounter _value;
 
     public DCProgressBar(int min, int max) {
         super(min, max);
-        setMinimumSize(new Dimension(10, 30));
-        setMaximumSize(new Dimension(1000, 30));
+        setMinimumSize(new Dimension(10, DEFAULT_HEIGHT));
+        
         setOpaque(false);
         _value = new ProgressCounter(0);
+    }
+    
+    @Override
+    public Dimension getPreferredSize() {
+        int width = super.getPreferredSize().width;
+        return new Dimension(width, DEFAULT_HEIGHT);
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+        return new Dimension(1000, DEFAULT_HEIGHT);
     }
 
     /**
@@ -102,12 +115,12 @@ public class DCProgressBar extends JProgressBar {
         final int barWidth = (int) (width * completenessRatio);
         return barWidth;
     }
-
+    
     @Override
     protected void paintComponent(Graphics g) {
         final int width = getWidth();
         final int height = getHeight();
-
+        
         if (isOpaque()) {
             g.setColor(WidgetUtils.BG_COLOR_DARK);
             g.fillRect(0, 0, width, height);

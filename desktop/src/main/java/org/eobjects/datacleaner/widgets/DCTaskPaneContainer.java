@@ -30,8 +30,6 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 /**
  * Minor improvement to the regular JXTaskPaneContainer, wrapping all task panes
  * in a bordered panel.
- * 
- * @author Kasper Sørensen
  */
 public class DCTaskPaneContainer extends JXTaskPaneContainer {
 
@@ -43,7 +41,6 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 		setBackgroundPainter(null);
 	}
 
-	@Override
 	public void add(JXTaskPane group) {
 		DCPanel panel = createTaskPanePanel(group);
 		super.add(panel);
@@ -91,8 +88,7 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 		}
 		return result;
 	}
-
-	@Override
+	
 	public void remove(JXTaskPane group) {
 		Component[] components = getComponents();
 		for (Component component : components) {

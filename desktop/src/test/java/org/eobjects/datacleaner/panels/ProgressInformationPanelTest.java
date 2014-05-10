@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import junit.framework.TestCase;
 
+import org.eobjects.datacleaner.panels.result.ProgressInformationPanel;
 import org.eobjects.metamodel.MetaModelException;
 
 public class ProgressInformationPanelTest extends TestCase {

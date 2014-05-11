@@ -20,8 +20,6 @@
 package org.eobjects.datacleaner.panels.result;
 
 import java.awt.BorderLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
@@ -31,7 +29,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -73,7 +70,6 @@ public class ProgressInformationPanel extends DCPanel {
     private final DCPanel _progressBarPanel;
     private final ConcurrentMap<Table, TableProgressInformationPanel> _tableProgressInformationPanels;
     private final ConcurrentMap<Table, ProgressCounter> _progressTimingCounters;
-    private final JButton _cancelButton;
     private final DCTaskPaneContainer _taskPaneContainer;
     private final Stopwatch _stopWatch;
 
@@ -102,28 +98,11 @@ public class ProgressInformationPanel extends DCPanel {
         }
         _taskPaneContainer.add(executionLogTaskPane);
 
-        _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
-                IconUtils.ICON_SIZE_SMALL));
-        _cancelButton.setMargin(new Insets(1, 1, 1, 1));
-        _cancelButton.setVisible(false);
-
-        final DCPanel bottomPanel = new DCPanel();
-        bottomPanel.setLayout(new BorderLayout());
-        bottomPanel.add(_cancelButton, BorderLayout.EAST);
-
         add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
-        if (running) {
-            add(bottomPanel, BorderLayout.SOUTH);
-        }
     }
 
     public String getTextAreaText() {
         return _executionLogTextArea.getText();
-    }
-
-    public void addCancelActionListener(ActionListener actionListener) {
-        _cancelButton.addActionListener(actionListener);
-        _cancelButton.setVisible(true);
     }
 
     private String getTimestamp() {
@@ -149,7 +128,6 @@ public class ProgressInformationPanel extends DCPanel {
         appendMessage(stringWriter.toString());
 
         if (jobFinished) {
-            _cancelButton.setEnabled(false);
             final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                     .values();
             for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
@@ -263,7 +241,6 @@ public class ProgressInformationPanel extends DCPanel {
         for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressCancelled();
         }
-        _cancelButton.setEnabled(false);
     }
 
     /**
@@ -284,7 +261,6 @@ public class ProgressInformationPanel extends DCPanel {
             addUserLog("Job success! Elapsed time: " + _stopWatch);
         }
 
-        _cancelButton.setEnabled(false);
         Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
         for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {

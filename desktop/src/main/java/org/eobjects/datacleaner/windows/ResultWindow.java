@@ -107,6 +107,10 @@ public final class ResultWindow extends AbstractWindow {
     private final FileObject _jobFilename;
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
+    private final JButton _cancelButton;
+    private final JButton _saveButton;
+    private final JButton _exportButton;
+    private final JButton _publishButton;
 
     private AnalysisResult _result;
 
@@ -137,12 +141,46 @@ public final class ResultWindow extends AbstractWindow {
                 _progressInformationPanel);
         _tabbedPane.setUnclosableTab(0);
 
+        _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _cancelButton.setOpaque(false);
+
+        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
+            @Override
+            public AnalysisResult get() {
+                return getResult();
+            }
+        };
+        
+        _publishButton = new JButton("Publish to monitor server", imageManager.getImageIcon(
+                IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
+        if (_jobFilename == null) {
+            _publishButton.setEnabled(false);
+        } else {
+            _publishButton.setOpaque(false);
+            _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
+                    _userPreferences, resultRef, _jobFilename));
+        }
+
+        _saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _saveButton.setOpaque(false);
+        _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+
+        _exportButton = new JButton("Export to HTML", imageManager.getImageIcon("images/actions/website.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _exportButton.setOpaque(false);
+        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
+                _userPreferences));
+        
+        updateButtonVisibility(running);
+
         if (running) {
             // run the job in a swing worker
             _result = null;
             _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this);
 
-            _progressInformationPanel.addCancelActionListener(new ActionListener() {
+            _cancelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _worker.cancelIfRunning();
@@ -289,34 +327,6 @@ public final class ResultWindow extends AbstractWindow {
         banner.setLayout(null);
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
-            @Override
-            public AnalysisResult get() {
-                return getResult();
-            }
-        };
-
-        final JButton saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
-                IconUtils.ICON_SIZE_MEDIUM));
-        saveButton.setOpaque(false);
-        saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
-
-        final JButton exportButton = new JButton("Export to HTML", imageManager.getImageIcon(
-                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
-        exportButton.setOpaque(false);
-        exportButton
-                .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
-
-        final JButton publishButton = new JButton("Publish to monitor server", imageManager.getImageIcon(
-                IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
-        if (_jobFilename == null) {
-            publishButton.setEnabled(false);
-        } else {
-            publishButton.setOpaque(false);
-            publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                    _userPreferences, resultRef, _jobFilename));
-        }
-
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
@@ -328,9 +338,10 @@ public final class ResultWindow extends AbstractWindow {
             }
         }
 
-        banner.add(publishButton);
-        banner.add(exportButton);
-        banner.add(saveButton);
+        banner.add(_publishButton);
+        banner.add(_exportButton);
+        banner.add(_saveButton);
+        banner.add(_cancelButton);
         banner.add(Box.createHorizontalStrut(10));
 
         panel.add(banner, BorderLayout.NORTH);
@@ -400,6 +411,7 @@ public final class ResultWindow extends AbstractWindow {
     public void onUnexpectedError(AnalysisJob job, Throwable throwable) {
         if (throwable instanceof AnalysisJobCancellation) {
             _progressInformationPanel.onCancelled();
+            _cancelButton.setEnabled(false);
             return;
         } else if (throwable instanceof PreviousErrorsExistException) {
             // do nothing
@@ -412,6 +424,7 @@ public final class ResultWindow extends AbstractWindow {
         return new AnalysisListener() {
             @Override
             public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+                updateButtonVisibility(true);
                 _progressInformationPanel.onBegin();
             }
 
@@ -420,6 +433,7 @@ public final class ResultWindow extends AbstractWindow {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        updateButtonVisibility(false);
                         _progressInformationPanel.onSuccess();
                         if (_tabbedPane.getTabCount() > 1) {
                             // switch to the first available result panel
@@ -509,5 +523,12 @@ public final class ResultWindow extends AbstractWindow {
                 onUnexpectedError(job, throwable);
             }
         };
+    }
+
+    protected void updateButtonVisibility(boolean running) {
+        _cancelButton.setVisible(running);
+        _saveButton.setVisible(!running);
+        _publishButton.setVisible(!running);
+        _exportButton.setVisible(!running);
     }
 }

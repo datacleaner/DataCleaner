@@ -111,6 +111,7 @@ public final class ResultWindow extends AbstractWindow {
     private final JButton _saveButton;
     private final JButton _exportButton;
     private final JButton _publishButton;
+    private final List<JComponent> _pluggableButtons;
 
     private AnalysisResult _result;
 
@@ -141,6 +142,8 @@ public final class ResultWindow extends AbstractWindow {
                 _progressInformationPanel);
         _tabbedPane.setUnclosableTab(0);
 
+        _pluggableButtons = new ArrayList<JComponent>(1);
+
         _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
                 IconUtils.ICON_SIZE_MEDIUM));
         _cancelButton.setOpaque(false);
@@ -155,8 +158,8 @@ public final class ResultWindow extends AbstractWindow {
         _publishButton = new JButton("Publish to server", imageManager.getImageIcon(IconUtils.MENU_DQ_MONITOR,
                 IconUtils.ICON_SIZE_MEDIUM));
         _publishButton.setOpaque(false);
-        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                _userPreferences, resultRef, _jobFilename));
+        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
+                resultRef, _jobFilename));
 
         _saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
                 IconUtils.ICON_SIZE_MEDIUM));
@@ -168,8 +171,13 @@ public final class ResultWindow extends AbstractWindow {
         _exportButton.setOpaque(false);
         _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
-
-        updateButtonVisibility(running);
+        
+        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
+            JComponent component = pluggableComponent.eval(this);
+            if (component != null) {
+                _pluggableButtons.add(component);
+            }
+        }
 
         if (running) {
             // run the job in a swing worker
@@ -206,6 +214,8 @@ public final class ResultWindow extends AbstractWindow {
                 }
             });
         }
+        
+        updateButtonVisibility(running);
     }
 
     /**
@@ -327,11 +337,8 @@ public final class ResultWindow extends AbstractWindow {
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
 
-        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
-            JComponent component = pluggableComponent.eval(this);
-            if (component != null) {
-                banner.add(component);
-            }
+        for (JComponent pluggableButton : _pluggableButtons) {
+            banner.add(pluggableButton);
         }
 
         banner.add(_publishButton);
@@ -523,6 +530,10 @@ public final class ResultWindow extends AbstractWindow {
 
     protected void updateButtonVisibility(boolean running) {
         _cancelButton.setVisible(running);
+
+        for (JComponent pluggableButton : _pluggableButtons) {
+            pluggableButton.setVisible(!running);
+        }
         _saveButton.setVisible(!running);
         _publishButton.setVisible(!running);
         _exportButton.setVisible(!running);

@@ -151,16 +151,12 @@ public final class ResultWindow extends AbstractWindow {
                 return getResult();
             }
         };
-        
-        _publishButton = new JButton("Publish to monitor server", imageManager.getImageIcon(
-                IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
-        if (_jobFilename == null) {
-            _publishButton.setEnabled(false);
-        } else {
-            _publishButton.setOpaque(false);
-            _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                    _userPreferences, resultRef, _jobFilename));
-        }
+
+        _publishButton = new JButton("Publish to server", imageManager.getImageIcon(IconUtils.MENU_DQ_MONITOR,
+                IconUtils.ICON_SIZE_MEDIUM));
+        _publishButton.setOpaque(false);
+        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
+                _userPreferences, resultRef, _jobFilename));
 
         _saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
                 IconUtils.ICON_SIZE_MEDIUM));
@@ -172,7 +168,7 @@ public final class ResultWindow extends AbstractWindow {
         _exportButton.setOpaque(false);
         _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
-        
+
         updateButtonVisibility(running);
 
         if (running) {

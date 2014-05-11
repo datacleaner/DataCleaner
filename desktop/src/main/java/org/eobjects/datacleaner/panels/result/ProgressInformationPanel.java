@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.ErrorUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.ProgressCounter;
@@ -121,6 +122,7 @@ public class ProgressInformationPanel extends DCPanel {
             stringWriter.append('\n');
             stringWriter.append("(No stack trace provided)");
         } else {
+            throwable = ErrorUtils.unwrapForPresentation(throwable);
             stringWriter.append('\n');
             PrintWriter printWriter = new PrintWriter(stringWriter);
             printStackTrace(printWriter, throwable);

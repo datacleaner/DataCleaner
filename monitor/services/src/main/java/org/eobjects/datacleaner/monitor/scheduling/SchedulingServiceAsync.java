@@ -41,6 +41,8 @@ public interface SchedulingServiceAsync {
 
     void getLatestExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
 
+    void cancelExecution(TenantIdentifier tenant, ExecutionLog executionLog, AsyncCallback<Boolean> callback);
+
     void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<ExecutionIdentifier>> callback);
 
     void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
@@ -53,4 +55,5 @@ public interface SchedulingServiceAsync {
 
     void removeSchedule(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<Void> callback);
 
+    void getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier, AsyncCallback<ScheduleDefinition> callback);
 }

@@ -35,13 +35,13 @@ import org.eobjects.metamodel.util.Resource;
 
 public class TenantContextFactoryImplTest extends TestCase {
 
-    public void testUseTenantSpecificInjectionManager() throws Exception {
-        Repository repository = new FileRepository("src/test/resources/example_repo");
-        InjectionManagerFactory parentInjectionManagerFactory = new InjectionManagerFactoryImpl();
-        JobEngineManager jobEngineManager = new MockJobEngineManager();
+    private Repository repository = new FileRepository("src/test/resources/example_repo");
+    private InjectionManagerFactory parentInjectionManagerFactory = new InjectionManagerFactoryImpl();
+    private JobEngineManager jobEngineManager = new MockJobEngineManager();
+    private TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
+            parentInjectionManagerFactory, jobEngineManager);
 
-        TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-                parentInjectionManagerFactory, jobEngineManager);
+    public void testUseTenantSpecificInjectionManager() throws Exception {
         TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
 
         InjectionManager injectionManager = tenantContext.getConfiguration().getInjectionManager(null);
@@ -49,17 +49,44 @@ public class TenantContextFactoryImplTest extends TestCase {
 
         TenantInjectionManager tenantInjectionManager = (TenantInjectionManager) injectionManager;
         assertEquals("tenant1", tenantInjectionManager.getTenantId());
-        
+
         StringConverter converter = injectionManager.getInstance(SimpleInjectionPoint.of(StringConverter.class));
-        
+
         Resource resource = converter.deserialize("repo://jobs/email_standardizer.analysis.xml", Resource.class);
         assertTrue(resource.isExists());
-        
+
         RepositoryFileResource repositoryFileResource = (RepositoryFileResource) resource;
-        
-        assertEquals("/tenant1/jobs/email_standardizer.analysis.xml", repositoryFileResource.getRepositoryFile().getQualifiedPath());
-        
+
+        assertEquals("/tenant1/jobs/email_standardizer.analysis.xml", repositoryFileResource.getRepositoryFile()
+                .getQualifiedPath());
+
         String serializedForm = converter.serialize(resource);
         assertEquals("repo://jobs/email_standardizer.analysis.xml", serializedForm);
+    }
+
+    public void testValidateTenantId() throws Exception {
+        try {
+            tenantContextFactory.getContext("\\//");
+            fail("Exception expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Tenant ID contained only invalid characters: \\//", e.getMessage());
+        }
+    }
+
+    public void testStandardizeTenantIdToCacheTenantContext() throws Exception {
+        TenantContext tc1 = tenantContextFactory.getContext("tenant1");
+        TenantContext tc2 = tenantContextFactory.getContext("   TENANT1 ");
+        TenantContext tc3 = tenantContextFactory.getContext("Tenant\\1");
+
+        assertSame(tc1, tc2);
+        assertSame(tc1, tc3);
+
+        assertEquals("tenant1", tc3.getTenantId());
+
+        TenantContext tc4 = tenantContextFactory.getContext("Tenant\\\n2");
+
+        assertNotSame(tc1, tc4);
+
+        assertEquals("tenant2", tc4.getTenantId());
     }
 }

@@ -320,9 +320,12 @@ public final class WidgetUtils {
             final Throwable exception) {
         JXErrorPane.setDefaultLocale(Locale.ENGLISH);
         final JXErrorPane errorPane = new JXErrorPane();
-        String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
-        String finalShortMessage = shortMessage == null ? "" : shortMessage;
-        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", exception,
+        final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
+        final String finalShortMessage = shortMessage == null ? "" : shortMessage;
+        
+        final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
+        
+        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", presentedException,
                 ErrorLevel.SEVERE, null);
         errorPane.setErrorInfo(info);
         final JDialog dialog = JXErrorPane.createDialog(null, errorPane);

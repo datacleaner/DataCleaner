@@ -24,15 +24,10 @@
 
 	<inherits name="org.eobjects.datacleaner.monitor.Widgets"/>
 
-	<entry-point
-		class='org.eobjects.datacleaner.monitor.scheduling.SchedulingEntryPoint' />
+	<entry-point class='org.eobjects.datacleaner.monitor.scheduling.SchedulingEntryPoint' />
 
 	<source path='scheduling' />
-	<source path='shared' />
 	
-	<stylesheet src="shared.css" />
 	<stylesheet src="scheduling.css" />
-	
-	<public path="resources" />
 
 </module>

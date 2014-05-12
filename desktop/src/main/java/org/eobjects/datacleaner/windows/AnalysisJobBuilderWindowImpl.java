@@ -584,8 +584,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             public void actionPerformed(ActionEvent e) {
                 applyPropertyValues();
 
-                // TODO: Also support exploring analyzers
-
                 runAnalysisActionListener.actionPerformed(e);
             }
         });
@@ -672,7 +670,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         List<MergedOutcomeJobBuilder> mergedOutcomeJobBuilders = _analysisJobBuilder.getMergedOutcomeJobBuilders();
         for (MergedOutcomeJobBuilder mojb : mergedOutcomeJobBuilders) {
-            // TODO: onAdd(mojb)
             logger.warn("Job contains unsupported MergedOutcomeJobBuilders: {}", mojb);
         }
 

@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.cluster.ClusterManager;
 import org.eobjects.analyzer.cluster.DistributedAnalysisRunner;
@@ -83,12 +84,14 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
     private final ClusterManagerFactory _clusterManagerFactory;
     private final DescriptorProvider _descriptorProvider;
+    private final Map<String, AnalysisResultFuture> _runningJobs;
 
     @Autowired
     public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider) {
         super(FileFilters.ANALYSIS_XML.getExtension());
         _clusterManagerFactory = clusterManagerFactory;
         _descriptorProvider = descriptorProvider;
+        _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
     }
 
     @Override
@@ -117,26 +120,26 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
+    public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception {
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, executionLogger);
 
-        final DataCleanerJobContext job = (DataCleanerJobContext) context.getJob(execution.getJob());
+        final DataCleanerJobContext job = (DataCleanerJobContext) tenantContext.getJob(execution.getJob());
         if (job == null) {
             throw new IllegalStateException("No such job: " + execution.getJob());
         }
 
-        preLoadJob(context, job);
+        preLoadJob(tenantContext, job);
 
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
 
         final AnalysisJob analysisJob = job.getAnalysisJob(variables);
 
-        preExecuteJob(context, job, analysisJob);
+        preExecuteJob(tenantContext, job, analysisJob);
 
         final ClusterManager clusterManager;
         if (_clusterManagerFactory != null && execution.getSchedule().isDistributedExecution()) {
-            final TenantIdentifier tenant = new TenantIdentifier(context.getTenantId());
+            final TenantIdentifier tenant = new TenantIdentifier(tenantContext.getTenantId());
             clusterManager = _clusterManagerFactory.getClusterManager(tenant);
         } else {
             clusterManager = null;
@@ -153,9 +156,56 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         // fire the job
         final AnalysisResultFuture resultFuture = runner.run(analysisJob);
 
-        // await the completion of the job (to block concurrent execution by
-        // Quartz).
-        resultFuture.await();
+        putRunningJob(tenantContext, execution, resultFuture);
+        try {
+            // await the completion of the job (to block concurrent execution by
+            // Quartz).
+            resultFuture.await();
+        } finally {
+            removeRunningJob(tenantContext, execution);
+        }
+    }
+
+    @Override
+    public boolean cancelJob(TenantContext tenantContext, ExecutionLog execution) {
+        final AnalysisResultFuture resultFuture = getRunningJob(tenantContext, execution);
+        if (resultFuture == null) {
+            logger.info("cancelJob(...) invoked but job not found: {}, {}", tenantContext, execution);
+            return false;
+        }
+
+        try {
+            logger.info("Invoking cancel on job: {}, {}", tenantContext, execution);
+            resultFuture.cancel();
+            return true;
+        } catch (Exception e) {
+            logger.warn("Unexpected exception thrown while cancelling job: " + tenantContext + ", " + execution, e);
+            return false;
+        }
+    }
+
+    private void removeRunningJob(TenantContext tenantContext, ExecutionLog execution) {
+        if (tenantContext == null || execution == null) {
+            return;
+        }
+        final String key = tenantContext.getTenantId() + "-" + execution.getResultId();
+        _runningJobs.remove(key);
+    }
+
+    private void putRunningJob(TenantContext tenantContext, ExecutionLog execution, AnalysisResultFuture resultFuture) {
+        if (tenantContext == null || execution == null) {
+            return;
+        }
+        final String key = tenantContext.getTenantId() + "-" + execution.getResultId();
+        _runningJobs.put(key, resultFuture);
+    }
+
+    private AnalysisResultFuture getRunningJob(TenantContext tenantContext, ExecutionLog execution) {
+        if (tenantContext == null || execution == null) {
+            return null;
+        }
+        final String key = tenantContext.getTenantId() + "-" + execution.getResultId();
+        return _runningJobs.get(key);
     }
 
     /**

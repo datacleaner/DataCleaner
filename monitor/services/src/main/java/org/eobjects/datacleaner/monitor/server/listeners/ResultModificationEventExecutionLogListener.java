@@ -28,6 +28,7 @@ import org.eobjects.datacleaner.monitor.events.ResultModificationEvent;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -71,17 +72,19 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
             return;
         }
 
+        final String resultId = event.getNewFilename().replace(resultExtension, "");
+
+        final JobIdentifier jobIdentifier = JobIdentifier.fromResultId(resultId);
+
         final ExecutionLog executionLog = oldFile.readFile(new Func<InputStream, ExecutionLog>() {
             @Override
             public ExecutionLog eval(InputStream in) {
                 final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
-                return reader.read(in, new TenantIdentifier(tenant));
+                return reader.read(in, jobIdentifier, new TenantIdentifier(tenant));
             }
         });
 
-        final String resultId = event.getNewFilename().replace(resultExtension, "");
         executionLog.setResultId(resultId);
-
         final String newFilename = resultId + executionLogExtension;
 
         final JaxbExecutionLogWriter writer = new JaxbExecutionLogWriter();
@@ -100,5 +103,4 @@ public class ResultModificationEventExecutionLogListener implements ApplicationL
 
         oldFile.delete();
     }
-
 }

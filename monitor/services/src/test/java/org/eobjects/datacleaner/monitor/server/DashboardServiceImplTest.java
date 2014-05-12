@@ -66,7 +66,7 @@ public class DashboardServiceImplTest extends TestCase {
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
-        assertEquals(5, jobs.size());
+        assertEquals(6, jobs.size());
 
         Collections.sort(jobs);
 

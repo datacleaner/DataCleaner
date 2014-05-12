@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.actions;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -35,6 +37,8 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.util.Ref;
 
+import com.google.common.base.Strings;
+
 /**
  * Action listener invoked when the user clicks the "Publish to dq monitor"
  * button on the {@link ResultWindow}.
@@ -45,6 +49,7 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     private final FileObject _jobFilename;
 
     private byte[] _bytes;
+    private String _resultFilename;
 
     public PublishResultToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
             Ref<AnalysisResult> resultRef, @Nullable @JobFile FileObject jobFilename) {
@@ -62,14 +67,29 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     }
 
     @Override
-    protected String getTransferredFilename() {
-        final String jobExtension = FileFilters.ANALYSIS_XML.getExtension();
+    protected boolean doBeforeAction() {
+        if (_jobFilename == null) {
+            final String jobName = JOptionPane.showInputDialog(null, "Enter the name of a (new or existing) job on the server that this result refers to?", "Job name on server",
+                    JOptionPane.QUESTION_MESSAGE);
+            if (Strings.isNullOrEmpty(jobName)) {
+                return false;
+            }
+            _resultFilename = jobName;
+        } else {
+            final String jobExtension = FileFilters.ANALYSIS_XML.getExtension();
 
-        String baseName = _jobFilename.getName().getBaseName();
-        if (baseName.endsWith(jobExtension)) {
-            baseName = baseName.substring(0, baseName.length() - jobExtension.length());
+            String baseName = _jobFilename.getName().getBaseName();
+            if (baseName.endsWith(jobExtension)) {
+                baseName = baseName.substring(0, baseName.length() - jobExtension.length());
+            }
+            _resultFilename = baseName;
         }
-        return baseName;
+        return true;
+    }
+
+    @Override
+    protected String getTransferredFilename() {
+        return _resultFilename;
     }
 
     @Override

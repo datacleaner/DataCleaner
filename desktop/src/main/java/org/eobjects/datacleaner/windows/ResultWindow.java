@@ -27,15 +27,16 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -43,12 +44,25 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.job.FilterJob;
+import org.eobjects.analyzer.job.TransformerJob;
+import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
+import org.eobjects.analyzer.job.runner.AnalysisJobCancellation;
+import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
+import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
+import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
+import org.eobjects.analyzer.util.LabelUtils;
+import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.ExportResultToHtmlActionListener;
 import org.eobjects.datacleaner.actions.PublishResultToMonitorActionListener;
@@ -58,7 +72,8 @@ import org.eobjects.datacleaner.guice.JobFile;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.panels.ProgressInformationPanel;
+import org.eobjects.datacleaner.panels.result.ProgressInformationPanel;
+import org.eobjects.datacleaner.panels.result.ResultListPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -70,6 +85,10 @@ import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.Ref;
 
+/**
+ * Window in which the result (and running progress information) of job
+ * execution is shown.
+ */
 public final class ResultWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
@@ -80,7 +99,7 @@ public final class ResultWindow extends AbstractWindow {
     private static final ImageManager imageManager = ImageManager.getInstance();
 
     private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane(true);
-    private final Map<Object, ResultListPanel> _resultPanels = new HashMap<Object, ResultListPanel>();
+    private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
     private final AnalysisJob _job;
     private final AnalyzerBeansConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
@@ -88,6 +107,11 @@ public final class ResultWindow extends AbstractWindow {
     private final FileObject _jobFilename;
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
+    private final JButton _cancelButton;
+    private final JButton _saveButton;
+    private final JButton _exportButton;
+    private final JButton _publishButton;
+    private final List<JComponent> _pluggableButtons;
 
     private AnalysisResult _result;
 
@@ -107,22 +131,60 @@ public final class ResultWindow extends AbstractWindow {
             @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
+        final boolean running = (result == null);
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
-        _progressInformationPanel = new ProgressInformationPanel();
+        _progressInformationPanel = new ProgressInformationPanel(running);
         _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
                 _progressInformationPanel);
         _tabbedPane.setUnclosableTab(0);
 
-        if (result == null) {
+        _pluggableButtons = new ArrayList<JComponent>(1);
+
+        _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _cancelButton.setOpaque(false);
+
+        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
+            @Override
+            public AnalysisResult get() {
+                return getResult();
+            }
+        };
+
+        _publishButton = new JButton("Publish to server", imageManager.getImageIcon(IconUtils.MENU_DQ_MONITOR,
+                IconUtils.ICON_SIZE_MEDIUM));
+        _publishButton.setOpaque(false);
+        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
+                resultRef, _jobFilename));
+
+        _saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _saveButton.setOpaque(false);
+        _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+
+        _exportButton = new JButton("Export to HTML", imageManager.getImageIcon("images/actions/website.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        _exportButton.setOpaque(false);
+        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
+                _userPreferences));
+        
+        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
+            JComponent component = pluggableComponent.eval(this);
+            if (component != null) {
+                _pluggableButtons.add(component);
+            }
+        }
+
+        if (running) {
             // run the job in a swing worker
             _result = null;
-            _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
+            _worker = new AnalysisRunnerSwingWorker(_configuration, _job, this);
 
-            _progressInformationPanel.addStopActionListener(new ActionListener() {
+            _cancelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     _worker.cancelIfRunning();
@@ -141,7 +203,19 @@ public final class ResultWindow extends AbstractWindow {
                 addResult(componentJob, analyzerResult);
             }
             _progressInformationPanel.onSuccess();
+
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (_tabbedPane.getTabCount() > 1) {
+                        // switch to the first available result panel
+                        _tabbedPane.setSelectedIndex(1);
+                    }
+                }
+            });
         }
+        
+        updateButtonVisibility(running);
     }
 
     /**
@@ -157,69 +231,31 @@ public final class ResultWindow extends AbstractWindow {
         _worker.execute();
     }
 
-    private void addTableResultPanel(final Table table) {
-        final String name = table.getName();
-        final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-        final ImageIcon icon = imageManager.getImageIcon("images/model/table.png");
-        _resultPanels.put(table, panel);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                _tabbedPane.addTab(name, icon, panel);
-                if (_tabbedPane.getTabCount() == 2) {
-                    // switch to the first available result panel
-                    _tabbedPane.setSelectedIndex(1);
-                }
+    private ResultListPanel getDescriptorResultPanel(final ComponentDescriptor<?> descriptor) {
+        ResultListPanel resultPanel = _resultPanels.get(descriptor);
+        if (resultPanel == null) {
+            resultPanel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
+            ResultListPanel previous = _resultPanels.putIfAbsent(descriptor, resultPanel);
+            if (previous != null) {
+                resultPanel = previous;
+            } else {
+                final ResultListPanel finalResultListPanel = resultPanel;
+                final String name = descriptor.getDisplayName();
+                final Icon icon = IconUtils.getDescriptorIcon(descriptor);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        _tabbedPane.addTab(name, icon, finalResultListPanel);
+                    }
+                });
             }
-        });
-    }
-
-    private void addDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
-        final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-        final String name = descriptor.getDisplayName();
-        final Icon icon = IconUtils.getDescriptorIcon(descriptor);
-        _resultPanels.put(descriptor, panel);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                _tabbedPane.addTab(name, icon, panel);
-                if (_tabbedPane.getTabCount() == 2) {
-                    // switch to the first available result panel
-                    _tabbedPane.setSelectedIndex(1);
-                }
-            }
-        });
-    }
-
-    private ResultListPanel getDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
-        synchronized (_resultPanels) {
-            if (!_resultPanels.containsKey(descriptor)) {
-                addDescriptorResultPanel(descriptor);
-            }
-            return _resultPanels.get(descriptor);
         }
-    }
-
-    private ResultListPanel getTableResultPanel(Table table) {
-        synchronized (_resultPanels) {
-            if (!_resultPanels.containsKey(table)) {
-                addTableResultPanel(table);
-            }
-            return _resultPanels.get(table);
-        }
+        return resultPanel;
     }
 
     public void addResult(ComponentJob componentJob, AnalyzerResult result) {
         ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         ResultListPanel resultListPanel = getDescriptorResultPanel(descriptor);
-        resultListPanel.addResult(componentJob, result);
-    }
-
-    public void addResult(Table table, ComponentJob componentJob, AnalyzerResult result) {
-        if (table == null) {
-            return;
-        }
-        ResultListPanel resultListPanel = getTableResultPanel(table);
         resultListPanel.addResult(componentJob, result);
     }
 
@@ -297,48 +333,18 @@ public final class ResultWindow extends AbstractWindow {
         banner.setLayout(null);
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
-            @Override
-            public AnalysisResult get() {
-                return _result;
-            }
-        };
-
-        final JButton saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
-                IconUtils.ICON_SIZE_MEDIUM));
-        saveButton.setOpaque(false);
-        saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
-
-        final JButton exportButton = new JButton("Export to HTML", imageManager.getImageIcon(
-                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
-        exportButton.setOpaque(false);
-        exportButton
-                .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
-
-        final JButton publishButton = new JButton("Publish to monitor server", imageManager.getImageIcon(
-                IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
-        if (_jobFilename == null) {
-            publishButton.setEnabled(false);
-        } else {
-            publishButton.setOpaque(false);
-            publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                    _userPreferences, resultRef, _jobFilename));
-        }
-
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
 
-        for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
-            JComponent component = pluggableComponent.eval(this);
-            if (component != null) {
-                banner.add(component);
-            }
+        for (JComponent pluggableButton : _pluggableButtons) {
+            banner.add(pluggableButton);
         }
 
-        banner.add(publishButton);
-        banner.add(exportButton);
-        banner.add(saveButton);
+        banner.add(_publishButton);
+        banner.add(_exportButton);
+        banner.add(_saveButton);
+        banner.add(_cancelButton);
         banner.add(Box.createHorizontalStrut(10));
 
         panel.add(banner, BorderLayout.NORTH);
@@ -367,6 +373,13 @@ public final class ResultWindow extends AbstractWindow {
     }
 
     public AnalysisResult getResult() {
+        if (_result == null && _worker != null) {
+            try {
+                _result = _worker.get();
+            } catch (Exception e) {
+                WidgetUtils.showErrorMessage("Unable to fetch result", e);
+            }
+        }
         return _result;
     }
 
@@ -396,5 +409,133 @@ public final class ResultWindow extends AbstractWindow {
 
     public Map<Object, ResultListPanel> getResultPanels() {
         return _resultPanels;
+    }
+
+    public void onUnexpectedError(AnalysisJob job, Throwable throwable) {
+        if (throwable instanceof AnalysisJobCancellation) {
+            _progressInformationPanel.onCancelled();
+            _cancelButton.setEnabled(false);
+            return;
+        } else if (throwable instanceof PreviousErrorsExistException) {
+            // do nothing
+            return;
+        }
+        _progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable, true);
+    }
+
+    public AnalysisListener createAnalysisListener() {
+        return new AnalysisListener() {
+            @Override
+            public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
+                updateButtonVisibility(true);
+                _progressInformationPanel.onBegin();
+            }
+
+            @Override
+            public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateButtonVisibility(false);
+                        _progressInformationPanel.onSuccess();
+                        if (_tabbedPane.getTabCount() > 1) {
+                            // switch to the first available result panel
+                            _tabbedPane.setSelectedIndex(1);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+                final int expectedRows = metrics.getExpectedRows();
+                final Table table = metrics.getTable();
+                if (expectedRows == -1) {
+                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
+                } else {
+                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName() + " (approx. "
+                            + expectedRows + " rows)");
+                    _progressInformationPanel.setExpectedRows(table, expectedRows);
+                }
+            }
+
+            @Override
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+                _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
+            }
+
+            @Override
+            public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+                _progressInformationPanel.updateProgressFinished(metrics.getTable());
+                _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
+                        + " finished. Generating results ...");
+            }
+
+            @Override
+            public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
+                _progressInformationPanel.addUserLog("Starting analyzer '" + LabelUtils.getLabel(analyzerJob) + "'");
+            }
+
+            @Override
+            public void analyzerSuccess(AnalysisJob job, final AnalyzerJob analyzerJob, final AnalyzerResult result) {
+                final List<InputColumn<?>> inputColumns = Arrays.asList(analyzerJob.getInput());
+                final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+                sourceColumnFinder.addSources(job);
+
+                Table table = null;
+                String tableName = null;
+                for (InputColumn<?> inputColumn : inputColumns) {
+                    table = sourceColumnFinder.findOriginatingTable(inputColumn);
+                    if (table != null) {
+                        tableName = table.getName();
+                        break;
+                    }
+                }
+
+                assert table != null;
+
+                _progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob)
+                        + "' finished, adding result to tab of " + tableName);
+                addResult(analyzerJob, result);
+            }
+
+            @Override
+            public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row,
+                    final Throwable throwable) {
+                _progressInformationPanel.addUserLog(
+                        "An error occurred in the filter: " + LabelUtils.getLabel(filterJob), throwable, true);
+            }
+
+            @Override
+            public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row,
+                    final Throwable throwable) {
+                _progressInformationPanel
+                        .addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
+                                throwable, true);
+            }
+
+            @Override
+            public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row,
+                    final Throwable throwable) {
+                _progressInformationPanel.addUserLog(
+                        "An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob), throwable, true);
+            }
+
+            @Override
+            public void errorUknown(AnalysisJob job, final Throwable throwable) {
+                onUnexpectedError(job, throwable);
+            }
+        };
+    }
+
+    protected void updateButtonVisibility(boolean running) {
+        _cancelButton.setVisible(running);
+
+        for (JComponent pluggableButton : _pluggableButtons) {
+            pluggableButton.setVisible(!running);
+        }
+        _saveButton.setVisible(!running);
+        _publishButton.setVisible(!running);
+        _exportButton.setVisible(!running);
     }
 }

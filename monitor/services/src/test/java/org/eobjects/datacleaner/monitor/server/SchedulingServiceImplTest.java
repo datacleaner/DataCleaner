@@ -36,7 +36,8 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
+import org.eobjects.datacleaner.monitor.server.job.DefaultJobEngineManager;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
@@ -54,26 +55,67 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 public class SchedulingServiceImplTest extends TestCase {
 
-    public void testScenario() throws Exception {
-        final File targetDir = new File("target/example_repo");
-        FileUtils.deleteDirectory(targetDir);
-        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
+    private SchedulingServiceImpl service;
+    private File resultDirectory;
+    private TenantContextFactory tenantContextFactory;
 
-        final Repository repository = new FileRepository(targetDir);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (service == null) {
+            final File targetDir = new File("target/example_repo");
+            FileUtils.deleteDirectory(targetDir);
+            FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
 
-        final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
-        service.setApplicationContext(applicationContext);
+            final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                    "context/application-context.xml");
 
-        service.initialize();
+            final Repository repository = new FileRepository(targetDir);
+            tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+                    new DefaultJobEngineManager(applicationContext));
+
+            service = new SchedulingServiceImpl(repository, tenantContextFactory);
+            service.setApplicationContext(applicationContext);
+
+            service.initialize();
+
+            resultDirectory = new File(targetDir, "tenant1/results");
+        }
+    }
+
+    public void testCancellation() throws Exception {
+        final TenantIdentifier tenant = new TenantIdentifier("tenant1");
+
+        final ScheduleDefinition schedule = service.getSchedule(tenant, new JobIdentifier("waiting_job"));
+        ExecutionLog execution = service.triggerExecution(tenant, schedule.getJob());
+
+        assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
+        assertNotNull(execution.getJob());
+
+        while (execution.getExecutionStatus() == ExecutionStatus.PENDING) {
+            execution = service.getExecution(tenant, execution);
+            assertNotNull(execution.getJob());
+        }
+
+        boolean result = service.cancelExecution(tenant, execution);
+        if (!result) {
+            final String logOutput = execution.getLogOutput();
+            System.err.println(logOutput);
+            fail("Expected positive result");
+        }
+
+        execution = service.getExecution(tenant, execution);
+        assertEquals(ExecutionStatus.FAILURE, execution.getExecutionStatus());
+
+        final String logOutput = execution.getLogOutput();
+        assertTrue(logOutput, logOutput.indexOf("org.eobjects.analyzer.job.runner.AnalysisJobCancellation") != -1);
+    }
+
+    public void testActiveQuartzTriggersInScenario() throws Exception {
         Scheduler scheduler = service.getScheduler();
 
         assertTrue(scheduler.isStarted());
 
-        final File resultDirectory = new File(targetDir, "tenant1/results");
         final FilenameFilter filenameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -101,7 +143,7 @@ public class SchedulingServiceImplTest extends TestCase {
             // sort to make it deterministic
             Collections.sort(schedules);
 
-            assertEquals(5, schedules.size());
+            assertEquals(6, schedules.size());
             assertEquals(null, schedules.get(1).getCronExpression());
             ScheduleDefinition randomNumberGenerationSchedule = schedules.get(4);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());

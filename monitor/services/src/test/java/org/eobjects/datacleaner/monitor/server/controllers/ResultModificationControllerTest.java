@@ -35,6 +35,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.server.listeners.ResultModificationEventExecutionLogListener;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -75,7 +76,8 @@ public class ResultModificationControllerTest extends TestCase {
         ResultModificationPayload input = new ResultModificationPayload();
         input.setJob("email_standardizer");
 
-        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
+                input);
         assertEquals("{new_result_name=email_standardizer-1338990580902.analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/email_standardizer-1338990580902.analysis.result.dat}",
@@ -89,7 +91,8 @@ public class ResultModificationControllerTest extends TestCase {
         // reproduce the date, to make unittest locale-independent
         Date date = ConvertToDateTransformer.getInternalInstance().transformValue("2012-12-17");
 
-        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
+                input);
         assertEquals("{new_result_name=product_profiling-" + date.getTime() + ".analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/product_profiling-" + date.getTime() + ".analysis.result.dat}",
@@ -105,7 +108,8 @@ public class ResultModificationControllerTest extends TestCase {
         input.setJob("email_standardizer");
         input.setDate("1355698800000");
 
-        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3",
+                input);
         assertEquals("{new_result_name=email_standardizer-1355698800000.analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/email_standardizer-1355698800000.analysis.result.dat}",
@@ -117,14 +121,15 @@ public class ResultModificationControllerTest extends TestCase {
         RepositoryFile executionLogFile = (RepositoryFile) repository
                 .getRepositoryNode("/tenant1/results/email_standardizer-1355698800000.analysis.execution.log.xml");
         assertNotNull(executionLogFile);
-        
+
         executionLogFile.readFile(new Action<InputStream>() {
             @Override
             public void run(InputStream inputStream) throws Exception {
-                ExecutionLog executionLog = new JaxbExecutionLogReader().read(inputStream, new TenantIdentifier("tenant1"));
+                ExecutionLog executionLog = new JaxbExecutionLogReader().read(inputStream, new JobIdentifier(
+                        "email_standardizer"), new TenantIdentifier("tenant1"));
                 assertEquals("email_standardizer-1355698800000", executionLog.getResultId());
             }
         });
-        
+
     }
 }

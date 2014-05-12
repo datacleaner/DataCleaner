@@ -5,22 +5,24 @@
 	<ui:define name="head">
 		<script type="text/javascript" language="javascript" src="scheduling/scheduling.nocache.js" />
 		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
-		<script type="text/javascript">
-			//<![CDATA[
-			var datacleaner = {
-				onApiInitialized : function() {
-					$(document).ready(function() {
-						// check if wizard needs to start immediately
-						var hashPartOfUri = window.location.hash;
-						if (hashPartOfUri == "#startWizard") {
-							datacleaner.startJobWizard();
-							window.location.hash = "";
-						}
-					});
+		<c:if test="#{user.scheduleEditor}">
+			<script type="text/javascript">
+				//<![CDATA[
+				var datacleaner = {
+					onApiInitialized : function() {
+						$(document).ready(function() {
+							// check if wizard needs to start immediately
+							var hashPartOfUri = window.location.hash;
+							if (hashPartOfUri == "#startWizard") {
+								datacleaner.startJobWizard();
+								window.location.hash = "";
+							}
+						});
+					}
 				}
-			}
-			//]]>
-		</script>
+				//]]>
+			</script>
+		</c:if>
 	</ui:define>
 
 	<ui:define name="content">

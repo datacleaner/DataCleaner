@@ -28,15 +28,10 @@
 	<set-property name="gflot.load.flot.text" value="ENABLED" />
 	<set-property name="gflot.load.canvas2image" value="ENABLED" />
 
-	<entry-point
-		class='org.eobjects.datacleaner.monitor.dashboard.DashboardEntryPoint' />
+	<entry-point class='org.eobjects.datacleaner.monitor.dashboard.DashboardEntryPoint' />
 
 	<source path='dashboard' />
-	<source path='shared' />
 	
-	<stylesheet src="shared.css" />
 	<stylesheet src="dashboard.css" />
 	
-	<public path="resources" />
-
 </module>

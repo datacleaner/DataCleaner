@@ -78,4 +78,9 @@ public class SharedTaskRunner implements TaskRunner {
     public void shutdown() {
         getDelegate().shutdown();
     }
+    
+    @Override
+    public String toString() {
+        return "SharedTaskRunner[" + getDelegate() + "]";
+    }
 }

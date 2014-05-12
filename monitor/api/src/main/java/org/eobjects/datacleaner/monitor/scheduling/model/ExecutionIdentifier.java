@@ -38,6 +38,11 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
     public ExecutionIdentifier() {
         this(null, null);
     }
+    
+    public ExecutionIdentifier(String resultId) {
+        this(resultId, null);
+        _executionStatus = ExecutionStatus.UNKNOWN;
+    }
 
     protected ExecutionIdentifier(String resultId, TriggerType triggerType) {
         _resultId = resultId;

@@ -418,4 +418,9 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
             return Collections.emptyList();
         }
     }
+
+    @Override
+    public boolean cancelJob(TenantContext tenantContext, ExecutionLog executionLog) {
+        return false;
+    }
 }

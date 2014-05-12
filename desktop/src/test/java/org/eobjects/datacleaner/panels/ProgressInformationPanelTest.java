@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import junit.framework.TestCase;
 
+import org.eobjects.datacleaner.panels.result.ProgressInformationPanel;
 import org.eobjects.metamodel.MetaModelException;
 
 public class ProgressInformationPanelTest extends TestCase {
@@ -43,7 +44,7 @@ public class ProgressInformationPanelTest extends TestCase {
 	}
 
 	public void testPrintNextSQLExceptions() throws Exception {
-		ProgressInformationPanel panel = new ProgressInformationPanel();
+		ProgressInformationPanel panel = new ProgressInformationPanel(true);
 		panel.addUserLog("damn, something rotten happened!", outerException, true);
 
 		// wait for swing dispatch
@@ -57,7 +58,7 @@ public class ProgressInformationPanelTest extends TestCase {
 	}
 
 	public void testPrintSingleException() throws Exception {
-		ProgressInformationPanel panel = new ProgressInformationPanel();
+		ProgressInformationPanel panel = new ProgressInformationPanel(true);
 		panel.addUserLog("damn, something rotten happened!", sql2, true);
 
 		// wait for swing dispatch

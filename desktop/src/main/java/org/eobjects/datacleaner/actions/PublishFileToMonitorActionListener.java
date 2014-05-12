@@ -51,6 +51,8 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * Abstract {@link SwingWorker} and {@link ActionListener} for publishing a file
  * to the DataCleaner monitor webapp.
@@ -89,14 +91,33 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
             dialog.open();
         } else {
+            boolean cont = doBeforeAction();
+            if (!cont) {
+                return;
+            }
 
-            _progressWindow = new FileTransferProgressWindow(_windowContext, null,
-                    new String[] { getTransferredFilename() });
+            final String transferredFilename = getTransferredFilename();
+            if (Strings.isNullOrEmpty(transferredFilename)) {
+                return;
+            }
+
+            _progressWindow = new FileTransferProgressWindow(_windowContext, null, new String[] { transferredFilename });
             _progressWindow.open();
 
             // start the swing worker
             execute();
         }
+    }
+
+    /**
+     * Optionally overrideable method invoked before doing the publishing
+     * action.
+     * 
+     * @return true if the publishing may continue.
+     */
+    protected boolean doBeforeAction() {
+        // do nothing
+        return true;
     }
 
     @Override

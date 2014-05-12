@@ -24,15 +24,10 @@
 	
 	<inherits name="org.eobjects.datacleaner.monitor.Widgets"/>
 
-	<entry-point
-		class='org.eobjects.datacleaner.monitor.query.QueryEntryPoint' />
+	<entry-point class='org.eobjects.datacleaner.monitor.query.QueryEntryPoint' />
 
 	<source path='query' />
-	<source path='shared' />
 	
-	<stylesheet src="shared.css" />
 	<stylesheet src="query.css" />
-	
-	<public path="resources" />
 
 </module>

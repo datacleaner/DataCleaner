@@ -21,6 +21,9 @@ package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
 
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+
 /**
  * Identifies a job in the repository. The identifier is based on the name of
  * the job, but typically also holds the type (in the form of a JobType class
@@ -29,13 +32,13 @@ import java.io.Serializable;
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
     public static final String JOB_TYPE_CUSTOM_JOB = "CustomJob";
 
     private String _name;
     private String _type;
-    
+
     public JobIdentifier(String name, String type) {
         _name = name;
         _type = type;
@@ -99,6 +102,41 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
     @Override
     public int compareTo(JobIdentifier o) {
         return getName().compareTo(o.getName());
+    }
+
+    public static JobIdentifier fromResultId(String resultId) {
+        if (resultId == null || "".equals(resultId)) {
+            throw new IllegalArgumentException("Result ID cannot be null or empty string");
+        }
+
+        final int lastIndexOfDash = resultId.lastIndexOf('-');
+        if (lastIndexOfDash == -1 || lastIndexOfDash == 0) {
+            throw new IllegalArgumentException("Result ID '" + resultId
+                    + "' does not match expected pattern: [jobname]-[timestamp]");
+        }
+
+        final String timestamp = resultId.substring(lastIndexOfDash + 1);
+        try {
+            Long.parseLong(timestamp);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Result ID '" + resultId
+                    + "' does not match expected pattern: [jobname]-[timestamp]");
+        }
+        
+        final String jobName = resultId.substring(0, lastIndexOfDash);
+
+        return new JobIdentifier(jobName);
+    }
+
+    public static JobIdentifier fromExecutionIdentifier(ExecutionIdentifier executionIdentifier) {
+        if (executionIdentifier instanceof ExecutionLog) {
+            JobIdentifier job = ((ExecutionLog) executionIdentifier).getJob();
+            if (job != null) {
+                return job;
+            }
+        }
+        String resultId = executionIdentifier.getResultId();
+        return fromResultId(resultId);
     }
 
 }

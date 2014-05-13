@@ -405,7 +405,14 @@ div.center {
 	width: 300px;
 }
 
-.ExecutionStatusPanel .loader, .WizardFinishedPanel .loader {
+.loader {
+	width: 100%;
+	min-width: 32px;
+	background: url("loader.gif") no-repeat center center;
+	height: 32px;
+}
+
+.ExecutionStatusPanel .loader {
 	width: 100%;
 	min-width: 128px;
 	background: url("job_loader.gif") no-repeat center center;

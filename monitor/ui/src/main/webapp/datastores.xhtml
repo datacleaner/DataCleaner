@@ -4,30 +4,32 @@
 
 	<ui:define name="head">
 		<script type="text/javascript" language="javascript" src="wizard/wizard.nocache.js" />
-		<script type="text/javascript">
-		//<![CDATA[
-		    function confirmRemoveDatastore(datastore) {
-		    	if (confirm('Are you sure you wish to remove datastore "' + datastore + '"?\nRemoving the datastore may cause jobs to fail, if they depend on it.')) {
-		    		return true;
-		    	}
-		    	return false;
-		    }
-		    
-		    var datacleaner = {
-		    	onApiInitialized : function() {
-		    		$(document).ready(function() {
-				    	// check if wizard needs to start immediately
-				    	var hashPartOfUri = window.location.hash;
-				    	if (hashPartOfUri == "#startWizard") {
-				    		datacleaner.startDatastoreWizard();
-				    		window.location.hash = "";
-				    	}
-				    });
-		    	}
-		    }
-		    
-		//]]>
-		</script>
+		<c:if test="#{user.configurationEditor}">
+			<script type="text/javascript">
+			//<![CDATA[
+			    function confirmRemoveDatastore(datastore) {
+			    	if (confirm('Are you sure you wish to remove datastore "' + datastore + '"?\nRemoving the datastore may cause jobs to fail, if they depend on it.')) {
+			    		return true;
+			    	}
+			    	return false;
+			    }
+			    
+			    var datacleaner = {
+			    	onApiInitialized : function() {
+			    		$(document).ready(function() {
+					    	// check if wizard needs to start immediately
+					    	var hashPartOfUri = window.location.hash;
+					    	if (hashPartOfUri == "#startWizard") {
+					    		datacleaner.startDatastoreWizard();
+					    		window.location.hash = "";
+					    	}
+					    });
+			    	}
+			    }
+			    
+			//]]>
+			</script>
+		</c:if>
 	</ui:define>
 
 	<ui:define name="content">

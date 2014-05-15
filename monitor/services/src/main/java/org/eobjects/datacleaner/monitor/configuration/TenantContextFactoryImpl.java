@@ -121,7 +121,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     private String getStandardizedTenantName(final String tenantId) {
-        String standardizedTenantId = tenantId.trim().toLowerCase();
+        String standardizedTenantId = tenantId.trim();
 
         for (int i = 0; i < ILLEGAL_TENANT_ID_CHARACTERS.length; i++) {
             char c = ILLEGAL_TENANT_ID_CHARACTERS[i];

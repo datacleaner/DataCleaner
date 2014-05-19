@@ -421,18 +421,13 @@ div.center {
 	margin-bottom: 40px;
 }
 
-
-#easyoffboarding .gwt-Button.btn-warning:hover, #easyonboarding .gwt-Button.btn-warning:hover{
+.wizard-navigation-button {
 	color: #fff;
-	background-color: #ed9c28;
-	border-color: #d58512;
-}
-
-
-.btn {
+	background-color: #ff9600;
+	border-color: #eea236;
 	display: inline-block;
 	margin-bottom: 0;
-	font-weight: 400;
+	font-weight: normal;
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
@@ -443,8 +438,33 @@ div.center {
 	font-size: 14px;
 	line-height: 1.42857143;
 	border-radius: 4px;
+	height:auto;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.wizard-navigation-button:disabled, .wizard-navigation-button:hover:disabled {
+	background-color: #ddd;
+	cursor: default;
+	border: 1px solid #bbb;
+}
+
+.wizard-navigation-button:hover{
+	background-color:#f0ad4e;
+	border-color: #eea236;
+}
+
+.alert {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+
+.alert-information {
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+	color: #31708f;
 }

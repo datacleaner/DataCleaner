@@ -84,13 +84,15 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
 
         _previousStepButton = new Button("‹ Back");
         _previousStepButton.setEnabled(false);
+        _previousStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_previousStepButton);
 
         _nextStepButton = new Button("Next ›");
-        _nextStepButton.addStyleName("btn btn-warning");
+        _nextStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_nextStepButton);
+        
         Button cancelButton = new Button("Cancel");
-        cancelButton.addStyleName("btn btn-warning");
+        cancelButton.addStyleName("wizard-navigation-button");
         cancelButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -179,7 +181,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         } else {
             _previousButtonClickRegistration = _previousStepButton.addClickHandler(clickHandler);
             _previousStepButton.setEnabled(true);
-            _previousStepButton.addStyleName("btn btn-warning");
+            _previousStepButton.addStyleName("wizard-navigation-button");
         }
     }
 

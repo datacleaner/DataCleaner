@@ -22,8 +22,6 @@ package org.eobjects.datacleaner.monitor.server.listeners;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
-import org.eobjects.datacleaner.monitor.server.controllers.ResultModificationController;
-import org.eobjects.datacleaner.monitor.server.controllers.ResultModificationPayload;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -39,13 +37,10 @@ import org.springframework.stereotype.Component;
 public class JobModificationEventRenameResultsListener implements ApplicationListener<JobModificationEvent> {
 
     private final ResultDao _resultDao;
-    private final ResultModificationController _resultModificationController;
 
     @Autowired
-    public JobModificationEventRenameResultsListener(ResultDao resultDao,
-            ResultModificationController resultModificationController) {
+    public JobModificationEventRenameResultsListener(ResultDao resultDao) {
         _resultDao = resultDao;
-        _resultModificationController = resultModificationController;
     }
 
     @Override
@@ -57,14 +52,13 @@ public class JobModificationEventRenameResultsListener implements ApplicationLis
         }
 
         final String tenant = event.getTenant();
-        final List<RepositoryFile> oldResultFiles = _resultDao.getResultsForJob(new TenantIdentifier(tenant),
-                new JobIdentifier(oldJobName));
+        final TenantIdentifier tenantIdentifier = new TenantIdentifier(tenant);
+        final List<RepositoryFile> oldResultFiles = _resultDao.getResultsForJob(tenantIdentifier, new JobIdentifier(
+                oldJobName));
 
+        final JobIdentifier newJob = new JobIdentifier(newJobName);
         for (RepositoryFile repositoryFile : oldResultFiles) {
-            ResultModificationPayload modificationInput = new ResultModificationPayload();
-            modificationInput.setJob(newJobName);
-            modificationInput.setOverwrite(true);
-            _resultModificationController.modifyResult(tenant, repositoryFile.getName(), modificationInput);
+            _resultDao.updateResult(tenantIdentifier, repositoryFile, newJob, null);
         }
     }
 }

@@ -52,14 +52,15 @@ public class DashboardServiceImplTest extends TestCase {
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         MockJobEngineManager jobEngineManager = new MockJobEngineManager();
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl(), jobEngineManager);
-        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory, jobEngineManager);
-        final ResultDao resultDao = new ResultDaoImpl(contextFactory);
-        final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
+        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(tenantContextFactory,
+                jobEngineManager);
+        final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
+        final TimelineDao timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);
 
-        final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory, resultDao);
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
+        final DescriptorService descriptorService = new DescriptorServiceImpl(tenantContextFactory, resultDao);
+        final DashboardService service = new DashboardServiceImpl(tenantContextFactory, metricValueCache, resultDao,
                 timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
@@ -133,7 +134,7 @@ public class DashboardServiceImplTest extends TestCase {
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl(), jobEngineManager);
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory, jobEngineManager);
-        final ResultDao resultDao = new ResultDaoImpl(contextFactory);
+        final ResultDao resultDao = new ResultDaoImpl(contextFactory, null);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
         final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,

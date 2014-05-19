@@ -36,9 +36,11 @@
 		</property>
 	</bean>
 
+	<bean id="tenantContextFactory" name="tenantContextFactory"
+		class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl"
+		autowire="constructor" />
+
 	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
-	<context:component-scan
-		base-package="org.eobjects.datacleaner.monitor.configuration" />
 
 	<import resource="classpath:context/repository-context.xml" />
 	<import resource="classpath:context/scheduling-context.xml" />
@@ -48,10 +50,12 @@
 	<!-- Extensions can put a context/extension-context.xml file in the JAR 
 		file to include additional Spring config. -->
 	<import resource="classpath*:context/extension-context.xml" />
-	
-	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<!-- Logs uncaught exceptions to the logger category 'org.eobjects.datacleaner.monitor.ExceptionResolver' -->
-		<property name="warnLogCategory" value="org.eobjects.datacleaner.monitor.ExceptionResolver"/>
+		<property name="warnLogCategory"
+			value="org.eobjects.datacleaner.monitor.ExceptionResolver" />
 	</bean>
 
 </beans>

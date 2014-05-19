@@ -49,6 +49,11 @@ public class ExecuteJobTest extends TestCase {
 
     public void testAssumptionsAboutDisallowConcurrentExecution() throws Exception {
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+        scheduler.clear();
+        
+        if (!scheduler.getJobGroupNames().isEmpty()) {
+            fail("Test prerequisites failed. Expecting empty getJobGroupNames() but got: " + scheduler.getJobGroupNames());
+        }
 
         JobDetail job1 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant1").build();
         JobDetail job2 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job2", "tenant1").build();

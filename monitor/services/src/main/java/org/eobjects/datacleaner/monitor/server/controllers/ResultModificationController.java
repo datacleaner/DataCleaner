@@ -19,8 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,23 +26,19 @@ import java.util.TreeMap;
 import javax.annotation.security.RolesAllowed;
 
 import org.eobjects.analyzer.beans.convert.ConvertToDateTransformer;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.events.ResultModificationEvent;
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,15 +50,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/{tenant}/results/{result:.+}.modify")
 public class ResultModificationController {
 
-    private static final String EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
-
     private static final Logger logger = LoggerFactory.getLogger(ResultModificationController.class);
 
     @Autowired
-    ApplicationEventPublisher _eventPublisher;
+    TenantContextFactory _contextFactory;
 
     @Autowired
-    TenantContextFactory _contextFactory;
+    ResultDao _resultDao;
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
@@ -84,70 +76,35 @@ public class ResultModificationController {
         final RepositoryFile existingFile = result.getResultFile();
         final String oldFilename = existingFile.getName();
         response.put("old_result_name", oldFilename);
-
+        
         final String jobInput = input.getJob();
         final String dateInput = input.getDate();
 
-        final long newTimestamp;
-        final AnalysisResult newAnalysisResult;
+        final Date newTimestamp;
         if (!StringUtils.isNullOrEmpty(dateInput)) {
-            final Date newDate = ConvertToDateTransformer.getInternalInstance().transformValue(dateInput);
-            if (newDate == null) {
+            newTimestamp = ConvertToDateTransformer.getInternalInstance().transformValue(dateInput);
+            if (newTimestamp == null) {
                 throw new IllegalArgumentException("Could not convert input '" + dateInput + "' to date.");
-
             }
-
-            final AnalysisResult existinAnalysisResult = result.getAnalysisResult();
-            newAnalysisResult = new SimpleAnalysisResult(existinAnalysisResult.getResultMap(), newDate);
-
-            newTimestamp = newDate.getTime();
         } else {
-            newAnalysisResult = result.getAnalysisResult();
-            newTimestamp = newAnalysisResult.getCreationDate().getTime();
+            newTimestamp = null;
         }
-
-        final String newJobName;
+        
+        final JobIdentifier newJob;
         if (!StringUtils.isNullOrEmpty(jobInput) && !oldFilename.startsWith(jobInput)) {
-            final JobContext newJob = tenantContext.getJob(jobInput);
-            assert newJob != null;
-            newJobName = jobInput;
+            final JobContext newJobContext = tenantContext.getJob(jobInput);
+            assert newJobContext != null;
+            newJob = new JobIdentifier(newJobContext.getName());
         } else {
-            // we assume a filename pattern like this:
-            // {job}-{timestamp}.analysis.result.dat
-            final int lastIndexOfDash = resultName.lastIndexOf('-');
-            assert lastIndexOfDash != -1;
-            newJobName = resultName.substring(0, lastIndexOfDash);
+            newJob = null;
         }
 
-        final String newFilename = newJobName + '-' + newTimestamp + EXTENSION;
+        final ResultContext newResult = _resultDao.updateResult(new TenantIdentifier(tenant), result, newJob, newTimestamp);
+
+        final String newFilename = newResult.getResultFile().getName();
+        
         response.put("new_result_name", newFilename);
         response.put("repository_url", "/" + tenant + "/results/" + newFilename);
-
-        final RepositoryFolder resultFolder = tenantContext.getResultFolder();
-        final RepositoryFile newFile = resultFolder.getFile(newFilename);
-
-        final Action<OutputStream> writeAction = new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final ObjectOutputStream oos = new ObjectOutputStream(out);
-                oos.writeObject(newAnalysisResult);
-            }
-        };
-
-        if (newFile == null) {
-            resultFolder.createFile(newFilename, writeAction);
-        } else {
-            final Boolean overwrite = input.getOverwrite();
-            if (overwrite == null || !overwrite.booleanValue()) {
-                throw new IllegalStateException("A result file with the name '" + newFilename
-                        + "' already exists, and the 'overwrite' flag is non-true.");
-            }
-            newFile.writeFile(writeAction);
-        }
-        existingFile.delete();
-
-        _eventPublisher.publishEvent(new ResultModificationEvent(this, tenant, oldFilename, newFilename, newJobName,
-                newTimestamp));
 
         logger.debug("Response payload: {}", response);
         return response;

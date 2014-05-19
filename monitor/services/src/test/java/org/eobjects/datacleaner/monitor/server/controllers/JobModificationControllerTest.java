@@ -47,7 +47,6 @@ public class JobModificationControllerTest extends TestCase {
     private JobModificationController jobModificationController;
     private JobModificationEventRenameResultsListener jobModificationListener1;
     private JobModificationEventUpdateTimelinesListener jobModificationListener2;
-    private ResultModificationController resultModificationController;
     private Repository repository;
     private TimelineDaoImpl timelineDao;
 
@@ -60,21 +59,11 @@ public class JobModificationControllerTest extends TestCase {
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
-        resultModificationController = new ResultModificationController();
-        resultModificationController._contextFactory = tenantContextFactory;
-        resultModificationController._eventPublisher = new ApplicationEventPublisher() {
-            @Override
-            public void publishEvent(ApplicationEvent event) {
-                // do nothing, we'll not test that here
-            }
-        };
-
-        final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory);
+        final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
         timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);
 
         jobModificationController = new JobModificationController();
-        jobModificationListener1 = new JobModificationEventRenameResultsListener(resultDao,
-                resultModificationController);
+        jobModificationListener1 = new JobModificationEventRenameResultsListener(resultDao);
         jobModificationListener2 = new JobModificationEventUpdateTimelinesListener(timelineDao);
         jobModificationController._contextFactory = tenantContextFactory;
         jobModificationController._eventPublisher = new ApplicationEventPublisher() {
@@ -90,8 +79,7 @@ public class JobModificationControllerTest extends TestCase {
         final JobModificationPayload input = new JobModificationPayload();
         input.setName("renamed_job");
 
-        final Map<String, String> result = jobModificationController
-                .modifyJob("tenant1", "product_profiling", input);
+        final Map<String, String> result = jobModificationController.modifyJob("tenant1", "product_profiling", input);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
                 + "repository_url=/tenant1/jobs/renamed_job.analysis.xml}", result.toString());
 

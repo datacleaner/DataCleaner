@@ -41,7 +41,7 @@ public class DatastoresFolderControllerTest extends TestCase {
 
     public void testSimpleScenario() throws Exception {
         FileUtils.copyDirectory(new File("src/test/resources/example_repo/tenant3"), new File(
-                "target/repo_datastore_registration/DC"));
+                "target/repo_datastore_registration/dc"));
 
         final FileRepository repository = new FileRepository("target/repo_datastore_registration");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
@@ -55,9 +55,9 @@ public class DatastoresFolderControllerTest extends TestCase {
         request.setContent("<foo><bar>baz</bar></foo>".getBytes());
 
         MockHttpServletResponse response = new MockHttpServletResponse();
-        controller.registerDatastore("DC", request, response);
+        controller.registerDatastore("dc", request, response);
 
-        RepositoryFile file = repository.getFolder("DC").getFile("conf.xml");
+        RepositoryFile file = repository.getFolder("dc").getFile("conf.xml");
         file.readFile(new Action<InputStream>() {
             @Override
             public void run(InputStream in) throws Exception {

@@ -82,7 +82,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _loadingIndicator = new LoadingIndicator();
         _wizardPanel.setContent(_loadingIndicator);
 
-        _previousStepButton = new Button("‹ Back");
+        _previousStepButton = new Button("‹ Previous");
         _previousStepButton.setEnabled(false);
         _previousStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_previousStepButton);
@@ -181,7 +181,6 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         } else {
             _previousButtonClickRegistration = _previousStepButton.addClickHandler(clickHandler);
             _previousStepButton.setEnabled(true);
-            _previousStepButton.addStyleName("wizard-navigation-button");
         }
     }
 

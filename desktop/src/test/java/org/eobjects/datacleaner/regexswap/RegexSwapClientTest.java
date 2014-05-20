@@ -25,7 +25,10 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.Ignore;
 
+// TODO: temporary ignore test case while new DC.org website is being updated.
+@Ignore
 public class RegexSwapClientTest extends TestCase {
 
 	public void testUpdateContent() throws Exception {

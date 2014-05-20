@@ -398,7 +398,7 @@ class CopyDataWizardTest extends AssertionsForJUnit {
 	<div>
 		<label>Please provide a name for the new job </label>
 		<div>
-			<input type="text" size="30" name="name" />
+			<input type="text" size="30" value="Copy data" name="name" />
 		</div>
 	</div>
 </div>"""), normalize(page6.getFormInnerHtml()));

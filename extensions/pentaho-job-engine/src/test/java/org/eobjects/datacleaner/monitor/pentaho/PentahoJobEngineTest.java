@@ -56,7 +56,7 @@ public class PentahoJobEngineTest extends TestCase {
         InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl();
         JobEngineManager jobEngineManager = new SimpleJobEngineManager(jobEngine);
         tenantContextFactory = new TenantContextFactoryImpl(repository, injectionManagerFactory, jobEngineManager);
-        tenantContext = tenantContextFactory.getContext("DC");
+        tenantContext = tenantContextFactory.getContext("dc");
     }
 
     public void testWorkingWithMetrics() throws Exception {

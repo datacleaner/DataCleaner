@@ -32,6 +32,7 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.events.ResultModificationEvent;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.server.listeners.ResultModificationEventExecutionLogListener;
@@ -63,13 +64,15 @@ public class ResultModificationControllerTest extends TestCase {
         resultModificationController = new ResultModificationController();
         resultModificationListener = new ResultModificationEventExecutionLogListener(tenantContextFactory);
 
-        resultModificationController._contextFactory = tenantContextFactory;
-        resultModificationController._eventPublisher = new ApplicationEventPublisher() {
+        final ApplicationEventPublisher applicationEventPublisher = new ApplicationEventPublisher() {
             @Override
             public void publishEvent(ApplicationEvent event) {
                 resultModificationListener.onApplicationEvent((ResultModificationEvent) event);
             }
         };
+        
+        resultModificationController._contextFactory = tenantContextFactory;
+        resultModificationController._resultDao = new ResultDaoImpl(tenantContextFactory, applicationEventPublisher);
     }
 
     public void testModifyJob() throws Exception {

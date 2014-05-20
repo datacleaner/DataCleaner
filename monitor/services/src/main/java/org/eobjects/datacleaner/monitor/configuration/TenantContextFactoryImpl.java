@@ -30,7 +30,6 @@ import org.eobjects.datacleaner.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
@@ -40,7 +39,6 @@ import com.google.common.cache.LoadingCache;
 /**
  * Factory and tenant-wise cache for {@link TenantContext} objects.
  */
-@Component("tenantContextFactory")
 public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private static final char[] ILLEGAL_TENANT_ID_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*',
@@ -132,9 +130,9 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
             throw new IllegalArgumentException("Tenant ID contained only invalid characters: " + tenantId);
         }
 
-        if (logger.isInfoEnabled()) {
+        if (logger.isDebugEnabled()) {
             if (!tenantId.equals(standardizedTenantId)) {
-                logger.info("Tenant ID '{}' standardized into '{}'", tenantId, standardizedTenantId);
+                logger.debug("Tenant ID '{}' standardized into '{}'", tenantId, standardizedTenantId);
             }
         }
         

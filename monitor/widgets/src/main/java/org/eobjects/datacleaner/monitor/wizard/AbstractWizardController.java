@@ -197,6 +197,7 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
             public void onSuccess(final WizardPage page) {
                 final String wizardDisplayName = _wizardIdentifier.getDisplayName();
                 if (page.isFinished()) {
+                	_wizardPanel.getButtonPanel().removeAllButtons();
                     final String resultEntityName = page.getWizardResult();
                     JavaScriptCallbacks.onWizardFinished(wizardDisplayName, resultEntityName);
                     wizardFinished(resultEntityName);

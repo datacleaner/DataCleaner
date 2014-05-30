@@ -28,8 +28,11 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,6 +41,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 /**
  * Panel used to customize the schedule expression of a
@@ -67,16 +71,22 @@ public class CustomizeSchedulePanel extends Composite {
     @UiField
     RadioButton manualTriggerRadio;
 
+    @UiField
+    RadioButton oneTimeTriggerRadio;
+    
+    @UiField 
+    DateBox dateBox;
+    
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
+	public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         super();
 
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
-
+         
         MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
         suggestions.add("@monthly");
@@ -91,15 +101,32 @@ public class CustomizeSchedulePanel extends Composite {
                 periodicTriggerRadio.setValue(true);
             }
         });
-
+       
         initWidget(uiBinder.createAndBindUi(this));
-
-        final String expression = _schedule.getCronExpression();
+        
+        dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("MMMM,dd yyyy HH:mm:ss")));
+        dateBox.getDatePicker().setWidth("200px");
+        
+        	dateBox.getTextBox().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					oneTimeTriggerRadio.setValue(true);					
+				}
+			});
+       
+	    final String expression = _schedule.getCronExpression();
         final JobIdentifier scheduleAfterJob = _schedule.getDependentJob();
+        final String expressionForOneTime = _schedule.getCronExpreesionForOneTimeSchedule();
+        
         if (expression != null) {
             periodicTriggerRadio.setValue(true);
             periodicTriggerExpressionTextBox.setText(expression);
-        } else if (scheduleAfterJob != null) {
+        } else if (expressionForOneTime != null){
+        	oneTimeTriggerRadio.setValue(true);
+        	dateBox.getTextBox().setValue(expressionForOneTime);
+        }
+        else if (scheduleAfterJob != null) {
             dependentTriggerRadio.setValue(true);
             dependentTriggerJobListBox.addItem(scheduleAfterJob.getName());
             dependentTriggerJobListBox.setSelectedIndex(0);
@@ -129,14 +156,18 @@ public class CustomizeSchedulePanel extends Composite {
         });
     }
 
-    public ScheduleDefinition getUpdatedSchedule() {
+	public ScheduleDefinition getUpdatedSchedule()  {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
+        _schedule.setCronExpressionForOneTimeSchedule(null);
 
         if (periodicTriggerRadio.getValue()) {
             _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
         }
-
+        if(oneTimeTriggerRadio.getValue()){
+        	_schedule.setCronExpressionForOneTimeSchedule(dateBox.getTextBox().getText());
+        }
+        
         if (dependentTriggerRadio.getValue()) {
             final int index = dependentTriggerJobListBox.getSelectedIndex();
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
@@ -145,4 +176,7 @@ public class CustomizeSchedulePanel extends Composite {
 
         return _schedule;
     }
+   
+    	  
+
 }

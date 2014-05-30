@@ -143,6 +143,9 @@ public class ExecutionLogPanel extends Composite {
                 case MANUAL:
                     triggerLabel.setText("Manually triggered");
                     break;
+                case ONETIME:
+                	triggerLabel.setText("Scheduled: OneTime '" + executionLog.getSchedule().getCronExpreesionForOneTimeSchedule() + "'");
+                	break;
                 }
             }
 

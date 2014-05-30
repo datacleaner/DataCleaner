@@ -22,7 +22,9 @@ package org.eobjects.datacleaner.monitor.server;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -333,18 +335,30 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
                 if (triggerType == TriggerType.PERIODIC) {
                     // time based trigger
-
                     final String scheduleExpression = schedule.getCronExpression();
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
-
                     final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-
                     final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
                             .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
 
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
-                } else {
+                       
+                } 
+                
+                else if(triggerType == TriggerType.ONETIME) {
+                	final String scheduleExpression = schedule.getCronExpreesionForOneTimeSchedule();
+                	final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleExpression);
+                	Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
+                     if(nextValidTimeAfter != null){
+                    	 final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
+                         final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
+                                 .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
+                         logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName, cronExpression);
+                         _scheduler.scheduleJob(jobDetail, trigger);
+                     }
+                }
+                else {
                     // event based trigger (via a job listener)
                     _scheduler.addJob(jobDetail, true);
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
@@ -360,7 +374,32 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    @Override
+	protected static CronExpression toCronExpressionForOneTimeSchedule(
+			String scheduleExpression) {
+    	scheduleExpression = scheduleExpression.trim();
+        final CronExpression cronExpression;
+    	try {
+    		Date oneTimeSchedule  = new SimpleDateFormat("MMMM,dd yyyy HH:mm:ss").parse(scheduleExpression);
+    		Calendar dateInfoExtractor = Calendar.getInstance();
+    		dateInfoExtractor.setTime(oneTimeSchedule);
+    		int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
+    		int year = dateInfoExtractor.get(Calendar.YEAR);
+    		StringBuilder cronStringBuilder = new StringBuilder();
+    		String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(year).toString();
+			cronExpression = new CronExpression(cronBuilder);
+    	} catch (ParseException e) {
+            throw new IllegalStateException("Failed to parse cron expression for one time schedule: " + scheduleExpression, e);
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
+                    .replaceAll("\n", ", "));
+        }
+
+        return cronExpression;
+	}
+
+	@Override
     public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
         logger.info("Removing schedule for job: " + job);
         final String jobName = job.getName();

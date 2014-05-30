@@ -84,6 +84,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
             String groupName, boolean includeAlerts) {
         final ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
         if (schedule != null) {
+        	scheduleDefinition.setCronExpressionForOneTimeSchedule(schedule.getCronExpressionForOneTime());
             scheduleDefinition.setCronExpression(schedule.getCronExpression());
             final String jaxbDependentJob = schedule.getDependentJob();
             if (jaxbDependentJob != null) {

@@ -117,7 +117,7 @@ public class CustomizeSchedulePanel extends Composite {
        
 	    final String expression = _schedule.getCronExpression();
         final JobIdentifier scheduleAfterJob = _schedule.getDependentJob();
-        final String expressionForOneTime = _schedule.getCronExpreesionForOneTimeSchedule();
+        final String expressionForOneTime = _schedule.getDateForOneTimeSchedule();
         
         if (expression != null) {
             periodicTriggerRadio.setValue(true);
@@ -159,13 +159,13 @@ public class CustomizeSchedulePanel extends Composite {
 	public ScheduleDefinition getUpdatedSchedule()  {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
-        _schedule.setCronExpressionForOneTimeSchedule(null);
+        _schedule.setDateForOneTimeSchedule(null);
 
         if (periodicTriggerRadio.getValue()) {
             _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
         }
         if(oneTimeTriggerRadio.getValue()){
-        	_schedule.setCronExpressionForOneTimeSchedule(dateBox.getTextBox().getText());
+        	_schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
         }
         
         if (dependentTriggerRadio.getValue()) {

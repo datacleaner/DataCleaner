@@ -196,7 +196,7 @@ public class SchedulePanel extends Composite {
             scheduleAnchor.addStyleName("discrete");
             break;
         case ONETIME :
-        	scheduleAnchor.setText(_schedule.getCronExpreesionForOneTimeSchedule());
+        	scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
         	scheduleAnchor.removeStyleName("discrete");
         }
 

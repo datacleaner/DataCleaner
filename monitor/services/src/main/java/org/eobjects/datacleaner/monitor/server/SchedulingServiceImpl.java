@@ -347,8 +347,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 } 
                 
                 else if(triggerType == TriggerType.ONETIME) {
-                	final String scheduleExpression = schedule.getCronExpreesionForOneTimeSchedule();
-                	final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleExpression);
+                	final String scheduleDate = schedule.getDateForOneTimeSchedule();
+                	final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleDate);
                 	Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
                      if(nextValidTimeAfter != null){
                     	 final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
@@ -374,8 +374,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-	protected static CronExpression toCronExpressionForOneTimeSchedule(
-			String scheduleExpression) {
+	protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
     	scheduleExpression = scheduleExpression.trim();
         final CronExpression cronExpression;
     	try {
@@ -383,9 +382,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     		Calendar dateInfoExtractor = Calendar.getInstance();
     		dateInfoExtractor.setTime(oneTimeSchedule);
     		int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
-    		int year = dateInfoExtractor.get(Calendar.YEAR);
     		StringBuilder cronStringBuilder = new StringBuilder();
-    		String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(year).toString();
+    		String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
 			cronExpression = new CronExpression(cronBuilder);
     	} catch (ParseException e) {
             throw new IllegalStateException("Failed to parse cron expression for one time schedule: " + scheduleExpression, e);

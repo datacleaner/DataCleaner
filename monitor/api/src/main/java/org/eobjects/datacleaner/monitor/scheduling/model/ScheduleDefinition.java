@@ -40,7 +40,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private String _groupName;
     private VariableProviderDefinition _variableProvider;
     private boolean _distributedExecution;
-    private String _cronExpressionForOneTimeSchedule;
+    private String _dateForOneTimeSchedule;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -52,13 +52,13 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         _groupName = groupName;
     }
 
-    public String getCronExpreesionForOneTimeSchedule() {
-		return _cronExpressionForOneTimeSchedule;
+    public String getDateForOneTimeSchedule() {
+		return _dateForOneTimeSchedule;
 	}
 
-	public void setCronExpressionForOneTimeSchedule(
-			String _cronExpressionForOneTimeSchedule) {
-		this._cronExpressionForOneTimeSchedule = _cronExpressionForOneTimeSchedule;
+	public void setDateForOneTimeSchedule(
+			String _DateForOneTimeSchedule) {
+		this._dateForOneTimeSchedule = _DateForOneTimeSchedule;
 	}
 
 	public TenantIdentifier getTenant() {
@@ -125,7 +125,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
             return TriggerType.DEPENDENT;
         } else if (_cronExpression != null) {
             return TriggerType.PERIODIC;
-        } else if(_cronExpressionForOneTimeSchedule!= null){
+        } else if(_dateForOneTimeSchedule!= null){
         	return TriggerType.ONETIME;
         }
         else {
@@ -147,7 +147,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         int result = 1;
         result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
         result = prime * result + ((_cronExpression == null) ? 0 : _cronExpression.hashCode());
-        result = prime * result + ((_cronExpressionForOneTimeSchedule == null) ? 0 : _cronExpressionForOneTimeSchedule.hashCode());
+        result = prime * result + ((_dateForOneTimeSchedule == null) ? 0 : _dateForOneTimeSchedule.hashCode());
         result = prime * result + ((_groupName == null) ? 0 : _groupName.hashCode());
         result = prime * result + ((_dependentJob == null) ? 0 : _dependentJob.hashCode());
         result = prime * result + ((_job == null) ? 0 : _job.hashCode());
@@ -175,10 +175,10 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
                 return false;
         } else if (!_cronExpression.equals(other._cronExpression))
             return false;
-        if (_cronExpressionForOneTimeSchedule == null) {
-            if (other._cronExpressionForOneTimeSchedule != null)
+        if (_dateForOneTimeSchedule == null) {
+            if (other._dateForOneTimeSchedule != null)
                 return false;
-        } else if (!_cronExpressionForOneTimeSchedule.equals(other._cronExpressionForOneTimeSchedule))
+        } else if (!_dateForOneTimeSchedule.equals(other._dateForOneTimeSchedule))
             return false;
         if (_groupName == null) {
             if (other._groupName != null)
@@ -224,8 +224,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 				+ _cronExpression + ", _alerts=" + _alerts + ", _groupName="
 				+ _groupName + ", _variableProvider=" + _variableProvider
 				+ ", _distributedExecution=" + _distributedExecution
-				+ ", _cronExpressionForOneTimeSchedule="
-				+ _cronExpressionForOneTimeSchedule + "]";
+				+ ", _DateForOneTimeSchedule="
+				+ _dateForOneTimeSchedule + "]";
 	}
 
    

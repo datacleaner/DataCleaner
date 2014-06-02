@@ -43,8 +43,10 @@ public class LoggerAlertNotifier implements AlertNotifier {
         }
 
         final Map<AlertDefinition, Number> alertValues = activeAlerts.get();
-        logger.warn("Active alerts: {}", alertValues.keySet());
-        logger.warn("Alert metric values: {}", alertValues.values());
+        if (!alertValues.isEmpty()) {
+            logger.info("Active alerts: {}", alertValues.keySet());
+            logger.info("Alert metric values: {}", alertValues.values());
+        }
     }
 
 }

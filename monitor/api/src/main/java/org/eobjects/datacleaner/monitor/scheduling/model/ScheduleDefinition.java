@@ -56,9 +56,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 		return _dateForOneTimeSchedule;
 	}
 
-	public void setDateForOneTimeSchedule(
-			String _DateForOneTimeSchedule) {
-		this._dateForOneTimeSchedule = _DateForOneTimeSchedule;
+	public void setDateForOneTimeSchedule(String _dateForOneTimeSchedule) {
+		this._dateForOneTimeSchedule = _dateForOneTimeSchedule;
 	}
 
 	public TenantIdentifier getTenant() {
@@ -219,13 +218,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 
 	@Override
 	public String toString() {
-		return "ScheduleDefinition [_tenant=" + _tenant + ", _job=" + _job
-				+ ", _dependentJob=" + _dependentJob + ", _cronExpression="
-				+ _cronExpression + ", _alerts=" + _alerts + ", _groupName="
-				+ _groupName + ", _variableProvider=" + _variableProvider
-				+ ", _distributedExecution=" + _distributedExecution
-				+ ", _DateForOneTimeSchedule="
-				+ _dateForOneTimeSchedule + "]";
+		return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName="+ _groupName + ", _variableProvider=" + _variableProvider+ ", _distributedExecution=" + _distributedExecution+ ", _dateForOneTimeSchedule="+ _dateForOneTimeSchedule + "]";
 	}
 
    

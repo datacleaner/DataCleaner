@@ -81,7 +81,7 @@
 					<dp:DateBox ui:field="dateBox" />
 					<p class="discrete">
 						Date is in following format:
-						<i>Month,dd YYYY HH:MM:SS</i>
+						<i>yyyy-MM-dd HH:MM:SS</i>
 					</p>
 				</div>
 			</div>

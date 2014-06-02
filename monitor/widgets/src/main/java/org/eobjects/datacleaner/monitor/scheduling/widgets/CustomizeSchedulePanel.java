@@ -104,7 +104,7 @@ public class CustomizeSchedulePanel extends Composite {
        
         initWidget(uiBinder.createAndBindUi(this));
         
-        dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("MMMM,dd yyyy HH:mm:ss")));
+        dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss")));
         dateBox.getDatePicker().setWidth("200px");
         
         	dateBox.getTextBox().addClickHandler(new ClickHandler() {

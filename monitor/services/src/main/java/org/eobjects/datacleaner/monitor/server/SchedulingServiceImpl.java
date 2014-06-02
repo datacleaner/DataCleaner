@@ -378,7 +378,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     	scheduleExpression = scheduleExpression.trim();
         final CronExpression cronExpression;
     	try {
-    		Date oneTimeSchedule  = new SimpleDateFormat("MMMM,dd yyyy HH:mm:ss").parse(scheduleExpression);
+    		Date oneTimeSchedule  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
     		Calendar dateInfoExtractor = Calendar.getInstance();
     		dateInfoExtractor.setTime(oneTimeSchedule);
     		int month = dateInfoExtractor.get(Calendar.MONTH) + 1;

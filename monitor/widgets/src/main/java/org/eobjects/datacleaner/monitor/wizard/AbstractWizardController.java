@@ -83,15 +83,18 @@ public abstract class AbstractWizardController<S extends WizardNavigationService
         _wizardPanel.setContent(_loadingIndicator);
 
         _previousStepButton = new Button("‹ Previous");
+        _previousStepButton.getElement().setId("wizardPreviousButton");
         _previousStepButton.setEnabled(false);
         _previousStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_previousStepButton);
 
         _nextStepButton = new Button("Next ›");
+        _nextStepButton.getElement().setId("wizardNextButton");
         _nextStepButton.addStyleName("wizard-navigation-button");
         _wizardPanel.getButtonPanel().addButton(_nextStepButton);
         
         Button cancelButton = new Button("Cancel");
+        cancelButton.getElement().setId("wizardCancelButton");
         cancelButton.addStyleName("wizard-navigation-button");
         cancelButton.addClickHandler(new ClickHandler() {
             @Override

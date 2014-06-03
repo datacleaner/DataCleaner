@@ -19,8 +19,10 @@
     Boston, MA  02110-1301  USA
 
 -->
+
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">
 
 	<g:HTMLPanel styleName="CustomizeSchedulePanel">
 		<div class="descriptionLabel">
@@ -66,7 +68,20 @@
 					</p>
 					<p class="discrete">
 						Or use a keyword:
-						<i>@monthly, @daily, @hourly.</i> (Press '@' to show all).
+						<i>@monthly, @daily, @hourly.</i>
+						(Press '@' to show all).
+					</p>
+				</div>
+			</div>
+			<div class="triggerPanel">
+				<g:RadioButton ui:field="oneTimeTriggerRadio" text="One Time Schedule"
+					name="triggerTypeRadio" />
+				<div class="configurationPanel">
+					<p>Please provide a date for one time scheduling:</p>
+					<dp:DateBox ui:field="dateBox" />
+					<p class="discrete">
+						Date is in following format:
+						<i>yyyy-MM-dd HH:MM:SS</i>
 					</p>
 				</div>
 			</div>
@@ -78,14 +93,15 @@
 					<g:ListBox ui:field="dependentTriggerJobListBox" />
 				</div>
 			</div>
+			</div>
 			<div class="triggerPanel">
 				<g:RadioButton ui:field="manualTriggerRadio" text="Manual trigger"
 					name="triggerTypeRadio" />
+				
 				<div class="configurationPanel">
 					<p>The job will not be automatically invoked.</p>
 				</div>
 			</div>
-		</div>
 
 	</g:HTMLPanel>
 </ui:UiBinder>

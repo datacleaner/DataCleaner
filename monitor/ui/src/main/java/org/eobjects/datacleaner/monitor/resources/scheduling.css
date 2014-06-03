@@ -132,6 +132,9 @@
 	background-image: url("trigger_type_manual.png");
 }
 
+.SchedulePanel .ScheduleColumn a.TriggerAnchor-ONETIME {
+	background-image: url("trigger_type_periodic.png");
+}
 .ScheduleGroupPanel a {
 	text-decoration: none;
 	color: #333;

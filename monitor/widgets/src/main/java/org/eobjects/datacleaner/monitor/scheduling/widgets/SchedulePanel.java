@@ -195,6 +195,9 @@ public class SchedulePanel extends Composite {
             scheduleAnchor.setText("Manually triggered");
             scheduleAnchor.addStyleName("discrete");
             break;
+        case ONETIME :
+        	scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
+        	scheduleAnchor.removeStyleName("discrete");
         }
 
         scheduleAnchor.setStyleName("TriggerAnchor-" + triggerType);

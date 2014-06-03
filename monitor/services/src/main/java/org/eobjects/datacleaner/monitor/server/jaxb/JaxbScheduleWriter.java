@@ -62,7 +62,10 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             }
         } else if (scheduleDefinition.getTriggerType() == TriggerType.PERIODIC) {
             schedule.setCronExpression(scheduleDefinition.getCronExpression());
-        } else {
+        }else if (scheduleDefinition.getTriggerType() == TriggerType.ONETIME) {
+            schedule.setOneTime(scheduleDefinition.getDateForOneTimeSchedule());
+        }
+        else {
             schedule.setManualTrigger(true);
         }
 

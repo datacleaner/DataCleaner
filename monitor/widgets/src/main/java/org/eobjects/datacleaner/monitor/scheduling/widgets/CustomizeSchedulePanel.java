@@ -19,10 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import java.util.Date;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -165,6 +167,11 @@ public class CustomizeSchedulePanel extends Composite {
             _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
         }
         if(oneTimeTriggerRadio.getValue()){
+        	Date currentDate = new Date();
+        	Date scheduleDate = dateBox.getValue();
+        	if(scheduleDate.before(currentDate)){
+        		throw new DCUserInputException("The selected date is in past.Please select a date in future.");
+        	}
         	_schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
         }
         

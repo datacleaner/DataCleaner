@@ -79,6 +79,8 @@
 				<div class="configurationPanel">
 					<p>Please provide a date for one time scheduling:</p>
 					<dp:DateBox ui:field="dateBox" />
+					<div id="errorMessage" style ="color:red">
+					    </div>
 					<p class="discrete">
 						Date is in following format:
 						<i>yyyy-MM-dd HH:MM:SS</i>

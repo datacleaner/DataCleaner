@@ -124,11 +124,11 @@ public class CustomizeSchedulePanel extends Composite {
     			    public void onShowRange(final ShowRangeEvent<Date> dateShowRangeEvent)
     			    {
     			        final Date today = DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(new Date()));
-    			        Date d =DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(dateShowRangeEvent.getStart()));
-    			        while (d.before(today))
+    			        Date dateFromDatePicker =DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(dateShowRangeEvent.getStart()));
+    			        while (dateFromDatePicker.before(today))
     			        {
-    			            dateBox.getDatePicker().setTransientEnabledOnDates(false, d);
-    			            CalendarUtil.addDaysToDate(d, 1);
+    			            dateBox.getDatePicker().setTransientEnabledOnDates(false, dateFromDatePicker);
+    			            CalendarUtil.addDaysToDate(dateFromDatePicker, 1);
     			        }
     			    }
     			});

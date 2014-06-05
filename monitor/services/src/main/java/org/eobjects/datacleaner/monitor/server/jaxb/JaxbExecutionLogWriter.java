@@ -70,6 +70,8 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.dat
             return TriggerType.DEPENDENT;
         case MANUAL:
             return TriggerType.MANUAL;
+        case ONETIME :
+        	return TriggerType.ONETIME; 
         default:
             throw new UnsupportedOperationException("Unknown trigger type: " + triggerType);
         }

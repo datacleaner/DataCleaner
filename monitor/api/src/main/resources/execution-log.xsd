@@ -33,6 +33,7 @@
 			<enumeration value="PERIODIC" />
 			<enumeration value="DEPENDENT" />
 			<enumeration value="MANUAL" />
+			<enumeration value="ONETIME" />
 		</restriction>
 	</simpleType>
 

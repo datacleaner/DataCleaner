@@ -19,25 +19,40 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import java.util.Date;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.logical.shared.ShowRangeEvent;
+import com.google.gwt.event.logical.shared.ShowRangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 /**
  * Panel used to customize the schedule expression of a
@@ -67,16 +82,22 @@ public class CustomizeSchedulePanel extends Composite {
     @UiField
     RadioButton manualTriggerRadio;
 
+    @UiField
+    RadioButton oneTimeTriggerRadio;
+    
+    @UiField 
+    DateBox dateBox;
+    
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
+	public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         super();
 
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
-
+         
         MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
         suggestions.add("@monthly");
@@ -91,15 +112,80 @@ public class CustomizeSchedulePanel extends Composite {
                 periodicTriggerRadio.setValue(true);
             }
         });
-
+       
         initWidget(uiBinder.createAndBindUi(this));
-
-        final String expression = _schedule.getCronExpression();
+        
+        dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss")));
+        dateBox.getDatePicker().setWidth("200px");
+        
+        dateBox.getDatePicker().addShowRangeHandler(new ShowRangeHandler<Date>()
+    			{
+    			    @Override
+    			    public void onShowRange(final ShowRangeEvent<Date> dateShowRangeEvent)
+    			    {
+    			        final Date today = DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(new Date()));
+    			        Date dateFromDatePicker =DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(dateShowRangeEvent.getStart()));
+    			        while (dateFromDatePicker.before(today))
+    			        {
+    			            dateBox.getDatePicker().setTransientEnabledOnDates(false, dateFromDatePicker);
+    			            CalendarUtil.addDaysToDate(dateFromDatePicker, 1);
+    			        }
+    			    }
+    			});
+        
+        dateBox.getTextBox().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					oneTimeTriggerRadio.setValue(true);
+				}
+			});
+        
+        dateBox.getTextBox().addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				Date currentDate = new Date();
+	        	Date scheduleDate = dateBox.getValue();
+	        	Element elementById = DOM.getElementById("errorMessage");
+				if(scheduleDate.before(currentDate)){
+	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
+				}
+	        		else{
+	        			elementById.setInnerHTML("");
+	        		}
+			}
+		});
+        
+        
+        dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				Date currentDate = new Date();
+	        	Date scheduleDate = dateBox.getValue();
+	        	Element elementById = DOM.getElementById("errorMessage");
+				if(scheduleDate.before(currentDate)){
+	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
+				}
+	        		else{
+	        			elementById.setInnerHTML("");
+	        		}
+			}
+		});
+        	
+	    final String expression = _schedule.getCronExpression();
         final JobIdentifier scheduleAfterJob = _schedule.getDependentJob();
+        final String expressionForOneTime = _schedule.getDateForOneTimeSchedule();
+        
         if (expression != null) {
             periodicTriggerRadio.setValue(true);
             periodicTriggerExpressionTextBox.setText(expression);
-        } else if (scheduleAfterJob != null) {
+        } else if (expressionForOneTime != null){
+        	oneTimeTriggerRadio.setValue(true);
+        	dateBox.getTextBox().setValue(expressionForOneTime);
+        }
+        else if (scheduleAfterJob != null) {
             dependentTriggerRadio.setValue(true);
             dependentTriggerJobListBox.addItem(scheduleAfterJob.getName());
             dependentTriggerJobListBox.setSelectedIndex(0);
@@ -129,20 +215,29 @@ public class CustomizeSchedulePanel extends Composite {
         });
     }
 
-    public ScheduleDefinition getUpdatedSchedule() {
+	public ScheduleDefinition getUpdatedSchedule()  {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
+        _schedule.setDateForOneTimeSchedule(null);
 
         if (periodicTriggerRadio.getValue()) {
             _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
         }
-
+        if(oneTimeTriggerRadio.getValue()){
+        	Date currentDate = new Date();
+        	Date scheduleDate = dateBox.getValue();
+        	if(scheduleDate.before(currentDate)){
+        	 throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
+        	}else{
+        		_schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
+        	}
+        }
+        
         if (dependentTriggerRadio.getValue()) {
             final int index = dependentTriggerJobListBox.getSelectedIndex();
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
             _schedule.setDependentJob(new JobIdentifier(dependentJobName));
         }
-
-        return _schedule;
+		return _schedule;
     }
 }

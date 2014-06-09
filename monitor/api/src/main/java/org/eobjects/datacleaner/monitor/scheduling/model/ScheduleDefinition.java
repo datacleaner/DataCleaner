@@ -139,6 +139,8 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     public void setVariableProvider(VariableProviderDefinition variableProvider) {
         _variableProvider = variableProvider;
     }
+    
+    
 
     @Override
     public int hashCode() {

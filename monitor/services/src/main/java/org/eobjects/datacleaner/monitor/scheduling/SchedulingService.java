@@ -64,7 +64,7 @@ public interface SchedulingService extends RemoteService {
     public ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
             throws DCSecurityException;
     
-    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Date getServerDate();
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.

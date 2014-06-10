@@ -140,8 +140,6 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         _variableProvider = variableProvider;
     }
     
-    
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -222,6 +220,4 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 	public String toString() {
 		return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName="+ _groupName + ", _variableProvider=" + _variableProvider+ ", _distributedExecution=" + _distributedExecution+ ", _dateForOneTimeSchedule="+ _dateForOneTimeSchedule + "]";
 	}
-
-   
 }

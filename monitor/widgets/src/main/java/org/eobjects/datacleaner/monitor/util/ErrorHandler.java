@@ -92,7 +92,8 @@ public class ErrorHandler {
             // sometimes several exceptions are bundled in an UmbrellaException
             Set<Throwable> causes = ((UmbrellaException) t).getCauses();
             if (causes.size() == 1) {
-                showErrorDialog(headerMessage, additionalDetails, causes.iterator().next());
+            	Throwable cause = causes.iterator().next();
+                showErrorDialog(cause.getMessage(), additionalDetails,cause);
                 return;
             }
             StringBuilder messageBuilder = new StringBuilder();

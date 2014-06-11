@@ -37,8 +37,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.logical.shared.ShowRangeEvent;
-import com.google.gwt.event.logical.shared.ShowRangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -51,7 +49,6 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 /**
@@ -90,6 +87,7 @@ public class CustomizeSchedulePanel extends Composite {
     
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
+    private Date serverDate;
 
 	public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         super();
@@ -97,6 +95,12 @@ public class CustomizeSchedulePanel extends Composite {
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
+        _service.getServerDate(new DCAsyncCallback<Date>() {
+			@Override
+			public void onSuccess(Date result) {
+				serverDate = result;
+			}
+		});
          
         MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
@@ -112,32 +116,19 @@ public class CustomizeSchedulePanel extends Composite {
                 periodicTriggerRadio.setValue(true);
             }
         });
-       
+        
         initWidget(uiBinder.createAndBindUi(this));
         
         dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss")));
         dateBox.getDatePicker().setWidth("200px");
-        
-        dateBox.getDatePicker().addShowRangeHandler(new ShowRangeHandler<Date>()
-    			{
-    			    @Override
-    			    public void onShowRange(final ShowRangeEvent<Date> dateShowRangeEvent)
-    			    {
-    			        final Date today = DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(new Date()));
-    			        Date dateFromDatePicker =DateTimeFormat.getFormat("yyyyMMdd").parse(DateTimeFormat.getFormat("yyyyMMdd").format(dateShowRangeEvent.getStart()));
-    			        while (dateFromDatePicker.before(today))
-    			        {
-    			            dateBox.getDatePicker().setTransientEnabledOnDates(false, dateFromDatePicker);
-    			            CalendarUtil.addDaysToDate(dateFromDatePicker, 1);
-    			        }
-    			    }
-    			});
-        
+
         dateBox.getTextBox().addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
 					oneTimeTriggerRadio.setValue(true);
+				    Element elementByIdForDate = DOM.getElementById("serverDate");
+					elementByIdForDate.setInnerHTML("Select date with respect to Server Time :" + serverDate);
 				}
 			});
         
@@ -145,27 +136,44 @@ public class CustomizeSchedulePanel extends Composite {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				Date currentDate = new Date();
+			    Element elementById = DOM.getElementById("errorMessage");
+				if(dateBox.getValue()==null){
+					elementById.setInnerHTML("Select date for one time schedule");
+				}
+				else{
 	        	Date scheduleDate = dateBox.getValue();
-	        	Element elementById = DOM.getElementById("errorMessage");
-				if(scheduleDate.before(currentDate)){
+	        	elementById.setInnerHTML("");
+				if(scheduleDate.before(serverDate)){
 	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
 				}
 	        		else{
 	        			elementById.setInnerHTML("");
 	        		}
 			}
+			}
 		});
         
+        oneTimeTriggerRadio.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Element elementById = DOM.getElementById("errorMessage");
+				Element elementByIdForDate = DOM.getElementById("serverDate");
+				elementByIdForDate.setInnerHTML("Select date with respect to Server Time :" + serverDate);
+				if(dateBox.getValue()==null){
+					elementById.setInnerHTML("Select date for one time schedule");
+				}
+			}
+		});
         
         dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				Date currentDate = new Date();
 	        	Date scheduleDate = dateBox.getValue();
 	        	Element elementById = DOM.getElementById("errorMessage");
-				if(scheduleDate.before(currentDate)){
+	        	elementById.setInnerHTML("");
+				if(scheduleDate.before(serverDate)){
 	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
 				}
 	        		else{
@@ -194,6 +202,7 @@ public class CustomizeSchedulePanel extends Composite {
         }
 
         dependentTriggerJobListBox.addFocusHandler(new FocusHandler() {
+        	
             @Override
             public void onFocus(FocusEvent event) {
                 dependentTriggerRadio.setValue(true);
@@ -215,7 +224,7 @@ public class CustomizeSchedulePanel extends Composite {
         });
     }
 
-	public ScheduleDefinition getUpdatedSchedule()  {
+	public ScheduleDefinition getUpdatedSchedule() {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
         _schedule.setDateForOneTimeSchedule(null);
@@ -224,12 +233,16 @@ public class CustomizeSchedulePanel extends Composite {
             _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
         }
         if(oneTimeTriggerRadio.getValue()){
-        	Date currentDate = new Date();
+        	if(dateBox.getValue() == null){
+        		throw new DCUserInputException("Please select a date for one time scheduling");
+        	}
+        	else{
         	Date scheduleDate = dateBox.getValue();
-        	if(scheduleDate.before(currentDate)){
-        	 throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
+        	if(scheduleDate.before(serverDate)){
+        		throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
         	}else{
         		_schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
+        	}
         	}
         }
         

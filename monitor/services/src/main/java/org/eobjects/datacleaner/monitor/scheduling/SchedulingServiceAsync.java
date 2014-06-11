@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
+import java.util.Date;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
@@ -56,4 +57,7 @@ public interface SchedulingServiceAsync {
     void removeSchedule(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<Void> callback);
 
     void getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier, AsyncCallback<ScheduleDefinition> callback);
+    
+    void getServerDate(AsyncCallback<Date> callback);
+    
 }

@@ -637,4 +637,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
         return result;
     }
+    
+	@Override
+	public Date getServerDate() {
+		Date serverDate = new Date();
+		return serverDate;
+	}
 }

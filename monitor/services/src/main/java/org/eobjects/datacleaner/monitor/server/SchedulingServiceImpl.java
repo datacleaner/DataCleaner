@@ -343,20 +343,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
-                       
-                } 
-                
-                else if(triggerType == TriggerType.ONETIME) {
-                	final String scheduleDate = schedule.getDateForOneTimeSchedule();
-                	final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleDate);
-                	Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
-                     if(nextValidTimeAfter != null){
-                    	 final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
-                         final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
-                                 .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
-                         logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName, cronExpression);
-                         _scheduler.scheduleJob(jobDetail, trigger);
-                     }
+
+                }
+
+                else if (triggerType == TriggerType.ONETIME) {
+                    final String scheduleDate = schedule.getDateForOneTimeSchedule();
+                    final CronExpression cronExpression = toCronExpressionForOneTimeSchedule(scheduleDate);
+                    Date nextValidTimeAfter = cronExpression.getNextValidTimeAfter(new Date());
+                    if (nextValidTimeAfter != null) {
+                        final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
+                        final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
+                                .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
+                        logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName, cronExpression);
+                        _scheduler.scheduleJob(jobDetail, trigger);
+                    }
                 }
                 else {
                     // event based trigger (via a job listener)
@@ -374,18 +374,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-	protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
-    	scheduleExpression = scheduleExpression.trim();
+    protected static CronExpression toCronExpressionForOneTimeSchedule(String scheduleExpression) {
+        scheduleExpression = scheduleExpression.trim();
         final CronExpression cronExpression;
-    	try {
-    		Date oneTimeSchedule  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
-    		Calendar dateInfoExtractor = Calendar.getInstance();
-    		dateInfoExtractor.setTime(oneTimeSchedule);
-    		int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
-    		StringBuilder cronStringBuilder = new StringBuilder();
-    		String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(dateInfoExtractor.get(Calendar.YEAR)).toString();
-			cronExpression = new CronExpression(cronBuilder);
-    	} catch (ParseException e) {
+        try {
+            Date oneTimeSchedule = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(scheduleExpression);
+            Calendar dateInfoExtractor = Calendar.getInstance();
+            dateInfoExtractor.setTime(oneTimeSchedule);
+            int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
+            StringBuilder cronStringBuilder = new StringBuilder();
+            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(
+                    dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(
+                    dateInfoExtractor.get(Calendar.YEAR)).toString();
+            cronExpression = new CronExpression(cronBuilder);
+        } catch (ParseException e) {
             throw new IllegalStateException("Failed to parse cron expression for one time schedule: " + scheduleExpression, e);
         }
 
@@ -395,9 +397,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         return cronExpression;
-	}
+    }
 
-	@Override
+    @Override
     public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
         logger.info("Removing schedule for job: " + job);
         final String jobName = job.getName();
@@ -567,7 +569,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (file == null) {
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
-        
+
         JobIdentifier jobIdentifier = JobIdentifier.fromExecutionIdentifier(executionIdentifier);
 
         return readExecutionLogFile(file, jobIdentifier, tenant, 3);
@@ -637,16 +639,16 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
         return result;
     }
-    
-	@Override
-	public String getServerDate() {
-		Date serverDate = new Date();
-		Calendar calendar = Calendar.getInstance();  
-	    calendar.setTime(serverDate);
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    String serverDateFormat = dateFormat.format(serverDate);
-	    String timeStampName = calendar.getTimeZone().getDisplayName();
-		logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
-		return serverDateFormat;
-	}
+
+    @Override
+    public String getServerDate() {
+        Date serverDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(serverDate);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String serverDateFormat = dateFormat.format(serverDate);
+        String timeStampName = calendar.getTimeZone().getDisplayName();
+        logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
+        return serverDateFormat;
+    }
 }

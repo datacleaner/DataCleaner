@@ -641,12 +641,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 	@Override
 	public String getServerDate() {
 		Date serverDate = new Date();
-		 Calendar calendar = Calendar.getInstance();  
-	     calendar.setTime(serverDate);
-	     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	     String serverDateFormat = dateFormat.format(serverDate);
-	     String timeStampName = calendar.getTimeZone().getDisplayName();
-		 logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
+		Calendar calendar = Calendar.getInstance();  
+	    calendar.setTime(serverDate);
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    String serverDateFormat = dateFormat.format(serverDate);
+	    String timeStampName = calendar.getTimeZone().getDisplayName();
+		logger.info("Date and TimeStamp for one time schedule: {} | {}", serverDate, timeStampName);
 		return serverDateFormat;
 	}
 }

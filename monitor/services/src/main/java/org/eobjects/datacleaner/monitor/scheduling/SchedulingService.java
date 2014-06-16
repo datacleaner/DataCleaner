@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -65,7 +64,7 @@ public interface SchedulingService extends RemoteService {
             throws DCSecurityException;
     
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public Date getServerDate();
+    public String getServerDate();
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.
      * 

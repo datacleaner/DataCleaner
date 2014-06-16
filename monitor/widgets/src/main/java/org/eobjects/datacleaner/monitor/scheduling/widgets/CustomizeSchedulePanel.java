@@ -88,6 +88,7 @@ public class CustomizeSchedulePanel extends Composite {
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
     private Date serverDate;
+    private String serverDateAsString;
 
 	public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         super();
@@ -95,13 +96,15 @@ public class CustomizeSchedulePanel extends Composite {
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
-        _service.getServerDate(new DCAsyncCallback<Date>() {
+        _service.getServerDate(new DCAsyncCallback<String>() {
+			
 			@Override
-			public void onSuccess(Date result) {
-				serverDate = result;
+			public void onSuccess(String result) {
+				serverDateAsString = result;
+				serverDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss").parse(serverDateAsString);
 			}
 		});
-         
+        
         MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
         suggestions.add("@monthly");
@@ -128,7 +131,7 @@ public class CustomizeSchedulePanel extends Composite {
 				public void onClick(ClickEvent event) {
 					oneTimeTriggerRadio.setValue(true);
 				    Element elementByIdForDate = DOM.getElementById("serverDate");
-					elementByIdForDate.setInnerHTML("Select date with respect to Server Time :" + serverDate);
+					elementByIdForDate.setInnerHTML("Date with respect to Server Time :" +serverDateAsString);
 				}
 			});
         
@@ -159,7 +162,7 @@ public class CustomizeSchedulePanel extends Composite {
 			public void onClick(ClickEvent event) {
 				Element elementById = DOM.getElementById("errorMessage");
 				Element elementByIdForDate = DOM.getElementById("serverDate");
-				elementByIdForDate.setInnerHTML("Select date with respect to Server Time :" + serverDate);
+				elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
 				if(dateBox.getValue()==null){
 					elementById.setInnerHTML("Select date for one time schedule");
 				}

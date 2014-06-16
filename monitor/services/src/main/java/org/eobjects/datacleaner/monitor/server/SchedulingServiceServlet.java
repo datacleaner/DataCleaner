@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -121,7 +120,7 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
 	@Override
-	public Date getServerDate() {
+	public String getServerDate() {
 		return _delegate.getServerDate();
 	}
 }

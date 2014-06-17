@@ -69,11 +69,7 @@ public class CustomizeScheduleClickHandler implements ClickHandler {
                 });
             }
         });
-        
-
-        
-
-
+     
         popup.setWidget(customizeSchedulePanel);
 
         popup.addButton(saveButton);

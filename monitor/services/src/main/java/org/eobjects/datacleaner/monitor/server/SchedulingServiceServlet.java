@@ -118,4 +118,9 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
             throws DCSecurityException {
         return _delegate.getSchedule(tenant, jobIdentifier);
     }
+
+	@Override
+	public String getServerDate() {
+		return _delegate.getServerDate();
+	}
 }

@@ -56,4 +56,7 @@ public interface SchedulingServiceAsync {
     void removeSchedule(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<Void> callback);
 
     void getSchedule(TenantIdentifier tenant, JobIdentifier jobIdentifier, AsyncCallback<ScheduleDefinition> callback);
+    
+    void getServerDate(AsyncCallback<String> callback);
+    
 }

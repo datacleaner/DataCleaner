@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>3.6.1-SNAPSHOT</version>
+		<version>3.6.1-RC1</version>
 	</parent>
 	<artifactId>DataCleaner-monitor</artifactId>
 	<packaging>pom</packaging>

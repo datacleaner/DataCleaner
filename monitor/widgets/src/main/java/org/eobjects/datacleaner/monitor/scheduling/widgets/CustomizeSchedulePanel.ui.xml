@@ -59,6 +59,7 @@
 				<div class="configurationPanel">
 					<p>Please provide a scheduling expression (cron syntax):</p>
 					<g:SuggestBox ui:field="periodicTriggerExpressionTextBox" />
+					<div id="periodicErrorMessage" style ="color:red"></div>
 					<p class="discrete">
 						Use
 						<i>cron</i>

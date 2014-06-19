@@ -80,10 +80,6 @@ public class ErrorHandler {
             return;
         }
 
-        if (JavaScriptCallbacks.onError(oneLineMessage, false)) {
-            return;
-        }
-
         GWT.log("Uncaught exception", t);
         GWT.log("Additional details: " + additionalDetails);
 
@@ -92,8 +88,8 @@ public class ErrorHandler {
             // sometimes several exceptions are bundled in an UmbrellaException
             Set<Throwable> causes = ((UmbrellaException) t).getCauses();
             if (causes.size() == 1) {
-            	Throwable cause = causes.iterator().next();
-                showErrorDialog(cause.getMessage(), additionalDetails,cause);
+                Throwable cause = causes.iterator().next();
+                showErrorDialog(cause.getMessage(), additionalDetails, cause);
                 return;
             }
             StringBuilder messageBuilder = new StringBuilder();
@@ -108,6 +104,10 @@ public class ErrorHandler {
             detailsMessage = messageBuilder.toString();
         } else {
             detailsMessage = t.getMessage();
+        }
+
+        if (JavaScriptCallbacks.onError(oneLineMessage, false)) {
+            return;
         }
 
         final String details = detailsMessage + "\n\n" + t;

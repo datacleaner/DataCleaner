@@ -81,30 +81,30 @@ public class CustomizeSchedulePanel extends Composite {
 
     @UiField
     RadioButton oneTimeTriggerRadio;
-    
-    @UiField 
+
+    @UiField
     DateBox dateBox;
-    
+
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
     private Date serverDate;
     private String serverDateAsString;
 
-	public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
+    public CustomizeSchedulePanel(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         super();
 
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
         _service.getServerDate(new DCAsyncCallback<String>() {
-			
-			@Override
-			public void onSuccess(String result) {
-				serverDateAsString = result;
-				serverDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss").parse(serverDateAsString);
-			}
-		});
-        
+
+            @Override
+            public void onSuccess(String result) {
+                serverDateAsString = result;
+                serverDate = DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss").parse(serverDateAsString);
+            }
+        });
+
         MultiWordSuggestOracle suggestions = new MultiWordSuggestOracle();
         suggestions.add("@yearly");
         suggestions.add("@monthly");
@@ -117,84 +117,90 @@ public class CustomizeSchedulePanel extends Composite {
             @Override
             public void onFocus(FocusEvent event) {
                 periodicTriggerRadio.setValue(true);
+                Element elementById = DOM.getElementById("periodicErrorMessage");
+                if (periodicTriggerExpressionTextBox.getText().equals("")) {
+                    elementById.setInnerHTML("Select cron expreesion for periodic scheduling");
+                } else {
+                    elementById.setInnerHTML("");
+                }
             }
         });
-        
+
         initWidget(uiBinder.createAndBindUi(this));
-        
+
         dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("yyyy-MM-dd HH:mm:ss")));
         dateBox.getDatePicker().setWidth("200px");
 
         dateBox.getTextBox().addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					oneTimeTriggerRadio.setValue(true);
-				    Element elementByIdForDate = DOM.getElementById("serverDate");
-					elementByIdForDate.setInnerHTML("Date with respect to Server Time :" +serverDateAsString);
-				}
-			});
-        
+
+            @Override
+            public void onClick(ClickEvent event) {
+                oneTimeTriggerRadio.setValue(true);
+                Element elementByIdForDate = DOM.getElementById("serverDate");
+                elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
+            }
+        });
+
         dateBox.getTextBox().addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-			    Element elementById = DOM.getElementById("errorMessage");
-				if(dateBox.getValue()==null){
-					elementById.setInnerHTML("Select date for one time schedule");
-				}
-				else{
-	        	Date scheduleDate = dateBox.getValue();
-	        	elementById.setInnerHTML("");
-				if(scheduleDate.before(serverDate)){
-	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
-				}
-	        		else{
-	        			elementById.setInnerHTML("");
-	        		}
-			}
-			}
-		});
-        
+
+            @Override
+            public void onChange(ChangeEvent event) {
+                Element elementById = DOM.getElementById("errorMessage");
+                if (dateBox.getValue() == null) {
+                    elementById.setInnerHTML("Select date for one time schedule");
+                }
+                else {
+                    Date scheduleDate = dateBox.getValue();
+                    elementById.setInnerHTML("");
+                    if (scheduleDate.before(serverDate)) {
+                        elementById.setInnerHTML("Past date can not be selected for one time schedule");
+                    }
+                    else {
+                        elementById.setInnerHTML("");
+                    }
+                }
+            }
+        });
+
         oneTimeTriggerRadio.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Element elementById = DOM.getElementById("errorMessage");
-				Element elementByIdForDate = DOM.getElementById("serverDate");
-				elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
-				if(dateBox.getValue()==null){
-					elementById.setInnerHTML("Select date for one time schedule");
-				}
-			}
-		});
-        
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Element elementById = DOM.getElementById("errorMessage");
+                Element elementByIdForDate = DOM.getElementById("serverDate");
+                elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
+                if (dateBox.getValue() == null) {
+                    elementById.setInnerHTML("Select date for one time schedule");
+                }
+            }
+        });
+
         dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-	        	Date scheduleDate = dateBox.getValue();
-	        	Element elementById = DOM.getElementById("errorMessage");
-	        	elementById.setInnerHTML("");
-				if(scheduleDate.before(serverDate)){
-	        		elementById.setInnerHTML("Past date can not be selected for one time schedule");
-				}
-	        		else{
-	        			elementById.setInnerHTML("");
-	        		}
-			}
-		});
-        	
-	    final String expression = _schedule.getCronExpression();
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Date> event) {
+                Date scheduleDate = dateBox.getValue();
+                Element elementById = DOM.getElementById("errorMessage");
+                elementById.setInnerHTML("");
+                if (scheduleDate.before(serverDate)) {
+                    elementById.setInnerHTML("Past date can not be selected for one time schedule");
+                }
+                else {
+                    elementById.setInnerHTML("");
+                }
+            }
+        });
+
+        final String expression = _schedule.getCronExpression();
         final JobIdentifier scheduleAfterJob = _schedule.getDependentJob();
         final String expressionForOneTime = _schedule.getDateForOneTimeSchedule();
-        
+
         if (expression != null) {
             periodicTriggerRadio.setValue(true);
             periodicTriggerExpressionTextBox.setText(expression);
-        } else if (expressionForOneTime != null){
-        	oneTimeTriggerRadio.setValue(true);
-        	dateBox.getTextBox().setValue(expressionForOneTime);
+        } else if (expressionForOneTime != null) {
+            oneTimeTriggerRadio.setValue(true);
+            dateBox.getTextBox().setValue(expressionForOneTime);
         }
         else if (scheduleAfterJob != null) {
             dependentTriggerRadio.setValue(true);
@@ -205,7 +211,7 @@ public class CustomizeSchedulePanel extends Composite {
         }
 
         dependentTriggerJobListBox.addFocusHandler(new FocusHandler() {
-        	
+
             @Override
             public void onFocus(FocusEvent event) {
                 dependentTriggerRadio.setValue(true);
@@ -227,33 +233,37 @@ public class CustomizeSchedulePanel extends Composite {
         });
     }
 
-	public ScheduleDefinition getUpdatedSchedule() {
+    public ScheduleDefinition getUpdatedSchedule() {
         _schedule.setCronExpression(null);
         _schedule.setDependentJob(null);
         _schedule.setDateForOneTimeSchedule(null);
 
         if (periodicTriggerRadio.getValue()) {
-            _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
+            if (periodicTriggerExpressionTextBox.getText().equals("")) {
+                throw new DCUserInputException("Please select a cron expreesion for periodic scheduling");
+            } else {
+                _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
+            }
         }
-        if(oneTimeTriggerRadio.getValue()){
-        	if(dateBox.getValue() == null){
-        		throw new DCUserInputException("Please select a date for one time scheduling");
-        	}
-        	else{
-        	Date scheduleDate = dateBox.getValue();
-        	if(scheduleDate.before(serverDate)){
-        		throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
-        	}else{
-        		_schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
-        	}
-        	}
+        if (oneTimeTriggerRadio.getValue()) {
+            if (dateBox.getValue() == null) {
+                throw new DCUserInputException("Please select a date for one time scheduling");
+            }
+            else {
+                Date scheduleDate = dateBox.getValue();
+                if (scheduleDate.before(serverDate)) {
+                    throw new DCUserInputException("Past date cannot be selected.Please select a date in future");
+                } else {
+                    _schedule.setDateForOneTimeSchedule(dateBox.getTextBox().getText());
+                }
+            }
         }
-        
+
         if (dependentTriggerRadio.getValue()) {
             final int index = dependentTriggerJobListBox.getSelectedIndex();
             final String dependentJobName = dependentTriggerJobListBox.getValue(index);
             _schedule.setDependentJob(new JobIdentifier(dependentJobName));
         }
-		return _schedule;
+        return _schedule;
     }
 }

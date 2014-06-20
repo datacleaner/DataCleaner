@@ -137,7 +137,7 @@ public class CustomizeSchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 oneTimeTriggerRadio.setValue(true);
                 Element elementByIdForDate = DOM.getElementById("serverDate");
-                elementByIdForDate.setInnerHTML("Select date with respect to Server Time : " + serverDateAsString);
+                elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
             }
         });
 
@@ -168,7 +168,7 @@ public class CustomizeSchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 Element elementById = DOM.getElementById("errorMessage");
                 Element elementByIdForDate = DOM.getElementById("serverDate");
-                elementByIdForDate.setInnerHTML("Select date with respect to Server Time : " + serverDateAsString);
+                elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
                 if (dateBox.getValue() == null) {
                     elementById.setInnerHTML("Select date for one time schedule");
                 }

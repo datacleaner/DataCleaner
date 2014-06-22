@@ -71,8 +71,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
     public ExecuteJobWithoutAnalyzersDialog(InjectorBuilder injectorBuilder, WindowContext windowContext,
             AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
-        // TODO: get better banner bg.
-        super(windowContext, ImageManager.get().getImage("images/window/banner-datastores.png"));
+        super(windowContext, ImageManager.get().getImage("images/window/banner-execute.png"));
         _injectorBuilder = injectorBuilder;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -80,12 +79,12 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return "Write data?";
+        return "Execute without analyzers?";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "Write data?";
+        return "Execute without analyzers?";
     }
 
     @Override

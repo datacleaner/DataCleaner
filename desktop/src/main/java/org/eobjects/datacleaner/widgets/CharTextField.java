@@ -65,6 +65,8 @@ public class CharTextField extends DCPanel {
 						_label.setText("[form feed]");
 					} else if (c == '\b') {
 						_label.setText("[backspace]");
+					} else if (c == '~') {
+                        _label.setText("[tilde]");
 					} else {
 						_label.setText(value.toString());
 					}

@@ -42,8 +42,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
 	// the close image(s)
-	private static final Image CLOSE_IMAGE = ImageManager.getInstance().getImage("images/widgets/tab_close.png");
-	private static final Image CLOSE_IMAGE_HOVER = ImageManager.getInstance().getImage(
+	private static final Image CLOSE_IMAGE = ImageManager.get().getImage("images/widgets/tab_close.png");
+	private static final Image CLOSE_IMAGE_HOVER = ImageManager.get().getImage(
 			"images/widgets/tab_close_hover.png");
 
 	// the width of the close images

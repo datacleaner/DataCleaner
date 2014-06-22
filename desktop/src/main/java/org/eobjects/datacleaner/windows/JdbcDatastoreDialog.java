@@ -89,7 +89,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
     private static final int TEST_CONNECTION_COUNT = 20;
 
     private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final JdbcDatastore _originalDatastore;
     private final DatabaseDriverCatalog _databaseDriverCatalog;

@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private final DCGlassPane _glassPane;
 	private final DCPanel _panel;

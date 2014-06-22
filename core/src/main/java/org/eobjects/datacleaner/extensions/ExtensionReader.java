@@ -53,7 +53,7 @@ public class ExtensionReader {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionReader.class);
 
-    private final ResourceManager resourceManager = ResourceManager.getInstance();
+    private final ResourceManager resourceManager = ResourceManager.get();
 
     public List<ExtensionPackage> getInternalExtensions() {
         final List<URL> extensionDescriptorUrls = resourceManager.getUrls("datacleaner-extension.xml");

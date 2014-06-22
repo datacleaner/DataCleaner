@@ -83,6 +83,7 @@ import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoreListPanel;
+import org.eobjects.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.eobjects.datacleaner.panels.FilterJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
@@ -118,8 +119,6 @@ import com.google.inject.Injector;
  * AnalysisJobBuilderWindow because it's main purpose is to present a job that
  * is being built. Behind the covers this job state is respresented in the
  * {@link AnalysisJobBuilder} class.
- * 
- * @author Kasper Sørensen
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
@@ -129,7 +128,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private static final int TAB_ICON_SIZE = IconUtils.ICON_SIZE_LARGE;
 
@@ -378,15 +377,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     public void updateStatusLabel() {
-        boolean success = false;
+        boolean executeable = false;
 
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getVersion());
             _statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
         } else {
+            if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
+                executeable = true;
+            }
             try {
                 if (_analysisJobBuilder.isConfigured(true)) {
-                    success = true;
                     setStatusLabelText("Job is correctly configured");
                     setStatusLabelValid();
                 } else {
@@ -397,6 +398,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 logger.debug("Job not correctly configured", ex);
                 final String errorMessage;
                 if (ex instanceof UnconfiguredConfiguredPropertyException) {
+                    executeable = false;
                     UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
                     ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
                             .getConfiguredProperty();
@@ -412,7 +414,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         }
 
-        _executeButton.setEnabled(success);
+        _executeButton.setEnabled(executeable);
     }
 
     @Override
@@ -589,6 +591,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             @Override
             public void actionPerformed(ActionEvent e) {
                 applyPropertyValues();
+
+                if (_analysisJobBuilder.getAnalyzerJobBuilders().isEmpty()) {
+                    // Present choices to user to write file somewhere,
+                    // and then run a copy of the job based on that.
+                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(getWindowContext(), _analysisJobBuilder);
+                    executeJobWithoutAnalyzersPanel.open();
+                    return;
+                }
 
                 runAnalysisActionListener.actionPerformed(e);
             }

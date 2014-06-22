@@ -110,7 +110,7 @@ public class DCFileChooser extends JFileChooser {
     }
 
     public static void main(String[] args) {
-        LookAndFeelManager.getInstance().init();
+        LookAndFeelManager.get().init();
         DCFileChooser fc = new DCFileChooser();
         fc.showOpenDialog(null);
     }

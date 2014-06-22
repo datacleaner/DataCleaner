@@ -64,7 +64,7 @@ import com.google.inject.Injector;
 public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
 
     private static final Logger logger = LoggerFactory.getLogger(WriteDataResultSwingRenderer.class);
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
 
     @Inject
     WindowContext windowContext;

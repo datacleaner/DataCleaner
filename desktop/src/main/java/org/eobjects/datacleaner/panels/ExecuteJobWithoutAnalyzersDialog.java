@@ -19,18 +19,31 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
+import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
+import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.output.beans.CreateCsvFileAnalyzer;
+import org.eobjects.datacleaner.output.beans.CreateExcelSpreadsheetAnalyzer;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -38,7 +51,11 @@ import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.windows.AbstractDialog;
+import org.eobjects.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * A panel that presents options for the user to execute a job that has no
@@ -49,11 +66,16 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private final AnalysisJobBuilder _analysisJobBuilder;
+    private final InjectorBuilder _injectorBuilder;
+    private final UserPreferences _userPreferences;
 
-    public ExecuteJobWithoutAnalyzersDialog(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder) {
+    public ExecuteJobWithoutAnalyzersDialog(InjectorBuilder injectorBuilder, WindowContext windowContext,
+            AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
         // TODO: get better banner bg.
         super(windowContext, ImageManager.get().getImage("images/window/banner-datastores.png"));
+        _injectorBuilder = injectorBuilder;
         _analysisJobBuilder = analysisJobBuilder;
+        _userPreferences = userPreferences;
     }
 
     @Override
@@ -83,15 +105,16 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         final DCLabel text2 = DCLabel
                 .brightMultiLine("Would you like to run the current job and write the output data somewhere?");
 
-        final JButton writeCsvButton = WidgetFactory.createButton("Write a CSV file", IconUtils.CSV_IMAGEPATH);
+        final JButton writeCsvButton = createButton("Write a CSV file", IconUtils.CSV_IMAGEPATH);
+        writeCsvButton.addActionListener(createWriteDataActionListener(CreateCsvFileAnalyzer.class, ".csv"));
 
-        final JButton writeExcelButton = WidgetFactory.createButton("Write an Excel spreadsheet",
-                IconUtils.EXCEL_IMAGEPATH);
-        
-        final DCLabel text3 = DCLabel
-                .brightMultiLine("... Or cancel and modify the job?");
+        final JButton writeExcelButton = createButton("Write an Excel spreadsheet", IconUtils.EXCEL_IMAGEPATH);
+        writeExcelButton
+                .addActionListener(createWriteDataActionListener(CreateExcelSpreadsheetAnalyzer.class, ".xlsx"));
 
-        final JButton cancelButton = WidgetFactory.createButton("Cancel", IconUtils.ACTION_REMOVE);
+        final DCLabel text3 = DCLabel.brightMultiLine("... Or cancel and modify the job?");
+
+        final JButton cancelButton = createButton("Cancel", IconUtils.ACTION_REMOVE);
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -113,12 +136,78 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         return panel;
     }
 
+    private ActionListener createWriteDataActionListener(final Class<? extends Analyzer<?>> analyzerClass,
+            final String filenameExtension) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final AnalysisJob copyAnalysisJob = _analysisJobBuilder.toAnalysisJob(false);
+                final AnalysisJobBuilder copyAnalysisJobBuilder = new AnalysisJobBuilder(
+                        _analysisJobBuilder.getConfiguration(), copyAnalysisJob);
+
+                final AnalyzerJobBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
+                        .addAnalyzer(analyzerClass);
+                analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
+
+                final String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+                analyzer.setConfiguredProperty("File",
+                        createFile("datacleaner-" + formattedDate + "-output", filenameExtension));
+
+                final ConfiguredPropertyDescriptor sheetNameProperty = analyzer.getDescriptor().getConfiguredProperty(
+                        "Sheet name");
+                if (sheetNameProperty != null) {
+                    analyzer.setConfiguredProperty(sheetNameProperty, "data");
+                }
+
+                final Injector injector = _injectorBuilder.with(AnalysisJobBuilder.class, copyAnalysisJobBuilder)
+                        .createInjector();
+                final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+                resultWindow.open();
+                ExecuteJobWithoutAnalyzersDialog.this.close();
+                resultWindow.startAnalysis();
+            }
+        };
+    }
+
+    private JButton createButton(String text, String imagePath) {
+        JButton button = WidgetFactory.createButton(text, imagePath);
+        button.addMouseListener(new ButtonHoverMouseListener());
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        return button;
+    }
+
+    private File createFile(String filenamePrefix, String extension) {
+        final File directory = _userPreferences.getSaveDatastoreDirectory();
+        int attempt = 0;
+        while (true) {
+            final String filename;
+            if (attempt == 0) {
+                filename = filenamePrefix + extension;
+            } else {
+                filename = filenamePrefix + "_" + attempt + extension;
+            }
+
+            File candidate = new File(directory, filename);
+            if (!candidate.exists()) {
+                return candidate;
+            }
+
+            attempt++;
+        }
+    }
+
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
 
         DCWindowContext windowContext = new DCWindowContext(new AnalyzerBeansConfigurationImpl(),
                 new UserPreferencesImpl(null), null);
-        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(windowContext, null);
+        InjectorBuilder injectorBuilder = Guice.createInjector(new DCModule()).getInstance(InjectorBuilder.class);
+
+        UserPreferences userPreferences = new UserPreferencesImpl(null);
+        ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(injectorBuilder, windowContext,
+                null, userPreferences);
         dialog.open();
     }
 }

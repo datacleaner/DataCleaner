@@ -23,12 +23,11 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.inject.Inject;
 import javax.swing.JLabel;
 
 import org.eobjects.datacleaner.Version;
-import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.CommunityEditionInformationPanel;
+import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -44,8 +43,7 @@ public class LicenceAndEditionStatusLabel extends JLabel {
 
     private final CommunityEditionInformationPanel _communityEditionInformationPanel;
 
-    @Inject
-    protected LicenceAndEditionStatusLabel(DCGlassPane glassPane) {
+    public LicenceAndEditionStatusLabel(DCGlassPane glassPane) {
         super(EDITION);
 
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);

@@ -163,7 +163,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCGlassPane _glassPane;
     private final Ref<DatastoreListPanel> _datastoreListPanelRef;
     private final UserPreferences _userPreferences;
-    private final Injector _injectorWithGlassPane;
+    private final InjectorBuilder _injectorBuilder;
     private final DCWindowMenuBar _windowMenuBar;
     private volatile AbstractJobBuilderPanel _latestPanel = null;
     private final DCPanel _sourceTabOuterPanel;
@@ -206,7 +206,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _datastoreSelectionEnabled = true;
         _componentJobBuilderPresenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
-        _injectorWithGlassPane = injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
+        _injectorBuilder = injectorBuilder;
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -229,7 +229,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _datastoreListPanelRef = new LazyRef<DatastoreListPanel>() {
             @Override
             protected DatastoreListPanel fetch() {
-                DatastoreListPanel datastoreListPanel = _injectorWithGlassPane.getInstance(DatastoreListPanel.class);
+                final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane)
+                        .createInjector();
+                final DatastoreListPanel datastoreListPanel = injectorWithGlassPane
+                        .getInstance(DatastoreListPanel.class);
                 datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 20));
                 return datastoreListPanel;
             }
@@ -595,7 +598,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 if (_analysisJobBuilder.getAnalyzerJobBuilders().isEmpty()) {
                     // Present choices to user to write file somewhere,
                     // and then run a copy of the job based on that.
-                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(getWindowContext(), _analysisJobBuilder);
+                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                            _injectorBuilder, getWindowContext(), _analysisJobBuilder, _userPreferences);
                     executeJobWithoutAnalyzersPanel.open();
                     return;
                 }
@@ -616,8 +620,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
-        LicenceAndEditionStatusLabel statusLabel = _injectorWithGlassPane
-                .getInstance(LicenceAndEditionStatusLabel.class);
+        final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);
 
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);

@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
  * Factory class for various commonly used widgets in DataCleaner. Typically the
  * factory is being used to cut down boilerplate code for typical features such
  * as setting mnemonics, tooltips etc.
- * 
- * @author Kasper Sørensen
  */
 public final class WidgetFactory {
 

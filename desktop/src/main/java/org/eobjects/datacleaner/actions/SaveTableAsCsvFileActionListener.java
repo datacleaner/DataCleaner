@@ -56,90 +56,93 @@ import com.google.inject.Injector;
  */
 public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
-	private final Datastore _datastore;
-	private final Table _table;
-	private final WindowContext _windowContext;
-	private final DCModule _parentModule;
-	private final UserPreferences _userPreferences;
-	private final InjectorBuilder _injectorBuilder;
-	private AnalyzerBeansConfiguration _configuration;
+    private final Datastore _datastore;
+    private final Table _table;
+    private final WindowContext _windowContext;
+    private final DCModule _parentModule;
+    private final UserPreferences _userPreferences;
+    private final InjectorBuilder _injectorBuilder;
+    private AnalyzerBeansConfiguration _configuration;
 
-	@Inject
-	protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-			DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration, InjectorBuilder injectorBuilder) {
-		_datastore = datastore;
-		_table = table;
-		_windowContext = windowContext;
-		_parentModule = parentModule;
-		_userPreferences = userPreferences;
-		_configuration = configuration;
-		_injectorBuilder = injectorBuilder;
-	}
+    @Inject
+    protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
+            DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration,
+            InjectorBuilder injectorBuilder) {
+        _datastore = datastore;
+        _table = table;
+        _windowContext = windowContext;
+        _parentModule = parentModule;
+        _userPreferences = userPreferences;
+        _configuration = configuration;
+        _injectorBuilder = injectorBuilder;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
-		ajb.setDatastore(_datastore);
-		ajb.addSourceColumns(_table.getColumns());
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
+        ajb.setDatastore(_datastore);
+        ajb.addSourceColumns(_table.getColumns());
 
-		final AnalyzerJobBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
-				.addAnalyzer(CreateCsvFileAnalyzer.class);
-		csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-		File directory = _userPreferences.getConfiguredFileDirectory();
-		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
+        final AnalyzerJobBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
+                .addAnalyzer(CreateCsvFileAnalyzer.class);
+        csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
+        File directory = _userPreferences.getConfiguredFileDirectory();
+        csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
-		final PropertyWidgetFactory propertyWidgetFactory = _injectorBuilder.with(
-				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
-				PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = _injectorBuilder.with(
+                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
+                PropertyWidgetFactory.class);
 
-		final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(
-				csvOutputAnalyzerBuilder, false, propertyWidgetFactory);
+        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(csvOutputAnalyzerBuilder, false,
+                propertyWidgetFactory);
 
-		final AbstractDialog dialog = new AbstractDialog(_windowContext) {
-			private static final long serialVersionUID = 1L;
+        final AbstractDialog dialog = new AbstractDialog(_windowContext) {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public String getWindowTitle() {
-				return "Save " + _table.getName() + " as CSV file";
-			}
+            @Override
+            public String getWindowTitle() {
+                return "Save " + _table.getName() + " as CSV file";
+            }
 
-			@Override
-			protected int getDialogWidth() {
-				return 600;
-			}
+            @Override
+            protected int getDialogWidth() {
+                return 600;
+            }
 
-			@Override
-			protected JComponent getDialogContent() {
-				final AnalyzerBeanDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
-				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
-				tabbedPane.addTab(descriptor.getDisplayName(),
-						IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE), presenter.createJComponent());
-				tabbedPane.setUnclosableTab(0);
-				return tabbedPane;
-			}
+            @Override
+            protected JComponent getDialogContent() {
+                final AnalyzerBeanDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder
+                        .getDescriptor();
+                final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
+                tabbedPane.addTab(descriptor.getDisplayName(),
+                        IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE),
+                        presenter.createJComponent());
+                tabbedPane.setUnclosableTab(0);
+                return tabbedPane;
+            }
 
-			@Override
-			protected String getBannerTitle() {
-				return "Save " + _table.getName() + "\nas CSV file";
-			}
-		};
+            @Override
+            protected String getBannerTitle() {
+                return "Save " + _table.getName() + "\nas CSV file";
+            }
+        };
 
-		final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon("images/actions/execute.png"));
-		runButton.addActionListener(new ActionListener() {
+        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon("images/actions/execute.png"));
+        runButton.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
 
-				ResultWindow window = injector.getInstance(ResultWindow.class);
-				window.setVisible(true);
-				dialog.dispose();
-				window.startAnalysis();
-			}
-		});
+                ResultWindow window = injector.getInstance(ResultWindow.class);
+                window.open();
+                dialog.dispose();
+                window.startAnalysis();
+            }
+        });
 
-		presenter.addToButtonPanel(runButton);
+        presenter.addToButtonPanel(runButton);
 
-		dialog.setVisible(true);
-	}
+        dialog.setVisible(true);
+    }
 }

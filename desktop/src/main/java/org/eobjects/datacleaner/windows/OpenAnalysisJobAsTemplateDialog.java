@@ -67,8 +67,6 @@ import com.google.inject.Injector;
  * Dialog for opening a job as a template. This feature allows the user to reuse
  * an existing job but on a new set of columns, typically from a different
  * datastore.
- * 
- * @author Kasper Sørensen
  */
 public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 

@@ -50,8 +50,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Utility class for working with HTTP and XML.
- * 
- * @author Kasper Sørensen
  */
 public final class HttpXmlUtils {
 

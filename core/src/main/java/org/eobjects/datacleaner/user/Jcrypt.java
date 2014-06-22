@@ -23,8 +23,6 @@ package org.eobjects.datacleaner.user;
  * Implementation of the Jcrypt algorithm. Adapted from the Xmlblaster project.
  * 
  * @see http://www.xmlblaster.org/
- * 
- * @author Kasper Sørensen
  */
 public class Jcrypt {
 

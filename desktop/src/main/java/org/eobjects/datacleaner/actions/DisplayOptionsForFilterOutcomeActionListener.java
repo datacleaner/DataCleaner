@@ -47,7 +47,7 @@ import org.eobjects.datacleaner.widgets.DescriptorMenu;
  */
 public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputWritersAction implements ActionListener {
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final FilterJobBuilder<?, ?> _filterJobBuilder;
     private final String _categoryName;

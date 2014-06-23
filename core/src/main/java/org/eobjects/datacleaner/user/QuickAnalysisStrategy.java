@@ -39,8 +39,6 @@ import org.eobjects.analyzer.util.ReflectionUtils;
  * Defines the strategy and rules for doing quick analysis.
  * 
  * @see QuickAnalysisActionListener
- * 
- * @author Kasper Sørensen
  */
 public class QuickAnalysisStrategy implements Serializable {
 

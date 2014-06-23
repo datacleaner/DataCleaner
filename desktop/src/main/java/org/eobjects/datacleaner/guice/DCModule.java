@@ -287,7 +287,7 @@ public class DCModule extends AbstractModule {
         if (builder == null) {
             return null;
         }
-        return builder.toAnalysisJob();
+        return builder.toAnalysisJob(false);
     }
 
     @Provides

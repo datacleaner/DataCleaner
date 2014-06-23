@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.util.ImageManager;
  */
 public class DefaultFileIconFactory implements FileIconFactory {
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private static final ImageIcon ICON_FILE_CSV = imageManager.getImageIcon(IconUtils.CSV_IMAGEPATH,
 			IconUtils.ICON_SIZE_MEDIUM);

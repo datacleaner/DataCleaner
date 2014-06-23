@@ -75,7 +75,7 @@ public class OptionsDialog extends AbstractWindow {
 
     public static final List<Func<OptionsDialog, Tab>> PLUGGABLE_TABS = new ArrayList<Func<OptionsDialog, Tab>>(0);
 
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
     private final AnalyzerBeansConfiguration _configuration;

@@ -100,7 +100,7 @@ public class DefaultBootstrapOptions implements BootstrapOptions {
 		if (_arguments.getJobFile() != null) {
 			if ("Kettle".equals(_embeddedClientName)) {
 				try {
-					URL url = ResourceManager.getInstance().getUrl("images/pdi_dc_banner.png");
+					URL url = ResourceManager.get().getUrl("images/pdi_dc_banner.png");
 					return ImageIO.read(url);
 				} catch (Exception e) {
 					logger.warn("Could not load PDI DC banner", e);

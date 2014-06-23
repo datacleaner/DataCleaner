@@ -30,7 +30,7 @@ public class LoadingIcon extends JLabel {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final ImageIcon ICON = ImageManager.getInstance().getImageIcon("images/status/loading.gif");
+	public static final ImageIcon ICON = ImageManager.get().getImageIcon("images/status/loading.gif");
 
 	public LoadingIcon() {
 		super();

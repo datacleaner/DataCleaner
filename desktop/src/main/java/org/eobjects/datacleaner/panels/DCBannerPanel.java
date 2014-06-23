@@ -39,10 +39,10 @@ public class DCBannerPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance()
+    private static final Image DEFAULT_LEFT_IMAGE = ImageManager.get()
             .getImage("images/window/banner-logo.png");
-    private static final Image DEFAULT_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
-    private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.getInstance().getImage(
+    private static final Image DEFAULT_BG_IMAGE = ImageManager.get().getImage("images/window/banner-bg.png");
+    private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.get().getImage(
             "images/window/banner-right.png");
 
     private static final int DEFAULT_HEIGHT = 80;

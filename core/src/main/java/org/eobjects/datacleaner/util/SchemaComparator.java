@@ -26,9 +26,6 @@ import org.eobjects.metamodel.schema.Schema;
 
 /**
  * Comparator of schemas that will put information schemas in the top
- * 
- * @author Kasper Sørensen
- * 
  */
 public class SchemaComparator implements Comparator<Schema>, Serializable {
 

@@ -51,7 +51,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
     private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
     private final TransformerJobBuilder<?> _transformerJobBuilder;

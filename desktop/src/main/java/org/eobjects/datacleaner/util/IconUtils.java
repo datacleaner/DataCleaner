@@ -121,7 +121,7 @@ public final class IconUtils {
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
 
-    private static final ImageManager _imageManager = ImageManager.getInstance();
+    private static final ImageManager _imageManager = ImageManager.get();
 
     private IconUtils() {
         // prevent instantiation
@@ -180,7 +180,7 @@ public final class IconUtils {
 
     public static String getImagePathForClass(Class<?> cls, ClassLoader classLoader) {
         final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
-        final URL url = ResourceManager.getInstance().getUrl(iconPath, classLoader);
+        final URL url = ResourceManager.get().getUrl(iconPath, classLoader);
         if (url == null) {
             return null;
         }

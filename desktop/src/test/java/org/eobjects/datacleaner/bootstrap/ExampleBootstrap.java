@@ -114,7 +114,7 @@ public class ExampleBootstrap {
 			@Override
 			public Image getWelcomeImage() {
 				try {
-					URL url = ResourceManager.getInstance().getUrl("images/pdi_dc_banner.png");
+					URL url = ResourceManager.get().getUrl("images/pdi_dc_banner.png");
 					return ImageIO.read(url);
 				} catch (Exception e) {
 					e.printStackTrace();

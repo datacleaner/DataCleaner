@@ -74,7 +74,7 @@ public class RegexSwapDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final Object[] TABLE_HEADERS = new Object[] { "Name", "Good/bad votes", "Author" };
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 	private final RegexSwapClient _client;
 	private final JXTree _categoryTree;
 	private final DCTable _regexSelectionTable;

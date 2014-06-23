@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
  * 
  * This implementation holds a buffer of records to write, to avoid hitting the
  * executeUpdate() method for every single record.
- * 
- * @author Kasper Sørensen
  */
 public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 

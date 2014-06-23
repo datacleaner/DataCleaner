@@ -63,7 +63,7 @@ public class ExtensionPackagesPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackagesPanel.class);
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private static final ImageIcon ICON_PLUGIN = imageManager.getImageIcon("images/component-types/plugin.png");
     private static final ImageIcon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR);

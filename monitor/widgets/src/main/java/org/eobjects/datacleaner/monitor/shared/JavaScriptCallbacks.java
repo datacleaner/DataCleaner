@@ -48,7 +48,10 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onWizardProgress(String wizardDisplayName, int stepIndex, int steps) /*-{
                                                                                                       if ($wnd.datacleaner && $wnd.datacleaner.onWizardProgress) {
-                                                                                                          $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
+                                                                                                          var v = $wnd.datacleaner.onWizardProgress(wizardDisplayName, stepIndex, steps);
+                                                                                                          if ((typeof v) == 'boolean') {
+                                                                                                              return v;
+                                                                                                          }
                                                                                                           return true;
                                                                                                       }
                                                                                                       return false;
@@ -64,7 +67,10 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onWizardFinished(String wizardDisplayName, String resultEntityName) /*-{
                                                                                                      if ($wnd.datacleaner && $wnd.datacleaner.onWizardFinished) {
-                                                                                                         $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
+                                                                                                         var v = $wnd.datacleaner.onWizardFinished(wizardDisplayName, resultEntityName);
+                                                                                                         if ((typeof v) == 'boolean') {
+                                                                                                             return v;
+                                                                                                         }
                                                                                                          return true;
                                                                                                      }
                                                                                                      return false;
@@ -83,7 +89,10 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onWizardPanelClosing(String wizardDisplayName, String wizardResultName) /*-{
                                                                                                          if ($wnd.datacleaner && $wnd.datacleaner.onWizardPanelClosing) {
-                                                                                                             $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
+                                                                                                             var v = $wnd.datacleaner.onWizardPanelClosing(wizardDisplayName, wizardResultName);
+                                                                                                             if ((typeof v) == 'boolean') {
+                                                                                                                 return v;
+                                                                                                             }
                                                                                                              return true;
                                                                                                          }
                                                                                                          return false;
@@ -100,7 +109,10 @@ public final class JavaScriptCallbacks {
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
                                                                              
                                                                              if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                                                 $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                                 var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                                 if ((typeof v) == 'boolean') {
+                                                                                     return v;
+                                                                                 }
                                                                                  return true;
                                                                              }
                                                                              return false;
@@ -113,7 +125,10 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onApiInitialized() /*-{
                                                     if ($wnd.datacleaner && $wnd.datacleaner.onApiInitialized) {
-                                                        $wnd.datacleaner.onApiInitialized();
+                                                        var v = $wnd.datacleaner.onApiInitialized();
+                                                        if ((typeof v) == 'boolean') {
+                                                           return v;
+                                                        }
                                                         return true;
                                                     }
                                                     return false;
@@ -132,7 +147,10 @@ public final class JavaScriptCallbacks {
      */
     public static native boolean onError(String message, boolean userFeedback)/*-{
                                                                               if ($wnd.datacleaner && (typeof $wnd.datacleaner.onError == 'function')){
-                                                                                  $wnd.datacleaner.onError(message, userFeedback);
+                                                                                  var v = $wnd.datacleaner.onError(message, userFeedback);
+                                                                                  if ((typeof v) == 'boolean') {
+                                                                                      return v;
+                                                                                  }
                                                                                   return true;
                                                                               }
                                                                               return false;

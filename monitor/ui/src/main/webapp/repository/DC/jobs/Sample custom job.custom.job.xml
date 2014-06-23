@@ -1,7 +1,0 @@
-<custom-job xmlns="http://eobjects.org/datacleaner/custom-job/1.0">
-	<class-name>org.eobjects.datacleaner.monitor.server.job.SampleCustomJob</class-name>
-	<group-name>Contributors</group-name>
-	<properties>
-		<property name="Count" value="40" />
-	</properties>
-</custom-job>

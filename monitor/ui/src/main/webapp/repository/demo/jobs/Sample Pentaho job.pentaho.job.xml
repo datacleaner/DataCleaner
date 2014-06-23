@@ -1,0 +1,8 @@
+<pentaho-job xmlns="http://eobjects.org/datacleaner/pentaho-job/1.0">
+	<group-name>Contributors</group-name>
+	<carte-hostname>localhost</carte-hostname>
+	<carte-port>8081</carte-port>
+	<carte-username>cluster</carte-username>
+	<carte-password>cluster</carte-password>
+	<transformation-name>Row generator test</transformation-name>
+</pentaho-job>

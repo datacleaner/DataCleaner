@@ -185,7 +185,7 @@ public final class WidgetUtils {
     }
 
     private static Font createFont(String path) {
-        final URL url = ResourceManager.getInstance().getUrl(path);
+        final URL url = ResourceManager.get().getUrl(path);
         if (url == null) {
             throw new IllegalArgumentException("Font resource not found: " + path);
         }

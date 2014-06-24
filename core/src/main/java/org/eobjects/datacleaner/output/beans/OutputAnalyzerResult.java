@@ -25,8 +25,6 @@ import org.eobjects.analyzer.beans.writers.WriteDataResult;
  * Represents the output of an output analyzer, which is an analyzer that writes
  * data to a target destination.
  * 
- * @author Kasper Sørensen
- * 
  * @deprecated use {@link WriteDataResult} instead.
  */
 @Deprecated

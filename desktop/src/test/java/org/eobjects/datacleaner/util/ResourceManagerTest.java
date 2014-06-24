@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class ResourceManagerTest extends TestCase {
 
 	public void testGetUrl() throws Exception {
-		assertNotNull(ResourceManager.getInstance().getUrl("images/menu/about.png"));
-		assertNotNull(ResourceManager.getInstance().getUrl("images/filetypes/folder.png"));
+		assertNotNull(ResourceManager.get().getUrl("images/menu/about.png"));
+		assertNotNull(ResourceManager.get().getUrl("images/filetypes/folder.png"));
 	}
 }

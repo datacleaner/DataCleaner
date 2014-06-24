@@ -54,7 +54,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
     private static final long serialVersionUID = 1L;
 
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
     private final DCTaskPaneContainer _taskPaneContainer;
     private final PropertyWidgetFactory _propertyWidgetFactory;
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
@@ -65,7 +65,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
     protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
+        this(ImageManager.get().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
     }
 
     protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,

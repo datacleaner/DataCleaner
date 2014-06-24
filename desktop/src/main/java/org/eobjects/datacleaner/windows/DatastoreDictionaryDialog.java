@@ -77,7 +77,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     protected DatastoreDictionaryDialog(@Nullable DatastoreDictionary dictionary,
             MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog,
             WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+        super(windowContext, ImageManager.get().getImage("images/window/banner-dictionaries.png"));
         _originalDictionary = dictionary;
         _referenceDataCatalog = referenceDataCatalog;
         _datastoreCatalog = datastoreCatalog;

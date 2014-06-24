@@ -53,7 +53,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
     public static final int REFERENCE_DATA_ITEM_MAX_WIDTH = 280;
 
     private static final long serialVersionUID = 1L;
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final CloseableTabbedPane _tabbedPane;
     private final DCGlassPane _glassPane;

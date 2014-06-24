@@ -82,10 +82,6 @@
 					<dp:DateBox ui:field="dateBox" />
 					<div id="errorMessage" style ="color:red"></div>
 					    <div id="serverDate" style="color:green"></div>
-					<p class="discrete">
-						Date is in following format:
-						<i>yyyy-MM-dd HH:MM:SS</i>
-					</p>
 				</div>
 			</div>
 			<div class="triggerPanel">

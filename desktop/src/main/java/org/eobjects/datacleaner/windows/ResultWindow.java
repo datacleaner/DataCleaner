@@ -96,7 +96,7 @@ public final class ResultWindow extends AbstractWindow {
     public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(
             0);
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane(true);
     private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();

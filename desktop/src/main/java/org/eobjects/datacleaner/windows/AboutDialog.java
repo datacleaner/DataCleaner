@@ -85,8 +85,8 @@ public class AboutDialog extends AbstractDialog {
         public String license;
     }
 
-    private static final ResourceManager resourceManager = ResourceManager.getInstance();
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ResourceManager resourceManager = ResourceManager.get();
+    private static final ImageManager imageManager = ImageManager.get();
 
     public AboutDialog(WindowContext windowContext) {
         super(windowContext);
@@ -238,7 +238,7 @@ public class AboutDialog extends AbstractDialog {
 
         headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-        final ImageManager imageManager = ImageManager.getInstance();
+        final ImageManager imageManager = ImageManager.get();
 
         final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
         datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));

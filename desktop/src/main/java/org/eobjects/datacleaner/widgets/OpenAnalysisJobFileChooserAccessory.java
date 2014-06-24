@@ -67,8 +67,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
-    private static final ImageManager imageManager = ImageManager.getInstance();
-    private static final ImageIcon ICON_APP = ImageManager.getInstance().getImageIcon("images/window/app-icon.png");
+    private static final ImageManager imageManager = ImageManager.get();
+    private static final ImageIcon ICON_APP = ImageManager.get().getImageIcon("images/window/app-icon.png");
     private static final int WIDTH = 220;
 
     private final AnalyzerBeansConfiguration _configuration;

@@ -104,7 +104,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
      */
     private static final int PREVIEW_COLUMNS = 10;
 
-    protected static final ImageManager imageManager = ImageManager.getInstance();
+    protected static final ImageManager imageManager = ImageManager.get();
     protected final MutableDatastoreCatalog _mutableDatastoreCatalog;
     protected final D _originalDatastore;
     protected final JButton _addDatastoreButton;

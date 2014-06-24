@@ -135,7 +135,7 @@ public class QueryWindow extends AbstractWindow {
 
     @Override
     public Image getWindowIcon() {
-        return ImageManager.getInstance().getImage("images/model/query.png");
+        return ImageManager.get().getImage("images/model/query.png");
     }
 
     @Override

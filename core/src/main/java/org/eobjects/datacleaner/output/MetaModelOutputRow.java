@@ -26,8 +26,6 @@ import org.eobjects.analyzer.data.InputRow;
 /**
  * {@link OutputRow} implementation for the
  * {@link AbstractMetaModelOutputWriter}.
- * 
- * @author Kasper Sørensen
  */
 final class MetaModelOutputRow implements OutputRow {
 

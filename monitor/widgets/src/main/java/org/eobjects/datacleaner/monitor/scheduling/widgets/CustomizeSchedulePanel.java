@@ -119,7 +119,7 @@ public class CustomizeSchedulePanel extends Composite {
                 periodicTriggerRadio.setValue(true);
                 Element elementById = DOM.getElementById("periodicErrorMessage");
                 if (periodicTriggerExpressionTextBox.getText().equals("")) {
-                    elementById.setInnerHTML("Select cron expreesion for periodic scheduling");
+                    elementById.setInnerHTML("Specify cron expression for periodic scheduling");
                 } else {
                     elementById.setInnerHTML("");
                 }
@@ -137,7 +137,7 @@ public class CustomizeSchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 oneTimeTriggerRadio.setValue(true);
                 Element elementByIdForDate = DOM.getElementById("serverDate");
-                elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
+                elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
             }
         });
 
@@ -168,7 +168,7 @@ public class CustomizeSchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 Element elementById = DOM.getElementById("errorMessage");
                 Element elementByIdForDate = DOM.getElementById("serverDate");
-                elementByIdForDate.setInnerHTML("Date with respect to Server Time :" + serverDateAsString);
+                elementByIdForDate.setInnerHTML("Server Time : " + serverDateAsString);
                 if (dateBox.getValue() == null) {
                     elementById.setInnerHTML("Select date for one time schedule");
                 }
@@ -240,7 +240,7 @@ public class CustomizeSchedulePanel extends Composite {
 
         if (periodicTriggerRadio.getValue()) {
             if (periodicTriggerExpressionTextBox.getText().equals("")) {
-                throw new DCUserInputException("Please select a cron expreesion for periodic scheduling");
+                throw new DCUserInputException("Please specify a cron expression for periodic scheduling");
             } else {
                 _schedule.setCronExpression(periodicTriggerExpressionTextBox.getText());
             }

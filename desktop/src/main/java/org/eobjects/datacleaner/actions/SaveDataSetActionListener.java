@@ -90,7 +90,7 @@ public class SaveDataSetActionListener implements ActionListener {
 		});
 
 		final JMenuItem saveAsCsvItem = new JMenuItem("As CSV file");
-		saveAsCsvItem.setIcon(ImageManager.getInstance().getImageIcon(IconUtils.CSV_IMAGEPATH));
+		saveAsCsvItem.setIcon(ImageManager.get().getImageIcon(IconUtils.CSV_IMAGEPATH));
 		saveAsCsvItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

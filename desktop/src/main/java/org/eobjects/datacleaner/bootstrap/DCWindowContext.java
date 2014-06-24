@@ -145,8 +145,12 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 		}
 		_exiting = true;
 		
-		_userPreferences.save();
-		_usageLogger.logApplicationShutdown();
+		if (_userPreferences != null) {
+		    _userPreferences.save();
+		}
+		if (_usageLogger != null) {
+		    _usageLogger.logApplicationShutdown();
+		}
 		if (_configuration != null) {
 			_configuration.getTaskRunner().shutdown();
 		}

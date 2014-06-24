@@ -39,7 +39,7 @@ import org.eobjects.metamodel.schema.Table;
 public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private boolean indentEnabled;
 	private String nullText = "- none -";

@@ -41,9 +41,6 @@ import org.slf4j.LoggerFactory;
  * Represents a database driver that the user has installed. Such database
  * drivers are based on (JAR) files on the filesystem and are loaded dynamically
  * (as opposed to statically loaded drivers, which are loaded at startup time).
- * 
- * @author Kasper Sørensen
- * 
  */
 public final class UserDatabaseDriver implements Serializable {
 

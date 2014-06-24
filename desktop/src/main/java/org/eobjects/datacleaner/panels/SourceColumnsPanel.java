@@ -69,7 +69,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
         _hintLabel.setFont(WidgetUtils.FONT_HEADER2);
         _hintLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
         _hintLabel.setIconTextGap(20);
-        _hintLabel.setIcon(ImageManager.getInstance().getImageIcon(IconUtils.MODEL_COLUMN));
+        _hintLabel.setIcon(ImageManager.get().getImageIcon(IconUtils.MODEL_COLUMN));
 
         _analysisJobBuilder.getSourceColumnListeners().add(this);
         setBorder(WidgetUtils.BORDER_EMPTY);

@@ -53,7 +53,7 @@ public class TableDefinitionDialog extends AbstractDialog {
 
 	public TableDefinitionDialog(WindowContext windowContext, SchemaFactory schemaFactory, SimpleTableDef[] tableDefs,
 			Action<SimpleTableDef[]> saveAction) {
-		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-tabledef.png"));
+		super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 		_tableDefsPanel = new SimpleTableDefsPanel(schemaFactory, tableDefs);
 		_saveAction = saveAction;
 	}

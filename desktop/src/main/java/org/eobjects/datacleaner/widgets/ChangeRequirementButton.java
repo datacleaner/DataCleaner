@@ -60,7 +60,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
 
     private static final String NO_FILTER_TEXT = "(No filter requirement)";
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
     private static final Icon mappedFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
             IconUtils.ICON_SIZE_SMALL);
     private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
@@ -69,7 +69,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
 
     public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
-        super(NO_FILTER_TEXT, ImageManager.getInstance().getImageIcon("images/component-types/filter.png",
+        super(NO_FILTER_TEXT, ImageManager.get().getImageIcon("images/component-types/filter.png",
                 IconUtils.ICON_SIZE_SMALL));
         _jobBuilder = jobBuilder;
         addActionListener(this);

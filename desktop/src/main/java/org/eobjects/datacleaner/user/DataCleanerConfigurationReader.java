@@ -201,7 +201,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
     private AnalyzerBeansConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
         logger.info("Reading conf.xml from classpath");
         try {
-            return configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
+            return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml")
                     .openStream());
         } catch (Exception ex2) {
             logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);

@@ -21,8 +21,6 @@ package org.eobjects.datacleaner.user;
 
 /**
  * Defines a service that is able to authenticate username/password credentials.
- * 
- * @author Kasper Sørensen
  */
 public interface AuthenticationService {
 

@@ -51,7 +51,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
-	private final static ImageManager imageManager = ImageManager.getInstance();
+	private final static ImageManager imageManager = ImageManager.get();
 	private final RendererFactory _rendererFactory;
 	private final List<AnalyzerResult> _results;
 	private final String _title;

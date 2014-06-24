@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A catalog of metadata about database drivers and their current installation
  * status.
- * 
- * @author Kasper Sørensen
  */
 @Singleton
 public class DatabaseDriverCatalog implements Serializable {

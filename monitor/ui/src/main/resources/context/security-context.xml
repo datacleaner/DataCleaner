@@ -49,7 +49,7 @@
 	</beans:bean>
 	
 	<user-service id="userService">
-		<!-- DC tenant users -->
+		<!-- demo tenant users -->
 		<user name="viewer" password="viewer" authorities="ROLE_VIEWER" />
 		<user name="developer" password="developer" authorities="ROLE_ENGINEER" />
 		<user name="admin" password="admin" authorities="ROLE_ADMIN" />
@@ -80,7 +80,7 @@
 
 	<beans:bean name="tenantResolver" id="tenantResolver"
 		class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">
-		<beans:property name="tenantId" value="DC" />
+		<beans:property name="tenantId" value="demo" />
 	</beans:bean>
 
 </beans:beans>

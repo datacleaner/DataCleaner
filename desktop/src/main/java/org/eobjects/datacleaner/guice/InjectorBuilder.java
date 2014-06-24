@@ -37,84 +37,82 @@ import com.google.inject.util.Modules;
 
 /**
  * Helper class for creating sub-injectors to the current injector.
- * 
- * @author Kasper Sørensen
  */
 public final class InjectorBuilder {
 
-	private final List<TypeLiteral<?>> _inheritedTypeLiterals;
-	private final AdHocModule _adHocModule;
-	private final DCModule _parentModule;
-	private final Injector _parentInjector;
+    private final List<TypeLiteral<?>> _inheritedTypeLiterals;
+    private final AdHocModule _adHocModule;
+    private final DCModule _parentModule;
+    private final Injector _parentInjector;
 
-	@Inject
-	protected InjectorBuilder(DCModule parentModule, Injector injector) {
-		_parentModule = parentModule;
-		_parentInjector = injector;
-		_adHocModule = new AdHocModule();
-		_inheritedTypeLiterals = new ArrayList<TypeLiteral<?>>();
-		inherit(AnalysisJobBuilderWindow.class);
-		inherit(Datastore.class);
-	}
+    @Inject
+    protected InjectorBuilder(DCModule parentModule, Injector injector) {
+        _parentModule = parentModule;
+        _parentInjector = injector;
+        _adHocModule = new AdHocModule();
+        _inheritedTypeLiterals = new ArrayList<TypeLiteral<?>>();
+        inherit(AnalysisJobBuilderWindow.class);
+        inherit(Datastore.class);
+    }
 
-	public InjectorBuilder with(Class<?> bindingClass, Object providerOrInstance) {
-		_adHocModule.bind(bindingClass, providerOrInstance);
-		return this;
-	}
+    public InjectorBuilder with(Class<?> bindingClass, Object providerOrInstance) {
+        _adHocModule.bind(bindingClass, providerOrInstance);
+        return this;
+    }
 
-	public InjectorBuilder with(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
-		_adHocModule.bind(bindingTypeLiteral, providerOrInstance);
-		return this;
-	}
+    public InjectorBuilder with(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
+        _adHocModule.bind(bindingTypeLiteral, providerOrInstance);
+        return this;
+    }
 
-	public InjectorBuilder inherit(Class<?> bindingClass) {
-		return inherit(Key.get(bindingClass));
-	}
+    public InjectorBuilder inherit(Class<?> bindingClass) {
+        return inherit(Key.get(bindingClass));
+    }
 
-	public InjectorBuilder inherit(Key<?> key) {
-		return inherit(key.getTypeLiteral());
-	}
+    public InjectorBuilder inherit(Key<?> key) {
+        return inherit(key.getTypeLiteral());
+    }
 
-	public InjectorBuilder inherit(TypeLiteral<?> typeLiteral) {
-		if (!_inheritedTypeLiterals.contains(typeLiteral)) {
-			_inheritedTypeLiterals.add(typeLiteral);
-		}
-		return this;
-	}
+    public InjectorBuilder inherit(TypeLiteral<?> typeLiteral) {
+        if (!_inheritedTypeLiterals.contains(typeLiteral)) {
+            _inheritedTypeLiterals.add(typeLiteral);
+        }
+        return this;
+    }
 
-	/**
-	 * Gets an instance of a particular type
-	 * 
-	 * @param <E>
-	 * @param type
-	 * @return
-	 */
-	public <E> E getInstance(Class<E> type) {
-		return createInjector().getInstance(type);
-	}
+    /**
+     * Gets an instance of a particular type
+     * 
+     * @param <E>
+     * @param type
+     * @return
+     */
+    public <E> E getInstance(Class<E> type) {
+        return createInjector().getInstance(type);
+    }
 
-	/**
-	 * Creates an {@link Injector} which in turn can be used to get instances of
-	 * various types.
-	 * 
-	 * Note the the {@link #getInstance(Class)} method is preferred, if only a
-	 * single injection is to be made.
-	 * 
-	 * @return a Guice injector
-	 */
-	public Injector createInjector() {
-		for (TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
-			Key<?> key = Key.get(typeLiteral);
-			Binding<?> binding = _parentInjector.getExistingBinding(key);
-			if (binding != null) {
-				if (!_adHocModule.hasBindingFor(typeLiteral)) {
-					// Bind entry if not already bound in adhoc module!!!
-					_adHocModule.bind(typeLiteral, binding.getProvider());
-				}
-			}
-		}
+    /**
+     * Creates an {@link Injector} which in turn can be used to get instances of
+     * various types.
+     * 
+     * Note the the {@link #getInstance(Class)} method is preferred, if only a
+     * single injection is to be made.
+     * 
+     * @return a Guice injector
+     */
+    public Injector createInjector() {
+        for (TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
+            Key<?> key = Key.get(typeLiteral);
+            Binding<?> binding = _parentInjector.getExistingBinding(key);
+            if (binding != null) {
+                if (!_adHocModule.hasBindingFor(typeLiteral)) {
+                    // Bind entry if not already bound in adhoc module!!!
+                    _adHocModule.bind(typeLiteral, binding.getProvider());
+                }
+            }
+        }
 
-		Module module = Modules.override(_parentModule).with(_adHocModule);
-		return Guice.createInjector(module);
-	}
+        Module module = Modules.override(_parentModule).with(_adHocModule);
+        return Guice.createInjector(module);
+    }
 }

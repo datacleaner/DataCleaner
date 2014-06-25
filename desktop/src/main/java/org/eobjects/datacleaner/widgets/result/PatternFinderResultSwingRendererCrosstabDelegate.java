@@ -85,7 +85,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 		final DCPanel headerPanel = new DCPanel();
 		headerPanel.setLayout(new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 1, 1));
 
-		final JButton chartButton = new JButton("Show distribution chart", ImageManager.getInstance().getImageIcon(
+		final JButton chartButton = new JButton("Show distribution chart", ImageManager.get().getImageIcon(
 				"images/chart-types/bar.png"));
 		chartButton.setMargin(new Insets(1, 1, 1, 1));
 		chartButton.addActionListener(new ActionListener() {

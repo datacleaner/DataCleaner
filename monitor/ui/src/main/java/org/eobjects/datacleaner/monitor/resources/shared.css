@@ -422,7 +422,7 @@ div.center {
 	margin-bottom: 40px;
 }
 
-.wizard-navigation-button {
+.ButtonPanel .gwt-Button {
 	color: #fff;
 	background-color:#f0ad4e;
 	border-color: #eea236;
@@ -446,13 +446,17 @@ div.center {
 	user-select: none;
 }
 
-.wizard-navigation-button:disabled, .wizard-navigation-button:hover:disabled {
+.ButtonPanel .gwt-Button-ImageButton {
+	height: 30px !important;
+}
+
+.ButtonPanel .gwt-Button:disabled, .ButtonPanel .gwt-Button:disabled {
 	background-color: #ddd;
 	cursor: default;
 	border: 1px solid #bbb;
 }
 
-.wizard-navigation-button:hover{
+.ButtonPanel .gwt-Button:hover {
 	background-color:#ff9600;
 	border-color: #eea236;
 }

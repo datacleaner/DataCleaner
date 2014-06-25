@@ -119,9 +119,9 @@ public class ComboButton extends JPanel {
 
     // a simple test app
     public static void main(String[] args) {
-        LookAndFeelManager.getInstance().init();
+        LookAndFeelManager.get().init();
 
-        ImageIcon icon = ImageManager.getInstance().getImageIcon("images/actions/add.png", 32);
+        ImageIcon icon = ImageManager.get().getImageIcon("images/actions/add.png", 32);
 
         final ComboButton comboButton1 = new ComboButton();
         comboButton1.addButton(icon, "Foo!", true);

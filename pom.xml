@@ -7,8 +7,8 @@
 		<slf4j.version>1.7.6</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
-		<guava.version>16.0.1</guava.version>
-		<analyzerbeans.version>0.42</analyzerbeans.version>
+		<guava.version>17.0</guava.version>
+		<analyzerbeans.version>0.43</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

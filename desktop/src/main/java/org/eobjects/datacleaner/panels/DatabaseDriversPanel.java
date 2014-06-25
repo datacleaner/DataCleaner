@@ -74,7 +74,7 @@ public class DatabaseDriversPanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseDriversPanel.class);
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
     private final Set<String> _usedDriverClassNames = new HashSet<String>();
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final WindowContext _windowContext;

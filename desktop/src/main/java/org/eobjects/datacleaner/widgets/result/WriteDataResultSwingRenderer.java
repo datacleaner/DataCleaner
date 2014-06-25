@@ -20,10 +20,13 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.swing.Box;
@@ -40,6 +43,7 @@ import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
@@ -52,6 +56,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.Resource;
 import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -64,7 +70,7 @@ import com.google.inject.Injector;
 public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
 
     private static final Logger logger = LoggerFactory.getLogger(WriteDataResultSwingRenderer.class);
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
 
     @Inject
     WindowContext windowContext;
@@ -103,6 +109,39 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                 panel.add(label);
             }
 
+            final Datastore datastore = result.getDatastore(_datastoreCatalog);
+            if (datastore != null && datastore instanceof ResourceDatastore) {
+                final ResourceDatastore resourceDatastore = (ResourceDatastore) datastore;
+                final Resource resource = resourceDatastore.getResource();
+                if (resource != null && resource instanceof FileResource) {
+                    final FileResource fileResource = (FileResource) resource;
+                    final File file = fileResource.getFile();
+                    if (file != null && file.exists()) {
+                        final JXEditorPane editorPane = new JXEditorPane("text/html",
+                                "Data was written to file: <a href=\"http://datacleaner.org/open_file\">"
+                                        + file.getAbsolutePath() + "</a>.");
+                        editorPane.setEditable(false);
+                        editorPane.setOpaque(false);
+                        editorPane.addHyperlinkListener(new HyperlinkListener() {
+                            @Override
+                            public void hyperlinkUpdate(HyperlinkEvent event) {
+                                if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+                                    final String href = event.getDescription();
+                                    if ("http://datacleaner.org/open_file".equals(href)) {
+                                        try {
+                                            Desktop.getDesktop().open(file);
+                                        } catch (IOException ex) {
+                                            logger.warn("Failed to open file: {}", file, ex);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        panel.add(editorPane);
+                    }
+                }
+            }
+
             final DCPanel buttonPanel = createButtonPanel(result);
             panel.add(buttonPanel);
         }
@@ -116,14 +155,11 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
 
             final FileDatastore errorDatastore = result.getErrorDatastore();
 
-            final JXEditorPane editorPane = new JXEditorPane(
-                    "text/html",
-                    "<b>"
-                            + result.getErrorRowCount()
-                            + " records</b> could <i>not</i> be written to the table!<br/>"
-                            + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
-                            + errorDatastore.getFilename()
-                            + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
+            final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
+                    + " records</b> could <i>not</i> be written to the table!<br/>"
+                    + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
+                    + errorDatastore.getFilename()
+                    + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
             editorPane.setEditable(false);
             editorPane.setOpaque(false);
             editorPane.addHyperlinkListener(new HyperlinkListener() {

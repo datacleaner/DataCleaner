@@ -43,7 +43,10 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.Resource;
 
 @AnalyzerBean("Create CSV file")
 @Alias("Write to CSV file")
@@ -91,7 +94,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
     @Override
     public OutputWriter createOutputWriter() {
-        String[] headers = new String[columns.length];
+        final String[] headers = new String[columns.length];
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
@@ -101,8 +104,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
-        Datastore datastore = new CsvDatastore(file.getName(), file.getAbsolutePath(), quoteChar, separatorChar,
-                FileHelper.DEFAULT_ENCODING);
+        final Resource resource = new FileResource(file);
+        final Datastore datastore = new CsvDatastore(file.getName(), resource, file.getAbsolutePath(), quoteChar,
+                separatorChar, escapeChar, FileHelper.DEFAULT_ENCODING, false, true,
+                CsvConfiguration.DEFAULT_COLUMN_NAME_LINE);
         return new WriteDataResultImpl(rowCount, datastore, null, null);
     }
 

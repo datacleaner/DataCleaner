@@ -114,7 +114,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 applyDetailedView();
             }
 
-            final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
+            final JButton saveToFileButton = new JButton("Save dataset", ImageManager.get().getImageIcon(
                     "images/actions/save.png", IconUtils.ICON_SIZE_MEDIUM));
             saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(),
                     result.getRows(), _userPreferences, _datastoreCatalog));

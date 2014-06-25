@@ -57,7 +57,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final int NUM_TEST_FIELDS = 6;
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 	private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
 	private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 
@@ -76,7 +76,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 	private StringPattern _regexStringPattern;
 
 	public RegexStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
-		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
+		super(windowContext, ImageManager.get().getImage("images/window/banner-string-patterns.png"));
 		_catalog = catalog;
 		_expressionNameField = WidgetFactory.createTextField("String pattern name");
 		_expressionField = WidgetFactory.createTextField("Expression");

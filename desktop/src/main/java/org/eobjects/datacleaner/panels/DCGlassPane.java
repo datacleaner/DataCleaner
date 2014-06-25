@@ -37,8 +37,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 /**
  * Encapsulated Swing glass pane, ensures correct access to it.
- * 
- * @author Kasper Sørensen
  */
 public class DCGlassPane {
 

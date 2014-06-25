@@ -50,7 +50,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
 	@Inject
 	protected MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
-		super(ImageManager.getInstance().getImage("images/window/metadata-tab-background.png"), 95, 95,
+		super(ImageManager.get().getImage("images/window/metadata-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_analysisJobBuilder = analysisJobBuilder;
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
@@ -70,7 +70,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 	private void updateComponents() {
 		final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<InputColumn<?>>(_analysisJobBuilder.getSourceColumns());
 
-		final Icon validIcon = ImageManager.getInstance().getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
+		final Icon validIcon = ImageManager.get().getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 
 		final DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, sourceColumns.size());
 

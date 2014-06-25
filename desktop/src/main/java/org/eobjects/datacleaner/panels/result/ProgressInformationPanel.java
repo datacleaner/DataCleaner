@@ -60,7 +60,7 @@ public class ProgressInformationPanel extends DCPanel {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private static final Icon ICON_PROGRESS = imageManager.getImageIcon("images/menu/progress.png",
             IconUtils.ICON_SIZE_SMALL);

@@ -50,7 +50,7 @@ public class MongoDbDatastoreDialog extends AbstractDialog implements SchemaFact
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private final MutableDatastoreCatalog _catalog;
 	private final MongoDbDatastore _originalDatastore;

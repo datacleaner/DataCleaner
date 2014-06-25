@@ -80,7 +80,7 @@ public final class VisualizeJobGraph {
 
 	private static final String MORE_COLUMNS_VERTEX = "...";
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 	private static final Logger logger = LoggerFactory
 			.getLogger(VisualizeJobGraph.class);
 

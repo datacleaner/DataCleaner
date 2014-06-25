@@ -38,7 +38,7 @@ public final class HelpIcon extends JLabel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 	private final String _helpMessage;
 	private final Icon _tooltipIcon;
 

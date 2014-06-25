@@ -72,7 +72,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorConnectionDialog.class);
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final UserPreferences _userPreferences;
     private final DCCheckBox<Void> _httpsCheckBox;
@@ -372,7 +372,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
     }
 
     public static void main(String[] args) {
-        LookAndFeelManager.getInstance().init();
+        LookAndFeelManager.get().init();
         UserPreferences userPreferences = new UserPreferencesImpl(null);
         WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
         MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);

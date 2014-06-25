@@ -33,9 +33,6 @@ import org.junit.Ignore;
 /**
  * Helper class for reuse by test cases that want to test an OutputWriters
  * ability to write different types of values
- *
- * @author Kasper Sørensen
- *
  */
 @Ignore
 public class OutputWriterScenarioHelper {

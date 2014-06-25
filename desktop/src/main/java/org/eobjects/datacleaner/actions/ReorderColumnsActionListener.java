@@ -77,7 +77,7 @@ public class ReorderColumnsActionListener implements ActionListener {
 
 		updateTableModel(table, list);
 
-		final Image image = ImageManager.getInstance().getImage("images/actions/reorder-columns.png");
+		final Image image = ImageManager.get().getImage("images/actions/reorder-columns.png");
 
 		final DCPanel tablePanel = table.toPanel();
 		tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));

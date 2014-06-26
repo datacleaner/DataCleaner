@@ -119,6 +119,24 @@ public final class JavaScriptCallbacks {
                                                                              }-*/;
 
     /**
+     * Called when the user clicks a button to close the execution status panel.
+     * 
+     * @return whether or not a callback was invoked
+     */
+    public static native boolean onExecutionStatusPanelClosing() /*-{
+                                                                     
+                                                                     if ($wnd.datacleaner && $wnd.datacleaner.onExecutionStatusPanelClosing) {
+                                                                         var v = $wnd.datacleaner.onExecutionStatusPanelClosing();
+                                                                         if ((typeof v) == 'boolean') {
+                                                                             return v;
+                                                                         }
+                                                                         return true;
+                                                                     }
+                                                                     return false;
+                                                                     
+                                                                 }-*/;
+    
+    /**
      * Called when the DataCleaner API has been initialized
      * 
      * @return

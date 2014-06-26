@@ -82,7 +82,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
     protected DatastoreSynonymCatalogDialog(@Nullable DatastoreSynonymCatalog synonymCatalog,
             MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
             WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+        super(windowContext, ImageManager.get().getImage("images/window/banner-synonym-catalog.png"));
         _originalsynonymCatalog = synonymCatalog;
         _datastoreCatalog = datastoreCatalog;
         _mutableReferenceCatalog = mutableReferenceCatalog;

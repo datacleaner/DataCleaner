@@ -41,7 +41,7 @@ public class SchemaTreePanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private final InjectorBuilder _injectorBuilder;
 	private JComponent _updatePanel;

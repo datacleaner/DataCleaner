@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
  * Factory class for various commonly used widgets in DataCleaner. Typically the
  * factory is being used to cut down boilerplate code for typical features such
  * as setting mnemonics, tooltips etc.
- * 
- * @author Kasper Sørensen
  */
 public final class WidgetFactory {
 
@@ -90,7 +88,7 @@ public final class WidgetFactory {
     public static JMenuItem createMenuItem(String text, String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
-            icon = ImageManager.getInstance().getImageIcon(iconPath);
+            icon = ImageManager.get().getImageIcon(iconPath);
         }
         return createMenuItem(text, icon);
     }
@@ -113,7 +111,7 @@ public final class WidgetFactory {
     }
 
     public static JButton createButton(String text, String imagePath) {
-        return createButton(text, ImageManager.getInstance().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM));
+        return createButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM));
     }
 
     public static JXStatusBar createStatusBar(JComponent comp) {
@@ -144,7 +142,7 @@ public final class WidgetFactory {
     }
 
     public static JButton createSmallButton(String imagePath) {
-        Image image = ImageManager.getInstance().getImage(imagePath, IconUtils.ICON_SIZE_SMALL);
+        Image image = ImageManager.get().getImage(imagePath, IconUtils.ICON_SIZE_SMALL);
         ImageIcon imageIcon = new ImageIcon(image);
         JButton button = new JButton(imageIcon);
         button.setMargin(new Insets(0, 0, 0, 0));

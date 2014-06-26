@@ -52,7 +52,7 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private final MutableDatastoreCatalog _datastoreCatalog;
     private final SalesforceDatastore _originalDatastore;

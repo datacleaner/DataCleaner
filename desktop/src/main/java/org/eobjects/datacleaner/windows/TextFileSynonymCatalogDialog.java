@@ -67,7 +67,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	@Inject
 	protected TextFileSynonymCatalogDialog(@Nullable TextFileSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog catalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+		super(windowContext, ImageManager.get().getImage("images/window/banner-synonym-catalog.png"));
 		_userPreferences = userPreferences;
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;

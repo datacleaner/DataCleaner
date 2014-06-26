@@ -33,7 +33,7 @@ public class HumanInferenceToolbarButton extends JButton {
 	private static final long serialVersionUID = 1L;
 
 	public HumanInferenceToolbarButton() {
-		this(ImageManager.getInstance().getImageIcon("images/powered-by-human-inference-dark.png"));
+		this(ImageManager.get().getImageIcon("images/powered-by-human-inference-dark.png"));
 	}
 
 	public HumanInferenceToolbarButton(Icon icon) {

@@ -142,7 +142,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        LookAndFeelManager.getInstance().init();
+        LookAndFeelManager.get().init();
 
         Injector injector = Guice.createInjector(new DCModule(VFSUtils.getFileSystemManager().resolveFile("."), null));
 

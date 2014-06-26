@@ -24,8 +24,6 @@ import java.io.Serializable;
 /**
  * An object that provides information about a JDBC database, which will aid the
  * user in selecting correct driver classes, filling out the connection URL etc.
- * 
- * @author Kasper Sørensen
  */
 public interface DatabaseDriverDescriptor extends Serializable, Comparable<DatabaseDriverDescriptor> {
 

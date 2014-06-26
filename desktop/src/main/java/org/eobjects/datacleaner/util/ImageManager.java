@@ -40,13 +40,30 @@ public final class ImageManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageManager.class);
 
-    private static ImageManager instance = new ImageManager();
+    private static final ImageManager instance = new ImageManager();
 
     private final Cache<String, Image> _cachedImageIcons = CollectionUtils2.createCache(500, 5 * 60);
-    private final ResourceManager resourceManager = ResourceManager.getInstance();
+    private final ResourceManager resourceManager = ResourceManager.get();
 
-    public static ImageManager getInstance() {
+    /**
+     * Gets the singleton instance of ImageManager.
+     * 
+     * @return
+     */
+    public static ImageManager get() {
         return instance;
+    }
+
+    /**
+     * Gets the singleton instance of ImageManager.
+     * 
+     * @return
+     * 
+     * @deprecated use {@link #get()} instead
+     */
+    @Deprecated
+    public static ImageManager getInstance() {
+        return get();
     }
 
     private ImageManager() {

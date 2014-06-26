@@ -56,7 +56,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
     @Inject
     protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
             WindowContext windowContext) {
-        super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+        super(windowContext, ImageManager.get().getImage("images/window/banner-dictionaries.png"));
         _originalDictionary = dictionary;
         _catalog = catalog;
 

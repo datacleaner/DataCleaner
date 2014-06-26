@@ -52,7 +52,7 @@ public final class FilenameTextField extends DCPanel {
 
 	private final JXTextField _textField = WidgetFactory.createTextField("Filename");
 	private final JButton _browseButton = WidgetFactory.createButton("Browse",
-			ImageManager.getInstance().getImageIcon("images/actions/browse.png", IconUtils.ICON_SIZE_SMALL));
+			ImageManager.get().getImageIcon("images/actions/browse.png", IconUtils.ICON_SIZE_SMALL));
 	private final List<FileSelectionListener> _listeners = new ArrayList<FileSelectionListener>();
 	private final List<FileFilter> _chooseableFileFilters = new ArrayList<FileFilter>();
 	private volatile FileFilter _selectedFileFilter;

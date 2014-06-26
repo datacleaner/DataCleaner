@@ -50,7 +50,7 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon TABLE_ICON = ImageManager.getInstance().getImageIcon("images/model/table.png");
+    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon("images/model/table.png");
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;

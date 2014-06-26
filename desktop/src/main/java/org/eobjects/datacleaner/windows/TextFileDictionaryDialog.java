@@ -65,7 +65,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
     @Inject
     protected TextFileDictionaryDialog(@Nullable TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
             WindowContext windowContext, UserPreferences userPreferences) {
-        super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+        super(windowContext, ImageManager.get().getImage("images/window/banner-dictionaries.png"));
         _originalDictionary = dictionary;
         _catalog = catalog;
         _userPreferences = userPreferences;

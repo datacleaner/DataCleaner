@@ -142,7 +142,7 @@ public final class Bootstrap {
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
 
             // init the look and feel
-            LookAndFeelManager.getInstance().init();
+            LookAndFeelManager.get().init();
         }
 
         // initially use a temporary non-persistent user preferences object.

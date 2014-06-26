@@ -133,7 +133,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     @Override
     public Image getWindowIcon() {
-        return ImageManager.getInstance().getImage("images/window/app-icon.png");
+        return ImageManager.get().getImage("images/window/app-icon.png");
     }
 
     protected final JComponent getWindowContent() {

@@ -37,7 +37,6 @@ import org.eobjects.analyzer.job.BeanConfiguration;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.ImmutableAnalyzerJob;
 import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
-import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
 
@@ -73,11 +72,6 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
     @Override
     public List<FilterJob> getFilterJobs() {
         return _delegateJob.getFilterJobs();
-    }
-
-    @Override
-    public List<MergedOutcomeJob> getMergedOutcomeJobs() {
-        return _delegateJob.getMergedOutcomeJobs();
     }
 
     @Override

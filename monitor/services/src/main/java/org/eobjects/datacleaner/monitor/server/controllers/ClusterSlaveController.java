@@ -68,16 +68,22 @@ public class ClusterSlaveController {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
 
-        logger.info("Accepting slave job request for tenant: {}", tenant);
+        logger.info("Accepting slave job request for tenant: {}. Running slave jobs: {}", tenant,
+                _runningJobsMap.size());
 
         try {
-            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor, _runningJobsMap);
+            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor,
+                    _runningJobsMap);
             slaveServletHelper.handleRequest(request, response);
+            logger.info("Succesfully handled slave job request for tenant: {}. Running slave jobs: {}", tenant,
+                    _runningJobsMap.size());
         } catch (RuntimeException e) {
-            logger.error("Unexpected runtime exception occurred during slave job execution", e);
+            logger.error("Unexpected runtime exception occurred during slave job execution. Running slave jobs: {}",
+                    _runningJobsMap.size(), e);
             throw e;
         } catch (IOException e) {
-            logger.error("Unexpected I/O exception occurred during slave job execution", e);
+            logger.error("Unexpected I/O exception occurred during slave job execution. Running slave jobs: {}",
+                    _runningJobsMap.size(), e);
             throw e;
         }
     }

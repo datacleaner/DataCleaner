@@ -56,7 +56,6 @@ import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -674,11 +673,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         List<TransformerJobBuilder<?>> transformerJobBuilders = _analysisJobBuilder.getTransformerJobBuilders();
         for (TransformerJobBuilder<?> tjb : transformerJobBuilders) {
             onAdd(tjb);
-        }
-
-        List<MergedOutcomeJobBuilder> mergedOutcomeJobBuilders = _analysisJobBuilder.getMergedOutcomeJobBuilders();
-        for (MergedOutcomeJobBuilder mojb : mergedOutcomeJobBuilders) {
-            logger.warn("Job contains unsupported MergedOutcomeJobBuilders: {}", mojb);
         }
 
         List<AnalyzerJobBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerJobBuilders();

@@ -26,6 +26,7 @@ import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TableIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.shared.widgets.SchemaTree;
@@ -69,6 +70,7 @@ public class QueryPanel extends FlowPanel {
         _tenant = tenant;
         _datastore = datastore;
         _queryTextArea = new TextArea();
+        _queryTextArea.setStyleName("QueryTextArea");
 
         if (tables.isEmpty()) {
             writeQuery(null);
@@ -130,8 +132,13 @@ public class QueryPanel extends FlowPanel {
         add(schemaPanel);
         add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
-        add(_queryTextArea);
-        add(_executeQueryButton);
+//        add(_queryTextArea);
+        
+        ButtonPanel buttonPanel = new ButtonPanel();
+        buttonPanel.add(_queryTextArea);;
+        buttonPanel.add(_executeQueryButton);
+        
+        add(buttonPanel);
         add(_loadingIcon);
         add(_resultPanel);
     }

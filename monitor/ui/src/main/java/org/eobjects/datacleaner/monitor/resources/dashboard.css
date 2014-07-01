@@ -105,12 +105,12 @@
 	margin-bottom: 15px;
 }
 
-.TimelinePanel .ButtonPanel {
+.TimelinePanel .TimelineButtonPanel {
 	text-align: right;
 	padding: 0;
 }
 
-.TimelinePanel .ButtonPanel .HeadingLabel {
+.TimelinePanel .TimelineButtonPanel .HeadingLabel {
 	float: left;
 }
 

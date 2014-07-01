@@ -47,7 +47,6 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.HasAnalyzerResult;
@@ -280,10 +279,6 @@ public final class VisualizeJobGraph {
 						if (obj instanceof FilterOutcome) {
 							return ((FilterOutcome) obj).getCategory().name();
 						}
-						if (obj instanceof MergedOutcomeJobBuilder) {
-							return LabelUtils
-									.getLabel((MergedOutcomeJobBuilder) obj);
-						}
 						if (obj instanceof Table) {
 							return ((Table) obj).getName();
 						}
@@ -320,11 +315,6 @@ public final class VisualizeJobGraph {
 				if (obj instanceof FilterOutcome) {
 					return imageManager.getImageIcon(
 							"images/component-types/filter-outcome.png",
-							IconUtils.ICON_SIZE_SMALL);
-				}
-				if (obj instanceof MergedOutcomeJobBuilder) {
-					return imageManager.getImageIcon(
-							"images/component-types/merged-outcome.png",
 							IconUtils.ICON_SIZE_SMALL);
 				}
 				if (obj instanceof Table) {

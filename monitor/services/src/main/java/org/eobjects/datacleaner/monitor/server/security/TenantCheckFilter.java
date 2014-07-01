@@ -66,12 +66,19 @@ public class TenantCheckFilter extends GenericFilterBean {
                 logger.debug("Matched tenant id: '{}' in servlet path: {}", urlTenantId, path);
 
                 final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (authentication != null) {
-                    final String username = authentication.getName();
+                if (authentication == null) {
+                    logger.warn("Could not perform tenant check because Authentication is null");
+                } else {
 
-                    final String userTenantId = _tenantResolver.getTenantId(username);
+                    final UserBean user = new UserBean(_tenantResolver);
+                    user.updateUser(authentication);
 
-                    if (!userTenantId.equalsIgnoreCase(urlTenantId)) {
+                    final String userTenantId = user.getTenant();
+
+                    if (user.isGod() || userTenantId.equalsIgnoreCase(urlTenantId)) {
+                        logger.debug("Tenant check passed");
+                    } else {
+                        final String username = user.getUsername();
                         final String message = "User " + username + " (" + userTenantId
                                 + ") is not authorized to access tenant: " + urlTenantId;
                         if (resp instanceof HttpServletResponse) {

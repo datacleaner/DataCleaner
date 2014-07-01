@@ -37,6 +37,20 @@ public interface SecurityRoles {
     public static final String TASK_ATOMIC_EXECUTOR = "ROLE_ATOMIC_EXECUTOR";
 
     // super roles
-    public static final String ADMIN = "ROLE_ADMIN";
+    /**
+     * ENGINEER role is for editors of both schedules and jobs
+     */
     public static final String ENGINEER = "ROLE_ENGINEER";
+
+    /**
+     * ADMIN role is for administrators of a tenant. He can do everything within
+     * the boundary of a tenant.
+     */
+    public static final String ADMIN = "ROLE_ADMIN";
+
+    /**
+     * GOD role is for multi-tenant administrators, selected people who can do
+     * everything for everyone.
+     */
+    public static final String GOD = "ROLE_GOD";
 }

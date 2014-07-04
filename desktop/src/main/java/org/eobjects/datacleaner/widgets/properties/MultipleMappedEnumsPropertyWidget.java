@@ -32,25 +32,27 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.DefaultEnumMatcher;
+import org.eobjects.datacleaner.util.EnumMatcher;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
 import org.eobjects.metamodel.util.EqualsBuilder;
+import org.eobjects.metamodel.util.LazyRef;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
  * enum values. This widget looks like the
  * {@link MultipleInputColumnsPropertyWidget}, but is enhanced with enum combo
  * boxes.
- * 
- * @author Kasper Sørensen
  */
 public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends MultipleInputColumnsPropertyWidget {
 
     private final WeakHashMap<InputColumn<?>, DCComboBox<E>> _mappedEnumComboBoxes;
     private final ConfiguredPropertyDescriptor _mappedEnumsProperty;
     private final MinimalPropertyWidget<E[]> _mappedEnumsPropertyWidget;
+    private final LazyRef<EnumMatcher<E>> _enumMatcherRef;
 
     /**
      * Constructs the property widget
@@ -68,18 +70,23 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         super(beanJobBuilder, inputColumnsProperty);
         _mappedEnumComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<E>>();
         _mappedEnumsProperty = mappedEnumsProperty;
-
+        _enumMatcherRef = new LazyRef<EnumMatcher<E>>() {
+            @Override
+            protected EnumMatcher<E> fetch() throws Throwable {
+                return createEnumMatcher();
+            }
+        };
         _mappedEnumsPropertyWidget = createMappedEnumsPropertyWidget();
 
-        InputColumn<?>[] currentValue = getCurrentValue();
+        final InputColumn<?>[] currentValue = getCurrentValue();
 
         @SuppressWarnings("unchecked")
-        E[] currentMappedEnums = (E[]) beanJobBuilder.getConfiguredProperty(mappedEnumsProperty);
+        final E[] currentMappedEnums = (E[]) beanJobBuilder.getConfiguredProperty(mappedEnumsProperty);
         if (currentValue != null && currentMappedEnums != null) {
-            int minLength = Math.min(currentValue.length, currentMappedEnums.length);
+            final int minLength = Math.min(currentValue.length, currentMappedEnums.length);
             for (int i = 0; i < minLength; i++) {
-                InputColumn<?> inputColumn = currentValue[i];
-                E mappedEnum = currentMappedEnums[i];
+                final InputColumn<?> inputColumn = currentValue[i];
+                final E mappedEnum = currentMappedEnums[i];
                 createComboBox(inputColumn, mappedEnum);
             }
         }
@@ -99,8 +106,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
      * @return
      */
     protected E[] getEnumConstants(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor mappedEnumsProperty) {
-        @SuppressWarnings("unchecked")
-        final E[] enumConstants = (E[]) mappedEnumsProperty.getBaseType().getEnumConstants();
+        final E[] enumConstants = getEnumClass().getEnumConstants();
         return enumConstants;
     }
 
@@ -160,7 +166,29 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
      * @return
      */
     protected E getSuggestedValue(InputColumn<?> inputColumn) {
-        return null;
+        final EnumMatcher<E> matcher = _enumMatcherRef.get();
+        if (matcher == null) {
+            return null;
+        }
+        final E suggestion = matcher.suggestMatch(inputColumn.getName());
+        return suggestion;
+    }
+
+    /**
+     * Creates an {@link EnumMatcher} for use by the suggested enum mappings in
+     * this widget
+     * 
+     * @return
+     */
+    protected EnumMatcher<E> createEnumMatcher() {
+        final Class<E> enumClass = getEnumClass();
+        return new DefaultEnumMatcher<E>(enumClass);
+    }
+
+    private Class<E> getEnumClass() {
+        @SuppressWarnings("unchecked")
+        final Class<E> baseType = (Class<E>) _mappedEnumsProperty.getBaseType();
+        return baseType;
     }
 
     @Override
@@ -265,7 +293,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         }
 
         @SuppressWarnings("unchecked")
-        E[] array = (E[]) Array.newInstance(_mappedEnumsProperty.getBaseType(), result.size());
+        E[] array = (E[]) Array.newInstance(getEnumClass(), result.size());
 
         return result.toArray(array);
     }

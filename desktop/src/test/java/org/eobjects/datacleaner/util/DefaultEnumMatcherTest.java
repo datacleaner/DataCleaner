@@ -40,7 +40,7 @@ public class DefaultEnumMatcherTest extends TestCase {
                 return new String[] { "brrr", "barbara" };
             }
             if (this == FOO) {
-                return new String[] { "fu" };
+                return new String[] { "fu", "fee2", "ber2", "ber3" };
             }
             return null;
         }
@@ -64,6 +64,13 @@ public class DefaultEnumMatcherTest extends TestCase {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("foo"));
         assertEquals(TestEnum.BAR, matcher.suggestMatch("BAR"));
         assertEquals(TestEnum.BAZ, matcher.suggestMatch("Baz"));
+    }
+
+    public void testSuggestIgnoringNumbers() throws Exception {
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("fee"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("ber3"));
+        assertEquals(null, matcher.suggestMatch("bor"));
     }
 
     public void testDontSuggest() throws Exception {

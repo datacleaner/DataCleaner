@@ -90,7 +90,7 @@ public class UserBean implements User, Serializable {
             updateUser();
         }
 
-        if (_roles.contains(SecurityRoles.ADMIN)) {
+        if (_roles.contains(SecurityRoles.GOD) || _roles.contains(SecurityRoles.ADMIN)) {
             return true;
         }
 
@@ -112,7 +112,7 @@ public class UserBean implements User, Serializable {
         }
         return _tenant;
     }
-    
+
     public List<String> getRoles() {
         if (_roles.isEmpty()) {
             updateUser();
@@ -131,10 +131,15 @@ public class UserBean implements User, Serializable {
     }
 
     @Override
+    public boolean isGod() {
+        return hasRole(SecurityRoles.GOD);
+    }
+
+    @Override
     public boolean isAdmin() {
         return hasRole(SecurityRoles.ADMIN);
     }
-    
+
     @Override
     public boolean isEngineer() {
         return hasRole(SecurityRoles.ENGINEER);
@@ -154,17 +159,17 @@ public class UserBean implements User, Serializable {
     public boolean isScheduleEditor() {
         return hasRole(SecurityRoles.SCHEDULE_EDITOR);
     }
-    
+
     @Override
     public boolean isViewer() {
         return hasRole(SecurityRoles.VIEWER);
     }
-    
+
     @Override
     public boolean isQueryAllowed() {
         return hasRole(SecurityRoles.TASK_QUERY);
     }
-    
+
     @Override
     public boolean isConfigurationEditor() {
         return hasRole(SecurityRoles.CONFIGURATION_EDITOR);

@@ -37,8 +37,6 @@ import javax.swing.SwingUtilities;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.MergedOutcome;
-import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -186,9 +184,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                             FilterJob filterJob = filterOutcome.getFilterJob();
                             setText(LabelUtils.getLabel(filterJob) + ": " + category);
                         }
-                    } else if (requirement instanceof MergedOutcome) {
-                        MergedOutcomeJob job = ((MergedOutcome) requirement).getMergedOutcomeJob();
-                        setText(LabelUtils.getLabel(job));
                     } else {
                         // Other requirement types not yet supported
                         setText(requirement.toString());

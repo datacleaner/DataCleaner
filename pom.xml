@@ -8,7 +8,7 @@
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>17.0</guava.version>
-		<analyzerbeans.version>0.43</analyzerbeans.version>
+		<analyzerbeans.version>0.44</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -19,7 +19,7 @@
 	</parent>
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>3.6.1-RC2-SNAPSHOT</version>
+	<version>3.6.2-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with

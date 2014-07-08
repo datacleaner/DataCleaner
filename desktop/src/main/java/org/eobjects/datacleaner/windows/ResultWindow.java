@@ -461,7 +461,7 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 

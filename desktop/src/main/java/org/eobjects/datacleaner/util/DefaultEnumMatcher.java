@@ -19,7 +19,11 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.eobjects.analyzer.util.HasAliases;
@@ -27,6 +31,7 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.util.HasName;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 /**
@@ -57,7 +62,7 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
                 final String[] aliases = hasAliases.getAliases();
                 if (aliases != null) {
                     for (String alias : aliases) {
-                        putExactMatch(alias, e);
+                        putMatch(alias, e);
                     }
                 }
             }
@@ -67,22 +72,29 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
             for (final E e : enumConstants) {
                 final HasName hasName = (HasName) e;
                 final String name = hasName.getName();
-                putExactMatch(name, e);
+                putMatch(name, e);
             }
         }
 
         for (final E e : enumConstants) {
             final String constantName = e.name();
-            putExactMatch(constantName, e);
+            putMatch(constantName, e);
         }
     }
 
-    private void putExactMatch(String string, E e) {
+    private void putMatch(String string, E e) {
         final String normalizedString = normalize(string);
         if (Strings.isNullOrEmpty(normalizedString)) {
             return;
         }
         _exactMatchesMap.put(normalizedString, e);
+        
+        final Collection<String> secondaryMatches = findSecondaryMatchStrings(string);
+        for (String secondaryMatch : secondaryMatches) {
+            if (!_exactMatchesMap.containsKey(secondaryMatch)) {
+                _exactMatchesMap.put(secondaryMatch, e);            
+            }
+        }
     }
 
     @Override
@@ -116,5 +128,36 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
         string = StringUtils.replaceAll(string, "*", "");
         string = string.toUpperCase();
         return string;
+    }
+    
+    private Collection<String> findSecondaryMatchStrings(String string) {
+        if (string == null) {
+            return Collections.emptySet();
+        }
+        
+        string = StringUtils.replaceAll(string, "-", " ");
+        string = StringUtils.replaceAll(string, "_", " ");
+        string = StringUtils.replaceAll(string, "|", " ");
+        string = StringUtils.replaceAll(string, "*", " ");
+        string = StringUtils.replaceAll(string, "  ", " ");
+        string = string.trim();
+        string = string.toUpperCase();
+        
+        final Splitter splitter = Splitter.on(' ');
+        final List<String> words1 = splitter.splitToList(string);
+
+        string = string.replaceAll("[0-9]", "");
+        
+        final List<String> words2 = splitter.splitToList(string);
+        
+        string = StringUtils.replaceWhitespaces(string, "");
+        
+        final List<String> words3 = splitter.splitToList(string);
+        
+        final Collection<String> result = new HashSet<String>();
+        result.addAll(words1);
+        result.addAll(words2);
+        result.addAll(words3);
+        return result;
     }
 }

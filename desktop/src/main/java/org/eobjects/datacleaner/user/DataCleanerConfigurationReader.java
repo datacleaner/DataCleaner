@@ -64,6 +64,10 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         _configurationFile = configurationFile;
         _userPreferencesRef = userPreferencesRef;
     }
+    
+    public FileObject getConfigurationFile() {
+        return _configurationFile;
+    }
 
     @Override
     protected AnalyzerBeansConfiguration fetch() {

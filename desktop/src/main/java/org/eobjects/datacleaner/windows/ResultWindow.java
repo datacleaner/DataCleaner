@@ -56,6 +56,7 @@ import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
 import org.eobjects.analyzer.job.runner.AnalysisJobCancellation;
 import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalysisListenerAdaptor;
 import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -424,7 +425,7 @@ public final class ResultWindow extends AbstractWindow {
     }
 
     public AnalysisListener createAnalysisListener() {
-        return new AnalysisListener() {
+        return new AnalysisListenerAdaptor() {
             @Override
             public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
                 updateButtonVisibility(true);
@@ -460,7 +461,7 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 

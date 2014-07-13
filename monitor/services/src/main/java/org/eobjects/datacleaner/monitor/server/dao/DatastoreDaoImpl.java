@@ -130,19 +130,9 @@ public class DatastoreDaoImpl implements DatastoreDao {
 
     @Override
     public String addDatastore(TenantContext tenantContext, Datastore datastore) throws UnsupportedOperationException {
-        final Element element;
         final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
-        if (datastore instanceof CsvDatastore) {
-            CsvDatastore csvDatastore = (CsvDatastore) datastore;
-            element = externalizer.externalize(csvDatastore, csvDatastore.getFilename());
-        } else if (datastore instanceof ExcelDatastore) {
-            ExcelDatastore excelDatastore = (ExcelDatastore) datastore;
-            element = externalizer.externalize(excelDatastore, excelDatastore.getFilename());
-        } else {
-            throw new UnsupportedOperationException("The datastore type '" + datastore.getClass().getName()
-                    + "' is not supported for automatic XML serialization");
-        }
-        String result = addDatastore(tenantContext, element);
+        final Element element = externalizer.externalize(datastore);
+        final String result = addDatastore(tenantContext, element);
         return result;
     }
 

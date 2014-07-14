@@ -64,7 +64,14 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         _configurationFile = configurationFile;
         _userPreferencesRef = userPreferencesRef;
     }
-    
+
+    /**
+     * Gets the configuration file, if any. Note that in embedded mode or during
+     * tests etc. there might not be a configuration file, and this method may
+     * return null!
+     * 
+     * @return
+     */
     public FileObject getConfigurationFile() {
         return _configurationFile;
     }
@@ -205,8 +212,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
     private AnalyzerBeansConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
         logger.info("Reading conf.xml from classpath");
         try {
-            return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml")
-                    .openStream());
+            return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml").openStream());
         } catch (Exception ex2) {
             logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
             logger.warn("Creating a bare-minimum configuration because of previous errors!");

@@ -295,6 +295,9 @@ public class DCModule extends AbstractModule {
 
     private DatastoreXmlExternalizer createDatastoreXmlExternalizer() {
         final FileObject configurationFile = _undecoratedConfigurationRef.getConfigurationFile();
+        if (configurationFile == null) {
+            return new DatastoreXmlExternalizer();
+        }
         final VfsResource resource = new VfsResource(configurationFile);
         return new DatastoreXmlExternalizer(resource) {
             @Override

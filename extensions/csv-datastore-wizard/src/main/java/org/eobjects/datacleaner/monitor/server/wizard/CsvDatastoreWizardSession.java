@@ -33,7 +33,6 @@ import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.FileResource;
 import org.eobjects.metamodel.util.Resource;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -141,14 +140,12 @@ public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
     @Override
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
-        final Document doc = documentBuilder.newDocument();
-
         final Resource resource = new FileResource(_file);
         final CsvDatastore datastore = new CsvDatastore(_name, resource, _configuration);
         datastore.setDescription(_description);
 
         final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
-        Element element = externalizer.externalize(datastore, _filepath, doc);
+        final Element element = externalizer.toElement(datastore, _filepath);
         return element;
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
@@ -38,6 +39,8 @@ public class DCProgressBar extends JProgressBar {
     private static final int DEFAULT_HEIGHT = 20;
 
     private final ProgressCounter _value;
+
+    private Color _progressBarColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
 
     public DCProgressBar(int min, int max) {
         super(min, max);
@@ -116,25 +119,33 @@ public class DCProgressBar extends JProgressBar {
         return barWidth;
     }
     
+    public void setProgressBarColor(Color progressBarColor) {
+        _progressBarColor = progressBarColor;
+    }
+    
+    public Color getProgressBarColor() {
+        return _progressBarColor;
+    }
+    
     @Override
     protected void paintComponent(Graphics g) {
         final int width = getWidth();
         final int height = getHeight();
         
         if (isOpaque()) {
-            g.setColor(WidgetUtils.BG_COLOR_DARK);
+            g.setColor( WidgetUtils.BG_COLOR_DARK);
             g.fillRect(0, 0, width, height);
         }
 
         final int barWidth = getBarWidth(getValue());
 
         if (barWidth > 0) {
-            g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            g.setColor(_progressBarColor);
             g.fillRect(0, 0, barWidth, height / 2);
-            g.setColor(WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.setColor(WidgetUtils.slightlyDarker(_progressBarColor));
             g.fillRect(0, height / 2, barWidth, height / 2);
 
-            g.setColor(WidgetUtils.slightlyBrighter(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.setColor(WidgetUtils.slightlyBrighter(_progressBarColor));
             g.drawRect(0, 0, barWidth, height);
         }
     }

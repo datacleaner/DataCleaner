@@ -21,8 +21,6 @@ package org.eobjects.datacleaner.util;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import javax.swing.SwingUtilities;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,7 @@ public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandle
 	public void uncaughtException(Thread t, final Throwable e) {
 		logger.error("Thread " + t.getName() + " threw uncaught exception", e);
 
-		SwingUtilities.invokeLater(new Runnable() {
+		WidgetUtils.invokeSwingAction(new Runnable() {
 			@Override
 			public void run() {
 				WidgetUtils.showErrorMessage("Unexpected error!", e);

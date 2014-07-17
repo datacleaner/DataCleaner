@@ -39,7 +39,6 @@ import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -205,7 +204,7 @@ public final class ResultWindow extends AbstractWindow {
             }
             _progressInformationPanel.onSuccess();
 
-            SwingUtilities.invokeLater(new Runnable() {
+            WidgetUtils.invokeSwingAction(new Runnable() {
                 @Override
                 public void run() {
                     if (_tabbedPane.getTabCount() > 1) {
@@ -243,7 +242,7 @@ public final class ResultWindow extends AbstractWindow {
                 final ResultListPanel finalResultListPanel = resultPanel;
                 final String name = descriptor.getDisplayName();
                 final Icon icon = IconUtils.getDescriptorIcon(descriptor);
-                SwingUtilities.invokeLater(new Runnable() {
+                WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
                         _tabbedPane.addTab(name, icon, finalResultListPanel);
@@ -434,7 +433,7 @@ public final class ResultWindow extends AbstractWindow {
 
             @Override
             public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
-                SwingUtilities.invokeLater(new Runnable() {
+                WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
                         updateButtonVisibility(false);

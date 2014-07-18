@@ -39,7 +39,6 @@ import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -56,6 +55,7 @@ import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
 import org.eobjects.analyzer.job.runner.AnalysisJobCancellation;
 import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalysisListenerAdaptor;
 import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -204,7 +204,7 @@ public final class ResultWindow extends AbstractWindow {
             }
             _progressInformationPanel.onSuccess();
 
-            SwingUtilities.invokeLater(new Runnable() {
+            WidgetUtils.invokeSwingAction(new Runnable() {
                 @Override
                 public void run() {
                     if (_tabbedPane.getTabCount() > 1) {
@@ -242,7 +242,7 @@ public final class ResultWindow extends AbstractWindow {
                 final ResultListPanel finalResultListPanel = resultPanel;
                 final String name = descriptor.getDisplayName();
                 final Icon icon = IconUtils.getDescriptorIcon(descriptor);
-                SwingUtilities.invokeLater(new Runnable() {
+                WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
                         _tabbedPane.addTab(name, icon, finalResultListPanel);
@@ -424,7 +424,7 @@ public final class ResultWindow extends AbstractWindow {
     }
 
     public AnalysisListener createAnalysisListener() {
-        return new AnalysisListener() {
+        return new AnalysisListenerAdaptor() {
             @Override
             public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
                 updateButtonVisibility(true);
@@ -433,7 +433,7 @@ public final class ResultWindow extends AbstractWindow {
 
             @Override
             public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
-                SwingUtilities.invokeLater(new Runnable() {
+                WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
                         updateButtonVisibility(false);
@@ -460,7 +460,7 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 

@@ -131,9 +131,12 @@ public class TableProgressInformationPanel extends DCPanel {
         return result;
     }
 
-    public void setProgressStopped() {
+    public void setProgressStopped(boolean failure) {
         _progressStatusLabel.setText("Stopped! - ");
         _progressBar.setEnabled(false);
+        if (failure) {
+            _progressBar.setProgressBarColor(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        }
     }
 
     public void setProgressFinished() {

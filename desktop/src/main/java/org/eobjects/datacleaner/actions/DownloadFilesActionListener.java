@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.vfs2.FileObject;
@@ -184,7 +183,7 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
         _cancelled = true;
 
         if (hideWindowImmediately && _downloadProgressWindow != null) {
-            SwingUtilities.invokeLater(new Runnable() {
+            WidgetUtils.invokeSwingAction(new Runnable() {
                 @Override
                 public void run() {
                     _downloadProgressWindow.close();

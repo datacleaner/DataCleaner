@@ -59,7 +59,7 @@ public class WelcomeDialog extends JDialog {
         panel.setLayout(new BorderLayout());
         panel.add(shadowedBanner, BorderLayout.CENTER);
 
-        final ImageManager imageManager = ImageManager.getInstance();
+        final ImageManager imageManager = ImageManager.get();
 
         final JButton closeButton = new JButton("Continue", imageManager.getImageIcon("images/actions/execute.png",
                 IconUtils.ICON_SIZE_MEDIUM));

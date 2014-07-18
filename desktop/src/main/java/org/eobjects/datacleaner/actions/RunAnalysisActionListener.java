@@ -34,7 +34,7 @@ public class RunAnalysisActionListener implements ActionListener {
 
     private final Provider<ResultWindow> _resultWindowProvider;
 
-    private long lastClickTime = 0;
+    private long _lastClickTime = 0;
 
     @Inject
     protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider) {
@@ -45,14 +45,14 @@ public class RunAnalysisActionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         synchronized (RunAnalysisActionListener.class) {
             long thisClickTime = System.currentTimeMillis();
-            if (thisClickTime - lastClickTime < 1000) {
+            if (thisClickTime - _lastClickTime < 1000) {
                 // prevent that double clicks fire two analysis runs!
                 return;
             }
-            lastClickTime = thisClickTime;
+            _lastClickTime = thisClickTime;
         }
 
-        ResultWindow window = _resultWindowProvider.get();
+        final ResultWindow window = _resultWindowProvider.get();
         window.setVisible(true);
         window.startAnalysis();
     }

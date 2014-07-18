@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.util.StringUtils;
@@ -32,95 +33,112 @@ import org.eobjects.analyzer.util.StringUtils;
  * allow the user to change the catalog of datastores at runtime. This datastore
  * catalog wraps an immutable instance, which typically represents what is
  * configured in datacleaner's xml file.
- * 
- * @author Kasper Sørensen
- * 
  */
 public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final DatastoreCatalog _immutableDelegate;
-	private final List<Datastore> _datastores;
-	private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
+    private final DatastoreXmlExternalizer _datastoreXmlExternalizer;
+    private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
+    private final UserPreferences _userPreferences;
 
-	public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate, UserPreferences userPreferences) {
-		_immutableDelegate = immutableDelegate;
-		_datastores = userPreferences.getUserDatastores();
-		String[] datastoreNames = immutableDelegate.getDatastoreNames();
-		for (String name : datastoreNames) {
-			if (containsDatastore(name)) {
-				// remove any copies of the datastore - the immutable (XML)
-				// version should always win
-				removeDatastore(getDatastore(name));
-			}
-			addDatastore(immutableDelegate.getDatastore(name));
-		}
-	}
+    public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate,
+            final DatastoreXmlExternalizer datastoreXmlExternalizer, final UserPreferences userPreferences) {
+        _datastoreXmlExternalizer = datastoreXmlExternalizer;
+        _userPreferences = userPreferences;
+        String[] datastoreNames = immutableDelegate.getDatastoreNames();
+        for (String name : datastoreNames) {
+            if (containsDatastore(name)) {
+                // remove any copies of the datastore - the immutable (XML)
+                // version should always win
+                removeDatastore(getDatastore(name), false);
+            }
+            addDatastore(immutableDelegate.getDatastore(name), false);
+        }
+    }
 
-	public boolean isDatastoreMutable(String name) {
-		return _immutableDelegate.getDatastore(name) == null;
-	}
+    public boolean containsDatastore(String name) {
+        final List<Datastore> datastores = _userPreferences.getUserDatastores();
+        for (Datastore datastore : datastores) {
+            if (name.equals(datastore.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean containsDatastore(String name) {
-		for (Datastore datastore : _datastores) {
-			if (name.equals(datastore.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public void removeDatastore(Datastore ds) {
+        removeDatastore(ds, true);
+    }
 
-	public synchronized void removeDatastore(Datastore ds) {
-		_datastores.remove(ds);
-		for (DatastoreChangeListener listener : _listeners) {
-			listener.onRemove(ds);
-		}
-	}
+    private synchronized void removeDatastore(Datastore ds, boolean externalize) {
+        final List<Datastore> datastores = _userPreferences.getUserDatastores();
+        datastores.remove(ds);
+        for (DatastoreChangeListener listener : _listeners) {
+            listener.onRemove(ds);
+        }
+        if (externalize) {
+            _datastoreXmlExternalizer.removeDatastore(ds.getName());
+            _userPreferences.save();
+        }
+    }
 
-	public synchronized void addDatastore(Datastore ds) {
-		String name = ds.getName();
-		if (StringUtils.isNullOrEmpty(name)) {
-			throw new IllegalArgumentException("Datastore has no name!");
-		}
-		for (Datastore datastore : _datastores) {
-			if (name.equals(datastore.getName())) {
-				throw new IllegalArgumentException("Datastore name '" + name + "' is not unique!");
-			}
-		}
-		_datastores.add(ds);
-		for (DatastoreChangeListener listener : _listeners) {
-			listener.onAdd(ds);
-		}
-	}
+    public void addDatastore(Datastore ds) {
+        addDatastore(ds, true);
+    }
 
-	@Override
-	public String[] getDatastoreNames() {
-		String[] names = new String[_datastores.size()];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = _datastores.get(i).getName();
-		}
-		return names;
-	}
+    private synchronized void addDatastore(Datastore ds, boolean externalize) {
+        final String name = ds.getName();
+        if (StringUtils.isNullOrEmpty(name)) {
+            throw new IllegalArgumentException("Datastore has no name!");
+        }
+        final List<Datastore> datastores = _userPreferences.getUserDatastores();
+        for (Datastore datastore : datastores) {
+            if (name.equals(datastore.getName())) {
+                throw new IllegalArgumentException("Datastore name '" + name + "' is not unique!");
+            }
+        }
+        datastores.add(ds);
+        for (DatastoreChangeListener listener : _listeners) {
+            listener.onAdd(ds);
+        }
+        if (externalize) {
+            if (_datastoreXmlExternalizer.isExternalizable(ds)) {
+                _datastoreXmlExternalizer.externalize(ds);
+            }
+            _userPreferences.save();
+        }
+    }
 
-	@Override
-	public Datastore getDatastore(String name) {
-		if (name == null) {
-			return null;
-		}
-		for (Datastore datastore : _datastores) {
-			if (name.equals(datastore.getName())) {
-				return datastore;
-			}
-		}
-		return null;
-	}
+    @Override
+    public String[] getDatastoreNames() {
+        final List<Datastore> datastores = _userPreferences.getUserDatastores();
+        String[] names = new String[datastores.size()];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = datastores.get(i).getName();
+        }
+        return names;
+    }
 
-	public void addListener(DatastoreChangeListener listener) {
-		_listeners.add(listener);
-	}
+    @Override
+    public Datastore getDatastore(String name) {
+        if (name == null) {
+            return null;
+        }
+        final List<Datastore> datastores = _userPreferences.getUserDatastores();
+        for (Datastore datastore : datastores) {
+            if (name.equals(datastore.getName())) {
+                return datastore;
+            }
+        }
+        return null;
+    }
 
-	public void removeListener(DatastoreChangeListener listener) {
-		_listeners.remove(listener);
-	}
+    public void addListener(DatastoreChangeListener listener) {
+        _listeners.add(listener);
+    }
+
+    public void removeListener(DatastoreChangeListener listener) {
+        _listeners.remove(listener);
+    }
 }

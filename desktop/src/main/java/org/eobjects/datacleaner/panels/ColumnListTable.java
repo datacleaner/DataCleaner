@@ -68,7 +68,7 @@ public final class ColumnListTable extends DCPanel {
 
     private static final String[] headers = new String[] { "Name", "Type", "" };
 
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Table _table;
     private final DCTable _columnTable;

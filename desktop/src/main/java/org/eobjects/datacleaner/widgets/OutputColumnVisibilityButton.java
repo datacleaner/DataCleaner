@@ -32,9 +32,9 @@ public class OutputColumnVisibilityButton extends DCCheckBox<MutableInputColumn<
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon SELECTED_ICON = ImageManager.getInstance().getImageIcon(
+    private static final Icon SELECTED_ICON = ImageManager.get().getImageIcon(
             "images/widgets/output_column_visibility_visible.png");
-    private static final Icon NOT_SELECTED_ICON = ImageManager.getInstance().getImageIcon(
+    private static final Icon NOT_SELECTED_ICON = ImageManager.get().getImageIcon(
             "images/widgets/output_column_visibility_hidden.png");
 
     public OutputColumnVisibilityButton(MutableInputColumn<?> column) {

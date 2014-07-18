@@ -66,7 +66,7 @@ public class PlaceholderDatastore implements Datastore {
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
-        return new PerformanceCharacteristicsImpl(false);
+        return new PerformanceCharacteristicsImpl(false, false);
     }
 
     @Override

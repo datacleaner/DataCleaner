@@ -31,7 +31,6 @@ import java.util.Arrays;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -66,6 +65,7 @@ import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.SimpleWebServiceHttpClient;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
@@ -142,7 +142,7 @@ public final class Bootstrap {
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
 
             // init the look and feel
-            LookAndFeelManager.getInstance().init();
+            LookAndFeelManager.get().init();
         }
 
         // initially use a temporary non-persistent user preferences object.
@@ -231,7 +231,7 @@ public final class Bootstrap {
             if (welcomeImage != null) {
                 // Ticket #834: make sure to show welcome dialog in swing's
                 // dispatch thread.
-                SwingUtilities.invokeLater(new Runnable() {
+                WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
                         final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);

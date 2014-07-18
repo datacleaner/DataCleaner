@@ -44,10 +44,27 @@ public final class LookAndFeelManager {
 
     private static final Logger logger = LoggerFactory.getLogger(LookAndFeelManager.class);
     private static final LookAndFeelManager instance = new LookAndFeelManager();
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
-    public static LookAndFeelManager getInstance() {
+    /**
+     * Gets the singleton instance of LookAndFeelManager.
+     * 
+     * @return
+     */
+    public static LookAndFeelManager get() {
         return instance;
+    }
+
+    /**
+     * Gets the singleton instance of LookAndFeelManager.
+     * 
+     * @return
+     * 
+     * @deprecated use {@link #get()} instead
+     */
+    @Deprecated
+    public static LookAndFeelManager getInstance() {
+        return get();
     }
 
     private LookAndFeelManager() {

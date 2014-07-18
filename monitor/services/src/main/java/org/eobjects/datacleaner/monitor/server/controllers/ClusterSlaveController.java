@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eobjects.analyzer.cluster.SlaveJobInterceptor;
 import org.eobjects.analyzer.cluster.http.SlaveServletHelper;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
@@ -55,6 +58,8 @@ public class ClusterSlaveController {
     @Autowired(required = false)
     SlaveJobInterceptor _slaveJobInterceptor;
 
+    private final ConcurrentMap<String, AnalysisResultFuture> _runningJobsMap = new ConcurrentHashMap<String, AnalysisResultFuture>();
+
     @RolesAllowed(SecurityRoles.TASK_SLAVE_EXECUTOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/octet-stream")
     @ResponseBody
@@ -63,16 +68,22 @@ public class ClusterSlaveController {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
 
-        logger.info("Accepting slave job request for tenant: {}", tenant);
+        logger.info("Accepting slave job request for tenant: {}. Running slave jobs: {}", tenant,
+                _runningJobsMap.size());
 
         try {
-            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor);
+            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor,
+                    _runningJobsMap);
             slaveServletHelper.handleRequest(request, response);
+            logger.info("Succesfully handled slave job request for tenant: {}. Running slave jobs: {}", tenant,
+                    _runningJobsMap.size());
         } catch (RuntimeException e) {
-            logger.error("Unexpected runtime exception occurred during slave job execution", e);
+            logger.error("Unexpected runtime exception occurred during slave job execution. Running slave jobs: {}",
+                    _runningJobsMap.size(), e);
             throw e;
         } catch (IOException e) {
-            logger.error("Unexpected I/O exception occurred during slave job execution", e);
+            logger.error("Unexpected I/O exception occurred during slave job execution. Running slave jobs: {}",
+                    _runningJobsMap.size(), e);
             throw e;
         }
     }

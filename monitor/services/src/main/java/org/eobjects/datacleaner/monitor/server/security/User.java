@@ -42,6 +42,13 @@ public interface User {
     public boolean isViewer();
 
     /**
+     * Determines whether the user has the {@link SecurityRoles#GOD} super role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#GOD} super role.
+     */
+    public boolean isGod();
+
+    /**
      * Determines whether the user has the {@link SecurityRoles#ADMIN} super
      * role.
      * 

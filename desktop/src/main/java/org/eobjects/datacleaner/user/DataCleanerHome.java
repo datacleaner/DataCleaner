@@ -147,7 +147,7 @@ public final class DataCleanerHome {
             parentFile.createFolder();
         }
 
-        final ResourceManager resourceManager = ResourceManager.getInstance();
+        final ResourceManager resourceManager = ResourceManager.get();
         final URL url = resourceManager.getUrl("datacleaner-home/" + filename);
 
         InputStream in = null;

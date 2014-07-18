@@ -244,7 +244,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         Component component = null;
-        ImageManager imageManager = ImageManager.getInstance();
+        ImageManager imageManager = ImageManager.get();
         Icon icon = null;
 
         if (value instanceof Datastore) {

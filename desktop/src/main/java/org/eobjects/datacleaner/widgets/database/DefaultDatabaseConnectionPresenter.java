@@ -48,7 +48,7 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnectionPresenter {
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	private final JXTextField _connectionStringTextField;
 	private final JButton _connectionStringTemplateButton;

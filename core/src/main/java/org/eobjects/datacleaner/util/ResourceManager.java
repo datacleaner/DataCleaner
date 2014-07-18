@@ -34,73 +34,86 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides service methods related to resources on the classpath or the file
  * system.
- * 
- * @author kasper
- * 
  */
 public final class ResourceManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
 
-	private static ResourceManager instance = new ResourceManager();
+    private static ResourceManager instance = new ResourceManager();
 
-	public static ResourceManager getInstance() {
-		return instance;
-	}
+    /**
+     * Gets the singleton instance of {@link ResourceManager}.
+     * 
+     * @return
+     */
+    public static ResourceManager get() {
+        return instance;
+    }
 
-	private ResourceManager() {
-		// only a single instance
-	}
+    /**
+     * Gets the singleton instance of {@link ResourceManager}.
+     * 
+     * @return
+     * @deprecated use {@link #get()} instead
+     */
+    @Deprecated
+    public static ResourceManager getInstance() {
+        return get();
+    }
 
-	public List<URL> getUrls(String path, ClassLoader... classLoaders) {
-		if (classLoaders == null || classLoaders.length == 0) {
-			classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
-		} else {
-		    if (logger.isDebugEnabled()) {
-		        logger.debug("Custom classloaders specified: {}", Arrays.toString(classLoaders));
-		    }
-		}
+    private ResourceManager() {
+        // only a single instance
+    }
 
-		List<URL> result = new LinkedList<URL>();
-		URL url = getClass().getResource(path);
-		if (url != null) {
-			result.add(url);
-		}
+    public List<URL> getUrls(String path, ClassLoader... classLoaders) {
+        if (classLoaders == null || classLoaders.length == 0) {
+            classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Custom classloaders specified: {}", Arrays.toString(classLoaders));
+            }
+        }
 
-		try {
-			for (ClassLoader classLoader : classLoaders) {
-				Enumeration<URL> resources = classLoader.getResources(path);
-				while (resources.hasMoreElements()) {
-					URL element = resources.nextElement();
-					if (element == null) {
-					    logger.warn("ClassLoader {} returned a null URL resource for path '{}'", classLoader, path);
-					} else {
-					    result.add(element);
-					}
-				}
-			}
-		} catch (IOException e) {
-			logger.error("IOException when investigating classloader resources", e);
-		}
+        List<URL> result = new LinkedList<URL>();
+        URL url = getClass().getResource(path);
+        if (url != null) {
+            result.add(url);
+        }
 
-		// when running in eclipse this file-based hack is nescesary
-		File file = new File("src/main/resources/" + path);
-		if (file.exists()) {
-			try {
-				result.add(file.toURI().toURL());
-			} catch (IOException e) {
-				logger.error("IOException when adding File-based resource to URLs", e);
-			}
-		}
+        try {
+            for (ClassLoader classLoader : classLoaders) {
+                Enumeration<URL> resources = classLoader.getResources(path);
+                while (resources.hasMoreElements()) {
+                    URL element = resources.nextElement();
+                    if (element == null) {
+                        logger.warn("ClassLoader {} returned a null URL resource for path '{}'", classLoader, path);
+                    } else {
+                        result.add(element);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.error("IOException when investigating classloader resources", e);
+        }
 
-		return result;
-	}
+        // when running in eclipse this file-based hack is nescesary
+        File file = new File("src/main/resources/" + path);
+        if (file.exists()) {
+            try {
+                result.add(file.toURI().toURL());
+            } catch (IOException e) {
+                logger.error("IOException when adding File-based resource to URLs", e);
+            }
+        }
 
-	public URL getUrl(String path, ClassLoader... classLoaders) {
-		List<URL> urls = getUrls(path, classLoaders);
-		if (urls.isEmpty()) {
-			return null;
-		}
-		return urls.get(0);
-	}
+        return result;
+    }
+
+    public URL getUrl(String path, ClassLoader... classLoaders) {
+        List<URL> urls = getUrls(path, classLoaders);
+        if (urls.isEmpty()) {
+            return null;
+        }
+        return urls.get(0);
+    }
 }

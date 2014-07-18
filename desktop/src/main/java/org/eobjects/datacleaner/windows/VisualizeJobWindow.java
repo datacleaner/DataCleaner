@@ -43,7 +43,7 @@ import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 public class VisualizeJobWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
-    private final ImageManager imageManager = ImageManager.getInstance();
+    private final ImageManager imageManager = ImageManager.get();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final JScrollPane _scroll;
     private volatile boolean _displayColumns;

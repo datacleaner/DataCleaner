@@ -165,7 +165,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		final String imagePath = IconUtils
 				.getImagePathForClass(MaxRowsFilter.class);
-		add(new JLabel(ImageManager.getInstance().getImageIcon(imagePath)));
+		add(new JLabel(ImageManager.get().getImageIcon(imagePath)));
 		add(_checkBox);
 		add(_prefixLabel);
 		add(_textField);

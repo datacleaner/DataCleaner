@@ -37,8 +37,6 @@ import javax.swing.SwingUtilities;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.MergedOutcome;
-import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -60,7 +58,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
 
     private static final String NO_FILTER_TEXT = "(No filter requirement)";
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
     private static final Icon mappedFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
             IconUtils.ICON_SIZE_SMALL);
     private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
@@ -69,7 +67,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
 
     public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
-        super(NO_FILTER_TEXT, ImageManager.getInstance().getImageIcon("images/component-types/filter.png",
+        super(NO_FILTER_TEXT, ImageManager.get().getImageIcon("images/component-types/filter.png",
                 IconUtils.ICON_SIZE_SMALL));
         _jobBuilder = jobBuilder;
         addActionListener(this);
@@ -186,9 +184,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                             FilterJob filterJob = filterOutcome.getFilterJob();
                             setText(LabelUtils.getLabel(filterJob) + ": " + category);
                         }
-                    } else if (requirement instanceof MergedOutcome) {
-                        MergedOutcomeJob job = ((MergedOutcome) requirement).getMergedOutcomeJob();
-                        setText(LabelUtils.getLabel(job));
                     } else {
                         // Other requirement types not yet supported
                         setText(requirement.toString());

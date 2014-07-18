@@ -20,14 +20,24 @@
 package org.eobjects.datacleaner.guice;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
+import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -42,6 +52,7 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.analyzer.util.VFSUtils;
+import org.eobjects.analyzer.util.VfsResource;
 import org.eobjects.analyzer.util.convert.ClasspathResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.FileResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.ResourceConverter;
@@ -65,12 +76,14 @@ import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
+import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.ImmutableRef;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.MutableRef;
 import org.eobjects.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -78,14 +91,12 @@ import com.google.inject.Provides;
 /**
  * Google Guice module for DataCleaner. Defines the main contextual components
  * of a DataCleaner session.
- * 
- * @author Kasper Sørensen
  */
 public class DCModule extends AbstractModule {
 
     private static final Logger logger = LoggerFactory.getLogger(DCModule.class);
 
-    private final Ref<AnalyzerBeansConfiguration> _undecoratedConfigurationRef;
+    private final DataCleanerConfigurationReader _undecoratedConfigurationRef;
     private final Ref<UserPreferences> _userPreferencesRef;
     private final Ref<AnalysisJobBuilder> _analysisJobBuilderRef;
     private AnalyzerBeansConfiguration _configuration;
@@ -248,7 +259,7 @@ public class DCModule extends AbstractModule {
                 if (_configuration == null) {
                     // make the configuration mutable
                     final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(
-                            c.getDatastoreCatalog(), userPreferences);
+                            c.getDatastoreCatalog(), createDatastoreXmlExternalizer(), userPreferences);
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), null, true));
@@ -282,12 +293,38 @@ public class DCModule extends AbstractModule {
         return _configuration;
     }
 
+    private DatastoreXmlExternalizer createDatastoreXmlExternalizer() {
+        final FileObject configurationFile = _undecoratedConfigurationRef.getConfigurationFile();
+        if (configurationFile == null) {
+            return new DatastoreXmlExternalizer();
+        }
+        final VfsResource resource = new VfsResource(configurationFile);
+        return new DatastoreXmlExternalizer(resource) {
+            @Override
+            protected void onDocumentChanged(final Document document) {
+                resource.write(new Action<OutputStream>() {
+                    @Override
+                    public void run(final OutputStream out) throws Exception {
+                        final Source source = new DOMSource(document);
+                        final Result outputTarget = new StreamResult(out);
+                        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                        final Transformer transformer = transformerFactory.newTransformer();
+                        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+                        transformer.transform(source, outputTarget);
+                    }
+                });
+
+            }
+        };
+    }
+
     @Provides
     public AnalysisJob getAnalysisJob(@Nullable AnalysisJobBuilder builder) {
         if (builder == null) {
             return null;
         }
-        return builder.toAnalysisJob();
+        return builder.toAnalysisJob(false);
     }
 
     @Provides

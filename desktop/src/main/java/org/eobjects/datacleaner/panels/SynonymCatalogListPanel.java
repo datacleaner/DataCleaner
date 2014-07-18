@@ -57,7 +57,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;

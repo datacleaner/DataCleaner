@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
@@ -53,7 +54,13 @@ public class TriggerJobClickHandler implements ClickHandler {
         
         popupPanel.setAutoHideEnabled(false);
         popupPanel.setWidget(panel);
-        popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
+        popupPanel.addButton(new CancelPopupButton(popupPanel, "Close") {
+            @Override
+            public void onClick(ClickEvent event) {
+                super.onClick(event);
+                JavaScriptCallbacks.onExecutionStatusPanelClosing();
+            }
+        }) ;
         popupPanel.center();
         popupPanel.show();
 

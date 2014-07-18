@@ -64,7 +64,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final ImageManager imageManager = ImageManager.getInstance();
+	private final ImageManager imageManager = ImageManager.get();
 	private final List<FilenameTextField> _filenameTextFields;
 	private final DCPanel _filesPanel;
 	private final DCComboBox<String> _driverClassNameComboBox;

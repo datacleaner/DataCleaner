@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.Icon;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ErrorUtils;
@@ -60,7 +59,7 @@ public class ProgressInformationPanel extends DCPanel {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
-    private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.get();
 
     private static final Icon ICON_PROGRESS = imageManager.getImageIcon("images/menu/progress.png",
             IconUtils.ICON_SIZE_SMALL);
@@ -133,7 +132,7 @@ public class ProgressInformationPanel extends DCPanel {
             final Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                     .values();
             for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
-                tableProgressInformationPanel.setProgressStopped();
+                tableProgressInformationPanel.setProgressStopped(throwable != null);
             }
         }
     }
@@ -162,7 +161,7 @@ public class ProgressInformationPanel extends DCPanel {
     }
 
     private void appendMessage(final String message) {
-        SwingUtilities.invokeLater(new Runnable() {
+        WidgetUtils.invokeSwingAction(new Runnable() {
             @Override
             public void run() {
                 _executionLogTextArea.append(message);
@@ -173,7 +172,7 @@ public class ProgressInformationPanel extends DCPanel {
     public void setExpectedRows(final Table table, final int expectedRows) {
         final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table,
                 expectedRows);
-        SwingUtilities.invokeLater(new Runnable() {
+        WidgetUtils.invokeSwingAction(new Runnable() {
             @Override
             public void run() {
                 _progressBarPanel.add(tableProgressInformationPanel);
@@ -259,7 +258,7 @@ public class ProgressInformationPanel extends DCPanel {
         if (_stopWatch.isRunning()) {
             _stopWatch.stop();
             _stopWatch.elapsed(TimeUnit.MINUTES);
-            
+
             addUserLog("Job success! Elapsed time: " + _stopWatch);
         }
 

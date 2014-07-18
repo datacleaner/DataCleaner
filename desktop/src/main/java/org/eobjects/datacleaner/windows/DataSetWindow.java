@@ -104,7 +104,7 @@ public class DataSetWindow extends AbstractWindow {
 
     @Override
     public Image getWindowIcon() {
-        return ImageManager.getInstance().getImage("images/actions/preview_data.png");
+        return ImageManager.get().getImage("images/actions/preview_data.png");
     }
 
     @Override

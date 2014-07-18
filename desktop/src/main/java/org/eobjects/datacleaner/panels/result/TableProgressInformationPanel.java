@@ -94,7 +94,7 @@ public class TableProgressInformationPanel extends DCPanel {
     }
 
     private Component createTableLabel() {
-        final Icon icon = ImageManager.getInstance().getImageIcon(IconUtils.MODEL_TABLE);
+        final Icon icon = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE);
         final JLabel iconLabel = new JLabel(icon);
         iconLabel.setHorizontalAlignment(Alignment.CENTER.getLabelAlignment());
 
@@ -131,9 +131,12 @@ public class TableProgressInformationPanel extends DCPanel {
         return result;
     }
 
-    public void setProgressStopped() {
+    public void setProgressStopped(boolean failure) {
         _progressStatusLabel.setText("Stopped! - ");
         _progressBar.setEnabled(false);
+        if (failure) {
+            _progressBar.setProgressBarColor(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+        }
     }
 
     public void setProgressFinished() {

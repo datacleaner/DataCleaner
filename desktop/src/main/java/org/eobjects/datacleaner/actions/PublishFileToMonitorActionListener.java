@@ -37,7 +37,7 @@ import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MonitorConnection;
@@ -46,11 +46,11 @@ import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
-import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 /**

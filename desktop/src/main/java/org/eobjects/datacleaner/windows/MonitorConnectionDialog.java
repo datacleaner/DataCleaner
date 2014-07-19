@@ -36,7 +36,7 @@ import javax.swing.event.DocumentEvent;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -56,11 +56,11 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
-import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 /**

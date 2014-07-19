@@ -116,17 +116,19 @@ public class ExtensionReader {
         for (File file : jarFiles) {
             if (file.getName().toLowerCase().endsWith(".jar")) {
                 try {
-                    JarFile jarFile = new JarFile(file);
-                    JarEntry entry = jarFile.getJarEntry("datacleaner-extension.xml");
-                    if (entry == null) {
-                        logger.info("No extension descriptor file (datacleaner-extension.xml) found in file: {}", file);
-                    } else {
-                        final InputStream inputStream = jarFile.getInputStream(entry);
-                        try {
-                            final ExtensionPackage extension = readExtension(name, inputStream, jarFiles);
-                            return extension;
-                        } finally {
-                            FileHelper.safeClose(inputStream);
+                    try (JarFile jarFile = new JarFile(file)) {
+                        JarEntry entry = jarFile.getJarEntry("datacleaner-extension.xml");
+                        if (entry == null) {
+                            logger.info("No extension descriptor file (datacleaner-extension.xml) found in file: {}",
+                                    file);
+                        } else {
+                            final InputStream inputStream = jarFile.getInputStream(entry);
+                            try {
+                                final ExtensionPackage extension = readExtension(name, inputStream, jarFiles);
+                                return extension;
+                            } finally {
+                                FileHelper.safeClose(inputStream);
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -208,20 +210,21 @@ public class ExtensionReader {
     public String autoDetectPackageName(File file) {
         try {
             Set<String> packageNames = new HashSet<String>();
-            JarFile jarFile = new JarFile(file);
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String name = entry.getName();
-                if (name.endsWith(".class")) {
-                    logger.debug("Considering package of entry '{}'", name);
+            try (JarFile jarFile = new JarFile(file)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String name = entry.getName();
+                    if (name.endsWith(".class")) {
+                        logger.debug("Considering package of entry '{}'", name);
 
-                    int lastIndexOfSlash = name.lastIndexOf('/');
-                    if (lastIndexOfSlash != -1) {
-                        name = name.substring(0, lastIndexOfSlash);
-                        packageNames.add(name);
+                        int lastIndexOfSlash = name.lastIndexOf('/');
+                        if (lastIndexOfSlash != -1) {
+                            name = name.substring(0, lastIndexOfSlash);
+                            packageNames.add(name);
+                        }
+
                     }
-
                 }
             }
 

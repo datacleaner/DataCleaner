@@ -42,9 +42,9 @@ import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Ref;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Ref;
 
 public class JaxbConfigurationInterceptorTest extends TestCase {
 

@@ -32,8 +32,8 @@ import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.metamodel.schema.ColumnType;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.jdesktop.swingx.JXTextField;
 
 public class SimpleTableDefPanel extends DCPanel {

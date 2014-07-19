@@ -28,10 +28,10 @@ import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.datacleaner.util.SchemaComparator;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Predicate;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the

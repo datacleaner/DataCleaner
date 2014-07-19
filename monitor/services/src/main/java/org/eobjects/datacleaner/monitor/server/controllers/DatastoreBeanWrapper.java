@@ -29,9 +29,9 @@ import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.analyzer.connection.UsernameDatastore;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.HasNameMapper;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
+import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

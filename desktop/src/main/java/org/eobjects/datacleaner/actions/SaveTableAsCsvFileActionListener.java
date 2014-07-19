@@ -44,7 +44,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

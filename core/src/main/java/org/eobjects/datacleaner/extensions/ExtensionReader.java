@@ -38,7 +38,7 @@ import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.ResourceManager;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

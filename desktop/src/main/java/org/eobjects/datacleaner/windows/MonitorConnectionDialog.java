@@ -56,7 +56,7 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

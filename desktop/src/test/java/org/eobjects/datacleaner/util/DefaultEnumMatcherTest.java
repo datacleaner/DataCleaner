@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.util;
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.util.HasAliases;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 public class DefaultEnumMatcherTest extends TestCase {
 

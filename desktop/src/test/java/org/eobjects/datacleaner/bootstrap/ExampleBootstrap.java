@@ -37,8 +37,8 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.ResourceManager;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.schema.Column;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
 import org.junit.Ignore;
 
 @Ignore

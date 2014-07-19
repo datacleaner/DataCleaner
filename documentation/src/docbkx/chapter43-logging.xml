@@ -88,7 +88,7 @@
 			&#160;&#160;&lt;/layout&gt;
 			&#160;&lt;/appender&gt;
 
-			&#160;&lt;logger&#160;name="org.eobjects.metamodel"&gt;
+			&#160;&lt;logger&#160;name="org.apache.metamodel"&gt;
 			&#160;&#160;&lt;level value="info" /&gt;
 			&#160;&lt;/logger&gt;
 

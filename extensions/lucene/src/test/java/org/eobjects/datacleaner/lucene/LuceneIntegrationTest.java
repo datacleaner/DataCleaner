@@ -46,9 +46,9 @@ import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
-import org.eobjects.metamodel.pojo.MapTableDataProvider;
-import org.eobjects.metamodel.pojo.TableDataProvider;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.pojo.MapTableDataProvider;
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.util.SimpleTableDef;
 
 public class LuceneIntegrationTest extends TestCase {
 

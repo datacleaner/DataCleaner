@@ -4,8 +4,8 @@ import org.eobjects.analyzer.result.AnalyzerResult
 import org.eobjects.analyzer.data.InputColumn
 import org.eobjects.analyzer.util.ReflectionUtils
 import scala.collection.mutable.Map
-import org.eobjects.metamodel.util.TimeComparator
-import org.eobjects.metamodel.util.ObjectComparator
+import org.apache.metamodel.util.TimeComparator
+import org.apache.metamodel.util.ObjectComparator
 
 class StackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: Array[InputColumn[Number]]) extends AnalyzerResult {
 

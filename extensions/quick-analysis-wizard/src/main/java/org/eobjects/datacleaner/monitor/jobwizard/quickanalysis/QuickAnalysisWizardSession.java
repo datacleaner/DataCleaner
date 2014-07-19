@@ -33,8 +33,8 @@ import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 
 /**
  * Session implementation for the Quick Analysis wizard.

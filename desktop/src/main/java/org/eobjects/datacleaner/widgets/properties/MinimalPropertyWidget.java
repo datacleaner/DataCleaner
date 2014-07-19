@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -67,7 +67,7 @@ import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;

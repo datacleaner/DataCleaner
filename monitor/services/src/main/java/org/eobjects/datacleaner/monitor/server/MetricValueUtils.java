@@ -49,9 +49,9 @@ import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.HasNameMapper;
-import org.eobjects.metamodel.util.Predicate;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
+import org.apache.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

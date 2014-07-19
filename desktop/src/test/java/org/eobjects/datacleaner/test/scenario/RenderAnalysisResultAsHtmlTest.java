@@ -37,7 +37,7 @@ import org.eobjects.analyzer.result.renderer.HtmlRenderingFormat;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.metamodel.util.ImmutableRef;
+import org.apache.metamodel.util.ImmutableRef;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

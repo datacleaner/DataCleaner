@@ -36,8 +36,8 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class MultiSourceColumnComboBoxPanel extends DCPanel {

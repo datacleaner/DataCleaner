@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the

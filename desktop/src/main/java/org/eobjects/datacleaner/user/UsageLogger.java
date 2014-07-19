@@ -39,7 +39,7 @@ import org.apache.http.util.EntityUtils;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.eobjects.metamodel.util.SharedExecutorService;
+import org.apache.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

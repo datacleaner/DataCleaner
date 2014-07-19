@@ -81,9 +81,9 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.Func;
-import org.eobjects.metamodel.util.Ref;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Ref;
 
 /**
  * Window in which the result (and running progress information) of job

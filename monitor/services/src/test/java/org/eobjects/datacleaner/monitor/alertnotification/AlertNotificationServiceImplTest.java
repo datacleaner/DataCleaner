@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.metamodel.util.Ref;
+import org.apache.metamodel.util.Ref;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class AlertNotificationServiceImplTest extends TestCase {

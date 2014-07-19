@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.repository;
 
 import java.io.Serializable;
 
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 /**
  * Represents an abstract node (typically a {@link RepositoryFile} or

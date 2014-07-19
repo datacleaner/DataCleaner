@@ -34,7 +34,7 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.eobjects.analyzer.reference.AbstractReferenceData;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 /**
  * An abstract {@link SearchIndex} implementation.

@@ -27,7 +27,7 @@ import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionPoint;
 import org.eobjects.analyzer.lifecycle.MemberInjectionPoint;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringInjectionManagerFactoryTest extends TestCase {

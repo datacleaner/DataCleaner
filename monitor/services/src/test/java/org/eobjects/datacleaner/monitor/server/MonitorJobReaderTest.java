@@ -31,7 +31,7 @@ import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnType;
 
 public class MonitorJobReaderTest extends TestCase {
 

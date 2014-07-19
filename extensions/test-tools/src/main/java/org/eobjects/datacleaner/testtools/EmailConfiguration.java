@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.testtools;
 
 import java.io.Serializable;
 
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 public class EmailConfiguration implements Serializable, HasName {
 

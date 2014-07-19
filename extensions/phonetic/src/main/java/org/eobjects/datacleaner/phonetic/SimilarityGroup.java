@@ -26,8 +26,8 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.storage.RowAnnotation;
 import org.eobjects.analyzer.storage.RowAnnotationFactory;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.EqualsBuilder;
 
 /**
  * Represents a group of values that have been marked as similar, typically by

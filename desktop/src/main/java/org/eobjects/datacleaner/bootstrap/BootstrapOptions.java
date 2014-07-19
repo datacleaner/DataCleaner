@@ -26,7 +26,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.metamodel.DataContext;
+import org.apache.metamodel.DataContext;
 
 /**
  * Defines the bootstrapping options used to start up and initialize

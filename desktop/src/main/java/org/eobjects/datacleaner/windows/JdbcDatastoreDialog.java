@@ -69,7 +69,7 @@ import org.eobjects.datacleaner.widgets.database.OracleDatabaseConnectionPresent
 import org.eobjects.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.SQLServerDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

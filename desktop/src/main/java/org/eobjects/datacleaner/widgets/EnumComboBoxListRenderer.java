@@ -25,7 +25,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 /**
  * {@link ListCellRenderer} for enums in a combobox.

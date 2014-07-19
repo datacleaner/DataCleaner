@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.job.AbstractJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 /**
  * Wizard session for creating Pentaho jobs

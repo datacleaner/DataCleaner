@@ -44,7 +44,7 @@ import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.EqualsBuilder;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

@@ -114,7 +114,7 @@ public class ExecuteJobTest extends TestCase {
             ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
             String logOutput = log.getLogOutput();
             assertTrue(logOutput, logOutput.indexOf("Resource does not exist: FileResource[" + new File("src/test/resources/example_repo/tenant3/foo/bar.csv").getPath() + "] (ResourceException)") != -1);
-            assertTrue(logOutput, logOutput.indexOf("org.eobjects.metamodel.util.ResourceException: ") != -1);
+            assertTrue(logOutput, logOutput.indexOf("org.apache.metamodel.util.ResourceException: ") != -1);
         } finally {
             RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
                     + ".analysis.execution.log.xml");

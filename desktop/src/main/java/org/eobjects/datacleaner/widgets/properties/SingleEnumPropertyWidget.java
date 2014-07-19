@@ -26,7 +26,7 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
 

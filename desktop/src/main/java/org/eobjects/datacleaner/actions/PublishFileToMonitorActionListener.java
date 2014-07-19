@@ -46,7 +46,7 @@ import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

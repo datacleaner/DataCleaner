@@ -27,7 +27,7 @@ import org.eobjects.analyzer.result.html.BaseHeadElement;
 import org.eobjects.analyzer.result.html.FlotChartLocator;
 import org.eobjects.analyzer.result.html.HeadElement;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
-import org.eobjects.metamodel.util.Predicate;
+import org.apache.metamodel.util.Predicate;
 import org.springframework.stereotype.Component;
 
 /**

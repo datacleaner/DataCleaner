@@ -39,7 +39,7 @@ import org.eobjects.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.MultipleStringPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleClassPropertyWidget;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 
 /**

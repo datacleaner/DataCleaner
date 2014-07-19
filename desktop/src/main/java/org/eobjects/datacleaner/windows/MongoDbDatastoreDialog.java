@@ -41,8 +41,8 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 

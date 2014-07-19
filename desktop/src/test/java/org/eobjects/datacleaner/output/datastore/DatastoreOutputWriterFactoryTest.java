@@ -30,10 +30,10 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.OutputWriterScenarioHelper;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.query.Query;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Table;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 

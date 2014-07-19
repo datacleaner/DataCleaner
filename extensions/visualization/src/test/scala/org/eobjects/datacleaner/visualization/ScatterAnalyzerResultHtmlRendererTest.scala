@@ -13,7 +13,7 @@ import org.eobjects.analyzer.job.ImmutableAnalyzerJob
 import org.eobjects.analyzer.result.SimpleAnalysisResult
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter
 import org.eobjects.analyzer.storage.InMemoryRowAnnotationFactory
-import org.eobjects.metamodel.util.FileHelper
+import org.apache.metamodel.util.FileHelper
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder

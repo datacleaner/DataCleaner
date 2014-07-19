@@ -55,9 +55,9 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 

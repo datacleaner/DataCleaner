@@ -53,8 +53,8 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Injector;

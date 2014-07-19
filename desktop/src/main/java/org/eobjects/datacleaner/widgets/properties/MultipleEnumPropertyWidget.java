@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Enum<?>> {
 

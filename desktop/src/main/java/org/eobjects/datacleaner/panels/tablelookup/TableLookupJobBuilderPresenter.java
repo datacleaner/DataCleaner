@@ -45,8 +45,8 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.SchemaNamePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.TableNamePropertyWidget;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the

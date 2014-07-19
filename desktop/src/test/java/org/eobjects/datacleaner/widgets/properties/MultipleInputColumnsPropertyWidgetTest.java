@@ -39,9 +39,9 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.eobjects.datacleaner.actions.ReorderColumnsActionListener;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
-import org.eobjects.metamodel.schema.ColumnType;
-import org.eobjects.metamodel.schema.MutableColumn;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.util.CollectionUtils;
 
 public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 

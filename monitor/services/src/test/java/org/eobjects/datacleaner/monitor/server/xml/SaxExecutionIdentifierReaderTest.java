@@ -35,8 +35,8 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.metamodel.util.DateUtils;
-import org.eobjects.metamodel.util.Month;
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 
 public class SaxExecutionIdentifierReaderTest extends TestCase {
 

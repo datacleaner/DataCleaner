@@ -27,15 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.metamodel.UpdateCallback;
-import org.eobjects.metamodel.UpdateScript;
-import org.eobjects.metamodel.UpdateableDataContext;
-import org.eobjects.metamodel.create.TableCreationBuilder;
-import org.eobjects.metamodel.csv.CsvConfiguration;
-import org.eobjects.metamodel.csv.CsvDataContext;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.UpdateCallback;
+import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.create.TableCreationBuilder;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvDataContext;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
 
 public final class CsvOutputWriterFactory {
 

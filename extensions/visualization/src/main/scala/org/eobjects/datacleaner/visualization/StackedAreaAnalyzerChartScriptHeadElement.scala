@@ -2,7 +2,7 @@ package org.eobjects.datacleaner.visualization
 
 import org.eobjects.analyzer.result.html.HeadElement
 import org.eobjects.analyzer.result.html.HtmlRenderingContext
-import org.eobjects.metamodel.util.NumberComparator
+import org.apache.metamodel.util.NumberComparator
 import java.util.Date
 
 class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResult, elementId: String) extends HeadElement {

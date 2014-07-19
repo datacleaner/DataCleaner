@@ -31,10 +31,10 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.NamedStructure;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.NamedStructure;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
 
 public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
 

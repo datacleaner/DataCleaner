@@ -47,7 +47,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

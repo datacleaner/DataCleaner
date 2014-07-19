@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.jobwizard.movedata;
 
-import org.eobjects.metamodel.schema.Column;
+import org.apache.metamodel.schema.Column;
 
 /**
  * Simple struct like pojo for holding the information about a mapped columns.

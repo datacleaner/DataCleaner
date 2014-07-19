@@ -55,7 +55,7 @@ import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HeaderLineComboBox;
-import org.eobjects.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.jdesktop.swingx.JXTextField;
 
 public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {

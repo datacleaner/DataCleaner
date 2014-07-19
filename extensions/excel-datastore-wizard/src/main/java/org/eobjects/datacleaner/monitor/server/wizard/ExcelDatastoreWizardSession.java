@@ -29,8 +29,8 @@ import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.FileResource;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
 import org.w3c.dom.Element;
 
 public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession {

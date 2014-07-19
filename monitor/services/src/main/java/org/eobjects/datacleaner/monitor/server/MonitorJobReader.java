@@ -32,8 +32,8 @@ import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.schema.ColumnType;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.Func;
 
 /**
  * A component that reads jobs for the monitor web app without starting a live

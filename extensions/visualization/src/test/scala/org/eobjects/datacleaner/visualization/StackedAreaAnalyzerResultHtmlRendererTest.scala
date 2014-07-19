@@ -12,7 +12,7 @@ import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter
 import org.eobjects.analyzer.test.TestHelper
 import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl
-import org.eobjects.metamodel.util.FileHelper
+import org.apache.metamodel.util.FileHelper
 import java.io.File
 import org.eobjects.analyzer.descriptors.Descriptors
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter

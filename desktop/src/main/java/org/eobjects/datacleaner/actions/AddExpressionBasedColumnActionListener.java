@@ -30,7 +30,7 @@ import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.CollectionUtils;
 
 /**
  * Action listener for adding an expression based input column

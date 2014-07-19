@@ -35,8 +35,8 @@ import org.apache.commons.io.FileUtils;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 
 public class RepositoryZipControllerTest extends TestCase {
 

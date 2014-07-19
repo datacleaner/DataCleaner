@@ -51,10 +51,10 @@ import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HeaderLineComboBox;
-import org.eobjects.metamodel.csv.CsvConfiguration;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.FileResource;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 
 /**
  * Dialog for setting up CSV datastores.

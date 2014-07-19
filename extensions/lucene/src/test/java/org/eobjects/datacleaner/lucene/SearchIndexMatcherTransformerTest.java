@@ -25,7 +25,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
 import org.eobjects.analyzer.data.MockInputRow;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 import junit.framework.TestCase;
 

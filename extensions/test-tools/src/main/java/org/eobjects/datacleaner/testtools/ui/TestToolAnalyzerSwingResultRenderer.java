@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer;
-import org.eobjects.metamodel.util.ImmutableRef;
+import org.apache.metamodel.util.ImmutableRef;
 import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)

@@ -28,7 +28,7 @@ import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

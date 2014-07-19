@@ -38,7 +38,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 
 /**
  * A panel that shows progress information about the processing of a table

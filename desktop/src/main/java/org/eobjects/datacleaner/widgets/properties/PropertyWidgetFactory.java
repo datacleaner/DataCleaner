@@ -46,9 +46,9 @@ import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.widgets.DCComboBox;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Resource;
 
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;

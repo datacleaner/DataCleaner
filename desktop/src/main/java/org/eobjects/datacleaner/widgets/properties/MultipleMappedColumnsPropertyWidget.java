@@ -165,7 +165,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 			sourceColumnComboBox.setSelectedItem(mappedColumn);
 			sourceColumnComboBox.setEditable(false);
 		}
-		sourceColumnComboBox.addListener(new Listener<Column>() {
+		sourceColumnComboBox.addColumnSelectedListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
 				if (isBatchUpdating()) {

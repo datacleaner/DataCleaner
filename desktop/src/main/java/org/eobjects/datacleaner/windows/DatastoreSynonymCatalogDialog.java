@@ -35,6 +35,9 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.CollectionUtils;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
@@ -55,9 +58,6 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Injector;
@@ -68,7 +68,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
     private final DatastoreSynonymCatalog _originalsynonymCatalog;
     private final MutableReferenceDataCatalog _mutableReferenceCatalog;
-    private final JComboBox _datastoreComboBox;
+    private final JComboBox<String> _datastoreComboBox;
     private final SourceColumnComboBox _masterTermColumnComboBox;
     private final JXTextField _nameTextField;
     private final DatastoreCatalog _datastoreCatalog;
@@ -90,7 +90,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Synonym catalog name");
         String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
-        _datastoreComboBox = new JComboBox(comboBoxModel);
+        _datastoreComboBox = new JComboBox<String>(comboBoxModel);
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
@@ -105,7 +105,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                 if (datastoreName != null) {
                     _datastore = _datastoreCatalog.getDatastore(datastoreName);
                     _masterTermColumnComboBox.setModel(_datastore);
-                    _masterTermColumnComboBox.addListener(new Listener<Column>() {
+                    _masterTermColumnComboBox.addColumnSelectedListener(new Listener<Column>() {
 
                         @Override
                         public void onItemSelected(Column column) {

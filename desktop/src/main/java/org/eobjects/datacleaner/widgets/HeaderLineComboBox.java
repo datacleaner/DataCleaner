@@ -41,14 +41,14 @@ public class HeaderLineComboBox extends DCComboBox<Integer> {
 		JTextComponent headerLineNumberText = (JTextComponent) getEditor().getEditorComponent();
 		headerLineNumberText.setDocument(new NumberDocument());
 		setEditable(true);
-		setModel(new DefaultComboBoxModel(new Integer[] { 0, 1 }));
+		setModel(new DefaultComboBoxModel<Integer>(new Integer[] { 0, 1 }));
 		setSelectedItem(1);
 		setRenderer(new DCListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if (value instanceof Integer) {
 					Integer i = (Integer) value;

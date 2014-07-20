@@ -152,7 +152,7 @@ public class AboutDialog extends AbstractDialog {
             }
         });
 
-        final JComboBox librariesComboBox = new JComboBox();
+        final JComboBox<Object> librariesComboBox = new JComboBox<Object>();
         final JButton visitProjectButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
 
         librariesComboBox.setRenderer(new DCListCellRenderer() {
@@ -160,7 +160,7 @@ public class AboutDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                     boolean cellHasFocus) {
                 if (value instanceof LicensedProject) {
                     LicensedProject project = (LicensedProject) value;

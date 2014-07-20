@@ -151,7 +151,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                     boolean cellHasFocus) {
                 if ("".equals(value)) {
                     value = "- select -";

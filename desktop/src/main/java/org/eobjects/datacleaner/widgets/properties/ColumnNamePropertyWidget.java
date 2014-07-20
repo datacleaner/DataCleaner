@@ -84,7 +84,7 @@ public final class ColumnNamePropertyWidget extends AbstractPropertyWidget<Strin
     }
 
     public void addComboListener(Listener<Column> listener) {
-        _comboBox.addListener(listener);
+        _comboBox.addColumnSelectedListener(listener);
     }
 
     @Override

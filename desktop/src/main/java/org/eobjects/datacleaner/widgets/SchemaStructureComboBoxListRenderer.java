@@ -53,7 +53,7 @@ public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
 	}
 
 	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {
 		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 

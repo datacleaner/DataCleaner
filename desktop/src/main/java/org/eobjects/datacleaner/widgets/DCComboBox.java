@@ -25,6 +25,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -38,7 +39,7 @@ import javax.swing.JComboBox;
  * @param <E>
  *            the type of element in the combo
  */
-public class DCComboBox<E> extends JComboBox implements ItemListener {
+public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,18 +50,18 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
     private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
 
     public DCComboBox() {
-        this(new DefaultComboBoxModel());
+        this(new DefaultComboBoxModel<E>());
     }
 
     public DCComboBox(Collection<E> items) {
-        this(new DefaultComboBoxModel(items.toArray()));
+        this(new DefaultComboBoxModel<E>(new Vector<E>(items)));
     }
 
     public DCComboBox(E[] items) {
-        this(new DefaultComboBoxModel(items));
+        this(new DefaultComboBoxModel<E>(items));
     }
 
-    public DCComboBox(ComboBoxModel model) {
+    public DCComboBox(ComboBoxModel<E> model) {
         super(model);
         super.addItemListener(this);
     }

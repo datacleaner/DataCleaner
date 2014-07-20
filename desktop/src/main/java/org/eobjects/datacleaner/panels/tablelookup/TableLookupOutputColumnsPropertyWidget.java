@@ -123,7 +123,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		comboBox.setEditable(true);
 		comboBox.setSelectedItem(column);
 		comboBox.setEditable(false);
-		comboBox.addListener(new Listener<Column>() {
+		comboBox.addColumnSelectedListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
 				fireValueChanged();

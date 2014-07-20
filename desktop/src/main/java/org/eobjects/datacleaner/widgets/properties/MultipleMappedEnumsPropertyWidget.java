@@ -154,7 +154,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
      * 
      * @return
      */
-    protected ListCellRenderer getComboBoxRenderer(InputColumn<?> inputColumn,
+    protected ListCellRenderer<? super E> getComboBoxRenderer(InputColumn<?> inputColumn,
             WeakHashMap<InputColumn<?>, DCComboBox<E>> mappedEnumComboBoxes, E[] enumConstants) {
         return new EnumComboBoxListRenderer();
     }

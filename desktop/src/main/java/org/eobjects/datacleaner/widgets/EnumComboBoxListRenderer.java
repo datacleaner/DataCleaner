@@ -46,7 +46,7 @@ public class EnumComboBoxListRenderer extends DCListCellRenderer {
 	}
 
 	@Override
-	public JLabel getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+	public JLabel getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {
 		final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 

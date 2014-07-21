@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -62,8 +64,8 @@ public class JobModificationController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName, @RequestBody final JobModificationPayload input) {
+    public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            @RequestBody final JobModificationPayload input, HttpServletResponse httpServletResponse) throws IOException {
 
         logger.info("Request payload: {} - {}", jobName, input);
 
@@ -80,8 +82,7 @@ public class JobModificationController {
 
         final String extension = existingFile.getName().substring(jobName.length());
 
-        final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(
-                jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
+        final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
 
         final String nameInput = input.getName();
 
@@ -111,8 +112,12 @@ public class JobModificationController {
             if (overwrite) {
                 newFile.writeFile(writeAction);
             } else {
-                throw new IllegalStateException("A job file with the name '" + newFilename
-                        + "' already exists, and the 'overwrite' flag is non-true.");
+                httpServletResponse.setStatus(HttpServletResponse.SC_CONFLICT);
+                httpServletResponse.setContentType("text/plain");
+                String errorText = "A job file with the name '" + newFilename
+                        + "' already exists, and the 'overwrite' flag is non-true.";
+                httpServletResponse.getOutputStream().write(errorText.getBytes());
+                return null;
             }
         }
 
@@ -135,8 +140,7 @@ public class JobModificationController {
         return response;
     }
 
-    private void renameSchedule(final RepositoryFile oldScheduleFile, final String nameInput,
-            final RepositoryFolder jobFolder) {
+    private void renameSchedule(final RepositoryFile oldScheduleFile, final String nameInput, final RepositoryFolder jobFolder) {
         final String newScheduleFilename = nameInput + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML;
 
         final Action<OutputStream> writeScheduleAction = new Action<OutputStream>() {

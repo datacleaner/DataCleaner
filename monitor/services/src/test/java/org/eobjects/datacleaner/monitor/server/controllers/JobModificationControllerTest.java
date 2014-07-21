@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 import java.io.File;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
@@ -41,6 +43,7 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 public class JobModificationControllerTest extends TestCase {
 
@@ -79,7 +82,8 @@ public class JobModificationControllerTest extends TestCase {
         final JobModificationPayload input = new JobModificationPayload();
         input.setName("renamed_job");
 
-        final Map<String, String> result = jobModificationController.modifyJob("tenant1", "product_profiling", input);
+        HttpServletResponse response = new MockHttpServletResponse(); 
+        final Map<String, String> result = jobModificationController.modifyJob("tenant1", "product_profiling", input, response);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
                 + "repository_url=/tenant1/jobs/renamed_job.analysis.xml}", result.toString());
 

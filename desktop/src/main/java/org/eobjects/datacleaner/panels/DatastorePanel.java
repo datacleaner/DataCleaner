@@ -175,9 +175,9 @@ public class DatastorePanel extends DCPanel {
                 }
             }
         });
-        if (!_datastoreCatalog.isDatastoreMutable(name)) {
-            removeButton.setEnabled(false);
-        }
+//        if (!_datastoreCatalog.isDatastoreMutable(name)) {
+//            removeButton.setEnabled(false);
+//        }
         return removeButton;
     }
 
@@ -313,10 +313,6 @@ public class DatastorePanel extends DCPanel {
                 }
             });
         } else {
-            editButton.setEnabled(false);
-        }
-
-        if (!_datastoreCatalog.isDatastoreMutable(datastore.getName())) {
             editButton.setEnabled(false);
         }
 

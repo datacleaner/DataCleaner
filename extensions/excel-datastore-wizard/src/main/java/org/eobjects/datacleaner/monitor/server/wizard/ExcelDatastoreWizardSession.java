@@ -31,7 +31,6 @@ import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizard
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.FileResource;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession {
@@ -116,13 +115,12 @@ public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession 
     @Override
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
         final DatastoreXmlExternalizer externalizer = new DatastoreXmlExternalizer();
-        final Document doc = documentBuilder.newDocument();
 
         final File file = new File(_filepath);
         final ExcelDatastore datastore = new ExcelDatastore(_name, new FileResource(file), _filepath);
         datastore.setDescription(_description);
 
-        final Element ds = externalizer.externalize(datastore, _filepath, doc);
+        final Element ds = externalizer.toElement(datastore, _filepath);
         return ds;
     }
 

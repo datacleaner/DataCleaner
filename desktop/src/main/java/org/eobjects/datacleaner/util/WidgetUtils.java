@@ -41,6 +41,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -184,6 +185,21 @@ public final class WidgetUtils {
         // prevent instantiation
     }
 
+    /**
+     * Invokes a {@link Runnable} as soon as possible. If this is the swing
+     * event dispatch thread, it will be run now, or else later using
+     * {@link SwingUtilities#invokeLater(Runnable)}
+     * 
+     * @param runnable
+     */
+    public static void invokeSwingAction(Runnable runnable) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        } else {
+            SwingUtilities.invokeLater(runnable);
+        }
+    }
+
     private static Font createFont(String path) {
         final URL url = ResourceManager.get().getUrl(path);
         if (url == null) {
@@ -322,11 +338,11 @@ public final class WidgetUtils {
         final JXErrorPane errorPane = new JXErrorPane();
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
-        
+
         final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
-        
-        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", presentedException,
-                ErrorLevel.SEVERE, null);
+
+        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error",
+                presentedException, ErrorLevel.SEVERE, null);
         errorPane.setErrorInfo(info);
         final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
         centerOnScreen(dialog);

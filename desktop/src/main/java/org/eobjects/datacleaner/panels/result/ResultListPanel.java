@@ -24,7 +24,6 @@ import java.awt.BorderLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.beans.api.Renderer;
@@ -81,7 +80,7 @@ public class ResultListPanel extends DCPanel {
 		taskPanePanel.add(new LoadingIcon());
 		_progressInformationPanel.addUserLog("Rendering result for " + resultLabel);
 
-		SwingUtilities.invokeLater(new Runnable() {
+		WidgetUtils.invokeSwingAction(new Runnable() {
 			@Override
 			public void run() {
 				String title = taskPane.getTitle();

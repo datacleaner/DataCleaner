@@ -19,25 +19,13 @@
  */
 package org.eobjects.datacleaner.util;
 
-import java.lang.Thread.UncaughtExceptionHandler;
+/**
+ * Represents a component capable of matching Strings to enum values
+ * 
+ * @param <E>
+ */
+public interface EnumMatcher<E extends Enum<?>> {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public final class DCUncaughtExceptionHandler implements UncaughtExceptionHandler {
-
-	private static final Logger logger = LoggerFactory.getLogger(DCUncaughtExceptionHandler.class);
-
-	@Override
-	public void uncaughtException(Thread t, final Throwable e) {
-		logger.error("Thread " + t.getName() + " threw uncaught exception", e);
-
-		WidgetUtils.invokeSwingAction(new Runnable() {
-			@Override
-			public void run() {
-				WidgetUtils.showErrorMessage("Unexpected error!", e);
-			}
-		});
-	}
+    public E suggestMatch(String string);
 
 }

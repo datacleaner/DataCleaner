@@ -19,11 +19,11 @@
  */
 package org.eobjects.datacleaner.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -34,25 +34,27 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 public class DCProgressBar extends JProgressBar {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final int DEFAULT_HEIGHT = 20;
 
     private final ProgressCounter _value;
 
+    private Color _progressBarColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
+
     public DCProgressBar(int min, int max) {
         super(min, max);
         setMinimumSize(new Dimension(10, DEFAULT_HEIGHT));
-        
+
         setOpaque(false);
         _value = new ProgressCounter(0);
     }
-    
+
     @Override
     public Dimension getPreferredSize() {
         int width = super.getPreferredSize().width;
         return new Dimension(width, DEFAULT_HEIGHT);
     }
-    
+
     @Override
     public Dimension getMaximumSize() {
         return new Dimension(1000, DEFAULT_HEIGHT);
@@ -68,21 +70,16 @@ public class DCProgressBar extends JProgressBar {
     public boolean setValueIfGreater(final int newValue) {
         boolean greater = _value.setIfSignificantToUser(newValue);
         if (greater) {
-            if (SwingUtilities.isEventDispatchThread()) {
-                super.setValue(newValue);
-            } else {
-                final Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        DCProgressBar.super.setValue(newValue);
-                    }
-                };
-                SwingUtilities.invokeLater(runnable);
-            }
+            WidgetUtils.invokeSwingAction(new Runnable() {
+                @Override
+                public void run() {
+                    DCProgressBar.super.setValue(newValue);
+                }
+            });
         }
         return greater;
     }
-    
+
     @Override
     public int getValue() {
         return _value.get();
@@ -115,12 +112,20 @@ public class DCProgressBar extends JProgressBar {
         final int barWidth = (int) (width * completenessRatio);
         return barWidth;
     }
-    
+
+    public void setProgressBarColor(Color progressBarColor) {
+        _progressBarColor = progressBarColor;
+    }
+
+    public Color getProgressBarColor() {
+        return _progressBarColor;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         final int width = getWidth();
         final int height = getHeight();
-        
+
         if (isOpaque()) {
             g.setColor(WidgetUtils.BG_COLOR_DARK);
             g.fillRect(0, 0, width, height);
@@ -129,12 +134,12 @@ public class DCProgressBar extends JProgressBar {
         final int barWidth = getBarWidth(getValue());
 
         if (barWidth > 0) {
-            g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            g.setColor(_progressBarColor);
             g.fillRect(0, 0, barWidth, height / 2);
-            g.setColor(WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.setColor(WidgetUtils.slightlyDarker(_progressBarColor));
             g.fillRect(0, height / 2, barWidth, height / 2);
 
-            g.setColor(WidgetUtils.slightlyBrighter(WidgetUtils.BG_COLOR_BLUE_BRIGHT));
+            g.setColor(WidgetUtils.slightlyBrighter(_progressBarColor));
             g.drawRect(0, 0, barWidth, height);
         }
     }

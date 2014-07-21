@@ -25,6 +25,7 @@ import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCRequestBuilder;
 import org.eobjects.datacleaner.monitor.util.DCRequestCallback;
+import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -87,6 +88,12 @@ public class CustomizeJobClickHandler implements ClickHandler {
                     @Override
                     protected void onSuccess(Request request, Response response) {
                         Window.Location.reload();
+                    }
+                    
+                    @Override
+                    public void onNonSuccesfullStatusCode(Request request, Response response, int statusCode, String statusText) {
+                        popup.hide();
+                        ErrorHandler.showErrorDialog(response.getText());
                     }
                 });
             }

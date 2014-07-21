@@ -30,6 +30,7 @@ import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalysisListenerAdaptor;
 import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -46,7 +47,7 @@ import org.eobjects.metamodel.schema.Table;
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
  * statements about the job execution.
  */
-public class MonitorAnalysisListener implements AnalysisListener {
+public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements AnalysisListener {
 
     private final Map<ComponentJob, AnalyzerResult> _results;
     private final Map<Table, ProgressCounter> _progressCounters;

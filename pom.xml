@@ -4,11 +4,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sshwagon.version>2.6</sshwagon.version>
 		<javadoc.version>2.9.1</javadoc.version>
-		<slf4j.version>1.7.6</slf4j.version>
+		<slf4j.version>1.7.7</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>17.0</guava.version>
-		<analyzerbeans.version>1.0-SNAPSHOT</analyzerbeans.version>
+		<analyzerbeans.version>1.0-RC1</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

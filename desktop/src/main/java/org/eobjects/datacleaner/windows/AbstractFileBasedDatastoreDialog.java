@@ -49,6 +49,7 @@ import javax.swing.table.TableModel;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -73,6 +74,8 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -87,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <D>
  */
-public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> extends AbstractDialog {
+public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -146,7 +149,18 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
         if (_originalDatastore != null) {
             _datastoreNameField.setText(_originalDatastore.getName());
             _datastoreNameField.setEnabled(false);
-            _filenameField.setFilename(_originalDatastore.getFilename());
+            if (_originalDatastore instanceof FileDatastore) {
+                final FileDatastore fileDatastore = (FileDatastore) _originalDatastore;
+                final String filename = fileDatastore.getFilename();
+                _filenameField.setFilename(filename);
+            } else if (_originalDatastore instanceof ResourceDatastore) {
+                final ResourceDatastore resourceDatastore = (ResourceDatastore) _originalDatastore;
+                final Resource resource = resourceDatastore.getResource();
+                if (resource instanceof FileResource) {
+                    final File file = ((FileResource) resource).getFile();
+                    _filenameField.setFile(file);
+                }
+            }
         }
 
         // add listeners after setting initial values.
@@ -413,12 +427,12 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
         }
-        
+
         final D datastore = getPreviewDatastore(filename);
         try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dc = con.getDataContext();
             final Table table = getPreviewTable(dc);
-            
+
             Column[] columns = table.getColumns();
             if (columns.length > getPreviewColumns()) {
                 // include max 10 columns

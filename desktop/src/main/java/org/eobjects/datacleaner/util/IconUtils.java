@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.metamodel.schema.Column;
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.connection.AccessDatastore;
@@ -37,7 +38,9 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
+import org.eobjects.analyzer.connection.HBaseDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.JsonDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SalesforceDatastore;
@@ -52,7 +55,6 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -63,7 +65,7 @@ public final class IconUtils {
     public static int ICON_SIZE_LARGE = 32;
     public static int ICON_SIZE_MEDIUM = 22;
     public static int ICON_SIZE_SMALL = 16;
-    
+
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
     public static final String MODEL_TABLE = "images/model/table.png";
@@ -368,6 +370,10 @@ public final class IconUtils {
             imagePath = SAS_IMAGEPATH;
         } else if (datastore instanceof XmlDatastore) {
             imagePath = XML_IMAGEPATH;
+        } else if (datastore instanceof HBaseDatastore) {
+            imagePath = HBASE_IMAGEPATH;
+        } else if (datastore instanceof JsonDatastore) {
+            imagePath = JSON_IMAGEPATH;
         } else if (datastore instanceof CouchDbDatastore) {
             imagePath = COUCHDB_IMAGEPATH;
         } else if (datastore instanceof MongoDbDatastore) {

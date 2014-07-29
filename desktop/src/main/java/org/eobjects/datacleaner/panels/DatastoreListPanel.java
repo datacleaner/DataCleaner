@@ -54,6 +54,7 @@ import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.HBaseDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.JsonDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SalesforceDatastore;
@@ -85,6 +86,7 @@ import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.HBaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
+import org.eobjects.datacleaner.windows.JsonDatastoreDialog;
 import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
@@ -306,6 +308,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
                 IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
         panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
                 IconUtils.XML_IMAGEPATH, XmlDatastore.class, XmlDatastoreDialog.class));
+        panel.add(createNewDatastoreButton("JSON file", "JavaScript Object NOtation file (.json).",
+                IconUtils.JSON_IMAGEPATH, JsonDatastore.class, JsonDatastoreDialog.class));
         panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
                 IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
 

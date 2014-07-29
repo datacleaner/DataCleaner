@@ -116,6 +116,8 @@ public final class IconUtils {
     public static final String COUCHDB_IMAGEPATH = "images/datastore-types/couchdb.png";
     public static final String SALESFORCE_IMAGEPATH = "images/datastore-types/salesforce.png";
     public static final String SUGAR_CRM_IMAGEPATH = "images/datastore-types/sugarcrm.png";
+    public static final String JSON_IMAGEPATH = "images/datastore-types/json.png";
+    public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
 
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";

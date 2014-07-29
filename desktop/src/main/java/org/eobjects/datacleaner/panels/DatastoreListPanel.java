@@ -144,10 +144,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
                         // open the connection here, to make any connection
                         // issues apparent early
-                        DatastoreConnection dataContextProvider = datastore.openConnection();
-                        dataContextProvider.getDataContext().getSchemaNames();
-                        _analysisJobBuilderWindow.setDatastore(datastore);
-                        dataContextProvider.close();
+                        try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
+                            datastoreConnection.getDataContext().getSchemaNames();
+                            _analysisJobBuilderWindow.setDatastore(datastore);
+                        }
                         return;
                     }
                 }
@@ -311,8 +311,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         panel.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
                 IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system",
-                IconUtils.SUGAR_CRM_IMAGEPATH, SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
+                SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
 
         panel.add(Box.createHorizontalStrut(10));
 

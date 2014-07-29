@@ -77,9 +77,9 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     private static final String ESCAPE_BACKSLASH = "Backslash (\\)";
     private static final String ESCAPE_NONE = "(None)";
 
-    private final JComboBox _separatorCharField;
-    private final JComboBox _quoteCharField;
-    private final JComboBox _escapeCharField;
+    private final JComboBox<String> _separatorCharField;
+    private final JComboBox<String> _quoteCharField;
+    private final JComboBox<String> _escapeCharField;
     private final HeaderLineComboBox _headerLineComboBox;
     private final CharSetEncodingComboBox _encodingComboBox;
     private final JCheckBox _failOnInconsistenciesCheckBox;
@@ -91,14 +91,14 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     public CsvDatastoreDialog(@Nullable CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
         super(datastore, mutableDatastoreCatalog, windowContext, userPreferences);
-        _separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
+        _separatorCharField = new JComboBox<String>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
                 SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
 
-        _quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
+        _quoteCharField = new JComboBox<String>(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
         _quoteCharField.setEditable(true);
 
-        _escapeCharField = new JComboBox(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
+        _escapeCharField = new JComboBox<String>(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
         _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
         _escapeCharField.setEditable(true);
 

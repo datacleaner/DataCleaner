@@ -37,31 +37,31 @@ public class MultipleEnumPropertyWidgetTest extends TestCase {
 	public void testSelection() throws Exception {
 
 		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-		AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
-		ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
-				"Enum array property");
-
-		assertEquals(ValidationCategory.class, property.getBaseType());
-
-		MultipleEnumPropertyWidget widget = new MultipleEnumPropertyWidget(analyzerJobBuilder, property);
-		widget.initialize(new ValidationCategory[] { ValidationCategory.VALID, ValidationCategory.INVALID });
-
-		assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
-		assertEquals("[VALID, INVALID]", Arrays.toString(widget.getValue()));
-
-		widget.onValueTouched(new ValidationCategory[0]);
-		assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
-		assertEquals("[]", Arrays.toString(widget.getValue()));
-
-		widget.onValueTouched(new ValidationCategory[] { ValidationCategory.VALID });
-		assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
-		assertEquals("[VALID]", Arrays.toString(widget.getValue()));
-
-		widget.onValueTouched(new ValidationCategory[] { ValidationCategory.INVALID });
-		assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
-		assertEquals("[INVALID]", Arrays.toString(widget.getValue()));
-		ajb.close();
+		try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+		    AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
+		    ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
+		            "Enum array property");
+		    
+		    assertEquals(ValidationCategory.class, property.getBaseType());
+		    
+		    MultipleEnumPropertyWidget widget = new MultipleEnumPropertyWidget(analyzerJobBuilder, property);
+		    widget.initialize(new ValidationCategory[] { ValidationCategory.VALID, ValidationCategory.INVALID });
+		    
+		    assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
+		    assertEquals("[VALID, INVALID]", Arrays.toString(widget.getValue()));
+		    
+		    widget.onValueTouched(new ValidationCategory[0]);
+		    assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
+		    assertEquals("[]", Arrays.toString(widget.getValue()));
+		    
+		    widget.onValueTouched(new ValidationCategory[] { ValidationCategory.VALID });
+		    assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
+		    assertEquals("[VALID]", Arrays.toString(widget.getValue()));
+		    
+		    widget.onValueTouched(new ValidationCategory[] { ValidationCategory.INVALID });
+		    assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
+		    assertEquals("[INVALID]", Arrays.toString(widget.getValue()));
+		}
 	}
 
 	private String getAvailableCheckboxValues(MultipleEnumPropertyWidget widget) {

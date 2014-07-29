@@ -27,7 +27,6 @@ import java.io.File;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -59,7 +58,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _nameTextField;
     private final FilenameTextField _filenameTextField;
-    private final JComboBox _encodingComboBox;
+    private final CharSetEncodingComboBox _encodingComboBox;
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject

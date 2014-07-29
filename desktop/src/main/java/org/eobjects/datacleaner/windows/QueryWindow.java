@@ -88,8 +88,7 @@ public class QueryWindow extends AbstractWindow {
                 final String queryString = _queryTextArea.getText();
                 logger.debug("Query being parsed: {}", queryString);
 
-                final DatastoreConnection con = _datastore.openConnection();
-                try {
+                try (final DatastoreConnection con = _datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
                     final Query q = dataContext.parseQuery(queryString);
                     logger.info("Parsed query: {}", q);
@@ -103,8 +102,6 @@ public class QueryWindow extends AbstractWindow {
                     _table.setModel(new DataSetTableModel(dataSet));
                 } catch (MetaModelException e) {
                     WidgetUtils.showErrorMessage("Failed to execute query", e.getMessage(), e);
-                } finally {
-                    con.close();
                 }
             }
         });

@@ -159,9 +159,8 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
             Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
             if (datastore != null) {
-                DatastoreConnection dataContextProvider = datastore.openConnection();
-                try {
-                    SchemaNavigator sn = dataContextProvider.getSchemaNavigator();
+                try (final DatastoreConnection datastoreConnection = datastore.openConnection()) {
+                    SchemaNavigator sn = datastoreConnection.getSchemaNavigator();
 
                     Column masterTermColumn = sn.convertToColumn(synonymCatalog.getMasterTermColumnPath());
                     _masterTermColumnComboBox.setSelectedItem(masterTermColumn);
@@ -169,8 +168,6 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
                     String[] synonymColumnPaths = synonymCatalog.getSynonymColumnPaths();
                     Column[] synonymColumns = sn.convertToColumns(synonymColumnPaths);
                     _synonymColumnsPanel.setColumns(Arrays.asList(synonymColumns));
-                } finally {
-                    dataContextProvider.close();
                 }
             }
 

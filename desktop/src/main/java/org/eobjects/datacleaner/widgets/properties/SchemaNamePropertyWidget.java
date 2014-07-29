@@ -41,103 +41,94 @@ import org.apache.metamodel.util.MutableRef;
  */
 public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 
-	private final DCComboBox<Schema> _comboBox;
-	private final MutableRef<Datastore> _datastoreRef;
+    private final DCComboBox<Schema> _comboBox;
+    private final MutableRef<Datastore> _datastoreRef;
 
-	public SchemaNamePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(beanJobBuilder, propertyDescriptor);
-		_comboBox = new DCComboBox<Schema>();
-		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
-		_comboBox.setEditable(false);
-		addComboListener(new Listener<Schema>() {
-			@Override
-			public void onItemSelected(Schema item) {
-				fireValueChanged();
-			}
-		});
-		add(_comboBox);
-		_datastoreRef = new MutableRef<Datastore>();
+    public SchemaNamePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(beanJobBuilder, propertyDescriptor);
+        _comboBox = new DCComboBox<Schema>();
+        _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
+        _comboBox.setEditable(false);
+        addComboListener(new Listener<Schema>() {
+            @Override
+            public void onItemSelected(Schema item) {
+                fireValueChanged();
+            }
+        });
+        add(_comboBox);
+        _datastoreRef = new MutableRef<Datastore>();
 
-		setValue(getCurrentValue());
-	}
+        setValue(getCurrentValue());
+    }
 
-	public void addComboListener(Listener<Schema> listener) {
-		_comboBox.addListener(listener);
-	}
+    public void addComboListener(Listener<Schema> listener) {
+        _comboBox.addListener(listener);
+    }
 
-	public void setDatastore(Datastore datastore) {
-		String previousValue = getValue();
-		_datastoreRef.set(datastore);
-		if (datastore == null) {
-			_comboBox.setModel(new DefaultComboBoxModel(new Object[1]));
-		} else {
-			final DatastoreConnection con = datastore.openConnection();
-			try {
-				Schema[] schemas = con.getSchemaNavigator().getSchemas();
-				schemas = CollectionUtils.array(new Schema[1], schemas);
-				_comboBox.setModel(new DefaultComboBoxModel(schemas));
-				Schema newValue = null;
-				if (previousValue != null) {
-					newValue = con.getSchemaNavigator().getSchemaByName(previousValue);
-				}
-				if (newValue == null) {
-					newValue = con.getSchemaNavigator().getDefaultSchema();
-				}
-				_comboBox.setSelectedItem(newValue);
-			} finally {
-				con.close();
-			}
-		}
-	}
+    public void setDatastore(Datastore datastore) {
+        String previousValue = getValue();
+        _datastoreRef.set(datastore);
+        if (datastore == null) {
+            _comboBox.setModel(new DefaultComboBoxModel<Schema>(new Schema[1]));
+        } else {
+            try (final DatastoreConnection con = datastore.openConnection()) {
+                Schema[] schemas = con.getSchemaNavigator().getSchemas();
+                schemas = CollectionUtils.array(new Schema[1], schemas);
+                _comboBox.setModel(new DefaultComboBoxModel<Schema>(schemas));
+                Schema newValue = null;
+                if (previousValue != null) {
+                    newValue = con.getSchemaNavigator().getSchemaByName(previousValue);
+                }
+                if (newValue == null) {
+                    newValue = con.getSchemaNavigator().getDefaultSchema();
+                }
+                _comboBox.setSelectedItem(newValue);
+            }
+        }
+    }
 
-	@Override
-	public String getValue() {
-		Schema schema = getSchema();
-		if (schema == null) {
-			return null;
-		}
-		return schema.getName();
-	}
+    @Override
+    public String getValue() {
+        Schema schema = getSchema();
+        if (schema == null) {
+            return null;
+        }
+        return schema.getName();
+    }
 
-	public Schema getSchema() {
-		Schema schema = _comboBox.getSelectedItem();
-		return schema;
-	}
+    public Schema getSchema() {
+        Schema schema = _comboBox.getSelectedItem();
+        return schema;
+    }
 
-	@Override
-	protected void setValue(String value) {
-		final Datastore datastore = _datastoreRef.get();
-		if (value == null && datastore != null) {
-			DatastoreConnection con = datastore.openConnection();
-			try {
-				value = con.getSchemaNavigator().getDefaultSchema().getName();
-			} finally {
-				con.close();
-			}
-		}
+    @Override
+    protected void setValue(String value) {
+        final Datastore datastore = _datastoreRef.get();
+        if (value == null && datastore != null) {
+            try (DatastoreConnection con = datastore.openConnection()) {
+                value = con.getSchemaNavigator().getDefaultSchema().getName();
+            }
+        }
 
-		if (getValue() == value) {
-			return;
-		}
+        if (getValue() == value) {
+            return;
+        }
 
-		final Schema schema;
-		if (value == null) {
-			schema = null;
-		} else if (datastore == null) {
-			schema = new MutableSchema(value);
-		} else {
-			DatastoreConnection con = datastore.openConnection();
-			try {
-				schema = con.getSchemaNavigator().getSchemaByName(value);
-			} finally {
-				con.close();
-			}
-		}
+        final Schema schema;
+        if (value == null) {
+            schema = null;
+        } else if (datastore == null) {
+            schema = new MutableSchema(value);
+        } else {
+            try (DatastoreConnection con = datastore.openConnection()) {
+                schema = con.getSchemaNavigator().getSchemaByName(value);
+            }
+        }
 
-		_comboBox.setEditable(true);
-		_comboBox.setSelectedItem(schema);
-		_comboBox.setEditable(false);
-	}
+        _comboBox.setEditable(true);
+        _comboBox.setSelectedItem(schema);
+        _comboBox.setEditable(false);
+    }
 
 }

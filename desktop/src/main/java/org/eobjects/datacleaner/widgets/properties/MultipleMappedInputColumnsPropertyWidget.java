@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.WeakHashMap;
 
 import javax.swing.DefaultComboBoxModel;
@@ -140,9 +141,8 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         }
 
         final Collection<DCComboBox<InputColumn<?>>> comboBoxes = _mappedInputColumnComboBoxes.values();
-        final Object[] availableInputColumnsArray = availableInputColumns.toArray();
         for (DCComboBox<InputColumn<?>> comboBox : comboBoxes) {
-            comboBox.setModel(new DefaultComboBoxModel(availableInputColumnsArray));
+            comboBox.setModel(new DefaultComboBoxModel<InputColumn<?>>(new Vector<InputColumn<?>>(availableInputColumns)));
         }
     }
 

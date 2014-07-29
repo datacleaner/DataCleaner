@@ -33,32 +33,32 @@ import javax.swing.SwingConstants;
  */
 public enum Alignment {
 
-	CENTER, LEFT, RIGHT;
+    CENTER, LEFT, RIGHT;
 
-	public int getFlowLayoutAlignment() {
-		if (this == LEFT) {
-			return FlowLayout.LEFT;
-		} else if (this == CENTER) {
-			return FlowLayout.CENTER;
-		}
-		return FlowLayout.RIGHT;
-	}
+    public int getFlowLayoutAlignment() {
+        if (this == LEFT) {
+            return FlowLayout.LEFT;
+        } else if (this == CENTER) {
+            return FlowLayout.CENTER;
+        }
+        return FlowLayout.RIGHT;
+    }
 
-	public int getLabelAlignment() {
-		if (this == LEFT) {
-			return JLabel.LEFT;
-		} else if (this == CENTER) {
-			return JLabel.CENTER;
-		}
-		return JLabel.RIGHT;
-	}
+    public int getLabelAlignment() {
+        if (this == LEFT) {
+            return JLabel.LEFT;
+        } else if (this == CENTER) {
+            return JLabel.CENTER;
+        }
+        return JLabel.RIGHT;
+    }
 
-	public int getSwingContstantsAlignment() {
-		if (this == LEFT) {
-			return SwingConstants.LEFT;
-		} else if (this == CENTER) {
-			return SwingConstants.CENTER;
-		}
-		return SwingConstants.RIGHT;
-	}
+    public int getSwingContstantsAlignment() {
+        if (this == LEFT) {
+            return SwingConstants.LEFT;
+        } else if (this == CENTER) {
+            return SwingConstants.CENTER;
+        }
+        return SwingConstants.RIGHT;
+    }
 }

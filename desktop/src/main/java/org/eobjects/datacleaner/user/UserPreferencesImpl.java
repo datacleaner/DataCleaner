@@ -147,6 +147,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
 
         logger.info("Saving user preferences to {}", _userPreferencesFile.getName().getPath());
+        
+        @SuppressWarnings("resource")
         ObjectOutputStream outputStream = null;
         try {
             outputStream = new ObjectOutputStream(_userPreferencesFile.getContent().getOutputStream());

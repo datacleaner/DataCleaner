@@ -57,9 +57,10 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
-        ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
-        AnalysisResult analysisResult = (AnalysisResult) is.readObject();
-        is.close();
+        AnalysisResult analysisResult;
+        try (ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file))) {
+            analysisResult = (AnalysisResult) is.readObject();
+        }
 
         RendererFactory rendererFactory = new RendererFactory(configuration);
 
@@ -71,11 +72,9 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
             assertNotNull("Did not find a renderer for: " + analyzerResult, renderer);
         }
 
-        Writer fileWriter = new FileWriter("target/testOpenJobWithAllAnalyzers.out.html");
-
-        HtmlAnalysisResultWriter writer = new HtmlAnalysisResultWriter();
-        writer.write(analysisResult, configuration, ImmutableRef.of(fileWriter), null);
-
-        fileWriter.close();
+        try (Writer fileWriter = new FileWriter("target/testOpenJobWithAllAnalyzers.out.html")) {
+            HtmlAnalysisResultWriter writer = new HtmlAnalysisResultWriter();
+            writer.write(analysisResult, configuration, ImmutableRef.of(fileWriter), null);
+        }
     }
 }

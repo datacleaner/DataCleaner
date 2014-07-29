@@ -189,12 +189,9 @@ public class MongoDbDatastoreDialog extends AbstractDialog implements SchemaFact
 	@Override
 	public Schema createSchema() {
 		final MongoDbDatastore datastore = createDatastore();
-		final UpdateableDatastoreConnection con = datastore.openConnection();
-		try {
+		try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
 			final Schema schema = con.getDataContext().getDefaultSchema();
 			return schema;
-		} finally {
-			con.close();
 		}
 	}
 }

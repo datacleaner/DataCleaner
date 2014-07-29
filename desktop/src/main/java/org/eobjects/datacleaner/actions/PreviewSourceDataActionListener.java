@@ -79,15 +79,12 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			throw new IllegalStateException("No columns found - could not determine which columns to query");
 		}
 
-		final DatastoreConnection con = _datastore.openConnection();
-		try {
+		try (final DatastoreConnection con = _datastore.openConnection()) {
 			DataContext dc = con.getDataContext();
 			Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
 			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
 			window.setVisible(true);
-		} finally {
-			con.close();
 		}
 	}
 }

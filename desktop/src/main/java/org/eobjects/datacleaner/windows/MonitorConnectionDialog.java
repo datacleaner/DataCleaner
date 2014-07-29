@@ -64,8 +64,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 /**
- * Dialog for setting up the users connection to the DataCleaner monitor
- * webapp.
+ * Dialog for setting up the users connection to the DataCleaner monitor webapp.
  */
 public class MonitorConnectionDialog extends AbstractDialog {
 
@@ -289,8 +288,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                 final MonitorConnection connection = createMonitorConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
-                final MonitorHttpClient monitorHttpClient = connection.getHttpClient();
-                try {
+                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
 
                     final StatusLine statusLine = response.getStatusLine();
@@ -312,14 +310,12 @@ public class MonitorConnectionDialog extends AbstractDialog {
                                 + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
                     }
                 } catch (Exception e) {
-                    //TODO: This dialog is shown behind the modal dialog
+                    // TODO: This dialog is shown behind the modal dialog
                     WidgetUtils
                             .showErrorMessage(
                                     "Connection failed",
                                     "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
                                     e);
-                } finally {
-                    monitorHttpClient.close();
                 }
             }
         });

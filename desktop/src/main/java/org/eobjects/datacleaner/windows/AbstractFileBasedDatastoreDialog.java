@@ -413,23 +413,24 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
         }
-        D datastore = getPreviewDatastore(filename);
-        DatastoreConnection con = datastore.openConnection();
-        DataContext dc = con.getDataContext();
-        Table table = getPreviewTable(dc);
-        Column[] columns = table.getColumns();
-        if (columns.length > getPreviewColumns()) {
-            // include max 10 columns
-            columns = Arrays.copyOf(columns, getPreviewColumns());
+        
+        final D datastore = getPreviewDatastore(filename);
+        try (DatastoreConnection con = datastore.openConnection()) {
+            final DataContext dc = con.getDataContext();
+            final Table table = getPreviewTable(dc);
+            
+            Column[] columns = table.getColumns();
+            if (columns.length > getPreviewColumns()) {
+                // include max 10 columns
+                columns = Arrays.copyOf(columns, getPreviewColumns());
+            }
+            final Query q = dc.query().from(table).select(columns).toQuery();
+            q.setMaxRows(7);
+
+            final DataSet dataSet = dc.executeQuery(q);
+
+            return dataSet;
         }
-        Query q = dc.query().from(table).select(columns).toQuery();
-        q.setMaxRows(7);
-
-        DataSet dataSet = dc.executeQuery(q);
-
-        con.close();
-
-        return dataSet;
     }
 
     protected String getDescriptionText() {

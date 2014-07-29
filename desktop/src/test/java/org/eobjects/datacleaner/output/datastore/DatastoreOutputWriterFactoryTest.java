@@ -38,7 +38,7 @@ import org.apache.metamodel.schema.Table;
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 
     private static final File OUTPUT_DIR = new File("target/test-output");
-    
+
     private boolean _datastoreCreated = false;
     private volatile Exception _exception;
     private Datastore _datastore;
@@ -80,8 +80,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
                 @Override
                 public void run() {
                     try {
-                        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate, "ds",
-                                "tab", false, columns);
+                        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate,
+                                "ds", "tab", false, columns);
                         scenarioHelper.writeExampleData(writer);
                     } catch (RuntimeException e) {
                         _exception = e;
@@ -102,16 +102,13 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
         assertEquals(9, datastoreCount.get());
 
         assertNotNull(_datastore);
-        DatastoreConnection connection = _datastore.openConnection();
-        try {
+        try (DatastoreConnection connection = _datastore.openConnection()) {
             DataContext dc = connection.getDataContext();
             dc.refreshSchemas();
             String[] tableNames = dc.getDefaultSchema().getTableNames();
             Arrays.sort(tableNames);
 
             assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]", Arrays.toString(tableNames));
-        } finally {
-            connection.close();
         }
     }
 
@@ -125,8 +122,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
                 _datastoreCreated = true;
                 assertEquals("my datastore", datastore.getName());
 
-                DatastoreConnection con = datastore.openConnection();
-                try {
+                try (DatastoreConnection con = datastore.openConnection()) {
                     DataContext dc = con.getDataContext();
 
                     Table table = dc.getDefaultSchema().getTables()[0];
@@ -134,8 +130,6 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
                     DataSet dataSet = dc.executeQuery(q);
 
                     scenarioHelper.performAssertions(dataSet, true);
-                } finally {
-                    con.close();
                 }
             }
         };

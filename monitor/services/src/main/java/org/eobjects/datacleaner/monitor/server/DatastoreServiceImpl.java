@@ -71,14 +71,9 @@ public class DatastoreServiceImpl implements DatastoreService {
             return null;
         }
 
-        try {
-            final DatastoreConnection con = datastore.openConnection();
-            try {
-                final Schema schema = con.getDataContext().getDefaultSchema();
-                return new SchemaIdentifier(datastoreId, schema.getName());
-            } finally {
-                con.close();
-            }
+        try (final DatastoreConnection con = datastore.openConnection()) {
+            final Schema schema = con.getDataContext().getDefaultSchema();
+            return new SchemaIdentifier(datastoreId, schema.getName());
         } catch (Exception e) {
             logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
             throw new DatastoreConnectionException(e.getMessage());
@@ -94,21 +89,16 @@ public class DatastoreServiceImpl implements DatastoreService {
             return null;
         }
 
-        try {
-            final DatastoreConnection con = datastore.openConnection();
-            try {
-                final String[] schemaNames = con.getDataContext().getSchemaNames();
-                final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
-                        new Func<String, SchemaIdentifier>() {
-                            @Override
-                            public SchemaIdentifier eval(String schemaName) {
-                                return new SchemaIdentifier(datastoreId, schemaName);
-                            }
-                        });
-                return schemaIdentifiers;
-            } finally {
-                con.close();
-            }
+        try (final DatastoreConnection con = datastore.openConnection()) {
+            final String[] schemaNames = con.getDataContext().getSchemaNames();
+            final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
+                    new Func<String, SchemaIdentifier>() {
+                        @Override
+                        public SchemaIdentifier eval(String schemaName) {
+                            return new SchemaIdentifier(datastoreId, schemaName);
+                        }
+                    });
+            return schemaIdentifiers;
         } catch (Exception e) {
             logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
             throw new DatastoreConnectionException(e.getMessage());
@@ -122,8 +112,7 @@ public class DatastoreServiceImpl implements DatastoreService {
         if (datastore == null) {
             return null;
         }
-        final DatastoreConnection con = datastore.openConnection();
-        try {
+        try (final DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final String[] tableNames = schema.getTableNames();
             final List<TableIdentifier> tableIdentifiers = CollectionUtils.map(tableNames,
@@ -134,8 +123,6 @@ public class DatastoreServiceImpl implements DatastoreService {
                         }
                     });
             return tableIdentifiers;
-        } finally {
-            con.close();
         }
     }
 
@@ -145,12 +132,11 @@ public class DatastoreServiceImpl implements DatastoreService {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Datastore datastore = tenantContext.getDatastore(schemaId.getDatastore());
-        
+
         if (datastore == null) {
             return null;
         }
-        final DatastoreConnection con = datastore.openConnection();
-        try {
+        try (final DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getSchemaByName(schemaId.getName());
             final Table table = schema.getTableByName(tableId.getName());
             final String[] columnNames = table.getColumnNames();
@@ -162,8 +148,6 @@ public class DatastoreServiceImpl implements DatastoreService {
                         }
                     });
             return columnIdentifiers;
-        } finally {
-            con.close();
         }
     }
 }

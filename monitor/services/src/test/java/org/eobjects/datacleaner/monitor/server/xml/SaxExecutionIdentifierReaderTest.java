@@ -55,13 +55,10 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
         executionLog.setExecutionStatus(ExecutionStatus.SUCCESS);
 
         final byte[] bytes;
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             new JaxbExecutionLogWriter().write(executionLog, out);
-        } finally {
             out.flush();
             bytes = out.toByteArray();
-            out.close();
         }
 
         final ByteArrayInputStream in = new ByteArrayInputStream(bytes);

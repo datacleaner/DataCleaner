@@ -41,7 +41,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
 
     private final Datastore _datastore;
     private final Integer _pageIndex;
-    
+
     private String _selectedTableName = "";
 
     public SelectTableWizardPage(JobWizardContext context, Integer pageIndex) {
@@ -52,11 +52,11 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
         _datastore = datastore;
         _pageIndex = pageIndex;
     }
-    
+
     public String getSelectedTableName() {
         return _selectedTableName;
     }
-    
+
     public void setSelectedTableName(String selectedTableName) {
         _selectedTableName = selectedTableName;
     }
@@ -85,8 +85,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("promptText", getPromptText());
         map.put("selectedTableName", _selectedTableName);
-        final DatastoreConnection con = _datastore.openConnection();
-        try {
+        try (final DatastoreConnection con = _datastore.openConnection()) {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
             final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
                 @Override
@@ -101,20 +100,15 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
             }
             map.put("schemas", schemaList);
             return map;
-        } finally {
-            con.close();
         }
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
         _selectedTableName = getString(formParameters, "tableName");
-        final DatastoreConnection con = _datastore.openConnection();
-        try {
+        try (final DatastoreConnection con = _datastore.openConnection()) {
             final Table selectedTable = con.getSchemaNavigator().convertToTable(_selectedTableName);
             return nextPageController(selectedTable);
-        } finally {
-            con.close();
         }
     }
 

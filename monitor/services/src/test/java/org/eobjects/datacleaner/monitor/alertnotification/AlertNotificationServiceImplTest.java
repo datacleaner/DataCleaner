@@ -45,29 +45,29 @@ public class AlertNotificationServiceImplTest extends TestCase {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
-        final AlertNotificationServiceImpl alertNotificationService = (AlertNotificationServiceImpl) applicationContext
-                .getBean(AlertNotificationService.class);
-        alertNotificationService.getAlertNotifiers().add(new AlertNotifier() {
-            @Override
-            public void onExecutionFinished(ExecutionLog execution, Ref<Map<AlertDefinition, Number>> activeAlerts,
-                    ResultContext result) {
-                counter.incrementAndGet();
+        try (final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml")) {
+            final AlertNotificationServiceImpl alertNotificationService = (AlertNotificationServiceImpl) applicationContext
+                    .getBean(AlertNotificationService.class);
+            alertNotificationService.getAlertNotifiers().add(new AlertNotifier() {
+                @Override
+                public void onExecutionFinished(ExecutionLog execution, Ref<Map<AlertDefinition, Number>> activeAlerts,
+                        ResultContext result) {
+                    counter.incrementAndGet();
 
-                assertTrue(activeAlerts.get().isEmpty());
-            }
-        });
+                    assertTrue(activeAlerts.get().isEmpty());
+                }
+            });
 
-        TenantIdentifier tenant = new TenantIdentifier("tenant1");
-        JobIdentifier job = new JobIdentifier("product_profiling");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "orderdb");
-        ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
-        execution.setResultId("product_profiling-3.analysis.result.dat");
-        alertNotificationService.notifySubscribers(execution);
+            TenantIdentifier tenant = new TenantIdentifier("tenant1");
+            JobIdentifier job = new JobIdentifier("product_profiling");
+            ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "orderdb");
+            ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+            execution.setResultId("product_profiling-3.analysis.result.dat");
+            alertNotificationService.notifySubscribers(execution);
 
-        assertEquals(1, counter.get());
-     
-        applicationContext.close();
+            assertEquals(1, counter.get());
+        }
     }
 
     public void testIsBeyondThreshold() throws Exception {

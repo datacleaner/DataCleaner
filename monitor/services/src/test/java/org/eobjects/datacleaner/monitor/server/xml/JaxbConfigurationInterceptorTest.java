@@ -61,7 +61,8 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
-        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+                new MockJobEngineManager());
     }
 
     public void testGenerateGenericConfiguration() throws Exception {
@@ -114,8 +115,8 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
     public void testGenerateWithLookupInsertUpdate() throws Exception {
         final TenantContext tenantContext = _contextFactory.getContext("tenant1");
         final Datastore ds = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
-        final DatastoreConnection con = ds.openConnection();
-        try {
+
+        try (final DatastoreConnection con = ds.openConnection()) {
             JobContext job = tenantContext.getJob("Move employees to customers");
             String actual = generationConf(job, null);
 
@@ -124,8 +125,6 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
             expected = expected.replaceAll("\r\n", "\n").trim();
             assertEquals(expected, actual);
-        } finally {
-            con.close();
         }
     }
 

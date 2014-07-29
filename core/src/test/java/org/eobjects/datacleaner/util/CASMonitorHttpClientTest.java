@@ -34,22 +34,27 @@ public class CASMonitorHttpClientTest {
 
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {
-        CASMonitorHttpClient client = new CASMonitorHttpClient(new DefaultHttpClient(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor");
+        try (CASMonitorHttpClient client = new CASMonitorHttpClient(new DefaultHttpClient(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
 
-        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
-        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=Customer+completeness"));
-        client.close();
+            doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
+            doRequest(
+                    client,
+                    new HttpGet(
+                            "https://localhost:8443/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=Customer+completeness"));
+            client.close();
+        }
 
-        client = new CASMonitorHttpClient(new DefaultHttpClient(),
-                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor");
-        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
-client.close();
+        try (CASMonitorHttpClient client = new CASMonitorHttpClient(new DefaultHttpClient(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor")) {
+            doRequest(client, new HttpGet(
+                    "https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
+        }
     }
 
     private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
         System.out.println("REQUESTING: " + req.getURI());
-        
+
         final HttpResponse response = client.execute(req);
 
         final StatusLine statusLine = response.getStatusLine();

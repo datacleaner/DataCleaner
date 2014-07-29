@@ -87,12 +87,9 @@ public class RepositoryZipController {
 
         logger.info("Uploading ZIP file for tenant repository: {}", tenant);
 
-        final InputStream inputStream = file.getInputStream();
-        try {
+        try (final InputStream inputStream = file.getInputStream()) {
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             decompress(zipInputStream, rootFolder);
-        } finally {
-            inputStream.close();
         }
 
         final Map<String, String> result = new HashMap<String, String>();

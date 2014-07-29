@@ -220,9 +220,8 @@ public class CsvConfigurationDetection {
         try {
             final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
                     System.currentTimeMillis()), multiLineConfiguration);
-            Table table = testDataContext.getDefaultSchema().getTable(0);
-            DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute();
-            try {
+            final Table table = testDataContext.getDefaultSchema().getTable(0);
+            try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
                     final Row row = dataSet.getRow();
                     final Object[] values = row.getValues();
@@ -236,8 +235,6 @@ public class CsvConfigurationDetection {
                         }
                     }
                 }
-            } finally {
-                dataSet.close();
             }
         } catch (Exception e) {
             logger.warn("Failed to detect multiline property of CsvConfiguration, defaulting to 'true'", e);

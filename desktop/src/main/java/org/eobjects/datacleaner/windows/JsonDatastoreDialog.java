@@ -24,7 +24,6 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.apache.metamodel.util.FileResource;
-import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.JsonDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.Nullable;

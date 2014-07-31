@@ -325,10 +325,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
         panel.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
                 IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("CouchDB database", "Connect to a Apache CouchDB database",
+        panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("HBase database", "Connect to a Apache HBase database",
+        panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                 IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
         // set of databases that are displayed directly on panel

@@ -8,7 +8,7 @@
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>17.0</guava.version>
-		<analyzerbeans.version>1.0-RC1</analyzerbeans.version>
+		<analyzerbeans.version>1.0-RC2</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -237,6 +237,7 @@
 				<version>2.5</version><!--$NO-MVN-MAN-VER$-->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<goals>deploy</goals>
 				</configuration>
 				<dependencies>
 					<dependency>

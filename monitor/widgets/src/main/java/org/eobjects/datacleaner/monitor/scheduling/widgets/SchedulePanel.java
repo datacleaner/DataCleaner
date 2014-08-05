@@ -66,7 +66,7 @@ public class SchedulePanel extends Composite {
     Anchor scheduleAnchor;
 
     @UiField
-    Button triggerNowButton;
+    Button executeButton;
 
     @UiField
     Button launchButton;
@@ -121,7 +121,7 @@ public class SchedulePanel extends Composite {
 
         if (_clientConfig.isScheduleEditor()) {
             TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, _schedule);
-            triggerNowButton.addClickHandler(handler);
+            executeButton.addClickHandler(handler);
 
             final String token = History.getToken();
             if (("trigger_" + encodedJobName).equals(token)) {

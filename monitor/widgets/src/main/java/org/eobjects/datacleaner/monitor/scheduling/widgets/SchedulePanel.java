@@ -61,7 +61,10 @@ public class SchedulePanel extends Composite {
 
     @UiField
     DropDownAnchor jobLabel;
-
+    
+    @UiField
+    DropDownAnchor moreLabel;
+    
     @UiField
     Anchor scheduleAnchor;
 
@@ -85,6 +88,7 @@ public class SchedulePanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
+        moreLabel.setText("More");
         // add the job type as a style name
         final String jobType = schedule.getJob().getType();
         if (jobType != null) {
@@ -100,7 +104,8 @@ public class SchedulePanel extends Composite {
         final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
 
         if (_clientConfig.isJobEditor()) {
-            jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant));
+            jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant,_schedule,service));
+            moreLabel.addClickHandler(new CustomizeJobClickHandler(this,tenant,schedule,service));
         }
 
         if (_clientConfig.isScheduleEditor()) {

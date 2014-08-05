@@ -91,8 +91,6 @@ public class SchedulingOverviewPanel extends Composite {
 
         panel.add(createLabel("", "EmptyColumn"));
         panel.add(createLabel("Job name", "JobColumn"));
-        panel.add(createLabel("Schedule", "ScheduleColumn"));
-        panel.add(createLabel("Alerts", "AlertsColumn"));
         panel.add(createLabel("Actions", "ActionsColumn"));
 
         return panel;

@@ -29,8 +29,9 @@ import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
+import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.Outcome;
+import org.eobjects.analyzer.job.SimpleComponentRequirement;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -42,8 +43,6 @@ import org.eobjects.datacleaner.widgets.DescriptorMenu;
 
 /**
  * Action that displays output writers for a filter's outcome.
- * 
- * @author Kasper Sørensen
  */
 public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputWritersAction implements ActionListener {
 
@@ -60,8 +59,9 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final FilterOutcome requirement = _filterJobBuilder.getOutcome(_filterJobBuilder.getDescriptor()
+        final FilterOutcome filterOutcome = _filterJobBuilder.getFilterOutcome(_filterJobBuilder.getDescriptor()
                 .getOutcomeCategoryByName(_categoryName));
+        final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
 
         final DescriptorMenu writeDataMenu = new DescriptorMenu(new WriteDataCategory());
         {
@@ -80,7 +80,7 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
         setAsDefaultOutcomeMenuItem
                 .setToolTipText("Makes this filter outcome the default choice for other components in the job.");
 
-        Outcome existingDefaultRequirement = analysisJobBuilder.getDefaultRequirement();
+        final ComponentRequirement existingDefaultRequirement = analysisJobBuilder.getDefaultRequirement();
         if (requirement.equals(existingDefaultRequirement)) {
             setAsDefaultOutcomeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID,
                     IconUtils.ICON_SIZE_SMALL));
@@ -90,7 +90,7 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
             @Override
             public void actionPerformed(ActionEvent e) {
                 Enum<?> category = _filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName);
-                FilterOutcome outcome = _filterJobBuilder.getOutcome(category);
+                FilterOutcome outcome = _filterJobBuilder.getFilterOutcome(category);
                 analysisJobBuilder.setDefaultRequirement(outcome);
             }
         });

@@ -110,8 +110,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
                 .addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
                 .addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
 
-        if (tjb.getRequirement() != null) {
-            rowCollector.setRequirement(tjb.getRequirement());
+        if (tjb.getComponentRequirement() != null) {
+            rowCollector.setComponentRequirement(tjb.getComponentRequirement());
         }
 
         // add a max rows filter

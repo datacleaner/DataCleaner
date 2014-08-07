@@ -29,7 +29,7 @@ import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -55,9 +55,9 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.FileResource;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -171,14 +171,11 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                             _datastoreCatalog.addDatastore(errorDatastore);
                             JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
                         } else if ("http://datacleaner.org/preview_datastore".equals(href)) {
-                            DatastoreConnection errorCon = errorDatastore.openConnection();
-                            try {
+                            try (DatastoreConnection errorCon = errorDatastore.openConnection()) {
                                 Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
                                 PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
                                         windowContext, errorDatastore, table);
                                 actionListener.actionPerformed(null);
-                            } finally {
-                                errorCon.close();
                             }
                         } else {
                             logger.error("Unexpected href: " + href + ". Event was: " + e);
@@ -238,8 +235,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             previewButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    final DatastoreConnection con = datastore.openConnection();
-                    try {
+                    try (final DatastoreConnection con = datastore.openConnection()) {
                         con.getSchemaNavigator().refreshSchemas();
                         final Table previewTable = result.getPreviewTable(datastore);
                         if (previewTable == null) {
@@ -249,8 +245,6 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                                     windowContext, datastore, previewTable);
                             actionListener.actionPerformed(null);
                         }
-                    } finally {
-                        con.close();
                     }
                 }
             });

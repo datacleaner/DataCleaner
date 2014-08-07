@@ -40,7 +40,7 @@ import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.repository;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 /**
  * Represents a folder in the {@link Repository}.

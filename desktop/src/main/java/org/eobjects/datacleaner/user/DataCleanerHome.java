@@ -35,7 +35,7 @@ import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

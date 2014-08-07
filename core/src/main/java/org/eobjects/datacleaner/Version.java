@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 
 import com.google.common.base.Strings;
 

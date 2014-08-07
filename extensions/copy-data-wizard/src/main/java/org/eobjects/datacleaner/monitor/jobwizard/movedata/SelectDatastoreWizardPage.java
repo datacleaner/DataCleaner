@@ -28,7 +28,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 
 class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
 

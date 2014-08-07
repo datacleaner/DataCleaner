@@ -37,11 +37,11 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.MutableColumn;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.EqualsBuilder;
-import org.eobjects.metamodel.util.MutableRef;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.MutableRef;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -123,7 +123,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		comboBox.setEditable(true);
 		comboBox.setSelectedItem(column);
 		comboBox.setEditable(false);
-		comboBox.addListener(new Listener<Column>() {
+		comboBox.addColumnSelectedListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
 				fireValueChanged();

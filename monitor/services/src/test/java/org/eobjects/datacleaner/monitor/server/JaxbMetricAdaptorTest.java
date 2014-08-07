@@ -105,9 +105,10 @@ public class JaxbMetricAdaptorTest extends TestCase {
     
     public void testReadMetricsList() throws Exception {
         JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
-        FileInputStream in = new FileInputStream("src/test/resources/jaxb_metrics.xml");
-        MetricsType metrics = adaptor.read(in);
-        in.close();
+        MetricsType metrics;
+        try (FileInputStream in = new FileInputStream("src/test/resources/jaxb_metrics.xml")) {
+            metrics = adaptor.read(in);
+        }
         
         List<MetricType> metricList = metrics.getMetric();
         assertEquals(3, metricList.size());

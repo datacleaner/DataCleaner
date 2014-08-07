@@ -25,7 +25,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.PerformanceCharacteristics;
 import org.eobjects.analyzer.connection.PerformanceCharacteristicsImpl;
-import org.eobjects.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnType;
 
 /**
  * {@link Datastore} placeholder for lightweight reading of analysis jobs

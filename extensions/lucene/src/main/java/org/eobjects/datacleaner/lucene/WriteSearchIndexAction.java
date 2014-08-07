@@ -26,7 +26,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 /**
  * Action performed for each batch of records to be inserted into a Lucene

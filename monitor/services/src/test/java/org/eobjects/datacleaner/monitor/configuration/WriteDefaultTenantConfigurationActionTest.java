@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 
 import junit.framework.TestCase;
 

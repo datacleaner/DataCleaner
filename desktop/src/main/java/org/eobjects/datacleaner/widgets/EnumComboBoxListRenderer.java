@@ -25,7 +25,7 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 /**
  * {@link ListCellRenderer} for enums in a combobox.
@@ -46,7 +46,7 @@ public class EnumComboBoxListRenderer extends DCListCellRenderer {
 	}
 
 	@Override
-	public JLabel getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+	public JLabel getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {
 		final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 

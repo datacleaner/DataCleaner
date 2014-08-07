@@ -33,8 +33,8 @@ import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.DataContextFactory;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.DataContextFactory;
 
 final class DatastoreOutputWriter implements OutputWriter {
 

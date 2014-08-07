@@ -29,7 +29,7 @@ import java.util.Map;
 import org.eobjects.analyzer.util.HasAliases;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;

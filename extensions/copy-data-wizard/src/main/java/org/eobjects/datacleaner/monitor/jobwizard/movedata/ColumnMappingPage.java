@@ -33,8 +33,8 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 
 /**
  * Page responsible for mapping of source and target columns.

@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.user;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.eobjects.metamodel.util.InMemoryResource;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.util.InMemoryResource;
+import org.apache.metamodel.util.Resource;
 
 /**
  * A {@link ResourceTypeHandler} that handles resource with the "repo" scheme,

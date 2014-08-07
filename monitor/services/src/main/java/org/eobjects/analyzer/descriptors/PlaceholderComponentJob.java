@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.AnalyzerResultReducer;
@@ -191,5 +192,10 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     @Override
     public String[] getAliases() {
         return new String[0];
+    }
+
+    @Override
+    public ComponentRequirement getComponentRequirement() {
+        return null;
     }
 }

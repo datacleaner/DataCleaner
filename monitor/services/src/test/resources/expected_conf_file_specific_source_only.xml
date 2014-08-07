@@ -6,7 +6,7 @@
         <updated-date>2012-06-26Z</updated-date>
     </configuration-metadata>
     <datastore-catalog>
-        <pojo-datastore description="DataCleaner example database" name="orderdb">
+        <pojo-datastore name="orderdb" description="DataCleaner example database">
             <schema-name>PUBLIC</schema-name>
             <table>
                 <name>CUSTOMERS</name>
@@ -992,13 +992,13 @@
             </table>
         </pojo-datastore>
         <pojo-datastore name="Vendors">
-            <schema-name>vendor_dictionary.txt</schema-name>
+            <schema-name>reference-data</schema-name>
             <table>
-                <name>vendor_dictionary</name>
+                <name>vendor_dictionary.txt</name>
                 <columns>
                     <column>
                         <name>A</name>
-                        <type>VARCHAR</type>
+                        <type>STRING</type>
                     </column>
                 </columns>
             </table>

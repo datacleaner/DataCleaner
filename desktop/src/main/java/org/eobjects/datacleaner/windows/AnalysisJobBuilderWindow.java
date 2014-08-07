@@ -31,8 +31,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
  * 
  * Besides job building, an {@link AnalysisJobBuilderWindow} also handles
  * datastore selection and menus in general.
- * 
- * @author Kasper Sørensen
  */
 public interface AnalysisJobBuilderWindow extends DCWindow {
 

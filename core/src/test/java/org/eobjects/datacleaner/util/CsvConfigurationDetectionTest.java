@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.util;
 
 import java.io.File;
 
-import org.eobjects.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvConfiguration;
 
 import junit.framework.TestCase;
 

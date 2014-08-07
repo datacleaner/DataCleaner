@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.wizard;
 import java.util.Locale;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Func;
 
 /**
  * Context object which is shared throughout the wizard session

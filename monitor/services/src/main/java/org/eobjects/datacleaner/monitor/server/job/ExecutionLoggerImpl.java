@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

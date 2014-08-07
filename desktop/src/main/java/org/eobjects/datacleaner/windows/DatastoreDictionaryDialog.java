@@ -53,8 +53,8 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Injector;
@@ -67,7 +67,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     private final DatastoreCatalog _datastoreCatalog;
     private final JXTextField _nameTextField;
     private final JXTextField _columnTextField;
-    private final JComboBox _datastoreComboBox;
+    private final JComboBox<String> _datastoreComboBox;
     private final DCPanel _treePanel;
     private final JSplitPane _splitPane;
     private final InjectorBuilder _injectorBuilder;
@@ -94,7 +94,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
 
         String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
-        _datastoreComboBox = new JComboBox(comboBoxModel);
+        _datastoreComboBox = new JComboBox<String>(comboBoxModel);
         _datastoreComboBox.setEditable(false);
 
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);

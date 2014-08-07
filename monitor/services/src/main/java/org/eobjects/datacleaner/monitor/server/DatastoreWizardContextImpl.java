@@ -24,7 +24,7 @@ import java.util.Locale;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of {@link DatastoreWizardContext}.

@@ -40,7 +40,7 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
-import org.eobjects.metamodel.util.FileResource;
+import org.apache.metamodel.util.FileResource;
 
 @AnalyzerBean("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")

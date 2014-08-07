@@ -24,7 +24,7 @@ import java.util.Map;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 /**
  * Defines a context around an {@link AnalysisJob}.

@@ -109,13 +109,13 @@ public class CoalesceUnitPanel extends DCPanel {
      * @param inputColumns
      */
     public void setAvailableInputColumns(Collection<InputColumn<?>> inputColumns) {
-        Object[] items = new Object[inputColumns.size() + 1];
+        final InputColumn<?>[] items = new InputColumn<?>[inputColumns.size() + 1];
         int index = 1;
         for (InputColumn<?> inputColumn : inputColumns) {
             items[index] = inputColumn;
             index++;
         }
-        DefaultComboBoxModel model = new DefaultComboBoxModel(items);
+        final DefaultComboBoxModel<InputColumn<?>> model = new DefaultComboBoxModel<InputColumn<?>>(items);
         _comboBox.setModel(model);
     }
 

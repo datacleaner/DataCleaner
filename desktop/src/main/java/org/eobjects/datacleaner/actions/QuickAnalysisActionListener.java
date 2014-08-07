@@ -32,8 +32,8 @@ import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

@@ -25,7 +25,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of {@link JobWizardContext}.

@@ -37,7 +37,7 @@ import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MonitorConnection;
@@ -46,11 +46,11 @@ import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
-import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 /**
@@ -160,8 +160,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             @Override
             public void writeTo(OutputStream out) throws IOException {
                 long progress = 0;
-                final InputStream in = getTransferStream();
-                try {
+                try (final InputStream in = getTransferStream()) {
                     byte[] tmp = new byte[4096];
                     int length;
                     while ((length = in.read(tmp)) != -1) {
@@ -180,8 +179,6 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                         });
                     }
                     out.flush();
-                } finally {
-                    in.close();
                 }
             }
 
@@ -194,8 +191,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
         entity.addPart("file", uploadFilePart);
         request.setEntity(entity);
 
-        final MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient();
-        try {
+        try (final MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient()) {
             final HttpResponse response;
             try {
                 response = monitorHttpClient.execute(request);
@@ -233,8 +229,6 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                         "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
                 return null;
             }
-        } finally {
-            monitorHttpClient.close();
         }
     }
 

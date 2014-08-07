@@ -40,8 +40,8 @@ import org.eobjects.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Injector;
 

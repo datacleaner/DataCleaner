@@ -31,7 +31,7 @@ import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFileResource;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.util.Resource;
 
 public class TenantContextFactoryImplTest extends TestCase {
 

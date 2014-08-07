@@ -27,8 +27,8 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.QueryWindow;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.HasName;
 
 /**
  * Action listener that displays a query window

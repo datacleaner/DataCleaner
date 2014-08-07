@@ -34,8 +34,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
 
 final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 

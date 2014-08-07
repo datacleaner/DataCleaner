@@ -36,9 +36,9 @@ import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 
 /**
  * Default implementation of the {@link ResultContext} interface.

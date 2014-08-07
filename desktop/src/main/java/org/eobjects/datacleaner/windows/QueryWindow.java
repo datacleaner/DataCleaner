@@ -41,11 +41,11 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.MetaModelException;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.data.DataSetTableModel;
-import org.eobjects.metamodel.query.Query;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.MetaModelException;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.DataSetTableModel;
+import org.apache.metamodel.query.Query;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.jdesktop.swingx.JXTextField;
@@ -88,8 +88,7 @@ public class QueryWindow extends AbstractWindow {
                 final String queryString = _queryTextArea.getText();
                 logger.debug("Query being parsed: {}", queryString);
 
-                final DatastoreConnection con = _datastore.openConnection();
-                try {
+                try (final DatastoreConnection con = _datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
                     final Query q = dataContext.parseQuery(queryString);
                     logger.info("Parsed query: {}", q);
@@ -103,8 +102,6 @@ public class QueryWindow extends AbstractWindow {
                     _table.setModel(new DataSetTableModel(dataSet));
                 } catch (MetaModelException e) {
                     WidgetUtils.showErrorMessage("Failed to execute query", e.getMessage(), e);
-                } finally {
-                    con.close();
                 }
             }
         });

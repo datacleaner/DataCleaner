@@ -28,15 +28,15 @@ import java.io.Reader;
 import java.util.Arrays;
 
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.metamodel.csv.CsvConfiguration;
-import org.eobjects.metamodel.csv.CsvDataContext;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.data.Row;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.FileResource;
-import org.eobjects.metamodel.util.InMemoryResource;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvDataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.InMemoryResource;
+import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,9 +220,8 @@ public class CsvConfigurationDetection {
         try {
             final CsvDataContext testDataContext = new CsvDataContext(new InMemoryResource("foo.txt", sample,
                     System.currentTimeMillis()), multiLineConfiguration);
-            Table table = testDataContext.getDefaultSchema().getTable(0);
-            DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute();
-            try {
+            final Table table = testDataContext.getDefaultSchema().getTable(0);
+            try (final DataSet dataSet = testDataContext.query().from(table).select(table.getColumns()).execute()) {
                 while (dataSet.next()) {
                     final Row row = dataSet.getRow();
                     final Object[] values = row.getValues();
@@ -236,8 +235,6 @@ public class CsvConfigurationDetection {
                         }
                     }
                 }
-            } finally {
-                dataSet.close();
             }
         } catch (Exception e) {
             logger.warn("Failed to detect multiline property of CsvConfiguration, defaulting to 'true'", e);

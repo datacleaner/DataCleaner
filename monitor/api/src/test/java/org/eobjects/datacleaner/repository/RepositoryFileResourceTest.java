@@ -26,8 +26,8 @@ import java.io.OutputStream;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 
 public class RepositoryFileResourceTest extends TestCase {
 

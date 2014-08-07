@@ -1,6 +1,6 @@
 package org.eobjects.datacleaner.monitor.jobwizard.completeness
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController
-import org.eobjects.metamodel.schema.Table
+import org.apache.metamodel.schema.Table
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder
 import scala.collection.JavaConversions._
 import org.eobjects.analyzer.beans.CompletenessAnalyzer

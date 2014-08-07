@@ -40,8 +40,8 @@ import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.util.ProgressCounter;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.eobjects.metamodel.query.Query;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Table;
 
 /**
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging

@@ -30,10 +30,10 @@ import org.eobjects.datacleaner.repository.AbstractRepositoryNode;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.RepositoryNode;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
-import org.eobjects.metamodel.util.ToStringComparator;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.ToStringComparator;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

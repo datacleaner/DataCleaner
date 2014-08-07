@@ -27,7 +27,7 @@ import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.schema.Table;
 
 final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 

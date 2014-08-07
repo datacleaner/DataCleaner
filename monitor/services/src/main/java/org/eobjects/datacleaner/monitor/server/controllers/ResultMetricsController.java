@@ -93,32 +93,31 @@ public class ResultMetricsController {
 
         response.setContentType("application/xml");
 
-        final PrintWriter out = response.getWriter();
+        try (final PrintWriter out = response.getWriter()) {
+            out.write("<result>");
 
-        out.write("<result>");
+            out.write("\n  <metric-date>");
+            out.write(xmlDate.toXMLFormat());
+            out.write("</metric-date>");
 
-        out.write("\n  <metric-date>");
-        out.write(xmlDate.toXMLFormat());
-        out.write("</metric-date>");
-
-        out.write("\n  <metric-values>");
-        for (int i = 0; i < metricList.size(); i++) {
-            final String displayName = metricList.get(i).getDisplayName();
-            final Number value = metricValues.getValues().get(i);
-            out.write("\n    <metric-value>");
-            out.write("\n      <display-name>" + StringEscapeUtils.escapeXml(displayName) + "</display-name>");
-            if (value == null) {
-                out.write("\n      <value />");
-            } else {
-                out.write("\n      <value>" + StringEscapeUtils.escapeXml(value + "") + "</value>");
+            out.write("\n  <metric-values>");
+            for (int i = 0; i < metricList.size(); i++) {
+                final String displayName = metricList.get(i).getDisplayName();
+                final Number value = metricValues.getValues().get(i);
+                out.write("\n    <metric-value>");
+                out.write("\n      <display-name>" + StringEscapeUtils.escapeXml(displayName) + "</display-name>");
+                if (value == null) {
+                    out.write("\n      <value />");
+                } else {
+                    out.write("\n      <value>" + StringEscapeUtils.escapeXml(value + "") + "</value>");
+                }
+                out.write("\n    </metric-value>");
             }
-            out.write("\n    </metric-value>");
-        }
-        out.write("\n  </metric-values>");
-        out.write("\n</result>");
+            out.write("\n  </metric-values>");
+            out.write("\n</result>");
 
-        out.flush();
-        out.close();
+            out.flush();
+        }
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)

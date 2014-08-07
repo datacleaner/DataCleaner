@@ -49,6 +49,7 @@ import javax.swing.table.TableModel;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -66,13 +67,15 @@ import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.data.DataSetTableModel;
-import org.eobjects.metamodel.query.Query;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.DataSetTableModel;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -87,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <D>
  */
-public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> extends AbstractDialog {
+public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -146,7 +149,18 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
         if (_originalDatastore != null) {
             _datastoreNameField.setText(_originalDatastore.getName());
             _datastoreNameField.setEnabled(false);
-            _filenameField.setFilename(_originalDatastore.getFilename());
+            if (_originalDatastore instanceof FileDatastore) {
+                final FileDatastore fileDatastore = (FileDatastore) _originalDatastore;
+                final String filename = fileDatastore.getFilename();
+                _filenameField.setFilename(filename);
+            } else if (_originalDatastore instanceof ResourceDatastore) {
+                final ResourceDatastore resourceDatastore = (ResourceDatastore) _originalDatastore;
+                final Resource resource = resourceDatastore.getResource();
+                if (resource instanceof FileResource) {
+                    final File file = ((FileResource) resource).getFile();
+                    _filenameField.setFile(file);
+                }
+            }
         }
 
         // add listeners after setting initial values.
@@ -413,23 +427,24 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
         }
-        D datastore = getPreviewDatastore(filename);
-        DatastoreConnection con = datastore.openConnection();
-        DataContext dc = con.getDataContext();
-        Table table = getPreviewTable(dc);
-        Column[] columns = table.getColumns();
-        if (columns.length > getPreviewColumns()) {
-            // include max 10 columns
-            columns = Arrays.copyOf(columns, getPreviewColumns());
+
+        final D datastore = getPreviewDatastore(filename);
+        try (DatastoreConnection con = datastore.openConnection()) {
+            final DataContext dc = con.getDataContext();
+            final Table table = getPreviewTable(dc);
+
+            Column[] columns = table.getColumns();
+            if (columns.length > getPreviewColumns()) {
+                // include max 10 columns
+                columns = Arrays.copyOf(columns, getPreviewColumns());
+            }
+            final Query q = dc.query().from(table).select(columns).toQuery();
+            q.setMaxRows(7);
+
+            final DataSet dataSet = dc.executeQuery(q);
+
+            return dataSet;
         }
-        Query q = dc.query().from(table).select(columns).toQuery();
-        q.setMaxRows(7);
-
-        DataSet dataSet = dc.executeQuery(q);
-
-        con.close();
-
-        return dataSet;
     }
 
     protected String getDescriptionText() {

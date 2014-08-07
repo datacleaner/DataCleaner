@@ -52,7 +52,9 @@ import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
+import org.eobjects.analyzer.connection.HBaseDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.JsonDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SalesforceDatastore;
@@ -82,7 +84,9 @@ import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
+import org.eobjects.datacleaner.windows.HBaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
+import org.eobjects.datacleaner.windows.JsonDatastoreDialog;
 import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
@@ -144,10 +148,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
                         // open the connection here, to make any connection
                         // issues apparent early
-                        DatastoreConnection dataContextProvider = datastore.openConnection();
-                        dataContextProvider.getDataContext().getSchemaNames();
-                        _analysisJobBuilderWindow.setDatastore(datastore);
-                        dataContextProvider.close();
+                        try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
+                            datastoreConnection.getDataContext().getSchemaNames();
+                            _analysisJobBuilderWindow.setDatastore(datastore);
+                        }
                         return;
                     }
                 }
@@ -304,6 +308,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
                 IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
         panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
                 IconUtils.XML_IMAGEPATH, XmlDatastore.class, XmlDatastoreDialog.class));
+        panel.add(createNewDatastoreButton("JSON file", "JavaScript Object NOtation file (.json).",
+                IconUtils.JSON_IMAGEPATH, JsonDatastore.class, JsonDatastoreDialog.class));
         panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
                 IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
 
@@ -311,16 +317,19 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         panel.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
                 IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system",
-                IconUtils.SUGAR_CRM_IMAGEPATH, SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
+                SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
 
         panel.add(Box.createHorizontalStrut(10));
 
         panel.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
                 IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("CouchDB database", "Connect to a CouchDB database",
+        panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
+                IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();

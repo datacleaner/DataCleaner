@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.WeakHashMap;
 
 import javax.swing.DefaultComboBoxModel;
@@ -41,9 +42,9 @@ import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.EqualsBuilder;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
@@ -140,9 +141,8 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         }
 
         final Collection<DCComboBox<InputColumn<?>>> comboBoxes = _mappedInputColumnComboBoxes.values();
-        final Object[] availableInputColumnsArray = availableInputColumns.toArray();
         for (DCComboBox<InputColumn<?>> comboBox : comboBoxes) {
-            comboBox.setModel(new DefaultComboBoxModel(availableInputColumnsArray));
+            comboBox.setModel(new DefaultComboBoxModel<InputColumn<?>>(new Vector<InputColumn<?>>(availableInputColumns)));
         }
     }
 

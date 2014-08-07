@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.regexswap;
 import java.io.Serializable;
 import java.util.List;
 
-import org.eobjects.metamodel.util.BaseObject;
+import org.apache.metamodel.util.BaseObject;
 
 public final class Category extends BaseObject implements Serializable {
 

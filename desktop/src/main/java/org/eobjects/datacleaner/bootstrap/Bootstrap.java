@@ -69,7 +69,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,14 +166,12 @@ public final class Bootstrap {
             // run in CLI mode
 
             int exitCode = 0;
-            final CliRunner runner = new CliRunner(arguments);
-            try {
+            try (final CliRunner runner = new CliRunner(arguments)) {
                 runner.run(configuration);
             } catch (Throwable e) {
                 logger.error("Error occurred while running DataCleaner command line mode", e);
                 exitCode = 1;
             } finally {
-                runner.close();
                 exitCommandLine(configuration, exitCode);
             }
             return;
@@ -218,12 +216,9 @@ public final class Bootstrap {
                 // this part has to be done after displaying the window (a lot
                 // of initialization goes on there)
                 final AnalysisJobBuilder analysisJobBuilder = analysisJobBuilderWindow.getAnalysisJobBuilder();
-                final DatastoreConnection con = singleDatastore.openConnection();
-                final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
-                try {
+                try (final DatastoreConnection con = singleDatastore.openConnection()) {
+                    final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
                     _options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
-                } finally {
-                    con.close();
                 }
             }
 
@@ -292,8 +287,6 @@ public final class Bootstrap {
 
                     final WindowContext windowContext = new SimpleWindowContext();
 
-                    @SuppressWarnings("resource")
-                    MonitorHttpClient httpClient = new SimpleWebServiceHttpClient();
                     MonitorConnection monitorConnection = null;
 
                     // check if URI points to DC monitor. If so, make sure
@@ -308,12 +301,11 @@ public final class Bootstrap {
                                     dialog.openBlocking();
                                 }
                                 monitorConnection = userPreferences.getMonitorConnection();
-                                httpClient = monitorConnection.getHttpClient();
                             }
                         }
                     }
 
-                    try {
+                    try (MonitorHttpClient httpClient = getHttpClient(monitorConnection)) {
 
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
@@ -350,8 +342,6 @@ public final class Bootstrap {
                         AbstractFileSystem fileSystem = (AbstractFileSystem) dataCleanerHome.getFileSystem();
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
                     } finally {
-                        httpClient.close();
-
                         userPreferences.setMonitorConnection(monitorConnection);
                     }
 
@@ -359,6 +349,14 @@ public final class Bootstrap {
             }
 
             return VFSUtils.getFileSystemManager().resolveFile(userRequestedFilename);
+        }
+    }
+
+    private MonitorHttpClient getHttpClient(MonitorConnection monitorConnection) {
+        if (monitorConnection == null) {
+            return new SimpleWebServiceHttpClient();
+        } else {
+            return monitorConnection.getHttpClient();
         }
     }
 

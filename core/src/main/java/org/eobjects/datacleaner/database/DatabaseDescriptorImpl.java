@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.database;
 
 import java.util.List;
 
-import org.eobjects.metamodel.util.BaseObject;
+import org.apache.metamodel.util.BaseObject;
 
 /**
  * Default implementation of {@link DatabaseDriverDescriptor}.

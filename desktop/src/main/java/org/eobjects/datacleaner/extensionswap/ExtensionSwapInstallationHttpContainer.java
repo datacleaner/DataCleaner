@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;

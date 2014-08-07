@@ -38,7 +38,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.CollectionUtils;
 
 public final class TransformButtonActionListener implements ActionListener {
 

@@ -44,7 +44,7 @@ import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.datacleaner.util.WebServiceHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -40,12 +40,12 @@ import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
-import org.eobjects.metamodel.pojo.ArrayTableDataProvider;
-import org.eobjects.metamodel.pojo.TableDataProvider;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
-import org.eobjects.metamodel.util.HasNameMapper;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.HasNameMapper;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,8 +113,8 @@ public class JobInvocationController {
             tableName = tablePath;
             schemaName = null;
         } else {
-            schemaName = tablePath.substring(0, tablePath.lastIndexOf('.'));
-            tableName = tablePath.substring(tablePath.lastIndexOf('.') + 1);
+            schemaName = tablePath.substring(0, tablePath.indexOf('.'));
+            tableName = tablePath.substring(tablePath.indexOf('.') + 1);
         }
 
         final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>(1);

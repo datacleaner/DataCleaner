@@ -34,6 +34,17 @@ import org.eobjects.datacleaner.monitor.wizard.WizardPanelFactory;
 import com.google.gwt.core.client.GWT;
 
 public final class JavaScriptCallbacks {
+	
+	
+    public static native String getJobGroupingCategory() /*-{
+                                                          if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
+                                                              var v = $wnd.datacleaner.getJobGroupingCategory();
+                                                              if ((typeof v) == 'string') {
+                                                                  return v;
+                                                              }
+                                                          }
+                                                          return null;
+                                                          }-*/;
 
     /**
      * Called when the user navigates in a wizard to the next step.

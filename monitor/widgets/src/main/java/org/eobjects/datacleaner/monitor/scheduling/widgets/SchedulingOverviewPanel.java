@@ -26,6 +26,7 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -69,10 +70,27 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     public void addSchedule(ScheduleDefinition schedule) {
-        String groupName = schedule.getGroupName();
+    	String jobGroupingCategory = JavaScriptCallbacks.getJobGroupingCategory();
+    	String groupName = null;
+    	
+    	if(jobGroupingCategory != null && jobGroupingCategory.equals("sourceSystemName")){
+    		Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
+    		if(jobMetadataProperties!=null){
+    			groupName = jobMetadataProperties.get("sourceSystemName");
+    		}
+    		if (groupName == null || groupName.trim().length() == 0) {
+    			groupName = schedule.getGroupName();
+    		}
+    	} else {
+    		 groupName = schedule.getGroupName();
+    	}
+    	
+    	
         if (groupName == null || groupName.trim().length() == 0) {
             groupName = "(other)";
         }
+        
+        
         final ScheduleGroupPanel scheduleGroupPanel;
         if (_scheduleGroupPanels.containsKey(groupName)) {
             scheduleGroupPanel = _scheduleGroupPanels.get(groupName);

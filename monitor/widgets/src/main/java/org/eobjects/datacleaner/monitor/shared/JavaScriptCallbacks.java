@@ -128,15 +128,11 @@ public final class JavaScriptCallbacks {
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
                                                                              
                                                                              if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                             Author: saurabh arora <sarora@xebia.com> 2014-08-08 17:24:06
-Committer: saurabh arora <sarora@xebia.com> 2014-08-08 17:24:06
-Parent: a30f3f9bb6c709453776112367b17a410a672a4d (refactoring , created separate class for different operation on job)
-Branches: 3.6.x
-                                                    var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
-                                                                                 if ((typeof v) == 'boolean') {
-                                                                                     return v;
-                                                                                 }
-                                                                                 return true;
+                                                    						 	var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                                if ((typeof v) == 'boolean') {
+                                                                                	return v;
+                                                                                }
+                                                                                return true;
                                                                              }
                                                                              return false;
                                                                              }-*/;

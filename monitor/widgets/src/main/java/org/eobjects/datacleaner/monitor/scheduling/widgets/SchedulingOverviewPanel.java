@@ -61,30 +61,32 @@ public class SchedulingOverviewPanel extends Composite {
         _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
-                for (ScheduleDefinition scheduleDefinition : result) {
-                    addSchedule(scheduleDefinition);
+            	String jobGroupingCategory = JavaScriptCallbacks.getJobGroupingCategory();
+                
+            	for (ScheduleDefinition scheduleDefinition : result) {
+                    addSchedule(scheduleDefinition, jobGroupingCategory);
                 }
+            	
                 listener.run();
             }
         });
     }
 
-    public void addSchedule(ScheduleDefinition schedule) {
-    	String jobGroupingCategory = JavaScriptCallbacks.getJobGroupingCategory();
+    public void addSchedule(ScheduleDefinition schedule, String jobGroupingCategory) {
     	String groupName = null;
     	
-    	if(jobGroupingCategory != null && jobGroupingCategory.equals("sourceSystemName")){
+    	if(jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0){
+    		groupName = schedule.getGroupName();
+    	} else {
     		Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
-    		if(jobMetadataProperties!=null){
-    			groupName = jobMetadataProperties.get("sourceSystemName");
+    		
+    		if(jobMetadataProperties != null){
+    			groupName = jobMetadataProperties.get(jobGroupingCategory);
     		}
     		if (groupName == null || groupName.trim().length() == 0) {
     			groupName = schedule.getGroupName();
     		}
-    	} else {
-    		 groupName = schedule.getGroupName();
-    	}
-    	
+		}
     	
         if (groupName == null || groupName.trim().length() == 0) {
             groupName = "(other)";

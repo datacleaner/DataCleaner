@@ -33,7 +33,7 @@ public class ViewJobDefinitionCommand implements Command {
 	private JobIdentifier job ;
 	private DCPopupPanel popup;
 	
-	public ViewJobDefinitionCommand(TenantIdentifier tenantIdentifier,JobIdentifier jobIdentifier,DCPopupPanel popupPanel){
+	public ViewJobDefinitionCommand(TenantIdentifier tenantIdentifier,JobIdentifier jobIdentifier,DCPopupPanel popupPanel) {
 		tenant = tenantIdentifier;
 		job = jobIdentifier;
 		popup = popupPanel;

@@ -35,7 +35,15 @@ import com.google.gwt.core.client.GWT;
 
 public final class JavaScriptCallbacks {
 	
-	
+	/**
+	 * This method (if present on the host page), should return the name of the property 
+	 * which should be used to group the jobs on the scheduling page. All those jobs
+	 * which have this name as a key in their <property> tag (in the <job-metadata> tag present
+	 * in the job metadata), will be shown grouped by the corresponding value present in 
+	 * this <property> tag.
+	 * 
+	 * @return
+	 */
     public static native String getJobGroupingCategory() /*-{
                                                           if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
                                                               var v = $wnd.datacleaner.getJobGroupingCategory();
@@ -120,7 +128,11 @@ public final class JavaScriptCallbacks {
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
                                                                              
                                                                              if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                                                 var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                             Author: saurabh arora <sarora@xebia.com> 2014-08-08 17:24:06
+Committer: saurabh arora <sarora@xebia.com> 2014-08-08 17:24:06
+Parent: a30f3f9bb6c709453776112367b17a410a672a4d (refactoring , created separate class for different operation on job)
+Branches: 3.6.x
+                                                    var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
                                                                                  if ((typeof v) == 'boolean') {
                                                                                      return v;
                                                                                  }

@@ -40,7 +40,7 @@ public class CopyJobCommand implements Command {
 	private TenantIdentifier _tenant;
 	private JobIdentifier job ; 
 	
-	public CopyJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier){
+	public CopyJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
 		_tenant = tenant;
 		job = jobIdentifier; 
 	}

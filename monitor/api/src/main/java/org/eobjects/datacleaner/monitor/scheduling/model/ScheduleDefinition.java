@@ -162,6 +162,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         result = prime * result + ((_job == null) ? 0 : _job.hashCode());
         result = prime * result + ((_tenant == null) ? 0 : _tenant.hashCode());
         result = prime * result + ((_variableProvider == null) ? 0 : _variableProvider.hashCode());
+        result = prime * result + ((_jobMetadataProperties == null) ? 0 : _jobMetadataProperties.hashCode());
         return result;
     }
 
@@ -214,6 +215,11 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
                 return false;
         } else if (!_variableProvider.equals(other._variableProvider))
             return false;
+        if (_jobMetadataProperties == null) {
+            if (other._jobMetadataProperties != null)
+                return false;
+        } else if (!_jobMetadataProperties.equals(other._jobMetadataProperties))
+            return false;
         return true;
     }
 
@@ -228,7 +234,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 
 	@Override
 	public String toString() {
-		return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName="+ _groupName + ", _variableProvider=" + _variableProvider+ ", _distributedExecution=" + _distributedExecution+ ", _dateForOneTimeSchedule="+ _dateForOneTimeSchedule + "]";
+		return "ScheduleDefinition[_tenant=" + _tenant + ", _job=" + _job + ", _dependentJob=" + _dependentJob + ", _cronExpression=" + _cronExpression + ", _alerts=" + _alerts + ", _groupName="+ _groupName + ", _variableProvider=" + _variableProvider+ ", _distributedExecution=" + _distributedExecution+ ", _dateForOneTimeSchedule="+ _dateForOneTimeSchedule+ ", _jobMetadataProperties=" + _jobMetadataProperties + "]";
 	}
 
 }

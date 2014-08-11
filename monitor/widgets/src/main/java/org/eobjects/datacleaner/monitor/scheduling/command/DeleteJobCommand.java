@@ -36,7 +36,7 @@ public class DeleteJobCommand implements Command {
 	private TenantIdentifier _tenant;
 	private JobIdentifier job ; 
 	
-	public DeleteJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier){
+	public DeleteJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
 		_tenant = tenant;
 		job = jobIdentifier; 
 	}

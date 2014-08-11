@@ -65,14 +65,11 @@ public class CustomizeJobClickHandler implements ClickHandler {
     public void onClick(ClickEvent event) {
         final JobIdentifier job = _schedulePanel.getSchedule().getJob();
         final MenuBar menuBar = new MenuBar(true);
+        
         menuBar.addItem("Execution History" ,new HistoryCommand(_schedule, _service, _tenant));
-        
         menuBar.addItem("Rename job", new RenameJobCommand(_tenant, job));
-           
         menuBar.addItem("Copy job", new CopyJobCommand(_tenant, job));
-        
         menuBar.addItem("Delete job", new DeleteJobCommand(_tenant, job));
-        
         menuBar.addItem("Add Alert",new AddAlertCommand(_schedule, _service));
 
         final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
@@ -81,9 +78,7 @@ public class CustomizeJobClickHandler implements ClickHandler {
             menuBar.addSeparator();
             
             menuBar.addItem("Job definition (xml)", new ViewJobDefinitionCommand(_tenant, job, _popup));
-                
             menuBar.addItem("Show latest result", new ShowLatestResultCommand(_tenant, job, _popup));
-            
         }
         
         _popup.setWidget(menuBar);

@@ -266,26 +266,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
         
         Map<String, String> jobMetadataProperties = null;
-        if(jobContext.getJobFile().getType()==Type.ANALYSIS_JOB){
-	        
-        	logger.error(jobName);
-	        
-	        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
-	        RepositoryFile file = jobContext.getJobFile();
-	        
-	        logger.error(file.getQualifiedPath());
-	        
-	        final AnalysisJobMetadata metadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
-	            @Override
-	            public AnalysisJobMetadata eval(InputStream in) {
-	                final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-	                AnalysisJobMetadata metadata = jobReader.readMetadata(in);
-	                return metadata;
-	            }
-	        });
-	        
-	        jobMetadataProperties = metadata.getjobMetadataProperties();
+        
+        if(jobContext.getJobFile().getType() == Type.ANALYSIS_JOB){
+	        final AnalysisJobMetadata analysisJobMetadata = getJobMetadataFromJobFile(context, jobContext);
+	        jobMetadataProperties = analysisJobMetadata.getProperties();
         }
+        
         final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();
@@ -305,10 +291,27 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 }
             });
         }
+        
         schedule.setJobMetadataProperties(jobMetadataProperties);
 
         return schedule;
     }
+
+	private AnalysisJobMetadata getJobMetadataFromJobFile(final TenantContext context, final JobContext jobContext) {
+		final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+		RepositoryFile file = jobContext.getJobFile();
+		
+		final AnalysisJobMetadata analysisJobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+		    @Override
+		    public AnalysisJobMetadata eval(InputStream in) {
+		        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+		        AnalysisJobMetadata metadata = jobReader.readMetadata(in);
+		        return metadata;
+		    }
+		});
+		
+		return analysisJobMetadata;
+	}
 
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant, final ScheduleDefinition scheduleDefinition) {

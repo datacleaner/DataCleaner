@@ -34,11 +34,12 @@ public class HistoryCommand implements Command {
 	private SchedulingServiceAsync _service;
 	private TenantIdentifier _tenant;
 	
-	public HistoryCommand(ScheduleDefinition schedule,SchedulingServiceAsync service , TenantIdentifier tenant){
+	public HistoryCommand(ScheduleDefinition schedule,SchedulingServiceAsync service , TenantIdentifier tenant) {
 		_schedule = schedule;
 		_service = service;
 		_tenant = tenant;
 	}
+	
 	@Override
 	public void execute() {
 		final DCPopupPanel popup = new DCPopupPanel("Execution history: '" + _schedule.getJob().getName() + "'");

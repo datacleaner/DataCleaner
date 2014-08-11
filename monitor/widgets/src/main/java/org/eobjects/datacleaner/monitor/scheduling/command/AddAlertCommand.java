@@ -47,7 +47,7 @@ public class AddAlertCommand implements Command {
 	private SchedulingServiceAsync _service;
 	private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
 	
-	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service ){
+	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service) {
 		_schedule = schedule;
 		_service = service;
 	}
@@ -106,6 +106,6 @@ public class AddAlertCommand implements Command {
             }
         });
 
-}
+	}
 
 }

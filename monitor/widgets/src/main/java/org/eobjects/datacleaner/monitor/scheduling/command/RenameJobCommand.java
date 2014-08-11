@@ -41,7 +41,7 @@ public class RenameJobCommand implements Command {
 	private TenantIdentifier _tenant;
 	private JobIdentifier job ; 
 	
-	public RenameJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier){
+	public RenameJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
 		_tenant = tenant;
 		job = jobIdentifier; 
 	}

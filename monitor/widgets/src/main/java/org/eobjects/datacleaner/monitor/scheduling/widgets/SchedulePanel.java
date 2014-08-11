@@ -106,6 +106,8 @@ public class SchedulePanel extends Composite {
         if (_clientConfig.isJobEditor()) {
             jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant,_schedule,service));
             moreLabel.addClickHandler(new CustomizeJobClickHandler(this,tenant,_schedule,service));
+        } else {
+        	moreLabel.setVisible(false);
         }
 
         if (_clientConfig.isScheduleEditor()) {

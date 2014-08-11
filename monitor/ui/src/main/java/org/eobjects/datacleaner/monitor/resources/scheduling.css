@@ -156,10 +156,6 @@
 .LaunchButton {
 }
 
-.HistoryButton {
-	background-image: url("executionlog.png");
-}
-
 .SchedulePanel .ScheduleColumn .gwt-Label {
 	background-image: url("schedule.png");
 	background-repeat: no-repeat;

@@ -23,9 +23,9 @@ import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.command.AddAlertCommand;
 import org.eobjects.datacleaner.monitor.scheduling.command.CopyJobCommand;
 import org.eobjects.datacleaner.monitor.scheduling.command.DeleteJobCommand;
+import org.eobjects.datacleaner.monitor.scheduling.command.EditJobCommand;
 import org.eobjects.datacleaner.monitor.scheduling.command.HistoryCommand;
 import org.eobjects.datacleaner.monitor.scheduling.command.RenameJobCommand;
-import org.eobjects.datacleaner.monitor.scheduling.command.ShowLatestResultCommand;
 import org.eobjects.datacleaner.monitor.scheduling.command.ViewJobDefinitionCommand;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -65,20 +65,23 @@ public class CustomizeJobClickHandler implements ClickHandler {
     public void onClick(ClickEvent event) {
         final JobIdentifier job = _schedulePanel.getSchedule().getJob();
         final MenuBar menuBar = new MenuBar(true);
-        
+
         menuBar.addItem("Execution History" ,new HistoryCommand(_schedule, _service, _tenant));
+        
+        final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
+        if(analysisJob){
+        	menuBar.addItem("Edit job" , new EditJobCommand(_tenant,_schedule));
+        }
+        
         menuBar.addItem("Rename job", new RenameJobCommand(_tenant, job));
         menuBar.addItem("Copy job", new CopyJobCommand(_tenant, job));
         menuBar.addItem("Delete job", new DeleteJobCommand(_tenant, job));
         menuBar.addItem("Add Alert",new AddAlertCommand(_schedule, _service));
 
-        final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
         
         if (analysisJob) {
             menuBar.addSeparator();
-            
-            menuBar.addItem("Job definition (xml)", new ViewJobDefinitionCommand(_tenant, job, _popup));
-            menuBar.addItem("Show latest result", new ShowLatestResultCommand(_tenant, job, _popup));
+            menuBar.addItem("View Job Definition", new ViewJobDefinitionCommand(_tenant, job, _popup));
         }
         
         _popup.setWidget(menuBar);

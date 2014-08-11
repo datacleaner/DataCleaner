@@ -28,7 +28,7 @@
 		<div class="EmptyColumn"></div>
 
 		<div class="JobColumn">
-			<dc:DropDownAnchor ui:field="jobLabel" />
+			<g:Label ui:field="jobLabel" />
 		</div>
 
 		<div class="ScheduleColumn">
@@ -43,12 +43,6 @@
 			<g:Button text="Execute" title="Trigger this job to execute on the server now"
 				ui:field="executeButton" styleName="gwt-Button gwt-Button-ImageTextButton ExecuteButton" />
 			<dc:DropDownAnchor ui:field="moreLabel" />
-			<g:Button text="Open"
-				title="Open this job for editing or testing on the client" ui:field="launchButton"
-				styleName="gwt-Button gwt-Button-ImageTextButton LaunchButton" />
-			<g:Button text="History"
-				title="View the execution history of this job" ui:field="historyButton"
-				styleName="gwt-Button gwt-Button-ImageTextButton HistoryButton" />
 		</div>
 
 		<div style="clear:both"></div>

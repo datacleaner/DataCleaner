@@ -29,7 +29,6 @@ import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.DropDownAnchor;
-import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +37,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -60,7 +58,7 @@ public class SchedulePanel extends Composite {
     private final ClientConfig _clientConfig;
 
     @UiField
-    DropDownAnchor jobLabel;
+    Label jobLabel;
     
     @UiField
     DropDownAnchor moreLabel;
@@ -70,12 +68,6 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button executeButton;
-
-    @UiField
-    Button launchButton;
-
-    @UiField
-    Button historyButton;
 
     @UiField
     FlowPanel alertsPanel;
@@ -95,8 +87,6 @@ public class SchedulePanel extends Composite {
             addStyleName(jobType);
         }
 
-        final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(jobType);
-
         updateScheduleWidgets();
 
         final TenantIdentifier tenant = _clientConfig.getTenant();
@@ -104,10 +94,7 @@ public class SchedulePanel extends Composite {
         final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
 
         if (_clientConfig.isJobEditor()) {
-            jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant,_schedule,service));
-            moreLabel.addClickHandler(new CustomizeJobClickHandler(this,tenant,_schedule,service));
-        } else {
-        	moreLabel.setVisible(false);
+            moreLabel.addClickHandler(new CustomizeJobClickHandler(this,tenant,schedule,service));
         }
 
         if (_clientConfig.isScheduleEditor()) {
@@ -127,7 +114,7 @@ public class SchedulePanel extends Composite {
         }
 
         if (_clientConfig.isScheduleEditor()) {
-            TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, _schedule);
+            TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, schedule);
             executeButton.addClickHandler(handler);
 
             final String token = History.getToken();
@@ -137,48 +124,32 @@ public class SchedulePanel extends Composite {
             }
         }
 
-        if (_clientConfig.isJobEditor() && analysisJob) {
-            launchButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName() + ".launch.jnlp");
-                    Window.open(url, "_blank", null);
-                }
-            });
-        } else {
-            launchButton.setVisible(false);
-        }
-
-        historyButton.addClickHandler(new JobHistoryClickHandler(service, tenant, schedule));
-
         final List<AlertDefinition> alerts = schedule.getAlerts();
-        final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");
-        if (alerts.isEmpty()) {
-            expandAlertsAnchor.addStyleName("discrete");
+        if(alerts.size() > 0) {
+        	
+        	final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");
+        	if (alerts.isEmpty()) {
+        		expandAlertsAnchor.addStyleName("discrete");
+        	}
+        	
+        	expandAlertsAnchor.addClickHandler(new ClickHandler() {
+        		@Override
+        		public void onClick(ClickEvent event) {
+        			final FlowPanel alertListPanel = new FlowPanel();
+        			alertListPanel.setStyleName("AlertListPanel");
+        			
+        			for (AlertDefinition alert : alerts) {
+        				AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
+        				alertListPanel.add(alertPanel);
+        			}
+        			
+        			alertsPanel.clear();
+        			alertsPanel.add(alertListPanel);
+        		}
+        	});
+        	alertsPanel.add(expandAlertsAnchor);
         }
-        expandAlertsAnchor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final FlowPanel alertListPanel = new FlowPanel();
-                alertListPanel.setStyleName("AlertListPanel");
-
-                if (alerts.isEmpty()) {
-                    Label label = new Label("(no alerts)");
-                    label.setStylePrimaryName("AlertPanel");
-                    alertListPanel.add(label);
-                }
-                for (AlertDefinition alert : alerts) {
-                    AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
-                    alertListPanel.add(alertPanel);
-                }
-
-                alertsPanel.clear();
-                alertsPanel.add(new CreateAlertAnchor(service, schedule));
-                alertsPanel.add(alertListPanel);
-            }
-        });
-        alertsPanel.add(expandAlertsAnchor);
-    }
+        }
 
     public ScheduleDefinition getSchedule() {
         return _schedule;

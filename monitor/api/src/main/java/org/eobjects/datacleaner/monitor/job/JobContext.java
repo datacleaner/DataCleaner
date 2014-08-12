@@ -77,5 +77,4 @@ public interface JobContext extends HasName {
      * @return
      */
     public Map<String, String> getVariables();
-    
 }

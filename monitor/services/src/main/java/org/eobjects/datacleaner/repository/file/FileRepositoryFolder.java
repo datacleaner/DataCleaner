@@ -95,6 +95,7 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
     @Override
     public List<RepositoryFolder> getFolders() {
         File[] directories = _file.listFiles(new FileFilter() {
+            
             @Override
             public boolean accept(File file) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
@@ -103,6 +104,8 @@ public class FileRepositoryFolder extends AbstractRepositoryNode implements Repo
                 return false;
             }
         });
+        //Sort the directories as listFiles does not gurantee an order.
+        Arrays.sort(directories);
 
         return CollectionUtils.map(directories, new Func<File, RepositoryFolder>() {
             @Override

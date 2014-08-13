@@ -17,42 +17,39 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.widgets;
+package org.eobjects.datacleaner.monitor.scheduling.command;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.widgets.JobHistoryPanel;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 
-/**
- * {@link ClickHandler} invoked when the user requests to view the history of a
- * {@link ScheduleDefinition}.
- */
-public class JobHistoryClickHandler implements ClickHandler {
-
-    private final SchedulingServiceAsync _service;
-    private final TenantIdentifier _tenant;
-    private final ScheduleDefinition _schedule;
-
-    public JobHistoryClickHandler(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
-        _service = service;
-        _tenant = tenant;
-        _schedule = schedule;
-    }
-
-    @Override
-    public void onClick(ClickEvent event) {
-        final DCPopupPanel popup = new DCPopupPanel("Execution history: '" + _schedule.getJob().getName() + "'");
+public class HistoryCommand implements Command {
+ 
+	private ScheduleDefinition _schedule;
+	private SchedulingServiceAsync _service;
+	private TenantIdentifier _tenant;
+	private  DCPopupPanel _morePopup;
+	
+	public HistoryCommand(ScheduleDefinition schedule,SchedulingServiceAsync service , TenantIdentifier tenant, DCPopupPanel morePopup) {
+		_schedule = schedule;
+		_service = service;
+		_tenant = tenant;
+		_morePopup = morePopup;
+	}
+	
+	@Override
+	public void execute() {
+		_morePopup.hide();
+		final DCPopupPanel popup = new DCPopupPanel("Execution history: '" + _schedule.getJob().getName() + "'");
 
         popup.setWidget(new JobHistoryPanel(_schedule.getJob(), _service, _tenant));
-
         popup.addButton(new CancelPopupButton(popup, "Close"));
         popup.center();
         popup.show();
     }
-
 }

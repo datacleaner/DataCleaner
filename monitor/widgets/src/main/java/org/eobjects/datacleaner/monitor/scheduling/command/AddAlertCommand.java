@@ -17,11 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.widgets;
+package org.eobjects.datacleaner.monitor.scheduling.command;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.widgets.CustomizeAlertPanel;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -36,31 +37,27 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 
-/**
- * Anchor for creating a new alert.
- */
-public class CreateAlertAnchor extends Anchor implements ClickHandler {
-
-    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
-
-    private final SchedulingServiceAsync _service;
-    private final ScheduleDefinition _schedule;
-
-    public CreateAlertAnchor(SchedulingServiceAsync service, ScheduleDefinition schedule) {
-        super("Create alert");
-        _service = service;
-        _schedule = schedule;
-        addStyleName("CreateAlertAnchor");
-        addClickHandler(this);
-    }
-
-    @Override
-    public void onClick(ClickEvent event) {
-        final JobIdentifier job = _schedule.getJob();
+public class AddAlertCommand implements Command {
+ 
+	private ScheduleDefinition _schedule;
+	private SchedulingServiceAsync _service;
+	private DCPopupPanel _morePopup;
+	private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
+	
+	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service, DCPopupPanel morePopup) {
+		_schedule = schedule;
+		_service = service;
+		_morePopup = morePopup;
+	}
+	
+	@Override
+	public void execute() {
+		_morePopup.hide();
+		final JobIdentifier job = _schedule.getJob();
         final TenantIdentifier tenant = _schedule.getTenant();
 
         descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
@@ -109,9 +106,9 @@ public class CreateAlertAnchor extends Anchor implements ClickHandler {
                 popup.addButton(new CancelPopupButton(popup));
                 popup.center();
                 popup.show();
-
             }
         });
 
-    }
+	}
+
 }

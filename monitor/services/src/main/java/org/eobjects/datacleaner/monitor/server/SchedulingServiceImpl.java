@@ -28,11 +28,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
+import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
@@ -58,6 +62,7 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.repository.RepositoryFile.Type;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
@@ -259,6 +264,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (jobContext == null) {
             throw new IllegalArgumentException("No such job: " + jobName);
         }
+        
+        Map<String, String> jobMetadataProperties = null;
+        
+        if(jobContext.getJobFile().getType() == Type.ANALYSIS_JOB){
+	        final AnalysisJobMetadata analysisJobMetadata = getJobMetadataFromJobFile(context, jobContext);
+	        jobMetadataProperties = analysisJobMetadata.getProperties();
+        }
+        
         final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();
@@ -278,9 +291,27 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 }
             });
         }
+        
+        schedule.setJobMetadataProperties(jobMetadataProperties);
 
         return schedule;
     }
+
+	private AnalysisJobMetadata getJobMetadataFromJobFile(final TenantContext context, final JobContext jobContext) {
+		final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+		RepositoryFile file = jobContext.getJobFile();
+		
+		final AnalysisJobMetadata analysisJobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+		    @Override
+		    public AnalysisJobMetadata eval(InputStream in) {
+		        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+		        AnalysisJobMetadata metadata = jobReader.readMetadata(in);
+		        return metadata;
+		    }
+		});
+		
+		return analysisJobMetadata;
+	}
 
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant, final ScheduleDefinition scheduleDefinition) {

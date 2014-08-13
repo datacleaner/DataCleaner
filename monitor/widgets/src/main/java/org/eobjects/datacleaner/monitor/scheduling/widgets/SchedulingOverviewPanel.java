@@ -26,6 +26,7 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.JavaScriptCallbacks;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -60,19 +61,38 @@ public class SchedulingOverviewPanel extends Composite {
         _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
-                for (ScheduleDefinition scheduleDefinition : result) {
-                    addSchedule(scheduleDefinition);
+            	String jobGroupingCategory = JavaScriptCallbacks.getJobGroupingCategory();
+                
+            	for (ScheduleDefinition scheduleDefinition : result) {
+                    addSchedule(scheduleDefinition, jobGroupingCategory);
                 }
+            	
                 listener.run();
             }
         });
     }
 
-    public void addSchedule(ScheduleDefinition schedule) {
-        String groupName = schedule.getGroupName();
+    public void addSchedule(ScheduleDefinition schedule, String jobGroupingCategory) {
+    	String groupName = null;
+    	
+    	if(jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0){
+    		groupName = schedule.getGroupName();
+    	} else {
+    		Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
+    		
+    		if(jobMetadataProperties != null){
+    			groupName = jobMetadataProperties.get(jobGroupingCategory);
+    		}
+    		if (groupName == null || groupName.trim().length() == 0) {
+    			groupName = schedule.getGroupName();
+    		}
+		}
+    	
         if (groupName == null || groupName.trim().length() == 0) {
             groupName = "(other)";
         }
+        
+        
         final ScheduleGroupPanel scheduleGroupPanel;
         if (_scheduleGroupPanels.containsKey(groupName)) {
             scheduleGroupPanel = _scheduleGroupPanels.get(groupName);
@@ -89,10 +109,7 @@ public class SchedulingOverviewPanel extends Composite {
         final FlowPanel panel = new FlowPanel();
         panel.addStyleName("ColumnHeaders");
 
-        panel.add(createLabel("", "EmptyColumn"));
         panel.add(createLabel("Job name", "JobColumn"));
-        panel.add(createLabel("Schedule", "ScheduleColumn"));
-        panel.add(createLabel("Alerts", "AlertsColumn"));
         panel.add(createLabel("Actions", "ActionsColumn"));
 
         return panel;

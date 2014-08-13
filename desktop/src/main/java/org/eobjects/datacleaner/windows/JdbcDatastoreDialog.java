@@ -69,7 +69,7 @@ import org.eobjects.datacleaner.widgets.database.OracleDatabaseConnectionPresent
 import org.eobjects.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.SQLServerDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +151,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                     boolean cellHasFocus) {
                 if ("".equals(value)) {
                     value = "- select -";

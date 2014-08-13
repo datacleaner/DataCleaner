@@ -35,18 +35,19 @@ import org.apache.commons.io.FileUtils;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 
 public class RepositoryZipControllerTest extends TestCase {
 
     public void testCompressAndDecompress() throws Exception {
         RepositoryZipController controller = new RepositoryZipController();
         RepositoryFolder repo = new FileRepository("src/test/resources/example_repo");
-        ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream("target/test_zipfile.zip"));
-        RepositoryFolder sourceFolder = repo.getFolder("tenant1");
-        controller.compress(sourceFolder, zipOutput);
-        zipOutput.close();
+        RepositoryFolder sourceFolder;
+        try (ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream("target/test_zipfile.zip"))) {
+            sourceFolder = repo.getFolder("tenant1");
+            controller.compress(sourceFolder, zipOutput);
+        }
 
         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream("target/test_zipfile.zip"));
         File targetRepoFolder = new File("target/decompressed_repo");
@@ -55,8 +56,7 @@ public class RepositoryZipControllerTest extends TestCase {
         RepositoryFolder targetFolder = new FileRepository(targetRepoFolder).createFolder("tenant1");
         targetFolder.createFolder("foobar_removeMe");
         targetFolder.createFile("Yes_remove_me.too", null);
-        
-        
+
         controller.decompress(zipInputStream, targetFolder);
 
         assertFoldersSimilar(sourceFolder, targetFolder);

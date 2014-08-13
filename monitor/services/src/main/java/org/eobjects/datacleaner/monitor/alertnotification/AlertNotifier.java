@@ -24,7 +24,7 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.metamodel.util.Ref;
+import org.apache.metamodel.util.Ref;
 
 /**
  * Interface for components that listen for executions and notifies in case any

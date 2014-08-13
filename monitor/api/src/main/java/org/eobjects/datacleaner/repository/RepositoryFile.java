@@ -22,8 +22,8 @@ package org.eobjects.datacleaner.repository;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 
 /**
  * Represents a file in the {@link Repository}.

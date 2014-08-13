@@ -32,8 +32,8 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.util.DriverWrapper;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

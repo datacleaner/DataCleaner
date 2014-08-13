@@ -22,8 +22,8 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 
 /**
  * Writes a default conf.xml file for a new tenant

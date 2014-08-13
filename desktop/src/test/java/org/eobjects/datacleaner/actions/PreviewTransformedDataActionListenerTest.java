@@ -135,7 +135,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 		TransformerJobBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
 				.addTransformer(TokenizerTransformer.class);
 		tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
-		tokenizer.setRequirement(numberRange.getOutcome(RangeFilterCategory.VALID));
+		tokenizer.setRequirement(numberRange.getFilterOutcome(RangeFilterCategory.VALID));
 		tokenizer.setConfiguredProperty("Token target", TokenizerTransformer.TokenTarget.ROWS);
 		tokenizer.setConfiguredProperty("Number of tokens", 50);
 		tokenizer.setConfiguredProperty("Delimiters", new char[] { 'p' });

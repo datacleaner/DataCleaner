@@ -24,9 +24,9 @@ import java.util.Date;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.util.DateUtils;
-import org.eobjects.metamodel.util.Month;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
 import org.junit.Assert;
 import org.junit.Ignore;
 

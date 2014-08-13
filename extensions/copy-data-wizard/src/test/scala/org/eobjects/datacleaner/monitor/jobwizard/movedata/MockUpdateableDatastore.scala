@@ -2,7 +2,7 @@ package org.eobjects.datacleaner.monitor.jobwizard.movedata
 import org.eobjects.analyzer.connection.UpdateableDatastore
 import org.eobjects.analyzer.connection.Datastore
 import org.eobjects.analyzer.connection.UpdateableDatastoreConnection
-import org.eobjects.metamodel.UpdateableDataContext
+import org.apache.metamodel.UpdateableDataContext
 
 /**
  * An implementation of the UpdateableDatastore interface.

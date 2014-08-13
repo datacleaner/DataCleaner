@@ -23,8 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.eobjects.analyzer.result.AnalyzerResult;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Identifies a metric of interest.

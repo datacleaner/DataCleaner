@@ -29,8 +29,6 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
  * in the windowContext class.
  * 
  * @see WindowContext
- * 
- * @author Kasper Sørensen
  */
 public interface DCWindow {
 	

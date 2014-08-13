@@ -80,7 +80,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if (value instanceof Class) {
 					// render eg. java.lang.String as just "String"

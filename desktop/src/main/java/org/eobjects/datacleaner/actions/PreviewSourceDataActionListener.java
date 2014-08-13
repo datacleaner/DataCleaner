@@ -30,10 +30,10 @@ import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DataSetWindow;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.query.Query;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 
 public class PreviewSourceDataActionListener implements ActionListener {
 
@@ -79,15 +79,12 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			throw new IllegalStateException("No columns found - could not determine which columns to query");
 		}
 
-		final DatastoreConnection con = _datastore.openConnection();
-		try {
+		try (final DatastoreConnection con = _datastore.openConnection()) {
 			DataContext dc = con.getDataContext();
 			Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
 			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
 			window.setVisible(true);
-		} finally {
-			con.close();
 		}
 	}
 }

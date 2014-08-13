@@ -23,11 +23,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.Func;
-import org.eobjects.metamodel.util.Resource;
-import org.eobjects.metamodel.util.ResourceException;
-import org.eobjects.metamodel.util.SerializableRef;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
+import org.apache.metamodel.util.ResourceException;
+import org.apache.metamodel.util.SerializableRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.widgets.visualization;
 
 import java.util.List;
 
-import org.eobjects.metamodel.util.BaseObject;
+import org.apache.metamodel.util.BaseObject;
 
 final class VisualizeJobLink extends BaseObject {
 

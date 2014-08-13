@@ -32,8 +32,8 @@ import org.eobjects.datacleaner.monitor.server.dao.DatastoreDaoImpl;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 

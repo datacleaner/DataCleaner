@@ -38,8 +38,8 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
-import org.eobjects.metamodel.util.EqualsBuilder;
-import org.eobjects.metamodel.util.LazyRef;
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.LazyRef;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
@@ -154,7 +154,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
      * 
      * @return
      */
-    protected ListCellRenderer getComboBoxRenderer(InputColumn<?> inputColumn,
+    protected ListCellRenderer<? super E> getComboBoxRenderer(InputColumn<?> inputColumn,
             WeakHashMap<InputColumn<?>, DCComboBox<E>> mappedEnumComboBoxes, E[] enumConstants) {
         return new EnumComboBoxListRenderer();
     }

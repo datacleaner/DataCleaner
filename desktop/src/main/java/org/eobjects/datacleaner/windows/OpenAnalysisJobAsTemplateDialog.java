@@ -38,6 +38,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.SourceColumnMapping;
 import org.eobjects.analyzer.connection.Datastore;
@@ -55,9 +58,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 
@@ -79,7 +79,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
     private final AnalysisJobMetadata _metadata;
     private final SourceColumnMapping _sourceColumnMapping;
     private final DatastoreCatalog _datastoreCatalog;
-    private final JComboBox _datastoreCombobox;
+    private final JComboBox<String> _datastoreCombobox;
     private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
     private final Map<String, JXTextField> _variableTextFields;
     private final JButton _openButton;
@@ -148,7 +148,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             final SourceColumnComboBox comboBox = new SourceColumnComboBox();
             comboBox.setEnabled(false);
             comboBox.setName(columnPath);
-            comboBox.addListener(new Listener<Column>() {
+            comboBox.addColumnSelectedListener(new Listener<Column>() {
 
                 @Override
                 public void onItemSelected(Column col) {
@@ -186,7 +186,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         // the combobox will contain all datastore names and a null for
         // "not selected"
         final String[] comboBoxModel = CollectionUtils.array(new String[1], datastoreNames);
-        _datastoreCombobox = new JComboBox(comboBoxModel);
+        _datastoreCombobox = new JComboBox<String>(comboBoxModel);
         _datastoreCombobox.setEditable(false);
         _datastoreCombobox.addActionListener(new ActionListener() {
             @Override

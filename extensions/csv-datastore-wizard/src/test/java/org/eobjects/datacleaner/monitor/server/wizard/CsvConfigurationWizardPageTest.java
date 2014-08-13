@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
-import org.eobjects.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvConfiguration;
 
 import junit.framework.TestCase;
 

@@ -75,6 +75,7 @@ public final class FileFilters {
     public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
     public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
     public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");
+    public static final ExtensionFilter JSON = new ExtensionFilter("JavaScript Object Notation (.json)", ".json");
 
     public static final ExtensionFilter JAR = new ExtensionFilter("Java Archive (.jar)", ".jar");
     public static final ExtensionFilter HTML = new ExtensionFilter("HTML web page (.html)", ".html");

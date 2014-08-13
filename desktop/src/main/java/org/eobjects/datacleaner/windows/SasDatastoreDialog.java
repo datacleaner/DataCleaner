@@ -35,7 +35,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
-import org.eobjects.sassy.SasFilenameFilter;
+import org.eobjects.metamodel.sas.SasFilenameFilter;
 
 public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
 

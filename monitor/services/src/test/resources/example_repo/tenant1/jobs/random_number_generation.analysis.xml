@@ -8,7 +8,7 @@
     <source>
         <data-context ref="Vendors"/>
         <columns>
-            <column path="vendor_dictionary.txt.vendor_dictionary.A" id="col_0"/>
+            <column path="reference-data.vendor_dictionary.txt.A" id="col_0"/>
         </columns>
     </source>
     <transformation>

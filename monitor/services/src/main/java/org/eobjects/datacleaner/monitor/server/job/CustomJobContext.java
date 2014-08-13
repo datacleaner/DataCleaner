@@ -45,9 +45,9 @@ import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbCustomJavaComponentJobAdaptor;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -35,7 +35,7 @@ public class DCListCellRenderer extends DefaultListCellRenderer {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {
 		final Component result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 

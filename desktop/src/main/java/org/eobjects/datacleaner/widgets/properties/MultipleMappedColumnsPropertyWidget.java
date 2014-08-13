@@ -38,11 +38,11 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.MutableColumn;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.EqualsBuilder;
-import org.eobjects.metamodel.util.MutableRef;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.MutableRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,7 +165,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 			sourceColumnComboBox.setSelectedItem(mappedColumn);
 			sourceColumnComboBox.setEditable(false);
 		}
-		sourceColumnComboBox.addListener(new Listener<Column>() {
+		sourceColumnComboBox.addColumnSelectedListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
 				if (isBatchUpdating()) {

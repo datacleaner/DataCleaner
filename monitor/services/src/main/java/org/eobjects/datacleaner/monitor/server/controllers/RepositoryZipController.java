@@ -38,8 +38,8 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,12 +87,9 @@ public class RepositoryZipController {
 
         logger.info("Uploading ZIP file for tenant repository: {}", tenant);
 
-        final InputStream inputStream = file.getInputStream();
-        try {
+        try (final InputStream inputStream = file.getInputStream()) {
             ZipInputStream zipInputStream = new ZipInputStream(inputStream);
             decompress(zipInputStream, rootFolder);
-        } finally {
-            inputStream.close();
         }
 
         final Map<String, String> result = new HashMap<String, String>();

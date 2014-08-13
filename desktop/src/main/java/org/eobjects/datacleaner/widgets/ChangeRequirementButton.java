@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.widgets;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +37,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
@@ -78,12 +80,15 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Outcome currentRequirement = _jobBuilder.getRequirement();
-        logger.info("Current requirement: {}", currentRequirement);
+        final ComponentRequirement currentComponentRequirement = _jobBuilder.getComponentRequirement();
+        logger.info("Current requirement: {}", currentComponentRequirement);
 
-        JPopupMenu popup = new JPopupMenu();
+        final Collection<FilterOutcome> currentFilterOutcomes = currentComponentRequirement == null ? Collections
+                .<FilterOutcome> emptyList() : currentComponentRequirement.getProcessingDependencies();
 
-        JMenuItem noFilterMenuItem = new JMenuItem(NO_FILTER_TEXT);
+        final JPopupMenu popup = new JPopupMenu();
+
+        final JMenuItem noFilterMenuItem = new JMenuItem(NO_FILTER_TEXT);
         noFilterMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,17 +98,18 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
         });
         popup.add(noFilterMenuItem);
 
-        List<FilterJobBuilder<?, ?>> fjbs = _jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
-
         // if this JobBuilder is a FilterJobBuilder, remove it from the list of
         // available filters
+        final List<FilterJobBuilder<?, ?>> fjbs;
         if (_jobBuilder instanceof FilterJobBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(fjbs);
+            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(_jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders());
             fjbs.remove(_jobBuilder);
+        } else {
+            fjbs = _jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
         }
 
         for (final FilterJobBuilder<?, ?> fjb : fjbs) {
-            JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
+            final JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
 
             if (!fjb.isConfigured()) {
                 filterMenuItem.setIcon(unconfiguredFilterIcon);
@@ -113,29 +119,20 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                 filterMenuItem.setEnabled(false);
                 filterMenuItem.setToolTipText("Requirement not possible");
             } else {
-                FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
-                Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
+                final FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
+                final Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
                 for (final String category : categoryNames) {
-                    JMenuItem categoryMenuItem = new JMenuItem(category);
-
-                    if (currentRequirement != null && currentRequirement instanceof FilterOutcome) {
-                        FilterOutcome filterOutcome = (FilterOutcome) currentRequirement;
-                        // put an icon on the currently configured requirement
-                        try {
-                            FilterJob filterJob = fjb.toFilterJob();
-
-                            if (filterOutcome.getFilterJob().equals(filterJob)) {
-                                if (filterOutcome.getCategory()
-                                        .equals(fjbDescriptor.getOutcomeCategoryByName(category))) {
-                                    filterMenuItem.setIcon(mappedFilterIcon);
-                                    categoryMenuItem.setIcon(mappedFilterIcon);
-                                }
-                            }
-                        } catch (Exception ex) {
-                            logger.info(
-                                    "Filterjob matching threw exception, probably because of incomplete configuration",
-                                    ex);
+                    final JMenuItem categoryMenuItem = new JMenuItem(category);
+                    try {
+                        final Enum<?> outcomeCategory = fjbDescriptor.getOutcomeCategoryByName(category);
+                        final FilterOutcome filterOutcome = fjb.getFilterOutcome(outcomeCategory);
+                        if ( currentFilterOutcomes.contains(filterOutcome)) {
+                            filterMenuItem.setIcon(mappedFilterIcon);
+                            categoryMenuItem.setIcon(mappedFilterIcon);
                         }
+                    } catch (Exception ex) {
+                        logger.info("Filterjob matching threw exception, probably because of incomplete configuration",
+                                ex);
                     }
 
                     categoryMenuItem.addActionListener(new ActionListener() {
@@ -162,7 +159,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final Outcome requirement = _jobBuilder.getRequirement();
+                final ComponentRequirement requirement = _jobBuilder.getComponentRequirement();
                 if (requirement == null) {
                     setText(NO_FILTER_TEXT);
                 } else {

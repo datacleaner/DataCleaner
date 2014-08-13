@@ -48,9 +48,9 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFile.Type;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Predicate;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +70,8 @@ public class DashboardServiceImpl implements DashboardService {
     private final TimelineDao _timelineDao;
 
     @Autowired
-    public DashboardServiceImpl(final TenantContextFactory tenantContextFactory, final MetricValueProducer metricValueProducer,
-            ResultDao resultDao, TimelineDao timelineDao) {
+    public DashboardServiceImpl(final TenantContextFactory tenantContextFactory,
+            final MetricValueProducer metricValueProducer, ResultDao resultDao, TimelineDao timelineDao) {
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
         _resultDao = resultDao;
@@ -93,9 +93,8 @@ public class DashboardServiceImpl implements DashboardService {
                 descriptionFile.readFile(new Action<InputStream>() {
                     @Override
                     public void run(InputStream in) throws Exception {
-                        final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                        final StringBuilder sb = new StringBuilder();
-                        try {
+                        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                            final StringBuilder sb = new StringBuilder();
                             boolean first = false;
                             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                                 if (first) {
@@ -109,8 +108,6 @@ public class DashboardServiceImpl implements DashboardService {
                         } catch (Exception e) {
                             logger.error("Error while reading timeline group description file: " + descriptionFile, e);
                         }
-
-                        reader.close();
                     }
                 });
             }
@@ -156,8 +153,8 @@ public class DashboardServiceImpl implements DashboardService {
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
 
         for (RepositoryFile resultFile : resultFiles) {
-            final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant,
-                    jobIdentifier);
+            final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile,
+                    tenant, jobIdentifier);
             final Date date = metricValues.getMetricDate();
             if (isInRange(date, horizontalAxisOption)) {
                 final TimelineDataRow row = new TimelineDataRow(date, resultFile.getQualifiedPath());

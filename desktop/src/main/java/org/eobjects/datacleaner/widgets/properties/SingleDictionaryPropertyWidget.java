@@ -29,10 +29,9 @@ import javax.swing.JButton;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCComboBox;
@@ -42,93 +41,93 @@ import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
 
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> implements
-		SynonymCatalogChangeListener {
+        DictionaryChangeListener {
 
-	private final DCComboBox<Dictionary> _comboBox;
-	private final MutableReferenceDataCatalog _referenceDataCatalog;
-	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
+    private final DCComboBox<Dictionary> _comboBox;
+    private final MutableReferenceDataCatalog _referenceDataCatalog;
+    private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
-	@Inject
-	public SingleDictionaryPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, MutableReferenceDataCatalog referenceDataCatalog,
-			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(beanJobBuilder, propertyDescriptor);
-		_referenceDataCatalog = referenceDataCatalog;
-		_referenceDataDialogProvider = referenceDataDialogProvider;
+    @Inject
+    public SingleDictionaryPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, MutableReferenceDataCatalog referenceDataCatalog,
+            Provider<ReferenceDataDialog> referenceDataDialogProvider) {
+        super(beanJobBuilder, propertyDescriptor);
+        _referenceDataCatalog = referenceDataCatalog;
+        _referenceDataDialogProvider = referenceDataDialogProvider;
 
-		_comboBox = new DCComboBox<Dictionary>();
-		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
-		_comboBox.setEditable(false);
+        _comboBox = new DCComboBox<Dictionary>();
+        _comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
+        _comboBox.setEditable(false);
 
-		if (!propertyDescriptor.isRequired()) {
-			_comboBox.addItem(null);
-		}
+        if (!propertyDescriptor.isRequired()) {
+            _comboBox.addItem(null);
+        }
 
-		final String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
-		for (String name : dictionaryNames) {
-			_comboBox.addItem(referenceDataCatalog.getDictionary(name));
-		}
+        final String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
+        for (String name : dictionaryNames) {
+            _comboBox.addItem(referenceDataCatalog.getDictionary(name));
+        }
 
-		Dictionary currentValue = getCurrentValue();
-		_comboBox.setSelectedItem(currentValue);
+        Dictionary currentValue = getCurrentValue();
+        _comboBox.setSelectedItem(currentValue);
 
-		_comboBox.addListener(new Listener<Dictionary>() {
-			@Override
-			public void onItemSelected(Dictionary item) {
-				fireValueChanged();
-			}
-		});
+        _comboBox.addListener(new Listener<Dictionary>() {
+            @Override
+            public void onItemSelected(Dictionary item) {
+                fireValueChanged();
+            }
+        });
 
-		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
-		dialogButton.setToolTipText("Configure dictionaries");
-		dialogButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
-				dialog.selectDictionariesTab();
-				dialog.setVisible(true);
-			}
-		});
+        final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+        dialogButton.setToolTipText("Configure dictionaries");
+        dialogButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+                dialog.selectDictionariesTab();
+                dialog.setVisible(true);
+            }
+        });
 
-		final DCPanel outerPanel = new DCPanel();
-		outerPanel.setLayout(new HorizontalLayout(2));
-		outerPanel.add(_comboBox);
-		outerPanel.add(dialogButton);
+        final DCPanel outerPanel = new DCPanel();
+        outerPanel.setLayout(new HorizontalLayout(2));
+        outerPanel.add(_comboBox);
+        outerPanel.add(dialogButton);
 
-		add(outerPanel);
-	}
+        add(outerPanel);
+    }
 
-	@Override
-	public void onPanelAdd() {
-		super.onPanelAdd();
-		_referenceDataCatalog.addSynonymCatalogListener(this);
-	}
+    @Override
+    public void onPanelAdd() {
+        super.onPanelAdd();
+        _referenceDataCatalog.addDictionaryListener(this);
+    }
 
-	@Override
-	public void onPanelRemove() {
-		super.onPanelRemove();
-		_referenceDataCatalog.removeSynonymCatalogListener(this);
-	}
+    @Override
+    public void onPanelRemove() {
+        super.onPanelRemove();
+        _referenceDataCatalog.removeDictionaryListener(this);
+    }
 
-	@Override
-	public Dictionary getValue() {
-		return (Dictionary) _comboBox.getSelectedItem();
-	}
+    @Override
+    public Dictionary getValue() {
+        return (Dictionary) _comboBox.getSelectedItem();
+    }
 
-	@Override
-	protected void setValue(Dictionary value) {
-		_comboBox.setEditable(true);
-		_comboBox.setSelectedItem(value);
-		_comboBox.setEditable(false);
-	}
+    @Override
+    protected void setValue(Dictionary value) {
+        _comboBox.setEditable(true);
+        _comboBox.setSelectedItem(value);
+        _comboBox.setEditable(false);
+    }
 
-	@Override
-	public void onAdd(SynonymCatalog synonymCatalog) {
-		_comboBox.addItem(synonymCatalog);
-	}
+    @Override
+    public void onAdd(Dictionary dictionary) {
+        _comboBox.addItem(dictionary);
+    }
 
-	@Override
-	public void onRemove(SynonymCatalog synonymCatalog) {
-		_comboBox.removeItem(synonymCatalog);
-	}
+    @Override
+    public void onRemove(Dictionary dictionary) {
+        _comboBox.removeItem(dictionary);
+    }
 }

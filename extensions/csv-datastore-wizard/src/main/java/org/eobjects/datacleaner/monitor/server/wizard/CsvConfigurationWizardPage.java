@@ -28,7 +28,7 @@ import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.eobjects.datacleaner.util.CsvConfigurationDetection;
-import org.eobjects.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

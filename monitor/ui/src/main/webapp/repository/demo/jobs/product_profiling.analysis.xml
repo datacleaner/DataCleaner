@@ -2,8 +2,7 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
     	<job-name>Product profiling</job-name>
-        <job-description>Created with DataCleaner 2.5.2</job-description>
-        <updated-date>2012-06-06+02:00</updated-date>
+        <job-description>Created with DataCleaner</job-description>
     </job-metadata>
     <source>
         <data-context ref="orderdb"/>

@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.inject.Inject;
 import javax.swing.DefaultComboBoxModel;
@@ -117,7 +118,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
             }
         }
 
-        _comboBox.setModel(new DefaultComboBoxModel(_inputColumns.toArray()));
+        _comboBox.setModel(new DefaultComboBoxModel<InputColumn<?>>(new Vector<InputColumn<?>>(_inputColumns)));
         _comboBox.setSelectedItem(currentValue);
 
         fireValueChanged();

@@ -50,8 +50,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.LazyRef;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.LazyRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,7 +26,7 @@ import java.awt.Stroke;
 import java.util.Arrays;
 
 import org.apache.commons.collections15.Transformer;
-import org.eobjects.metamodel.util.HasName;
+import org.apache.metamodel.util.HasName;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;

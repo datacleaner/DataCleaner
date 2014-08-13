@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.panels.result.ProgressInformationPanel;
-import org.eobjects.metamodel.MetaModelException;
+import org.apache.metamodel.MetaModelException;
 
 public class ProgressInformationPanelTest extends TestCase {
 
@@ -52,7 +52,7 @@ public class ProgressInformationPanelTest extends TestCase {
 		String text = panel.getTextAreaText();
 		
 		assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
-		assertTrue(text.indexOf("org.eobjects.metamodel.MetaModelException: mm") != -1);
+		assertTrue(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
 		assertTrue(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
 		assertTrue(text.indexOf("Next exception: java.sql.SQLException: sql2") != -1);
 	}
@@ -69,7 +69,7 @@ public class ProgressInformationPanelTest extends TestCase {
 		
 
 		assertTrue(text.indexOf("ERROR: damn, something rotten happened!") != -1);
-		assertFalse(text.indexOf("org.eobjects.metamodel.MetaModelException: mm") != -1);
+		assertFalse(text.indexOf("org.apache.metamodel.MetaModelException: mm") != -1);
 		assertFalse(text.indexOf("Caused by: java.sql.SQLException: sql1") != -1);
 		assertTrue(text.indexOf("java.sql.SQLException: sql2") != -1);
 	}

@@ -33,9 +33,9 @@ import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.windows.CouchDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.TableDefinitionDialog;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.HasName;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.HasName;
+import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * A widget used for selecting whether to automatically discover or to manually

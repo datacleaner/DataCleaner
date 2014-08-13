@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.output.csv;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.AbstractMetaModelOutputWriter;
-import org.eobjects.metamodel.UpdateableDataContext;
-import org.eobjects.metamodel.schema.Table;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.schema.Table;
 
 final class CsvOutputWriter extends AbstractMetaModelOutputWriter {
 

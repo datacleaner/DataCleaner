@@ -23,7 +23,7 @@ import java.io.OutputStream;
 
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
-import org.eobjects.metamodel.util.Action;
+import org.apache.metamodel.util.Action;
 
 public class WriteTimelineAction implements Action<OutputStream> {
 

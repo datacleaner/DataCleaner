@@ -25,10 +25,10 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.MutableRef;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.MutableRef;
 
 /**
  * Property widget for a {@link String} that represents a {@link Column} name.
@@ -84,7 +84,7 @@ public final class ColumnNamePropertyWidget extends AbstractPropertyWidget<Strin
     }
 
     public void addComboListener(Listener<Column> listener) {
-        _comboBox.addListener(listener);
+        _comboBox.addColumnSelectedListener(listener);
     }
 
     @Override

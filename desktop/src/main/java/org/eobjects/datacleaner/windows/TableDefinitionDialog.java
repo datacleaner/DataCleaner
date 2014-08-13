@@ -36,8 +36,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaFactory;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * A dialog presenting a {@link SimpleTableDefsPanel} and a save button. Used

@@ -104,7 +104,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
             return;
         }
 
-        final Boolean persistResult = jobContext.getCustomJavaComponentJob().isPersistResult();
+        final Boolean persistResult = jobContext.getCustomJavaComponentJob().getPersistResult();
         if (persistResult == null || persistResult.booleanValue()) {
             executionLogger.setStatusSuccess(result);
         } else {

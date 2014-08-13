@@ -32,8 +32,8 @@ import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.schema.ColumnType;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.Func;
 
 /**
  * A component that reads jobs for the monitor web app without starting a live
@@ -70,10 +70,9 @@ public class MonitorJobReader {
         final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 
         // read job
-        final AnalysisJobBuilder jobBuilder = _jobFile.readFile(new Func<InputStream, AnalysisJobBuilder>() {
+        final Func<InputStream, AnalysisJobBuilder> readCallback = new Func<InputStream, AnalysisJobBuilder>() {
             @Override
             public AnalysisJobBuilder eval(InputStream inputStream) {
-                final AnalysisJobBuilder jobBuilder;
                 if (datastore == null) {
                     final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
                     final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
@@ -89,15 +88,16 @@ public class MonitorJobReader {
                                 + sourceColumnMapping.getUnmappedPaths());
                     }
 
-                    jobBuilder = jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
+                    return jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
                 } else {
-                    jobBuilder = jobReader.create(inputStream, variableOverrides);
+                    return jobReader.create(inputStream, variableOverrides);
                 }
-                return jobBuilder;
             }
-        });
+        };
 
-        final AnalysisJob job = jobBuilder.toAnalysisJob();
-        return job;
+        try (final AnalysisJobBuilder jobBuilder = _jobFile.readFile(readCallback)) {
+            final AnalysisJob job = jobBuilder.toAnalysisJob();
+            return job;
+        }
     }
 }

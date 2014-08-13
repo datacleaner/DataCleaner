@@ -25,7 +25,7 @@ import org.eobjects.analyzer.connection.PerformanceCharacteristics;
 import org.eobjects.analyzer.connection.PerformanceCharacteristicsImpl;
 import org.eobjects.analyzer.connection.UsageAwareDatastore;
 import org.eobjects.analyzer.connection.UsageAwareDatastoreConnection;
-import org.eobjects.metamodel.DataContext;
+import org.apache.metamodel.DataContext;
 
 public class SampleDatastore extends UsageAwareDatastore<DataContext> {
 

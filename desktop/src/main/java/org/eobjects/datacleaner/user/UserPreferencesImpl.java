@@ -48,9 +48,9 @@ import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,6 +147,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
 
         logger.info("Saving user preferences to {}", _userPreferencesFile.getName().getPath());
+        
+        @SuppressWarnings("resource")
         ObjectOutputStream outputStream = null;
         try {
             outputStream = new ObjectOutputStream(_userPreferencesFile.getContent().getOutputStream());

@@ -33,11 +33,11 @@ import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.data.Row;
-import org.eobjects.metamodel.query.SelectItem;
-import org.eobjects.metamodel.query.parser.QueryParserException;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.query.parser.QueryParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class DatastoreQueryController {
     private void queryDatastore(String tenant, String datastoreName, String query, HttpServletResponse response)
             throws IOException {
         response.setContentType("application/xhtml+xml");
-        
+
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
         final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
@@ -94,11 +94,9 @@ public class DatastoreQueryController {
             return;
         }
 
-        final DatastoreConnection con = ds.openConnection();
-        try {
+        try (final DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
-            final DataSet dataSet = dataContext.executeQuery(query);
-            try {
+            try (final DataSet dataSet = dataContext.executeQuery(query)) {
                 logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
                         datastoreName, username, query });
 
@@ -142,13 +140,9 @@ public class DatastoreQueryController {
                 }
                 writer.write("\n</tbody>");
                 writer.write("\n</table>");
-            } finally {
-                dataSet.close();
             }
         } catch (QueryParserException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query parsing failed: " + e.getMessage());
-        } finally {
-            con.close();
         }
     }
 

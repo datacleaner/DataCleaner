@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.util.SchemaNavigator;
-import org.eobjects.metamodel.DataContext;
+import org.apache.metamodel.DataContext;
 
 /**
  * {@link DatastoreConnection} placeholder for lightweight reading of analysis

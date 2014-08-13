@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.repository;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.eobjects.metamodel.util.Resource;
+import org.apache.metamodel.util.Resource;
 
 /**
  * {@link ResourceTypeHandler} for {@link RepositoryFileResource}s.

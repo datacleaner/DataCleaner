@@ -30,8 +30,8 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
 
 /**
  * Abstract helper-implementation of {@link TenantContext}. Provides the methods

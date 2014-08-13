@@ -27,8 +27,8 @@ import javax.xml.bind.JAXBException;
 import org.eobjects.analyzer.configuration.jaxb.Configuration;
 import org.eobjects.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.Func;
 
 /**
  * Writes an updated conf.xml file to the repository. This is used by taking the

@@ -36,7 +36,7 @@ import javax.swing.event.DocumentEvent;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -56,16 +56,15 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
-import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 /**
- * Dialog for setting up the users connection to the DataCleaner monitor
- * webapp.
+ * Dialog for setting up the users connection to the DataCleaner monitor webapp.
  */
 public class MonitorConnectionDialog extends AbstractDialog {
 
@@ -289,8 +288,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                 final MonitorConnection connection = createMonitorConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
-                final MonitorHttpClient monitorHttpClient = connection.getHttpClient();
-                try {
+                try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
                     final HttpResponse response = monitorHttpClient.execute(request);
 
                     final StatusLine statusLine = response.getStatusLine();
@@ -312,14 +310,12 @@ public class MonitorConnectionDialog extends AbstractDialog {
                                 + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
                     }
                 } catch (Exception e) {
-                    //TODO: This dialog is shown behind the modal dialog
+                    // TODO: This dialog is shown behind the modal dialog
                     WidgetUtils
                             .showErrorMessage(
                                     "Connection failed",
                                     "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
                                     e);
-                } finally {
-                    monitorHttpClient.close();
                 }
             }
         });

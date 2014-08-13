@@ -30,7 +30,7 @@ import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.wizard.Wizard;
 import org.eobjects.datacleaner.monitor.wizard.WizardSession;
-import org.eobjects.metamodel.util.Func;
+import org.apache.metamodel.util.Func;
 
 /**
  * A kind of DAO (Data Access Object) and utility class for {@link Wizard}

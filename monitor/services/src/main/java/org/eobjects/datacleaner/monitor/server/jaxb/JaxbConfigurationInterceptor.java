@@ -61,13 +61,13 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.MutableSchema;
-import org.eobjects.metamodel.schema.MutableTable;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.Ref;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableSchema;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,8 +213,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             if (datastore == null) {
                 throw new IllegalArgumentException("Datastore '" + datastoreName + "' does not exist");
             }
-            DatastoreConnection con = datastore.openConnection();
-            try {
+            try (final DatastoreConnection con = datastore.openConnection()) {
                 final MutableSchema usageSchema = new MutableSchema();
                 final Schema schema;
                 if (job == null) {
@@ -231,8 +230,6 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                             REMARK_INCLUDE_IN_QUERY));
                 }
                 datastoreUsage.put(datastoreName, usageSchema);
-            } finally {
-                con.close();
             }
 
             // add schema information about the remaining datastores
@@ -270,8 +267,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     }
                 };
 
-                final DatastoreConnection connection = datastore.openConnection();
-                try {
+                try (final DatastoreConnection connection = datastore.openConnection()) {
                     final DataContext dataContext = connection.getDataContext();
                     final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
                     final Collection<PojoTableType> pojoTables = new ArrayList<PojoTableType>();
@@ -293,19 +289,21 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                             final String tableName = usageTable.getName();
                             final Schema schemaByName = dataContext.getSchemaByName(schemaName);
                             if (schemaByName == null) {
-                                logger.error("Could not find schema by name: {}, skipping table: {}", schemaName, usageTable);
+                                logger.error("Could not find schema by name: {}, skipping table: {}", schemaName,
+                                        usageTable);
                                 usageColumns = new Column[0];
                             } else {
                                 final Table table = schemaByName.getTableByName(tableName);
                                 usageColumns = table.getColumns();
                             }
                         }
-                        
+
                         if (usageColumns != null && usageColumns.length > 0) {
                             Arrays.sort(usageColumns, columnComparator);
-                            
-                            final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
-                            
+
+                            final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS
+                                    : 0;
+
                             final Table sourceTable = usageColumns[0].getTable();
                             try {
                                 final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
@@ -327,8 +325,6 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                 } catch (Exception e) {
                     // allow omitting errornous datastores here.
                     logger.error("Failed to serialize datastore '" + name + "' to POJO format: " + e.getMessage(), e);
-                } finally {
-                    connection.close();
                 }
             }
         }

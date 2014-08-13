@@ -83,7 +83,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_launch_file.xml"), "UTF-8");
         expected = expected.replaceAll("\r\n", "\n");
 
-        assertEquals(expected, response.getContentAsString());
+        assertEquals(expected, response.getContentAsString().trim());
 
         EasyMock.verify(contextFactoryMock, contextMock, jobMock);
     }

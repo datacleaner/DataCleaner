@@ -45,15 +45,18 @@ public class AddAlertCommand implements Command {
  
 	private ScheduleDefinition _schedule;
 	private SchedulingServiceAsync _service;
+	private DCPopupPanel _morePopup;
 	private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
 	
-	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service) {
+	public AddAlertCommand(ScheduleDefinition schedule,SchedulingServiceAsync service, DCPopupPanel morePopup) {
 		_schedule = schedule;
 		_service = service;
+		_morePopup = morePopup;
 	}
 	
 	@Override
 	public void execute() {
+		_morePopup.hide();
 		final JobIdentifier job = _schedule.getJob();
         final TenantIdentifier tenant = _schedule.getTenant();
 

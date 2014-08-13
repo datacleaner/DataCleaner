@@ -66,18 +66,17 @@ public class CustomizeJobClickHandler implements ClickHandler {
         final JobIdentifier job = _schedulePanel.getSchedule().getJob();
         final MenuBar menuBar = new MenuBar(true);
 
-        menuBar.addItem("Execution History" ,new HistoryCommand(_schedule, _service, _tenant));
+        menuBar.addItem("Execution History" ,new HistoryCommand(_schedule, _service, _tenant,_popup));
         
         final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
         if(analysisJob){
-        	menuBar.addItem("Edit job" , new EditJobCommand(_tenant,_schedule));
+        	menuBar.addItem("Edit job" , new EditJobCommand(_tenant,_schedule,_popup));
         }
         
-        menuBar.addItem("Rename job", new RenameJobCommand(_tenant, job));
-        menuBar.addItem("Copy job", new CopyJobCommand(_tenant, job));
-        menuBar.addItem("Delete job", new DeleteJobCommand(_tenant, job));
-        menuBar.addItem("Add Alert",new AddAlertCommand(_schedule, _service));
-
+        menuBar.addItem("Rename job", new RenameJobCommand(_tenant, job,_popup));
+        menuBar.addItem("Copy job", new CopyJobCommand(_tenant, job,_popup));
+        menuBar.addItem("Delete job", new DeleteJobCommand(_tenant, job,_popup));
+        menuBar.addItem("Add Alert",new AddAlertCommand(_schedule, _service,_popup));
         
         if (analysisJob) {
             menuBar.addSeparator();

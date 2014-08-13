@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.command;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.user.client.Command;
@@ -30,15 +31,17 @@ public class EditJobCommand implements Command {
  
 	private TenantIdentifier _tenant;
 	private ScheduleDefinition _schedule;
+	private DCPopupPanel _morePopup;
 	
-	public EditJobCommand(TenantIdentifier tenantIdentifier, ScheduleDefinition schedule){
+	public EditJobCommand(TenantIdentifier tenantIdentifier, ScheduleDefinition schedule, DCPopupPanel morePopup){
 		_tenant = tenantIdentifier;
 		_schedule = schedule;
-		
+		_morePopup = morePopup;
 	}
 	
 	@Override
 	public void execute() {
+		_morePopup.hide();
 		String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _schedule.getJob().getName() + ".launch.jnlp");
         Window.open(url, "_blank", null);
     }

@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.command;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.DCRequestBuilder;
 import org.eobjects.datacleaner.monitor.util.DCRequestCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
@@ -34,19 +35,22 @@ import com.google.gwt.user.client.Window;
 public class DeleteJobCommand implements Command {
  
 	private TenantIdentifier _tenant;
-	private JobIdentifier job ; 
+	private JobIdentifier _job ; 
+	private DCPopupPanel _morePopup;
 	
-	public DeleteJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
+	public DeleteJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
 		_tenant = tenant;
-		job = jobIdentifier; 
+		_job = jobIdentifier; 
+		_morePopup = morePopup;
 	}
 	
 	@Override
 	public void execute() {
-		 boolean delete = Window.confirm("Are you sure you want to delete the job '" + job.getName()
+		 _morePopup.hide();
+		 boolean delete = Window.confirm("Are you sure you want to delete the job '" + _job.getName()
                  + "' and related schedule, results and timelines.");
          if (delete) {
-             final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".delete");
+             final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".delete");
              final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
              requestBuilder.setHeader("Content-Type", "application/json");
              requestBuilder.send("", new DCRequestCallback() {

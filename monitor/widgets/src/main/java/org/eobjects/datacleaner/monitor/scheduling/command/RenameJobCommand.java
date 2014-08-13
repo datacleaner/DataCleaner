@@ -39,17 +39,20 @@ import com.google.gwt.user.client.Window;
 public class RenameJobCommand implements Command {
  
 	private TenantIdentifier _tenant;
-	private JobIdentifier job ; 
+	private JobIdentifier _job ; 
+	private DCPopupPanel _morePopup;
 	
-	public RenameJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
+	public RenameJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
 		_tenant = tenant;
-		job = jobIdentifier; 
+		_job = jobIdentifier; 
+		_morePopup = morePopup;
 	}
 	
 	@Override
 	public void execute() {
-		final String newName = Window.prompt("Enter job name", job.getName());
-        if (newName == null || newName.trim().length() == 0 || newName.equals(job.getName())) {
+		_morePopup.hide();
+		final String newName = Window.prompt("Enter job name", _job.getName());
+        if (newName == null || newName.trim().length() == 0 || newName.equals(_job.getName())) {
             return;
         }
 
@@ -58,7 +61,7 @@ public class RenameJobCommand implements Command {
         popup.center();
         popup.show();
 
-        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".modify");
+        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".modify");
 
         final JSONObject payload = new JSONObject();
         payload.put("name", new JSONString(newName));

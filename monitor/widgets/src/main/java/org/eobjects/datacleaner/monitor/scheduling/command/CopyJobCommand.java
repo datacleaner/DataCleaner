@@ -38,18 +38,21 @@ import com.google.gwt.user.client.Window;
 public class CopyJobCommand implements Command {
  
 	private TenantIdentifier _tenant;
-	private JobIdentifier job ; 
+	private JobIdentifier _job ; 
+	private DCPopupPanel _morePopup;
 	
-	public CopyJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier) {
+	public CopyJobCommand(TenantIdentifier tenant,JobIdentifier jobIdentifier, DCPopupPanel morePopup) {
 		_tenant = tenant;
-		job = jobIdentifier; 
+		_job = jobIdentifier; 
+		_morePopup = morePopup;
 	}
 	
 	@Override
 	public void execute() {
-		final String newJobName = Window.prompt("Enter new job name", job.getName() + " (Copy)");
+		_morePopup.hide();
+		final String newJobName = Window.prompt("Enter new job name", _job.getName() + " (Copy)");
 
-        if (newJobName == null || newJobName.trim().length() == 0 || newJobName.equals(job.getName())) {
+        if (newJobName == null || newJobName.trim().length() == 0 || newJobName.equals(_job.getName())) {
             return;
         }
 
@@ -58,7 +61,7 @@ public class CopyJobCommand implements Command {
         popup.center();
         popup.show();
 
-        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".copy");
+        final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".copy");
 
         final JSONObject payload = new JSONObject();
         payload.put("name", new JSONString(newJobName));

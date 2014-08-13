@@ -25,20 +25,20 @@
 
 	<g:HTMLPanel styleName="SchedulePanel">
 
-		<div class="EmptyColumn"></div>
-
+		<div class="jobColumnContainer">
+		    
 		<div class="JobColumn">
 			<g:Label ui:field="jobLabel" />
 		</div>
 
 		<div class="ScheduleColumn">
-			<g:Anchor ui:field="scheduleAnchor" styleName="ScheduleAnchor" />
+			Schedule : <g:Anchor ui:field="scheduleAnchor" styleName="ScheduleAnchor" />
 		</div>
-
 		<div class="AlertsColumn">
 			<g:FlowPanel ui:field="alertsPanel" />
 		</div>
-
+		</div>
+		
 		<div class="ActionsColumn">
 			<g:Button text="Execute" title="Trigger this job to execute on the server now"
 				ui:field="executeButton" styleName="gwt-Button gwt-Button-ImageTextButton ExecuteButton" />

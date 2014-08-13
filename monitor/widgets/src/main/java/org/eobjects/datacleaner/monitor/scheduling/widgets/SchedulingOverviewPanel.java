@@ -109,7 +109,6 @@ public class SchedulingOverviewPanel extends Composite {
         final FlowPanel panel = new FlowPanel();
         panel.addStyleName("ColumnHeaders");
 
-        panel.add(createLabel("", "EmptyColumn"));
         panel.add(createLabel("Job name", "JobColumn"));
         panel.add(createLabel("Actions", "ActionsColumn"));
 

@@ -29,20 +29,20 @@ import com.google.gwt.user.client.Window;
 
 public class ViewJobDefinitionCommand implements Command {
  
-	private TenantIdentifier tenant;
-	private JobIdentifier job ;
-	private DCPopupPanel popup;
+	private TenantIdentifier _tenant;
+	private JobIdentifier _job ;
+	private DCPopupPanel _popup;
 	
 	public ViewJobDefinitionCommand(TenantIdentifier tenantIdentifier,JobIdentifier jobIdentifier,DCPopupPanel popupPanel) {
-		tenant = tenantIdentifier;
-		job = jobIdentifier;
-		popup = popupPanel;
+		_tenant = tenantIdentifier;
+		_job = jobIdentifier;
+		_popup = popupPanel;
 	}
 	
 	@Override
 	public void execute() {
-            String url = Urls.createRepositoryUrl(tenant, "jobs/" + job.getName() + ".analysis.xml");
+            String url = Urls.createRepositoryUrl(_tenant, "jobs/" + _job.getName() + ".analysis.xml");
             Window.open(url, "datacleaner_job_details", null);
-            popup.hide();
+            _popup.hide();
     }
 }

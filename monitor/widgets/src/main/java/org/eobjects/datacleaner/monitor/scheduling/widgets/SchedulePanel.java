@@ -177,8 +177,6 @@ public class SchedulePanel extends Composite {
         	scheduleAnchor.setText(_schedule.getDateForOneTimeSchedule());
         	scheduleAnchor.removeStyleName("discrete");
         }
-
-        scheduleAnchor.setStyleName("TriggerAnchor-" + triggerType);
     }
 
 }

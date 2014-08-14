@@ -75,12 +75,6 @@
 /* a "row" representing a datastore header */
 .SchedulingOverviewPanel .ScheduleGroupPanel .HeadingLabel {
 	clear: both;
-	/*
-	background-image: url("datastore.png");
-	background-position: 4px center;
-	background-repeat: no-repeat;
-	padding-left: 30px;
-	*/
 	padding-left: 4px;
 	background-color: #D1D1D1;
 	color: #333;
@@ -97,20 +91,10 @@
 
 .SchedulePanel {
 	font-size: 0.9em;
-	/*background-image: url("job.png");*/
 	background-repeat: no-repeat;
 	background-position: 4px center;
 	min-height: 30px;
 }
-/*
-.SchedulePanel.CustomJob {
-	background-image: url("custom-job.png");
-}
-
-.SchedulePanel.PentahoJob {
-	background-image: url("pentaho-job.png");
-}
-*/
 
 .SchedulePanel .ScheduleColumn {
 	overflow: hidden;

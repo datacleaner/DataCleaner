@@ -198,4 +198,10 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
         metrics.setJob(new JobIdentifier(getName()));
         return metrics;
     }
+    
+    @Override
+	public AnalysisJobMetadata getMetadataProperties() {
+		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
+		return jobMetadata ;
+	}
 }

@@ -32,6 +32,7 @@ import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.Descriptors;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.BeanConfiguration;
 import org.eobjects.analyzer.job.ComponentConfigurationException;
 import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
@@ -211,4 +212,9 @@ public class CustomJobContext implements XmlJobContext {
         return _engine;
     }
 
+	@Override
+	public AnalysisJobMetadata getMetadataProperties() {
+		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
+		return jobMetadata ;
+	}
 }

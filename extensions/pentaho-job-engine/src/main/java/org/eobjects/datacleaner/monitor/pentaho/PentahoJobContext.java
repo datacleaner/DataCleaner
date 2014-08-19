@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
@@ -128,4 +129,10 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
         metrics.setJob(new JobIdentifier(getName()));
         return metrics;
     }
+
+	@Override
+	public AnalysisJobMetadata getMetadataProperties() {
+		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
+		return jobMetadata ;
+	}
 }

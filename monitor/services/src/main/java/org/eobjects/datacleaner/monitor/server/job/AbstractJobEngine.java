@@ -19,8 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
+import java.io.InputStream;
 import java.util.List;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
+import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
@@ -94,4 +98,20 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
         }
         return true;
     }
+    
+    @Override
+    public AnalysisJobMetadata getJobMetadataFromJobFile(final TenantContext context, final RepositoryFile file) {
+		final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+		
+		final AnalysisJobMetadata analysisJobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+		    @Override
+		    public AnalysisJobMetadata eval(InputStream in) {
+		        final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+		        AnalysisJobMetadata metadata = jobReader.readMetadata(in);
+		        return metadata;
+		    }
+		});
+		
+		return analysisJobMetadata;
+	}
 }

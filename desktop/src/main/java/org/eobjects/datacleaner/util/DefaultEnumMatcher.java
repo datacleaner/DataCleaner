@@ -103,9 +103,18 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
         if (Strings.isNullOrEmpty(normalizedString)) {
             return null;
         }
+        
         final E exactMatchResult = _exactMatchesMap.get(normalizedString);
         if (exactMatchResult != null) {
             return exactMatchResult;
+        }
+        
+        final Collection<String> secondaryMatchStrings = findSecondaryMatchStrings(string);
+        for (String secondaryMatchString : secondaryMatchStrings) {
+            final E secondaryMatch = _exactMatchesMap.get(secondaryMatchString);
+            if (secondaryMatch != null) {
+                return secondaryMatch;
+            }
         }
 
         return null;

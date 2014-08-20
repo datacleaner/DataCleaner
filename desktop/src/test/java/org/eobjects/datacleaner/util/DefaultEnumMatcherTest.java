@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.util;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.util.HasAliases;
 import org.apache.metamodel.util.HasName;
+import org.eobjects.analyzer.util.HasAliases;
 
 public class DefaultEnumMatcherTest extends TestCase {
 
@@ -40,7 +40,7 @@ public class DefaultEnumMatcherTest extends TestCase {
                 return new String[] { "brrr", "barbara" };
             }
             if (this == FOO) {
-                return new String[] { "fu", "fee2", "ber2", "ber3" };
+                return new String[] { "fu", "fee2", "ber2", "ber3", "data cleaner" };
             }
             return null;
         }
@@ -71,6 +71,11 @@ public class DefaultEnumMatcherTest extends TestCase {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("ber"));
         assertEquals(TestEnum.FOO, matcher.suggestMatch("ber3"));
         assertEquals(null, matcher.suggestMatch("bor"));
+    }
+    
+    public void testSuggestBasedOnSecondaryMatch() throws Exception {
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("cleaner"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("data"));
     }
 
     public void testDontSuggest() throws Exception {

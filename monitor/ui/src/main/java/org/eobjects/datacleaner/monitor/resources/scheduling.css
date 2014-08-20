@@ -34,6 +34,10 @@
 	width: 1%;
 }
 
+.SchedulingOverviewPanel .ColumnHeaders .JobColumn {
+	padding-left: 4px;
+}
+
 .SchedulingOverviewPanel .JobColumn {
 	min-height: 1em;
 	float: left;
@@ -126,6 +130,11 @@
     color: #fff;
 	padding: 5px 20px;
 	font-weight:bold;
+}
+
+.ExecuteButton:hover {
+	background-color:#ff9600;
+	border-color: #eea236;
 }
 
 .LaunchButton {

@@ -74,6 +74,14 @@
 
 .DashboardGroupPanel .NewDashboardWidgetButton {
 	background-image: url("new.png");
+	background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;
+}
+
+.DashboardGroupPanel .NewDashboardWidgetButton:hover {
+	background-color:#ff9600;
+	border-color: #eea236;
 }
 
 .DashboardGroupPanel .welcomeTextPanel {
@@ -81,6 +89,7 @@
 }
 
 .DashboardGroupPanel .toggleWelcomeTextButton {
+	vertical-align: middle;
 	cursor: pointer;
 	width: 30px;
 	height: 20px;

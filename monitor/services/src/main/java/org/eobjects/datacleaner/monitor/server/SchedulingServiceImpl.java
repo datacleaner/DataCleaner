@@ -37,7 +37,6 @@ import javax.annotation.PreDestroy;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
@@ -63,7 +62,6 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFile.Type;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.quartz.CronExpression;
@@ -262,14 +260,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (jobContext == null) {
             throw new IllegalArgumentException("No such job: " + jobName);
         }
-        
-        Map<String, String> jobMetadataProperties = null;
-        
-        if(jobContext.getJobFile().getType() == Type.ANALYSIS_JOB){
-	        final AnalysisJobMetadata analysisJobMetadata = jobContext.getMetadataProperties();
-	        jobMetadataProperties = analysisJobMetadata.getProperties();
-        }
-        
+
+        final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
+
         final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();
@@ -289,7 +282,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 }
             });
         }
-        
+
         schedule.setJobMetadataProperties(jobMetadataProperties);
 
         return schedule;
@@ -367,11 +360,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
                         final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
                                 .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
-                        logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName, cronExpression);
+                        logger.info("Adding trigger to scheduler for One time schedule: {} | {}", jobName,
+                                cronExpression);
                         _scheduler.scheduleJob(jobDetail, trigger);
                     }
-                }
-                else {
+                } else {
                     // event based trigger (via a job listener)
                     _scheduler.addJob(jobDetail, true);
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
@@ -396,12 +389,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             dateInfoExtractor.setTime(oneTimeSchedule);
             int month = dateInfoExtractor.get(Calendar.MONTH) + 1;
             StringBuilder cronStringBuilder = new StringBuilder();
-            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND)).append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ").append(
-                    dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ").append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ").append(
-                    dateInfoExtractor.get(Calendar.YEAR)).toString();
+            String cronBuilder = cronStringBuilder.append(" ").append(dateInfoExtractor.get(Calendar.SECOND))
+                    .append(" ").append(dateInfoExtractor.get(Calendar.MINUTE)).append(" ")
+                    .append(dateInfoExtractor.get(Calendar.HOUR_OF_DAY)).append(" ")
+                    .append(dateInfoExtractor.get(Calendar.DAY_OF_MONTH)).append(" ").append(month).append(" ? ")
+                    .append(dateInfoExtractor.get(Calendar.YEAR)).toString();
             cronExpression = new CronExpression(cronBuilder);
         } catch (ParseException e) {
-            throw new IllegalStateException("Failed to parse cron expression for one time schedule: " + scheduleExpression, e);
+            throw new IllegalStateException("Failed to parse cron expression for one time schedule: "
+                    + scheduleExpression, e);
         }
 
         if (logger.isInfoEnabled()) {

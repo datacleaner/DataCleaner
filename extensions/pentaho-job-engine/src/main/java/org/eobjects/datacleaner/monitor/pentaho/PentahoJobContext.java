@@ -27,9 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
@@ -39,9 +41,6 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 
 /**
  * Job context object for Pentaho jobs
@@ -130,9 +129,8 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
         return metrics;
     }
 
-	@Override
-	public AnalysisJobMetadata getMetadataProperties() {
-		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
-		return jobMetadata ;
-	}
+    @Override
+    public Map<String, String> getMetadataProperties() {
+        return Collections.emptyMap();
+    }
 }

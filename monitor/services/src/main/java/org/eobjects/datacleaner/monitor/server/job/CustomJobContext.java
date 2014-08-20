@@ -21,18 +21,21 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.eobjects.analyzer.beans.api.Converter;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.BeanConfiguration;
 import org.eobjects.analyzer.job.ComponentConfigurationException;
 import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
@@ -46,9 +49,6 @@ import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbCustomJavaComponentJobAdaptor;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,9 +212,8 @@ public class CustomJobContext implements XmlJobContext {
         return _engine;
     }
 
-	@Override
-	public AnalysisJobMetadata getMetadataProperties() {
-		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
-		return jobMetadata ;
-	}
+    @Override
+    public Map<String, String> getMetadataProperties() {
+        return Collections.emptyMap();
+    }
 }

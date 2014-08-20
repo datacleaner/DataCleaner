@@ -21,11 +21,10 @@ package org.eobjects.datacleaner.monitor.job;
 
 import java.util.Map;
 
+import org.apache.metamodel.util.HasName;
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.util.HasName;
 
 /**
  * Defines a context around an {@link AnalysisJob}.
@@ -78,10 +77,11 @@ public interface JobContext extends HasName {
      * @return
      */
     public Map<String, String> getVariables();
-    
+
     /**
-     * Gets the metadata properties of the job
+     * Gets any metadata properties that the job may hold.
+     * 
      * @return
      */
-    public AnalysisJobMetadata getMetadataProperties() ;
+    public Map<String, String> getMetadataProperties();
 }

@@ -22,11 +22,9 @@ package org.eobjects.datacleaner.monitor.job;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
 
 /**
  * A component responsible for discovery and execution of jobs of a particular
@@ -100,12 +98,4 @@ public interface JobEngine<T extends JobContext> {
      * @return
      */
     public boolean containsJob(TenantContext tenantContext, String jobName);
-
-    /**
-     * Gets the job metadata from a job file
-     * @param context
-     * @param file
-     * @return
-     */
-	public AnalysisJobMetadata getJobMetadataFromJobFile(TenantContext context, RepositoryFile file);
 }

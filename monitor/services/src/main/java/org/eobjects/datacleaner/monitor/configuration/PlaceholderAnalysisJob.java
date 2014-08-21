@@ -32,6 +32,7 @@ import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.BeanConfiguration;
 import org.eobjects.analyzer.job.FilterJob;
@@ -96,6 +97,11 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
 
         final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, beanConfiguration, null);
         return Arrays.asList(analyzerJob);
+    }
+
+    @Override
+    public AnalysisJobMetadata getMetadata() {
+        return _delegateJob.getMetadata();
     }
 
 }

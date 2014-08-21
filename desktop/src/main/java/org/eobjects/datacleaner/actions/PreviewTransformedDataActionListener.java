@@ -177,9 +177,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new JaxbJobWriter(_configuration).write(analysisJob, baos);
-        AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(baos
-                .toByteArray()));
+        final JaxbJobWriter writer = new JaxbJobWriter(_configuration);
+        writer.write(analysisJob, baos);
+
+        final AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(
+                baos.toByteArray()));
         return ajb;
     }
 }

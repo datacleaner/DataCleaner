@@ -21,9 +21,13 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
@@ -37,9 +41,6 @@ import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 
 /**
  * The {@link JobContext} implementation for DataCleaner analysis jobs. This
@@ -198,10 +199,25 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
         metrics.setJob(new JobIdentifier(getName()));
         return metrics;
     }
-    
+
     @Override
-	public AnalysisJobMetadata getMetadataProperties() {
-		AnalysisJobMetadata jobMetadata = _engine.getJobMetadataFromJobFile(_tenantContext, _file) ;
-		return jobMetadata ;
-	}
+    public Map<String, String> getMetadataProperties() {
+        final RepositoryFile file = getJobFile();
+
+        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
+        final AnalysisJobMetadata jobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+            @Override
+            public AnalysisJobMetadata eval(InputStream in) {
+                final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+                AnalysisJobMetadata metadata = jobReader.readMetadata(in);
+                return metadata;
+            }
+        });
+        
+        if (jobMetadata == null) {
+            return Collections.emptyMap();
+        }
+
+        return jobMetadata.getProperties();
+    }
 }

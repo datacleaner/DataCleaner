@@ -58,7 +58,7 @@ optgroup {
 	font-weight: normal;
 	font-style: normal;
 	color: #5594DD;
-	background-color: #f0f0f0;
+	background-color: #f2f2f2;
 }
 
 option {
@@ -576,9 +576,8 @@ div.loader {
 .datastoreList .datastore .description {
 	margin-left: 30px;
 	color: #333;
-	background-color: #f4f4d3;
+	background-color: #D1D1D1;
 	padding: 4px;
-	border: 1px solid #a0a0a0;
 	border-bottom: none;
 }
 
@@ -586,8 +585,7 @@ div.loader {
 	margin-left: 30px;
 	color: #333;
 	padding: 4px;
-	border: 1px solid #a0a0a0;
-	border-top: none;
+	background-color: #f2f2f2;
 }
 
 .datastoreList .datastore .details .label {
@@ -645,15 +643,14 @@ button.LaunchButton {
  */
 .uploadConfigurationPanel {
 	background-color: #f4f4d3;
-	border: 1px solid #a0a0a0;
 	float: right;
 	clear: right;
 	margin-top: 4px;
 	background-image: url("images/repository_file.png");
 	background-repeat: no-repeat;
 	padding: 10px;
-	padding-left: 30px;
-	background-position: 2px 22px;
+	padding-left: 36px;
+	background-position: 8px 22px;
 }
 
 .uploadConfigurationPanel p { 
@@ -756,7 +753,6 @@ button.QueryButton {
 	padding: 5px;
 }
 
-
 button.orangeButton, input.orangeButton {
 	color: #fff;
 	background-color:#f0ad4e;
@@ -767,10 +763,9 @@ button.orangeButton, input.orangeButton {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	background-image: none;
 	border: 1px solid transparent;
 	white-space: nowrap;
-	padding: 6px 12px;
+	padding: 6px;
 	font-size: 14px;
 	line-height: 1.42857143;
 	border-radius: 4px;
@@ -781,7 +776,8 @@ button.orangeButton, input.orangeButton {
 	user-select: none;
 }
 
-button.orangeButton.gwt-Button-ImageButton, input.orangeButton.gwt-Button-ImageButton {
+button.orangeButton.gwt-Button-ImageTextButton, input.orangeButton.gwt-Button-ImageTextButton {
+	padding-left: 32px;
 	height: 30px !important;
 }
 

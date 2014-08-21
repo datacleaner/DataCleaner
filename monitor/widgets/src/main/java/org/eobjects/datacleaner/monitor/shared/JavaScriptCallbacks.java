@@ -34,6 +34,25 @@ import org.eobjects.datacleaner.monitor.wizard.WizardPanelFactory;
 import com.google.gwt.core.client.GWT;
 
 public final class JavaScriptCallbacks {
+	
+	/**
+	 * This method (if present on the host page), should return the name of the property 
+	 * which should be used to group the jobs on the scheduling page. All those jobs
+	 * which have this name as a key in their <property> tag (in the <job-metadata> tag present
+	 * in the job metadata), will be shown grouped by the corresponding value present in 
+	 * this <property> tag.
+	 * 
+	 * @return
+	 */
+    public static native String getJobGroupingCategory() /*-{
+                                                          if ($wnd.datacleaner && $wnd.datacleaner.getJobGroupingCategory) {
+                                                              var v = $wnd.datacleaner.getJobGroupingCategory();
+                                                              if ((typeof v) == 'string') {
+                                                                  return v;
+                                                              }
+                                                          }
+                                                          return null;
+                                                          }-*/;
 
     /**
      * Called when the user navigates in a wizard to the next step.
@@ -109,11 +128,11 @@ public final class JavaScriptCallbacks {
     public static native boolean onWizardCancelled(String wizardDisplayName) /*-{
                                                                              
                                                                              if ($wnd.datacleaner && $wnd.datacleaner.onWizardCancelled) {
-                                                                                 var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
-                                                                                 if ((typeof v) == 'boolean') {
-                                                                                     return v;
-                                                                                 }
-                                                                                 return true;
+                                                    						 	var v = $wnd.datacleaner.onWizardCancelled(wizardDisplayName);
+                                                                                if ((typeof v) == 'boolean') {
+                                                                                	return v;
+                                                                                }
+                                                                                return true;
                                                                              }
                                                                              return false;
                                                                              }-*/;

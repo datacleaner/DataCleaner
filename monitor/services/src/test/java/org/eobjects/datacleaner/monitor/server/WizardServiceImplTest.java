@@ -134,7 +134,7 @@ public class WizardServiceImplTest extends TestCase {
         // submit second page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
         assertEquals(2, wizardPage.getPageIndex().intValue());
-        
+
         // go back and forth
         wizardPage = service.previousPage(tenant, wizardSession);
         assertEquals(1, wizardPage.getPageIndex().intValue());
@@ -149,20 +149,19 @@ public class WizardServiceImplTest extends TestCase {
         assertTrue(wizardPage.isFinished());
 
         // find the job and do assertions on it.
-
-        final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant)
-                .getJob(jobName);
-        assertNotNull(job);
-        assertEquals("orderdb", job.getSourceDatastoreName());
-        assertEquals("[PUBLIC.CUSTOMERS.CUSTOMERNUMBER, PUBLIC.CUSTOMERS.CUSTOMERNAME]", job.getSourceColumnPaths()
-                .toString());
-
-        File jobFile = new File("src/test/resources/example_repo/" + tenant.getId() + "/jobs/" + jobName
+        final File jobFile = new File("src/test/resources/example_repo/" + tenant.getId() + "/jobs/" + jobName
                 + FileFilters.ANALYSIS_XML.getExtension());
+        try {
+            final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant)
+                    .getJob(jobName);
+            assertNotNull(job);
+            assertEquals("orderdb", job.getSourceDatastoreName());
+            assertEquals("[CUSTOMERS.CUSTOMERNUMBER, CUSTOMERS.CUSTOMERNAME]", job.getSourceColumnPaths().toString());
 
-        assertTrue(jobFile.exists());
-
-        // clean up
-        jobFile.delete();
+            assertTrue(jobFile.exists());
+        } finally {
+            // clean up
+            jobFile.delete();
+        }
     }
 }

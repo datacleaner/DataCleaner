@@ -124,13 +124,19 @@ public class SchedulingServiceImplTest extends TestCase {
         };
 
         try {
-            assertEquals("[tenant1, tenant2]", scheduler.getTriggerGroupNames().toString());
+            final List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
+            Collections.sort(triggerGroupNames);
+
+            assertEquals("[tenant1, tenant2]", triggerGroupNames.toString());
             assertEquals("[tenant1.random_number_generation]",
                     scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant1")).toString());
             assertEquals("[tenant2.another_random_job]",
                     scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant2")).toString());
 
-            assertEquals("[tenant1, tenant2]", scheduler.getJobGroupNames().toString());
+            final List<String> jobGroupNames = scheduler.getJobGroupNames();
+            Collections.sort(jobGroupNames);
+            
+            assertEquals("[tenant1, tenant2]", jobGroupNames.toString());
             assertEquals("[tenant1.random_number_generation]",
                     scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant1")).toString());
             assertEquals("[tenant2.another_random_job]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2"))

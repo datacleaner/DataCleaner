@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -261,7 +262,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalArgumentException("No such job: " + jobName);
         }
 
-        final Map<String, String> jobMetadataProperties = jobContext.getMetadataProperties();
+        final Map<String, String> immutableJobMetadataProperties = jobContext.getMetadataProperties();
+        //Convert Immutable map to mutable map as it will be transferred to a GWT object on the front end .
+        final Map<String, String> jobMetadataProperties = new HashMap<String,String>(immutableJobMetadataProperties); 
 
         final String groupName = jobContext.getGroupName();
 

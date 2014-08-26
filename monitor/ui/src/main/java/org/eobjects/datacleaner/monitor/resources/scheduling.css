@@ -56,9 +56,14 @@
 }
 
 .SchedulingOverviewPanel .AlertsColumn {
-	min-height: 1em;
-	width: 100%;
-	float: left;
+	border-left: 1px solid #ddd;
+    margin-left: 10px;
+    min-height: 1em;
+    padding-left: 10px;
+}
+
+.SchedulingOverviewPanel .AlertsColumn div {
+	display:inline;
 }
 
 .SchedulingOverviewPanel .ActionsColumn {
@@ -304,4 +309,25 @@
 }
 .ScheduleGroupPanel .ActionsColumn{
 	margin-top:5px;
+}
+.pull-left {
+	float:left;
+}
+
+#SchedulingPage .showFormButton, #uploadJobs input[type="submit"]{
+	height: 30px!important;
+	padding: 4px 6px;
+	font-size: 14px;
+	margin-left: 4px;
+}
+
+#SchedulingPage #uploadJobs{
+	margin:0 0 10px 4px;
+}
+
+#uploadJobs input[type="file"] {
+	padding: 4px 0 4px 4px;
+	margin: 0;
+	height: 20px;
+	border:1px #ddd solid;
 }

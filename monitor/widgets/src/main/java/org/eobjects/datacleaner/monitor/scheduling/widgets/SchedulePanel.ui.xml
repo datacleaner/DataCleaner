@@ -33,10 +33,11 @@
 
 		<div class="ScheduleColumn">
 			Schedule : <g:Anchor ui:field="scheduleAnchor" styleName="ScheduleAnchor" />
-		</div>
-		<div class="AlertsColumn">
+		<span class="AlertsColumn">
 			<g:FlowPanel ui:field="alertsPanel" />
+		</span>	
 		</div>
+		
 		</div>
 		
 		<div class="ActionsColumn">

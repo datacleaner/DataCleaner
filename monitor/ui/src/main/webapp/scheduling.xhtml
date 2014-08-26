@@ -46,10 +46,10 @@
 		<div id="SchedulingPage">
 			<c:if test="#{user.scheduleEditor}">
 				<div>
-					<button class="gwt-Button-ImageTextButton NewJobButton orangeButton" onclick="datacleaner.startJobWizard();">Build job</button>
+					<button class="gwt-Button-ImageTextButton NewJobButton orangeButton pull-left" onclick="datacleaner.startJobWizard();">Build job</button>
 				</div>
 				<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
-				    enctype="multipart/form-data">
+				    enctype="multipart/form-data" class="pull-left" id="uploadJobs">
 				    <input class="showFormButton" onclick="showUploadJobForm(this)" type="button" 
 				        value="Upload Job" alt="Upload/replace the job file contents" />
 				</form>

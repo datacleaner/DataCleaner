@@ -31,7 +31,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -44,113 +43,106 @@ import com.google.gwt.user.client.ui.Panel;
 public class SchedulingOverviewPanel extends Composite {
 
     private static final String CATEGORY = "Category";
-	private static final String OTHERS = "Others";
-	private final ClientConfig _clientConfig;
+    private static final String OTHERS = "Others";
+    private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
     private final Map<String, ScheduleGroupPanel> _scheduleGroupPanels;
-    
-    
-    
-    
+
     public SchedulingOverviewPanel(ClientConfig clientConfig, SchedulingServiceAsync service) {
         _clientConfig = clientConfig;
         _service = service;
         _scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
-        
-        
-        
     }
 
     public void initialize(final Runnable listener) {
         _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
-            	
-            	Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
-            	String jobGroupingCategory = "Group";
-            	
-            	if(categoryAndGroupMapForJobs.size()==1){
-            		FlowPanel panel = new FlowPanel();
-            		panel.add(createHeaderPanel());
-            		panel.addStyleName("SchedulingOverviewPanel");
-            		for (ScheduleDefinition scheduleDefinition : result) {
-            			addSchedule(scheduleDefinition, jobGroupingCategory,panel);
-            		}
-            		initWidget(panel);
-            	}else{
-            		DecoratedTabPanel tabPanel = new DecoratedTabPanel();
-            		tabPanel.setWidth("100%");
-            		Set<String> jobCategories = categoryAndGroupMapForJobs.keySet();
-            		for (String jobCategory : jobCategories) {
-            			FlowPanel panel = new FlowPanel();
-                		panel.add(createHeaderPanel());
-                		panel.addStyleName("SchedulingOverviewPanel");
-                		tabPanel.add(panel,jobCategory);
-                		for (ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs.get(jobCategory)) {
-                			addSchedule(scheduleDefinition, jobGroupingCategory,panel);
-                		}
-            		}
-            		tabPanel.selectTab(0);
-            	    tabPanel.ensureDebugId("cwTabPanel");
-            		initWidget(tabPanel);
-            	}
+
+                Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
+                String jobGroupingCategory = "Group";
+
+                if (categoryAndGroupMapForJobs.size() == 1) {
+                    FlowPanel panel = new FlowPanel();
+                    panel.add(createHeaderPanel());
+                    panel.addStyleName("SchedulingOverviewPanel");
+                    for (ScheduleDefinition scheduleDefinition : result) {
+                        addSchedule(scheduleDefinition, jobGroupingCategory, panel);
+                    }
+                    initWidget(panel);
+                } else {
+                    DecoratedTabPanel tabPanel = new DecoratedTabPanel();
+                    tabPanel.setWidth("100%");
+                    Set<String> jobCategories = categoryAndGroupMapForJobs.keySet();
+                    for (String jobCategory : jobCategories) {
+                        FlowPanel panel = new FlowPanel();
+                        panel.add(createHeaderPanel());
+                        panel.addStyleName("SchedulingOverviewPanel");
+                        tabPanel.add(panel, jobCategory);
+                        for (ScheduleDefinition scheduleDefinition : categoryAndGroupMapForJobs.get(jobCategory)) {
+                            addSchedule(scheduleDefinition, jobGroupingCategory, panel);
+                        }
+                    }
+                    tabPanel.selectTab(0);
+                    tabPanel.ensureDebugId("cwTabPanel");
+                    initWidget(tabPanel);
+                }
                 listener.run();
             }
 
-			private Map<String,List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
-					List<ScheduleDefinition> result) {
-				Map<String,List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<String, List<ScheduleDefinition>>();
-				for (ScheduleDefinition scheduleDefinition : result) {
-					Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
-					String categoryName;
-					if(jobMetadataProperties == null){
-						categoryName = OTHERS;
-					}else{
-						categoryName = jobMetadataProperties.get(CATEGORY);
-					}
-					
-					List<ScheduleDefinition> listOfJobWithSameCategory;
-					if(categoryName == null || categoryName.isEmpty() ){
-						categoryName = OTHERS;
-					}
-						listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
-					
-						if(listOfJobWithSameCategory == null){
-							listOfJobWithSameCategory = new ArrayList<ScheduleDefinition>();
-							
-							categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
-						}
-						listOfJobWithSameCategory.add(scheduleDefinition);
-					
-				}
-				return categoryAndGroupMap;
-				
-			}
+            private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
+                    List<ScheduleDefinition> result) {
+                Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<String, List<ScheduleDefinition>>();
+                for (ScheduleDefinition scheduleDefinition : result) {
+                    Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
+                    String categoryName;
+                    if (jobMetadataProperties == null) {
+                        categoryName = OTHERS;
+                    } else {
+                        categoryName = jobMetadataProperties.get(CATEGORY);
+                    }
+
+                    List<ScheduleDefinition> listOfJobWithSameCategory;
+                    if (categoryName == null || categoryName.isEmpty()) {
+                        categoryName = OTHERS;
+                    }
+                    listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
+
+                    if (listOfJobWithSameCategory == null) {
+                        listOfJobWithSameCategory = new ArrayList<ScheduleDefinition>();
+
+                        categoryAndGroupMap.put(categoryName, listOfJobWithSameCategory);
+                    }
+                    listOfJobWithSameCategory.add(scheduleDefinition);
+
+                }
+                return categoryAndGroupMap;
+
+            }
 
         });
     }
 
     public void addSchedule(ScheduleDefinition schedule, String jobGroupingCategory, FlowPanel panel) {
-    	String groupName = null;
-    	
-    	if(jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0){
-    		groupName = schedule.getGroupName();
-    	} else {
-    		Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
-    		
-    		if(jobMetadataProperties != null){
-    			groupName = jobMetadataProperties.get(jobGroupingCategory);
-    		}
-    		if (groupName == null || groupName.trim().length() == 0) {
-    			groupName = schedule.getGroupName();
-    		}
-		}
-    	
+        String groupName = null;
+
+        if (jobGroupingCategory == null || jobGroupingCategory.trim().length() == 0) {
+            groupName = schedule.getGroupName();
+        } else {
+            Map<String, String> jobMetadataProperties = schedule.getJobMetadataProperties();
+
+            if (jobMetadataProperties != null) {
+                groupName = jobMetadataProperties.get(jobGroupingCategory);
+            }
+            if (groupName == null || groupName.trim().length() == 0) {
+                groupName = schedule.getGroupName();
+            }
+        }
+
         if (groupName == null || groupName.trim().length() == 0) {
             groupName = "(other)";
         }
-        
-        
+
         final ScheduleGroupPanel scheduleGroupPanel;
         if (_scheduleGroupPanels.containsKey(groupName)) {
             scheduleGroupPanel = _scheduleGroupPanels.get(groupName);

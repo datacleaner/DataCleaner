@@ -20,6 +20,23 @@
 						});
 					}
 				}
+				
+				function confirmUpload(file, fileType) {
+					if(file.value) {
+			    	    if (confirm('Are you sure you wish to upload the ' + fileType + ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
+			    		    return true;
+			    	    }
+			    	    return false;
+					} else {
+						alert('Please choose a ' + fileType + ' file to upload.') ;
+					    return false ;
+					}
+			    }
+			           
+				function showUploadJobForm(button) {
+					var form = button.form;
+					form.innerHTML = '<div style="clear:left"></div><input type="file" name="file" /> <input type="submit" value="Upload" onclick="return confirmUpload(file,\'job\')" />';
+				}
 				//]]>
 			</script>
 		</c:if>
@@ -29,8 +46,13 @@
 		<div id="SchedulingPage">
 			<c:if test="#{user.scheduleEditor}">
 				<div>
-					<button class="gwt-Button-ImageTextButton NewJobButton orangeButton" onclick="datacleaner.startJobWizard();">Build job</button>
+					<button class="gwt-Button-ImageTextButton NewJobButton orangeButton pull-left" onclick="datacleaner.startJobWizard();">Build job</button>
 				</div>
+				<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
+				    enctype="multipart/form-data" class="pull-left" id="uploadJobs">
+				    <input class="showFormButton" onclick="showUploadJobForm(this)" type="button" 
+				        value="Upload Job" alt="Upload/replace the job file contents" />
+				</form>
 				
 				<div class="spacer"></div>
 			</c:if>

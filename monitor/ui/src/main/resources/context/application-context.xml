@@ -52,8 +52,11 @@
 		file to include additional Spring config. -->
 	<import resource="classpath*:context/extension-context.xml" />
 
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver" p:order="1" />
+
 	<bean id="exceptionResolver"
-		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" 
+		p:order="2">
 		<!-- Logs uncaught exceptions to the logger category 'org.eobjects.datacleaner.monitor.ExceptionResolver' -->
 		<property name="warnLogCategory"
 			value="org.eobjects.datacleaner.monitor.ExceptionResolver" />

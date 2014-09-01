@@ -57,14 +57,19 @@ public class SchedulingOverviewPanel extends Composite {
         _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
-
+                
                 Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
                 String jobGroupingCategory = "Group";
-
-                if (categoryAndGroupMapForJobs.size() == 1) {
+                if (categoryAndGroupMapForJobs.size() == 0) {
+                    FlowPanel panel = new FlowPanel();
+                    panel.addStyleName("alert alert-info");
+                    panel.add(new Label("There are no jobs available."));
+                    initWidget(panel);
+                }else if (categoryAndGroupMapForJobs.size() == 1) {
                     FlowPanel panel = new FlowPanel();
                     panel.add(createHeaderPanel());
-                    panel.addStyleName("SchedulingOverviewPanel");
+                    panel.addStyleName("SchedulingOverviewPan"
+                            + "el");
                     Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
                     for (ScheduleDefinition scheduleDefinition : result) {
                         addSchedule(scheduleDefinition, jobGroupingCategory, panel, scheduleGroupPanels);

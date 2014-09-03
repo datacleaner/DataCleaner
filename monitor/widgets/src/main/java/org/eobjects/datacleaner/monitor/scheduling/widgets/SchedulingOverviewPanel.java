@@ -31,10 +31,10 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
@@ -61,7 +61,7 @@ public class SchedulingOverviewPanel extends Composite {
                 Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
                 String jobGroupingCategory = "Group";
                 if (categoryAndGroupMapForJobs.size() == 0) {
-                    FlowPanel panel = new FlowPanel();
+                    HorizontalPanel panel = new HorizontalPanel();
                     panel.addStyleName("alert alert-info");
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);

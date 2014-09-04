@@ -62,7 +62,6 @@ public class SchedulingOverviewPanel extends Composite {
                 String jobGroupingCategory = "Group";
                 if (categoryAndGroupMapForJobs.size() == 0) {
                     HorizontalPanel panel = new HorizontalPanel();
-                    panel.addStyleName("alert alert-info");
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);
                 }else if (categoryAndGroupMapForJobs.size() == 1) {

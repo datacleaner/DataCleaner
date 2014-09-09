@@ -543,6 +543,27 @@ div.loader {
 }
 
 /**
+ * Scheduling page
+ */
+#SchedulingPage .showFormButton, #uploadJobs input[type="submit"] {
+	height: 30px!important;
+	padding: 4px 6px;
+	font-size: 14px;
+	margin-left: 4px;
+}
+
+#SchedulingPage #uploadJobs {
+	margin:0 0 10px 4px;
+}
+
+#uploadJobs input[type="file"] {
+	padding: 4px 0 4px 4px;
+	margin: 0;
+	height: 20px;
+	border:1px #ddd solid;
+}
+
+/**
  * Datastores page
  */
 .datastoreList,.datastoreList li {

@@ -20,10 +20,10 @@
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -39,12 +40,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
 /**
- * Presents an overview of all scheduled activity in the DCmonitor.
+ * Presents an overview of all scheduled activity in DC monitor.
  */
 public class SchedulingOverviewPanel extends Composite {
 
     private static final String CATEGORY = "Category";
-    private static final String OTHERS = "Others";
+    private static final String OTHERS = "(Other)";
     private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
 
@@ -58,13 +59,17 @@ public class SchedulingOverviewPanel extends Composite {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
 
-                Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
-                String jobGroupingCategory = "Group";
-                if (categoryAndGroupMapForJobs.size() == 0) {
+                final Map<String, List<ScheduleDefinition>> categoryAndGroupMapForJobs = createCategoryAndGroupMapForJobs(result);
+                final String jobGroupingCategory = "Group";
+
+                final int categoryCount = categoryAndGroupMapForJobs.size();
+                GWT.log("Categories: " + categoryCount);
+
+                if (categoryCount == 0) {
                     HorizontalPanel panel = new HorizontalPanel();
                     panel.add(new Label("There are no jobs available."));
                     initWidget(panel);
-                } else if (categoryAndGroupMapForJobs.size() == 1) {
+                } else if (categoryCount == 1) {
                     FlowPanel panel = new FlowPanel();
                     panel.add(createHeaderPanel());
                     panel.addStyleName("SchedulingOverviewPanel");
@@ -76,7 +81,9 @@ public class SchedulingOverviewPanel extends Composite {
                 } else {
                     DecoratedTabPanel tabPanel = new DecoratedTabPanel();
                     tabPanel.setWidth("100%");
-                    Set<String> jobCategories = categoryAndGroupMapForJobs.keySet();
+                    Collection<String> jobCategories = categoryAndGroupMapForJobs.keySet();
+                    jobCategories = sortJobCategories(jobCategories);
+
                     for (String jobCategory : jobCategories) {
                         Map<String, ScheduleGroupPanel> scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
                         FlowPanel panel = new FlowPanel();
@@ -94,22 +101,40 @@ public class SchedulingOverviewPanel extends Composite {
                 listener.run();
             }
 
+            private Collection<String> sortJobCategories(Collection<String> jobCategories) {
+                List<String> result = new ArrayList<>(jobCategories);
+
+                // move OTHERS to the end
+                boolean removed = result.remove(OTHERS);
+                if (removed) {
+                    result.add(OTHERS);
+                }
+                
+                return result;
+            }
+
             private Map<String, List<ScheduleDefinition>> createCategoryAndGroupMapForJobs(
                     List<ScheduleDefinition> result) {
-                Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<String, List<ScheduleDefinition>>();
-                for (ScheduleDefinition scheduleDefinition : result) {
-                    Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
-                    String categoryName;
+                final Map<String, List<ScheduleDefinition>> categoryAndGroupMap = new TreeMap<String, List<ScheduleDefinition>>();
+
+                for (final ScheduleDefinition scheduleDefinition : result) {
+                    final Map<String, String> jobMetadataProperties = scheduleDefinition.getJobMetadataProperties();
+
+                    GWT.log("Job '" + scheduleDefinition.getJob().getName() + "' metadata: " + jobMetadataProperties);
+
+                    final String categoryName;
                     if (jobMetadataProperties == null) {
                         categoryName = OTHERS;
                     } else {
-                        categoryName = jobMetadataProperties.get(CATEGORY);
+                        String metadataValue = jobMetadataProperties.get(CATEGORY);
+                        if (metadataValue != null && !"".equals(metadataValue.trim())) {
+                            categoryName = metadataValue;
+                        } else {
+                            categoryName = OTHERS;
+                        }
                     }
 
                     List<ScheduleDefinition> listOfJobWithSameCategory;
-                    if (categoryName == null || categoryName.isEmpty()) {
-                        categoryName = OTHERS;
-                    }
                     listOfJobWithSameCategory = categoryAndGroupMap.get(categoryName);
 
                     if (listOfJobWithSameCategory == null) {

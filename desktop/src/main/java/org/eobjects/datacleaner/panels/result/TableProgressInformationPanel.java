@@ -25,12 +25,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.text.NumberFormat;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.schema.Table;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -38,7 +40,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
-import org.apache.metamodel.schema.Table;
 
 /**
  * A panel that shows progress information about the processing of a table
@@ -60,7 +61,7 @@ public class TableProgressInformationPanel extends DCPanel {
         _progressBar = new DCProgressBar(0, expectedRows);
         _progressStatusLabel = DCLabel.bright("");
         _progressCountLabel = DCLabel.bright("0");
-        _progressExpectationLabel = DCLabel.bright(" of approx. " + expectedRows + " rows");
+        _progressExpectationLabel = DCLabel.bright(" of approx. " + formatNumber(expectedRows) + " rows");
 
         _progressStatusLabel.setFont(FONT);
         _progressCountLabel.setFont(FONT);
@@ -125,7 +126,7 @@ public class TableProgressInformationPanel extends DCPanel {
         boolean result = _progressBar.setValueIfGreater(currentRow);
 
         if (result) {
-            _progressCountLabel.setText("" + currentRow);
+            _progressCountLabel.setText(formatNumber(currentRow));
         }
 
         return result;
@@ -147,10 +148,15 @@ public class TableProgressInformationPanel extends DCPanel {
     public void setProgressFinished(int finalNumberOfRows) {
         _progressStatusLabel.setText("Finished! - ");
         _progressBar.setMaximum(finalNumberOfRows);
-        _progressExpectationLabel.setText(" of  " + finalNumberOfRows + " rows");
+        _progressExpectationLabel.setText(" of  " + formatNumber(finalNumberOfRows) + " rows");
     }
 
     public void setProgressCancelled() {
         _progressStatusLabel.setText("Cancelled! - ");
+    }
+
+    private String formatNumber(int number) {
+        NumberFormat nf = NumberFormat.getInstance();
+        return nf.format(number);
     }
 }

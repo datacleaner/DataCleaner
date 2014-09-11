@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -231,8 +232,13 @@ public class ProgressInformationPanel extends DCPanel {
             log = false;
         }
         if (log) {
-            addUserLog("Progress of " + table.getName() + ": " + currentRow + " rows processed");
+            addUserLog("Progress of " + table.getName() + ": " + formatNumber(currentRow) + " rows processed");
         }
+    }
+
+    private String formatNumber(int number) {
+        NumberFormat nf = NumberFormat.getInstance();
+        return nf.format(number);
     }
 
     public void onCancelled() {

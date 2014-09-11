@@ -37,7 +37,6 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -176,9 +175,6 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
     @Inject
     DatastoreCatalog datastoreCatalog;
-
-    @Inject
-    UsageLogger usageLogger;
 
     @Override
     public AnnotatedRowResultPanel render(final AnnotatedRowsResult result) {

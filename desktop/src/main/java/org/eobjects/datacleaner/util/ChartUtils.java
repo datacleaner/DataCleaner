@@ -94,6 +94,8 @@ public final class ChartUtils {
 			piePlot.setLabelPaint(WidgetUtils.BG_COLOR_DARK);
 			piePlot.setSectionOutlinesVisible(false);
 			piePlot.setLabelLinkStyle(PieLabelLinkStyle.QUAD_CURVE);
+			piePlot.setDrawingSupplier(new DCDrawingSupplier());
+			
 		} else if (plot instanceof CategoryPlot) {
 			// tweaks for bar charts
 			final CategoryPlot categoryPlot = (CategoryPlot) plot;

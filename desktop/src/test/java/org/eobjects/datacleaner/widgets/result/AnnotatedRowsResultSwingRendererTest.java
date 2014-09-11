@@ -37,7 +37,6 @@ public class AnnotatedRowsResultSwingRendererTest extends TestCase {
 
 	public void testInitialViewState() throws Exception {
 		AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
-		renderer.usageLogger = null;
 		renderer.userPreferences = new UserPreferencesImpl(null);
 		renderer.datastoreCatalog = new DatastoreCatalogImpl();
 

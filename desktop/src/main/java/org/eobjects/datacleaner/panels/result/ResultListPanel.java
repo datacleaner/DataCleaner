@@ -145,7 +145,7 @@ public class ResultListPanel extends DCPanel {
                     panel.setLayout(new VerticalLayout(4));
 
                     final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.STATUS_ERROR);
-                    panel.add(new JLabel("An error occurred while rendering result, check the status tab", icon,
+                    panel.add(new JLabel("An error occurred while rendering result, check the 'Progress information' tab.", icon,
                             SwingConstants.LEFT));
 
                     try {

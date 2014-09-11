@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -117,7 +118,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
     private final List<DatastorePanel> _datastorePanels = new ArrayList<DatastorePanel>();
     private final DCGlassPane _glassPane;
     private final JButton _analyzeButton;
-    private final DCPanel _listPanel;
+    private final JButton _openJobButton;
+    private final JButton _moreRecentJobsButton;
+    private final DCPanel _datastoreListPanel;
+    private final DCPanel _jobsListPanel;
     private final JXTextField _searchDatastoreTextField;
     private final InjectorBuilder _injectorBuilder;
 
@@ -136,8 +140,16 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         _datastoreCatalog.addListener(this);
 
+        _openJobButton = new JButton("Open job", imageManager.getImageIcon(IconUtils.MENU_OPEN,
+                IconUtils.ICON_SIZE_SMALL));
+        _openJobButton.setMargin(new Insets(1, 1, 1, 1));
+
+        _moreRecentJobsButton = new JButton("More recent jobs", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
+                IconUtils.ICON_SIZE_SMALL));
+        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 1));
+
         // initialize "analyze" button
-        _analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+        _analyzeButton = new JButton("Build job", imageManager.getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL));
         _analyzeButton.setMargin(new Insets(1, 1, 1, 1));
         _analyzeButton.addActionListener(new ActionListener() {
             @Override
@@ -198,42 +210,65 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         setLayout(new VerticalLayout(4));
 
-        final DCLabel headerLabel = DCLabel.dark("Select datastore for analysis");
-        headerLabel.setFont(WidgetUtils.FONT_HEADER1);
-        add(headerLabel);
+        add(Box.createVerticalStrut(10));
 
-        final DCLabel createNewDatastoreLabel = DCLabel.dark("Create a new datastore:");
-        createNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel jobsHeaderLabel = DCLabel.dark("Jobs");
+        jobsHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(jobsHeaderLabel);
+
+        _jobsListPanel = new DCPanel();
+        final GridLayout jobsListLayout = new GridLayout(1, 3);
+        jobsListLayout.setHgap(10);
+        _jobsListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
+        _jobsListPanel.setLayout(jobsListLayout);
+        _jobsListPanel.add(new OpenAnalysisJobPanel());
+        _jobsListPanel.add(new OpenAnalysisJobPanel());
+        _jobsListPanel.add(new OpenAnalysisJobPanel());
+        add(_jobsListPanel);
+
+        final DCPanel jobsButtonPanel = new DCPanel();
+        jobsButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        jobsButtonPanel.add(_openJobButton);
+        jobsButtonPanel.add(_moreRecentJobsButton);
+        add(jobsButtonPanel);
+
+        add(Box.createVerticalStrut(40));
+
+        final DCLabel datastoreHeaderLabel = DCLabel.dark("Datastores");
+        datastoreHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(datastoreHeaderLabel);
+
+        final DCLabel registerNewDatastoreLabel = DCLabel.dark("Register new:");
+        registerNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         final DCPanel newDatastorePanel = new DCPanel();
         newDatastorePanel.setLayout(new VerticalLayout(4));
         newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
-        newDatastorePanel.add(createNewDatastoreLabel);
+        newDatastorePanel.add(registerNewDatastoreLabel);
         newDatastorePanel.add(createNewDatastorePanel());
 
         add(newDatastorePanel);
 
-        _listPanel = new DCPanel();
-        _listPanel.setLayout(new VerticalLayout(4));
-        _listPanel.setBorder(new EmptyBorder(10, 10, 10, 0));
-        add(_listPanel);
+        _datastoreListPanel = new DCPanel();
+        _datastoreListPanel.setLayout(new VerticalLayout(4));
+        _datastoreListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
+        add(_datastoreListPanel);
         updateDatastores();
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
-        buttonPanel.add(_analyzeButton);
-
-        add(buttonPanel);
+        final DCPanel datastoresButtonPanel = new DCPanel();
+        datastoresButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        datastoresButtonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
+        datastoresButtonPanel.add(_analyzeButton);
+        add(datastoresButtonPanel);
     }
 
     private void updateDatastores() {
         Datastore selectedDatastore = getSelectedDatastore();
-        _listPanel.removeAll();
+        _datastoreListPanel.removeAll();
         _datastorePanels.clear();
 
-        final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");
-        existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel existingDatastoresLabel = DCLabel.dark("Existing datastores:");
+        existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         final DCPanel searchDatastorePanel = DCPanel.around(_searchDatastoreTextField);
         searchDatastorePanel.setBorder(WidgetUtils.BORDER_SHADOW);
@@ -244,7 +279,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
         headerPanel.add(Box.createHorizontalStrut(20));
         headerPanel.add(searchDatastorePanel);
 
-        _listPanel.add(headerPanel);
+        _datastoreListPanel.add(headerPanel);
 
         boolean selectFirst = true;
 
@@ -254,7 +289,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
             DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
                     _analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
             _datastorePanels.add(datastorePanel);
-            _listPanel.add(datastorePanel);
+            _datastoreListPanel.add(datastorePanel);
 
             if (selectedDatastore != null && selectedDatastore.getName().equals(datastore.getName())) {
                 selectFirst = false;

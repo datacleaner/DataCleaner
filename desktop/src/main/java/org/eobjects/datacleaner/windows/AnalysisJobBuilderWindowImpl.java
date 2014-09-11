@@ -257,8 +257,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        _sourceTabOuterPanel = new DCPanel(imageManager.getImage("images/window/source-tab-background.png"), 95, 95,
-                WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _sourceTabOuterPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
         _sourceTabOuterPanel.setLayout(new VerticalLayout(0));
 
         _schemaTreePanel = schemaTreePanel;

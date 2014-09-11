@@ -73,7 +73,9 @@ public final class IconUtils {
     public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
+    public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
 
+    public static final String MENU_OPEN = "images/actions/open.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
@@ -124,6 +126,14 @@ public final class IconUtils {
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
+
+    public static final String FILE_FOLDER = "images/filetypes/folder.png";
+    public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
+    public static final String FILE_FILE = "images/filetypes/file.png";
+    public static final String FILE_DESKTOP_FOLDER = "images/filetypes/desktop-folder.png";
+    public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
+    public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
+    
 
     private static final ImageManager _imageManager = ImageManager.get();
 

@@ -37,6 +37,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.job.AnyComponentRequirement;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -50,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A button that displays the {@link Outcome} requirement of a particular
+ * A button that displays the {@link ComponentRequirement} of a particular
  * component that is being built.
  */
 public class ChangeRequirementButton extends JButton implements ActionListener {
@@ -59,23 +60,25 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
 
-    private static final String NO_FILTER_TEXT = "(No filter requirement)";
+    private static final String NO_REQUIREMENT_TEXT = "(No requirement)";
+    private static final String ANY_REQUIREMENT_TEXT = "All records";
+
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Icon mappedFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
+
+    private static final Icon selectedRequirementIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
             IconUtils.ICON_SIZE_SMALL);
     private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
+            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH,
             IconUtils.ICON_SIZE_SMALL);
 
     private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
 
     public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
-        super(NO_FILTER_TEXT, ImageManager.get().getImageIcon("images/component-types/filter.png",
-                IconUtils.ICON_SIZE_SMALL));
+        super(NO_REQUIREMENT_TEXT, filterIcon);
         _jobBuilder = jobBuilder;
         addActionListener(this);
         updateText();
-
-        logger.debug("Instantiated: {}", this);
     }
 
     @Override
@@ -88,15 +91,32 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
         final JPopupMenu popup = new JPopupMenu();
 
-        final JMenuItem noFilterMenuItem = new JMenuItem(NO_FILTER_TEXT);
+        final JMenuItem noFilterMenuItem = new JMenuItem(NO_REQUIREMENT_TEXT);
+        noFilterMenuItem
+                .setToolTipText("Do not apply any specific requirements on this component, except for those that are transitively inherited by the configuration.");
         noFilterMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                _jobBuilder.setRequirement(null);
+                _jobBuilder.setComponentRequirement(null);
                 updateText();
             }
         });
         popup.add(noFilterMenuItem);
+
+        final JMenuItem anyFilterMenuItem = new JMenuItem(ANY_REQUIREMENT_TEXT);
+        anyFilterMenuItem
+                .setToolTipText("Explicitly accept all records into this component, regardless of any other transitive requirements.");
+        anyFilterMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _jobBuilder.setComponentRequirement(AnyComponentRequirement.get());
+                updateText();
+            }
+        });
+        if (AnyComponentRequirement.get().equals(_jobBuilder.getComponentRequirement())) {
+            anyFilterMenuItem.setIcon(selectedRequirementIcon);
+        }
+        popup.add(anyFilterMenuItem);
 
         // if this JobBuilder is a FilterJobBuilder, remove it from the list of
         // available filters
@@ -126,9 +146,9 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                     try {
                         final Enum<?> outcomeCategory = fjbDescriptor.getOutcomeCategoryByName(category);
                         final FilterOutcome filterOutcome = fjb.getFilterOutcome(outcomeCategory);
-                        if ( currentFilterOutcomes.contains(filterOutcome)) {
-                            filterMenuItem.setIcon(mappedFilterIcon);
-                            categoryMenuItem.setIcon(mappedFilterIcon);
+                        if (currentFilterOutcomes.contains(filterOutcome)) {
+                            filterMenuItem.setIcon(selectedRequirementIcon);
+                            categoryMenuItem.setIcon(selectedRequirementIcon);
                         }
                     } catch (Exception ex) {
                         logger.info("Filterjob matching threw exception, probably because of incomplete configuration",
@@ -161,7 +181,9 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             public void run() {
                 final ComponentRequirement requirement = _jobBuilder.getComponentRequirement();
                 if (requirement == null) {
-                    setText(NO_FILTER_TEXT);
+                    setText(NO_REQUIREMENT_TEXT);
+                } else if (AnyComponentRequirement.get().equals(requirement)) {
+                    setText(ANY_REQUIREMENT_TEXT);
                 } else {
                     if (requirement instanceof FilterOutcome) {
                         FilterOutcome filterOutcome = (FilterOutcome) requirement;

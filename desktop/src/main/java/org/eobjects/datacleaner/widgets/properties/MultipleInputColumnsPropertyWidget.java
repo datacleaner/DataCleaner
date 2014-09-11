@@ -305,11 +305,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     @Override
     public InputColumn<?>[] getValue() {
-        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-        Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes.values();
-        for (DCCheckBox<InputColumn<?>> cb : checkBoxes) {
+        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        final Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes.values();
+        for (final DCCheckBox<InputColumn<?>> cb : checkBoxes) {
             if (cb.isSelected()) {
-                InputColumn<?> value = cb.getValue();
+                final InputColumn<?> value = cb.getValue();
                 if (value != null) {
                     result.add(value);
                 }
@@ -367,7 +367,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    protected void setValue(InputColumn<?>[] values) {
+    protected void setValue(final InputColumn<?>[] values) {
         // if checkBoxes is empty it means that the value is being set before
         // initializing the widget. This can occur in subclasses and automatic
         // creating of checkboxes should be done.
@@ -385,13 +385,19 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         }
 
         // update selections in checkboxes
-        for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-            if (ArrayUtils.contains(values, cb.getValue())) {
-                cb.setSelected(true);
-            } else {
-                cb.setSelected(false);
+        
+        batchUpdateWidget(new Runnable() {
+            @Override
+            public void run() {
+                for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+                    if (ArrayUtils.contains(values, cb.getValue())) {
+                        cb.setSelected(true);
+                    } else {
+                        cb.setSelected(false);
+                    }
+                }
             }
-        }
+        });
 
         updateUI();
     }

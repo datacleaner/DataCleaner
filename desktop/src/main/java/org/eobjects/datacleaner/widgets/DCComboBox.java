@@ -154,4 +154,9 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "DCComboBox[items=" + getItemCount() + ", selected=" + getSelectedItem() + "]";
+    }
 }

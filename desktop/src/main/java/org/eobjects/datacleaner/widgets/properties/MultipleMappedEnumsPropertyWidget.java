@@ -23,11 +23,14 @@ import java.awt.BorderLayout;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
 import javax.swing.ListCellRenderer;
 
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.LazyRef;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -38,8 +41,6 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
-import org.apache.metamodel.util.EqualsBuilder;
-import org.apache.metamodel.util.LazyRef;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
@@ -49,7 +50,7 @@ import org.apache.metamodel.util.LazyRef;
  */
 public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends MultipleInputColumnsPropertyWidget {
 
-    private final WeakHashMap<InputColumn<?>, DCComboBox<E>> _mappedEnumComboBoxes;
+    private final Map<InputColumn<?>, DCComboBox<E>> _mappedEnumComboBoxes;
     private final ConfiguredPropertyDescriptor _mappedEnumsProperty;
     private final MinimalPropertyWidget<E[]> _mappedEnumsPropertyWidget;
     private final LazyRef<EnumMatcher<E>> _enumMatcherRef;
@@ -68,7 +69,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
     public MultipleMappedEnumsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedEnumsProperty) {
         super(beanJobBuilder, inputColumnsProperty);
-        _mappedEnumComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<E>>();
+        _mappedEnumComboBoxes = new WeakHashMap<>();
         _mappedEnumsProperty = mappedEnumsProperty;
         _enumMatcherRef = new LazyRef<EnumMatcher<E>>() {
             @Override
@@ -155,7 +156,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
      * @return
      */
     protected ListCellRenderer<? super E> getComboBoxRenderer(InputColumn<?> inputColumn,
-            WeakHashMap<InputColumn<?>, DCComboBox<E>> mappedEnumComboBoxes, E[] enumConstants) {
+            Map<InputColumn<?>, DCComboBox<E>> mappedEnumComboBoxes, E[] enumConstants) {
         return new EnumComboBoxListRenderer();
     }
 
@@ -253,11 +254,17 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
             }
 
             @Override
-            protected void setValue(E[] value) {
+            protected void setValue(final E[] value) {
                 if (EqualsBuilder.equals(value, getValue())) {
                     return;
                 }
+
                 final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
+                if (value != null && inputColumns.length != value.length) {
+                    // This may occur during updates, ignore the event. See #101
+                    return;
+                }
+
                 for (int i = 0; i < inputColumns.length; i++) {
                     final InputColumn<?> inputColumn = inputColumns[i];
                     final E mappedEnum;
@@ -282,18 +289,18 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
     private E[] getMappedEnums() {
         final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
         final List<E> result = new ArrayList<E>();
-        for (InputColumn<?> inputColumn : inputColumns) {
-            DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
+        for (final InputColumn<?> inputColumn : inputColumns) {
+            final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
             if (comboBox == null) {
                 result.add(null);
             } else {
-                E value = comboBox.getSelectedItem();
+                final E value = comboBox.getSelectedItem();
                 result.add(value);
             }
         }
 
         @SuppressWarnings("unchecked")
-        E[] array = (E[]) Array.newInstance(getEnumClass(), result.size());
+        final E[] array = (E[]) Array.newInstance(getEnumClass(), result.size());
 
         return result.toArray(array);
     }

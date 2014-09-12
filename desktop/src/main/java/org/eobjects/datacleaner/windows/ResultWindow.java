@@ -41,6 +41,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.apache.commons.vfs2.FileObject;
+import org.eobjects.analyzer.beans.api.ComponentMessage;
+import org.eobjects.analyzer.beans.api.ExecutionLogMessage;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
@@ -171,7 +173,7 @@ public final class ResultWindow extends AbstractWindow {
         _exportButton.setOpaque(false);
         _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
-        
+
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             JComponent component = pluggableComponent.eval(this);
             if (component != null) {
@@ -214,7 +216,7 @@ public final class ResultWindow extends AbstractWindow {
                 }
             });
         }
-        
+
         updateButtonVisibility(running);
     }
 
@@ -447,6 +449,18 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
+            public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
+
+                if (message instanceof ExecutionLogMessage) {
+                    final String messageString = ((ExecutionLogMessage) message).getMessage();
+                    final String componentLabel = LabelUtils.getLabel(componentJob);
+
+                    _progressInformationPanel.addUserLog(messageString + " (" + componentLabel + ")");
+                }
+
+            }
+
+            @Override
             public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
@@ -460,7 +474,8 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
+                    final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
@@ -538,4 +553,5 @@ public final class ResultWindow extends AbstractWindow {
         _publishButton.setVisible(!running);
         _exportButton.setVisible(!running);
     }
+
 }

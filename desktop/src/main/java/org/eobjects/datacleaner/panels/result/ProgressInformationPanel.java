@@ -270,6 +270,7 @@ public class ProgressInformationPanel extends DCPanel {
 
         Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
+        
         for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressFinished();
         }

@@ -79,7 +79,7 @@ import com.google.inject.Injector;
 
 /**
  * A panel that presents a datastore and shows edit/remove buttons. This panel
- * is placed as a child inside the {@link DatastoreListPanel}.
+ * is placed as a child inside the {@link WelcomePanel}.
  * 
  * @author Kasper Sørensen
  */
@@ -91,13 +91,13 @@ public class DatastorePanel extends DCPanel {
 
     private final Datastore _datastore;
     private final MutableDatastoreCatalog _datastoreCatalog;
-    private final DatastoreListPanel _datastoreListPanel;
+    private final WelcomePanel _datastoreListPanel;
     private final JCheckBox _checkBox;
     private final WindowContext _windowContext;
     private final InjectorBuilder _injectorBuilder;
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-            DatastoreListPanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            WelcomePanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
         super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;

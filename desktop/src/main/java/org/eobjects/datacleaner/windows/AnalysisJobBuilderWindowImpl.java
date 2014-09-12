@@ -81,7 +81,7 @@ import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.panels.DatastoreListPanel;
+import org.eobjects.datacleaner.panels.WelcomePanel;
 import org.eobjects.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.eobjects.datacleaner.panels.FilterJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.MetadataPanel;
@@ -160,7 +160,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<AnalyzeButtonActionListener> _addAnalyzerActionListenerProvider;
     private final Provider<TransformButtonActionListener> _addTransformerActionListenerProvider;
     private final DCGlassPane _glassPane;
-    private final Ref<DatastoreListPanel> _datastoreListPanelRef;
+    private final Ref<WelcomePanel> _welcomePanelRef;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final DCWindowMenuBar _windowMenuBar;
@@ -225,15 +225,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
         _executeButton = createToolBarButton("Execute", imageManager.getImageIcon("images/actions/execute.png"));
 
-        _datastoreListPanelRef = new LazyRef<DatastoreListPanel>() {
+        _welcomePanelRef = new LazyRef<WelcomePanel>() {
             @Override
-            protected DatastoreListPanel fetch() {
+            protected WelcomePanel fetch() {
                 final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane)
                         .createInjector();
-                final DatastoreListPanel datastoreListPanel = injectorWithGlassPane
-                        .getInstance(DatastoreListPanel.class);
-                datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 20));
-                return datastoreListPanel;
+                final WelcomePanel welcomePanel = injectorWithGlassPane
+                        .getInstance(WelcomePanel.class);
+                welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
+                return welcomePanel;
             }
         };
 
@@ -347,7 +347,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         _sourceColumnsPanel.setVisible(true);
-        _datastoreListPanelRef.get().setVisible(false);
+        _welcomePanelRef.get().setVisible(false);
     }
 
     private void displayDatastoreSelection() {
@@ -366,8 +366,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 timer.start();
 
                 _sourceColumnsPanel.setVisible(false);
-                _datastoreListPanelRef.get().setVisible(true);
-                _datastoreListPanelRef.get().requestSearchFieldFocus();
+                _welcomePanelRef.get().setVisible(true);
+                _welcomePanelRef.get().requestSearchFieldFocus();
             }
         }
     }
@@ -547,7 +547,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         setJMenuBar(_windowMenuBar);
 
-        _sourceTabOuterPanel.add(_datastoreListPanelRef.get());
+        _sourceTabOuterPanel.add(_welcomePanelRef.get());
         _sourceTabOuterPanel.add(_sourceColumnsPanel);
 
         // add source tab

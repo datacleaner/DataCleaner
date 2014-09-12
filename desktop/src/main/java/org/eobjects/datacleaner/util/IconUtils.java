@@ -133,7 +133,6 @@ public final class IconUtils {
     public static final String FILE_DESKTOP_FOLDER = "images/filetypes/desktop-folder.png";
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
-    
 
     private static final ImageManager _imageManager = ImageManager.get();
 
@@ -185,6 +184,27 @@ public final class IconUtils {
         final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
         bufferedImage.getGraphics().drawImage(decoration, totalSize - decorationSize, totalSize - decorationSize, null);
+        return new ImageIcon(bufferedImage);
+    }
+
+    public static Icon getDatastoreSpecificAnalysisJobIcon(Datastore datastore) {
+        final int decorationSize = ICON_SIZE_MEDIUM;
+        final int totalSize = ICON_SIZE_LARGE;
+
+        final Image datastoreIcon;
+        if (datastore == null) {
+            datastoreIcon = _imageManager.getImage(IconUtils.GENERIC_DATASTORE_IMAGEPATH, decorationSize);
+        } else {
+            final String datastoreImagePath = getDatastoreImagePath(datastore);
+            datastoreIcon = _imageManager.getImage(datastoreImagePath, decorationSize);
+        }
+
+        final Image jobIcon = _imageManager.getImage(MODEL_JOB, decorationSize);
+
+        final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(jobIcon, 0, 0, null);
+        bufferedImage.getGraphics().drawImage(datastoreIcon, totalSize - decorationSize, totalSize - decorationSize,
+                null);
         return new ImageIcon(bufferedImage);
     }
 

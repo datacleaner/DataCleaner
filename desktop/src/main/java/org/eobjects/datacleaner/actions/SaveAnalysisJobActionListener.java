@@ -104,10 +104,8 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
                 if (LABEL_TEXT_SAVING_JOB.equals(detail)) {
                     detail = e.getMessage();
                 }
-                WidgetUtils.showErrorMessage(
-                        "Errors in job",
-                        "Please fix the errors that exist in the job before saving it:\n\n"
-                                + detail, e);
+                WidgetUtils.showErrorMessage("Errors in job",
+                        "Please fix the errors that exist in the job before saving it:\n\n" + detail, e);
                 return;
             }
         }
@@ -124,7 +122,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             if (result != JFileChooser.APPROVE_OPTION) {
                 return;
             }
-            FileObject candidate = fileChooser.getSelectedFileObject();
+            final FileObject candidate = fileChooser.getSelectedFileObject();
 
             final boolean exists;
             try {

@@ -49,8 +49,6 @@ import org.slf4j.LoggerFactory;
  * will be used.</li>
  * <li>If none of the above, the current folder "." will be used.</li>
  * </ol>
- * 
- * @author Kasper Sørensen
  */
 public final class DataCleanerHome {
 
@@ -116,12 +114,12 @@ public final class DataCleanerHome {
             if (candidate.isWriteable()) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
-                copyIfNonExisting(candidate, manager, "examples/countrycodes.csv");
-                copyIfNonExisting(candidate, manager, "examples/employees.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/duplicate_customer_detection.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/customer_data_cleansing.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/write_order_information.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/customer_data_completeness.analysis.xml");
+                copyIfNonExisting(candidate, manager, "datastores/countrycodes.csv");
+                copyIfNonExisting(candidate, manager, "jobs/employees.analysis.xml");
+                copyIfNonExisting(candidate, manager, "jobs/duplicate_customer_detection.analysis.xml");
+                copyIfNonExisting(candidate, manager, "jobs/customer_data_cleansing.analysis.xml");
+                copyIfNonExisting(candidate, manager, "jobs/write_order_information.analysis.xml");
+                copyIfNonExisting(candidate, manager, "jobs/customer_data_completeness.analysis.xml");
             }
         }
 

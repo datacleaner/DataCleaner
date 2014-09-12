@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
 	<job-metadata>
-		<job-description>Demonstrates the EasyDQ.com cleansing functions. Open as a
-			template to specify the easydq_connection variable.</job-description>
+		<job-description>EasyDQ.com cleansing function example.</job-description>
 		<updated-date>2011-11-30+01:00</updated-date>
 	</job-metadata>
 	<source>

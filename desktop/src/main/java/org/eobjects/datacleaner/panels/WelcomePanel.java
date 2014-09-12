@@ -117,7 +117,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     private Logger logger = LoggerFactory.getLogger(WelcomePanel.class);
 
     private static final ImageManager imageManager = ImageManager.get();
-    
+
     private static final int MAX_JOB_PANELS = 3;
 
     private final MutableDatastoreCatalog _datastoreCatalog;
@@ -248,7 +248,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
             for (FileObject fileObject : recentJobFiles) {
                 try {
                     if (fileObject.exists()) {
-                        _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, configuration));
+                        _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, configuration,
+                                openAnalysisJobActionListener));
                     }
                 } catch (FileSystemException ex) {
                     logger.debug("Skipping file {} because of unexpected error", ex);

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
-		<job-description>An example of using the EasyDQ duplicate detection
-			for finding duplicate customers</job-description>
+		<job-description>Duplicate detection example</job-description>
         <updated-date>2013-01-04+01:00</updated-date>
     </job-metadata>
     <source>

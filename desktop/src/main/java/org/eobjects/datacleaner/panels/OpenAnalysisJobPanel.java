@@ -19,10 +19,17 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -31,11 +38,13 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.Alignment;
-import org.eobjects.datacleaner.widgets.DCLabel;
+import org.jdesktop.swingx.HorizontalLayout;
+import org.jdesktop.swingx.VerticalLayout;
 
 import com.google.common.base.Strings;
 
@@ -51,17 +60,24 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     private final FileObject _file;
 
-    public OpenAnalysisJobPanel(FileObject file, AnalyzerBeansConfiguration configuration) {
+    private OpenAnalysisJobActionListener _openAnalysisJobActionListener;
+
+    public OpenAnalysisJobPanel(final FileObject file, final AnalyzerBeansConfiguration configuration,
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener) {
         super(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _file = file;
-        setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment()));
+        _openAnalysisJobActionListener = openAnalysisJobActionListener;
+
+        setLayout(new HorizontalLayout(4));
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
         final AnalysisJobMetadata metadata = new JaxbJobReader(configuration).readMetadata(_file);
         final String jobName = metadata.getJobName();
         final String jobDescription = metadata.getJobDescription();
 
-        final StringBuilder sb = new StringBuilder();
+        final DCPanel labelListPanel = new DCPanel();
+        labelListPanel.setLayout(new VerticalLayout(4));
+        labelListPanel.setBorder(new EmptyBorder(4, 4, 4, 0));
 
         final String title;
         if (Strings.isNullOrEmpty(jobName)) {
@@ -75,32 +91,45 @@ public class OpenAnalysisJobPanel extends DCPanel {
         } else {
             title = jobName;
         }
-        sb.append("<b>");
-        sb.append(title);
-        sb.append("</b>");
+
+        final JButton titleButton = new JButton("<html><u>" + title + "</u></html>");
+        titleButton.setFont(WidgetUtils.FONT_HEADER1);
+        titleButton.setHorizontalAlignment(SwingConstants.LEFT);
+        titleButton.setBorderPainted(false);
+        titleButton.setOpaque(false);
+        titleButton.setMargin(new Insets(0, 0, 0, 0));
+        titleButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        titleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _openAnalysisJobActionListener.openFile(_file);
+            }
+        });
+        labelListPanel.add(titleButton);
 
         if (!Strings.isNullOrEmpty(jobDescription)) {
-            sb.append("<br/>");
-            sb.append(jobDescription);
+            String desc = StringUtils.replaceWhitespaces(jobDescription, " ");
+            desc = StringUtils.replaceAll(desc, "  ", " ");
+            final JLabel label = new JLabel(desc);
+            label.setFont(WidgetUtils.FONT_SMALL);
+            labelListPanel.add(label);
         }
 
         final Icon icon;
         final String datastoreName = metadata.getDatastoreName();
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
-            sb.append("<br/>");
-            sb.append(datastoreName);
+            final JLabel label = new JLabel(datastoreName);
+            label.setFont(WidgetUtils.FONT_SMALL);
+            labelListPanel.add(label);
 
             final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
             icon = IconUtils.getDatastoreSpecificAnalysisJobIcon(datastore);
         } else {
-            icon = IconUtils.getDatastoreSpecificAnalysisJobIcon(null);
+            icon = ImageManager.get().getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_LARGE);
         }
 
-        final DCLabel label = DCLabel.dark("<html>" + sb + "</html>");
-        label.setIconTextGap(10);
-        label.setHorizontalAlignment(Alignment.LEFT.getLabelAlignment());
-        label.setIcon(icon);
-        add(label);
+        add(new JLabel(icon));
+        add(labelListPanel);
     }
 
     @Override

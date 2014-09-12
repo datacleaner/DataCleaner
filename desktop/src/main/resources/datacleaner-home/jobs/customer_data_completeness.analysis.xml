@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
-        <job-description>Created with DataCleaner 3.0 (alpha)</job-description>
+        <job-description>Check completeness / fill rate of customers</job-description>
         <updated-date>2012-08-30+02:00</updated-date>
     </job-metadata>
     <source>

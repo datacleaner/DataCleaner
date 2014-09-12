@@ -129,7 +129,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
         openJobButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
+                final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
                         .get();
                 final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file);
                 final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);

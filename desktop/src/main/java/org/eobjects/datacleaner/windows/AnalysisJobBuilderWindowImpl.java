@@ -131,8 +131,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final int TAB_ICON_SIZE = IconUtils.ICON_SIZE_LARGE;
 
-    private static final int DEFAULT_WINDOW_WIDTH = 900;
-    private static final int DEFAULT_WINDOW_HEIGHT = 630;
+    private static final int DEFAULT_WINDOW_WIDTH = 1000;
+    private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
     private static final int SOURCE_TAB = 0;
     private static final int METADATA_TAB = 1;

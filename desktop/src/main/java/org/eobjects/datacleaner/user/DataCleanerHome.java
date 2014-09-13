@@ -55,6 +55,7 @@ public final class DataCleanerHome {
     public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
     public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce.com duplicate leads.analysis.xml";
     public static final String JOB_EXAMPLE_EASYDQ_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
+    public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
     private static final FileObject _dataCleanerHome;
@@ -118,6 +119,8 @@ public final class DataCleanerHome {
             if (candidate.isWriteable()) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
+                copyIfNonExisting(candidate, manager, "datastores/contactdata.txt");
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EXPORT_ORDERS_DATA);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_CUSTOMER_PROFILING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EASYDQ_CLEANSING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
@@ -148,6 +151,9 @@ public final class DataCleanerHome {
 
         final ResourceManager resourceManager = ResourceManager.get();
         final URL url = resourceManager.getUrl("datacleaner-home/" + filename);
+        if (url == null) {
+            return null;
+        }
 
         InputStream in = null;
         OutputStream out = null;

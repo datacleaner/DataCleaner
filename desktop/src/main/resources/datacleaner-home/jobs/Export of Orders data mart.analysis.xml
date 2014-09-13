@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Lightweight ETL to join and standardize tables in order to build an export file</job-description>
+    </job-metadata>
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column id="col_0" path="ORDERFACT.ORDERNUMBER" type="INTEGER"/>
+            <column id="col_1" path="ORDERFACT.PRODUCTCODE" type="VARCHAR"/>
+            <column id="col_2" path="ORDERFACT.TOTALPRICE" type="REAL"/>
+            <column id="col_3" path="ORDERFACT.CUSTOMERNUMBER" type="INTEGER"/>
+            <column id="col_4" path="ORDERFACT.QUANTITYORDERED" type="INTEGER"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer name="Lookup products">
+            <descriptor ref="Table lookup"/>
+            <properties>
+                <property name="Cache lookups" value="true"/>
+                <property name="Condition columns" value="[PRODUCTCODE]"/>
+                <property name="Datastore" value="orderdb"/>
+                <property name="Join semantic" value="LEFT_JOIN_MAX_ONE"/>
+                <property name="Output columns" value="[PRODUCTNAME,PRODUCTLINE]"/>
+                <property name="Schema name" value="PUBLIC"/>
+                <property name="Table name" value="PRODUCTS"/>
+            </properties>
+            <input ref="col_1"/>
+            <output id="col_5" name="PRODUCTNAME"/>
+            <output id="col_6" name="PRODUCTLINE"/>
+        </transformer>
+        <transformer name="Lookup customers">
+            <descriptor ref="Table lookup"/>
+            <properties>
+                <property name="Cache lookups" value="true"/>
+                <property name="Condition columns" value="[CUSTOMERNUMBER]"/>
+                <property name="Datastore" value="orderdb"/>
+                <property name="Join semantic" value="LEFT_JOIN_MAX_ONE"/>
+                <property name="Output columns" value="[CUSTOMERNAME,CITY,COUNTRY]"/>
+                <property name="Schema name" value="PUBLIC"/>
+                <property name="Table name" value="CUSTOMERS"/>
+            </properties>
+            <input ref="col_3"/>
+            <output id="col_7" name="CUSTOMERNAME"/>
+            <output id="col_8" name="CITY"/>
+            <output id="col_9" name="COUNTRY"/>
+        </transformer>
+        <transformer>
+            <descriptor ref="Country standardizer"/>
+            <properties>
+                <property name="Output format" value="ISO2"/>
+            </properties>
+            <input ref="col_9"/>
+            <output id="col_10" name="COUNTRYCODE"/>
+        </transformer>
+    </transformation>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Create CSV file"/>
+            <properties>
+                <property name="File" value="datastores/orders_w_dimensions.csv"/>
+                <property name="Separator char" value=";"/>
+                <property name="Quote char" value="&amp;quot;"/>
+                <property name="Escape char" value="\"/>
+                <property name="Include header" value="true"/>
+            </properties>
+            <input ref="col_0"/>
+            <input ref="col_1"/>
+            <input ref="col_2"/>
+            <input ref="col_3"/>
+            <input ref="col_4"/>
+            <input ref="col_7"/>
+            <input ref="col_8"/>
+            <input ref="col_10"/>
+            <input ref="col_5"/>
+            <input ref="col_6"/>
+        </analyzer>
+    </analysis>
+</job>

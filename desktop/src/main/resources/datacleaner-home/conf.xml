@@ -23,6 +23,14 @@
 			<password>password</password>
 			<security-token>token</security-token>
 		</salesforce-datastore>
+		
+		<csv-datastore name="Contact data" description="A text-file with contact data to be cleansed">
+			<filename>datastores/contactdata.txt</filename>
+			<encoding>UTF8</encoding>
+			<quote-char>"</quote-char>
+			<separator-char>;</separator-char>
+		</csv-datastore>
+		
 	</datastore-catalog>
 
 	<reference-data-catalog>

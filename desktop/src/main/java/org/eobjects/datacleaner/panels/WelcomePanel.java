@@ -250,13 +250,13 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
                     if (fileObject.exists()) {
                         _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, configuration,
                                 openAnalysisJobActionListener));
+                        jobIndex++;
+                        if (jobIndex == MAX_JOB_PANELS) {
+                            break;
+                        }
                     }
                 } catch (FileSystemException ex) {
                     logger.debug("Skipping file {} because of unexpected error", ex);
-                }
-                jobIndex++;
-                if (jobIndex == MAX_JOB_PANELS) {
-                    break;
                 }
             }
         }

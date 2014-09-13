@@ -34,11 +34,11 @@
         </transformer>
     </transformation>
     <analysis>
-        <analyzer>
+        <analyzer name="Phone number Traffic light distribution">
             <descriptor ref="Value distribution"/>
             <input ref="col_2" name="Column"/>
         </analyzer>
-        <analyzer>
+        <analyzer name="Line type distribution">
             <descriptor ref="Value distribution"/>
             <input ref="col_6" name="Column"/>
         </analyzer>

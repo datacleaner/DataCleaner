@@ -67,14 +67,6 @@
             <input ref="col_5"/>
         </analyzer>
         <analyzer>
-            <descriptor ref="Reference data matcher"/>
-            <properties>
-                <property value="[Country names]" name="Dictionaries"/>
-                <property value="[Country code (2 letter),Country code (3 letter)]" name="Synonym catalogs"/>
-            </properties>
-            <input ref="col_7"/>
-        </analyzer>
-        <analyzer>
             <descriptor ref="Pattern finder"/>
             <properties>
                 <property value="true" name="Discriminate text case"/>

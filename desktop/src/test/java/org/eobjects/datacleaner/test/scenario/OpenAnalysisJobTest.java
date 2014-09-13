@@ -49,7 +49,7 @@ public class OpenAnalysisJobTest extends TestCase {
      * 
      * @throws Exception
      */
-    public void testOpenJobWithAllAnalyzers() throws Exception {
+    public void testOpenJobWithManyAnalyzers() throws Exception {
         if (GraphicsEnvironment.isHeadless()) {
             System.out.println("!!! Skipping test because environment is headless: " + getName());
             return;

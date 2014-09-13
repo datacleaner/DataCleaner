@@ -34,6 +34,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -49,6 +50,8 @@ import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * ActionListener for saving an analysis job
@@ -161,10 +164,23 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             logger.warn("Failed to determine parent of {}: {}", file, e.getMessage());
         }
 
-        final String author = System.getProperty("user.name");
-        final String jobName = null;
-        final String jobDescription = "Created with DataCleaner " + Version.getEdition() + " " + Version.getVersion();
-        final String jobVersion = null;
+        final AnalysisJobMetadata existingMetadata = analysisJob.getMetadata();
+        final String jobName = existingMetadata.getJobName();
+        final String jobVersion = existingMetadata.getJobVersion();
+
+        final String author;
+        if (Strings.isNullOrEmpty(existingMetadata.getAuthor())) {
+            author = System.getProperty("user.name");
+        } else {
+            author = existingMetadata.getAuthor();
+        }
+
+        final String jobDescription;
+        if (Strings.isNullOrEmpty(existingMetadata.getJobDescription())) {
+            jobDescription = "Created with DataCleaner " + Version.getEdition() + " " + Version.getVersion();
+        } else {
+            jobDescription = existingMetadata.getJobDescription();
+        }
 
         final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,
                 jobDescription, jobVersion));

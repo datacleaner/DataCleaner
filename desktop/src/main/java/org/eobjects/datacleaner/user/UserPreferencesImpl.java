@@ -246,6 +246,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_PHONE_CLEANSING));
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS));
         }
 
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {

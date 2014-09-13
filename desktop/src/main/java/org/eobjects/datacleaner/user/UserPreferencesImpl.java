@@ -240,10 +240,10 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         if (recentJobFiles == null || recentJobFiles.isEmpty()) {
             recentJobFiles = new ArrayList<>();
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EASYDQ_CLEANSING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EASYDQ_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
         }
 
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {

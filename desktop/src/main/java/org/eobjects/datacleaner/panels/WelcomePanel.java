@@ -155,8 +155,6 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
-        _datastoreCatalog.addListener(this);
-
         _openJobButton = new JButton("Browse jobs", imageManager.getImageIcon(IconUtils.MENU_OPEN,
                 IconUtils.ICON_SIZE_SMALL));
         _openJobButton.setMargin(new Insets(1, 1, 1, 1));
@@ -574,6 +572,12 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
                 dialog.setVisible(true);
             }
         };
+    }
+    
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _datastoreCatalog.addListener(this);
     }
 
     @Override

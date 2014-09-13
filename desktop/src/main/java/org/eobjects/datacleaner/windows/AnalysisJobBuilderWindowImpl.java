@@ -43,6 +43,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.Ref;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -81,13 +83,13 @@ import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.panels.WelcomePanel;
 import org.eobjects.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.eobjects.datacleaner.panels.FilterJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.eobjects.datacleaner.panels.WelcomePanel;
 import org.eobjects.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -104,10 +106,7 @@ import org.eobjects.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +257,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         });
 
         _sourceTabOuterPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-        _sourceTabOuterPanel.setLayout(new VerticalLayout(0));
+        _sourceTabOuterPanel.setLayout(new BorderLayout());
 
         _schemaTreePanel = schemaTreePanel;
         _metadataPanel = metadataPanel;
@@ -345,9 +344,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_leftPanel.isCollapsed()) {
             _leftPanel.setCollapsed(false);
         }
-
-        _sourceColumnsPanel.setVisible(true);
-        _welcomePanelRef.get().setVisible(false);
+        
+        _sourceTabOuterPanel.removeAll();
+        _sourceTabOuterPanel.add(_sourceColumnsPanel, BorderLayout.CENTER);
     }
 
     private void displayDatastoreSelection() {
@@ -364,9 +363,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 });
                 timer.setRepeats(false);
                 timer.start();
+                
+                _sourceTabOuterPanel.removeAll();
+                _sourceTabOuterPanel.add(_welcomePanelRef.get(), BorderLayout.CENTER);
 
-                _sourceColumnsPanel.setVisible(false);
-                _welcomePanelRef.get().setVisible(true);
                 _welcomePanelRef.get().requestSearchFieldFocus();
             }
         }
@@ -546,9 +546,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         setJMenuBar(_windowMenuBar);
-
-        _sourceTabOuterPanel.add(_welcomePanelRef.get());
-        _sourceTabOuterPanel.add(_sourceColumnsPanel);
 
         // add source tab
         _tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png", TAB_ICON_SIZE),

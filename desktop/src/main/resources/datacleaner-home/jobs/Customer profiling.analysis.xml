@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
-    	<job-name>Customer profiling</job-name>
+    	<job-name>Customer data profiling</job-name>
         <job-description>Showcase of various data profiling features</job-description>
     </job-metadata>
     <source>

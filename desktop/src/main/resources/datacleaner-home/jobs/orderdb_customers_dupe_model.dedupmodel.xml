@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<deduplication-model threshold="0.001">
+    <columns>
+        <column index="0" name="CUSTOMERNUMBER"/>
+        <column index="1" name="CUSTOMERNAME"/>
+        <column index="2" name="CONTACTLASTNAME"/>
+        <column index="3" name="CONTACTFIRSTNAME"/>
+        <column index="4" name="PHONE"/>
+        <column index="5" name="ADDRESSLINE1"/>
+        <column index="6" name="ADDRESSLINE2"/>
+        <column index="7" name="CITY"/>
+        <column index="8" name="STATE"/>
+        <column index="9" name="POSTALCODE"/>
+        <column index="10" name="COUNTRY"/>
+        <column index="11" name="SALESREPEMPLOYEENUMBER"/>
+        <column index="12" name="CREDITLIMIT"/>
+    </columns>
+    <preselection-model>
+        <subset>
+            <item column-index="6"/>
+        </subset>
+        <subset>
+            <item column-index="5"/>
+        </subset>
+        <subset>
+            <item column-index="1"/>
+        </subset>
+        <subset>
+            <item column-index="4"/>
+        </subset>
+        <subset>
+            <item column-index="2"/>
+        </subset>
+        <subset>
+            <item column-index="9"/>
+        </subset>
+        <subset>
+            <item column-index="7"/>
+        </subset>
+        <subset>
+            <item column-index="3"/>
+        </subset>
+        <subset>
+            <item column-index="8"/>
+        </subset>
+        <subset>
+            <item column-index="11"/>
+        </subset>
+        <subset>
+            <item column-index="12"/>
+        </subset>
+        <subset>
+            <item column-index="10"/>
+        </subset>
+    </preselection-model>
+    <matching-model>
+        <rule fixed-score="true" score="0.0">
+            <condition feature="edit-distance" feature-modifier="unmodified" column-index="1" operator="less-than" threshold="0.6515151515151516"/>
+        </rule>
+        <rule fixed-score="false">
+            <condition feature="edit-distance" feature-modifier="unmodified" column-index="2" operator="greater-than" threshold="0.6666666666666667"/>
+        </rule>
+    </matching-model>
+    <scoring-model bias="-7.995677541058537">
+        <term feature="exact" feature-modifier="unmodified" column-index="1" weight="-1.112095636684276"/>
+        <term feature="exact" feature-modifier="empty-high" column-index="1" weight="0.38798188275482004"/>
+        <term feature="exact" feature-modifier="empty-low" column-index="1" weight="-1.390673626504695"/>
+        <term feature="exact" feature-modifier="multiple-parts" column-index="1" weight="2.8913684871591268"/>
+        <term feature="edit-distance" feature-modifier="unmodified" column-index="1" weight="0.7795537045249623"/>
+        <term feature="edit-distance" feature-modifier="empty-high" column-index="1" weight="1.6226938097932113"/>
+        <term feature="edit-distance" feature-modifier="empty-low" column-index="1" weight="2.091966480225197"/>
+        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="1" weight="-0.05429848419478483"/>
+        <term feature="phonetic" feature-modifier="unmodified" column-index="1" weight="0.2012053466092598"/>
+        <term feature="phonetic" feature-modifier="empty-high" column-index="1" weight="-0.7962591225382654"/>
+        <term feature="phonetic" feature-modifier="empty-low" column-index="1" weight="0.10561880226752533"/>
+        <term feature="phonetic" feature-modifier="multiple-parts" column-index="1" weight="2.580771279077959"/>
+        <term feature="exact" feature-modifier="unmodified" column-index="2" weight="0.6245318207505962"/>
+        <term feature="exact" feature-modifier="empty-high" column-index="2" weight="0.8055762062221582"/>
+        <term feature="exact" feature-modifier="empty-low" column-index="2" weight="-0.809194808029944"/>
+        <term feature="exact" feature-modifier="multiple-parts" column-index="2" weight="-0.3772895443284256"/>
+        <term feature="edit-distance" feature-modifier="unmodified" column-index="2" weight="0.6615245122467637"/>
+        <term feature="edit-distance" feature-modifier="empty-high" column-index="2" weight="-0.545104686083584"/>
+        <term feature="edit-distance" feature-modifier="empty-low" column-index="2" weight="-0.13921070712848263"/>
+        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="2" weight="0.2521085950874918"/>
+        <term feature="phonetic" feature-modifier="unmodified" column-index="2" weight="0.6901334208562475"/>
+        <term feature="phonetic" feature-modifier="empty-high" column-index="2" weight="0.28167341570843957"/>
+        <term feature="phonetic" feature-modifier="empty-low" column-index="2" weight="0.5361660294043848"/>
+        <term feature="phonetic" feature-modifier="multiple-parts" column-index="2" weight="0.9882527330856634"/>
+    </scoring-model>
+</deduplication-model>

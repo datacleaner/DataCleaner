@@ -59,6 +59,8 @@ public final class DataCleanerHome {
     public static final String JOB_EXAMPLE_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
     public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
     public static final String JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS = "jobs/Copy employees to customer table.analysis.xml";
+    public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION = "jobs/OrderDB Customers Duplicate detection.analysis.xml";
+    public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING = "jobs/OrderDB Customers dedup Training.analysis.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
     private static final FileObject _dataCleanerHome;
@@ -129,8 +131,12 @@ public final class DataCleanerHome {
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_PHONE_CLEANSING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS);
                 copyIfNonExisting(candidate, manager, "jobs/sfdc_dupe_model_users.dedupmodel.xml");
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING);
+                copyIfNonExisting(candidate, manager, "jobs/orderdb_customers_dupe_model.dedupmodel.xml");
+                copyIfNonExisting(candidate, manager, "jobs/orderdb_customers_dupe_reference.txt");
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS);
             }
         }
 

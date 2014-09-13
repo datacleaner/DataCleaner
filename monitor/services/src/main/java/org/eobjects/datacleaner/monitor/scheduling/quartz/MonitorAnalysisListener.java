@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eobjects.analyzer.beans.api.ComponentMessage;
+import org.eobjects.analyzer.beans.api.ExecutionLogMessage;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
@@ -36,6 +38,7 @@ import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.util.ProgressCounter;
@@ -128,6 +131,16 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
         if (progressCounter.setIfSignificantToUser(currentRow)) {
             final Table table = metrics.getTable();
             _executionLogger.log("Progress of " + table.getName() + ": " + currentRow + " rows processed");
+            _executionLogger.flushLog();
+        }
+    }
+
+    @Override
+    public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
+        if (message instanceof ExecutionLogMessage) {
+            final String messageString = ((ExecutionLogMessage) message).getMessage();
+            final String componentLabel = LabelUtils.getLabel(componentJob);
+            _executionLogger.log(messageString + " (" + componentLabel + ")");
             _executionLogger.flushLog();
         }
     }

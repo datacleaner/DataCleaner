@@ -51,6 +51,10 @@ import org.slf4j.LoggerFactory;
  * </ol>
  */
 public final class DataCleanerHome {
+    
+    public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
+    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce.com duplicate leads.analysis.xml";
+    public static final String JOB_EXAMPLE_EASYDQ_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
     private static final FileObject _dataCleanerHome;
@@ -114,12 +118,9 @@ public final class DataCleanerHome {
             if (candidate.isWriteable()) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
-                copyIfNonExisting(candidate, manager, "datastores/countrycodes.csv");
-                copyIfNonExisting(candidate, manager, "jobs/employees.analysis.xml");
-                copyIfNonExisting(candidate, manager, "jobs/duplicate_customer_detection.analysis.xml");
-                copyIfNonExisting(candidate, manager, "jobs/customer_data_cleansing.analysis.xml");
-                copyIfNonExisting(candidate, manager, "jobs/write_order_information.analysis.xml");
-                copyIfNonExisting(candidate, manager, "jobs/customer_data_completeness.analysis.xml");
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_CUSTOMER_PROFILING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EASYDQ_CLEANSING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
             }
         }
 
@@ -133,12 +134,12 @@ public final class DataCleanerHome {
         return _dataCleanerHome;
     }
 
-    private static void copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
+    private static FileObject copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
             throws FileSystemException {
         FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
             logger.info("File already exists in DATACLEANER_HOME: " + filename);
-            return;
+            return file;
         }
         FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {
@@ -160,6 +161,8 @@ public final class DataCleanerHome {
         } finally {
             FileHelper.safeClose(in, out);
         }
+        
+        return file;
     }
 
     private static boolean isUsable(FileObject candidate) throws FileSystemException {

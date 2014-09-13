@@ -237,6 +237,14 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     @Override
     public List<FileObject> getRecentJobFiles() {
+        if (recentJobFiles == null || recentJobFiles.isEmpty()) {
+            recentJobFiles = new ArrayList<>();
+            final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EASYDQ_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION));
+        }
+
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
             @Override
             public FileObject eval(File file) {

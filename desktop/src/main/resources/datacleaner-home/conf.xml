@@ -17,15 +17,12 @@
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
-
-		<csv-datastore name="Country codes"
-			description="Country reference data, courtesy of Graham Rhind">
-			<filename>examples/countrycodes.csv</filename>
-			<quote-char>"</quote-char>
-			<separator-char>;</separator-char>
-			<encoding>ISO-8859-1</encoding>
-			<fail-on-inconsistencies>false</fail-on-inconsistencies>
-		</csv-datastore>
+		
+		<salesforce-datastore name="Salesforce.com" description="A connection to SFDC - credentials not provided">
+			<username>username</username>
+			<password>password</password>
+			<security-token>token</security-token>
+		</salesforce-datastore>
 	</datastore-catalog>
 
 	<reference-data-catalog>

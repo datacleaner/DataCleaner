@@ -151,12 +151,12 @@ public final class IconUtils {
     }
 
     public static Icon getDatastoreIcon(Datastore datastore, int newWidth) {
-        String imagePath = getDatastoreImagePath(datastore);
+        String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
     public static Icon getDatastoreIcon(Datastore datastore) {
-        String imagePath = getDatastoreImagePath(datastore);
+        String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
@@ -189,21 +189,22 @@ public final class IconUtils {
 
     public static Icon getDatastoreSpecificAnalysisJobIcon(Datastore datastore) {
         final int decorationSize = ICON_SIZE_MEDIUM;
-        final int totalSize = ICON_SIZE_LARGE;
+        final int totalWidth = ICON_SIZE_LARGE;
+        final int totalHeight = ICON_SIZE_LARGE + 6;
 
         final Image datastoreIcon;
         if (datastore == null) {
             datastoreIcon = _imageManager.getImage(IconUtils.GENERIC_DATASTORE_IMAGEPATH, decorationSize);
         } else {
-            final String datastoreImagePath = getDatastoreImagePath(datastore);
+            final String datastoreImagePath = getDatastoreImagePath(datastore, false);
             datastoreIcon = _imageManager.getImage(datastoreImagePath, decorationSize);
         }
 
         final Image jobIcon = _imageManager.getImage(MODEL_JOB, decorationSize);
 
-        final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bufferedImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(jobIcon, 0, 0, null);
-        bufferedImage.getGraphics().drawImage(datastoreIcon, totalSize - decorationSize, totalSize - decorationSize,
+        bufferedImage.getGraphics().drawImage(datastoreIcon, totalWidth - decorationSize, totalHeight - decorationSize,
                 null);
         return new ImageIcon(bufferedImage);
     }
@@ -366,13 +367,13 @@ public final class IconUtils {
         return _imageManager.getImageIcon(MODEL_COLUMN, iconSize);
     }
 
-    protected static String getDatastoreImagePath(Datastore datastore) {
+    protected static String getDatastoreImagePath(Datastore datastore, boolean considerOrderdbSpecialization) {
         String imagePath = GENERIC_DATASTORE_IMAGEPATH;
         if (datastore == null) {
             return imagePath;
         } else if (datastore instanceof JdbcDatastore) {
             JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-            if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
+            if (considerOrderdbSpecialization && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
                 imagePath = "images/datastore-types/orderdb.png";
             } else {
                 String driverClass = jdbcDatastore.getDriverClass();

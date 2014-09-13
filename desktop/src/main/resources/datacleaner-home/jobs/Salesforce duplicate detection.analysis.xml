@@ -2,7 +2,7 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
     	<job-name>Salesforce.com Duplicate detection</job-name>
-        <job-description>Duplicate user detection on Salesforce.com (pre-trained configuration)</job-description>
+        <job-description>Detect duplicate user records in Salesforce.com</job-description>
     </job-metadata>
     <source>
         <data-context ref="Salesforce.com"/>

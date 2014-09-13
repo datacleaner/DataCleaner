@@ -80,8 +80,8 @@ public class OpenAnalysisJobPanel extends DCPanel {
         labelListPanel.setBorder(new EmptyBorder(4, 4, 4, 0));
 
         final String title;
+        final String filename = file.getName().getBaseName();
         if (Strings.isNullOrEmpty(jobName)) {
-            final String filename = file.getName().getBaseName();
             final String extension = FileFilters.ANALYSIS_XML.getExtension();
             if (filename.toLowerCase().endsWith(extension)) {
                 title = filename.substring(0, filename.length() - extension.length());
@@ -96,6 +96,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         titleButton.setFont(WidgetUtils.FONT_HEADER1);
         titleButton.setHorizontalAlignment(SwingConstants.LEFT);
         titleButton.setBorderPainted(false);
+        titleButton.setToolTipText(filename);
         titleButton.setOpaque(false);
         titleButton.setMargin(new Insets(0, 0, 0, 0));
         titleButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -118,7 +119,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         final Icon icon;
         final String datastoreName = metadata.getDatastoreName();
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
-            final JLabel label = new JLabel(datastoreName);
+            final JLabel label = new JLabel("» " + datastoreName);
             label.setFont(WidgetUtils.FONT_SMALL);
             labelListPanel.add(label);
 

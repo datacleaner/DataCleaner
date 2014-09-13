@@ -80,6 +80,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
+import org.eobjects.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -134,6 +135,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     private final JXTextField _searchDatastoreTextField;
     private final InjectorBuilder _injectorBuilder;
     private final UserPreferences _userPreferences;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
 
     @Inject
     protected WelcomePanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
@@ -141,6 +144,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
             OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
             UserPreferences userPreferences) {
         super();
+        _openAnalysisJobActionListener = openAnalysisJobActionListener;
+        _configuration = configuration;
         _datastorePanels = new ArrayList<DatastorePanel>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
         _analysisJobBuilderWindow = analysisJobBuilderWindow;
@@ -156,16 +161,6 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
                 IconUtils.ICON_SIZE_SMALL));
         _openJobButton.setMargin(new Insets(1, 1, 1, 1));
         _openJobButton.addActionListener(openAnalysisJobActionListener);
-
-        _moreRecentJobsButton = new JButton("More recent jobs", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
-                IconUtils.ICON_SIZE_SMALL));
-        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 1));
-        _moreRecentJobsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
-            }
-        });
 
         // initialize "analyze" button
         _analyzeButton = new JButton("Build job", imageManager.getImageIcon(IconUtils.MODEL_JOB,
@@ -242,26 +237,31 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         _jobsListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
         _jobsListPanel.setLayout(jobsListLayout);
 
-        {
-            int jobIndex = 0;
-            final List<FileObject> recentJobFiles = _userPreferences.getRecentJobFiles();
-            for (FileObject fileObject : recentJobFiles) {
-                try {
-                    if (fileObject.exists()) {
-                        _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, configuration,
-                                openAnalysisJobActionListener));
-                        jobIndex++;
-                        if (jobIndex == MAX_JOB_PANELS) {
-                            break;
-                        }
-                    }
-                } catch (FileSystemException ex) {
-                    logger.debug("Skipping file {} because of unexpected error", ex);
-                }
-            }
-        }
+        final List<FileObject> recentJobFiles = getRecentJobFiles();
+
+        updateJobsListPanel(recentJobFiles);
 
         add(_jobsListPanel);
+
+        _moreRecentJobsButton = new JButton("More recent jobs", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
+                IconUtils.ICON_SIZE_SMALL));
+        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 1));
+        if (recentJobFiles.size() <= MAX_JOB_PANELS) {
+            _moreRecentJobsButton.setEnabled(false);
+        } else {
+            _moreRecentJobsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final JPopupMenu popup = new JPopupMenu();
+                    for (int i = 3; i < recentJobFiles.size(); i++) {
+                        final FileObject jobFile = recentJobFiles.get(i);
+                        final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
+                        popup.add(menuItem);
+                    }
+                    popup.show(_moreRecentJobsButton, 0, _moreRecentJobsButton.getHeight());
+                }
+            });
+        }
 
         final DCPanel jobsButtonPanel = new DCPanel();
         jobsButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -297,6 +297,35 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         datastoresButtonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         datastoresButtonPanel.add(_analyzeButton);
         add(datastoresButtonPanel);
+    }
+
+    private List<FileObject> getRecentJobFiles() {
+        final List<FileObject> recentJobFiles = _userPreferences.getRecentJobFiles();
+        final List<FileObject> result = new ArrayList<>();
+        for (FileObject fileObject : recentJobFiles) {
+            try {
+                if (fileObject.exists()) {
+                    result.add(fileObject);
+                    if (result.size() == 10) {
+                        break;
+                    }
+                }
+            } catch (FileSystemException ex) {
+                logger.debug("Skipping file {} because of unexpected error", ex);
+            }
+        }
+        return result;
+    }
+
+    private void updateJobsListPanel(List<FileObject> recentJobFiles) {
+        int jobIndex = 0;
+        for (FileObject fileObject : recentJobFiles) {
+            _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
+            jobIndex++;
+            if (jobIndex == MAX_JOB_PANELS) {
+                break;
+            }
+        }
     }
 
     private void updateDatastores() {

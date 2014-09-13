@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +44,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CouchDbDatastore;
@@ -62,11 +65,13 @@ import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.SugarCrmDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -75,6 +80,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
+import org.eobjects.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -96,48 +102,67 @@ import org.eobjects.datacleaner.windows.SugarCrmDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
 /**
- * Panel to select which datastore to use. Shown in the "source" tab, if no
- * datastore has been selected to begin with.
- * 
- * @author Kasper Sørensen
+ * Panel to select which job or datastore to use. Shown in the "source" tab, if
+ * no datastore or job has been selected to begin with.
  */
-public class DatastoreListPanel extends DCPanel implements DatastoreChangeListener {
+public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
     private static final long serialVersionUID = 1L;
 
+    private Logger logger = LoggerFactory.getLogger(WelcomePanel.class);
+
     private static final ImageManager imageManager = ImageManager.get();
+
+    private static final int MAX_JOB_PANELS = 3;
+
     private final MutableDatastoreCatalog _datastoreCatalog;
     private final AnalysisJobBuilderWindow _analysisJobBuilderWindow;
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DatabaseDriverCatalog _databaseDriverCatalog;
-    private final List<DatastorePanel> _datastorePanels = new ArrayList<DatastorePanel>();
+    private final List<DatastorePanel> _datastorePanels;
     private final DCGlassPane _glassPane;
     private final JButton _analyzeButton;
-    private final DCPanel _listPanel;
+    private final JButton _openJobButton;
+    private final JButton _moreRecentJobsButton;
+    private final DCPanel _datastoreListPanel;
+    private final DCPanel _jobsListPanel;
     private final JXTextField _searchDatastoreTextField;
     private final InjectorBuilder _injectorBuilder;
+    private final UserPreferences _userPreferences;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
 
     @Inject
-    protected DatastoreListPanel(AnalyzerBeansConfiguration configuration,
-            AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
-            DatabaseDriverCatalog databaseDriverCatalog) {
+    protected WelcomePanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
+            DCGlassPane glassPane, Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
+            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
+            UserPreferences userPreferences) {
         super();
+        _openAnalysisJobActionListener = openAnalysisJobActionListener;
+        _configuration = configuration;
+        _datastorePanels = new ArrayList<DatastorePanel>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
         _analysisJobBuilderWindow = analysisJobBuilderWindow;
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
         _injectorBuilder = injectorBuilder;
         _databaseDriverCatalog = databaseDriverCatalog;
+        _userPreferences = userPreferences;
 
-        _datastoreCatalog.addListener(this);
+        _openJobButton = new JButton("Browse jobs", imageManager.getImageIcon(IconUtils.MENU_OPEN,
+                IconUtils.ICON_SIZE_SMALL));
+        _openJobButton.setMargin(new Insets(1, 1, 1, 1));
+        _openJobButton.addActionListener(openAnalysisJobActionListener);
 
         // initialize "analyze" button
-        _analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+        _analyzeButton = new JButton("Build job", imageManager.getImageIcon(IconUtils.MODEL_JOB,
+                IconUtils.ICON_SIZE_SMALL));
         _analyzeButton.setMargin(new Insets(1, 1, 1, 1));
         _analyzeButton.addActionListener(new ActionListener() {
             @Override
@@ -198,42 +223,116 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         setLayout(new VerticalLayout(4));
 
-        final DCLabel headerLabel = DCLabel.dark("Select datastore for analysis");
-        headerLabel.setFont(WidgetUtils.FONT_HEADER1);
-        add(headerLabel);
+        add(Box.createVerticalStrut(10));
 
-        final DCLabel createNewDatastoreLabel = DCLabel.dark("Create a new datastore:");
-        createNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel jobsHeaderLabel = DCLabel.dark("Jobs");
+        jobsHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(jobsHeaderLabel);
+
+        _jobsListPanel = new DCPanel();
+        final GridLayout jobsListLayout = new GridLayout(1, MAX_JOB_PANELS);
+        jobsListLayout.setHgap(10);
+        _jobsListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
+        _jobsListPanel.setLayout(jobsListLayout);
+
+        final List<FileObject> recentJobFiles = getRecentJobFiles();
+
+        updateJobsListPanel(recentJobFiles);
+
+        add(_jobsListPanel);
+
+        _moreRecentJobsButton = new JButton("More recent jobs", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
+                IconUtils.ICON_SIZE_SMALL));
+        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 1));
+        if (recentJobFiles.size() <= MAX_JOB_PANELS) {
+            _moreRecentJobsButton.setEnabled(false);
+        } else {
+            _moreRecentJobsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final JPopupMenu popup = new JPopupMenu();
+                    for (int i = 3; i < recentJobFiles.size(); i++) {
+                        final FileObject jobFile = recentJobFiles.get(i);
+                        final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
+                        popup.add(menuItem);
+                    }
+                    popup.show(_moreRecentJobsButton, 0, _moreRecentJobsButton.getHeight());
+                }
+            });
+        }
+
+        final DCPanel jobsButtonPanel = new DCPanel();
+        jobsButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        jobsButtonPanel.add(_openJobButton);
+        jobsButtonPanel.add(_moreRecentJobsButton);
+        add(jobsButtonPanel);
+
+        add(Box.createVerticalStrut(40));
+
+        final DCLabel datastoreHeaderLabel = DCLabel.dark("Datastores");
+        datastoreHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(datastoreHeaderLabel);
+
+        final DCLabel registerNewDatastoreLabel = DCLabel.dark("Register new:");
+        registerNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         final DCPanel newDatastorePanel = new DCPanel();
         newDatastorePanel.setLayout(new VerticalLayout(4));
         newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
-        newDatastorePanel.add(createNewDatastoreLabel);
+        newDatastorePanel.add(registerNewDatastoreLabel);
         newDatastorePanel.add(createNewDatastorePanel());
 
         add(newDatastorePanel);
 
-        _listPanel = new DCPanel();
-        _listPanel.setLayout(new VerticalLayout(4));
-        _listPanel.setBorder(new EmptyBorder(10, 10, 10, 0));
-        add(_listPanel);
+        _datastoreListPanel = new DCPanel();
+        _datastoreListPanel.setLayout(new VerticalLayout(4));
+        _datastoreListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
+        add(_datastoreListPanel);
         updateDatastores();
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
-        buttonPanel.add(_analyzeButton);
+        final DCPanel datastoresButtonPanel = new DCPanel();
+        datastoresButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        datastoresButtonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
+        datastoresButtonPanel.add(_analyzeButton);
+        add(datastoresButtonPanel);
+    }
 
-        add(buttonPanel);
+    private List<FileObject> getRecentJobFiles() {
+        final List<FileObject> recentJobFiles = _userPreferences.getRecentJobFiles();
+        final List<FileObject> result = new ArrayList<>();
+        for (FileObject fileObject : recentJobFiles) {
+            try {
+                if (fileObject.exists()) {
+                    result.add(fileObject);
+                    if (result.size() == 10) {
+                        break;
+                    }
+                }
+            } catch (FileSystemException ex) {
+                logger.debug("Skipping file {} because of unexpected error", ex);
+            }
+        }
+        return result;
+    }
+
+    private void updateJobsListPanel(List<FileObject> recentJobFiles) {
+        int jobIndex = 0;
+        for (FileObject fileObject : recentJobFiles) {
+            _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
+            jobIndex++;
+            if (jobIndex == MAX_JOB_PANELS) {
+                break;
+            }
+        }
     }
 
     private void updateDatastores() {
         Datastore selectedDatastore = getSelectedDatastore();
-        _listPanel.removeAll();
+        _datastoreListPanel.removeAll();
         _datastorePanels.clear();
 
-        final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");
-        existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER1);
+        final DCLabel existingDatastoresLabel = DCLabel.dark("Existing datastores:");
+        existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         final DCPanel searchDatastorePanel = DCPanel.around(_searchDatastoreTextField);
         searchDatastorePanel.setBorder(WidgetUtils.BORDER_SHADOW);
@@ -244,7 +343,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
         headerPanel.add(Box.createHorizontalStrut(20));
         headerPanel.add(searchDatastorePanel);
 
-        _listPanel.add(headerPanel);
+        _datastoreListPanel.add(headerPanel);
 
         boolean selectFirst = true;
 
@@ -254,7 +353,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
             DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
                     _analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
             _datastorePanels.add(datastorePanel);
-            _listPanel.add(datastorePanel);
+            _datastoreListPanel.add(datastorePanel);
 
             if (selectedDatastore != null && selectedDatastore.getName().equals(datastore.getName())) {
                 selectFirst = false;
@@ -473,6 +572,12 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
                 dialog.setVisible(true);
             }
         };
+    }
+    
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _datastoreCatalog.addListener(this);
     }
 
     @Override

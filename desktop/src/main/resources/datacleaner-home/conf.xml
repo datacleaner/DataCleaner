@@ -5,9 +5,9 @@
 	<configuration-metadata>
 		<configuration-name>DataCleaner configuration</configuration-name>
 		<configuration-description>Configures DataCleaner's initial environment.
-			This includes an example datastore and some example reference data.</configuration-description>
-		<configuration-version>2.3</configuration-version>
-		<author>eobjects.org</author>
+			This includes example datastores and example reference data.</configuration-description>
+		<configuration-version>3.7</configuration-version>
+		<author>DataCleaner.org</author>
 	</configuration-metadata>
 
 	<datastore-catalog>
@@ -17,49 +17,26 @@
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
-
-		<csv-datastore name="Country codes"
-			description="Country reference data, courtesy of Graham Rhind">
-			<filename>examples/countrycodes.csv</filename>
+		
+		<salesforce-datastore name="Salesforce.com" description="A connection to SFDC - credentials not provided">
+			<username>username</username>
+			<password>password</password>
+			<security-token>token</security-token>
+		</salesforce-datastore>
+		
+		<csv-datastore name="Contact data" description="A text-file with contact data to be cleansed">
+			<filename>datastores/contactdata.txt</filename>
+			<encoding>UTF8</encoding>
 			<quote-char>"</quote-char>
 			<separator-char>;</separator-char>
-			<encoding>ISO-8859-1</encoding>
-			<fail-on-inconsistencies>false</fail-on-inconsistencies>
 		</csv-datastore>
+		
 	</datastore-catalog>
 
 	<reference-data-catalog>
 		<dictionaries>
-			<datastore-dictionary name="Country names"
-				description="List of country names">
-				<datastore-name>Country codes</datastore-name>
-				<column-path>Country name</column-path>
-			</datastore-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
-			<datastore-synonym-catalog name="Country code (2 letter)"
-				description="Retrieve ISO 3166-1 alpha-2 code of country/territory">
-				<datastore-name>Country codes</datastore-name>
-				<master-term-column-path>ISO 3166-2</master-term-column-path>
-				<synonym-column-path>ISO 3166-3</synonym-column-path>
-				<synonym-column-path>ISO Numeric</synonym-column-path>
-				<synonym-column-path>Country name</synonym-column-path>
-				<synonym-column-path>Synonym1</synonym-column-path>
-				<synonym-column-path>Synonym2</synonym-column-path>
-				<synonym-column-path>Synonym3</synonym-column-path>
-			</datastore-synonym-catalog>
-
-			<datastore-synonym-catalog name="Country code (3 letter)"
-				description="Retrieve ISO 3166-1 alpha-3 code of country/territory">
-				<datastore-name>Country codes</datastore-name>
-				<master-term-column-path>ISO 3166-3</master-term-column-path>
-				<synonym-column-path>ISO 3166-2</synonym-column-path>
-				<synonym-column-path>ISO Numeric</synonym-column-path>
-				<synonym-column-path>Country name</synonym-column-path>
-				<synonym-column-path>Synonym1</synonym-column-path>
-				<synonym-column-path>Synonym2</synonym-column-path>
-				<synonym-column-path>Synonym3</synonym-column-path>
-			</datastore-synonym-catalog>
 		</synonym-catalogs>
 	</reference-data-catalog>
 

@@ -49,10 +49,15 @@ import org.slf4j.LoggerFactory;
  * will be used.</li>
  * <li>If none of the above, the current folder "." will be used.</li>
  * </ol>
- * 
- * @author Kasper Sørensen
  */
 public final class DataCleanerHome {
+    
+    public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
+    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce duplicate detection.analysis.xml";
+    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING = "jobs/Salesforce dedup training.analysis.xml";
+    public static final String JOB_EXAMPLE_ADDRESS_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
+    public static final String JOB_EXAMPLE_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
+    public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
     private static final FileObject _dataCleanerHome;
@@ -116,12 +121,14 @@ public final class DataCleanerHome {
             if (candidate.isWriteable()) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
-                copyIfNonExisting(candidate, manager, "examples/countrycodes.csv");
-                copyIfNonExisting(candidate, manager, "examples/employees.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/duplicate_customer_detection.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/customer_data_cleansing.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/write_order_information.analysis.xml");
-                copyIfNonExisting(candidate, manager, "examples/customer_data_completeness.analysis.xml");
+                copyIfNonExisting(candidate, manager, "datastores/contactdata.txt");
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EXPORT_ORDERS_DATA);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_CUSTOMER_PROFILING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ADDRESS_CLEANSING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_PHONE_CLEANSING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING);
+                copyIfNonExisting(candidate, manager, "jobs/sfdc_dupe_model_users.dedupmodel.xml");
             }
         }
 
@@ -135,12 +142,12 @@ public final class DataCleanerHome {
         return _dataCleanerHome;
     }
 
-    private static void copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
+    private static FileObject copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
             throws FileSystemException {
         FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
             logger.info("File already exists in DATACLEANER_HOME: " + filename);
-            return;
+            return file;
         }
         FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {
@@ -149,6 +156,9 @@ public final class DataCleanerHome {
 
         final ResourceManager resourceManager = ResourceManager.get();
         final URL url = resourceManager.getUrl("datacleaner-home/" + filename);
+        if (url == null) {
+            return null;
+        }
 
         InputStream in = null;
         OutputStream out = null;
@@ -162,6 +172,8 @@ public final class DataCleanerHome {
         } finally {
             FileHelper.safeClose(in, out);
         }
+        
+        return file;
     }
 
     private static boolean isUsable(FileObject candidate) throws FileSystemException {

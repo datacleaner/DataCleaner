@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.user;
 import java.io.File;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -48,9 +52,6 @@ import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,24 +148,18 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
 
         logger.info("Saving user preferences to {}", _userPreferencesFile.getName().getPath());
-        
-        @SuppressWarnings("resource")
+
         ObjectOutputStream outputStream = null;
         try {
-            outputStream = new ObjectOutputStream(_userPreferencesFile.getContent().getOutputStream());
+            OutputStream fileOutputStream = _userPreferencesFile.getContent().getOutputStream();
+            outputStream = new ObjectOutputStream(fileOutputStream);
             outputStream.writeObject(this);
             outputStream.flush();
         } catch (Exception e) {
             logger.warn("Unexpected error while saving user preferences", e);
             throw new IllegalStateException(e);
         } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
+            FileHelper.safeClose(outputStream);
         }
     }
 
@@ -242,6 +237,17 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     @Override
     public List<FileObject> getRecentJobFiles() {
+        if (recentJobFiles == null || recentJobFiles.isEmpty()) {
+            recentJobFiles = new ArrayList<>();
+            final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_ADDRESS_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_PHONE_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING));
+        }
+
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
             @Override
             public FileObject eval(File file) {

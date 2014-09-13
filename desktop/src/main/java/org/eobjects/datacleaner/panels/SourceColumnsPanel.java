@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -37,14 +39,10 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * Panel that presents the source columns of a job.
- * 
- * @author Kasper Sørensen
  */
 public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
 
@@ -58,7 +56,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
     @Inject
     protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
-        super();
+        super(ImageManager.get().getImage("images/window/source-tab-background.png"), 0, 100);
         _analysisJobBuilder = analysisJobBuilder;
         _windowContext = windowContext;
 

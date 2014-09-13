@@ -131,19 +131,19 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
     // #e1e1e1 (silver-ish)
-    public static final Color BG_COLOR_BRIGHT = new ColorUIResource(235, 235, 235);
+    public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
 
     // slightly darker than BRIGHT
-    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
+    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(230, 230, 230);
 
     // #a0a0a0
-    public static final Color BG_COLOR_MEDIUM = new ColorUIResource(160, 160, 160);
+    public static final Color BG_COLOR_MEDIUM = new ColorUIResource(130, 140, 150);
 
-    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(95, 95, 95);
+    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(85, 95, 100);
 
-    public static final Color BG_COLOR_DARK = new ColorUIResource(70, 70, 70);
+    public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
 
-    public static final Color BG_COLOR_DARKEST = new ColorUIResource(40, 40, 40);
+    public static final Color BG_COLOR_DARKEST = new ColorUIResource(37, 40, 45);
 
     // additional colors, only intended for special widget coloring such as
     // charts etc.

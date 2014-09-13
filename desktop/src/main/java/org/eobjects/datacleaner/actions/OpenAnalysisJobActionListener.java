@@ -59,8 +59,6 @@ import com.google.inject.util.Providers;
  * 
  * The class also contains a few reusable static methods for opening job files
  * without showing the dialog.
- * 
- * @author Kasper Sørensen
  */
 public class OpenAnalysisJobActionListener implements ActionListener {
 

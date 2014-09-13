@@ -242,8 +242,9 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION));
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EASYDQ_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_ADDRESS_CLEANSING));
             recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
+            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_PHONE_CLEANSING));
         }
 
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {

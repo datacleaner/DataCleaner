@@ -54,7 +54,8 @@ public final class DataCleanerHome {
     
     public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
     public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce.com duplicate leads.analysis.xml";
-    public static final String JOB_EXAMPLE_EASYDQ_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
+    public static final String JOB_EXAMPLE_ADDRESS_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
+    public static final String JOB_EXAMPLE_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
     public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
@@ -122,7 +123,8 @@ public final class DataCleanerHome {
                 copyIfNonExisting(candidate, manager, "datastores/contactdata.txt");
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EXPORT_ORDERS_DATA);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_CUSTOMER_PROFILING);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EASYDQ_CLEANSING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ADDRESS_CLEANSING);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_PHONE_CLEANSING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
             }
         }

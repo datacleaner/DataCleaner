@@ -53,7 +53,8 @@ import org.slf4j.LoggerFactory;
 public final class DataCleanerHome {
     
     public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
-    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce.com duplicate leads.analysis.xml";
+    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/sfdc_dupe_detection.analysis.xml";
+    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING = "jobs/sfdc_dupe_training.analysis.xml";
     public static final String JOB_EXAMPLE_ADDRESS_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
     public static final String JOB_EXAMPLE_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
     public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
@@ -126,6 +127,8 @@ public final class DataCleanerHome {
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ADDRESS_CLEANSING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_PHONE_CLEANSING);
                 copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
+                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING);
+                copyIfNonExisting(candidate, manager, "jobs/sfdc_dupe_model_users.dedupmodel.xml");
             }
         }
 

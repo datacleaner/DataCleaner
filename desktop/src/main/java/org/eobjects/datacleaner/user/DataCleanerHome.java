@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -51,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * </ol>
  */
 public final class DataCleanerHome {
-    
+
     public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
     public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce duplicate detection.analysis.xml";
     public static final String JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING = "jobs/Salesforce dedup training.analysis.xml";
@@ -62,13 +65,23 @@ public final class DataCleanerHome {
     public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION = "jobs/OrderDB Customers Duplicate detection.analysis.xml";
     public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING = "jobs/OrderDB Customers dedup Training.analysis.xml";
 
-    private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
+    // note: Logger is specified using a string. This is because the logger is
+    // to be used also in the static initializer and any error in that code
+    // would otherwise be swallowed.
+    private static final Logger logger;
+
     private static final FileObject _dataCleanerHome;
 
     static {
+        logger = LoggerFactory.getLogger("org.eobjects.datacleaner.user.DataCleanerHome");
+        logger.info("Initializing DATACLEANER_HOME");
         try {
             _dataCleanerHome = findDataCleanerHome();
-        } catch (FileSystemException e) {
+        } catch (Exception e) {
+            logger.error("Failed to initialize DATACLEANER_HOME!", e);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
             throw new IllegalStateException(e);
         }
     }
@@ -90,12 +103,7 @@ public final class DataCleanerHome {
 
         if (ClassLoaderUtils.IS_WEB_START) {
             // in web start, the default folder will be in user.home
-            final String userHomePath = System.getProperty("user.home");
-            if (userHomePath == null) {
-                throw new IllegalStateException("Could not determine user home directory: " + candidate);
-            }
-
-            final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Version.getVersion();
+            final String path = getUserHomeCandidatePath();
             candidate = manager.resolveFile(path);
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
@@ -103,7 +111,16 @@ public final class DataCleanerHome {
             // in normal mode, the default folder will be in the working
             // directory
             candidate = manager.resolveFile(".");
-            logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);
+            if (isWriteable(candidate)) {
+                logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);
+            } else {
+                final String path = getUserHomeCandidatePath();
+                candidate = manager.resolveFile(path);
+                logger.info(
+                        "Application directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
+                        path, candidate);
+            }
+
         }
 
         if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
@@ -121,7 +138,7 @@ public final class DataCleanerHome {
                 candidate.createFolder();
             }
 
-            if (candidate.isWriteable()) {
+            if (isWriteable(candidate)) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
                 copyIfNonExisting(candidate, manager, "datastores/contactdata.txt");
@@ -141,6 +158,18 @@ public final class DataCleanerHome {
         }
 
         return candidate;
+    }
+
+    private static boolean isWriteable(FileObject candidate) throws FileSystemException {
+        if (!candidate.isWriteable()) {
+            return false;
+        }
+
+        // check with java.nio.Files.isWriteable() - is more detailed in it's
+        // check
+        final File file = VFSUtils.toFile(candidate);
+        final Path path = file.toPath();
+        return Files.isWritable(path);
     }
 
     /**
@@ -180,8 +209,15 @@ public final class DataCleanerHome {
         } finally {
             FileHelper.safeClose(in, out);
         }
-        
+
         return file;
+    }
+
+    private static String getUserHomeCandidatePath() {
+        final String userHomePath = System.getProperty("user.home");
+        final String path = userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar
+                + Version.getVersion();
+        return path;
     }
 
     private static boolean isUsable(FileObject candidate) throws FileSystemException {

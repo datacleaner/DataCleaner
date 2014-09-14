@@ -8,12 +8,9 @@
 	<section id="installing_datacleaner">
 		<title>Installing the desktop application</title>
 		<para>The desktop version of DataCleaner requires practically no
-			installation. The
-			application is not dependent on any particular
-			operating system and
-			does not need to "register" in any registration
-			database or something
-			like that.
+			installation. The application is not dependent on any particular
+			operating system and does not need to "register" in any registration
+			database or something like that.
 		</para>
 		<para>The only two requirements of DataCleaner are:</para>
 		<orderedlist>
@@ -24,7 +21,7 @@
 			<listitem>
 				A
 				<link xl:href="http://www.java.com">Java Runtime Environment</link>
-				(JRE), version 6 or higher.
+				(JRE), version 7 or higher.
 			</listitem>
 		</orderedlist>
 

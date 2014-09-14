@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -32,13 +31,13 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.util.SystemProperties;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -63,6 +63,9 @@ public class DefaultResultContext implements ResultContext {
                     inputStream = new ChangeAwareObjectInputStream(in);
                     return inputStream.readObject();
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
                     throw new IllegalStateException(e);
                 } finally {
                     FileHelper.safeClose(inputStream);

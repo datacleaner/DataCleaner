@@ -48,7 +48,6 @@
 				<module>quick-analysis-wizard</module>
 				<module>copy-data-wizard</module>
 				<module>completeness-analysis-wizard</module>
-				<module>lucene</module>
 			</modules>
 		</profile>
 		<profile>

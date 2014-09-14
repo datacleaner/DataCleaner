@@ -179,6 +179,7 @@ public final class WidgetFactory {
         tf.setColumns(columns);
         if (promptText != null) {
             tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
+            tf.setToolTipText(promptText);
         }
         return tf;
     }

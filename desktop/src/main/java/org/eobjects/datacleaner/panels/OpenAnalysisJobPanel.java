@@ -56,7 +56,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(278, 70);
+    private static final Dimension PREFERRED_SIZE = new Dimension(278, 78);
 
     private final FileObject _file;
 
@@ -94,6 +94,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
         final JButton titleButton = new JButton("<html><u>" + title + "</u></html>");
         titleButton.setFont(WidgetUtils.FONT_HEADER1);
+        titleButton.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
         titleButton.setHorizontalAlignment(SwingConstants.LEFT);
         titleButton.setBorderPainted(false);
         titleButton.setToolTipText(filename);

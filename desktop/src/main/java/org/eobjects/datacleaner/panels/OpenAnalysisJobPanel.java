@@ -25,6 +25,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -56,7 +57,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(278, 78);
+    private static final Dimension PREFERRED_SIZE = new Dimension(278, 75);
 
     private final FileObject _file;
 
@@ -92,11 +93,11 @@ public class OpenAnalysisJobPanel extends DCPanel {
             title = jobName;
         }
 
-        final JButton titleButton = new JButton("<html><u>" + title + "</u></html>");
+        final JButton titleButton = new JButton(title);
         titleButton.setFont(WidgetUtils.FONT_HEADER1);
-        titleButton.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+        titleButton.setForeground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
         titleButton.setHorizontalAlignment(SwingConstants.LEFT);
-        titleButton.setBorderPainted(false);
+        titleButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
         titleButton.setToolTipText(filename);
         titleButton.setOpaque(false);
         titleButton.setMargin(new Insets(0, 0, 0, 0));
@@ -107,7 +108,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
                 _openAnalysisJobActionListener.openFile(_file);
             }
         });
-        labelListPanel.add(titleButton);
+        labelListPanel.add(DCPanel.around(titleButton));
 
         if (!Strings.isNullOrEmpty(jobDescription)) {
             String desc = StringUtils.replaceWhitespaces(jobDescription, " ");

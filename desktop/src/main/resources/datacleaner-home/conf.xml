@@ -11,20 +11,20 @@
 	</configuration-metadata>
 
 	<datastore-catalog>
-		<jdbc-datastore name="orderdb" description="DataCleaner example database">
+		<jdbc-datastore name="orderdb" description="Example database for use with DataCleaner">
 			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
 		
-		<salesforce-datastore name="Salesforce.com" description="A connection to SFDC - credentials not provided">
+		<salesforce-datastore name="Salesforce.com" description="Example connection to SFDC - credentials not provided">
 			<username>username</username>
 			<password>password</password>
 			<security-token>token</security-token>
 		</salesforce-datastore>
 		
-		<csv-datastore name="Contact data" description="A text-file with contact data to be cleansed">
+		<csv-datastore name="Contact data" description="Example text-file with contact data to be cleansed">
 			<filename>datastores/contactdata.txt</filename>
 			<encoding>UTF8</encoding>
 			<quote-char>"</quote-char>

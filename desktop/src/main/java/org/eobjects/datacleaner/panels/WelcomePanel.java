@@ -128,7 +128,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     private final List<DatastorePanel> _datastorePanels;
     private final DCGlassPane _glassPane;
     private final JButton _analyzeButton;
-    private final JButton _openJobButton;
+    private final JButton _browseJobsButton;
     private final JButton _moreRecentJobsButton;
     private final DCPanel _datastoreListPanel;
     private final DCPanel _jobsListPanel;
@@ -155,10 +155,10 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
-        _openJobButton = new JButton("Browse jobs", imageManager.getImageIcon(IconUtils.MENU_OPEN,
+        _browseJobsButton = new JButton("Browse jobs", imageManager.getImageIcon(IconUtils.MENU_OPEN,
                 IconUtils.ICON_SIZE_SMALL));
-        _openJobButton.setMargin(new Insets(1, 1, 1, 1));
-        _openJobButton.addActionListener(openAnalysisJobActionListener);
+        _browseJobsButton.setMargin(new Insets(1, 1, 1, 4));
+        _browseJobsButton.addActionListener(openAnalysisJobActionListener);
 
         // initialize "analyze" button
         _analyzeButton = new JButton("Build job", imageManager.getImageIcon(IconUtils.MODEL_JOB,
@@ -241,9 +241,9 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         add(_jobsListPanel);
 
-        _moreRecentJobsButton = new JButton("More recent jobs", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
+        _moreRecentJobsButton = new JButton("More", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
                 IconUtils.ICON_SIZE_SMALL));
-        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 1));
+        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 4));
         if (recentJobFiles.size() <= MAX_JOB_PANELS) {
             _moreRecentJobsButton.setEnabled(false);
         } else {
@@ -263,8 +263,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         final DCPanel jobsButtonPanel = new DCPanel();
         jobsButtonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        jobsButtonPanel.add(_openJobButton);
         jobsButtonPanel.add(_moreRecentJobsButton);
+        jobsButtonPanel.add(_browseJobsButton);
         add(jobsButtonPanel);
 
         add(Box.createVerticalStrut(40));
@@ -435,8 +435,9 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         createDefaultDatabaseButtons(panel, databaseNames);
 
-        final JButton moreDatastoreTypesButton = new JButton("more");
-        moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 1));
+        final JButton moreDatastoreTypesButton = new JButton("More", imageManager.getImageIcon(IconUtils.FILE_FOLDER,
+                IconUtils.ICON_SIZE_SMALL));
+        moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 4));
         moreDatastoreTypesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

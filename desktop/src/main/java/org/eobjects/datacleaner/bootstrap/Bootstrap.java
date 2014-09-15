@@ -115,12 +115,19 @@ public final class Bootstrap {
 
         if (cliMode) {
 
-            if (!GraphicsEnvironment.isHeadless()) {
-                // hide splash screen
-                final SplashScreen splashScreen = SplashScreen.getSplashScreen();
-                if (splashScreen != null) {
-                    splashScreen.close();
+            try {
+                if (!GraphicsEnvironment.isHeadless()) {
+                    // hide splash screen
+                    final SplashScreen splashScreen = SplashScreen.getSplashScreen();
+                    if (splashScreen != null) {
+                        splashScreen.close();
+                    }
                 }
+            } catch (Exception e) {
+                // ignore this condition - may happen rarely on e.g. X windows
+                // systems when the user is not authorized to access the
+                // graphics environment.
+                logger.trace("Swallowing exception caused by trying to hide splash screen", e);
             }
 
             if (arguments.isUsageMode()) {

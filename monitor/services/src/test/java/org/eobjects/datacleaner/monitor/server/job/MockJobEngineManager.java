@@ -36,7 +36,7 @@ public class MockJobEngineManager extends SimpleJobEngineManager {
     }
 
     private static Collection<JobEngine<?>> createDefaultJobEngines() {
-        JobEngine<?> engine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true));
+        JobEngine<?> engine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true), null);
         ArrayList<JobEngine<?>> list = new ArrayList<JobEngine<?>>(1);
         list.add(engine);
         return list;

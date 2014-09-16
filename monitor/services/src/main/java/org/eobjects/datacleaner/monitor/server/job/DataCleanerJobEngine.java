@@ -47,6 +47,7 @@ import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
+import org.eobjects.analyzer.job.runner.CompositeAnalysisListener;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.datacleaner.monitor.cluster.ClusterManagerFactory;
@@ -71,6 +72,7 @@ import org.apache.metamodel.util.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -85,12 +87,15 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     private final ClusterManagerFactory _clusterManagerFactory;
     private final DescriptorProvider _descriptorProvider;
     private final Map<String, AnalysisResultFuture> _runningJobs;
+    private final ApplicationContext _applicationContext;
 
     @Autowired
-    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider) {
+    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider,
+            ApplicationContext applicationContext) {
         super(FileFilters.ANALYSIS_XML.getExtension());
         _clusterManagerFactory = clusterManagerFactory;
         _descriptorProvider = descriptorProvider;
+        _applicationContext = applicationContext;
         _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
     }
 
@@ -122,7 +127,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception {
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, executionLogger);
+
+        final AnalysisListener analysisListener = createAnalysisListener(execution, executionLogger);
 
         final DataCleanerJobContext job = (DataCleanerJobContext) tenantContext.getJob(execution.getJob());
         if (job == null) {
@@ -164,6 +170,25 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         } finally {
             removeRunningJob(tenantContext, execution);
         }
+    }
+
+    private AnalysisListener createAnalysisListener(ExecutionLog execution, ExecutionLogger executionLogger) {
+        // we always want a MonitorAnalysisListener instance
+        final AnalysisListener monitorAnalysisListener = new MonitorAnalysisListener(execution, executionLogger);
+
+        // we might want to plug in additional AnalysisListeners
+        final Map<String, AnalysisListener> analysisListeners = (_applicationContext == null ? null
+                : _applicationContext.getBeansOfType(AnalysisListener.class));
+
+        final AnalysisListener analysisListener;
+        if (analysisListeners == null || analysisListeners.isEmpty()) {
+            analysisListener = monitorAnalysisListener;
+        } else {
+            final AnalysisListener[] delegates = analysisListeners.values().toArray(
+                    new AnalysisListener[analysisListeners.size()]);
+            analysisListener = new CompositeAnalysisListener(monitorAnalysisListener, delegates);
+        }
+        return analysisListener;
     }
 
     @Override

@@ -2,6 +2,9 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
         <job-description>Applies EasyDQ phone cleansing (credentials reqd.) to do line type analysis</job-description>
+        <metadata-properties>
+        	<property name="DemoJob">true</property>
+        </metadata-properties>
     </job-metadata>
     <source>
         <data-context ref="Contact data"/>

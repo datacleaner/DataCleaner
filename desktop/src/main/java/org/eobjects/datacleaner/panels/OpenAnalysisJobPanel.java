@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -46,6 +47,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -57,7 +60,10 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobPanel.class);
     private static final Dimension PREFERRED_SIZE = new Dimension(278, 75);
+
+    private static final Icon demoBadgeIcon = ImageManager.get().getImageIcon("images/window/badge-demo.png");
 
     private final FileObject _file;
 
@@ -72,9 +78,11 @@ public class OpenAnalysisJobPanel extends DCPanel {
         setLayout(new HorizontalLayout(4));
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
-        final AnalysisJobMetadata metadata = new JaxbJobReader(configuration).readMetadata(_file);
+        final AnalysisJobMetadata metadata = getMetadata(configuration);
         final String jobName = metadata.getJobName();
         final String jobDescription = metadata.getJobDescription();
+
+        final boolean isDemoJob = isDemoJob(metadata);
 
         final DCPanel labelListPanel = new DCPanel();
         labelListPanel.setLayout(new VerticalLayout(4));
@@ -118,21 +126,46 @@ public class OpenAnalysisJobPanel extends DCPanel {
             labelListPanel.add(label);
         }
 
-        final Icon icon;
-        final String datastoreName = metadata.getDatastoreName();
-        if (!StringUtils.isNullOrEmpty(datastoreName)) {
-            final JLabel label = new JLabel("» " + datastoreName);
-            label.setFont(WidgetUtils.FONT_SMALL);
-            labelListPanel.add(label);
-
-            final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
-            icon = IconUtils.getDatastoreSpecificAnalysisJobIcon(datastore);
-        } else {
-            icon = ImageManager.get().getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_LARGE);
+        final Icon icon; 
+        {
+            final String datastoreName = metadata.getDatastoreName();
+            if (!StringUtils.isNullOrEmpty(datastoreName)) {
+                final JLabel label = new JLabel("» " + datastoreName);
+                label.setFont(WidgetUtils.FONT_SMALL);
+                labelListPanel.add(label);
+                
+                final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+                if (isDemoJob) {
+                    icon = demoBadgeIcon;
+                } else {
+                    icon = IconUtils.getDatastoreSpecificAnalysisJobIcon(datastore);
+                }
+            } else {
+                icon = ImageManager.get().getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_LARGE);
+            }
         }
 
         add(new JLabel(icon));
         add(labelListPanel);
+    }
+
+    private AnalysisJobMetadata getMetadata(AnalyzerBeansConfiguration configuration) {
+        try {
+            return new JaxbJobReader(configuration).readMetadata(_file);
+        } catch (Exception e) {
+            logger.warn("Failed to read metadata from file '" + _file + "'", e);
+            return AnalysisJobMetadata.EMPTY_METADATA;
+        }
+    }
+
+    private boolean isDemoJob(AnalysisJobMetadata metadata) {
+        final Map<String, String> metadataProperties = metadata.getProperties();
+        if (metadataProperties != null) {
+            if ("true".equals(metadataProperties.get("DemoJob"))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -7,12 +7,8 @@
 
 	<section id="installing_datacleaner">
 		<title>Installing the desktop application</title>
-		<para>The desktop version of DataCleaner requires practically no
-			installation. The application is not dependent on any particular
-			operating system and does not need to "register" in any registration
-			database or something like that.
-		</para>
-		<para>The only two requirements of DataCleaner are:</para>
+
+		<para>These are the system requirements of DataCleaner:</para>
 		<orderedlist>
 			<listitem>
 				A computer (with a graphical display, except if run in command-line
@@ -23,38 +19,51 @@
 				<link xl:href="http://www.java.com">Java Runtime Environment</link>
 				(JRE), version 7 or higher.
 			</listitem>
+			<listitem>
+				A DataCleaner software license file. If you've requested a free
+				trial or purchased DataCleaner online, this file will have been sent
+				to your email address.
+			</listitem>
 		</orderedlist>
 
-		<para>You have two options in terms of installation.</para>
+		<para>
+			Start the installation procedure using the installer program.
+			The
+			installer program is an executable JAR file, which is executable
+			on
+			most systems if you simply double-click it.
+		</para>
+
+		<tip>
+			<para>If the installer does not launch when you double-click it,
+				open a command prompt and enter:
+			</para>
+			<blockquote>
+				java -jar DataCleaner-[edition]-[version]-install.jar
+			</blockquote>
+		</tip>
+		
+		<para>Troubleshooting</para>
+		<para>Usually the installation procedure is trivial and self-explanatory. But in case something is not working as expected, please check the following points:</para>
+		
 		<orderedlist>
 			<listitem>
-				<para>
-					Download DataCleaner as a distributable package (.zip or .tar.gz)
-					from the release list on our
-					<link xl:href="http://datacleaner.org/downloads">downloads page</link>
-					.
-				</para>
-
-				<para>Unpackage the distributable in a directory of your own choice.
-					DataCleaner will save it's configuration within this same
-					directory.
-				</para>
+				<para>On Windows systems, if you do not have <emphasis>Administrative privileges</emphasis> on the machine, we encourage you to install DataCleaner in your user's directory instead of in 'Program Files'.</para>
 			</listitem>
 			<listitem>
-				<para>
-					Run DataCleaner as a Java WebStart application. You can do this by
-					clicking the WebStart link on our
-					<link xl:href="http://datacleaner.org/downloads">downloads page</link>
-					.
-				</para>
-				<para>In WebStart the application will be installed in your JRE's
-					application cache. Each time you start the application it will
-					automatically check for updates to the application. DataCleaner's
-					configuration will be stored in your "home"-directory in a folder
-					called .datacleaner/[version].
-				</para>
+				<para>On some Windows systems you can get a warning '<emphasis>There is no script engine for file extension '.js'</emphasis>'. This happens when .js files (JavaScript) files are associated with an editor instead of Windows' built-in scripting engine. To resolve this issue, please refer to these help links:</para>
+				<orderedlist>
+					<listitem><para><link xl:href="http://answers.microsoft.com/en-us/windows/forum/windows_7-system/fix-there-is-no-script-engine-for-file-extension/95d58867-3f31-45e3-aeaf-32ecea4d33c1">answers.microsoft.com</link>, which address the issue and recommends...</para></listitem>
+					<listitem><para><link xl:href="http://www.winhelponline.com/articles/230/1/Error-There-is-no-script-engine-for-file-extension-when-running-js-files.html">winhelponline.com</link>, which has a fix for the issue</para></listitem>
+				</orderedlist>
 			</listitem>
+			<listitem>
+				<para>If you have issues with locating or selecting the software license file, you can skip the step in the installer by copying the license file manually to this folder: '~/.datacleaner' (where ~ is your User's home folder). Note that on Windows machines it is prohibited by Windows explorer to create directories starting with dot (.), but it can be done using the command prompt:</para>
+				<blockquote>mkdir .datacleaner</blockquote>
+			</listitem>
+			
 		</orderedlist>
+
 	</section>
 
 	<section id="connecting_to_your_datastore">
@@ -80,14 +89,16 @@
 		<tip>
 			<para>
 				You can also configure your datastore by means of the
-				configuration file (conf.xml), which has both some pros and some cons.
-				For more information, read the
+				configuration
+				file (conf.xml), which has both some pros and some cons.
+				For more
+				information, read the
 				<link linkend="chapter_configuration_file">configuration file chapter</link>
 				.
 			</para>
 		</tip>
 	</section>
-	
+
 	<section id="adding_components">
 		<title>Adding components to the job</title>
 		<para>There are a few different kinds of components that you can add

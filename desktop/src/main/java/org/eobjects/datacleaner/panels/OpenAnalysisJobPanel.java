@@ -29,8 +29,10 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -46,11 +48,13 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.inject.Injector;
 
 /**
  * Panel that is shown in the {@link WelcomePanel} to present a recently opened
@@ -108,7 +112,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         titleButton.setForeground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
         titleButton.setHorizontalAlignment(SwingConstants.LEFT);
         titleButton.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
-        titleButton.setToolTipText(filename);
+        titleButton.setToolTipText("Open job");
         titleButton.setOpaque(false);
         titleButton.setMargin(new Insets(0, 0, 0, 0));
         titleButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -121,14 +125,30 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
         final JButton executeButton = new JButton(executeIcon);
         executeButton.setOpaque(false);
+        executeButton.setToolTipText("Execute job directly");
         executeButton.setMargin(new Insets(0, 0, 0, 0));
         executeButton.setBorderPainted(false);
         executeButton.setHorizontalAlignment(SwingConstants.RIGHT);
+        executeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final ImageIcon executeIconLarge = ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE);
+                final String question = "Are you sure you want to execute the job\n'" + title + "'?";
+                final int choice = JOptionPane.showConfirmDialog(null, question, "Execute job?",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, executeIconLarge);
+                if (choice == JOptionPane.YES_OPTION) {
+                    final Injector injector = _openAnalysisJobActionListener.openAnalysisJob(_file);
+                    final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+                    resultWindow.open();
+                    resultWindow.startAnalysis();
+                }
+            }
+        });
 
         final DCPanel titlePanel = new DCPanel();
         titlePanel.setLayout(new BorderLayout());
         titlePanel.add(DCPanel.around(titleButton), BorderLayout.CENTER);
-//        titlePanel.add(executeButton, BorderLayout.EAST);
+        titlePanel.add(executeButton, BorderLayout.EAST);
 
         labelListPanel.add(titlePanel);
 
@@ -161,7 +181,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
         final JLabel iconLabel = new JLabel(icon);
         iconLabel.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
-        
+
         add(iconLabel, BorderLayout.WEST);
         add(labelListPanel, BorderLayout.CENTER);
     }

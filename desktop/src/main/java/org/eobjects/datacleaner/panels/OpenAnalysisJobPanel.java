@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -45,7 +46,6 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,8 @@ public class OpenAnalysisJobPanel extends DCPanel {
     private static final Dimension PREFERRED_SIZE = new Dimension(278, 75);
 
     private static final Icon demoBadgeIcon = ImageManager.get().getImageIcon("images/window/badge-demo.png");
+    private static final Icon executeIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE,
+            IconUtils.ICON_SIZE_SMALL);
 
     private final FileObject _file;
 
@@ -75,7 +77,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         _file = file;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 
-        setLayout(new HorizontalLayout(4));
+        setLayout(new BorderLayout());
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
         final AnalysisJobMetadata metadata = getMetadata(configuration);
@@ -116,7 +118,19 @@ public class OpenAnalysisJobPanel extends DCPanel {
                 _openAnalysisJobActionListener.openFile(_file);
             }
         });
-        labelListPanel.add(DCPanel.around(titleButton));
+
+        final JButton executeButton = new JButton(executeIcon);
+        executeButton.setOpaque(false);
+        executeButton.setMargin(new Insets(0, 0, 0, 0));
+        executeButton.setBorderPainted(false);
+        executeButton.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        final DCPanel titlePanel = new DCPanel();
+        titlePanel.setLayout(new BorderLayout());
+        titlePanel.add(DCPanel.around(titleButton), BorderLayout.CENTER);
+        titlePanel.add(executeButton, BorderLayout.EAST);
+
+        labelListPanel.add(titlePanel);
 
         if (!Strings.isNullOrEmpty(jobDescription)) {
             String desc = StringUtils.replaceWhitespaces(jobDescription, " ");
@@ -126,14 +140,14 @@ public class OpenAnalysisJobPanel extends DCPanel {
             labelListPanel.add(label);
         }
 
-        final Icon icon; 
+        final Icon icon;
         {
             final String datastoreName = metadata.getDatastoreName();
             if (!StringUtils.isNullOrEmpty(datastoreName)) {
                 final JLabel label = new JLabel("» " + datastoreName);
                 label.setFont(WidgetUtils.FONT_SMALL);
                 labelListPanel.add(label);
-                
+
                 final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
                 if (isDemoJob) {
                     icon = demoBadgeIcon;
@@ -145,8 +159,11 @@ public class OpenAnalysisJobPanel extends DCPanel {
             }
         }
 
-        add(new JLabel(icon));
-        add(labelListPanel);
+        final JLabel iconLabel = new JLabel(icon);
+        iconLabel.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+        
+        add(iconLabel, BorderLayout.WEST);
+        add(labelListPanel, BorderLayout.CENTER);
     }
 
     private AnalysisJobMetadata getMetadata(AnalyzerBeansConfiguration configuration) {

@@ -222,7 +222,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>");
         _analyzeButton = createToolbarButton("Analyze", IconUtils.ANALYZER_IMAGEPATH,
                 "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
-        _executeButton = createToolBarButton("Execute", imageManager.getImageIcon("images/actions/execute.png"));
+        _executeButton = createToolBarButton("Execute", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE));
 
         _welcomePanelRef = new LazyRef<WelcomePanel>() {
             @Override

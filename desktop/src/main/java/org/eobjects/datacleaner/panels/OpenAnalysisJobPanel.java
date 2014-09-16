@@ -128,7 +128,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         final DCPanel titlePanel = new DCPanel();
         titlePanel.setLayout(new BorderLayout());
         titlePanel.add(DCPanel.around(titleButton), BorderLayout.CENTER);
-        titlePanel.add(executeButton, BorderLayout.EAST);
+//        titlePanel.add(executeButton, BorderLayout.EAST);
 
         labelListPanel.add(titlePanel);
 

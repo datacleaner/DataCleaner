@@ -1,8 +1,8 @@
 DataCleaner
-Copyright (C) 2014 Human Inference
+Copyright (C) 2014 Neopost - Customer Information Management
 
 This product includes software developed by
-Human Inference and the DataCleaner community (http://datacleaner.org/).
+Neopost and the DataCleaner community (http://datacleaner.org/).
 
 Please refer to the 'about' dialog for more
 info on credits, license and history.

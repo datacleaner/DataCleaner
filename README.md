@@ -7,7 +7,7 @@ DataCleaner
 
 The premier Open Source Data Quality solution.
 
-Powered by Human Inference, a Neopost Customer Information Management company.
+Powered by Neopost - Customer Information Management.
 
 ## Module structure
 

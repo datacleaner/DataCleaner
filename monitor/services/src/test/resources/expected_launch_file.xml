@@ -3,7 +3,7 @@
 <jnlp spec="1.0+" codebase="http://localhost:80/DataCleaner-monitor/repository/DC">
 	<information>
 		<title>DataCleaner monitor client</title>
-		<vendor>Human Inference</vendor>
+		<vendor>Neopost - Customer Information Management</vendor>
 		<homepage href="http://datacleaner.org" />
 		<icon href="launch-resources/images/app-icon.png" />
 		<icon kind="splash" href="launch-resources/images/splash.png" />

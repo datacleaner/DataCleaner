@@ -26,8 +26,6 @@ import javax.swing.event.DocumentListener;
  * A simple abstract class that implements DocumentListener. Using this class
  * will make it easier to create DocumentListeners on the fly that delegate to
  * the same method, so you only have to override a single method
- * 
- * @author Kasper Sørensen
  */
 public abstract class DCDocumentListener implements DocumentListener {
 

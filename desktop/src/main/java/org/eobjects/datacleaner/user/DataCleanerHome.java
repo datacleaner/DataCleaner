@@ -54,16 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataCleanerHome {
 
-    public static final String JOB_EXAMPLE_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
-    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce duplicate detection.analysis.xml";
-    public static final String JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING = "jobs/Salesforce dedup training.analysis.xml";
-    public static final String JOB_EXAMPLE_ADDRESS_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
-    public static final String JOB_EXAMPLE_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
-    public static final String JOB_EXAMPLE_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
-    public static final String JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS = "jobs/Copy employees to customer table.analysis.xml";
-    public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION = "jobs/OrderDB Customers Duplicate detection.analysis.xml";
-    public static final String JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING = "jobs/OrderDB Customers dedup Training.analysis.xml";
-
     // note: Logger is specified using a string. This is because the logger is
     // to be used also in the static initializer and any error in that code
     // would otherwise be swallowed.
@@ -140,19 +130,19 @@ public final class DataCleanerHome {
             if (isWriteable(candidate)) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyIfNonExisting(candidate, manager, "conf.xml");
-                copyIfNonExisting(candidate, manager, "datastores/contactdata.txt");
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_EXPORT_ORDERS_DATA);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_CUSTOMER_PROFILING);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ADDRESS_CLEANSING);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_PHONE_CLEANSING);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING);
-                copyIfNonExisting(candidate, manager, "jobs/sfdc_dupe_model_users.dedupmodel.xml");
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION);
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING);
-                copyIfNonExisting(candidate, manager, "jobs/orderdb_customers_dupe_model.dedupmodel.xml");
-                copyIfNonExisting(candidate, manager, "jobs/orderdb_customers_dupe_reference.txt");
-                copyIfNonExisting(candidate, manager, JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
             }
         }
 

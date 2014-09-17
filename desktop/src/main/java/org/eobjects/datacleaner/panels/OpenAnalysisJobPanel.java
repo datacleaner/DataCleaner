@@ -44,6 +44,7 @@ import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.eobjects.datacleaner.user.DemoConfiguration;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -87,6 +88,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         final AnalysisJobMetadata metadata = getMetadata(configuration);
         final String jobName = metadata.getJobName();
         final String jobDescription = metadata.getJobDescription();
+        final String datastoreName = metadata.getDatastoreName();
 
         final boolean isDemoJob = isDemoJob(metadata);
 
@@ -119,7 +121,9 @@ public class OpenAnalysisJobPanel extends DCPanel {
         titleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                _openAnalysisJobActionListener.openFile(_file);
+                if (isDemoDatastoreConfigured(datastoreName, configuration)) {
+                    _openAnalysisJobActionListener.openFile(_file);
+                }
             }
         });
 
@@ -132,15 +136,17 @@ public class OpenAnalysisJobPanel extends DCPanel {
         executeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final ImageIcon executeIconLarge = ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE);
-                final String question = "Are you sure you want to execute the job\n'" + title + "'?";
-                final int choice = JOptionPane.showConfirmDialog(null, question, "Execute job?",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, executeIconLarge);
-                if (choice == JOptionPane.YES_OPTION) {
-                    final Injector injector = _openAnalysisJobActionListener.openAnalysisJob(_file);
-                    final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-                    resultWindow.open();
-                    resultWindow.startAnalysis();
+                if (isDemoDatastoreConfigured(datastoreName, configuration)) {
+                    final ImageIcon executeIconLarge = ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE);
+                    final String question = "Are you sure you want to execute the job\n'" + title + "'?";
+                    final int choice = JOptionPane.showConfirmDialog(null, question, "Execute job?",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, executeIconLarge);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        final Injector injector = _openAnalysisJobActionListener.openAnalysisJob(_file);
+                        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+                        resultWindow.open();
+                        resultWindow.startAnalysis();
+                    }
                 }
             }
         });
@@ -162,7 +168,6 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
         final Icon icon;
         {
-            final String datastoreName = metadata.getDatastoreName();
             if (!StringUtils.isNullOrEmpty(datastoreName)) {
                 final JLabel label = new JLabel("» " + datastoreName);
                 label.setFont(WidgetUtils.FONT_SMALL);
@@ -208,5 +213,29 @@ public class OpenAnalysisJobPanel extends DCPanel {
     @Override
     public Dimension getPreferredSize() {
         return PREFERRED_SIZE;
+    }
+
+    private boolean isDemoDatastoreConfigured(String datastoreName, AnalyzerBeansConfiguration configuration) {
+        if (Strings.isNullOrEmpty(datastoreName)) {
+            // datastore ISN'T configured, but it's not a demo datastore, so we
+            // let it pass here.
+            return true;
+        }
+
+        final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+        if (datastore == null) {
+            // datastore doesn't exist, but it's not a demo datastore, so we let
+            // it pass here.
+            return true;
+        }
+
+        final boolean stopTheUser = DemoConfiguration.isUnconfiguredDemoDatastore(datastore);
+        if (stopTheUser) {
+            WidgetUtils.showErrorMessage("Datastore not configured", "Please configure the datastore '" + datastoreName
+                    + "' before using the demo job.", null);
+            return false;
+        } else {
+            return true;
+        }
     }
 }

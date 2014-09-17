@@ -42,8 +42,6 @@ import org.jfree.util.UnitType;
 
 /**
  * Contains features related to layout and styling of JFreeChart based charts.
- * 
- * @author Kasper Sørensen
  */
 public final class ChartUtils {
 

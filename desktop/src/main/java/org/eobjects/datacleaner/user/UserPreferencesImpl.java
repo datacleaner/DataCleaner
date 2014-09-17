@@ -240,15 +240,15 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         if (recentJobFiles == null || recentJobFiles.isEmpty()) {
             recentJobFiles = new ArrayList<>();
             final File dcHome = VFSUtils.toFile(DataCleanerHome.get());
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_CUSTOMER_PROFILING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_ADDRESS_CLEANSING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_DETECTION));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_PHONE_CLEANSING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_EXPORT_ORDERS_DATA));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_SFDC_DUPLICATE_TRAINING));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_COPY_EMPLOYEES_TO_CUSTOMERS));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_ORDERDB_DUPLICATE_DETECTION));
-            recentJobFiles.add(new File(dcHome, DataCleanerHome.JOB_EXAMPLE_ORDERDB_DUPLICATE_TRAINING));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_CUSTOMER_PROFILING));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_ADDRESS_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_PHONE_CLEANSING));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_EXPORT_ORDERS_DATA));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING));
         }
 
         List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {

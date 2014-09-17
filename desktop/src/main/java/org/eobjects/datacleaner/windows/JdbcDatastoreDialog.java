@@ -59,7 +59,7 @@ import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
-import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
@@ -387,7 +387,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
         });
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new HumanInferenceToolbarButton());
+        toolBar.add(new NeopostToolbarButton());
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(testButton);
         toolBar.add(Box.createHorizontalStrut(4));

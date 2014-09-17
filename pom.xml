@@ -69,10 +69,6 @@
 			</modules>
 		</profile>
 	</profiles>
-	<organization>
-		<name>Human Inference</name>
-		<url>http://www.humaninference.com</url>
-	</organization>
 	<developers>
 		<developer>
 			<name>Kasper Sørensen</name>

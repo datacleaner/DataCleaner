@@ -28,20 +28,20 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
-public class HumanInferenceToolbarButton extends JButton {
+public class NeopostToolbarButton extends JButton {
 
 	private static final long serialVersionUID = 1L;
 
-	public HumanInferenceToolbarButton() {
-		this(ImageManager.get().getImageIcon("images/powered-by-human-inference-dark.png"));
+	public NeopostToolbarButton() {
+		this(ImageManager.get().getImageIcon("images/powered-by-neopost-dark.png"));
 	}
 
-	public HumanInferenceToolbarButton(Icon icon) {
+	public NeopostToolbarButton(Icon icon) {
 		super(icon);
-		addActionListener(new OpenBrowserAction("http://eobjects.org/humaninference"));
+		addActionListener(new OpenBrowserAction("http://www.neopost.com"));
 		setOpaque(false);
 		setBorder(new EmptyBorder(4, 4, 4, 4));
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		setToolTipText("Powered by Human Inference");
+		setToolTipText("Powered by Neopost");
 	}
 }

@@ -43,7 +43,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
-import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 import com.google.inject.Injector;
@@ -145,7 +145,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
         });
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new HumanInferenceToolbarButton());
+        toolBar.add(new NeopostToolbarButton());
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 

@@ -62,7 +62,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HelpIcon;
-import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.Tab;
 import org.apache.metamodel.util.Func;
@@ -411,7 +411,7 @@ public class OptionsDialog extends AbstractWindow {
         });
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new HumanInferenceToolbarButton());
+        toolBar.add(new NeopostToolbarButton());
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 

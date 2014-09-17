@@ -56,7 +56,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCListCellRenderer;
-import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
@@ -235,7 +235,6 @@ public class AboutDialog extends AbstractDialog {
 
     private JComponent getAboutPanel() {
         final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getVersion());
-
         headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
         final ImageManager imageManager = ImageManager.get();
@@ -263,16 +262,16 @@ public class AboutDialog extends AbstractDialog {
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(linkedInButton);
 
-        final HumanInferenceToolbarButton humanInferenceButton = new HumanInferenceToolbarButton(
-                imageManager.getImageIcon("images/powered-by-human-inference-bright.png"));
+        final NeopostToolbarButton neopostButton = new NeopostToolbarButton(
+                imageManager.getImageIcon("images/powered-by-neopost-bright.png"));
 
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
         contentPanel.add(DCLabel
-                .dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Human Inference"));
+                .dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Neopost - Customer Information Management"));
         contentPanel.add(Box.createVerticalStrut(20));
-        contentPanel.add(DCPanel.around(humanInferenceButton));
+        contentPanel.add(DCPanel.around(neopostButton));
 
         if (Version.isCommunityEdition()) {
             contentPanel.add(Box.createVerticalStrut(20));

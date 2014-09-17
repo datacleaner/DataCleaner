@@ -69,7 +69,6 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
         _hintLabel.setIconTextGap(20);
         _hintLabel.setIcon(ImageManager.get().getImageIcon(IconUtils.MODEL_COLUMN));
 
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
         setBorder(WidgetUtils.BORDER_EMPTY);
         setLayout(new VerticalLayout(4));
 
@@ -154,6 +153,12 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
     public void removeNotify() {
         _analysisJobBuilder.getSourceColumnListeners().remove(this);
         super.removeNotify();
+    }
+    
+    @Override
+    public void addNotify() {
+        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        super.addNotify();
     }
 
     public MaxRowsFilterShortcutPanel getMaxRowsFilterShortcutPanel() {

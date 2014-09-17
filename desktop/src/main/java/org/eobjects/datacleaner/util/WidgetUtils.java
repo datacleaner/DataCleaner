@@ -54,6 +54,7 @@ import javax.swing.text.JTextComponent;
 import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.decorator.Highlighter;
@@ -332,20 +333,35 @@ public final class WidgetUtils {
         container.add(component);
     }
 
+    public static void showErrorMessage(final String shortMessage, final String detailedMessage) {
+        final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
+        final String finalShortMessage = shortMessage == null ? "" : shortMessage;
+        final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage);
+
+        dialog.setModal(true);
+        dialog.open();
+    }
+
     public static void showErrorMessage(final String shortMessage, final String detailedMessage,
             final Throwable exception) {
-        JXErrorPane.setDefaultLocale(Locale.ENGLISH);
-        final JXErrorPane errorPane = new JXErrorPane();
+        final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
+        if (exception == null) {
+            showErrorMessage(shortMessage, detailedMessage);
+            return;
+        }
+
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
 
-        final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
-
         final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error",
                 presentedException, ErrorLevel.SEVERE, null);
+        final JXErrorPane errorPane = new JXErrorPane();
         errorPane.setErrorInfo(info);
+
         final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
+
         centerOnScreen(dialog);
+        JXErrorPane.setDefaultLocale(Locale.ENGLISH);
         dialog.setLocale(Locale.ENGLISH);
         dialog.setModal(true);
         dialog.setTitle(finalShortMessage);

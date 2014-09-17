@@ -226,7 +226,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
                 logger.warn("Upload response status: {}", statusLine);
                 final String reasonPhrase = statusLine.getReasonPhrase();
                 WidgetUtils.showErrorMessage("Server reported error",
-                        "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
+                        "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                 return null;
             }
         }

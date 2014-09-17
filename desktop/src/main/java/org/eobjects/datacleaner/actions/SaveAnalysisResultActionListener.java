@@ -60,7 +60,7 @@ public class SaveAnalysisResultActionListener implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         if (_result.get() == null) {
             WidgetUtils.showErrorMessage("Result not ready",
-                    "Please wait for the job to finish before saving the result", null);
+                    "Please wait for the job to finish before saving the result");
             return;
         }
 

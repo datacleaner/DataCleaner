@@ -307,7 +307,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                     } else {
                         final String reasonPhrase = statusLine.getReasonPhrase();
                         WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
-                                + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
+                                + statusLine.getStatusCode() + ":\n" + reasonPhrase);
                     }
                 } catch (Exception e) {
                     // TODO: This dialog is shown behind the modal dialog

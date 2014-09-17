@@ -41,9 +41,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     private volatile boolean initialized = false;
     private final WindowContext _windowContext;
-    private final DCBannerPanel _banner;
+    private final Image _bannerImage;
+
     private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
     private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+    private DCBannerPanel _banner;
 
     public AbstractDialog(WindowContext windowContext) {
         this(windowContext, null);
@@ -59,10 +61,13 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         addWindowListener(this);
         setResizable(isWindowResizable());
         _windowContext = windowContext;
-        _banner = createBanner(bannerImage);
+        _bannerImage = bannerImage;
     }
 
     protected DCBannerPanel getBanner() {
+        if (_banner == null && _bannerImage != null) {
+            _banner = createBanner(_bannerImage);
+        }
         return _banner;
     }
 
@@ -112,7 +117,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
         WidgetUtils.centerOnScreen(this);
 
-        _windowContext.onShow(this);
+        if (_windowContext != null) {
+            _windowContext.onShow(this);
+        }
     }
 
     @Override
@@ -141,11 +148,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         panel.setLayout(new BorderLayout());
 
         final int bannerHeight;
-        if (_banner == null) {
+        final DCBannerPanel banner = getBanner();
+        if (banner == null) {
             bannerHeight = 0;
         } else {
-            panel.add(_banner, BorderLayout.NORTH);
-            bannerHeight = _banner.getPreferredSize().height;
+            panel.add(banner, BorderLayout.NORTH);
+            bannerHeight = banner.getPreferredSize().height;
         }
         JComponent dialogContent = getDialogContent();
         panel.add(dialogContent, BorderLayout.CENTER);
@@ -184,7 +192,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     @Override
     public void dispose() {
-        _windowContext.onDispose(this);
+        if (_windowContext != null) {
+            _windowContext.onDispose(this);
+        }
         super.dispose();
     }
 

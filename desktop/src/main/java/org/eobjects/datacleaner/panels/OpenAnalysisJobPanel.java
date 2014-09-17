@@ -232,7 +232,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
         final boolean stopTheUser = DemoConfiguration.isUnconfiguredDemoDatastore(datastore);
         if (stopTheUser) {
             WidgetUtils.showErrorMessage("Datastore not configured", "Please configure the datastore '" + datastoreName
-                    + "' before using the demo job.", null);
+                    + "' before using the demo job.");
             return false;
         } else {
             return true;

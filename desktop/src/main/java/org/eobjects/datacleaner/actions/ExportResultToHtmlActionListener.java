@@ -65,7 +65,7 @@ public class ExportResultToHtmlActionListener implements ActionListener {
         final AnalysisResult analysisResult = _result.get();
         if (analysisResult == null) {
             WidgetUtils.showErrorMessage("Result not ready",
-                    "Please wait for the job to finish before saving the result", null);
+                    "Please wait for the job to finish before saving the result");
             return;
         }
 

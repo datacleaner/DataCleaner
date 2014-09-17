@@ -48,132 +48,132 @@ import org.slf4j.LoggerFactory;
 
 public class ReorderColumnsActionListener implements ActionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(ReorderColumnsActionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReorderColumnsActionListener.class);
 
-	private final MultipleInputColumnsPropertyWidget _propertyWidget;
+    private final MultipleInputColumnsPropertyWidget _propertyWidget;
 
-	public ReorderColumnsActionListener(MultipleInputColumnsPropertyWidget propertyWidget) {
-		_propertyWidget = propertyWidget;
-	}
+    public ReorderColumnsActionListener(MultipleInputColumnsPropertyWidget propertyWidget) {
+        _propertyWidget = propertyWidget;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		InputColumn<?>[] currentValue = _propertyWidget.getValue();
-		if (currentValue == null || currentValue.length == 0) {
-			WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.", null);
-			return;
-		}
-		if (currentValue.length < 2) {
-			WidgetUtils.showErrorMessage("Nothing to reorder",
-					"You need to have at least two selected colummns to be able to reorder them.", null);
-			return;
-		}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        InputColumn<?>[] currentValue = _propertyWidget.getValue();
+        if (currentValue == null || currentValue.length == 0) {
+            WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.");
+            return;
+        }
+        if (currentValue.length < 2) {
+            WidgetUtils.showErrorMessage("Nothing to reorder",
+                    "You need to have at least two selected colummns to be able to reorder them.");
+            return;
+        }
 
-		final List<InputColumn<?>> list = Arrays.asList(currentValue);
-		logger.info("Selected columns before reordering: {}", list);
+        final List<InputColumn<?>> list = Arrays.asList(currentValue);
+        logger.info("Selected columns before reordering: {}", list);
 
-		final DCTable table = new DCTable();
-		table.setRowHeight(22);
+        final DCTable table = new DCTable();
+        table.setRowHeight(22);
 
-		updateTableModel(table, list);
+        updateTableModel(table, list);
 
-		final Image image = ImageManager.get().getImage("images/actions/reorder-columns.png");
+        final Image image = ImageManager.get().getImage("images/actions/reorder-columns.png");
 
-		final DCPanel tablePanel = table.toPanel();
-		tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+        final DCPanel tablePanel = table.toPanel();
+        tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
 
-		final JDialog dialog = new JDialog();
+        final JDialog dialog = new JDialog();
 
-		final JButton button = new JButton("Save order", new ImageIcon(image));
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				saveReorderedValue(list);
-				dialog.dispose();
-			}
-		});
+        final JButton button = new JButton("Save order", new ImageIcon(image));
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveReorderedValue(list);
+                dialog.dispose();
+            }
+        });
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttonPanel.add(button);
+        final DCPanel buttonPanel = new DCPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonPanel.add(button);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
-		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		panel.setLayout(new BorderLayout());
-		panel.add(tablePanel, BorderLayout.CENTER);
-		panel.add(buttonPanel, BorderLayout.SOUTH);
+        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.setLayout(new BorderLayout());
+        panel.add(tablePanel, BorderLayout.CENTER);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
-		dialog.setModal(true);
-		dialog.setTitle("Reorder columns");
-		dialog.setIconImage(image);
-		dialog.getContentPane().add(panel);
-		Dimension size = panel.getPreferredSize();
-		size.width = Math.max(size.width, 300);
-		size.height = Math.max(size.height, 400);
-		dialog.setSize(size);
-		WidgetUtils.centerOnScreen(dialog);
-		dialog.setVisible(true);
-	}
+        dialog.setModal(true);
+        dialog.setTitle("Reorder columns");
+        dialog.setIconImage(image);
+        dialog.getContentPane().add(panel);
+        Dimension size = panel.getPreferredSize();
+        size.width = Math.max(size.width, 300);
+        size.height = Math.max(size.height, 400);
+        dialog.setSize(size);
+        WidgetUtils.centerOnScreen(dialog);
+        dialog.setVisible(true);
+    }
 
-	private void updateTableModel(final DCTable table, final List<InputColumn<?>> list) {
-		final String[] columnNames = new String[2];
-		columnNames[0] = "Column name";
-		columnNames[1] = "Move";
+    private void updateTableModel(final DCTable table, final List<InputColumn<?>> list) {
+        final String[] columnNames = new String[2];
+        columnNames[0] = "Column name";
+        columnNames[1] = "Move";
 
-		final DefaultTableModel tableModel = new DefaultTableModel(columnNames, list.size());
+        final DefaultTableModel tableModel = new DefaultTableModel(columnNames, list.size());
 
-		for (int i = 0; i < list.size(); i++) {
-			final int index = i;
+        for (int i = 0; i < list.size(); i++) {
+            final int index = i;
 
-			final JButton moveDownButton = WidgetFactory.createSmallButton("/images/actions/move-down.png");
-			moveDownButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					InputColumn<?> col1 = list.get(index);
-					InputColumn<?> col2 = list.get(index + 1);
-					list.set(index, col2);
-					list.set(index + 1, col1);
-					updateTableModel(table, list);
-				}
-			});
+            final JButton moveDownButton = WidgetFactory.createSmallButton("/images/actions/move-down.png");
+            moveDownButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    InputColumn<?> col1 = list.get(index);
+                    InputColumn<?> col2 = list.get(index + 1);
+                    list.set(index, col2);
+                    list.set(index + 1, col1);
+                    updateTableModel(table, list);
+                }
+            });
 
-			final JButton moveUpButton = WidgetFactory.createSmallButton("/images/actions/move-up.png");
-			moveUpButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					InputColumn<?> col1 = list.get(index);
-					InputColumn<?> col2 = list.get(index - 1);
-					list.set(index, col2);
-					list.set(index - 1, col1);
-					updateTableModel(table, list);
-				}
-			});
+            final JButton moveUpButton = WidgetFactory.createSmallButton("/images/actions/move-up.png");
+            moveUpButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    InputColumn<?> col1 = list.get(index);
+                    InputColumn<?> col2 = list.get(index - 1);
+                    list.set(index, col2);
+                    list.set(index - 1, col1);
+                    updateTableModel(table, list);
+                }
+            });
 
-			final DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-			if (i == list.size() - 1) {
-				buttonPanel.add(Box.createHorizontalStrut(moveDownButton.getPreferredSize().width));
-			} else {
-				buttonPanel.add(moveDownButton);
-			}
-			buttonPanel.add(Box.createHorizontalStrut(6));
-			if (i == 0) {
-				buttonPanel.add(Box.createHorizontalStrut(moveUpButton.getPreferredSize().width));
-			} else {
-				buttonPanel.add(moveUpButton);
-			}
+            final DCPanel buttonPanel = new DCPanel();
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+            if (i == list.size() - 1) {
+                buttonPanel.add(Box.createHorizontalStrut(moveDownButton.getPreferredSize().width));
+            } else {
+                buttonPanel.add(moveDownButton);
+            }
+            buttonPanel.add(Box.createHorizontalStrut(6));
+            if (i == 0) {
+                buttonPanel.add(Box.createHorizontalStrut(moveUpButton.getPreferredSize().width));
+            } else {
+                buttonPanel.add(moveUpButton);
+            }
 
-			tableModel.setValueAt(list.get(i).getName(), i, 0);
-			tableModel.setValueAt(buttonPanel, i, 1);
-		}
+            tableModel.setValueAt(list.get(i).getName(), i, 0);
+            tableModel.setValueAt(buttonPanel, i, 1);
+        }
 
-		table.setModel(tableModel);
-	}
+        table.setModel(tableModel);
+    }
 
-	public void saveReorderedValue(List<InputColumn<?>> list) {
-		logger.info("Saving reordered columns: {}", list);
+    public void saveReorderedValue(List<InputColumn<?>> list) {
+        logger.info("Saving reordered columns: {}", list);
 
-		final InputColumn<?>[] newValue = list.toArray(new InputColumn[list.size()]);
-		_propertyWidget.reorderValue(newValue);
-	}
+        final InputColumn<?>[] newValue = list.toArray(new InputColumn[list.size()]);
+        _propertyWidget.reorderValue(newValue);
+    }
 }

@@ -1,7 +1,7 @@
 <!--
 
     DataCleaner (community edition)
-    Copyright (C) 2013 Human Inference
+    Copyright (C) 2014 Neopost - Customer Information Management
 
     This copyrighted material is made available to anyone wishing to use, modify,
     copy, or redistribute it subject to the terms and conditions of the GNU
@@ -19,7 +19,6 @@
     Boston, MA  02110-1301  USA
 
 -->
-
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:dp="urn:import:com.google.gwt.user.datepicker.client">

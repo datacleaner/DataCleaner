@@ -1,6 +1,6 @@
 /**
  * DataCleaner (community edition)
- * Copyright (C) 2013 Human Inference
+ * Copyright (C) 2014 Neopost - Customer Information Management
  *
  * This copyrighted material is made available to anyone wishing to use, modify,
  * copy, or redistribute it subject to the terms and conditions of the GNU
@@ -17,7 +17,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
 package org.eobjects.datacleaner.monitor.wizard;
 
 import com.google.gwt.event.dom.client.ClickEvent;

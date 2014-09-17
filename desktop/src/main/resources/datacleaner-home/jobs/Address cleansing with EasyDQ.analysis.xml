@@ -21,7 +21,7 @@
             <descriptor ref="EasyDQ Address cleansing"/>
             <properties>
                 <property name="Number of address lines" value="FOUR_ADDRESS_LINES"/>
-                <property name="Connection" value="ondemand:username:password"/>
+                <property name="Connection" value="demo"/>
                 <property name="Mapping of output" value="ADDRESS_LINES"/>
                 <property name="Address parts" value="[FORMATTED_ADDRESS_LINE_1,FORMATTED_ADDRESS_LINE_2,FORMATTED_ADDRESS_LINE_3,FORMATTED_ADDRESS_LINE_4,COUNTRY_ISO_CODE]"/>
             </properties>

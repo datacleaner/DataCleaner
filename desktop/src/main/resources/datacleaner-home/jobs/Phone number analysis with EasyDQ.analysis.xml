@@ -18,7 +18,7 @@
             <descriptor ref="EasyDQ Phone cleansing"/>
             <properties>
                 <property name="Default country" value="&lt;null&gt;"/>
-                <property name="Connection" value="ondemand:username:password"/>
+                <property name="Connection" value="demo"/>
                 <property name="Interpret" value="true"/>
             </properties>
             <input ref="col_0" name="Phone number column"/>

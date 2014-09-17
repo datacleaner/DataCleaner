@@ -49,6 +49,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
 
 /**
  * Panel that shows various progress information widgets within the
@@ -123,9 +124,19 @@ public class ProgressInformationPanel extends DCPanel {
             stringWriter.append("(No stack trace provided)");
         } else {
             throwable = ErrorUtils.unwrapForPresentation(throwable);
+            
+            final String exceptionMessage = throwable.getMessage();
+            if (!Strings.isNullOrEmpty(exceptionMessage)) {
+                stringWriter.append('\n');
+                stringWriter.append('\n');
+                stringWriter.append(exceptionMessage);
+            }
+            
+            stringWriter.append('\n');
             stringWriter.append('\n');
             PrintWriter printWriter = new PrintWriter(stringWriter);
             printStackTrace(printWriter, throwable);
+            stringWriter.append('\n');
         }
         appendMessage(stringWriter.toString());
 

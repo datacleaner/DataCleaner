@@ -32,6 +32,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
+import org.eobjects.analyzer.job.ComponentConfigurationException;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.NoSuchComponentException;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
@@ -51,7 +52,10 @@ import org.eobjects.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.util.Providers;
@@ -64,6 +68,8 @@ import com.google.inject.util.Providers;
  * without showing the dialog.
  */
 public class OpenAnalysisJobActionListener implements ActionListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobActionListener.class);
 
     private final AnalyzerBeansConfiguration _configuration;
     private final AnalysisJobBuilderWindow _parentWindow;
@@ -213,6 +219,27 @@ public class OpenAnalysisJobActionListener implements ActionListener {
                 dialog.setVisible(true);
             }
             return null;
+        } catch (ComponentConfigurationException e) {
+            final String message;
+            final Throwable cause = e.getCause();
+            if (cause != null) {
+                // check for causes of the mis-configuration. If there's a cause
+                // with a message, then show the message first and foremost
+                // (usually a validation error).
+                if (!Strings.isNullOrEmpty(cause.getMessage())) {
+                    message = cause.getMessage();
+                } else {
+                    message = e.getMessage();
+                }
+            } else {
+                message = e.getMessage();
+            }
+
+            WidgetUtils.showErrorMessage("Failed to validate job configuration", message, e);
+            return null;
+        } catch (RuntimeException e) {
+            logger.error("Unexpected failure when opening job: {}", file, e);
+            throw e;
         }
     }
 

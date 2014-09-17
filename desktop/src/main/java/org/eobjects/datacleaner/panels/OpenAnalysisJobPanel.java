@@ -143,9 +143,11 @@ public class OpenAnalysisJobPanel extends DCPanel {
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, executeIconLarge);
                     if (choice == JOptionPane.YES_OPTION) {
                         final Injector injector = _openAnalysisJobActionListener.openAnalysisJob(_file);
-                        final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-                        resultWindow.open();
-                        resultWindow.startAnalysis();
+                        if (injector != null) {
+                            final ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+                            resultWindow.open();
+                            resultWindow.startAnalysis();
+                        }
                     }
                 }
             }

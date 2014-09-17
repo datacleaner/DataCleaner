@@ -99,6 +99,20 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         _runningJobs = new ConcurrentHashMap<String, AnalysisResultFuture>();
     }
 
+    /**
+     * 
+     * @param clusterManagerFactory
+     * @param descriptorProvider
+     * 
+     * @deprecated use
+     *             {@link #DataCleanerJobEngine(ClusterManagerFactory, DescriptorProvider, ApplicationContext)}
+     *             instead
+     */
+    @Deprecated
+    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider) {
+        this(clusterManagerFactory, descriptorProvider, null);
+    }
+
     @Override
     public String getJobType() {
         return "DataCleanerAnalysisJob";

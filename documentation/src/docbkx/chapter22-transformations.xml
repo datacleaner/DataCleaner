@@ -390,10 +390,9 @@
 		<para>
 			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
 			is an on-demand service for data quality functions.
-			DataCleaner
-			provides access to the EasyDQ services,
-			but the core functionality is
-			provided by Human Inference.
+			DataCleaner provides access to these EasyDQ services,
+			but a separate account on www.easydq.com is needed in order
+			to take them to any use.
 		</para>
 		<para>
 			Please refer to the

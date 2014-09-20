@@ -316,12 +316,16 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     }
 
     private void updateJobsListPanel(List<FileObject> recentJobFiles) {
-        int jobIndex = 0;
-        for (FileObject fileObject : recentJobFiles) {
-            _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
-            jobIndex++;
-            if (jobIndex == MAX_JOB_PANELS) {
-                break;
+        if (recentJobFiles.isEmpty()) {
+            _jobsListPanel.add(DCLabel.dark("(no recent jobs)"));
+        } else {
+            int jobIndex = 0;
+            for (FileObject fileObject : recentJobFiles) {
+                _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
+                jobIndex++;
+                if (jobIndex == MAX_JOB_PANELS) {
+                    break;
+                }
             }
         }
     }

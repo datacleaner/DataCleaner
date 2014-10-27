@@ -52,6 +52,10 @@ public class ExtensionClassLoader extends ClassLoader {
      * Parent ClassLoader passed to this constructor will be used if this
      * ClassLoader can not resolve a particular class. The class loader name
      * will be empty.
+     * <p>
+     * The global parent or the parent must resolv all classes of the java.lang
+     * package, or the security manager will throw when this class loader tries
+     * to do that.
      * 
      * @param parent
      *            Parent ClassLoader (may be from getClass().getClassLoader())
@@ -105,10 +109,12 @@ public class ExtensionClassLoader extends ClassLoader {
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Class<?> class1 = null;
-        try {
-            class1 = globalParent.loadClass(name);
-        } catch (ClassNotFoundException cnfe) {
-            // Ignore - The global parent does not have this class.
+        if (globalParent != null) {
+            try {
+                class1 = globalParent.loadClass(name);
+            } catch (ClassNotFoundException cnfe) {
+                // Ignore - The global parent does not have this class.
+            }
         }
         if (class1 == null) {
             // already loaded?

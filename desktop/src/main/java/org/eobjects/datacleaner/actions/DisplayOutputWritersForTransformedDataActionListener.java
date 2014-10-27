@@ -32,7 +32,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
-import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
+import org.eobjects.datacleaner.extension.output.AbstractOutputWriterAnalyzer;
 
 /**
  * Action that displays output writers for a transformer's data.

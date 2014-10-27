@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.beans;
+package org.eobjects.datacleaner.extension.output;
 
 import javax.inject.Inject;
 
@@ -34,6 +34,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.extension.output.AbstractOutputWriterAnalyzer;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegateImpl;

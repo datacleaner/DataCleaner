@@ -17,7 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.beans;
+package org.eobjects.datacleaner.extension.output;
+
+import org.eobjects.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
 
 import junit.framework.TestCase;
 

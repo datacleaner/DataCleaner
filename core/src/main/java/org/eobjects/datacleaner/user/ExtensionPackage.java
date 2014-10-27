@@ -25,11 +25,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.metamodel.util.HasName;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
+import org.eobjects.datacleaner.classloader.ExtensionClassLoader;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,15 +118,19 @@ public final class ExtensionPackage implements Serializable, HasName {
             return;
         }
         synchronized (ExtensionPackage.class) {
-            // each loaded extension package is loaded within it's own
-            // classloader which is a child of the previous extension's
-            // classloader. This mechanism ensures that classes occurring in
-            // several extensions are only loaded once.
-            _latestClassLoader = ClassLoaderUtils.createClassLoader(getJarFiles(), _latestClassLoader);
+            // Each extension is loaded using its own ExtensionClassLoader. This
+            // loader has 2 parents. The first
+            // is an URL classloader provided by ClassLoaderUtils. This
+            // classloader will load classes that are
+            // specific to the extension. The second class loader resolves all
+            // classes already loaded from the main
+            // locations.
+            _latestClassLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(getJarFiles(), null),
+                    ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
             _classLoader = _latestClassLoader;
         }
     }
-    
+
     private File[] getJarFiles() {
         if (_files.length == 1 && _files[0].isDirectory()) {
             return _files[0].listFiles(FileFilters.JAR);
@@ -215,8 +220,15 @@ public final class ExtensionPackage implements Serializable, HasName {
     public String getUrl() {
         return _additionalProperties.get("url");
     }
-    
+
     public String getAuthor() {
         return _additionalProperties.get("author");
+    }
+
+    /**
+     * Returns the name of the package.
+     */
+    public String toString() {
+        return getName();
     }
 }

@@ -1,10 +1,3 @@
-package org.eobjects.datacleaner.classloader;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 /**
  * DataCleaner (community edition) Copyright (C) 2014 Neopost - Customer
  * Information Management
@@ -22,6 +15,15 @@ import java.net.URL;
  * along with this distribution; if not, write to: Free Software Foundation,
  * Inc. 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
  * 
+ */
+package org.eobjects.datacleaner.classloader;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+/**
  * The Extension Classloader insulates extensions from other extensions.
  * Extensions are shipped as single jars. A separate ExtensionClassLoader is
  * used to load each of these extension jars.

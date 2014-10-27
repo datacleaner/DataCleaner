@@ -59,6 +59,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
         AnalysisResult analysisResult;
         try (ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file))) {
+            is.addRenamedPackage("org.eobjects.datacleaner.output.beans", "org.eobjects.datacleaner.extension.output");
             analysisResult = (AnalysisResult) is.readObject();
         }
 

@@ -120,12 +120,14 @@ public class ResultListPanel extends DCPanel {
                 logger.debug("renderer.render({})", result);
                 final JComponent component = renderer.render(result);
                 if (logger.isInfoEnabled()) {
-                    String resultAsString = result.toString();
-                    if (resultAsString.length() > 150) {
-                        resultAsString = resultAsString.substring(0, 147) + "...";
+                    final String resultAsString = getResultAsString(componentJob, result);
+                    if (resultAsString != null) {
+                        String resultAsStringToLog = resultAsString.replaceAll("\n", " | ");
+                        if (resultAsStringToLog.length() > 150) {
+                            resultAsStringToLog = resultAsStringToLog.substring(0, 147) + "...";
+                        }
+                        logger.info("renderer.render({}) returned: {}", resultAsStringToLog, component);
                     }
-                    resultAsString = resultAsString.replaceAll("\n", " | ");
-                    logger.info("renderer.render({}) returned: {}", resultAsString, component);
                 }
                 return component;
             }
@@ -145,16 +147,15 @@ public class ResultListPanel extends DCPanel {
                     panel.setLayout(new VerticalLayout(4));
 
                     final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.STATUS_ERROR);
-                    panel.add(new JLabel("An error occurred while rendering result, check the 'Progress information' tab.", icon,
+                    panel.add(new JLabel(
+                            "An error occurred while rendering result, check the 'Progress information' tab.", icon,
                             SwingConstants.LEFT));
 
-                    try {
-                        final String toString = result.toString();
-                        final DCLabel label = DCLabel.darkMultiLine(toString);
+                    final String resultAsString = getResultAsString(componentJob, result);
+                    if (resultAsString != null) {
+                        final DCLabel label = DCLabel.darkMultiLine(resultAsString);
                         label.setBorder(WidgetUtils.BORDER_EMPTY);
                         panel.add(label);
-                    } catch (Exception ex) {
-                        logger.error("Couldn't render result.toString() as label", ex);
                     }
 
                     taskPanePanel.add(panel);
@@ -164,5 +165,14 @@ public class ResultListPanel extends DCPanel {
             };
 
         }.execute();
+    }
+
+    protected String getResultAsString(ComponentJob componentJob, AnalyzerResult result) {
+        try {
+            return result.toString();
+        } catch (Exception ex) {
+            logger.error("Couldn't render result of {} as label using toString() method", componentJob, ex);
+            return null;
+        }
     }
 }

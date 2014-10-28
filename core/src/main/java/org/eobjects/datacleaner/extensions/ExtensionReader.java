@@ -33,12 +33,12 @@ import java.util.jar.JarFile;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.ResourceManager;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -137,7 +137,7 @@ public class ExtensionReader {
             }
         }
 
-        // no etension descriptor files found
+        // no extension descriptor files found
         final String extensionName;
         if (StringUtils.isNullOrEmpty(name)) {
             final StringBuilder extensionNameBuilder = new StringBuilder();

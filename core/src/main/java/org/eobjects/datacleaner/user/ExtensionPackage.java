@@ -21,7 +21,9 @@ package org.eobjects.datacleaner.user;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.datacleaner.classloader.ExtensionClassLoader;
+import org.eobjects.datacleaner.classloader.ScanningClassLoader;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +48,7 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
-    private static ClassLoader _latestClassLoader = ClassLoaderUtils.getParentClassLoader();
+    private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<ClassLoader>();
 
     private transient boolean _loaded = false;
     private transient int _loadedAnalyzers;
@@ -119,15 +122,14 @@ public final class ExtensionPackage implements Serializable, HasName {
         }
         synchronized (ExtensionPackage.class) {
             // Each extension is loaded using its own ExtensionClassLoader. This
-            // loader has 2 parents. The first
-            // is an URL classloader provided by ClassLoaderUtils. This
-            // classloader will load classes that are
+            // loader has 2 parents. The first is an URL class loader
+            // provided by ClassLoaderUtils. This class loader loads classes
             // specific to the extension. The second class loader resolves all
-            // classes already loaded from the main
-            // locations.
-            _latestClassLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(getJarFiles(), null),
+            // classes already loaded from the main locations.
+            final ClassLoader extensionLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(getJarFiles(), null),
                     ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
-            _classLoader = _latestClassLoader;
+            _allExtensionClassLoaders.add(extensionLoader);
+            _classLoader = extensionLoader;
         }
     }
 
@@ -206,7 +208,7 @@ public final class ExtensionPackage implements Serializable, HasName {
      * @return
      */
     public static ClassLoader getExtensionClassLoader() {
-        return _latestClassLoader;
+        return new ScanningClassLoader(_allExtensionClassLoaders);
     }
 
     public String getDescription() {

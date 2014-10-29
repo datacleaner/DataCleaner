@@ -55,6 +55,8 @@ public class ExtensionClassLoaderTest {
         final ClassLoader loader2 = bazTransformer2.getClassLoader();
         Assert.assertEquals("Extension classloader for: Extension1", loader1.toString());
         Assert.assertEquals("Extension classloader for: Extension2", loader2.toString());
+        // Check the loaded transformer classes really are separate
+        Assert.assertNotEquals(bazTransformer1, bazTransformer2);
     }
 
     /**

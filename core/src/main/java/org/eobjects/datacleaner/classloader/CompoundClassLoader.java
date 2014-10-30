@@ -26,7 +26,7 @@ import java.util.Collection;
  * This class loader scans a set of class loaders for class definitions.
  *
  */
-public class ScanningClassLoader extends ClassLoader {
+public class CompoundClassLoader extends ClassLoader {
 
     private Collection<ClassLoader> loaders;
 
@@ -36,7 +36,7 @@ public class ScanningClassLoader extends ClassLoader {
      * @param loaders
      *            The class loaders that will be searched.
      */
-    public ScanningClassLoader(Collection<ClassLoader> loaders) {
+    public CompoundClassLoader(Collection<ClassLoader> loaders) {
         this.loaders = new ArrayList<ClassLoader>(loaders);
     }
 

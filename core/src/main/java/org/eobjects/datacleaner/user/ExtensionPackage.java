@@ -32,7 +32,7 @@ import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.datacleaner.classloader.ExtensionClassLoader;
-import org.eobjects.datacleaner.classloader.ScanningClassLoader;
+import org.eobjects.datacleaner.classloader.CompoundClassLoader;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,7 +208,7 @@ public final class ExtensionPackage implements Serializable, HasName {
      * @return
      */
     public static ClassLoader getExtensionClassLoader() {
-        return new ScanningClassLoader(_allExtensionClassLoaders);
+        return new CompoundClassLoader(_allExtensionClassLoaders);
     }
 
     public String getDescription() {

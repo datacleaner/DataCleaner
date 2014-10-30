@@ -30,7 +30,7 @@ import org.junit.Test;
  * Test cases for the scanning classloader.
  *
  */
-public class ScanningClassloaderTest {
+public class CompoundClassloaderTest {
 
     /**
      * The FooBarPlugin is read using a class loader. Another class loader loads
@@ -55,7 +55,7 @@ public class ScanningClassloaderTest {
         final Collection<ClassLoader> loaders = new ArrayList<ClassLoader>();
         loaders.add(c1);
         loaders.add(c2);
-        final ScanningClassLoader loader = new ScanningClassLoader(loaders);
+        final CompoundClassLoader loader = new CompoundClassLoader(loaders);
 
         Class<?> cResult1 = loader.loadClass("foo.bar.transformer.BazTransformer");
         Assert.assertNotNull(cResult1);

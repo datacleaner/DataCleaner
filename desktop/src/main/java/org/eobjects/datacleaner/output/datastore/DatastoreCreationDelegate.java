@@ -31,8 +31,6 @@ import org.eobjects.analyzer.connection.Datastore;
  * outputwriter is being closed.
  * 
  * @see DatastoreOutputWriterFactory
- * 
- * @author Kasper Sørensen
  */
 public interface DatastoreCreationDelegate {
 

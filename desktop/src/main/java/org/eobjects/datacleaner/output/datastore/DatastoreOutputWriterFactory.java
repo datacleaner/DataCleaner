@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Factory for output writers that write new datastores.
- * 
- * @author Kasper Sørensen
  */
 public final class DatastoreOutputWriterFactory {
 
@@ -92,22 +90,18 @@ public final class DatastoreOutputWriterFactory {
             if (count == 0) {
                 counters.remove(writer.getJdbcUrl());
 
-                @SuppressWarnings("resource")
-                final Connection connection = writer.getConnection();
+                try (final Connection connection = writer.getConnection()) {
 
-                Statement st = null;
-                try {
-                    st = connection.createStatement();
-                    st.execute("SHUTDOWN");
-                } catch (SQLException e) {
-                    logger.error("Could not invoke SHUTDOWN", e);
-                } finally {
-                    SqlDatabaseUtils.safeClose(null, st);
-                }
+                    Statement st = null;
+                    try {
+                        st = connection.createStatement();
+                        st.execute("SHUTDOWN");
+                    } catch (SQLException e) {
+                        logger.error("Could not invoke SHUTDOWN", e);
+                    } finally {
+                        SqlDatabaseUtils.safeClose(null, st);
+                    }
 
-                try {
-                    logger.info("Closing connection: {}", connection);
-                    connection.close();
                 } catch (SQLException e) {
                     logger.error("Could not close connection", e);
                     throw new IllegalStateException(e);

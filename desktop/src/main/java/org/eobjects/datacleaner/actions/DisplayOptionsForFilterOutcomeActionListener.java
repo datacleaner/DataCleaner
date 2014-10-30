@@ -36,7 +36,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
-import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
+import org.eobjects.datacleaner.extension.output.AbstractOutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.DescriptorMenu;

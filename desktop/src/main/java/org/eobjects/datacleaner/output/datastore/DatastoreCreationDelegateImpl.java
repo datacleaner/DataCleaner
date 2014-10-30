@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the DatastoreCreationDelegate.
- * 
- * @author Kasper Sørensen
  */
 public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate {
 

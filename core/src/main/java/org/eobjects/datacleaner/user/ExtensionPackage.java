@@ -21,15 +21,19 @@ package org.eobjects.datacleaner.user;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.metamodel.util.HasName;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
+import org.eobjects.datacleaner.classloader.ExtensionClassLoader;
+import org.eobjects.datacleaner.classloader.CompoundClassLoader;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +48,7 @@ public final class ExtensionPackage implements Serializable, HasName {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
-    private static ClassLoader _latestClassLoader = ClassLoaderUtils.getParentClassLoader();
+    private static Collection<ClassLoader> _allExtensionClassLoaders = new ArrayList<ClassLoader>();
 
     private transient boolean _loaded = false;
     private transient int _loadedAnalyzers;
@@ -117,15 +121,18 @@ public final class ExtensionPackage implements Serializable, HasName {
             return;
         }
         synchronized (ExtensionPackage.class) {
-            // each loaded extension package is loaded within it's own
-            // classloader which is a child of the previous extension's
-            // classloader. This mechanism ensures that classes occurring in
-            // several extensions are only loaded once.
-            _latestClassLoader = ClassLoaderUtils.createClassLoader(getJarFiles(), _latestClassLoader);
-            _classLoader = _latestClassLoader;
+            // Each extension is loaded using its own ExtensionClassLoader. This
+            // loader has 2 parents. The first is an URL class loader
+            // provided by ClassLoaderUtils. This class loader loads classes
+            // specific to the extension. The second class loader resolves all
+            // classes already loaded from the main locations.
+            final ClassLoader extensionLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(getJarFiles(), null),
+                    ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
+            _allExtensionClassLoaders.add(extensionLoader);
+            _classLoader = extensionLoader;
         }
     }
-    
+
     private File[] getJarFiles() {
         if (_files.length == 1 && _files[0].isDirectory()) {
             return _files[0].listFiles(FileFilters.JAR);
@@ -201,7 +208,7 @@ public final class ExtensionPackage implements Serializable, HasName {
      * @return
      */
     public static ClassLoader getExtensionClassLoader() {
-        return _latestClassLoader;
+        return new CompoundClassLoader(_allExtensionClassLoaders);
     }
 
     public String getDescription() {
@@ -215,8 +222,15 @@ public final class ExtensionPackage implements Serializable, HasName {
     public String getUrl() {
         return _additionalProperties.get("url");
     }
-    
+
     public String getAuthor() {
         return _additionalProperties.get("author");
+    }
+
+    /**
+     * Returns the name of the package.
+     */
+    public String toString() {
+        return getName();
     }
 }

@@ -22,10 +22,13 @@ package org.eobjects.datacleaner.widgets.visualization;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -50,6 +53,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.HasAnalyzerResult;
 import org.eobjects.analyzer.util.LabelUtils;
@@ -71,6 +75,8 @@ import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.GraphMouseListener;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
@@ -196,7 +202,7 @@ public final class VisualizeJobGraph {
         for (FilterJobBuilder<?, ?> fjb : fjbs) {
             graph.addNodes(sourceColumnFinder, fjb, displayColumns, displayOutcomes, -1);
         }
-        
+
         return graph.renderGraph();
     }
 
@@ -225,6 +231,38 @@ public final class VisualizeJobGraph {
                 layout);
         visualizationViewer.setSize(preferredSize);
         GraphUtils.applyStyles(visualizationViewer);
+
+        visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
+            @Override
+            public void graphReleased(Object v, MouseEvent me) {
+                final PickedState<Object> pickedVertexState = visualizationViewer.getPickedVertexState();
+                logger.debug("PickedState: {}", pickedVertexState);
+                
+                final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("selected objects: {}", Arrays.toString(selectedObjects));
+                }
+                
+                for (Object vertex : selectedObjects) {
+                    if (vertex instanceof HasMetadataProperties) {
+                        final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
+                        final Double x = layout.getX(vertex);
+                        final Double y = layout.getY(vertex);
+                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
+                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
+                    }
+                    // TODO: Add support for Tables, Columns, FilterRequirements
+                }
+            }
+
+            @Override
+            public void graphPressed(Object v, MouseEvent me) {
+            }
+
+            @Override
+            public void graphClicked(Object v, MouseEvent me) {
+            }
+        });
 
         final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer.getRenderContext();
 

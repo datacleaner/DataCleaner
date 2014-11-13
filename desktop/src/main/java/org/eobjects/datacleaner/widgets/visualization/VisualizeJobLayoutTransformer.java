@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.collections15.Transformer;
+import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
+import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,20 +117,33 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         return result;
     }
 
-    private Point createPoint(final Object vertex, final int x) {
-        Integer y = _yCount.get(x);
+    private Point createPoint(final Object vertex, final int xIndex) {
+        if (vertex instanceof HasMetadataProperties) {
+            final String xString = ((HasMetadataProperties) vertex)
+                    .getMetadataProperty(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X);
+            final String yString = ((HasMetadataProperties) vertex)
+                    .getMetadataProperty(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y);
+            final Number x = ConvertToNumberTransformer.transformValue(xString);
+            final Number y = ConvertToNumberTransformer.transformValue(yString);
+            if (x != null && y != null) {
+                return new Point(x.intValue(), y.intValue());
+            }
+        }
+        // TODO: Add support for Tables, Columns, FilterRequirements
+
+        Integer y = _yCount.get(xIndex);
         if (y == null) {
             y = 0;
         } else {
             y++;
         }
-        _yCount.put(x, y);
+        _yCount.put(xIndex, y);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Assigning coordinate ({},{}) to vertex {}", new Object[] { x, y, vertex });
+            logger.debug("Assigning coordinate ({},{}) to vertex {}", new Object[] { xIndex, y, vertex });
         }
 
-        return createPoint(x, y.intValue());
+        return createPoint(xIndex, y.intValue());
     }
 
     private Point createPoint(final int x, final int y) {

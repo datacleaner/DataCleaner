@@ -172,6 +172,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final VisualizeJobGraph _graph;
     private final DCPanel _contentContainerPanel;
 
+    private JComponent _editingContentView;
+
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, SourceColumnsPanel sourceColumnsPanel,
@@ -208,13 +210,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _injectorBuilder = injectorBuilder;
 
         _graph = new VisualizeJobGraph(_analysisJobBuilder, _presenterRendererFactory);
+        _editingContentView = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
-        _contentContainerPanel =new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
         _contentContainerPanel.setLayout(new BorderLayout());
 
         _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
@@ -345,8 +348,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _leftPanel.setCollapsed(false);
         }
 
-        _contentContainerPanel.removeAll();
-        _contentContainerPanel.add(_graph.getPanel(), BorderLayout.CENTER);
+        setContentView(_editingContentView);
     }
 
     private void displayDatastoreSelection() {
@@ -364,12 +366,29 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 timer.setRepeats(false);
                 timer.start();
 
-                _contentContainerPanel.removeAll();
-                _contentContainerPanel.add(_welcomePanelRef.get(), BorderLayout.CENTER);
+                setContentView(_welcomePanelRef.get());
 
                 _welcomePanelRef.get().requestSearchFieldFocus();
             }
         }
+    }
+
+    private void setContentView(JComponent component) {
+        boolean found = false;
+        final Component[] components = _contentContainerPanel.getComponents();
+        for (Component existing : components) {
+            if (component == existing) {
+                existing.setVisible(true);
+                found = true;
+            } else {
+                existing.setVisible(false);
+            }
+        }
+        
+        if (!found) {
+            _contentContainerPanel.add(component, BorderLayout.CENTER);
+        }
+        _contentContainerPanel.updateUI();
     }
 
     @Override
@@ -549,7 +568,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         // add source tab
         _tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png", TAB_ICON_SIZE),
-                WidgetUtils.scrolleable(_contentContainerPanel));
+                WidgetUtils.scrolleable(_sourceColumnsPanel));
         _tabbedPane.setRightClickActionListener(SOURCE_TAB, new HideTabTextActionListener(_tabbedPane, SOURCE_TAB));
         _tabbedPane.setUnclosableTab(SOURCE_TAB);
 
@@ -604,6 +623,26 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBar.add(_executeButton);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+
+        final JButton classicViewButton = WidgetFactory.createButton("Classic");
+        classicViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _editingContentView = _tabbedPane;
+                setContentView(_editingContentView);
+            }
+        });
+        statusBar.add(classicViewButton);
+
+        final JButton graphViewButton = WidgetFactory.createButton("Graph");
+        graphViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _editingContentView = _graph.getPanel();
+                setContentView(_editingContentView);
+            }
+        });
+        statusBar.add(graphViewButton);
 
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);

@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.widgets.visualization;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -168,9 +167,6 @@ public final class VisualizeJobGraph {
      */
     private JComponent createJComponent(final DirectedGraph<Object, VisualizeJobLink> graph) {
         final int vertexCount = graph.getVertexCount();
-        if (vertexCount == 0) {
-            graph.addVertex("No components in job");
-        }
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
         final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_analysisJobBuilder,
@@ -183,7 +179,7 @@ public final class VisualizeJobGraph {
             // manually initialize all vertices
             layout.transform(vertex);
         }
-        if (!layoutTransformer.isTransformed()) {
+        if (vertexCount > 0 && !layoutTransformer.isTransformed()) {
             throw new IllegalStateException("Layout transformer was never invoked!");
         }
 
@@ -196,12 +192,8 @@ public final class VisualizeJobGraph {
             @Override
             public void graphReleased(Object v, MouseEvent me) {
                 final PickedState<Object> pickedVertexState = visualizationViewer.getPickedVertexState();
-                logger.debug("PickedState: {}", pickedVertexState);
 
                 final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
-                if (logger.isDebugEnabled()) {
-                    logger.debug("selected objects: {}", Arrays.toString(selectedObjects));
-                }
 
                 for (Object vertex : selectedObjects) {
                     final Double x = layout.getX(vertex);
@@ -415,7 +407,7 @@ public final class VisualizeJobGraph {
                 }
 
                 if (inputColumn.isPhysicalColumn()) {
-                    Table table = inputColumn.getPhysicalColumn().getTable();
+                    final Table table = inputColumn.getPhysicalColumn().getTable();
                     if (table != null) {
                         addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
                         addEdge(graph, table, item);

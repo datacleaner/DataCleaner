@@ -76,10 +76,11 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
         add(_hintLabel);
         add(Box.createVerticalStrut(10));
 
-        List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
+        final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
         for (InputColumn<?> column : sourceColumns) {
             onAdd(column);
         }
+        analysisJobBuilder.getSourceColumnListeners().add(this);
     }
 
     private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
@@ -154,7 +155,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
         _analysisJobBuilder.getSourceColumnListeners().remove(this);
         super.removeNotify();
     }
-    
+
     @Override
     public void addNotify() {
         _analysisJobBuilder.getSourceColumnListeners().add(this);

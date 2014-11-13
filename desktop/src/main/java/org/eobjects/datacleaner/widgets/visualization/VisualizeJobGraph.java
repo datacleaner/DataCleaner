@@ -59,6 +59,7 @@ import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
+import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -216,9 +217,9 @@ public final class VisualizeJobGraph {
 
             @Override
             public void graphClicked(Object v, MouseEvent me) {
+                final int button = me.getButton();
                 if (v instanceof AbstractBeanJobBuilder) {
                     final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
-                    final int button = me.getButton();
                     if (me.getClickCount() == 2) {
                         @SuppressWarnings("unchecked")
                         final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
@@ -233,6 +234,13 @@ public final class VisualizeJobGraph {
                     } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
                         final JPopupMenu popup = new JPopupMenu();
                         popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
+                        popup.show(visualizationViewer, me.getX(), me.getY());
+                    }
+                } else if (v instanceof Table) {
+                    final Table table = (Table) v;
+                    if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                        final JPopupMenu popup = new JPopupMenu();
+                        popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
                         popup.show(visualizationViewer, me.getX(), me.getY());
                     }
                 }

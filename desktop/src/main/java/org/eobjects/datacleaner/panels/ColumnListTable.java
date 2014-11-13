@@ -41,6 +41,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -53,9 +55,6 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
@@ -119,10 +118,7 @@ public final class ColumnListTable extends DCPanel {
             removeButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Column[] cols = _table.getColumns();
-                    for (Column col : cols) {
-                        _analysisJobBuilder.removeSourceColumn(col);
-                    }
+                    _analysisJobBuilder.removeSourceTable(_table);
                 }
             });
 

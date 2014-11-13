@@ -118,16 +118,18 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
     }
 
     private Point createPoint(final Object vertex, final int xIndex) {
+        final Map<String, String> metadataProperties;
         if (vertex instanceof HasMetadataProperties) {
-            final String xString = ((HasMetadataProperties) vertex)
-                    .getMetadataProperty(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X);
-            final String yString = ((HasMetadataProperties) vertex)
-                    .getMetadataProperty(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y);
+            metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
+            final String xString = metadataProperties.get(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X);
+            final String yString = metadataProperties.get(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y);
             final Number x = ConvertToNumberTransformer.transformValue(xString);
             final Number y = ConvertToNumberTransformer.transformValue(yString);
             if (x != null && y != null) {
                 return new Point(x.intValue(), y.intValue());
             }
+        } else {
+            metadataProperties = null;
         }
         // TODO: Add support for Tables, Columns, FilterRequirements
 
@@ -143,7 +145,12 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             logger.debug("Assigning coordinate ({},{}) to vertex {}", new Object[] { xIndex, y, vertex });
         }
 
-        return createPoint(xIndex, y.intValue());
+        final Point point = createPoint(xIndex, y.intValue());
+        if (metadataProperties != null) {
+            metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X, "" + point.x);
+            metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y, "" + point.y);
+        }
+        return point;
     }
 
     private Point createPoint(final int x, final int y) {

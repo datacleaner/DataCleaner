@@ -142,7 +142,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Map<ComponentJobBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentJobBuilderPresenter, JComponent>();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalyzerBeansConfiguration _configuration;
-    private final RendererFactory _componentJobBuilderPresenterRendererFactory;
+    private final RendererFactory _presenterRendererFactory;
     private final CloseableTabbedPane _tabbedPane;
     private final DCLabel _statusLabel = DCLabel.bright("");
     private final CollapsibleTreePanel _leftPanel;
@@ -202,7 +202,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _windowMenuBar.setAnalysisJobBuilder(_analysisJobBuilder);
 
         _datastoreSelectionEnabled = true;
-        _componentJobBuilderPresenterRendererFactory = new RendererFactory(configuration);
+        _presenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
@@ -752,7 +752,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void onAdd(final AnalyzerJobBuilder<?> analyzerJobBuilder) {
         @SuppressWarnings("unchecked")
-        final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+        final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
         AnalyzerJobBuilderPresenter presenter = (AnalyzerJobBuilderPresenter) renderer.render(analyzerJobBuilder);
 
@@ -786,13 +786,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void onAdd(final TransformerJobBuilder<?> transformerJobBuilder) {
         @SuppressWarnings("unchecked")
-        final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+        final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
         final TransformerJobBuilderPresenter presenter = (TransformerJobBuilderPresenter) renderer
                 .render(transformerJobBuilder);
 
         _transformerPresenters.put(transformerJobBuilder, presenter);
-        JComponent comp = presenter.createJComponent();
+        final JComponent comp = presenter.createJComponent();
         _tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
                 IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
         _jobBuilderTabs.put(presenter, comp);
@@ -829,7 +829,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void onAdd(final FilterJobBuilder<?, ?> filterJobBuilder) {
         @SuppressWarnings("unchecked")
-        final Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+        final Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(filterJobBuilder, ComponentJobBuilderRenderingFormat.class);
         final FilterJobBuilderPresenter presenter = (FilterJobBuilderPresenter) renderer.render(filterJobBuilder);
 

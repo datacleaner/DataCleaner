@@ -34,12 +34,14 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.border.MatteBorder;
 
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -49,7 +51,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
 public class VisualizeJobWindow extends AbstractWindow implements TransformerChangeListener, FilterChangeListener,
-        AnalyzerChangeListener {
+        AnalyzerChangeListener, SourceColumnChangeListener {
 
     private static final long serialVersionUID = 1L;
     private final ImageManager imageManager = ImageManager.get();
@@ -73,6 +75,7 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
+        _analysisJobBuilder.getSourceColumnListeners().add(this);
     }
 
     @Override
@@ -80,6 +83,7 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
         _analysisJobBuilder.getTransformerChangeListeners().remove(this);
         _analysisJobBuilder.getFilterChangeListeners().remove(this);
         _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+        _analysisJobBuilder.getSourceColumnListeners().remove(this);
         return super.onWindowClosing();
     }
 
@@ -241,6 +245,16 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
     @Override
     public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onAdd(InputColumn<?> sourceColumn) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRemove(InputColumn<?> sourceColumn) {
         refreshGraph();
     }
 }

@@ -38,7 +38,9 @@ import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -56,14 +58,19 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.HasAnalyzerResult;
+import org.eobjects.analyzer.result.renderer.Renderable;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
+import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
+import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,14 +98,18 @@ public final class VisualizeJobGraph {
 
     private final DirectedGraph<Object, VisualizeJobLink> _graph;
     private final Set<Object> _highlighedVertexes;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final RendererFactory _presenterRendererFactory;
 
-    public VisualizeJobGraph() {
-        this(new DirectedSparseGraph<Object, VisualizeJobLink>());
+    public VisualizeJobGraph(AnalyzerBeansConfiguration configuration) {
+        this(new DirectedSparseGraph<Object, VisualizeJobLink>(), configuration);
     }
 
-    public VisualizeJobGraph(DirectedGraph<Object, VisualizeJobLink> graph) {
+    public VisualizeJobGraph(DirectedGraph<Object, VisualizeJobLink> graph, AnalyzerBeansConfiguration configuration) {
         _graph = graph;
         _highlighedVertexes = new HashSet<Object>();
+        _configuration = configuration;
+        _presenterRendererFactory = new RendererFactory(configuration);
     }
 
     public VisualizeJobGraph highlightVertex(Object vertex) {
@@ -116,7 +127,8 @@ public final class VisualizeJobGraph {
      * @return
      */
     public static JComponent create(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        final VisualizeJobGraph graph = new VisualizeJobGraph();
+        final AnalyzerBeansConfiguration configuration = beanJobBuilder.getAnalysisJobBuilder().getConfiguration();
+        final VisualizeJobGraph graph = new VisualizeJobGraph(configuration);
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(beanJobBuilder.getAnalysisJobBuilder());
@@ -183,7 +195,9 @@ public final class VisualizeJobGraph {
      */
     public static JComponent create(final AnalysisJobBuilder analysisJobBuilder, final boolean displayColumns,
             final boolean displayOutcomes) {
-        final VisualizeJobGraph graph = new VisualizeJobGraph();
+        final AnalyzerBeansConfiguration configuration = analysisJobBuilder.getConfiguration();
+
+        final VisualizeJobGraph graph = new VisualizeJobGraph(configuration);
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(analysisJobBuilder);
@@ -237,19 +251,22 @@ public final class VisualizeJobGraph {
             public void graphReleased(Object v, MouseEvent me) {
                 final PickedState<Object> pickedVertexState = visualizationViewer.getPickedVertexState();
                 logger.debug("PickedState: {}", pickedVertexState);
-                
+
                 final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
                 if (logger.isDebugEnabled()) {
                     logger.debug("selected objects: {}", Arrays.toString(selectedObjects));
                 }
-                
+
                 for (Object vertex : selectedObjects) {
                     if (vertex instanceof HasMetadataProperties) {
-                        final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
+                        final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex)
+                                .getMetadataProperties();
                         final Double x = layout.getX(vertex);
                         final Double y = layout.getY(vertex);
-                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
-                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
+                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X,
+                                "" + x.intValue());
+                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y,
+                                "" + y.intValue());
                     }
                     // TODO: Add support for Tables, Columns, FilterRequirements
                 }
@@ -261,6 +278,21 @@ public final class VisualizeJobGraph {
 
             @Override
             public void graphClicked(Object v, MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    if (v instanceof AbstractBeanJobBuilder<?, ?, ?>) {
+                        final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
+                        @SuppressWarnings("unchecked")
+                        final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
+                                .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
+                        if (renderer != null) {
+                            final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
+
+                            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(
+                                    componentBuilder, _configuration, presenter);
+                            dialog.open();
+                        }
+                    }
+                }
             }
         });
 

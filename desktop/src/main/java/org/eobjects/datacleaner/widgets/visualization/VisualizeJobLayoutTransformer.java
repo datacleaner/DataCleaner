@@ -89,7 +89,13 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 
         final int x = maxPrerequisiteCount;
         for (Object vertex : vertices) {
-            final Point point = createPoint(vertex, x);
+            final Point point = createPoint(vertex, x, true);
+            if (point != null) {
+                _points.put(vertex, point);
+            }
+        }
+        for (Object vertex : vertices) {
+            final Point point = createPoint(vertex, x, false);
             _points.put(vertex, point);
 
             createPrerequisitePoints(vertex, x);
@@ -105,7 +111,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         for (Object prerequisiteVertex : prerequisites) {
             if (!_points.containsKey(prerequisiteVertex)) {
                 final int x = vertexX - 1;
-                final Point point = createPoint(prerequisiteVertex, x);
+                final Point point = createPoint(prerequisiteVertex, x, false);
                 _points.put(prerequisiteVertex, point);
 
                 createPrerequisitePoints(prerequisiteVertex, x);
@@ -124,7 +130,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         return result;
     }
 
-    private Point createPoint(final Object vertex, int xIndex) {
+    private Point createPoint(final Object vertex, int xIndex, boolean onlyIfCoordinatesDefined) {
         Point point = null;
         final Map<String, String> metadataProperties;
         if (vertex instanceof HasMetadataProperties) {
@@ -144,12 +150,17 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             point = VisualizationMetadata.getPointForTable(_analysisJobBuilder, (Table) vertex);
         }
 
+        if (onlyIfCoordinatesDefined && point == null) {
+            // this means we are not interested in generating a point
+            return null;
+        }
+
         // TODO: Add support for Columns, FilterRequirements
 
         if (point != null) {
             // find out what the "xIndex" should be - which spot in the grid
             // would we want to occupy with this component.
-            int x = point.x;
+            final int x = point.x;
             xIndex = x / X_STEP + x % X_STEP / X_OFFSET - 1;
             xIndex = Math.max(xIndex, 0);
         }

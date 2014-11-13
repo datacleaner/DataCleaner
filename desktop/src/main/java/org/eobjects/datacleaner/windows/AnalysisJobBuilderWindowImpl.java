@@ -171,7 +171,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final MetadataPanel _metadataPanel;
     private final VisualizeJobGraph _graph;
     private final DCPanel _contentContainerPanel;
-
     private JComponent _editingContentView;
 
     @Inject
@@ -334,15 +333,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         if (datastore == null) {
             _analysisJobBuilder.reset();
-            displayDatastoreSelection();
+            displayWelcomeView();
         } else {
-            displaySourceColumnsList();
+            displayEditingView();
         }
 
         updateStatusLabel();
     }
 
-    private void displaySourceColumnsList() {
+    private void displayEditingView() {
         _leftPanel.setVisible(true);
         if (_leftPanel.isCollapsed()) {
             _leftPanel.setCollapsed(false);
@@ -351,7 +350,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         setContentView(_editingContentView);
     }
 
-    private void displayDatastoreSelection() {
+    private void displayWelcomeView() {
         if (isShowing()) {
             if (_datastore == null) {
                 if (!_leftPanel.isCollapsed()) {
@@ -393,7 +392,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     protected void onWindowVisible() {
-        displayDatastoreSelection();
+        displayWelcomeView();
     }
 
     public void updateStatusLabel() {

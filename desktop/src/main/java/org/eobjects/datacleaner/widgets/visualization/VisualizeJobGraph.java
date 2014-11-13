@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,6 +80,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.picking.PickedState;
@@ -123,6 +125,9 @@ public final class VisualizeJobGraph {
     }
 
     public DCPanel getPanel() {
+        if (_panel.getComponentCount() == 0) {
+            refresh();
+        }
         return _panel;
     }
 
@@ -189,6 +194,30 @@ public final class VisualizeJobGraph {
                 layout);
         visualizationViewer.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         GraphUtils.applyStyles(visualizationViewer);
+        visualizationViewer.addPreRenderPaintable(new Paintable() {
+            @Override
+            public boolean useTransform() {
+                return false;
+            }
+            
+            @Override
+            public void paint(Graphics g) {
+                g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
+                if (graph.getVertexCount() == 0) {
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(30f));
+                    g.drawString("Start building ...", 100, 200);
+                    
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
+                    g.drawString("Select source table/columns in the tree to the left.", 100, 260);
+                } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0) {
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(30f));
+                    g.drawString("Good then ...", 100, 200);
+                    
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
+                    g.drawString("Now make sure to also add an analysis option from the 'Analyze' menu!", 100, 260);
+                }
+            }
+        });
 
         visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
             @Override

@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
@@ -33,14 +34,22 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.border.MatteBorder;
 
+import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.FilterChangeListener;
+import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.TransformerChangeListener;
+import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
-public class VisualizeJobWindow extends AbstractWindow {
+public class VisualizeJobWindow extends AbstractWindow implements TransformerChangeListener, FilterChangeListener,
+        AnalyzerChangeListener {
 
     private static final long serialVersionUID = 1L;
     private final ImageManager imageManager = ImageManager.get();
@@ -60,6 +69,18 @@ public class VisualizeJobWindow extends AbstractWindow {
         _scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         refreshGraph();
+
+        _analysisJobBuilder.getTransformerChangeListeners().add(this);
+        _analysisJobBuilder.getFilterChangeListeners().add(this);
+        _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
+    }
+
+    @Override
+    protected boolean onWindowClosing() {
+        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
+        _analysisJobBuilder.getFilterChangeListeners().remove(this);
+        _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+        return super.onWindowClosing();
     }
 
     private boolean isDefaultDisplayColumns(AnalysisJobBuilder analysisJobBuilder) {
@@ -155,5 +176,71 @@ public class VisualizeJobWindow extends AbstractWindow {
         buttonPanel.add(displayFilterOutcomesCheckBox);
 
         return buttonPanel;
+    }
+
+    @Override
+    public void onAdd(AnalyzerJobBuilder<?> analyzerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onAdd(FilterJobBuilder<?, ?> filterJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRemove(FilterJobBuilder<?, ?> filterJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+        refreshGraph();
+    }
+
+    @Override
+    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+            List<MutableInputColumn<?>> outputColumns) {
+        refreshGraph();
     }
 }

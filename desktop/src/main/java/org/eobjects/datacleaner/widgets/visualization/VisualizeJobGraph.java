@@ -196,7 +196,7 @@ public final class VisualizeJobGraph {
         for (FilterJobBuilder<?, ?> fjb : fjbs) {
             graph.addNodes(sourceColumnFinder, fjb, displayColumns, displayOutcomes, -1);
         }
-
+        
         return graph.renderGraph();
     }
 

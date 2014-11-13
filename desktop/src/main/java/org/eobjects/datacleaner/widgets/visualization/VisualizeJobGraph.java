@@ -96,7 +96,7 @@ public final class VisualizeJobGraph {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
     private final DCPanel _panel;
-    
+
     public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder) {
         this(analysisJobBuilder, null);
     }
@@ -104,16 +104,16 @@ public final class VisualizeJobGraph {
     public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
-        
+
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
         } else {
             _presenterRendererFactory = presenterRendererFactory;
         }
-        
+
         System.out.println("--------- " + getClass().getSimpleName() + " got created with AJB1: "
                 + System.identityHashCode(analysisJobBuilder));
-        
+
         _panel = new DCPanel();
         _panel.setLayout(new BorderLayout());
     }
@@ -170,7 +170,8 @@ public final class VisualizeJobGraph {
         }
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
-        final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(graph);
+        final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_analysisJobBuilder,
+                graph);
         final Dimension preferredSize = layoutTransformer.getPreferredSize();
         final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
                 layoutTransformer, preferredSize);
@@ -201,17 +202,17 @@ public final class VisualizeJobGraph {
                 }
 
                 for (Object vertex : selectedObjects) {
+                    final Double x = layout.getX(vertex);
+                    final Double y = layout.getY(vertex);
                     if (vertex instanceof HasMetadataProperties) {
                         final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex)
                                 .getMetadataProperties();
-                        final Double x = layout.getX(vertex);
-                        final Double y = layout.getY(vertex);
-                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X,
-                                "" + x.intValue());
-                        metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y,
-                                "" + y.intValue());
+                        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
+                        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
+                    } else if (vertex instanceof Table) {
+                        VisualizationMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
                     }
-                    // TODO: Add support for Tables, Columns, FilterRequirements
+                    // TODO: Add support for Columns, FilterRequirements
                 }
             }
 

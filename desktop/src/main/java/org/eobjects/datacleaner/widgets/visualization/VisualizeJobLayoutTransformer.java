@@ -33,7 +33,9 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.collections15.Transformer;
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +59,16 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
     private static final int X_OFFSET = 40;
     private static final int Y_STEP = 80;
     private static final int Y_OFFSET = 40;
+
+    private final AnalysisJobBuilder _analysisJobBuilder;
     private final DirectedGraph<Object, VisualizeJobLink> _graph;
     private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
     private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
     private volatile boolean _transformed;
 
-    public VisualizeJobLayoutTransformer(DirectedGraph<Object, VisualizeJobLink> graph) {
+    public VisualizeJobLayoutTransformer(AnalysisJobBuilder analysisJobBuilder,
+            DirectedGraph<Object, VisualizeJobLink> graph) {
+        _analysisJobBuilder = analysisJobBuilder;
         _graph = graph;
         createPoints();
         _transformed = false;
@@ -121,8 +127,8 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         final Map<String, String> metadataProperties;
         if (vertex instanceof HasMetadataProperties) {
             metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
-            final String xString = metadataProperties.get(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X);
-            final String yString = metadataProperties.get(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y);
+            final String xString = metadataProperties.get(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X);
+            final String yString = metadataProperties.get(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y);
             final Number x = ConvertToNumberTransformer.transformValue(xString);
             final Number y = ConvertToNumberTransformer.transformValue(yString);
             if (x != null && y != null) {
@@ -131,7 +137,15 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         } else {
             metadataProperties = null;
         }
-        // TODO: Add support for Tables, Columns, FilterRequirements
+
+        if (vertex instanceof Table) {
+            final Point point = VisualizationMetadata.getPointForTable(_analysisJobBuilder, (Table) vertex);
+            if (point != null) {
+                return point;
+            }
+        }
+
+        // TODO: Add support for Columns, FilterRequirements
 
         Integer y = _yCount.get(xIndex);
         if (y == null) {
@@ -147,9 +161,14 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 
         final Point point = createPoint(xIndex, y.intValue());
         if (metadataProperties != null) {
-            metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_X, "" + point.x);
-            metadataProperties.put(VisualizationConstants.METADATA_PROPERTY_COORDINATES_Y, "" + point.y);
+            metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X, "" + point.x);
+            metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + point.y);
         }
+
+        if (vertex instanceof Table) {
+            VisualizationMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, point.x, point.y);
+        }
+
         return point;
     }
 

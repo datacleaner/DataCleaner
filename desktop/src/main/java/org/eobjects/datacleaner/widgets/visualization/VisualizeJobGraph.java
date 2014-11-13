@@ -199,22 +199,44 @@ public final class VisualizeJobGraph {
             public boolean useTransform() {
                 return false;
             }
-            
+
             @Override
             public void paint(Graphics g) {
+                final String title;
+                final String subTitle;
+                final String imagePath;
+
                 g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
-                if (graph.getVertexCount() == 0) {
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(30f));
-                    g.drawString("Start building ...", 100, 200);
-                    
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
-                    g.drawString("Select source table/columns in the tree to the left.", 100, 260);
+                if (_analysisJobBuilder.getSourceColumns().size() == 0) {
+                    title = "Select source ...";
+                    subTitle = "Pick table/columns in the tree to the left.";
+                    imagePath = "images/window/canvas-bg-table.png";
+                } else if (_analysisJobBuilder.getComponentCount() == 0) {
+                    title = "Start building ...";
+                    subTitle = "Use the 'Transform' and 'Analyze' buttons above.";
+                    imagePath = "images/window/canvas-bg-plus.png";
                 } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0) {
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(30f));
-                    g.drawString("Good then ...", 100, 200);
-                    
+                    title = "Almost ready to run ...";
+                    subTitle = "Any job needs to either perform a 'Write' or 'Analyze' action.";
+                    imagePath = "images/window/canvas-bg-plus.png";
+                } else {
+                    title = null;
+                    subTitle = null;
+                    imagePath = null;
+                }
+
+                if (title != null) {
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(35f));
+                    g.drawString(title, 200, 200);
+                }
+
+                if (subTitle != null) {
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
-                    g.drawString("Now make sure to also add an analysis option from the 'Analyze' menu!", 100, 260);
+                    g.drawString(subTitle, 200, 260);
+                }
+
+                if (imagePath != null) {
+                    g.drawImage(ImageManager.get().getImage(imagePath), 80, 200 - 32, null);
                 }
             }
         });
@@ -273,7 +295,8 @@ public final class VisualizeJobGraph {
                         popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
                         popup.show(visualizationViewer, me.getX(), me.getY());
                     } else if (me.getClickCount() == 2) {
-                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_analysisJobBuilder, table);
+                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_analysisJobBuilder,
+                                table);
                         dialog.open();
                     }
                 }

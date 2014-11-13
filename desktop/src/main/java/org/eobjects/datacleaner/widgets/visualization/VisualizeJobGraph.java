@@ -111,9 +111,6 @@ public final class VisualizeJobGraph {
             _presenterRendererFactory = presenterRendererFactory;
         }
 
-        System.out.println("--------- " + getClass().getSimpleName() + " got created with AJB1: "
-                + System.identityHashCode(analysisJobBuilder));
-
         _panel = new DCPanel();
         _panel.setLayout(new BorderLayout());
     }
@@ -295,22 +292,23 @@ public final class VisualizeJobGraph {
             @Override
             public Icon transform(Object obj) {
                 if (obj == MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
-                    return imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+                    return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
                 }
                 if (obj instanceof AbstractBeanJobBuilder) {
-                    return IconUtils.getDescriptorIcon(((AbstractBeanJobBuilder<?, ?, ?>) obj).getDescriptor());
+                    return IconUtils.getDescriptorIcon(((AbstractBeanJobBuilder<?, ?, ?>) obj).getDescriptor(),
+                            IconUtils.ICON_SIZE_LARGE);
                 }
                 if (obj instanceof FilterOutcome) {
                     return imageManager.getImageIcon("images/component-types/filter-outcome.png",
-                            IconUtils.ICON_SIZE_SMALL);
+                            IconUtils.ICON_SIZE_MEDIUM);
                 }
                 if (obj instanceof Table) {
-                    return imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_MEDIUM);
+                    return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
                 }
                 if (obj instanceof Class) {
                     Class<?> cls = (Class<?>) obj;
                     if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                        return imageManager.getImageIcon("images/model/result.png", IconUtils.ICON_SIZE_MEDIUM);
+                        return imageManager.getImageIcon("images/model/result.png", IconUtils.ICON_SIZE_LARGE);
                     }
                 }
                 return imageManager.getImageIcon(IconUtils.STATUS_ERROR);

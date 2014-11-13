@@ -37,8 +37,6 @@ import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
 
 /**
  * Contains features related to layout and styling of JUNG based graphs.
- * 
- * @author Kasper Sørensen
  */
 public class GraphUtils {
 

@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
@@ -59,6 +60,7 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
+import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -219,9 +221,10 @@ public final class VisualizeJobGraph {
 
             @Override
             public void graphClicked(Object v, MouseEvent me) {
-                if (me.getClickCount() == 2) {
-                    if (v instanceof AbstractBeanJobBuilder<?, ?, ?>) {
-                        final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
+                if (v instanceof AbstractBeanJobBuilder) {
+                    final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
+                    final int button = me.getButton();
+                    if (me.getClickCount() == 2) {
                         @SuppressWarnings("unchecked")
                         final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                                 .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
@@ -232,6 +235,10 @@ public final class VisualizeJobGraph {
                                     componentBuilder, _analysisJobBuilder, presenter);
                             dialog.open();
                         }
+                    } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                        final JPopupMenu popup = new JPopupMenu();
+                        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
+                        popup.show(visualizationViewer, me.getX(), me.getY());
                     }
                 }
             }

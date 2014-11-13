@@ -20,8 +20,12 @@
 package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -29,7 +33,9 @@ import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
 /**
@@ -75,10 +81,29 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     @Override
     protected JComponent getDialogContent() {
         final JComponent configurationComponent = _presenter.createJComponent();
+        
+        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ComponentConfigurationDialog.this.dispose();
+            }
+        });
+
+        final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(new NeopostToolbarButton());
+        toolBar.add(WidgetFactory.createToolBarSeparator());
+        toolBar.add(closeButton);
+        
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        toolBarPanel.setLayout(new BorderLayout());
+        toolBarPanel.add(toolBar, BorderLayout.CENTER);
+        
         final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
-        // TODO: Have a close button or react to window closed
+        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        
         return panel;
     }
 }

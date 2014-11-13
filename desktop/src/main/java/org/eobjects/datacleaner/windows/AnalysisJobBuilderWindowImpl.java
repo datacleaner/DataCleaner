@@ -151,7 +151,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final SchemaTreePanel _schemaTreePanel;
     private final JButton _saveButton;
     private final JButton _saveAsButton;
-    private final JButton _visualizeButton;
     private final JButton _transformButton;
     private final JButton _analyzeButton;
     private final JButton _executeButton;
@@ -220,8 +219,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
         _saveAsButton = createToolBarButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
 
-        _visualizeButton = createToolbarButton("Visualize", "images/actions/visualize.png",
-                "<html><b>Visualize job</b><br/>Visualize the components of this job in a flow-chart.</html>");
         _transformButton = createToolbarButton(
                 "Transform",
                 IconUtils.TRANSFORMER_IMAGEPATH,
@@ -573,15 +570,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveAsButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
 
-        _visualizeButton.setToolTipText("Visualize execution flow");
-        _visualizeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getWindowContext());
-                window.setVisible(true);
-            }
-        });
-
         // Transform button
         _transformButton.addActionListener(_addTransformerActionListenerProvider.get());
 
@@ -611,7 +599,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(_saveButton);
         toolBar.add(_saveAsButton);
-        toolBar.add(_visualizeButton);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_transformButton);
         toolBar.add(_analyzeButton);
@@ -706,7 +693,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
-        _visualizeButton.setEnabled(everythingEnabled);
         _transformButton.setEnabled(everythingEnabled);
         _analyzeButton.setEnabled(everythingEnabled);
         _windowMenuBar.getWriteDataMenu().setEnabled(everythingEnabled);

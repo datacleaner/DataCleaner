@@ -124,7 +124,8 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         return result;
     }
 
-    private Point createPoint(final Object vertex, final int xIndex) {
+    private Point createPoint(final Object vertex, int xIndex) {
+        Point point = null;
         final Map<String, String> metadataProperties;
         if (vertex instanceof HasMetadataProperties) {
             metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
@@ -133,20 +134,25 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             final Number x = ConvertToNumberTransformer.transformValue(xString);
             final Number y = ConvertToNumberTransformer.transformValue(yString);
             if (x != null && y != null) {
-                return new Point(x.intValue(), y.intValue());
+                point = new Point(x.intValue(), y.intValue());
             }
         } else {
             metadataProperties = null;
         }
 
-        if (vertex instanceof Table) {
-            final Point point = VisualizationMetadata.getPointForTable(_analysisJobBuilder, (Table) vertex);
-            if (point != null) {
-                return point;
-            }
+        if (point == null && vertex instanceof Table) {
+            point = VisualizationMetadata.getPointForTable(_analysisJobBuilder, (Table) vertex);
         }
 
         // TODO: Add support for Columns, FilterRequirements
+
+        if (point != null) {
+            // find out what the "xIndex" should be - which spot in the grid
+            // would we want to occupy with this component.
+            int x = point.x;
+            xIndex = x / X_STEP + x % X_STEP / X_OFFSET - 1;
+            xIndex = Math.max(xIndex, 0);
+        }
 
         Integer y = _yCount.get(xIndex);
         if (y == null) {
@@ -160,7 +166,10 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             logger.debug("Assigning coordinate ({},{}) to vertex {}", new Object[] { xIndex, y, vertex });
         }
 
-        final Point point = createPoint(xIndex, y.intValue());
+        if (point == null) {
+            point = createPoint(xIndex, y.intValue());
+        }
+
         if (metadataProperties != null) {
             metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X, "" + point.x);
             metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + point.y);

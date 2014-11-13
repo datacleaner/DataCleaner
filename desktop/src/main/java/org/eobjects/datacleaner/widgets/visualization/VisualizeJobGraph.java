@@ -68,6 +68,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
+import org.eobjects.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,7 +221,11 @@ public final class VisualizeJobGraph {
                 final int button = me.getButton();
                 if (v instanceof AbstractBeanJobBuilder) {
                     final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
-                    if (me.getClickCount() == 2) {
+                    if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                        final JPopupMenu popup = new JPopupMenu();
+                        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
+                        popup.show(visualizationViewer, me.getX(), me.getY());
+                    } else if (me.getClickCount() == 2) {
                         @SuppressWarnings("unchecked")
                         final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                                 .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
@@ -231,10 +236,6 @@ public final class VisualizeJobGraph {
                                     componentBuilder, _analysisJobBuilder, presenter);
                             dialog.open();
                         }
-                    } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                        final JPopupMenu popup = new JPopupMenu();
-                        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
-                        popup.show(visualizationViewer, me.getX(), me.getY());
                     }
                 } else if (v instanceof Table) {
                     final Table table = (Table) v;
@@ -242,6 +243,9 @@ public final class VisualizeJobGraph {
                         final JPopupMenu popup = new JPopupMenu();
                         popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
                         popup.show(visualizationViewer, me.getX(), me.getY());
+                    } else if (me.getClickCount() == 2) {
+                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_analysisJobBuilder, table);
+                        dialog.open();
                     }
                 }
             }

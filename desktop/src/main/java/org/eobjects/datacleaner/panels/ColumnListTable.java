@@ -102,16 +102,25 @@ public final class ColumnListTable extends DCPanel {
                     IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
+            headerPanel.add(tableNameLabel);
 
-            final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
-            previewButton.setToolTipText("Preview table rows");
-            previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-                    .getDatastore(), _columns.keySet()));
+            if (_windowContext != null) {
+                final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
+                previewButton.setToolTipText("Preview table rows");
+                previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
+                        .getDatastore(), _columns.keySet()));
+                headerPanel.add(Box.createHorizontalStrut(4));
+                headerPanel.add(previewButton);
+            }
 
-            final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
-            queryButton.setToolTipText("Ad-hoc query");
-            queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns
-                    .keySet()));
+            if (_windowContext != null) {
+                final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
+                queryButton.setToolTipText("Ad-hoc query");
+                queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table,
+                        _columns.keySet()));
+                headerPanel.add(Box.createHorizontalStrut(4));
+                headerPanel.add(queryButton);
+            }
 
             final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
             removeButton.setToolTipText("Remove table from source");
@@ -121,14 +130,9 @@ public final class ColumnListTable extends DCPanel {
                     _analysisJobBuilder.removeSourceTable(_table);
                 }
             });
-
-            headerPanel.add(tableNameLabel);
-            headerPanel.add(Box.createHorizontalStrut(4));
-            headerPanel.add(previewButton);
-            headerPanel.add(Box.createHorizontalStrut(4));
-            headerPanel.add(queryButton);
             headerPanel.add(Box.createHorizontalStrut(4));
             headerPanel.add(removeButton);
+
             add(headerPanel, BorderLayout.NORTH);
         }
 

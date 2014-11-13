@@ -27,8 +27,6 @@ import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException
  * Interface for all job builder presenter objects. These are objects that are
  * used to present the configuration screen (eg. the builder objects) of a
  * component.
- * 
- * @author Kasper Sørensen
  */
 public interface ComponentJobBuilderPresenter {
 

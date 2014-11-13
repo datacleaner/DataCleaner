@@ -106,6 +106,7 @@ import org.eobjects.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
+import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,6 +172,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private boolean _datastoreSelectionEnabled;
     private final MetadataPanel _metadataPanel;
 
+    private VisualizeJobGraph _graph;
+
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, SourceColumnsPanel sourceColumnsPanel,
@@ -189,7 +192,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
         _addTransformerActionListenerProvider = addTransformerActionListenerProvider;
         _userPreferences = userPreferences;
-
+        
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
         } else {
@@ -201,11 +204,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
         _windowMenuBar.setAnalysisJobBuilder(_analysisJobBuilder);
 
+
         _datastoreSelectionEnabled = true;
         _presenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
-
+        
+        _graph = new VisualizeJobGraph(_analysisJobBuilder, _presenterRendererFactory);
+        
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
@@ -229,8 +235,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             protected WelcomePanel fetch() {
                 final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane)
                         .createInjector();
-                final WelcomePanel welcomePanel = injectorWithGlassPane
-                        .getInstance(WelcomePanel.class);
+                final WelcomePanel welcomePanel = injectorWithGlassPane.getInstance(WelcomePanel.class);
                 welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
                 return welcomePanel;
             }
@@ -344,7 +349,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (_leftPanel.isCollapsed()) {
             _leftPanel.setCollapsed(false);
         }
-        
+
         _sourceTabOuterPanel.removeAll();
         _sourceTabOuterPanel.add(_sourceColumnsPanel, BorderLayout.CENTER);
     }
@@ -363,7 +368,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 });
                 timer.setRepeats(false);
                 timer.start();
-                
+
                 _sourceTabOuterPanel.removeAll();
                 _sourceTabOuterPanel.add(_welcomePanelRef.get(), BorderLayout.CENTER);
 
@@ -627,7 +632,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.setLayout(new BorderLayout());
         panel.add(toolBarPanel, BorderLayout.NORTH);
         panel.add(_leftPanel, BorderLayout.WEST);
-        panel.add(_tabbedPane, BorderLayout.CENTER);
+
+        
+        DCPanel newPanel = new DCPanel();
+        newPanel.setLayout(new BorderLayout());
+        // TODO: Old approach
+//        newPanel.add(_tabbedPane, BorderLayout.NORTH);
+        newPanel.add(_graph.getPanel(), BorderLayout.CENTER);
+        panel.add(newPanel, BorderLayout.CENTER);
+
         panel.add(statusBar, BorderLayout.SOUTH);
 
         WidgetUtils.centerOnScreen(this);
@@ -773,6 +786,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _tabbedPane.setSelectedIndex(tabIndex);
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -781,6 +795,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         JComponent comp = _jobBuilderTabs.remove(presenter);
         _tabbedPane.remove(comp);
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -807,6 +822,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -815,6 +831,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         JComponent comp = _jobBuilderTabs.remove(presenter);
         _tabbedPane.remove(comp);
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -824,6 +841,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (presenter != null) {
             presenter.onOutputChanged(outputColumns);
         }
+        _graph.refresh();
     }
 
     @Override
@@ -855,6 +873,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             });
         }
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -867,6 +886,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _sourceColumnsPanel.getMaxRowsFilterShortcutPanel().resetToDefault();
         }
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -876,6 +896,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             presenter.onConfigurationChanged();
         }
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -884,6 +905,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (presenter != null) {
             presenter.onRequirementChanged();
         }
+        _graph.refresh();
     }
 
     @Override
@@ -893,6 +915,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             presenter.onConfigurationChanged();
         }
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -901,6 +924,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (presenter != null) {
             presenter.onRequirementChanged();
         }
+        _graph.refresh();
     }
 
     @Override
@@ -910,6 +934,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             presenter.onConfigurationChanged();
         }
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
@@ -918,18 +943,21 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (presenter != null) {
             presenter.onRequirementChanged();
         }
+        _graph.refresh();
     }
 
     @Override
     public void onAdd(InputColumn<?> sourceColumn) {
         onSourceColumnsChanged();
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override
     public void onRemove(InputColumn<?> sourceColumn) {
         onSourceColumnsChanged();
         updateStatusLabel();
+        _graph.refresh();
     }
 
     @Override

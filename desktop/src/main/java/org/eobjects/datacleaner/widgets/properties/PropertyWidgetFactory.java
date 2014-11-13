@@ -29,6 +29,9 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Resource;
 import org.eobjects.analyzer.beans.api.ColumnProperty;
 import org.eobjects.analyzer.beans.api.MappedProperty;
 import org.eobjects.analyzer.beans.api.SchemaProperty;
@@ -46,9 +49,6 @@ import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.widgets.DCComboBox;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Resource;
 
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
@@ -81,7 +81,7 @@ public final class PropertyWidgetFactory {
         _injectorBuilder = injectorBuilder;
         _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
 
-        Set<ConfiguredPropertyDescriptor> mappedProperties = beanJobBuilder.getDescriptor()
+        final Set<ConfiguredPropertyDescriptor> mappedProperties = beanJobBuilder.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(MappedProperty.class);
         for (ConfiguredPropertyDescriptor mappedProperty : mappedProperties) {
             MappedProperty annotation = mappedProperty.getAnnotation(MappedProperty.class);

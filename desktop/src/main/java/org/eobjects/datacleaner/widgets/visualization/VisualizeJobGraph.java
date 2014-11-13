@@ -39,10 +39,7 @@ import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.beans.writers.WriteDataCategory;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -57,7 +54,6 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.HasAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
@@ -96,20 +92,30 @@ public final class VisualizeJobGraph {
     private static final ImageManager imageManager = ImageManager.get();
     private static final Logger logger = LoggerFactory.getLogger(VisualizeJobGraph.class);
 
-    private final DirectedGraph<Object, VisualizeJobLink> _graph;
     private final Set<Object> _highlighedVertexes;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
-
-    public VisualizeJobGraph(AnalyzerBeansConfiguration configuration) {
-        this(new DirectedSparseGraph<Object, VisualizeJobLink>(), configuration);
+    private final DCPanel _panel;
+    
+    public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder) {
+        this(analysisJobBuilder, null);
     }
 
-    public VisualizeJobGraph(DirectedGraph<Object, VisualizeJobLink> graph, AnalyzerBeansConfiguration configuration) {
-        _graph = graph;
+    public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory) {
         _highlighedVertexes = new HashSet<Object>();
-        _configuration = configuration;
-        _presenterRendererFactory = new RendererFactory(configuration);
+        _analysisJobBuilder = analysisJobBuilder;
+        
+        if (presenterRendererFactory == null) {
+            _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
+        } else {
+            _presenterRendererFactory = presenterRendererFactory;
+        }
+        
+        System.out.println("--------- " + getClass().getSimpleName() + " got created with AJB1: "
+                + System.identityHashCode(analysisJobBuilder));
+        
+        _panel = new DCPanel();
+        _panel.setLayout(new BorderLayout());
     }
 
     public VisualizeJobGraph highlightVertex(Object vertex) {
@@ -117,122 +123,59 @@ public final class VisualizeJobGraph {
         return this;
     }
 
-    /**
-     * Builds a graph for a single {@link AbstractBeanJobBuilder} which
-     * comprises only it's immediate connections
-     * 
-     * @param beanJobBuilder
-     * @param displayColumns
-     * @param displayOutcomes
-     * @return
-     */
-    public static JComponent create(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        final AnalyzerBeansConfiguration configuration = beanJobBuilder.getAnalysisJobBuilder().getConfiguration();
-        final VisualizeJobGraph graph = new VisualizeJobGraph(configuration);
-
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(beanJobBuilder.getAnalysisJobBuilder());
-
-        graph.addNodes(sourceColumnFinder, beanJobBuilder, false, true, 2);
-
-        // add output outcomes
-        if (beanJobBuilder instanceof HasFilterOutcomes) {
-            final Collection<FilterOutcome> outcomes = ((HasFilterOutcomes) beanJobBuilder).getFilterOutcomes();
-            for (final FilterOutcome outcome : outcomes) {
-                graph.addNodes(null, outcome, true, true, 0);
-                graph.addEdge(beanJobBuilder, outcome);
-            }
-        }
-
-        // add output columns
-        final int maxColumns = 5;
-        if (beanJobBuilder instanceof InputColumnSourceJob) {
-            InputColumn<?>[] outputColumns = ((InputColumnSourceJob) beanJobBuilder).getOutput();
-            for (int i = 0; i < outputColumns.length; i++) {
-                if (i == maxColumns) {
-                    graph.addNodes(sourceColumnFinder, MORE_COLUMNS_VERTEX, true, true, 0);
-                    graph.addEdge(beanJobBuilder, MORE_COLUMNS_VERTEX);
-                    graph.highlightVertex(MORE_COLUMNS_VERTEX);
-                    break;
-                }
-                InputColumn<?> outputColumn = outputColumns[i];
-                graph.addNodes(null, outputColumn, true, true, 0);
-                graph.addEdge(beanJobBuilder, outputColumn);
-            }
-        }
-
-        BeanDescriptor<?> descriptor = beanJobBuilder.getDescriptor();
-        if (descriptor.getComponentCategories().contains(new WriteDataCategory())) {
-            logger.debug("Not rendering analyzer result for {} because it is a data writer", descriptor);
-        } else {
-            final Class<?> componentClass = descriptor.getComponentClass();
-            if (ReflectionUtils.is(componentClass, HasAnalyzerResult.class)) {
-
-                // this approach is maybe a bit dodgy - not so error safe
-                try {
-                    final Class<?> typeParameter = ReflectionUtils.getTypeParameter(componentClass,
-                            HasAnalyzerResult.class, 0);
-                    graph.addNodes(null, typeParameter, true, true, 0);
-                    graph.addEdge(beanJobBuilder, typeParameter);
-                } catch (Exception e) {
-                    logger.warn("Could not retrieve and present analyzer result type", e);
-                }
-            }
-        }
-
-        graph.highlightVertex(beanJobBuilder);
-        return graph.renderGraph();
+    public DCPanel getPanel() {
+        return _panel;
     }
 
-    /**
-     * Builds a graph for a complete analysis job, based on an
-     * {@link AnalysisJobBuilder}.
-     * 
-     * @param analysisJobBuilder
-     * @param displayColumns
-     * @param displayOutcomes
-     * @return
-     */
-    public static JComponent create(final AnalysisJobBuilder analysisJobBuilder, final boolean displayColumns,
-            final boolean displayOutcomes) {
-        final AnalyzerBeansConfiguration configuration = analysisJobBuilder.getConfiguration();
+    public void refresh() {
+        refresh(false, true);
+    }
 
-        final VisualizeJobGraph graph = new VisualizeJobGraph(configuration);
-
+    public void refresh(boolean displayColumns, boolean displayOutcomes) {
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(analysisJobBuilder);
+        sourceColumnFinder.addSources(_analysisJobBuilder);
 
-        final List<TransformerJobBuilder<?>> tjbs = analysisJobBuilder.getTransformerJobBuilders();
+        final DirectedGraph<Object, VisualizeJobLink> graph = new DirectedSparseGraph<Object, VisualizeJobLink>();
+
+        final List<TransformerJobBuilder<?>> tjbs = _analysisJobBuilder.getTransformerJobBuilders();
         for (TransformerJobBuilder<?> tjb : tjbs) {
-            graph.addNodes(sourceColumnFinder, tjb, displayColumns, displayOutcomes, -1);
+            addNodes(graph, sourceColumnFinder, tjb, displayColumns, displayOutcomes, -1);
         }
 
-        final List<AnalyzerJobBuilder<?>> ajbs = analysisJobBuilder.getAnalyzerJobBuilders();
+        final List<AnalyzerJobBuilder<?>> ajbs = _analysisJobBuilder.getAnalyzerJobBuilders();
         for (AnalyzerJobBuilder<?> ajb : ajbs) {
-            graph.addNodes(sourceColumnFinder, ajb, displayColumns, displayOutcomes, -1);
+            addNodes(graph, sourceColumnFinder, ajb, displayColumns, displayOutcomes, -1);
         }
 
-        final List<FilterJobBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterJobBuilders();
+        final List<FilterJobBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterJobBuilders();
         for (FilterJobBuilder<?, ?> fjb : fjbs) {
-            graph.addNodes(sourceColumnFinder, fjb, displayColumns, displayOutcomes, -1);
+            addNodes(graph, sourceColumnFinder, fjb, displayColumns, displayOutcomes, -1);
         }
 
-        return graph.renderGraph();
+        final JComponent newComponent = createJComponent(graph);
+        _panel.removeAll();
+        _panel.add(newComponent, BorderLayout.CENTER);
+        _panel.updateUI();
     }
 
-    public JComponent renderGraph() {
-        final int vertexCount = _graph.getVertexCount();
+    /**
+     * Creates the {@link JComponent} that shows the graph
+     * 
+     * @return
+     */
+    private JComponent createJComponent(final DirectedGraph<Object, VisualizeJobLink> graph) {
+        final int vertexCount = graph.getVertexCount();
         if (vertexCount == 0) {
-            _graph.addVertex("No components in job");
+            graph.addVertex("No components in job");
         }
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
-        final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_graph);
+        final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(graph);
         final Dimension preferredSize = layoutTransformer.getPreferredSize();
-        final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(_graph,
+        final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
                 layoutTransformer, preferredSize);
 
-        Collection<Object> vertices = _graph.getVertices();
+        Collection<Object> vertices = graph.getVertices();
         for (Object vertex : vertices) {
             // manually initialize all vertices
             layout.transform(vertex);
@@ -288,7 +231,7 @@ public final class VisualizeJobGraph {
                             final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
 
                             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(
-                                    componentBuilder, _configuration, presenter);
+                                    componentBuilder, _analysisJobBuilder, presenter);
                             dialog.open();
                         }
                     }
@@ -380,8 +323,8 @@ public final class VisualizeJobGraph {
         return panel;
     }
 
-    private void addNodes(SourceColumnFinder scf, Object item, boolean displayColumns, boolean displayFilterOutcomes,
-            int recurseCount) {
+    private void addNodes(DirectedGraph<Object, VisualizeJobLink> graph, SourceColumnFinder scf, Object item,
+            boolean displayColumns, boolean displayFilterOutcomes, int recurseCount) {
         if (item == null) {
             throw new IllegalArgumentException("Node item cannot be null");
         }
@@ -391,8 +334,8 @@ public final class VisualizeJobGraph {
         } else if (!displayFilterOutcomes && item instanceof FilterOutcome) {
             return;
         }
-        if (!_graph.containsVertex(item)) {
-            _graph.addVertex(item);
+        if (!graph.containsVertex(item)) {
+            graph.addVertex(item);
 
             if (recurseCount == 0) {
                 return;
@@ -406,23 +349,23 @@ public final class VisualizeJobGraph {
                 for (InputColumn<?> inputColumn : inputColumns) {
                     if (displayColumns) {
                         // add the column itself
-                        addNodes(scf, inputColumn, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(inputColumn, item);
+                        addNodes(graph, scf, inputColumn, displayColumns, displayFilterOutcomes, recurseCount);
+                        addEdge(graph, inputColumn, item);
                     } else {
                         // add the origin of the column
                         if (inputColumn.isVirtualColumn()) {
                             InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                             if (source != null) {
-                                addNodes(scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(source, item);
+                                addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
+                                addEdge(graph, source, item);
                             }
                         }
 
                         if (inputColumn.isPhysicalColumn()) {
                             Table table = inputColumn.getPhysicalColumn().getTable();
                             if (table != null) {
-                                addNodes(scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(table, item);
+                                addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
+                                addEdge(graph, table, item);
                             }
                         }
                     }
@@ -432,8 +375,8 @@ public final class VisualizeJobGraph {
             if (item instanceof FilterOutcome) {
                 final HasFilterOutcomes source = scf.findOutcomeSource((FilterOutcome) item);
                 if (source != null) {
-                    addNodes(scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                    addEdge(source, item);
+                    addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
+                    addEdge(graph, source, item);
                 }
             }
 
@@ -443,14 +386,14 @@ public final class VisualizeJobGraph {
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
                     if (displayFilterOutcomes) {
                         // add the filter outcome itself
-                        addNodes(scf, filterOutcome, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(filterOutcome, item);
+                        addNodes(graph, scf, filterOutcome, displayColumns, displayFilterOutcomes, recurseCount);
+                        addEdge(graph, filterOutcome, item);
                     } else {
                         // add the origin of the filter outcome
                         final HasFilterOutcomes source = scf.findOutcomeSource(filterOutcome);
                         if (source != null) {
-                            addNodes(scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                            addEdge(source, item);
+                            addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
+                            addEdge(graph, source, item);
                         }
                     }
                 }
@@ -461,16 +404,16 @@ public final class VisualizeJobGraph {
                 if (inputColumn.isVirtualColumn()) {
                     InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                     if (source != null) {
-                        addNodes(scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(source, item);
+                        addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
+                        addEdge(graph, source, item);
                     }
                 }
 
                 if (inputColumn.isPhysicalColumn()) {
                     Table table = inputColumn.getPhysicalColumn().getTable();
                     if (table != null) {
-                        addNodes(scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(table, item);
+                        addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
+                        addEdge(graph, table, item);
                     }
                 }
             }
@@ -485,10 +428,10 @@ public final class VisualizeJobGraph {
         return componentRequirement.getProcessingDependencies();
     }
 
-    private void addEdge(Object from, Object to) {
+    private void addEdge(DirectedGraph<Object, VisualizeJobLink> graph, Object from, Object to) {
         VisualizeJobLink link = new VisualizeJobLink(from, to);
-        if (!_graph.containsEdge(link)) {
-            _graph.addEdge(link, from, to, EdgeType.DIRECTED);
+        if (!graph.containsEdge(link)) {
+            graph.addEdge(link, from, to, EdgeType.DIRECTED);
         }
     }
 }

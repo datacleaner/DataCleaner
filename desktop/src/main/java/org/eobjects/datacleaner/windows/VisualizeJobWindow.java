@@ -60,6 +60,8 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
     private volatile boolean _displayColumns;
     private volatile boolean _displayOutcomes;
 
+    private VisualizeJobGraph _graph;
+
     public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
         super(windowContext);
         _analysisJobBuilder = analysisJobBuilder;
@@ -70,7 +72,7 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
         _scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         _scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        refreshGraph();
+        rebuildGraph();
 
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
@@ -93,10 +95,10 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
         return columnsTotal <= 10;
     }
 
-    public void refreshGraph() {
-        final JComponent visualization = VisualizeJobGraph.create(_analysisJobBuilder, _displayColumns,
-                _displayOutcomes);
-        _scroll.setViewportView(visualization);
+    public void rebuildGraph() {
+        _graph = new VisualizeJobGraph(_analysisJobBuilder);
+        _graph.refresh(_displayColumns, _displayOutcomes);
+        _scroll.setViewportView(_graph.getPanel());
     }
 
     @Override
@@ -153,7 +155,7 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
             @Override
             public void actionPerformed(ActionEvent e) {
                 _displayColumns = displayColumnsCheckBox.isSelected();
-                refreshGraph();
+                rebuildGraph();
             }
         });
 
@@ -165,7 +167,7 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
             @Override
             public void actionPerformed(ActionEvent e) {
                 _displayOutcomes = displayFilterOutcomesCheckBox.isSelected();
-                refreshGraph();
+                rebuildGraph();
             }
         });
 
@@ -184,77 +186,77 @@ public class VisualizeJobWindow extends AbstractWindow implements TransformerCha
 
     @Override
     public void onAdd(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onAdd(FilterJobBuilder<?, ?> filterJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRemove(FilterJobBuilder<?, ?> filterJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onAdd(InputColumn<?> sourceColumn) {
-        refreshGraph();
+        _graph.refresh();
     }
 
     @Override
     public void onRemove(InputColumn<?> sourceColumn) {
-        refreshGraph();
+        _graph.refresh();
     }
 }

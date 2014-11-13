@@ -23,8 +23,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JComponent;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -44,8 +44,9 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     private final ComponentJobBuilderPresenter _presenter;
 
     public ComponentConfigurationDialog(AbstractBeanJobBuilder<?, ?, ?> componentBuilder,
-            AnalyzerBeansConfiguration configuration, ComponentJobBuilderPresenter presenter) {
+            AnalysisJobBuilder analysisJobBuilder, ComponentJobBuilderPresenter presenter) {
         super(null, ImageManager.get().getImage("images/window/banner-logo.png"));
+
         _shortMessage = LabelUtils.getLabel(componentBuilder);
         _presenter = presenter;
         setModal(true);

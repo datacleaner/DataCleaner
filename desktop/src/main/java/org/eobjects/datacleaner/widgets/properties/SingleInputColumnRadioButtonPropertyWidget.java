@@ -76,6 +76,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         super(beanJobBuilder, propertyDescriptor);
         _radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
         _radioGroup.setOpaque(false);
+
         _analysisJobBuilder = analysisJobBuilder;
         _analysisJobBuilder.getSourceColumnListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -206,9 +207,9 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         _radioGroup.setValues(_radioButtons);
         fireValueChanged();
     }
-    
+
     private JRadioButton getRadioButton(InputColumn<?> column) {
-        int i=0;
+        int i = 0;
         for (InputColumn<?> inputColumn : _inputColumns) {
             if (column.equals(inputColumn)) {
                 return _radioButtons[i];

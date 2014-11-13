@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
@@ -47,7 +46,6 @@ import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
-import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 import org.jdesktop.swingx.JXTaskPane;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
@@ -60,7 +58,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final BeanDescriptor<?> _descriptor;
     private final ChangeRequirementButton _requirementButton;
-    private final DCPanel _visualizationPanel;
     private final JComponent _buttonPanel;
 
     protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
@@ -84,9 +81,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         _beanJobBuilder = beanJobBuilder;
         _descriptor = beanJobBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
-
-        _visualizationPanel = new DCPanel();
-        _visualizationPanel.setLayout(new BorderLayout());
 
         setLayout(new BorderLayout());
 
@@ -129,7 +123,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     public final JComponent createJComponent() {
         init();
         JComponent decorate = decorate(this);
-        buildVisualizationTaskPane();
         return decorate;
     }
 
@@ -156,14 +149,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
                     propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
                     propertyTaskPane.getTitle(), getJobBuilder(), propertyTaskPane.isExpanded());
         }
-    }
-
-    private void buildVisualizationTaskPane() {
-        if (!showContextVisualization()) {
-            return;
-        }
-        ImageIcon icon = imageManager.getImageIcon("images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
-        addTaskPane(icon, "Context visualization", _visualizationPanel);
     }
 
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
@@ -276,16 +261,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     @Override
     public void onConfigurationChanged() {
         getPropertyWidgetFactory().onConfigurationChanged();
-
-        if (showContextVisualization()) {
-            final AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
-            _visualizationPanel.removeAll();
-            if (jobBuilder.isConfigured()) {
-                JComponent visualization = VisualizeJobGraph.create(jobBuilder);
-                _visualizationPanel.add(visualization, BorderLayout.CENTER);
-            }
-            _visualizationPanel.updateUI();
-        }
     }
 
     @Override
@@ -295,7 +270,12 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         }
     }
 
-    protected boolean showContextVisualization() {
-        return true;
+    /**
+     * @deprecated not used anymore
+     * @return
+     */
+    @Deprecated
+    protected final boolean showContextVisualization() {
+        return false;
     }
 }

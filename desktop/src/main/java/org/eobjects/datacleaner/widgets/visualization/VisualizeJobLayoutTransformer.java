@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.widgets.visualization;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
@@ -42,6 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
 
+/**
+ * Transformer that makes 2D points for each vertex in the graph.
+ */
 public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2D> {
 
     private static final Logger logger = LoggerFactory.getLogger(VisualizeJobLayoutTransformer.class);
@@ -177,21 +178,6 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             throw new IllegalArgumentException("Negative coordinates are not allowed: x=" + x + ",y=" + y);
         }
         return new Point(x * X_STEP + X_OFFSET, y * Y_STEP + Y_OFFSET);
-    }
-
-    public Dimension getPreferredSize() {
-        final int x;
-        final int y;
-        if (_yCount.isEmpty()) {
-            x = 1;
-            y = 1;
-        } else {
-            x = new TreeSet<Integer>(_yCount.keySet()).last();
-            y = new TreeSet<Integer>(_yCount.values()).last();
-        }
-        final int w = X_OFFSET + (x + 1) * X_STEP;
-        final int h = Y_OFFSET + (y + 1) * Y_STEP;
-        return new Dimension(w, h);
     }
 
     @Override

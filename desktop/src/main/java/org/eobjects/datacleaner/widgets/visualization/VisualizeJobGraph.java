@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -136,6 +135,11 @@ public final class VisualizeJobGraph {
 
         final DirectedGraph<Object, VisualizeJobLink> graph = new DirectedSparseGraph<Object, VisualizeJobLink>();
 
+        final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
+        for (Table table : sourceTables) {
+            addNodes(graph, sourceColumnFinder, table, displayColumns, displayOutcomes, -1);
+        }
+
         final List<TransformerJobBuilder<?>> tjbs = _analysisJobBuilder.getTransformerJobBuilders();
         for (TransformerJobBuilder<?> tjb : tjbs) {
             addNodes(graph, sourceColumnFinder, tjb, displayColumns, displayOutcomes, -1);
@@ -171,9 +175,8 @@ public final class VisualizeJobGraph {
 
         final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_analysisJobBuilder,
                 graph);
-        final Dimension preferredSize = layoutTransformer.getPreferredSize();
         final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
-                layoutTransformer, preferredSize);
+                layoutTransformer);
 
         Collection<Object> vertices = graph.getVertices();
         for (Object vertex : vertices) {
@@ -186,7 +189,7 @@ public final class VisualizeJobGraph {
 
         final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
                 layout);
-        visualizationViewer.setSize(preferredSize);
+        visualizationViewer.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         GraphUtils.applyStyles(visualizationViewer);
 
         visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
@@ -322,11 +325,7 @@ public final class VisualizeJobGraph {
             }
         });
 
-        final DCPanel panel = new DCPanel();
-        panel.setPreferredSize(preferredSize);
-        panel.setLayout(new BorderLayout());
-        panel.add(visualizationViewer, BorderLayout.CENTER);
-        return panel;
+        return visualizationViewer;
     }
 
     private void addNodes(DirectedGraph<Object, VisualizeJobLink> graph, SourceColumnFinder scf, Object item,

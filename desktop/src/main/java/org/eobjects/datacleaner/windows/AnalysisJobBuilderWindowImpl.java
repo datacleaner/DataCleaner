@@ -164,14 +164,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final InjectorBuilder _injectorBuilder;
     private final DCWindowMenuBar _windowMenuBar;
     private volatile AbstractJobBuilderPanel _latestPanel = null;
-    private final DCPanel _sourceTabOuterPanel;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
     private boolean _datastoreSelectionEnabled;
     private final MetadataPanel _metadataPanel;
-
-    private VisualizeJobGraph _graph;
+    private final VisualizeJobGraph _graph;
+    private final DCPanel _contentContainerPanel;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
@@ -191,7 +190,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
         _addTransformerActionListenerProvider = addTransformerActionListenerProvider;
         _userPreferences = userPreferences;
-        
+
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
         } else {
@@ -203,18 +202,20 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
         _windowMenuBar.setAnalysisJobBuilder(_analysisJobBuilder);
 
-
         _datastoreSelectionEnabled = true;
         _presenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
-        
+
         _graph = new VisualizeJobGraph(_analysisJobBuilder, _presenterRendererFactory);
-        
+
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
+
+        _contentContainerPanel =new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _contentContainerPanel.setLayout(new BorderLayout());
 
         _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
         _saveAsButton = createToolBarButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
@@ -257,9 +258,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 updateStatusLabel();
             }
         });
-
-        _sourceTabOuterPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-        _sourceTabOuterPanel.setLayout(new BorderLayout());
 
         _schemaTreePanel = schemaTreePanel;
         _metadataPanel = metadataPanel;
@@ -347,8 +345,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _leftPanel.setCollapsed(false);
         }
 
-        _sourceTabOuterPanel.removeAll();
-        _sourceTabOuterPanel.add(_sourceColumnsPanel, BorderLayout.CENTER);
+        _contentContainerPanel.removeAll();
+        _contentContainerPanel.add(_graph.getPanel(), BorderLayout.CENTER);
     }
 
     private void displayDatastoreSelection() {
@@ -366,8 +364,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 timer.setRepeats(false);
                 timer.start();
 
-                _sourceTabOuterPanel.removeAll();
-                _sourceTabOuterPanel.add(_welcomePanelRef.get(), BorderLayout.CENTER);
+                _contentContainerPanel.removeAll();
+                _contentContainerPanel.add(_welcomePanelRef.get(), BorderLayout.CENTER);
 
                 _welcomePanelRef.get().requestSearchFieldFocus();
             }
@@ -551,7 +549,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         // add source tab
         _tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png", TAB_ICON_SIZE),
-                WidgetUtils.scrolleable(_sourceTabOuterPanel));
+                WidgetUtils.scrolleable(_contentContainerPanel));
         _tabbedPane.setRightClickActionListener(SOURCE_TAB, new HideTabTextActionListener(_tabbedPane, SOURCE_TAB));
         _tabbedPane.setUnclosableTab(SOURCE_TAB);
 
@@ -620,13 +618,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.add(toolBarPanel, BorderLayout.NORTH);
         panel.add(_leftPanel, BorderLayout.WEST);
 
-        
-        DCPanel newPanel = new DCPanel();
-        newPanel.setLayout(new BorderLayout());
-        // TODO: Old approach
-//        newPanel.add(_tabbedPane, BorderLayout.NORTH);
-        newPanel.add(_graph.getPanel(), BorderLayout.CENTER);
-        panel.add(newPanel, BorderLayout.CENTER);
+        // newPanel.add(_tabbedPane, BorderLayout.NORTH);
+        panel.add(_contentContainerPanel, BorderLayout.CENTER);
 
         panel.add(statusBar, BorderLayout.SOUTH);
 

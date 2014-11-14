@@ -69,7 +69,7 @@ public class AnalyzeButtonActionListener implements ActionListener {
         popup.show(source, 0, source.getHeight());
     }
 
-    public JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
         final JMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override

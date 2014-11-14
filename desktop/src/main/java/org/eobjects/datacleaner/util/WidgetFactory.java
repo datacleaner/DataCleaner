@@ -228,7 +228,7 @@ public final class WidgetFactory {
 
     public static JPasswordField createPasswordField(int columns) {
         JPasswordField field = new JPasswordField(columns);
-        field.setFont(new Font("LucidaSans",Font.PLAIN, 12));
+        field.setFont(new Font("LucidaSans", Font.PLAIN, 12));
         return field;
     }
 }

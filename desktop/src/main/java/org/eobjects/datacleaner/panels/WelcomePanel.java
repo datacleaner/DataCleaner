@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -138,8 +137,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     private final AnalyzerBeansConfiguration _configuration;
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
 
-    @Inject
-    protected WelcomePanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
+    public WelcomePanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
             DCGlassPane glassPane, Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
             OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
             UserPreferences userPreferences) {
@@ -321,7 +319,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         } else {
             int jobIndex = 0;
             for (FileObject fileObject : recentJobFiles) {
-                _jobsListPanel.add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
+                _jobsListPanel
+                        .add(new OpenAnalysisJobPanel(fileObject, _configuration, _openAnalysisJobActionListener));
                 jobIndex++;
                 if (jobIndex == MAX_JOB_PANELS) {
                     break;
@@ -578,7 +577,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
             }
         };
     }
-    
+
     @Override
     public void addNotify() {
         super.addNotify();

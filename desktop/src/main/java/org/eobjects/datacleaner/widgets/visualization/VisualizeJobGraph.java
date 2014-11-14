@@ -128,6 +128,7 @@ public final class VisualizeJobGraph {
         if (_panel.getComponentCount() == 0) {
             refresh();
         }
+        _panel.updateUI();
         return _panel;
     }
 

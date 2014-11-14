@@ -33,18 +33,19 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -69,11 +70,13 @@ import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.RenameComponentActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.TransformButtonActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.guice.JobFile;
 import org.eobjects.datacleaner.guice.Nullable;
@@ -110,8 +113,6 @@ import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Injector;
 
 /**
  * The main window in the DataCleaner GUI. This window is called the
@@ -159,19 +160,21 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<AnalyzeButtonActionListener> _addAnalyzerActionListenerProvider;
     private final Provider<TransformButtonActionListener> _addTransformerActionListenerProvider;
     private final DCGlassPane _glassPane;
-    private final Ref<WelcomePanel> _welcomePanelRef;
+    private final WelcomePanel _welcomePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final DCWindowMenuBar _windowMenuBar;
+    private final JToggleButton _classicViewButton;
+    private final JToggleButton _graphViewButton;
+    private final MetadataPanel _metadataPanel;
+    private final VisualizeJobGraph _graph;
+    private final DCPanel _contentContainerPanel;
+    private final JComponent _editingContentView;
     private volatile AbstractJobBuilderPanel _latestPanel = null;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
     private boolean _datastoreSelectionEnabled;
-    private final MetadataPanel _metadataPanel;
-    private final VisualizeJobGraph _graph;
-    private final DCPanel _contentContainerPanel;
-    private JComponent _editingContentView;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
@@ -181,7 +184,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             @Nullable @JobFile FileObject jobFilename, DCWindowMenuBar windowMenuBar,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
             Provider<AnalyzeButtonActionListener> addAnalyzerActionListenerProvider,
-            Provider<TransformButtonActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger) {
+            Provider<TransformButtonActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger,
+            Provider<OptionsDialog> optionsDialogProvider, OpenAnalysisJobActionListener openAnalysisJobActionListener,
+            DatabaseDriverCatalog databaseDriverCatalog) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -209,15 +214,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _injectorBuilder = injectorBuilder;
 
         _graph = new VisualizeJobGraph(_analysisJobBuilder, _presenterRendererFactory);
-        _editingContentView = _graph.getPanel();
+        final DCPanel graphPanel = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
-
-        _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-        _contentContainerPanel.setLayout(new BorderLayout());
 
         _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
         _saveAsButton = createToolBarButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
@@ -230,16 +232,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
         _executeButton = createToolBarButton("Execute", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE));
 
-        _welcomePanelRef = new LazyRef<WelcomePanel>() {
-            @Override
-            protected WelcomePanel fetch() {
-                final Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane)
-                        .createInjector();
-                final WelcomePanel welcomePanel = injectorWithGlassPane.getInstance(WelcomePanel.class);
-                welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
-                return welcomePanel;
-            }
-        };
+        _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
+                openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
+        _welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
 
         _sourceColumnsPanel = sourceColumnsPanel;
 
@@ -260,6 +255,37 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 updateStatusLabel();
             }
         });
+
+        _editingContentView = new DCPanel();
+        _editingContentView.setLayout(new BorderLayout());
+        _editingContentView.add(_tabbedPane, BorderLayout.CENTER);
+        _editingContentView.add(graphPanel, BorderLayout.CENTER);
+        setEditingView(graphPanel);
+
+        _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _contentContainerPanel.setLayout(new BorderLayout());
+        _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
+        _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
+
+        _classicViewButton = createViewToggleButton("Classic view", _tabbedPane,
+                "images/actions/editing-view-classic.png");
+        _graphViewButton = createViewToggleButton("Graph view", graphPanel, "images/actions/editing-view-graph.png");
+        _graphViewButton.setSelected(true);
+
+        final ActionListener viewToggleButtonActionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == _classicViewButton) {
+                    _classicViewButton.setSelected(true);
+                    _graphViewButton.setSelected(false);
+                } else {
+                    _classicViewButton.setSelected(false);
+                    _graphViewButton.setSelected(true);
+                }
+            }
+        };
+        _classicViewButton.addActionListener(viewToggleButtonActionListener);
+        _graphViewButton.addActionListener(viewToggleButtonActionListener);
 
         _schemaTreePanel = schemaTreePanel;
         _metadataPanel = metadataPanel;
@@ -347,7 +373,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _leftPanel.setCollapsed(false);
         }
 
-        setContentView(_editingContentView);
+        _welcomePanel.setVisible(false);
+        _editingContentView.setVisible(true);
     }
 
     private void displayWelcomeView() {
@@ -356,7 +383,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 if (!_leftPanel.isCollapsed()) {
                     _leftPanel.setCollapsed(true);
                 }
-                Timer timer = new Timer(500, new ActionListener() {
+                final Timer timer = new Timer(500, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         _leftPanel.setVisible(false);
@@ -365,29 +392,26 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 timer.setRepeats(false);
                 timer.start();
 
-                setContentView(_welcomePanelRef.get());
+                _welcomePanel.requestSearchFieldFocus();
 
-                _welcomePanelRef.get().requestSearchFieldFocus();
+                _editingContentView.setVisible(false);
+                _welcomePanel.setVisible(true);
             }
         }
     }
 
-    private void setContentView(JComponent component) {
-        boolean found = false;
-        final Component[] components = _contentContainerPanel.getComponents();
+    private void setEditingView(JComponent component) {
+        final Component[] components = _editingContentView.getComponents();
         for (Component existing : components) {
             if (component == existing) {
                 existing.setVisible(true);
-                found = true;
             } else {
                 existing.setVisible(false);
             }
         }
-        
-        if (!found) {
-            _contentContainerPanel.add(component, BorderLayout.CENTER);
-        }
-        _contentContainerPanel.updateUI();
+
+        _editingContentView.add(component, BorderLayout.CENTER);
+        _editingContentView.updateUI();
     }
 
     @Override
@@ -622,26 +646,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBar.add(_executeButton);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-
-        final JButton classicViewButton = WidgetFactory.createButton("Classic");
-        classicViewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _editingContentView = _tabbedPane;
-                setContentView(_editingContentView);
-            }
-        });
-        statusBar.add(classicViewButton);
-
-        final JButton graphViewButton = WidgetFactory.createButton("Graph");
-        graphViewButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _editingContentView = _graph.getPanel();
-                setContentView(_editingContentView);
-            }
-        });
-        statusBar.add(graphViewButton);
+        statusBar.add(_classicViewButton);
+        statusBar.add(_graphViewButton);
+        statusBar.add(Box.createHorizontalStrut(10));
 
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);
@@ -666,6 +673,24 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         initializeExistingComponents();
 
         return panel;
+    }
+
+    private JToggleButton createViewToggleButton(final String text, final JComponent editingContentView,
+            final String iconPath) {
+        final ImageIcon icon = imageManager.getImageIcon(iconPath);
+        final JToggleButton button = new JToggleButton(text, icon);
+        button.setFont(WidgetUtils.FONT_SMALL);
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setBackground(WidgetUtils.BG_COLOR_DARK);
+        button.setBorderPainted(false);
+        button.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(0, 4, 0, 4)));
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditingView(editingContentView);
+            }
+        });
+        return button;
     }
 
     /**

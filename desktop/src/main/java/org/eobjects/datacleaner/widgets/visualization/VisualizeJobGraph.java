@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -95,6 +97,7 @@ import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
@@ -149,7 +152,7 @@ public final class VisualizeJobGraph {
     }
 
     public void refresh() {
-        refresh(false, true);
+        refresh(false, false);
     }
 
     public void refresh(boolean displayColumns, boolean displayOutcomes) {
@@ -457,6 +460,46 @@ public final class VisualizeJobGraph {
                 .getInstance();
         renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
 
+        renderContext.setEdgeLabelTransformer(new Transformer<VisualizeJobLink, String>() {
+            @Override
+            public String transform(VisualizeJobLink link) {
+                final ComponentRequirement req = link.getRequirement();
+                if (req == null) {
+                    return null;
+                }
+                return req.getSimpleName();
+            }
+        });
+
+        renderContext
+                .setEdgeLabelClosenessTransformer(new Transformer<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>, Number>() {
+                    @Override
+                    public Number transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
+                        return 0.4d;
+                    }
+                });
+
+        renderContext.setEdgeLabelRenderer(new EdgeLabelRenderer() {
+            @Override
+            public void setRotateEdgeLabels(boolean state) {
+            }
+
+            @Override
+            public boolean isRotateEdgeLabels() {
+                return true;
+            }
+
+            @Override
+            public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
+                    boolean isSelected, T edge) {
+                final Icon icon = ImageManager.get()
+                        .getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
+                final JLabel label = new JLabel(value + "", icon, JLabel.LEFT);
+                label.setFont(WidgetUtils.FONT_SMALL);
+                return label;
+            }
+        });
+
         // render icons
         renderContext.setVertexIconTransformer(new Transformer<Object, Icon>() {
 
@@ -516,14 +559,14 @@ public final class VisualizeJobGraph {
                     if (displayColumns) {
                         // add the column itself
                         addNodes(graph, scf, inputColumn, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, inputColumn, item);
+                        addEdge(graph, inputColumn, item, null);
                     } else {
                         // add the origin of the column
                         if (inputColumn.isVirtualColumn()) {
                             InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                             if (source != null) {
                                 addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(graph, source, item);
+                                addEdge(graph, source, item, null);
                             }
                         }
 
@@ -531,7 +574,7 @@ public final class VisualizeJobGraph {
                             Table table = inputColumn.getPhysicalColumn().getTable();
                             if (table != null) {
                                 addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(graph, table, item);
+                                addEdge(graph, table, item, null);
                             }
                         }
                     }
@@ -542,7 +585,7 @@ public final class VisualizeJobGraph {
                 final HasFilterOutcomes source = scf.findOutcomeSource((FilterOutcome) item);
                 if (source != null) {
                     addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                    addEdge(graph, source, item);
+                    addEdge(graph, source, item, null);
                 }
             }
 
@@ -553,13 +596,13 @@ public final class VisualizeJobGraph {
                     if (displayFilterOutcomes) {
                         // add the filter outcome itself
                         addNodes(graph, scf, filterOutcome, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, filterOutcome, item);
+                        addEdge(graph, filterOutcome, item, null);
                     } else {
                         // add the origin of the filter outcome
                         final HasFilterOutcomes source = scf.findOutcomeSource(filterOutcome);
                         if (source != null) {
                             addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                            addEdge(graph, source, item);
+                            addEdge(graph, source, item, hasComponentRequirement.getComponentRequirement());
                         }
                     }
                 }
@@ -571,7 +614,7 @@ public final class VisualizeJobGraph {
                     InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                     if (source != null) {
                         addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, source, item);
+                        addEdge(graph, source, item, null);
                     }
                 }
 
@@ -579,7 +622,7 @@ public final class VisualizeJobGraph {
                     final Table table = inputColumn.getPhysicalColumn().getTable();
                     if (table != null) {
                         addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, table, item);
+                        addEdge(graph, table, item, null);
                     }
                 }
             }
@@ -594,8 +637,9 @@ public final class VisualizeJobGraph {
         return componentRequirement.getProcessingDependencies();
     }
 
-    private void addEdge(DirectedGraph<Object, VisualizeJobLink> graph, Object from, Object to) {
-        VisualizeJobLink link = new VisualizeJobLink(from, to);
+    private void addEdge(DirectedGraph<Object, VisualizeJobLink> graph, Object from, Object to,
+            ComponentRequirement requirement) {
+        VisualizeJobLink link = new VisualizeJobLink(from, to, requirement);
         if (!graph.containsEdge(link)) {
             graph.addEdge(link, from, to, EdgeType.DIRECTED);
         }

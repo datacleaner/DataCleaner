@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -216,7 +217,8 @@ public final class VisualizeJobGraph {
                     title = "Start building ...";
                     subTitle = "Use the 'Transform' and 'Analyze' buttons above.";
                     imagePath = "images/window/canvas-bg-plus.png";
-                } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0) {
+                } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
+                        && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Almost ready to run ...";
                     subTitle = "Any job needs to either perform a 'Write' or 'Analyze' action.";
                     imagePath = "images/window/canvas-bg-plus.png";
@@ -226,18 +228,22 @@ public final class VisualizeJobGraph {
                     imagePath = null;
                 }
 
+                final Dimension size = getPanel().getSize();
+                final int yOffset = size.height - 150;
+                final int xOffset = size.width / 2 - 250;
+
                 if (title != null) {
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(35f));
-                    g.drawString(title, 200, 200);
+                    g.drawString(title, xOffset, yOffset);
                 }
 
                 if (subTitle != null) {
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
-                    g.drawString(subTitle, 200, 260);
+                    g.drawString(subTitle, xOffset, yOffset + 60);
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(ImageManager.get().getImage(imagePath), 80, 200 - 32, null);
+                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - 120, yOffset - 32, null);
                 }
             }
         });

@@ -55,7 +55,6 @@ public class ComponentConfigurationDialog extends AbstractDialog {
 
         _shortMessage = LabelUtils.getLabel(componentBuilder);
         _presenter = presenter;
-        setModal(true);
     }
 
     @Override

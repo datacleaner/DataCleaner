@@ -49,7 +49,6 @@ public class SourceTableConfigurationDialog extends AbstractDialog {
 
     public SourceTableConfigurationDialog(AnalysisJobBuilder analysisJobBuilder, Table table) {
         super(null, ImageManager.get().getImage("images/window/banner-tabledef.png"));
-        setModal(true);
 
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;

@@ -31,6 +31,7 @@ import javax.swing.JToolBar;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.ColumnListTable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -47,8 +48,8 @@ public class SourceTableConfigurationDialog extends AbstractDialog {
     private final Table _table;
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public SourceTableConfigurationDialog(AnalysisJobBuilder analysisJobBuilder, Table table) {
-        super(null, ImageManager.get().getImage("images/window/banner-tabledef.png"));
+    public SourceTableConfigurationDialog(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table) {
+        super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;

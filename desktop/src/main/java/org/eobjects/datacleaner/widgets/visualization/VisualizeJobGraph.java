@@ -62,6 +62,7 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
 import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -101,14 +102,17 @@ public final class VisualizeJobGraph {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
     private final DCPanel _panel;
+    private final WindowContext _windowContext;
 
-    public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder) {
-        this(analysisJobBuilder, null);
+    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder) {
+        this(windowContext, analysisJobBuilder, null);
     }
 
-    public VisualizeJobGraph(AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory) {
+    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
+            RendererFactory presenterRendererFactory) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
+        _windowContext = windowContext;
 
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
@@ -302,8 +306,8 @@ public final class VisualizeJobGraph {
                         popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
                         popup.show(visualizationViewer, me.getX(), me.getY());
                     } else if (me.getClickCount() == 2) {
-                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_analysisJobBuilder,
-                                table);
+                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
+                                _analysisJobBuilder, table);
                         dialog.open();
                     }
                 }

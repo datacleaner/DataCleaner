@@ -155,8 +155,6 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
             return null;
         }
 
-        // TODO: Add support for Columns, FilterRequirements
-
         if (point != null) {
             // find out what the "xIndex" should be - which spot in the grid
             // would we want to occupy with this component.

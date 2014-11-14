@@ -75,6 +75,7 @@ public class GraphUtils {
             }
         };
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+        graphMouse.setZoomAtMouse(false);
         visualizationViewer.setGraphMouse(graphMouse);
     }
 
@@ -91,7 +92,7 @@ public class GraphUtils {
                 if (input instanceof HasName) {
                     str = ((HasName) input).getName();
                 } else if (input instanceof Object[]) {
-                    str = Arrays.toString((Object[])input);
+                    str = Arrays.toString((Object[]) input);
                 } else {
                     str = input.toString();
                 }

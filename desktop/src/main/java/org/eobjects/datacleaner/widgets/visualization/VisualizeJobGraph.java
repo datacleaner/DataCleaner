@@ -24,8 +24,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,10 +41,12 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.TransferHandler;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.data.InputColumn;
@@ -76,6 +79,7 @@ import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.util.DragDropUtils;
 import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -212,6 +216,41 @@ public final class VisualizeJobGraph {
 
         final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
                 layout);
+        visualizationViewer.setTransferHandler(new TransferHandler() {
+
+            private static final long serialVersionUID = 1L;
+
+            public boolean canImport(TransferSupport support) {
+                return support.isDataFlavorSupported(DragDropUtils.MODEL_DATA_FLAVOR);
+            };
+
+            public boolean importData(TransferSupport support) {
+                Transferable transferable = support.getTransferable();
+
+                final Object data;
+                try {
+                    data = transferable.getTransferData(DragDropUtils.MODEL_DATA_FLAVOR);
+                } catch (Exception ex) {
+                    logger.warn("Unexpected error while dropping data", ex);
+                    return false;
+                }
+
+                if (data == null) {
+                    return false;
+                }
+
+                if (data instanceof Table) {
+                    _analysisJobBuilder.addSourceColumns(((Table) data).getColumns());
+                }
+
+                if (data instanceof Column) {
+                    _analysisJobBuilder.addSourceColumn((Column) data);
+                }
+
+                return true;
+            };
+        });
+
         visualizationViewer.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         GraphUtils.applyStyles(visualizationViewer);
         visualizationViewer.addPreRenderPaintable(new Paintable() {
@@ -288,7 +327,6 @@ public final class VisualizeJobGraph {
                     } else if (vertex instanceof Table) {
                         VisualizationMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
                     }
-                    // TODO: Add support for Columns, FilterRequirements
                 }
             }
 
@@ -337,7 +375,7 @@ public final class VisualizeJobGraph {
             }
         });
 
-        visualizationViewer.addMouseListener(new MouseListener() {
+        visualizationViewer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent me) {
                 int button = me.getButton();
@@ -392,22 +430,6 @@ public final class VisualizeJobGraph {
                         popup.show(visualizationViewer, me.getX(), me.getY());
                     }
                 }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
             }
         });
 

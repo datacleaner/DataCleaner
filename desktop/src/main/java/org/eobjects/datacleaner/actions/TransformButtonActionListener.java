@@ -47,15 +47,15 @@ public class TransformButtonActionListener implements ActionListener {
     private final UsageLogger _usageLogger;
 
     @Inject
-    public TransformButtonActionListener(AnalyzerBeansConfiguration configuration,
-            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+    public TransformButtonActionListener(final AnalyzerBeansConfiguration configuration,
+            final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger) {
         _configuration = configuration;
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         final List<BeanDescriptor<?>> descriptors = getDescriptors();
 
         final JPopupMenu popup = new JPopupMenu();
@@ -70,7 +70,7 @@ public class TransformButtonActionListener implements ActionListener {
         showPopup(e, popup);
     }
 
-    public JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
         final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override

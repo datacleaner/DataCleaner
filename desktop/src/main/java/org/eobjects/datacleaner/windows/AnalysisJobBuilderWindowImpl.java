@@ -879,10 +879,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
-        TransformerJobBuilderPresenter presenter = _transformerPresenters.get(transformerJobBuilder);
-        if (presenter != null) {
-            presenter.onOutputChanged(outputColumns);
-        }
         _graph.refresh();
     }
 
@@ -933,58 +929,34 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-        FilterJobBuilderPresenter presenter = _filterPresenters.get(filterJobBuilder);
-        if (presenter != null) {
-            presenter.onConfigurationChanged();
-        }
         updateStatusLabel();
         _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-        FilterJobBuilderPresenter presenter = _filterPresenters.get(filterJobBuilder);
-        if (presenter != null) {
-            presenter.onRequirementChanged();
-        }
         _graph.refresh();
     }
 
     @Override
     public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        TransformerJobBuilderPresenter presenter = _transformerPresenters.get(transformerJobBuilder);
-        if (presenter != null) {
-            presenter.onConfigurationChanged();
-        }
         updateStatusLabel();
         _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        TransformerJobBuilderPresenter presenter = _transformerPresenters.get(transformerJobBuilder);
-        if (presenter != null) {
-            presenter.onRequirementChanged();
-        }
         _graph.refresh();
     }
 
     @Override
     public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        AnalyzerJobBuilderPresenter presenter = _analyzerPresenters.get(analyzerJobBuilder);
-        if (presenter != null) {
-            presenter.onConfigurationChanged();
-        }
         updateStatusLabel();
         _graph.refresh();
     }
 
     @Override
     public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-        AnalyzerJobBuilderPresenter presenter = _analyzerPresenters.get(analyzerJobBuilder);
-        if (presenter != null) {
-            presenter.onRequirementChanged();
-        }
         _graph.refresh();
     }
 

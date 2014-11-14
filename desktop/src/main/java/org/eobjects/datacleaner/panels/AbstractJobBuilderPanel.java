@@ -47,6 +47,8 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.jdesktop.swingx.VerticalLayout;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
 
@@ -78,6 +80,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
                 WidgetUtils.BG_COLOR_BRIGHTEST);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+        _taskPaneContainer.setLayout(new VerticalLayout(4));
         _beanJobBuilder = beanJobBuilder;
         _descriptor = beanJobBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
@@ -115,7 +118,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         return _requirementButton;
     }
 
-    protected DCTaskPaneContainer getTaskPaneContainer() {
+    protected JXTaskPaneContainer getTaskPaneContainer() {
         return _taskPaneContainer;
     }
 
@@ -216,10 +219,8 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
     protected void addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
         JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
+        taskPane.setCollapsed(!expanded);
         taskPane.add(content);
-        if (!expanded) {
-            taskPane.setCollapsed(true);
-        }
         _taskPaneContainer.add(taskPane);
     }
 
@@ -258,13 +259,19 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         getJobBuilder().setConfiguredProperty(propertyDescriptor, value);
     }
 
-    @Override
-    public void onConfigurationChanged() {
+    /**
+     * Convenience method made available to subclasses to inform that the
+     * configuration of this component has changed
+     */
+    protected void onConfigurationChanged() {
         getPropertyWidgetFactory().onConfigurationChanged();
     }
 
-    @Override
-    public void onRequirementChanged() {
+    /**
+     * Convenience method made available to subclasses to inform that the
+     * requirement on this component has changed
+     */
+    protected void onRequirementChanged() {
         if (_requirementButton != null) {
             _requirementButton.updateText();
         }

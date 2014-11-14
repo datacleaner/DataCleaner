@@ -24,6 +24,7 @@ import java.awt.Image;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
@@ -33,7 +34,8 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialization of {@link AbstractJobBuilderPanel} for {@link Analyzer}s.
  */
-public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements AnalyzerJobBuilderPresenter {
+public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements AnalyzerJobBuilderPresenter,
+        AnalyzerChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,7 +75,37 @@ public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements 
     }
 
     @Override
+    public void addNotify() {
+        super.addNotify();
+        _analyzerJobBuilder.addChangeListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _analyzerJobBuilder.removeChangeListener(this);
+    }
+
+    @Override
     public AnalyzerJobBuilder<?> getJobBuilder() {
         return _analyzerJobBuilder;
+    }
+
+    @Override
+    public void onAdd(AnalyzerJobBuilder<?> ajb) {
+    }
+
+    @Override
+    public void onConfigurationChanged(AnalyzerJobBuilder<?> ajb) {
+        onConfigurationChanged();
+    }
+
+    @Override
+    public void onRemove(AnalyzerJobBuilder<?> ajb) {
+    }
+
+    @Override
+    public void onRequirementChanged(AnalyzerJobBuilder<?> ajb) {
+        onRequirementChanged();
     }
 }

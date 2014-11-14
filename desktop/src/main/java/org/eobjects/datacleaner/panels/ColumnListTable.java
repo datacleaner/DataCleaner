@@ -73,8 +73,8 @@ public final class ColumnListTable extends DCPanel {
     private final DCTable _columnTable;
 
     private final SortedMap<InputColumn<?>, JComponent> _columns = new TreeMap<InputColumn<?>, JComponent>();
-
     private final WindowContext _windowContext;
+    private final boolean _addShadowBorder;
 
     public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
             boolean addShadowBorder, WindowContext windowContext) {
@@ -91,8 +91,9 @@ public final class ColumnListTable extends DCPanel {
         super();
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;
+        _addShadowBorder = addShadowBorder;
         _windowContext = windowContext;
-
+        
         setLayout(new BorderLayout());
 
         if (table != null) {
@@ -141,13 +142,6 @@ public final class ColumnListTable extends DCPanel {
         _columnTable.setColumnControlVisible(false);
         _columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 
-        JPanel tablePanel = _columnTable.toPanel();
-
-        if (addShadowBorder) {
-            tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
-        }
-        add(tablePanel, BorderLayout.CENTER);
-
         if (columns != null) {
             for (InputColumn<?> column : columns) {
                 addColumn(column, false);
@@ -194,6 +188,12 @@ public final class ColumnListTable extends DCPanel {
         columnExt.setMinWidth(26);
         columnExt.setMaxWidth(80);
         columnExt.setPreferredWidth(30);
+        
+        JPanel tablePanel = _columnTable.toPanel();
+        if (_addShadowBorder) {
+            tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+        }
+        add(tablePanel, BorderLayout.CENTER);
     }
 
     protected JComponent createComponentForColumn(InputColumn<?> column) {

@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.beans.api.Filter;
+import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOptionsForFilterOutcomeActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -43,7 +44,8 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialization of {@link AbstractJobBuilderPanel} for {@link Filter}s.
  */
-public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements FilterJobBuilderPresenter {
+public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements FilterJobBuilderPresenter,
+        FilterChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,6 +99,18 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
         _outcomePanel.add(helpButton);
     }
 
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _filterJobBuilder.addChangeListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _filterJobBuilder.removeChangeListener(this);
+    }
+
     protected JComponent decorate(DCPanel panel) {
         JComponent result = super.decorate(panel);
         addTaskPane(imageManager.getImageIcon("images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL),
@@ -107,5 +121,23 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
     @Override
     public FilterJobBuilder<?, ?> getJobBuilder() {
         return _filterJobBuilder;
+    }
+
+    @Override
+    public void onAdd(FilterJobBuilder<?, ?> fjb) {
+    }
+
+    @Override
+    public void onConfigurationChanged(FilterJobBuilder<?, ?> fjb) {
+        onConfigurationChanged();
+    }
+
+    @Override
+    public void onRemove(FilterJobBuilder<?, ?> fjb) {
+    }
+
+    @Override
+    public void onRequirementChanged(FilterJobBuilder<?, ?> fjb) {
+        onRequirementChanged();
     }
 }

@@ -54,14 +54,4 @@ public interface ComponentJobBuilderPresenter {
 	 *             in case one or more properties have not been configured
 	 */
 	public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
-
-	/**
-	 * Invoked when a configured property changes.
-	 */
-	public void onConfigurationChanged();
-	
-    /**
-     * Invoked when the requirement for this component changes.
-     */
-    public void onRequirementChanged();
 }

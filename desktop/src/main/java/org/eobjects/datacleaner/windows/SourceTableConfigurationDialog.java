@@ -28,9 +28,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.ColumnListTable;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -42,17 +45,33 @@ import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 /**
  * Dialog used for configuring a source table of a job.
  */
-public class SourceTableConfigurationDialog extends AbstractDialog {
+public class SourceTableConfigurationDialog extends AbstractDialog implements SourceColumnChangeListener {
 
     private static final long serialVersionUID = 1L;
     private final Table _table;
     private final AnalysisJobBuilder _analysisJobBuilder;
+    private final ColumnListTable _columnListTable;
 
-    public SourceTableConfigurationDialog(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table) {
+    public SourceTableConfigurationDialog(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
+            Table table) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _table = table;
         _analysisJobBuilder = analysisJobBuilder;
+
+        _columnListTable = new ColumnListTable(table, analysisJobBuilder, true, windowContext);
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _analysisJobBuilder.getSourceColumnListeners().add(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _analysisJobBuilder.getSourceColumnListeners().remove(this);
     }
 
     @Override
@@ -72,10 +91,9 @@ public class SourceTableConfigurationDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final ColumnListTable table = new ColumnListTable(_table, _analysisJobBuilder, true, getWindowContext());
         final List<MetaModelInputColumn> columns = _analysisJobBuilder.getSourceColumnsOfTable(_table);
         for (MetaModelInputColumn metaModelInputColumn : columns) {
-            table.addColumn(metaModelInputColumn);
+            _columnListTable.addColumn(metaModelInputColumn);
         }
 
         final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
@@ -97,9 +115,24 @@ public class SourceTableConfigurationDialog extends AbstractDialog {
 
         final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
         panel.setLayout(new BorderLayout());
-        panel.add(table, BorderLayout.CENTER);
+        panel.add(_columnListTable, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);
         return panel;
+    }
+
+    @Override
+    public void onAdd(InputColumn<?> column) {
+        Column physicalColumn = column.getPhysicalColumn();
+        if (physicalColumn != null) {
+            if (physicalColumn.getTable() == _table) {
+                _columnListTable.addColumn(column);
+            }
+        }
+    }
+
+    @Override
+    public void onRemove(InputColumn<?> column) {
+        _columnListTable.removeColumn(column);
     }
 
 }

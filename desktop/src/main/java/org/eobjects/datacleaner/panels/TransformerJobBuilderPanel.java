@@ -32,6 +32,7 @@ import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
+import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
@@ -47,7 +48,8 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
  * output columns, a "write data" button, a preview button and a context
  * visualization.
  */
-public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {
+public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter,
+        TransformerChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,6 +100,18 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
         _outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
     }
 
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _transformerJobBuilder.addChangeListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _transformerJobBuilder.removeChangeListener(this);
+    }
+
     protected int getPreviewRows() {
         return PreviewTransformedDataActionListener.DEFAULT_PREVIEW_ROWS;
     }
@@ -124,13 +138,25 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
     }
 
     @Override
-    public void removeNotify() {
-        super.removeNotify();
-        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
+    public void onAdd(TransformerJobBuilder<?> tjb) {
     }
 
     @Override
-    public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
+    public void onConfigurationChanged(TransformerJobBuilder<?> tjb) {
+        onConfigurationChanged();
+    }
+
+    @Override
+    public void onOutputChanged(TransformerJobBuilder<?> tjb, List<MutableInputColumn<?>> outputColumns) {
         _outputColumnsTable.setColumns(outputColumns);
+    }
+
+    @Override
+    public void onRemove(TransformerJobBuilder<?> tjb) {
+    }
+
+    @Override
+    public void onRequirementChanged(TransformerJobBuilder<?> tjb) {
+        onRequirementChanged();
     }
 }

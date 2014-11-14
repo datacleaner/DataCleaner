@@ -213,7 +213,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _graph = new VisualizeJobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory);
+        _graph = new VisualizeJobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
         final DCPanel graphPanel = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);

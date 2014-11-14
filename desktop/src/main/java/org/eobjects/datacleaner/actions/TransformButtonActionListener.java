@@ -37,17 +37,17 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
-import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
+import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.apache.metamodel.util.CollectionUtils;
 
-public final class TransformButtonActionListener implements ActionListener {
+public class TransformButtonActionListener implements ActionListener {
 
     private final AnalyzerBeansConfiguration _configuration;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final UsageLogger _usageLogger;
 
     @Inject
-    protected TransformButtonActionListener(AnalyzerBeansConfiguration configuration,
+    public TransformButtonActionListener(AnalyzerBeansConfiguration configuration,
             AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         _configuration = configuration;
         _analysisJobBuilder = analysisJobBuilder;
@@ -56,7 +56,37 @@ public final class TransformButtonActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        final List<BeanDescriptor<?>> descriptors = getDescriptors();
 
+        final JPopupMenu popup = new JPopupMenu();
+        final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
+            @Override
+            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+                return TransformButtonActionListener.this.createMenuItem(descriptor);
+            }
+        };
+        descriptorMenuBuilder.addItemsToPopupMenu(popup);
+
+        showPopup(e, popup);
+    }
+
+    public JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+        final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (descriptor instanceof TransformerBeanDescriptor) {
+                    _analysisJobBuilder.addTransformer((TransformerBeanDescriptor<?>) descriptor);
+                } else if (descriptor instanceof FilterBeanDescriptor) {
+                    _analysisJobBuilder.addFilter((FilterBeanDescriptor<?, ?>) descriptor);
+                }
+                _usageLogger.logComponentUsage(descriptor);
+            }
+        });
+        return menuItem;
+    }
+
+    public List<BeanDescriptor<?>> getDescriptors() {
         final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
         final Collection<FilterBeanDescriptor<?, ?>> filterBeanDescriptors = descriptorProvider
                 .getFilterBeanDescriptors();
@@ -64,30 +94,11 @@ public final class TransformButtonActionListener implements ActionListener {
                 .getTransformerBeanDescriptors();
         final List<BeanDescriptor<?>> descriptors = CollectionUtils.<BeanDescriptor<?>> concat(false,
                 filterBeanDescriptors, transformerBeanDescritpors);
+        return descriptors;
+    }
 
-        final JPopupMenu popup = new DescriptorPopupMenu<BeanDescriptor<?>>(descriptors) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
-                final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
-                menuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (descriptor instanceof TransformerBeanDescriptor) {
-                            _analysisJobBuilder.addTransformer((TransformerBeanDescriptor<?>) descriptor);
-                        } else if (descriptor instanceof FilterBeanDescriptor) {
-                            _analysisJobBuilder.addFilter((FilterBeanDescriptor<?, ?>) descriptor);
-                        }
-                        _usageLogger.logComponentUsage(descriptor);
-                    }
-                });
-                return menuItem;
-            }
-        };
-
+    protected void showPopup(ActionEvent e, JPopupMenu popup) {
         Component source = (Component) e.getSource();
         popup.show(source, 0, source.getHeight());
-
     }
 }

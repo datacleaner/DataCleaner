@@ -24,15 +24,19 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.apache.commons.collections15.Predicate;
@@ -41,6 +45,7 @@ import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -60,16 +65,20 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
+import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
 import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
+import org.eobjects.datacleaner.actions.TransformButtonActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
 import org.eobjects.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
@@ -103,16 +112,18 @@ public final class VisualizeJobGraph {
     private final RendererFactory _presenterRendererFactory;
     private final DCPanel _panel;
     private final WindowContext _windowContext;
+    private final UsageLogger _usageLogger;
 
-    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder) {
-        this(windowContext, analysisJobBuilder, null);
+    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+        this(windowContext, analysisJobBuilder, null, usageLogger);
     }
 
     public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
-            RendererFactory presenterRendererFactory) {
+            RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
         _windowContext = windowContext;
+        _usageLogger = usageLogger;
 
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
@@ -252,6 +263,10 @@ public final class VisualizeJobGraph {
             }
         });
 
+        // this is ugly, but a hack to make the graph mouse listener and the
+        // regular mouse listener aware of each other's actions.
+        final AtomicBoolean clickCaught = new AtomicBoolean(false);
+
         visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
             @Override
             public void graphReleased(Object v, MouseEvent me) {
@@ -280,10 +295,12 @@ public final class VisualizeJobGraph {
 
             @Override
             public void graphClicked(Object v, MouseEvent me) {
+                clickCaught.set(false);
                 final int button = me.getButton();
                 if (v instanceof AbstractBeanJobBuilder) {
                     final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
                     if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                        clickCaught.set(true);
                         final JPopupMenu popup = new JPopupMenu();
                         popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
                         popup.show(visualizationViewer, me.getX(), me.getY());
@@ -292,6 +309,7 @@ public final class VisualizeJobGraph {
                         final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                                 .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
                         if (renderer != null) {
+                            clickCaught.set(true);
                             final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
 
                             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(
@@ -302,15 +320,91 @@ public final class VisualizeJobGraph {
                 } else if (v instanceof Table) {
                     final Table table = (Table) v;
                     if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                        clickCaught.set(true);
                         final JPopupMenu popup = new JPopupMenu();
                         popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
                         popup.show(visualizationViewer, me.getX(), me.getY());
                     } else if (me.getClickCount() == 2) {
+                        clickCaught.set(true);
                         SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
                                 _analysisJobBuilder, table);
                         dialog.open();
                     }
                 }
+            }
+        });
+
+        visualizationViewer.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                int button = me.getButton();
+                if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+                    if (!clickCaught.get()) {
+
+                        final JMenu transformMenuItem = new JMenu("Transform");
+                        transformMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH,
+                                IconUtils.ICON_SIZE_SMALL));
+                        {
+                            final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
+                                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
+                            final List<BeanDescriptor<?>> descriptors = transformButtonHelper.getDescriptors();
+                            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
+                                @Override
+                                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor);
+                                    return menuItem;
+                                }
+                            };
+                            descriptorMenuBuilder.addItemsToMenu(transformMenuItem);
+                        }
+
+                        final JMenu analyzeMenuItem = new JMenu("Analyze");
+                        analyzeMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.ANALYZER_IMAGEPATH,
+                                IconUtils.ICON_SIZE_SMALL));
+                        {
+                            final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
+                                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
+                            final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper
+                                    .getDescriptors();
+                            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
+                                @Override
+                                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                                    final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor);
+                                    return menuItem;
+                                }
+                            };
+                            descriptorMenuBuilder.addItemsToMenu(analyzeMenuItem);
+                        }
+
+                        final JMenu writeMenuItem = new JMenu("Write");
+                        writeMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+                                IconUtils.ICON_SIZE_SMALL));
+                        // TODO
+                        writeMenuItem.add(new JMenuItem("TODO"));
+
+                        final JPopupMenu popup = new JPopupMenu();
+                        popup.add(transformMenuItem);
+                        popup.add(analyzeMenuItem);
+                        popup.add(writeMenuItem);
+                        popup.show(visualizationViewer, me.getX(), me.getY());
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
             }
         });
 

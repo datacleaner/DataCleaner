@@ -31,19 +31,20 @@ import javax.swing.JPopupMenu;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
+import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
-import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
 
-public final class AnalyzeButtonActionListener implements ActionListener {
+public class AnalyzeButtonActionListener implements ActionListener {
 
     private final AnalyzerBeansConfiguration _configuration;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final UsageLogger _usageLogger;
 
     @Inject
-    protected AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration,
+    public AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration,
             AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         _configuration = configuration;
         _analysisJobBuilder = analysisJobBuilder;
@@ -52,30 +53,41 @@ public final class AnalyzeButtonActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
-                .getAnalyzerBeanDescriptors();
+        final Collection<? extends BeanDescriptor<?>> descriptors = getDescriptors();
 
-        final JPopupMenu popup = new DescriptorPopupMenu<AnalyzerBeanDescriptor<?>>(descriptors) {
+        final JPopupMenu popup = new JPopupMenu();
 
-            private static final long serialVersionUID = 1L;
-
+        final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
             @Override
-            protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
-                JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-                menuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
-                        _analysisJobBuilder.addAnalyzer(analyzerClass);
-                        _usageLogger.logComponentUsage(descriptor);
-                    }
-                });
-
-                return menuItem;
+            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+                return AnalyzeButtonActionListener.this.createMenuItem(descriptor);
             }
         };
+        descriptorMenuBuilder.addItemsToPopupMenu(popup);
 
         Component source = (Component) e.getSource();
         popup.show(source, 0, source.getHeight());
+    }
+
+    public JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+        final JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                @SuppressWarnings("unchecked")
+                Class<? extends Analyzer<?>> analyzerClass = (Class<? extends Analyzer<?>>) descriptor
+                        .getComponentClass();
+                _analysisJobBuilder.addAnalyzer(analyzerClass);
+                _usageLogger.logComponentUsage(descriptor);
+            }
+        });
+
+        return menuItem;
+    }
+
+    public Collection<? extends BeanDescriptor<?>> getDescriptors() {
+        final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+                .getAnalyzerBeanDescriptors();
+        return descriptors;
     }
 }

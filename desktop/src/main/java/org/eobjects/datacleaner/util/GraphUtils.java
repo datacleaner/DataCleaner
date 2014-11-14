@@ -23,6 +23,7 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
 import org.apache.commons.collections15.Transformer;
@@ -66,7 +67,13 @@ public class GraphUtils {
         renderContext.setEdgeFontTransformer(GraphUtils.<E> createFontTransformer());
         renderContext.setVertexFontTransformer(GraphUtils.<V> createFontTransformer());
 
-        final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
+        final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                // avoid zooming
+                return;
+            }
+        };
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         visualizationViewer.setGraphMouse(graphMouse);
     }

@@ -50,7 +50,6 @@ import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -199,10 +198,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     protected boolean isAllInputColumnsSelectedIfNoValueExist() {
-        final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = getBeanJobBuilder();
-        if (beanJobBuilder instanceof AnalyzerJobBuilder) {
-            return true;
-        }
         return false;
     }
 

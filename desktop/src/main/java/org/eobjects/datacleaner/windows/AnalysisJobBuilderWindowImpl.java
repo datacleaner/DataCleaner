@@ -125,6 +125,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         AnalyzerChangeListener, TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener,
         TabCloseListener {
 
+    private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
+
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
@@ -260,17 +262,25 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _editingContentView.setLayout(new BorderLayout());
         _editingContentView.add(_tabbedPane, BorderLayout.CENTER);
         _editingContentView.add(graphPanel, BorderLayout.CENTER);
-        setEditingView(graphPanel);
 
         _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
         _contentContainerPanel.setLayout(new BorderLayout());
         _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
         _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
 
+        final boolean graphPreferred = isGraphPreferred();
+
+        if (graphPreferred) {
+            setEditingView(graphPanel);
+        } else {
+            setEditingView(_tabbedPane);
+        }
+
         _classicViewButton = createViewToggleButton("Classic view", _tabbedPane,
                 "images/actions/editing-view-classic.png");
+        _classicViewButton.setSelected(!graphPreferred);
         _graphViewButton = createViewToggleButton("Graph view", graphPanel, "images/actions/editing-view-graph.png");
-        _graphViewButton.setSelected(true);
+        _graphViewButton.setSelected(graphPreferred);
 
         final ActionListener viewToggleButtonActionListener = new ActionListener() {
             @Override
@@ -278,9 +288,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 if (e.getSource() == _classicViewButton) {
                     _classicViewButton.setSelected(true);
                     _graphViewButton.setSelected(false);
+                    _userPreferences.getAdditionalProperties().put(USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE,
+                            "Classic");
                 } else {
                     _classicViewButton.setSelected(false);
                     _graphViewButton.setSelected(true);
+                    _userPreferences.getAdditionalProperties().put(USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE,
+                            "Graph");
                 }
             }
         };
@@ -294,6 +308,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+    }
+
+    private boolean isGraphPreferred() {
+        final Map<String, String> additionalProperties = _userPreferences.getAdditionalProperties();
+        final String property = additionalProperties.get(USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE);
+        if ("Classic".equals(property)) {
+            return false;
+        }
+        return true;
     }
 
     private JButton createToolBarButton(String text, ImageIcon imageIcon) {

@@ -51,8 +51,6 @@ import org.slf4j.LoggerFactory;
  * physical columns. This widget looks like the
  * {@link MultipleInputColumnsPropertyWidget}, but is enhanced with source
  * column combo boxes and awareness of changes to selected table.
- * 
- * @author Kasper Sørensen
  */
 public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
@@ -142,11 +140,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 				}
 			}
 		});
-	}
-
-	@Override
-	protected boolean isAllInputColumnsSelectedIfNoValueExist() {
-		return false;
 	}
 
 	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {

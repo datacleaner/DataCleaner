@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -96,10 +97,13 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
+import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
@@ -200,10 +204,13 @@ public final class VisualizeJobGraph {
         final int vertexCount = graph.getVertexCount();
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
+        // TODO: Make the size dynamic as per the graphs size
+        final Dimension preferredSize = new Dimension(2500, 2000);
+
         final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_analysisJobBuilder,
                 graph);
         final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
-                layoutTransformer);
+                layoutTransformer, preferredSize);
 
         Collection<Object> vertices = graph.getVertices();
         for (Object vertex : vertices) {
@@ -215,7 +222,7 @@ public final class VisualizeJobGraph {
         }
 
         final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
-                layout);
+                layout, preferredSize);
         visualizationViewer.setTransferHandler(new TransferHandler() {
 
             private static final long serialVersionUID = 1L;
@@ -308,6 +315,12 @@ public final class VisualizeJobGraph {
         // this is ugly, but a hack to make the graph mouse listener and the
         // regular mouse listener aware of each other's actions.
         final AtomicBoolean clickCaught = new AtomicBoolean(false);
+
+        GraphMouse graphMouse = visualizationViewer.getGraphMouse();
+        if (graphMouse instanceof PluggableGraphMouse) {
+            PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
+            pluggableGraphMouse.add(new VisualizeJobEdgeMousePlugin(_analysisJobBuilder));
+        }
 
         visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
             @Override
@@ -481,6 +494,12 @@ public final class VisualizeJobGraph {
         final Predicate<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>> edgeArrowPredicate = TruePredicate
                 .getInstance();
         renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
+        renderContext.setEdgeArrowTransformer(new Transformer<Context<Graph<Object,VisualizeJobLink>,VisualizeJobLink>, Shape>() {
+            @Override
+            public Shape transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
+                return GraphUtils.ARROW_SHAPE;
+            }
+        });
 
         renderContext.setEdgeLabelTransformer(new Transformer<VisualizeJobLink, String>() {
             @Override
@@ -551,7 +570,8 @@ public final class VisualizeJobGraph {
             }
         });
 
-        return visualizationViewer;
+        GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
+        return scrollPane;
     }
 
     private void addNodes(DirectedGraph<Object, VisualizeJobLink> graph, SourceColumnFinder scf, Object item,

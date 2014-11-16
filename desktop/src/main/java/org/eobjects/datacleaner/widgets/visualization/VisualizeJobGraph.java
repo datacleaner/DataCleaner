@@ -275,16 +275,24 @@ public final class VisualizeJobGraph {
                 g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
                 if (_analysisJobBuilder.getSourceColumns().size() == 0) {
                     title = "Select source ...";
-                    subTitle = "Pick table/columns in the tree to the left.";
+                    subTitle = "Pick table/columns in the tree to the left.\n"
+                            + "You can drag it onto this canvas with your mouse.";
                     imagePath = "images/window/canvas-bg-table.png";
                 } else if (_analysisJobBuilder.getComponentCount() == 0) {
                     title = "Start building ...";
-                    subTitle = "Use the 'Transform' and 'Analyze' buttons above.";
+                    subTitle = "Add components to your job. Components define 'what to do'.\n"
+                            + "Right-click the canvas or use the 'Transform' and 'Analyze' buttons above.";
                     imagePath = "images/window/canvas-bg-plus.png";
+                } else if (graph.getEdgeCount() == 0) {
+                    title = "Connect the pieces";
+                    subTitle = "Click the source table and drag a connection\n"
+                            + "with your mouse while holding down the Shift button.";
+                    imagePath = "images/window/canvas-bg-connect.png";
                 } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Almost ready to run ...";
-                    subTitle = "Any job needs to either perform a 'Write' or 'Analyze' action.";
+                    subTitle = "Your job is almost ready. But any job needs to\n"
+                            + "either perform a 'Write' or 'Analyze' action.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else {
                     title = null;
@@ -294,7 +302,7 @@ public final class VisualizeJobGraph {
 
                 final Dimension size = getPanel().getSize();
                 final int yOffset = size.height - 150;
-                final int xOffset = size.width / 2 - 250;
+                final int xOffset = 150;
 
                 if (title != null) {
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(35f));
@@ -302,12 +310,17 @@ public final class VisualizeJobGraph {
                 }
 
                 if (subTitle != null) {
+                    final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
-                    g.drawString(subTitle, xOffset, yOffset + 60);
+                    int y = yOffset + 10;
+                    for (String line : lines) {
+                        y = y + 30;
+                        g.drawString(line, xOffset, y);
+                    }
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - 120, yOffset - 32, null);
+                    g.drawImage(imageManager.getImage(imagePath), xOffset - 120, yOffset - 30, null);
                 }
             }
         });
@@ -319,7 +332,7 @@ public final class VisualizeJobGraph {
         GraphMouse graphMouse = visualizationViewer.getGraphMouse();
         if (graphMouse instanceof PluggableGraphMouse) {
             PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
-            pluggableGraphMouse.add(new VisualizeJobEdgeMousePlugin(_analysisJobBuilder));
+            pluggableGraphMouse.add(new VisualizeJobEdgeMousePlugin(_analysisJobBuilder, this));
         }
 
         visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
@@ -396,7 +409,7 @@ public final class VisualizeJobGraph {
                     if (!clickCaught.get()) {
 
                         final JMenu transformMenuItem = new JMenu("Transform");
-                        transformMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH,
+                        transformMenuItem.setIcon(imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH,
                                 IconUtils.ICON_SIZE_SMALL));
                         {
                             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
@@ -413,7 +426,7 @@ public final class VisualizeJobGraph {
                         }
 
                         final JMenu analyzeMenuItem = new JMenu("Analyze");
-                        analyzeMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.ANALYZER_IMAGEPATH,
+                        analyzeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH,
                                 IconUtils.ICON_SIZE_SMALL));
                         {
                             final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
@@ -431,7 +444,7 @@ public final class VisualizeJobGraph {
                         }
 
                         final JMenu writeMenuItem = new JMenu("Write");
-                        writeMenuItem.setIcon(ImageManager.get().getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+                        writeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
                                 IconUtils.ICON_SIZE_SMALL));
                         // TODO
                         writeMenuItem.add(new JMenuItem("TODO"));
@@ -494,12 +507,13 @@ public final class VisualizeJobGraph {
         final Predicate<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>> edgeArrowPredicate = TruePredicate
                 .getInstance();
         renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
-        renderContext.setEdgeArrowTransformer(new Transformer<Context<Graph<Object,VisualizeJobLink>,VisualizeJobLink>, Shape>() {
-            @Override
-            public Shape transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
-                return GraphUtils.ARROW_SHAPE;
-            }
-        });
+        renderContext
+                .setEdgeArrowTransformer(new Transformer<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>, Shape>() {
+                    @Override
+                    public Shape transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
+                        return GraphUtils.ARROW_SHAPE;
+                    }
+                });
 
         renderContext.setEdgeLabelTransformer(new Transformer<VisualizeJobLink, String>() {
             @Override
@@ -533,8 +547,7 @@ public final class VisualizeJobGraph {
             @Override
             public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
                     boolean isSelected, T edge) {
-                final Icon icon = ImageManager.get()
-                        .getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
+                final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
                 final JLabel label = new JLabel(value + "", icon, JLabel.LEFT);
                 label.setFont(WidgetUtils.FONT_SMALL);
                 return label;

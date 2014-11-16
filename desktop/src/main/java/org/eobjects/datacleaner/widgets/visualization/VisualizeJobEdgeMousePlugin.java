@@ -54,6 +54,8 @@ import org.eobjects.analyzer.job.builder.ComponentBuilder;
 import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -74,7 +76,10 @@ import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
  */
 public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implements MouseListener, MouseMotionListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(VisualizeJobEdgeMousePlugin.class);
+
     private final AnalysisJobBuilder _analysisJobBuilder;
+    private final VisualizeJobGraph _graph;
     private final CubicCurve2D _rawEdge;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
@@ -84,9 +89,10 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
     private Shape _arrowShape;
     private Object _startVertex;
 
-    public VisualizeJobEdgeMousePlugin(AnalysisJobBuilder analysisJobBuilder) {
+    public VisualizeJobEdgeMousePlugin(AnalysisJobBuilder analysisJobBuilder, VisualizeJobGraph graph) {
         super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
         _analysisJobBuilder = analysisJobBuilder;
+        _graph = graph;
         _rawEdge = new CubicCurve2D.Float();
         _rawEdge.setCurve(0.0f, 0.0f, 0.20f, 20, .33f, -15, 1.0f, 0.0f);
         _edgePaintable = new EdgePaintable();
@@ -173,9 +179,9 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                 @SuppressWarnings("unchecked")
                 final Object vertex = pickSupport.getVertex(layout, p.getX(), p.getY());
                 if (vertex != null && _startVertex != null) {
-                    createLink(e, _startVertex, vertex);
-                    if (vv.isVisible()) {
-                        vv.repaint();
+                    final boolean created = createLink(e, _startVertex, vertex);
+                    if (created && vv.isVisible()) {
+                        _graph.refresh();
                     }
                 }
             }
@@ -187,10 +193,7 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
         }
     }
 
-    private void createLink(MouseEvent me, Object fromVertex, Object toVertex) {
-        // TODO: Also support other combinations, such as to create filter
-        // requirements.
-
+    private boolean createLink(MouseEvent me, Object fromVertex, Object toVertex) {
         final List<? extends InputColumn<?>> sourceColumns;
         final Collection<FilterOutcome> filterOutcomes;
 
@@ -227,8 +230,11 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     } else {
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
+                    // returning true to indicate a change
+                    return true;
                 } catch (Exception e) {
                     // nothing to do
+                    logger.info("Failed to add input columns ({}) to {}", sourceColumns.size(), componentBuilder, e);
                 }
             } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
                 final JPopupMenu popup = new JPopupMenu();
@@ -248,9 +254,12 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     menuItem.setBorder(null);
                     popup.add(menuItem);
                     popup.show(me.getComponent(), me.getX(), me.getY());
+                    // we return false because no change was applied (yet)
+                    return false;
                 }
             }
         }
+        return false;
     }
 
     @Override

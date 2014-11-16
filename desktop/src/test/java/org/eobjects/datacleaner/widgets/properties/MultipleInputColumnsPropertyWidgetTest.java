@@ -60,8 +60,9 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
             MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(beanJobBuilder, property);
 
-            // initialize with null (then select all)
+            // initialize with null
             widget.initialize(null);
+            widget.selectAll();
             InputColumn<?>[] value = widget.getValue();
             assertEquals("[MetaModelInputColumn[foo], MetaModelInputColumn[bar]]", Arrays.toString(value));
 
@@ -171,6 +172,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             analyzer.addInputColumn(ajb.getSourceColumnByName("bar"), property);
 
             final InputColumn<?>[] propertyValue = (InputColumn<?>[]) analyzer.getConfiguredProperty(property);
+            assertEquals(3, propertyValue.length);
 
             final MultipleInputColumnsPropertyWidget widget = new MultipleInputColumnsPropertyWidget(analyzer, property);
             widget.onOutputChanged(transformer, transformer.getOutputColumns());

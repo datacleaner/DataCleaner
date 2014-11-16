@@ -238,6 +238,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             } else {
                 // handle updated names from transformed columns.
                 checkBox.setText(col.getName());
+                checkBox.setSelected(true);
             }
         }
 

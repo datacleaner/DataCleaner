@@ -21,9 +21,12 @@ package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -31,15 +34,26 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
+import javax.swing.Icon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
+import org.eobjects.analyzer.job.ComponentRequirement;
+import org.eobjects.analyzer.job.FilterOutcome;
+import org.eobjects.analyzer.job.HasFilterOutcomes;
 import org.eobjects.analyzer.job.InputColumnSourceJob;
+import org.eobjects.analyzer.job.SimpleComponentRequirement;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.ComponentBuilder;
 import org.eobjects.datacleaner.util.GraphUtils;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -159,7 +173,7 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                 @SuppressWarnings("unchecked")
                 final Object vertex = pickSupport.getVertex(layout, p.getX(), p.getY());
                 if (vertex != null && _startVertex != null) {
-                    createLink(_startVertex, vertex);
+                    createLink(e, _startVertex, vertex);
                     if (vv.isVisible()) {
                         vv.repaint();
                     }
@@ -173,13 +187,17 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
         }
     }
 
-    private void createLink(Object fromVertex, Object toVertex) {
-        // TODO: Also support other combinations, such as to create filter requirements.
-        
+    private void createLink(MouseEvent me, Object fromVertex, Object toVertex) {
+        // TODO: Also support other combinations, such as to create filter
+        // requirements.
+
         final List<? extends InputColumn<?>> sourceColumns;
+        final Collection<FilterOutcome> filterOutcomes;
+
         if (fromVertex instanceof Table) {
             final Table table = (Table) fromVertex;
             sourceColumns = _analysisJobBuilder.getSourceColumnsOfTable(table);
+            filterOutcomes = null;
         } else if (fromVertex instanceof InputColumnSourceJob) {
             InputColumn<?>[] outputColumns = null;
             try {
@@ -188,13 +206,19 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                 outputColumns = new InputColumn[0];
             }
             sourceColumns = Arrays.<InputColumn<?>> asList(outputColumns);
+            filterOutcomes = null;
+        } else if (fromVertex instanceof HasFilterOutcomes) {
+            final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex;
+            filterOutcomes = hasFilterOutcomes.getFilterOutcomes();
+            sourceColumns = null;
         } else {
             sourceColumns = null;
+            filterOutcomes = null;
         }
 
-        if (sourceColumns != null && !sourceColumns.isEmpty()) {
-            if (toVertex instanceof ComponentBuilder) {
-                final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
+        if (toVertex instanceof ComponentBuilder) {
+            final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
+            if (sourceColumns != null && !sourceColumns.isEmpty()) {
                 try {
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
@@ -205,6 +229,25 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     }
                 } catch (Exception e) {
                     // nothing to do
+                }
+            } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
+                final JPopupMenu popup = new JPopupMenu();
+                final int iconSize = IconUtils.ICON_SIZE_MEDIUM;
+                final Icon icon = ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH, iconSize);
+                for (final FilterOutcome filterOutcome : filterOutcomes) {
+                    final JMenuItem menuItem = new JMenuItem(filterOutcome.getSimpleName(), icon);
+                    menuItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
+                            componentBuilder.setComponentRequirement(requirement);
+                        }
+                    });
+                    final int preferredWidth = menuItem.getPreferredSize().width;
+                    menuItem.setPreferredSize(new Dimension(Math.max(preferredWidth, 200), iconSize + 20));
+                    menuItem.setBorder(null);
+                    popup.add(menuItem);
+                    popup.show(me.getComponent(), me.getX(), me.getY());
                 }
             }
         }

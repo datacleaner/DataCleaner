@@ -254,9 +254,9 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     menuItem.setBorder(null);
                     popup.add(menuItem);
                     popup.show(me.getComponent(), me.getX(), me.getY());
-                    // we return false because no change was applied (yet)
-                    return false;
                 }
+                // we return false because no change was applied (yet)
+                return false;
             }
         }
         return false;

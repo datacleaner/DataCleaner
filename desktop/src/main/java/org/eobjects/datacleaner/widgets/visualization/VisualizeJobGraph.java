@@ -23,7 +23,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
@@ -258,7 +260,6 @@ public final class VisualizeJobGraph {
             };
         });
 
-        visualizationViewer.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         GraphUtils.applyStyles(visualizationViewer);
         visualizationViewer.addPreRenderPaintable(new Paintable() {
             @Override
@@ -268,6 +269,16 @@ public final class VisualizeJobGraph {
 
             @Override
             public void paint(Graphics g) {
+                GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0, visualizationViewer
+                        .getHeight(), WidgetUtils.BG_COLOR_BRIGHT);
+                if (g instanceof Graphics2D) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    g2d.setPaint(paint);
+                } else {
+                    g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
+                }
+                g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
+
                 final String title;
                 final String subTitle;
                 final String imagePath;
@@ -311,7 +322,7 @@ public final class VisualizeJobGraph {
 
                 if (subTitle != null) {
                     final String[] lines = subTitle.split("\n");
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(26f));
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(20f));
                     int y = yOffset + 10;
                     for (String line : lines) {
                         y = y + 30;

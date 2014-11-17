@@ -103,6 +103,7 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
     @Override
     public void mouseDragged(MouseEvent e) {
         if (checkModifiers(e)) {
+            e.consume();
             if (_startVertex != null) {
                 transformEdgeShape(_mouseDownPoint, e.getPoint());
                 if (_edgeIsDirected == EdgeType.DIRECTED) {
@@ -125,6 +126,7 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
     @Override
     public void mousePressed(MouseEvent e) {
         if (checkModifiers(e)) {
+            e.consume();
             final VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
             final Point2D p = e.getPoint();
             GraphElementAccessor<?, ?> pickSupport = vv.getPickSupport();

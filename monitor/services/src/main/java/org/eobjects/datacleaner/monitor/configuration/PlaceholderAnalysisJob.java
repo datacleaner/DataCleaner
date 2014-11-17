@@ -95,7 +95,7 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
                 columns.toArray(new InputColumn[columns.size()]));
         final BeanConfiguration beanConfiguration = new ImmutableBeanConfiguration(properties);
 
-        final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, beanConfiguration, null);
+        final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, beanConfiguration, null, null);
         return Arrays.asList(analyzerJob);
     }
 

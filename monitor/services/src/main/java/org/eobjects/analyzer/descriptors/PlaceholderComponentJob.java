@@ -21,6 +21,7 @@ package org.eobjects.analyzer.descriptors;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.eobjects.analyzer.beans.api.ComponentCategory;
@@ -197,5 +198,10 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     @Override
     public ComponentRequirement getComponentRequirement() {
         return null;
+    }
+
+    @Override
+    public Map<String, String> getMetadataProperties() {
+        return Collections.emptyMap();
     }
 }

@@ -126,8 +126,8 @@ public final class ExtensionPackage implements Serializable, HasName {
             // provided by ClassLoaderUtils. This class loader loads classes
             // specific to the extension. The second class loader resolves all
             // classes already loaded from the main locations.
-            final ClassLoader extensionLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(getJarFiles(), null),
-                    ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
+            final ClassLoader extensionLoader = new ExtensionClassLoader(ClassLoaderUtils.createClassLoader(
+                    getJarFiles(), null), ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
             _allExtensionClassLoaders.add(extensionLoader);
             _classLoader = extensionLoader;
         }
@@ -208,7 +208,9 @@ public final class ExtensionPackage implements Serializable, HasName {
      * @return
      */
     public static ClassLoader getExtensionClassLoader() {
-        return new CompoundClassLoader(_allExtensionClassLoaders);
+        final Collection<ClassLoader> classLoaders = new ArrayList<>(_allExtensionClassLoaders);
+        classLoaders.add(ClassLoaderUtils.getParentClassLoader());
+        return new CompoundClassLoader(classLoaders);
     }
 
     public String getDescription() {

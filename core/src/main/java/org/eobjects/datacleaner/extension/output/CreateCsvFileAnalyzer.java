@@ -98,7 +98,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
-        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, quoteChar,
+        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, escapeChar,
                 includeHeader, columns);
     }
 

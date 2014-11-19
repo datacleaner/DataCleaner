@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.ChangeRequirementMenu;
 import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
 import org.eobjects.datacleaner.windows.SourceTableConfigurationDialog;
@@ -140,8 +141,9 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
      */
     public void onComponentRightClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
-        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
         popup.add(new RenameComponentMenuItem(componentBuilder));
+        popup.add(new ChangeRequirementMenu(componentBuilder));
+        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
         popup.show(_visualizationViewer, me.getX(), me.getY());
     }
 
@@ -161,7 +163,7 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
                     _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
             final List<BeanDescriptor<?>> descriptors = transformButtonHelper.getDescriptors();
-            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
+            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
                 protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
                     final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor);
@@ -177,7 +179,7 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
             final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
                     _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
             final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
-            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
+            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
                 protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
                     final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor);

@@ -31,16 +31,14 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 /**
  * ActionListener that will present a popup menu on the tabbed pane to enable
  * the user to rename a component
- * 
- * @author Kasper Sørensen
  */
-public class JobBuilderTabTextActionListener extends AbstractJobBuilderPopupListener implements ActionListener {
+public class ComponentBuilderTabTextActionListener extends AbstractJobBuilderPopupListener implements ActionListener {
 
     private final CloseableTabbedPane _tabbedPane;
 
     private volatile int _tabIndex;
 
-    public JobBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
+    public ComponentBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
             AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
         super(jobBuilder, analysisJobBuilder);
         _tabIndex = tabIndex;

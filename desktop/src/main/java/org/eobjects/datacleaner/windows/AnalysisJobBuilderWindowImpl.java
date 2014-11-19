@@ -69,7 +69,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
-import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
+import org.eobjects.datacleaner.actions.ComponentBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.RenameComponentActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
@@ -840,7 +840,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
         _jobBuilderTabs.put(presenter, comp);
         final int tabIndex = _tabbedPane.getTabCount() - 1;
-        _tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
+        _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(_analysisJobBuilder,
                 analyzerJobBuilder, tabIndex, _tabbedPane));
         _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(analyzerJobBuilder) {
             @Override
@@ -878,7 +878,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _jobBuilderTabs.put(presenter, comp);
         final int tabIndex = _tabbedPane.getTabCount() - 1;
         _tabbedPane.setSelectedIndex(tabIndex);
-        _tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
+        _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(_analysisJobBuilder,
                 transformerJobBuilder, tabIndex, _tabbedPane));
         _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(transformerJobBuilder) {
             @Override
@@ -924,7 +924,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _tabbedPane.setUnclosableTab(tabIndex);
         } else {
             _tabbedPane.setSelectedIndex(tabIndex);
-            _tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
+            _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(_analysisJobBuilder,
                     filterJobBuilder, tabIndex, _tabbedPane));
             _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(filterJobBuilder) {
                 @Override

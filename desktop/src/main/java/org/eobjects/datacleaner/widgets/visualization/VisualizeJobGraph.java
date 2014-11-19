@@ -28,22 +28,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.TransferHandler;
 
 import org.apache.commons.collections15.Predicate;
@@ -51,9 +44,7 @@ import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -66,20 +57,12 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
-import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
-import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
-import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
-import org.eobjects.datacleaner.actions.TransformButtonActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
-import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.DragDropUtils;
@@ -87,9 +70,6 @@ import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
-import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
-import org.eobjects.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,9 +84,7 @@ import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
-import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
@@ -336,139 +314,17 @@ public final class VisualizeJobGraph {
             }
         });
 
-        // this is ugly, but a hack to make the graph mouse listener and the
-        // regular mouse listener aware of each other's actions.
-        final AtomicBoolean clickCaught = new AtomicBoolean(false);
-
         GraphMouse graphMouse = visualizationViewer.getGraphMouse();
         if (graphMouse instanceof PluggableGraphMouse) {
             PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
             pluggableGraphMouse.add(new VisualizeJobEdgeMousePlugin(_analysisJobBuilder, this));
         }
 
-        visualizationViewer.addGraphMouseListener(new GraphMouseListener<Object>() {
-            @Override
-            public void graphReleased(Object v, MouseEvent me) {
-                final PickedState<Object> pickedVertexState = visualizationViewer.getPickedVertexState();
+        final VisualizeJobGraphMouseListener graphMouseListener = new VisualizeJobGraphMouseListener(
+                _analysisJobBuilder, visualizationViewer, _presenterRendererFactory, _windowContext, _usageLogger);
 
-                final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
-
-                for (Object vertex : selectedObjects) {
-                    final Double x = layout.getX(vertex);
-                    final Double y = layout.getY(vertex);
-                    if (vertex instanceof HasMetadataProperties) {
-                        final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex)
-                                .getMetadataProperties();
-                        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
-                        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
-                    } else if (vertex instanceof Table) {
-                        VisualizationMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
-                    }
-                }
-            }
-
-            @Override
-            public void graphPressed(Object v, MouseEvent me) {
-            }
-
-            @Override
-            public void graphClicked(Object v, MouseEvent me) {
-                clickCaught.set(false);
-                final int button = me.getButton();
-                if (v instanceof AbstractBeanJobBuilder) {
-                    final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
-                    if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                        clickCaught.set(true);
-                        final JPopupMenu popup = new JPopupMenu();
-                        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
-                        popup.show(visualizationViewer, me.getX(), me.getY());
-                    } else if (me.getClickCount() == 2) {
-                        @SuppressWarnings("unchecked")
-                        final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
-                                .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
-                        if (renderer != null) {
-                            clickCaught.set(true);
-                            final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
-
-                            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(
-                                    componentBuilder, _analysisJobBuilder, presenter);
-                            dialog.open();
-                        }
-                    }
-                } else if (v instanceof Table) {
-                    final Table table = (Table) v;
-                    if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                        clickCaught.set(true);
-                        final JPopupMenu popup = new JPopupMenu();
-                        popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
-                        popup.show(visualizationViewer, me.getX(), me.getY());
-                    } else if (me.getClickCount() == 2) {
-                        clickCaught.set(true);
-                        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
-                                _analysisJobBuilder, table);
-                        dialog.open();
-                    }
-                }
-            }
-        });
-
-        visualizationViewer.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                int button = me.getButton();
-                if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                    if (!clickCaught.get()) {
-
-                        final JMenu transformMenuItem = new JMenu("Transform");
-                        transformMenuItem.setIcon(imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH,
-                                IconUtils.ICON_SIZE_SMALL));
-                        {
-                            final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
-                                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
-                            final List<BeanDescriptor<?>> descriptors = transformButtonHelper.getDescriptors();
-                            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
-                                @Override
-                                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
-                                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor);
-                                    return menuItem;
-                                }
-                            };
-                            descriptorMenuBuilder.addItemsToMenu(transformMenuItem);
-                        }
-
-                        final JMenu analyzeMenuItem = new JMenu("Analyze");
-                        analyzeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH,
-                                IconUtils.ICON_SIZE_SMALL));
-                        {
-                            final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
-                                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
-                            final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper
-                                    .getDescriptors();
-                            DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
-                                @Override
-                                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
-                                    final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor);
-                                    return menuItem;
-                                }
-                            };
-                            descriptorMenuBuilder.addItemsToMenu(analyzeMenuItem);
-                        }
-
-                        final JMenu writeMenuItem = new JMenu("Write");
-                        writeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
-                                IconUtils.ICON_SIZE_SMALL));
-                        // TODO
-                        writeMenuItem.add(new JMenuItem("TODO"));
-
-                        final JPopupMenu popup = new JPopupMenu();
-                        popup.add(transformMenuItem);
-                        popup.add(analyzeMenuItem);
-                        popup.add(writeMenuItem);
-                        popup.show(visualizationViewer, me.getX(), me.getY());
-                    }
-                }
-            }
-        });
+        visualizationViewer.addGraphMouseListener(graphMouseListener);
+        visualizationViewer.addMouseListener(graphMouseListener);
 
         final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer.getRenderContext();
 

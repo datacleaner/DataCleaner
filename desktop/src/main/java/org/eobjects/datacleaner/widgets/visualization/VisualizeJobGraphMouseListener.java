@@ -36,10 +36,12 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
+import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
 import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.eobjects.datacleaner.actions.RenameComponentMenuItem;
@@ -142,6 +144,16 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
     public void onComponentRightClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
         popup.add(new RenameComponentMenuItem(componentBuilder));
+
+        if (componentBuilder instanceof TransformerJobBuilder) {
+            final TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) componentBuilder;
+            final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
+                    IconUtils.ACTION_PREVIEW));
+            previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
+            previewMenuItem.setEnabled(componentBuilder.isConfigured());
+            popup.add(previewMenuItem);
+        }
+
         popup.add(new ChangeRequirementMenu(componentBuilder));
         popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
         popup.show(_visualizationViewer, me.getX(), me.getY());

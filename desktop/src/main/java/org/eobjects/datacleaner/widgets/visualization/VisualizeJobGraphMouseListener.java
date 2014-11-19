@@ -33,6 +33,8 @@ import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.api.Renderer;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -41,6 +43,7 @@ import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
+import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
 import org.eobjects.datacleaner.actions.RemoveSourceTableMenuItem;
@@ -131,6 +134,14 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
      */
     public void onTableRightClicked(Table table, MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
+
+        final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
+                IconUtils.ACTION_PREVIEW));
+        final Datastore datastore = _analysisJobBuilder.getDatastore();
+        final List<MetaModelInputColumn> inputColumns = _analysisJobBuilder.getSourceColumnsOfTable(table);
+        previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_windowContext, datastore, inputColumns));
+        popup.add(previewMenuItem);
+
         popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
         popup.show(_visualizationViewer, me.getX(), me.getY());
     }

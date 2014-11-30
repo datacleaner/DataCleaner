@@ -26,6 +26,7 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.util.Collection;
@@ -45,6 +46,7 @@ import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -230,12 +232,25 @@ public final class JobGraph {
                     return false;
                 }
 
+                final Point dropPoint = support.getDropLocation().getDropPoint();
+
                 if (data instanceof Table) {
-                    _analysisJobBuilder.addSourceColumns(((Table) data).getColumns());
+                    final Table table = (Table) data;
+                    // position the table
+                    JobGraphMetadata.setPointForTable(_analysisJobBuilder, table, dropPoint.x, dropPoint.y);
+                    _analysisJobBuilder.addSourceColumns(table.getColumns());
                 }
 
                 if (data instanceof Column) {
-                    _analysisJobBuilder.addSourceColumn((Column) data);
+                    final Column column = (Column) data;
+                    final Table table = column.getTable();
+                    final List<MetaModelInputColumn> columnsOfSameTable = _analysisJobBuilder
+                            .getSourceColumnsOfTable(table);
+                    if (columnsOfSameTable.isEmpty()) {
+                        // the table is new - position it
+                        JobGraphMetadata.setPointForTable(_analysisJobBuilder, table, dropPoint.x, dropPoint.y);
+                    }
+                    _analysisJobBuilder.addSourceColumn(column);
                 }
 
                 return true;

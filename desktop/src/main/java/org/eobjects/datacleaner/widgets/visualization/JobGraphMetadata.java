@@ -27,7 +27,7 @@ import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 
-public class VisualizationMetadata {
+public class JobGraphMetadata {
 
     public static final String METADATA_PROPERTY_COORDINATES_X = "CoordinatesX";
     public static final String METADATA_PROPERTY_COORDINATES_Y = "CoordinatesY";
@@ -50,8 +50,8 @@ public class VisualizationMetadata {
         final String postFix = getTablePostFix(table);
 
         final Map<String, String> metadataProperties = analysisJobBuilder.getMetadataProperties();
-        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X + postFix, "" + x.intValue());
-        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y + postFix, "" + y.intValue());
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X + postFix, "" + x.intValue());
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y + postFix, "" + y.intValue());
     }
 
     private static String getTablePostFix(Table table) {

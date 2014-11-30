@@ -89,14 +89,14 @@ import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
- * of them.
+ * of them as a graph.
  */
-public final class VisualizeJobGraph {
+public final class JobGraph {
 
     private static final String MORE_COLUMNS_VERTEX = "...";
 
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Logger logger = LoggerFactory.getLogger(VisualizeJobGraph.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
 
     private final Set<Object> _highlighedVertexes;
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -105,11 +105,11 @@ public final class VisualizeJobGraph {
     private final WindowContext _windowContext;
     private final UsageLogger _usageLogger;
 
-    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         this(windowContext, analysisJobBuilder, null, usageLogger);
     }
 
-    public VisualizeJobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
+    public JobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
             RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
@@ -126,7 +126,7 @@ public final class VisualizeJobGraph {
         _panel.setLayout(new BorderLayout());
     }
 
-    public VisualizeJobGraph highlightVertex(Object vertex) {
+    public JobGraph highlightVertex(Object vertex) {
         _highlighedVertexes.add(vertex);
         return this;
     }
@@ -143,11 +143,15 @@ public final class VisualizeJobGraph {
         refresh(false, false);
     }
 
+    public AnalysisJobBuilder getAnalysisJobBuilder() {
+        return _analysisJobBuilder;
+    }
+
     public void refresh(boolean displayColumns, boolean displayOutcomes) {
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(_analysisJobBuilder);
 
-        final DirectedGraph<Object, VisualizeJobLink> graph = new DirectedSparseGraph<Object, VisualizeJobLink>();
+        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
 
         final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
         for (Table table : sourceTables) {
@@ -180,16 +184,15 @@ public final class VisualizeJobGraph {
      * 
      * @return
      */
-    private JComponent createJComponent(final DirectedGraph<Object, VisualizeJobLink> graph) {
+    private JComponent createJComponent(final DirectedGraph<Object, JobGraphLink> graph) {
         final int vertexCount = graph.getVertexCount();
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
         // TODO: Make the size dynamic as per the graphs size
         final Dimension preferredSize = new Dimension(2500, 2000);
 
-        final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(_analysisJobBuilder,
-                graph);
-        final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
+        final JobGraphLayoutTransformer layoutTransformer = new JobGraphLayoutTransformer(_analysisJobBuilder, graph);
+        final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<Object, JobGraphLink>(graph,
                 layoutTransformer, preferredSize);
 
         Collection<Object> vertices = graph.getVertices();
@@ -201,7 +204,7 @@ public final class VisualizeJobGraph {
             throw new IllegalStateException("Layout transformer was never invoked!");
         }
 
-        final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
+        final VisualizationViewer<Object, JobGraphLink> visualizationViewer = new VisualizationViewer<Object, JobGraphLink>(
                 layout, preferredSize);
         visualizationViewer.setTransferHandler(new TransferHandler() {
 
@@ -314,19 +317,23 @@ public final class VisualizeJobGraph {
             }
         });
 
-        GraphMouse graphMouse = visualizationViewer.getGraphMouse();
+        final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(this, visualizationViewer);
+
+        final JobGraphLinkPainterMousePlugin linkPainterMousePlugin = new JobGraphLinkPainterMousePlugin(linkPainter,
+                _analysisJobBuilder, this);
+        final GraphMouse graphMouse = visualizationViewer.getGraphMouse();
         if (graphMouse instanceof PluggableGraphMouse) {
             PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
-            pluggableGraphMouse.add(new VisualizeJobEdgeMousePlugin(_analysisJobBuilder, this));
+            pluggableGraphMouse.add(linkPainterMousePlugin);
         }
 
-        final VisualizeJobGraphMouseListener graphMouseListener = new VisualizeJobGraphMouseListener(
-                _analysisJobBuilder, visualizationViewer, _presenterRendererFactory, _windowContext, _usageLogger);
+        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(_analysisJobBuilder,
+                visualizationViewer, linkPainter, _presenterRendererFactory, _windowContext, _usageLogger);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
 
-        final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer.getRenderContext();
+        final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
         // render fonts (some may be highlighted)
         renderContext.setVertexFontTransformer(new Transformer<Object, Font>() {
@@ -371,20 +378,20 @@ public final class VisualizeJobGraph {
         });
 
         // render arrows
-        final Predicate<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>> edgeArrowPredicate = TruePredicate
+        final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> edgeArrowPredicate = TruePredicate
                 .getInstance();
         renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
         renderContext
-                .setEdgeArrowTransformer(new Transformer<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>, Shape>() {
+                .setEdgeArrowTransformer(new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape>() {
                     @Override
-                    public Shape transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
+                    public Shape transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
                         return GraphUtils.ARROW_SHAPE;
                     }
                 });
 
-        renderContext.setEdgeLabelTransformer(new Transformer<VisualizeJobLink, String>() {
+        renderContext.setEdgeLabelTransformer(new Transformer<JobGraphLink, String>() {
             @Override
-            public String transform(VisualizeJobLink link) {
+            public String transform(JobGraphLink link) {
                 final ComponentRequirement req = link.getRequirement();
                 if (req == null) {
                     return null;
@@ -394,9 +401,9 @@ public final class VisualizeJobGraph {
         });
 
         renderContext
-                .setEdgeLabelClosenessTransformer(new Transformer<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>, Number>() {
+                .setEdgeLabelClosenessTransformer(new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number>() {
                     @Override
-                    public Number transform(Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink> input) {
+                    public Number transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
                         return 0.4d;
                     }
                 });
@@ -454,7 +461,7 @@ public final class VisualizeJobGraph {
         return scrollPane;
     }
 
-    private void addNodes(DirectedGraph<Object, VisualizeJobLink> graph, SourceColumnFinder scf, Object item,
+    private void addNodes(DirectedGraph<Object, JobGraphLink> graph, SourceColumnFinder scf, Object item,
             boolean displayColumns, boolean displayFilterOutcomes, int recurseCount) {
         if (item == null) {
             throw new IllegalArgumentException("Node item cannot be null");
@@ -559,9 +566,9 @@ public final class VisualizeJobGraph {
         return componentRequirement.getProcessingDependencies();
     }
 
-    private void addEdge(DirectedGraph<Object, VisualizeJobLink> graph, Object from, Object to,
+    private void addEdge(DirectedGraph<Object, JobGraphLink> graph, Object from, Object to,
             ComponentRequirement requirement) {
-        VisualizeJobLink link = new VisualizeJobLink(from, to, requirement);
+        JobGraphLink link = new JobGraphLink(from, to, requirement);
         if (!graph.containsEdge(link)) {
             graph.addEdge(link, from, to, EdgeType.DIRECTED);
         }

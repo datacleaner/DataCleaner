@@ -19,13 +19,14 @@
  */
 package org.eobjects.datacleaner.widgets.visualization;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -36,6 +37,8 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.job.HasFilterOutcomes;
+import org.eobjects.analyzer.job.InputColumnSourceJob;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -59,6 +62,8 @@ import org.eobjects.datacleaner.widgets.ChangeRequirementMenu;
 import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.eobjects.datacleaner.windows.ComponentConfigurationDialog;
 import org.eobjects.datacleaner.windows.SourceTableConfigurationDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -68,28 +73,32 @@ import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 /**
- * Listener for mouse events on the {@link VisualizeJobGraph}.
+ * Listener for mouse events on the {@link JobGraph}.
  * 
  * Note that this class implements two interfaces and is thus added as two
  * distinct listener types: {@link MouseListener} and {@link GraphMouseListener}
  */
-public class VisualizeJobGraphMouseListener extends MouseAdapter implements GraphMouseListener<Object> {
+public class JobGraphMouseListener extends MouseAdapter implements GraphMouseListener<Object> {
+
+    private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final VisualizationViewer<Object, VisualizeJobLink> _visualizationViewer;
+    private final VisualizationViewer<Object, JobGraphLink> _visualizationViewer;
+    private final JobGraphLinkPainter _linkPainter;
     private final RendererFactory _presenterRendererFactory;
     private final WindowContext _windowContext;
     private final UsageLogger _usageLogger;
 
     // this is ugly, but a hack to make the graph mouse listener and the
     // regular mouse listener aware of each other's actions.
-    private final AtomicBoolean clickCaught = new AtomicBoolean(false);
+    private boolean _clickCaught = false;
 
-    public VisualizeJobGraphMouseListener(AnalysisJobBuilder analysisJobBuilder,
-            VisualizationViewer<Object, VisualizeJobLink> visualizationViewer,
+    public JobGraphMouseListener(AnalysisJobBuilder analysisJobBuilder,
+            VisualizationViewer<Object, JobGraphLink> visualizationViewer, JobGraphLinkPainter linkPainter,
             RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger) {
         _analysisJobBuilder = analysisJobBuilder;
         _visualizationViewer = visualizationViewer;
+        _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
@@ -135,6 +144,8 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
     public void onTableRightClicked(Table table, MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
 
+        popup.add(createLinkMenuItem(table));
+
         final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                 IconUtils.ACTION_PREVIEW));
         final Datastore datastore = _analysisJobBuilder.getDatastore();
@@ -154,6 +165,11 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
      */
     public void onComponentRightClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
+
+        if (componentBuilder instanceof InputColumnSourceJob || componentBuilder instanceof HasFilterOutcomes) {
+            popup.add(createLinkMenuItem(componentBuilder));
+        }
+
         popup.add(new RenameComponentMenuItem(componentBuilder));
 
         if (componentBuilder instanceof TransformerJobBuilder) {
@@ -170,12 +186,25 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
         popup.show(_visualizationViewer, me.getX(), me.getY());
     }
 
+    private JMenuItem createLinkMenuItem(final Object from) {
+        final ImageManager imageManager = ImageManager.get();
+        final JMenuItem menuItem = new JMenuItem("Link to ...", imageManager.getImageIcon(IconUtils.ACTION_ADD));
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _linkPainter.startLink(from);
+            }
+        });
+        return menuItem;
+    }
+
     /**
      * Invoked when the canvas is right-clicked
      * 
      * @param me
      */
     public void onCanvasRightClicked(MouseEvent me) {
+        _linkPainter.cancelLink();
 
         final ImageManager imageManager = ImageManager.get();
 
@@ -231,7 +260,7 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
 
         final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
 
-        final AbstractLayout<Object, VisualizeJobLink> graphLayout = getGraphLayout();
+        final AbstractLayout<Object, JobGraphLink> graphLayout = getGraphLayout();
 
         // update the coordinates metadata of the moved objects.
 
@@ -240,20 +269,20 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
             final Double y = graphLayout.getY(vertex);
             if (vertex instanceof HasMetadataProperties) {
                 final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
-                metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
-                metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
+                metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
+                metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
             } else if (vertex instanceof Table) {
-                VisualizationMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
+                JobGraphMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
             }
         }
     }
 
-    private AbstractLayout<Object, VisualizeJobLink> getGraphLayout() {
-        Layout<Object, VisualizeJobLink> layout = _visualizationViewer.getGraphLayout();
+    private AbstractLayout<Object, JobGraphLink> getGraphLayout() {
+        Layout<Object, JobGraphLink> layout = _visualizationViewer.getGraphLayout();
         while (layout instanceof LayoutDecorator) {
-            layout = ((LayoutDecorator<Object, VisualizeJobLink>) layout).getDelegate();
+            layout = ((LayoutDecorator<Object, JobGraphLink>) layout).getDelegate();
         }
-        return (AbstractLayout<Object, VisualizeJobLink>) layout;
+        return (AbstractLayout<Object, JobGraphLink>) layout;
     }
 
     @Override
@@ -262,24 +291,30 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
 
     @Override
     public void graphClicked(Object v, MouseEvent me) {
-        clickCaught.set(false);
+        logger.debug("graphClicked({}, {})", v, me);
+        _clickCaught = false;
         final int button = me.getButton();
         if (v instanceof AbstractBeanJobBuilder) {
             final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                clickCaught.set(true);
+                _clickCaught = true;
                 onComponentRightClicked(componentBuilder, me);
             } else if (me.getClickCount() == 2) {
-                clickCaught.set(true);
+                _clickCaught = true;
                 onComponentDoubleClicked(componentBuilder, me);
+            } else {
+                final boolean ended = _linkPainter.endLink(componentBuilder, me);
+                if (ended) {
+                    me.consume();
+                }
             }
         } else if (v instanceof Table) {
             final Table table = (Table) v;
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                clickCaught.set(true);
+                _clickCaught = true;
                 onTableRightClicked(table, me);
             } else if (me.getClickCount() == 2) {
-                clickCaught.set(true);
+                _clickCaught = true;
                 onTableDoubleClicked(table, me);
             }
         }
@@ -287,11 +322,14 @@ public class VisualizeJobGraphMouseListener extends MouseAdapter implements Grap
 
     @Override
     public void mouseClicked(MouseEvent me) {
-        int button = me.getButton();
-        if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-            if (!clickCaught.get()) {
+        logger.debug("mouseClicked({}) (clickCaught={})", me, _clickCaught);
+        if (!_clickCaught) {
+            int button = me.getButton();
+            if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
                 onCanvasRightClicked(me);
             }
         }
+        // reset the variable for next time
+        _clickCaught = false;
     }
 }

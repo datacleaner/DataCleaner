@@ -36,11 +36,11 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
-import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
+import org.eobjects.datacleaner.widgets.visualization.JobGraph;
 
 /**
  * Dialog for configuring components that have been selected through the
- * {@link VisualizeJobGraph}.
+ * {@link JobGraph}.
  */
 public class ComponentConfigurationDialog extends AbstractDialog {
 

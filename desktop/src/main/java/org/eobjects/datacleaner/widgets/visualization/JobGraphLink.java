@@ -23,15 +23,15 @@ import org.eobjects.analyzer.job.ComponentRequirement;
 
 /**
  * Represents a "link" (rendered as an edge) between two items in the
- * {@link VisualizeJobGraph}.
+ * {@link JobGraph}.
  */
-final class VisualizeJobLink {
+final class JobGraphLink {
 
     private final Object _from;
     private final Object _to;
     private final ComponentRequirement _requirement;
 
-    public VisualizeJobLink(Object from, Object to, ComponentRequirement requirement) {
+    public JobGraphLink(Object from, Object to, ComponentRequirement requirement) {
         _from = from;
         _to = to;
         _requirement = requirement;
@@ -67,7 +67,7 @@ final class VisualizeJobLink {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        VisualizeJobLink other = (VisualizeJobLink) obj;
+        JobGraphLink other = (JobGraphLink) obj;
         if (_from == null) {
             if (other._from != null)
                 return false;

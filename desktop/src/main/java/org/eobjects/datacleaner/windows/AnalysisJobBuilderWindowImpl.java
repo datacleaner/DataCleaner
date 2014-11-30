@@ -109,7 +109,7 @@ import org.eobjects.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
-import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
+import org.eobjects.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +169,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final JToggleButton _classicViewButton;
     private final JToggleButton _graphViewButton;
     private final MetadataPanel _metadataPanel;
-    private final VisualizeJobGraph _graph;
+    private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
     private final JComponent _editingContentView;
     private volatile AbstractJobBuilderPanel _latestPanel = null;
@@ -215,7 +215,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _graph = new VisualizeJobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
+        _graph = new JobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
         final DCPanel graphPanel = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(this);

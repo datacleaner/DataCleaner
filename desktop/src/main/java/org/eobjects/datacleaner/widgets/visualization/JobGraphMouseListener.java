@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.visualization;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -198,11 +199,12 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * 
      * @param me
      */
-    public void onCanvasRightClicked(MouseEvent me) {
+    public void onCanvasRightClicked(final MouseEvent me) {
         _linkPainter.cancelLink();
 
         final ImageManager imageManager = ImageManager.get();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final Point point = me.getPoint();
 
         final JMenu transformMenuItem = new JMenu("Transform");
         transformMenuItem
@@ -214,7 +216,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
                 protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
-                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor);
+                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
                     return menuItem;
                 }
             };
@@ -230,7 +232,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
                 protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
-                    final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor);
+                    final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor, point);
                     return menuItem;
                 }
             };

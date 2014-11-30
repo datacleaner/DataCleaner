@@ -195,12 +195,13 @@ public final class JobGraph {
         final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<Object, JobGraphLink>(graph,
                 layoutTransformer, preferredSize);
 
-        Collection<Object> vertices = graph.getVertices();
+        final Collection<Object> vertices = graph.getVertices();
         for (Object vertex : vertices) {
             // manually initialize all vertices
             layout.transform(vertex);
         }
-        if (vertexCount > 0 && !layoutTransformer.isTransformed()) {
+
+        if (!vertices.isEmpty() && !layoutTransformer.isTransformed()) {
             throw new IllegalStateException("Layout transformer was never invoked!");
         }
 
@@ -317,21 +318,24 @@ public final class JobGraph {
             }
         });
 
-        final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(this, visualizationViewer);
+        final JobGraphContext graphContext = new JobGraphContext(this, visualizationViewer, _analysisJobBuilder);
+
+        final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(graphContext);
 
         final JobGraphLinkPainterMousePlugin linkPainterMousePlugin = new JobGraphLinkPainterMousePlugin(linkPainter,
-                _analysisJobBuilder, this);
+                graphContext);
         final GraphMouse graphMouse = visualizationViewer.getGraphMouse();
         if (graphMouse instanceof PluggableGraphMouse) {
             PluggableGraphMouse pluggableGraphMouse = (PluggableGraphMouse) graphMouse;
             pluggableGraphMouse.add(linkPainterMousePlugin);
         }
 
-        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(_analysisJobBuilder,
-                visualizationViewer, linkPainter, _presenterRendererFactory, _windowContext, _usageLogger);
+        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter,
+                _presenterRendererFactory, _windowContext, _usageLogger);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
+        visualizationViewer.addKeyListener(new JobGraphKeyListener(graphContext));
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 

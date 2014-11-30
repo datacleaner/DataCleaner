@@ -25,7 +25,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +43,11 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainterMousePlugin.class);
 
     private final JobGraphLinkPainter _linkPainter;
+    private final JobGraphContext _graphContext;
 
-    public JobGraphLinkPainterMousePlugin(JobGraphLinkPainter linkPainter, AnalysisJobBuilder analysisJobBuilder,
-            JobGraph graph) {
+    public JobGraphLinkPainterMousePlugin(JobGraphLinkPainter linkPainter, JobGraphContext graphContext) {
         super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
+        _graphContext = graphContext;
         _linkPainter = linkPainter;
         cursor = Cursor.getDefaultCursor();
     }
@@ -76,7 +76,7 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
         final boolean mods = checkModifiers(me);
         logger.debug("mousePressed({}) (mods={})", me, mods);
         if (mods) {
-            final Object vertex = _linkPainter.getVertex(me);
+            final Object vertex = _graphContext.getVertex(me);
             if (vertex != null) {
                 me.consume();
                 _linkPainter.startLink(vertex);
@@ -90,7 +90,7 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
         logger.debug("mouseReleased({}) (mods={})", me, mods);
         if (mods) {
             final Point2D p = me.getPoint();
-            final Object vertex = _linkPainter.getVertex(p);
+            final Object vertex = _graphContext.getVertex(p);
             final boolean ended = _linkPainter.endLink(vertex, me);
             if (ended) {
                 me.consume();

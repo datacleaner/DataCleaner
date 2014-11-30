@@ -56,11 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
-import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.LayoutDecorator;
 import edu.uci.ics.jung.visualization.VisualizationServer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 /**
  * Supporting class containing the state surrounding the drawing of new
@@ -70,8 +66,7 @@ public class JobGraphLinkPainter {
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
-    private final JobGraph _graph;
-    private final VisualizationViewer<Object, JobGraphLink> _visualizationViewer;
+    private final JobGraphContext _graphContext;
     private final CubicCurve2D _rawEdge;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
@@ -81,9 +76,8 @@ public class JobGraphLinkPainter {
     private Object _startVertex;
     private Point2D _startPoint;
 
-    public JobGraphLinkPainter(JobGraph graph, VisualizationViewer<Object, JobGraphLink> visualizationViewer) {
-        _graph = graph;
-        _visualizationViewer = visualizationViewer;
+    public JobGraphLinkPainter(JobGraphContext graphContext) {
+        _graphContext = graphContext;
         _rawEdge = new CubicCurve2D.Float();
         _rawEdge.setCurve(0.0f, 0.0f, 0.20f, 20, .33f, -15, 1.0f, 0.0f);
         _edgePaintable = new EdgePaintable();
@@ -100,7 +94,7 @@ public class JobGraphLinkPainter {
             return;
         }
 
-        final AbstractLayout<Object, JobGraphLink> graphLayout = getGraphLayout();
+        final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
         int x = (int) graphLayout.getX(startVertex);
         int y = (int) graphLayout.getY(startVertex);
 
@@ -110,14 +104,14 @@ public class JobGraphLinkPainter {
         _startPoint = new Point(x, y);
 
         transformEdgeShape(_startPoint, _startPoint);
-        _visualizationViewer.addPostRenderPaintable(_edgePaintable);
+        _graphContext.getVisualizationViewer().addPostRenderPaintable(_edgePaintable);
         transformArrowShape(_startPoint, _startPoint);
-        _visualizationViewer.addPostRenderPaintable(_arrowPaintable);
+        _graphContext.getVisualizationViewer().addPostRenderPaintable(_arrowPaintable);
     }
 
     public boolean endLink(MouseEvent me) {
         if (_startVertex != null) {
-            final Object vertex = getVertex(me);
+            final Object vertex = _graphContext.getVertex(me);
             return endLink(vertex, me);
         }
         return false;
@@ -134,8 +128,8 @@ public class JobGraphLinkPainter {
         boolean result = false;
         if (_startVertex != null && endVertex != null) {
             final boolean created = createLink(_startVertex, endVertex, mouseEvent);
-            if (created && _visualizationViewer.isVisible()) {
-                _graph.refresh();
+            if (created && _graphContext.getVisualizationViewer().isVisible()) {
+                _graphContext.getJobGraph().refresh();
             }
             result = true;
         }
@@ -146,8 +140,8 @@ public class JobGraphLinkPainter {
     private void stopDrawing() {
         _startVertex = null;
         _startPoint = null;
-        _visualizationViewer.removePostRenderPaintable(_edgePaintable);
-        _visualizationViewer.removePostRenderPaintable(_arrowPaintable);
+        _graphContext.getVisualizationViewer().removePostRenderPaintable(_edgePaintable);
+        _graphContext.getVisualizationViewer().removePostRenderPaintable(_arrowPaintable);
     }
 
     /**
@@ -169,27 +163,19 @@ public class JobGraphLinkPainter {
             logger.debug("moveCursor({})", currentPoint);
             transformEdgeShape(_startPoint, currentPoint);
             transformArrowShape(_startPoint, currentPoint);
-            _visualizationViewer.repaint();
+            _graphContext.getVisualizationViewer().repaint();
         }
-    }
-
-    private AbstractLayout<Object, JobGraphLink> getGraphLayout() {
-        Layout<Object, JobGraphLink> layout = _visualizationViewer.getGraphLayout();
-        while (layout instanceof LayoutDecorator) {
-            layout = ((LayoutDecorator<Object, JobGraphLink>) layout).getDelegate();
-        }
-        return (AbstractLayout<Object, JobGraphLink>) layout;
     }
 
     private boolean createLink(final Object fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
         logger.debug("createLink({}, {}, {})", fromVertex, toVertex, mouseEvent);
-        
+
         final List<? extends InputColumn<?>> sourceColumns;
         final Collection<FilterOutcome> filterOutcomes;
 
         if (fromVertex instanceof Table) {
             final Table table = (Table) fromVertex;
-            final AnalysisJobBuilder analysisJobBuilder = _graph.getAnalysisJobBuilder();
+            final AnalysisJobBuilder analysisJobBuilder = _graphContext.getJobGraph().getAnalysisJobBuilder();
             sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
             filterOutcomes = null;
         } else if (fromVertex instanceof InputColumnSourceJob) {
@@ -221,7 +207,7 @@ public class JobGraphLinkPainter {
                     } else {
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
-                    
+
                     // returning true to indicate a change
                     logger.debug("createLink(...) returning true - input column(s) added");
                     return true;
@@ -247,9 +233,9 @@ public class JobGraphLinkPainter {
                     menuItem.setBorder(null);
                     popup.add(menuItem);
 
-                    popup.show(_visualizationViewer, mouseEvent.getX(), mouseEvent.getY());
+                    popup.show(_graphContext.getVisualizationViewer(), mouseEvent.getX(), mouseEvent.getY());
                 }
-                
+
                 // we return false because no change was applied (yet)
                 logger.debug("createLink(...) returning false - popup with choices presented to user");
                 return false;
@@ -331,27 +317,5 @@ public class JobGraphLinkPainter {
         public boolean useTransform() {
             return false;
         }
-    }
-
-    public Object getVertex(MouseEvent me) {
-        return getVertex(me.getPoint());
-    }
-
-    /**
-     * Gets the vertex at a particular point, or null if it does not exist.
-     * 
-     * @param p
-     * @return
-     */
-    public Object getVertex(Point2D p) {
-        final GraphElementAccessor<?, ?> pickSupport = _visualizationViewer.getPickSupport();
-
-        @SuppressWarnings("rawtypes")
-        final Layout graphLayout = _visualizationViewer.getModel().getGraphLayout();
-
-        @SuppressWarnings("unchecked")
-        final Object vertex = pickSupport.getVertex(graphLayout, p.getX(), p.getY());
-
-        return vertex;
     }
 }

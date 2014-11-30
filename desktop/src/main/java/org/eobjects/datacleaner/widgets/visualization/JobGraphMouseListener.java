@@ -66,9 +66,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.algorithms.layout.LayoutDecorator;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.GraphMouseListener;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
@@ -82,8 +79,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
-    private final AnalysisJobBuilder _analysisJobBuilder;
-    private final VisualizationViewer<Object, JobGraphLink> _visualizationViewer;
+    private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
     private final RendererFactory _presenterRendererFactory;
     private final WindowContext _windowContext;
@@ -93,11 +89,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     // regular mouse listener aware of each other's actions.
     private boolean _clickCaught = false;
 
-    public JobGraphMouseListener(AnalysisJobBuilder analysisJobBuilder,
-            VisualizationViewer<Object, JobGraphLink> visualizationViewer, JobGraphLinkPainter linkPainter,
+    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
             RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger) {
-        _analysisJobBuilder = analysisJobBuilder;
-        _visualizationViewer = visualizationViewer;
+        _graphContext = graphContext;
         _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
         _windowContext = windowContext;
@@ -118,7 +112,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
-                    _analysisJobBuilder, presenter);
+                    _graphContext.getAnalysisJobBuilder(), presenter);
             dialog.open();
         }
     }
@@ -130,7 +124,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onTableDoubleClicked(Table table, MouseEvent me) {
-        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext, _analysisJobBuilder,
+        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext, _graphContext.getAnalysisJobBuilder(),
                 table);
         dialog.open();
     }
@@ -148,13 +142,14 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                 IconUtils.ACTION_PREVIEW));
-        final Datastore datastore = _analysisJobBuilder.getDatastore();
-        final List<MetaModelInputColumn> inputColumns = _analysisJobBuilder.getSourceColumnsOfTable(table);
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final Datastore datastore = analysisJobBuilder.getDatastore();
+        final List<MetaModelInputColumn> inputColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
         previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_windowContext, datastore, inputColumns));
         popup.add(previewMenuItem);
 
-        popup.add(new RemoveSourceTableMenuItem(_analysisJobBuilder, table));
-        popup.show(_visualizationViewer, me.getX(), me.getY());
+        popup.add(new RemoveSourceTableMenuItem(analysisJobBuilder, table));
+        popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
     /**
@@ -182,8 +177,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         }
 
         popup.add(new ChangeRequirementMenu(componentBuilder));
-        popup.add(new RemoveComponentMenuItem(_analysisJobBuilder, componentBuilder));
-        popup.show(_visualizationViewer, me.getX(), me.getY());
+        popup.add(new RemoveComponentMenuItem(_graphContext.getAnalysisJobBuilder(), componentBuilder));
+        popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
     private JMenuItem createLinkMenuItem(final Object from) {
@@ -207,13 +202,14 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         _linkPainter.cancelLink();
 
         final ImageManager imageManager = ImageManager.get();
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
 
         final JMenu transformMenuItem = new JMenu("Transform");
         transformMenuItem
                 .setIcon(imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
         {
             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
-                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
+                    analysisJobBuilder.getConfiguration(), analysisJobBuilder, _usageLogger);
             final List<BeanDescriptor<?>> descriptors = transformButtonHelper.getDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
@@ -229,7 +225,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         analyzeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
         {
             final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
-                    _analysisJobBuilder.getConfiguration(), _analysisJobBuilder, _usageLogger);
+                    analysisJobBuilder.getConfiguration(), analysisJobBuilder, _usageLogger);
             final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
@@ -251,16 +247,16 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         popup.add(transformMenuItem);
         popup.add(analyzeMenuItem);
         popup.add(writeMenuItem);
-        popup.show(_visualizationViewer, me.getX(), me.getY());
+        popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
     @Override
     public void graphReleased(Object v, MouseEvent me) {
-        final PickedState<Object> pickedVertexState = _visualizationViewer.getPickedVertexState();
+        final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
 
         final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
 
-        final AbstractLayout<Object, JobGraphLink> graphLayout = getGraphLayout();
+        final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
 
         // update the coordinates metadata of the moved objects.
 
@@ -272,17 +268,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
                 metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
             } else if (vertex instanceof Table) {
-                JobGraphMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, x, y);
+                JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
             }
         }
-    }
-
-    private AbstractLayout<Object, JobGraphLink> getGraphLayout() {
-        Layout<Object, JobGraphLink> layout = _visualizationViewer.getGraphLayout();
-        while (layout instanceof LayoutDecorator) {
-            layout = ((LayoutDecorator<Object, JobGraphLink>) layout).getDelegate();
-        }
-        return (AbstractLayout<Object, JobGraphLink>) layout;
     }
 
     @Override

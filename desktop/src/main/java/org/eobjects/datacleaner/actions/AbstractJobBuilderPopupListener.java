@@ -26,6 +26,7 @@ import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
 /**
@@ -52,7 +53,7 @@ public abstract class AbstractJobBuilderPopupListener {
     }
 
     public void showPopup(Component parentComponent, int x, int y) {
-        final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", "images/actions/rename.png");
+        final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", IconUtils.ACTION_RENAME);
         renameMenuItem.addActionListener(new RenameComponentActionListener(_jobBuilder) {
             @Override
             protected void onNameChanged() {

@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.metamodel.schema.Schema;
@@ -27,7 +29,7 @@ import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 
-public class VisualizationMetadata {
+public class JobGraphMetadata {
 
     public static final String METADATA_PROPERTY_COORDINATES_X = "CoordinatesX";
     public static final String METADATA_PROPERTY_COORDINATES_Y = "CoordinatesY";
@@ -50,8 +52,8 @@ public class VisualizationMetadata {
         final String postFix = getTablePostFix(table);
 
         final Map<String, String> metadataProperties = analysisJobBuilder.getMetadataProperties();
-        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_X + postFix, "" + x.intValue());
-        metadataProperties.put(VisualizationMetadata.METADATA_PROPERTY_COORDINATES_Y + postFix, "" + y.intValue());
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X + postFix, "" + x.intValue());
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y + postFix, "" + y.intValue());
     }
 
     private static String getTablePostFix(Table table) {
@@ -63,5 +65,17 @@ public class VisualizationMetadata {
             postFix = "." + schema.getName() + "." + table.getName();
         }
         return postFix;
+    }
+
+    public static Map<String, String> createMetadataProperties(Point2D p) {
+        if (p == null) {
+            return null;
+        }
+        final Map<String, String> metadataProperties = new HashMap<>();
+        final int x = (int) p.getX();
+        final int y = (int) p.getY();
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x);
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y);
+        return metadataProperties;
     }
 }

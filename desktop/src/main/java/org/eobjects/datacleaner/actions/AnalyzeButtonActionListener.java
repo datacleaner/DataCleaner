@@ -22,13 +22,14 @@ package org.eobjects.datacleaner.actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
@@ -36,6 +37,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.visualization.JobGraphMetadata;
 
 public class AnalyzeButtonActionListener implements ActionListener {
 
@@ -44,8 +46,8 @@ public class AnalyzeButtonActionListener implements ActionListener {
     private final UsageLogger _usageLogger;
 
     @Inject
-    public AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration,
-            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+    public AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+            UsageLogger usageLogger) {
         _configuration = configuration;
         _analysisJobBuilder = analysisJobBuilder;
         _usageLogger = usageLogger;
@@ -60,7 +62,7 @@ public class AnalyzeButtonActionListener implements ActionListener {
         final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
             @Override
             protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
-                return AnalyzeButtonActionListener.this.createMenuItem(descriptor);
+                return AnalyzeButtonActionListener.this.createMenuItem(descriptor, null);
             }
         };
         descriptorMenuBuilder.addItemsToPopupMenu(popup);
@@ -69,15 +71,14 @@ public class AnalyzeButtonActionListener implements ActionListener {
         popup.show(source, 0, source.getHeight());
     }
 
-    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor, final Point2D p) {
         final JMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                @SuppressWarnings("unchecked")
-                Class<? extends Analyzer<?>> analyzerClass = (Class<? extends Analyzer<?>>) descriptor
-                        .getComponentClass();
-                _analysisJobBuilder.addAnalyzer(analyzerClass);
+                final Map<String, String> metadataProperties = JobGraphMetadata.createMetadataProperties(p);
+                final AnalyzerBeanDescriptor<?> analyzerDescriptor = (AnalyzerBeanDescriptor<?>) descriptor;
+                _analysisJobBuilder.addAnalyzer(analyzerDescriptor, null, null, metadataProperties);
                 _usageLogger.logComponentUsage(descriptor);
             }
         });

@@ -88,10 +88,10 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(
                 _transformerJobBuilder));
 
-        _previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
+        _previewButton = new JButton("Preview data", imageManager.getImageIcon(IconUtils.ACTION_PREVIEW));
         int previewRows = getPreviewRows();
         _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-                getAnalysisJobBuilder(), _transformerJobBuilder, configuration, previewRows));
+                _transformerJobBuilder, previewRows));
 
         final DCPanel bottomButtonPanel = new DCPanel();
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));

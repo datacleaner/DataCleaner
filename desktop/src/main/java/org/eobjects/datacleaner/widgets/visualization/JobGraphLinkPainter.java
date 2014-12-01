@@ -20,16 +20,14 @@
 package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
@@ -57,151 +55,128 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.visualization.VisualizationServer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.EditingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
 
 /**
- * {@link GraphMousePlugin} inpsired by {@link EditingGraphMousePlugin} to
- * support the creation of new links between parts of a visualized DataCleaner
- * job.
+ * Supporting class containing the state surrounding the drawing of new
+ * {@link JobGraphLink}s.
  */
-public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implements MouseListener, MouseMotionListener {
+public class JobGraphLinkPainter {
 
-    private static final Logger logger = LoggerFactory.getLogger(VisualizeJobEdgeMousePlugin.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
-    private final AnalysisJobBuilder _analysisJobBuilder;
-    private final VisualizeJobGraph _graph;
+    private final JobGraphContext _graphContext;
     private final CubicCurve2D _rawEdge;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
-    private Point2D _mouseDownPoint;
-    private EdgeType _edgeIsDirected;
+
     private Shape _edgeShape;
     private Shape _arrowShape;
     private Object _startVertex;
+    private Point2D _startPoint;
 
-    public VisualizeJobEdgeMousePlugin(AnalysisJobBuilder analysisJobBuilder, VisualizeJobGraph graph) {
-        super(MouseEvent.BUTTON1_MASK + MouseEvent.SHIFT_MASK);
-        _analysisJobBuilder = analysisJobBuilder;
-        _graph = graph;
+    public JobGraphLinkPainter(JobGraphContext graphContext) {
+        _graphContext = graphContext;
         _rawEdge = new CubicCurve2D.Float();
         _rawEdge.setCurve(0.0f, 0.0f, 0.20f, 20, .33f, -15, 1.0f, 0.0f);
         _edgePaintable = new EdgePaintable();
         _arrowPaintable = new ArrowPaintable();
-        cursor = Cursor.getDefaultCursor();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (checkModifiers(e)) {
-            e.consume();
-            if (_startVertex != null) {
-                transformEdgeShape(_mouseDownPoint, e.getPoint());
-                if (_edgeIsDirected == EdgeType.DIRECTED) {
-                    transformArrowShape(_mouseDownPoint, e.getPoint());
-                }
-            }
-            VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-            vv.repaint();
-        }
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (checkModifiers(e)) {
-            e.consume();
-            final VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-            final Point2D p = e.getPoint();
-            GraphElementAccessor<?, ?> pickSupport = vv.getPickSupport();
-            if (pickSupport != null) {
-                Graph<?, ?> graph = vv.getModel().getGraphLayout().getGraph();
-                // set default edge type
-                if (graph instanceof DirectedGraph) {
-                    _edgeIsDirected = EdgeType.DIRECTED;
-                } else {
-                    _edgeIsDirected = EdgeType.UNDIRECTED;
-                }
-
-                @SuppressWarnings("rawtypes")
-                final Layout graphLayout = vv.getModel().getGraphLayout();
-
-                @SuppressWarnings("unchecked")
-                final Object vertex = pickSupport.getVertex(graphLayout, p.getX(), p.getY());
-
-                if (vertex != null) { // get ready to make an edge
-                    _startVertex = vertex;
-                    _mouseDownPoint = e.getPoint();
-                    transformEdgeShape(_mouseDownPoint, _mouseDownPoint);
-                    vv.addPostRenderPaintable(_edgePaintable);
-                    if ((e.getModifiers() & MouseEvent.SHIFT_MASK) != 0
-                            && vv.getModel().getGraphLayout().getGraph() instanceof UndirectedGraph == false) {
-                        _edgeIsDirected = EdgeType.DIRECTED;
-                    }
-                    if (_edgeIsDirected == EdgeType.DIRECTED) {
-                        transformArrowShape(_mouseDownPoint, e.getPoint());
-                        vv.addPostRenderPaintable(_arrowPaintable);
-                    }
-                }
-            }
-        }
     }
 
     /**
-     * If startVertex is non-null, and the mouse is released over an existing
-     * vertex, create an undirected edge from startVertex to the vertex under
-     * the mouse pointer. If shift was also pressed, create a directed edge
-     * instead.
+     * Called when the drawing of a new link/edge is started
+     * 
+     * @param startVertex
      */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        if (checkModifiers(e)) {
-            final VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-            final Point2D p = e.getPoint();
-            @SuppressWarnings("rawtypes")
-            final Layout layout = vv.getModel().getGraphLayout();
-            final GraphElementAccessor<?, ?> pickSupport = vv.getPickSupport();
-            if (pickSupport != null) {
-                @SuppressWarnings("unchecked")
-                final Object vertex = pickSupport.getVertex(layout, p.getX(), p.getY());
-                if (vertex != null && _startVertex != null) {
-                    final boolean created = createLink(e, _startVertex, vertex);
-                    if (created && vv.isVisible()) {
-                        _graph.refresh();
-                    }
-                }
+    public void startLink(Object startVertex) {
+        if (startVertex == null) {
+            return;
+        }
+
+        final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
+        int x = (int) graphLayout.getX(startVertex);
+        int y = (int) graphLayout.getY(startVertex);
+
+        logger.debug("startLink({})", startVertex);
+
+        _startVertex = startVertex;
+        _startPoint = new Point(x, y);
+
+        transformEdgeShape(_startPoint, _startPoint);
+        _graphContext.getVisualizationViewer().addPostRenderPaintable(_edgePaintable);
+        transformArrowShape(_startPoint, _startPoint);
+        _graphContext.getVisualizationViewer().addPostRenderPaintable(_arrowPaintable);
+    }
+
+    public boolean endLink(MouseEvent me) {
+        if (_startVertex != null) {
+            final Object vertex = _graphContext.getVertex(me);
+            return endLink(vertex, me);
+        }
+        return false;
+    }
+
+    /**
+     * If startVertex is non-null this method will attempt to end the
+     * link-painting at the given endVertex
+     * 
+     * @return true if a link drawing was ended or false if it wasn't started
+     */
+    public boolean endLink(Object endVertex, MouseEvent mouseEvent) {
+        logger.debug("endLink({})", endVertex);
+        boolean result = false;
+        if (_startVertex != null && endVertex != null) {
+            final boolean created = createLink(_startVertex, endVertex, mouseEvent);
+            if (created && _graphContext.getVisualizationViewer().isVisible()) {
+                _graphContext.getJobGraph().refresh();
             }
-            _startVertex = null;
-            _mouseDownPoint = null;
-            _edgeIsDirected = EdgeType.UNDIRECTED;
-            vv.removePostRenderPaintable(_edgePaintable);
-            vv.removePostRenderPaintable(_arrowPaintable);
+            result = true;
+        }
+        stopDrawing();
+        return result;
+    }
+
+    private void stopDrawing() {
+        _startVertex = null;
+        _startPoint = null;
+        _graphContext.getVisualizationViewer().removePostRenderPaintable(_edgePaintable);
+        _graphContext.getVisualizationViewer().removePostRenderPaintable(_arrowPaintable);
+    }
+
+    /**
+     * Cancels the drawing of the link
+     */
+    public void cancelLink() {
+        logger.debug("cancelLink()");
+        stopDrawing();
+    }
+
+    public void moveCursor(MouseEvent me) {
+        if (_startVertex != null) {
+            moveCursor(me.getPoint());
         }
     }
 
-    private boolean createLink(MouseEvent me, Object fromVertex, Object toVertex) {
+    public void moveCursor(Point2D currentPoint) {
+        if (_startVertex != null) {
+            logger.debug("moveCursor({})", currentPoint);
+            transformEdgeShape(_startPoint, currentPoint);
+            transformArrowShape(_startPoint, currentPoint);
+            _graphContext.getVisualizationViewer().repaint();
+        }
+    }
+
+    private boolean createLink(final Object fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
+        logger.debug("createLink({}, {}, {})", fromVertex, toVertex, mouseEvent);
+
         final List<? extends InputColumn<?>> sourceColumns;
         final Collection<FilterOutcome> filterOutcomes;
 
         if (fromVertex instanceof Table) {
             final Table table = (Table) fromVertex;
-            sourceColumns = _analysisJobBuilder.getSourceColumnsOfTable(table);
+            final AnalysisJobBuilder analysisJobBuilder = _graphContext.getJobGraph().getAnalysisJobBuilder();
+            sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
             filterOutcomes = null;
         } else if (fromVertex instanceof InputColumnSourceJob) {
             InputColumn<?>[] outputColumns = null;
@@ -232,7 +207,9 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     } else {
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
+
                     // returning true to indicate a change
+                    logger.debug("createLink(...) returning true - input column(s) added");
                     return true;
                 } catch (Exception e) {
                     // nothing to do
@@ -255,21 +232,17 @@ public class VisualizeJobEdgeMousePlugin extends AbstractGraphMousePlugin implem
                     menuItem.setPreferredSize(new Dimension(Math.max(preferredWidth, 200), iconSize + 20));
                     menuItem.setBorder(null);
                     popup.add(menuItem);
-                    popup.show(me.getComponent(), me.getX(), me.getY());
+
+                    popup.show(_graphContext.getVisualizationViewer(), mouseEvent.getX(), mouseEvent.getY());
                 }
+
                 // we return false because no change was applied (yet)
+                logger.debug("createLink(...) returning false - popup with choices presented to user");
                 return false;
             }
         }
+        logger.debug("createLink(...) returning false - no applicable action");
         return false;
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
     }
 
     /**

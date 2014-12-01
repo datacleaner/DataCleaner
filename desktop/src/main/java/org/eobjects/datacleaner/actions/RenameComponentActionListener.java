@@ -31,8 +31,6 @@ import org.eobjects.analyzer.util.StringUtils;
 /**
  * {@link ActionListener} used when renaming a component, such as an analyzer, a
  * filter or a transformer.
- * 
- * @author Kasper Sørensen
  */
 public abstract class RenameComponentActionListener implements ActionListener {
 

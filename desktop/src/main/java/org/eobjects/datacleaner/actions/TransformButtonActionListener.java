@@ -22,13 +22,16 @@ package org.eobjects.datacleaner.actions;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
@@ -36,9 +39,9 @@ import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 import org.eobjects.datacleaner.widgets.DescriptorMenuBuilder;
-import org.apache.metamodel.util.CollectionUtils;
+import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.visualization.JobGraphMetadata;
 
 public class TransformButtonActionListener implements ActionListener {
 
@@ -62,7 +65,7 @@ public class TransformButtonActionListener implements ActionListener {
         final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
             @Override
             protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
-                return TransformButtonActionListener.this.createMenuItem(descriptor);
+                return TransformButtonActionListener.this.createMenuItem(descriptor, null);
             }
         };
         descriptorMenuBuilder.addItemsToPopupMenu(popup);
@@ -70,15 +73,19 @@ public class TransformButtonActionListener implements ActionListener {
         showPopup(e, popup);
     }
 
-    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor, final Point2D p) {
         final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(p);
+
                 if (descriptor instanceof TransformerBeanDescriptor) {
-                    _analysisJobBuilder.addTransformer((TransformerBeanDescriptor<?>) descriptor);
+                    final TransformerBeanDescriptor<?> transformerDescriptor = (TransformerBeanDescriptor<?>) descriptor;
+                    _analysisJobBuilder.addTransformer(transformerDescriptor, null, null, metadata);
                 } else if (descriptor instanceof FilterBeanDescriptor) {
-                    _analysisJobBuilder.addFilter((FilterBeanDescriptor<?, ?>) descriptor);
+                    final FilterBeanDescriptor<?, ?> filterDescriptor = (FilterBeanDescriptor<?, ?>) descriptor;
+                    _analysisJobBuilder.addFilter(filterDescriptor, null, null, metadata);
                 }
                 _usageLogger.logComponentUsage(descriptor);
             }

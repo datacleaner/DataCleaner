@@ -35,6 +35,7 @@ import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.api.Renderer;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
@@ -47,6 +48,7 @@ import org.eobjects.analyzer.metadata.HasMetadataProperties;
 import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
+import org.eobjects.datacleaner.actions.DisplayOutputWritersAction;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.RemoveComponentMenuItem;
@@ -125,8 +127,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onTableDoubleClicked(Table table, MouseEvent me) {
-        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext, _graphContext.getAnalysisJobBuilder(),
-                table);
+        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
+                _graphContext.getAnalysisJobBuilder(), table);
         dialog.open();
     }
 
@@ -204,6 +206,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final ImageManager imageManager = ImageManager.get();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final AnalyzerBeansConfiguration configuration = analysisJobBuilder.getConfiguration();
         final Point point = me.getPoint();
 
         final JMenu transformMenuItem = new JMenu("Transform");
@@ -211,8 +214,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 .setIcon(imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
         {
             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
-                    analysisJobBuilder.getConfiguration(), analysisJobBuilder, _usageLogger);
-            final List<BeanDescriptor<?>> descriptors = transformButtonHelper.getDescriptors();
+                    configuration, analysisJobBuilder, _usageLogger);
+            final Collection<? extends BeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                    .getTransformerBeanDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
                 protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
@@ -223,11 +227,28 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             descriptorMenuBuilder.addItemsToMenu(transformMenuItem);
         }
 
+        final JMenu filterMenuItem = new JMenu("Filter");
+        filterMenuItem.setIcon(imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+        {
+            final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
+                    configuration, analysisJobBuilder, _usageLogger);
+            final Collection<? extends BeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                    .getFilterBeanDescriptors();
+            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors, false) {
+                @Override
+                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
+                    return menuItem;
+                }
+            };
+            descriptorMenuBuilder.addItemsToMenu(filterMenuItem);
+        }
+
         final JMenu analyzeMenuItem = new JMenu("Analyze");
         analyzeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
         {
-            final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(
-                    analysisJobBuilder.getConfiguration(), analysisJobBuilder, _usageLogger);
+            final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(configuration,
+                    analysisJobBuilder, _usageLogger);
             final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
@@ -242,11 +263,17 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         final JMenu writeMenuItem = new JMenu("Write");
         writeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
                 IconUtils.ICON_SIZE_SMALL));
-        // TODO
-        writeMenuItem.add(new JMenuItem("TODO"));
+        {
+            final DisplayOutputWritersAction writeButtonHelper = new DisplayOutputWritersAction(analysisJobBuilder);
+            final List<JMenuItem> menuItems = writeButtonHelper.createMenuItems();
+            for (JMenuItem menuItem : menuItems) {
+                writeMenuItem.add(menuItem);
+            }
+        }
 
         final JPopupMenu popup = new JPopupMenu();
         popup.add(transformMenuItem);
+        popup.add(filterMenuItem);
         popup.add(analyzeMenuItem);
         popup.add(writeMenuItem);
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());

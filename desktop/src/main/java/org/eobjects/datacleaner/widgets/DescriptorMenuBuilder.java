@@ -49,9 +49,15 @@ public abstract class DescriptorMenuBuilder {
     private static final Logger logger = LoggerFactory.getLogger(DescriptorMenuBuilder.class);
 
     private final List<? extends BeanDescriptor<?>> _descriptors;
+    private final boolean _buildSubmenus;
 
     public DescriptorMenuBuilder(Collection<? extends BeanDescriptor<?>> descriptors) {
+        this(descriptors, true);
+    }
+
+    public DescriptorMenuBuilder(Collection<? extends BeanDescriptor<?>> descriptors, boolean buildSubmenus) {
         _descriptors = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
+        _buildSubmenus = buildSubmenus;
     }
 
     public void addItemsToMenu(JMenu menu) {
@@ -63,12 +69,20 @@ public abstract class DescriptorMenuBuilder {
     }
 
     private void initialize(final JComponent outerMenu) {
+        if (!_buildSubmenus) {
+            for (BeanDescriptor<?> descriptor : _descriptors) {
+                final JMenuItem menuItem = createMenuItem(descriptor);
+                outerMenu.add(menuItem);
+            }
+            return;
+        }
+        
         final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
-
+        
         // build sub menus
         {
             for (BeanDescriptor<?> descriptor : _descriptors) {
-                Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
+                final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
                 for (ComponentCategory componentCategory : componentCategories) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
                     if (menu == null) {
@@ -82,9 +96,9 @@ public abstract class DescriptorMenuBuilder {
 
         {
             // place sub menus
-            List<DescriptorMenu> sortedMenus = CollectionUtils2.sorted(descriptorMenus.values());
+            final List<DescriptorMenu> sortedMenus = CollectionUtils2.sorted(descriptorMenus.values());
             for (DescriptorMenu descriptorMenu : sortedMenus) {
-                int count = descriptorMenu.getComponentClassCount();
+                final int count = descriptorMenu.getComponentClassCount();
                 if (count <= 1) {
                     // disregard categories with only a single component in
                     // them!
@@ -103,7 +117,7 @@ public abstract class DescriptorMenuBuilder {
         {
             for (final BeanDescriptor<?> descriptor : _descriptors) {
                 boolean placedInSubmenu = false;
-                Class<?> componentClass = descriptor.getComponentClass();
+                final Class<?> componentClass = descriptor.getComponentClass();
                 JMenuItem menuItem = createMenuItem(descriptor);
                 if (menuItem != null) {
                     for (DescriptorMenu descriptorMenu : descriptorMenus.values()) {
@@ -126,7 +140,7 @@ public abstract class DescriptorMenuBuilder {
         }
 
         // disregard WriteDataCategory
-        DescriptorMenu writeDataMenu = descriptorMenus.get(new WriteDataCategory());
+        final DescriptorMenu writeDataMenu = descriptorMenus.get(new WriteDataCategory());
         if (writeDataMenu != null) {
             outerMenu.remove(writeDataMenu);
         }

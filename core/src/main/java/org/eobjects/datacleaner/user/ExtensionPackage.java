@@ -208,9 +208,9 @@ public final class ExtensionPackage implements Serializable, HasName {
      * @return
      */
     public static ClassLoader getExtensionClassLoader() {
-        final Collection<ClassLoader> classLoaders = new ArrayList<>(_allExtensionClassLoaders);
-        classLoaders.add(ClassLoaderUtils.getParentClassLoader());
-        return new CompoundClassLoader(classLoaders);
+        Collection<ClassLoader> childClassLoaders = new ArrayList<>(_allExtensionClassLoaders);
+        childClassLoaders.add(ClassLoaderUtils.getParentClassLoader());
+        return new CompoundClassLoader(childClassLoaders);
     }
 
     public String getDescription() {

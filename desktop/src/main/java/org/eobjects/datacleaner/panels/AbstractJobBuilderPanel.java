@@ -44,6 +44,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetCollection;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 import org.jdesktop.swingx.JXTaskPane;
@@ -57,6 +58,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     private final ImageManager imageManager = ImageManager.get();
     private final DCTaskPaneContainer _taskPaneContainer;
     private final PropertyWidgetFactory _propertyWidgetFactory;
+    private final PropertyWidgetCollection _propertyWidgetCollection;
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final BeanDescriptor<?> _descriptor;
     private final ChangeRequirementButton _requirementButton;
@@ -84,6 +86,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         _beanJobBuilder = beanJobBuilder;
         _descriptor = beanJobBuilder.getDescriptor();
         _propertyWidgetFactory = propertyWidgetFactory;
+        _propertyWidgetCollection = propertyWidgetFactory.getPropertyWidgetCollection();
 
         setLayout(new BorderLayout());
 
@@ -196,7 +199,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
                 @Override
                 protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
                     PropertyWidget<?> propertyWidget = createPropertyWidget(getJobBuilder(), propertyDescriptor);
-                    getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
+                    getPropertyWidgetCollection().registerWidget(propertyDescriptor, propertyWidget);
                     return propertyWidget;
                 }
             };
@@ -234,7 +237,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
      *            case some of the applied properties are missing or errornous
      */
     public final void applyPropertyValues(boolean errorAware) {
-        for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
+        for (PropertyWidget<?> propertyWidget : getPropertyWidgetCollection().getWidgets()) {
             ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
             if (propertyWidget.isSet()) {
                 Object value = propertyWidget.getValue();
@@ -251,6 +254,10 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         return _propertyWidgetFactory;
     }
 
+    public PropertyWidgetCollection getPropertyWidgetCollection() {
+        return _propertyWidgetCollection;
+    }
+
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return getJobBuilder().getAnalysisJobBuilder();
     }
@@ -264,7 +271,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
      * configuration of this component has changed
      */
     protected void onConfigurationChanged() {
-        getPropertyWidgetFactory().onConfigurationChanged();
+        getPropertyWidgetCollection().onConfigurationChanged();
     }
 
     /**

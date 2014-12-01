@@ -20,10 +20,6 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -70,16 +66,14 @@ public final class PropertyWidgetFactory {
     };
 
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-    private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
     private final InjectorBuilder _injectorBuilder;
-
-    private final Map<ConfiguredPropertyDescriptor, PropertyWidgetMapping> _propertyWidgetMappings;
+    private final PropertyWidgetCollection _propertyWidgetCollection;
 
     @Inject
     protected PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
         _beanJobBuilder = beanJobBuilder;
         _injectorBuilder = injectorBuilder;
-        _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
+        _propertyWidgetCollection = new PropertyWidgetCollection(beanJobBuilder);
 
         final Set<ConfiguredPropertyDescriptor> mappedProperties = beanJobBuilder.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(MappedProperty.class);
@@ -91,9 +85,13 @@ public final class PropertyWidgetFactory {
 
             PropertyWidgetMapping propertyWidgetMapping = buildMappedPropertyWidget(mappedProperty, mappedToProperty);
 
-            _propertyWidgetMappings.put(mappedProperty, propertyWidgetMapping);
-            _propertyWidgetMappings.put(mappedToProperty, propertyWidgetMapping);
+            _propertyWidgetCollection.putMappedPropertyWidget(mappedProperty, propertyWidgetMapping);
+            _propertyWidgetCollection.putMappedPropertyWidget(mappedToProperty, propertyWidgetMapping);
         }
+    }
+    
+    public PropertyWidgetCollection getPropertyWidgetCollection() {
+        return _propertyWidgetCollection;
     }
 
     protected PropertyWidgetMapping buildMappedPropertyWidget(ConfiguredPropertyDescriptor mappedProperty,
@@ -125,13 +123,7 @@ public final class PropertyWidgetFactory {
             // save the "mappedToPropertyWidget" since it may be need to be
             // reused when there is a chain of dependencies between mapped
             // properties
-            final PropertyWidgetMapping propertyWidgetMapping = _propertyWidgetMappings.get(mappedToProperty);
-            final PropertyWidget<?> mappedToPropertyWidget;
-            if (propertyWidgetMapping == null) {
-                mappedToPropertyWidget = null;
-            } else {
-                mappedToPropertyWidget = propertyWidgetMapping.getMapping(mappedToProperty);
-            }
+            final PropertyWidget<?> mappedToPropertyWidget = _propertyWidgetCollection.getMappedPropertyWidget(mappedToProperty);
 
             // mapped schema name
             if (mappedProperty.getAnnotation(SchemaProperty.class) != null
@@ -227,14 +219,6 @@ public final class PropertyWidgetFactory {
         return null;
     }
 
-    public Collection<PropertyWidget<?>> getWidgets() {
-        return _widgets.values();
-    }
-
-    public PropertyWidget<?> getWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-        return _widgets.get(propertyDescriptor);
-    }
-
     public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
         return _beanJobBuilder;
     }
@@ -266,7 +250,7 @@ public final class PropertyWidgetFactory {
 
         // first check if there is a mapping created for this property
         // descriptor
-        PropertyWidget<?> propertyWidget = getMappedPropertyWidget(propertyDescriptor);
+        PropertyWidget<?> propertyWidget = _propertyWidgetCollection.getMappedPropertyWidget(propertyDescriptor);
         if (propertyWidget != null) {
             result = propertyWidget;
         } else {
@@ -349,55 +333,6 @@ public final class PropertyWidgetFactory {
             result = injector.getInstance(widgetClass);
         }
 
-        registerWidget(propertyDescriptor, result);
         return result;
-    }
-
-    private PropertyWidget<?> getMappedPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-        final PropertyWidgetMapping existingMapping = _propertyWidgetMappings.get(propertyDescriptor);
-        if (existingMapping != null) {
-            PropertyWidget<?> propertyWidget = existingMapping.getMapping(propertyDescriptor);
-            if (propertyWidget != null) {
-                return propertyWidget;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Registers a widget in this factory in rare cases when the factory is not
-     * used to actually instantiate the widget, but it is still needed to
-     * register the widget for compliancy with eg. the onConfigurationChanged()
-     * behaviour.
-     * 
-     * @param propertyDescriptor
-     * @param widget
-     */
-    public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
-        if (widget == null) {
-            _widgets.remove(propertyDescriptor);
-        } else {
-            _widgets.put(propertyDescriptor, widget);
-            @SuppressWarnings("unchecked")
-            PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-            Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
-            objectWidget.initialize(value);
-        }
-    }
-
-    /**
-     * Invoked whenever a configured property within this widget factory is
-     * changed.
-     */
-    public void onConfigurationChanged() {
-        final Collection<PropertyWidget<?>> widgets = getWidgets();
-
-        for (PropertyWidget<?> widget : widgets) {
-            @SuppressWarnings("unchecked")
-            final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-            final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
-            final Object value = _beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-            objectWidget.onValueTouched(value);
-        }
     }
 }

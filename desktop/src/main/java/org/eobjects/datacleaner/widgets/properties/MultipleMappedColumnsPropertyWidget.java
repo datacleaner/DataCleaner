@@ -31,6 +31,11 @@ import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.MutableRef;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -38,11 +43,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.EqualsBuilder;
-import org.apache.metamodel.util.MutableRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,6 +299,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     @Override
     public InputColumn<?>[] getValue() {
         final InputColumn<?>[] checkedInputColumns = super.getValue();
+        if (!isVisible()) {
+            return checkedInputColumns;
+        }
         final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
         for (InputColumn<?> inputColumn : checkedInputColumns) {
             // exclude input columns that have not been mapped yet

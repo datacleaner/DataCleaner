@@ -27,8 +27,6 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
  * Defines an interface for (wrappers of) widgets that are used to edit
  * configurable properties of analyzers, transformers and filters.
  * 
- * @author Kasper Sørensen
- * 
  * @param <E>
  */
 public interface PropertyWidget<E> {

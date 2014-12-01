@@ -75,7 +75,7 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
 	public void setValue(E value) {
 		_value = value;
 	}
-
+	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		notifyListeners();
@@ -152,4 +152,13 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListe
 			listener.onItemSelected(item, selected);
 		}
 	}
+
+    public void setSelected(boolean selected, boolean notifyListeners) {
+        final boolean previous = isSelected();
+        if (selected == previous) {
+            return;
+        }
+        setSelected(selected);
+        notifyListeners();
+    }
 }

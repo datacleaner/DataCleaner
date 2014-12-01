@@ -35,16 +35,14 @@ import org.apache.metamodel.util.MutableRef;
 /**
  * Alternative String property widget, specifically built for components that
  * need a {@link Table} name drop down.
- * 
- * @author Kasper Sørensen
  */
 public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 
     private final DCComboBox<Table> _comboBox;
     private final MutableRef<Schema> _schemaRef;
 
-    public TableNamePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
+    public TableNamePropertyWidget(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(beanJobBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<Table>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
@@ -57,7 +55,7 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
         });
         add(_comboBox);
         _schemaRef = new MutableRef<Schema>();
-
+        
         setValue(getCurrentValue());
     }
 
@@ -89,9 +87,18 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
         }
     }
 
+    /**
+     * Gets the combo box containing the available {@link Table}s
+     * 
+     * @return
+     */
+    public DCComboBox<Table> getComboBox() {
+        return _comboBox;
+    }
+
     @Override
     public String getValue() {
-        Table table = getTable();
+        final Table table = getTable();
         if (table == null) {
             return null;
         }
@@ -103,7 +110,7 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
     }
 
     @Override
-    protected void setValue(String value) {
+    protected void setValue(final String value) {
         if (getValue() == value) {
             return;
         }
@@ -121,5 +128,7 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
         _comboBox.setEditable(true);
         _comboBox.setSelectedItem(table);
         _comboBox.setEditable(false);
+        
+        fireValueChanged();
     }
 }

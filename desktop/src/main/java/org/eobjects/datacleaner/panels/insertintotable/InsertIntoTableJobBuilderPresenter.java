@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.writers.InsertIntoTableAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -46,8 +47,6 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.SchemaNamePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.TableNamePropertyWidget;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the
@@ -57,121 +56,111 @@ import org.apache.metamodel.schema.Table;
  */
 class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
+    private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-	private final ConfiguredPropertyDescriptor _schemaNameProperty;
-	private final ConfiguredPropertyDescriptor _tableNameProperty;
-	private final ConfiguredPropertyDescriptor _datastoreProperty;
-	private final ConfiguredPropertyDescriptor _inputColumnsProperty;
-	private final ConfiguredPropertyDescriptor _columnNamesProperty;
-	private final ConfiguredPropertyDescriptor _errorHandlingProperty;
-	private final ConfiguredPropertyDescriptor _errorFileLocationProperty;
-	private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
-	private final ConfiguredPropertyDescriptor _bufferSizeProperty;
-	private final ConfiguredPropertyDescriptor _truncateTableProperty;
+    private final ConfiguredPropertyDescriptor _schemaNameProperty;
+    private final ConfiguredPropertyDescriptor _tableNameProperty;
+    private final ConfiguredPropertyDescriptor _datastoreProperty;
+    private final ConfiguredPropertyDescriptor _inputColumnsProperty;
+    private final ConfiguredPropertyDescriptor _columnNamesProperty;
+    private final ConfiguredPropertyDescriptor _errorHandlingProperty;
+    private final ConfiguredPropertyDescriptor _errorFileLocationProperty;
+    private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
+    private final ConfiguredPropertyDescriptor _bufferSizeProperty;
+    private final ConfiguredPropertyDescriptor _truncateTableProperty;
 
-	public InsertIntoTableJobBuilderPresenter(AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
-			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-			AnalyzerBeansConfiguration configuration) {
-		super(analyzerJobBuilder, propertyWidgetFactory);
-		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+    public InsertIntoTableJobBuilderPresenter(AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
+            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
+            AnalyzerBeansConfiguration configuration) {
+        super(analyzerJobBuilder, propertyWidgetFactory);
+        _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-		final AnalyzerBeanDescriptor<InsertIntoTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
-		assert descriptor.getComponentClass() == InsertIntoTableAnalyzer.class;
+        final AnalyzerBeanDescriptor<InsertIntoTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
+        assert descriptor.getComponentClass() == InsertIntoTableAnalyzer.class;
 
-		_datastoreProperty = descriptor.getConfiguredProperty("Datastore");
-		_schemaNameProperty = descriptor.getConfiguredProperty("Schema name");
-		_tableNameProperty = descriptor.getConfiguredProperty("Table name");
-		_inputColumnsProperty = descriptor.getConfiguredProperty("Values");
-		_columnNamesProperty = descriptor.getConfiguredProperty("Column names");
-		_bufferSizeProperty = descriptor.getConfiguredProperty("Buffer size");
-		_truncateTableProperty = descriptor.getConfiguredProperty("Truncate table");
-		_errorHandlingProperty = descriptor.getConfiguredProperty("How to handle insertion errors?");
-		_errorFileLocationProperty = descriptor.getConfiguredProperty("Error log file location");
-		_additionalErrorLogValuesProperty = descriptor.getConfiguredProperty("Additional error log values");
+        _datastoreProperty = descriptor.getConfiguredProperty("Datastore");
+        _schemaNameProperty = descriptor.getConfiguredProperty("Schema name");
+        _tableNameProperty = descriptor.getConfiguredProperty("Table name");
+        _inputColumnsProperty = descriptor.getConfiguredProperty("Values");
+        _columnNamesProperty = descriptor.getConfiguredProperty("Column names");
+        _bufferSizeProperty = descriptor.getConfiguredProperty("Buffer size");
+        _truncateTableProperty = descriptor.getConfiguredProperty("Truncate table");
+        _errorHandlingProperty = descriptor.getConfiguredProperty("How to handle insertion errors?");
+        _errorFileLocationProperty = descriptor.getConfiguredProperty("Error log file location");
+        _additionalErrorLogValuesProperty = descriptor.getConfiguredProperty("Additional error log values");
 
-		// the Datastore property
-		assert _datastoreProperty != null;
-		assert _datastoreProperty.getType() == Datastore.class;
-		final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-				analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
-		_overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
+        // the Datastore property
+        assert _datastoreProperty != null;
+        assert _datastoreProperty.getType() == Datastore.class;
+        final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
+                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
+        _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
-		// The schema name (String) property
-		final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(analyzerJobBuilder,
-				_schemaNameProperty);
-		_overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
+        // The schema name (String) property
+        final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(analyzerJobBuilder,
+                _schemaNameProperty);
+        _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
-		// The table name (String) property
-		final TableNamePropertyWidget tableNamePropertyWidget = new TableNamePropertyWidget(analyzerJobBuilder,
-				_tableNameProperty);
-		_overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
+        // The table name (String) property
+        final TableNamePropertyWidget tableNamePropertyWidget = new TableNamePropertyWidget(analyzerJobBuilder,
+                _tableNameProperty);
+        _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
-		// the InputColumn<?>[] property
-		assert _inputColumnsProperty != null;
-		assert _inputColumnsProperty.getType() == InputColumn[].class;
-		final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-				analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " -> ");
-		_overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
+        // the InputColumn<?>[] property
+        assert _inputColumnsProperty != null;
+        assert _inputColumnsProperty.getType() == InputColumn[].class;
+        final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
+                analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " -> ");
+        _overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
 
-		// the String[] property
-		assert _columnNamesProperty != null;
-		assert _columnNamesProperty.getType() == String[].class;
-		_overriddenPropertyWidgets.put(_columnNamesProperty,
-				inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
+        // the String[] property
+        assert _columnNamesProperty != null;
+        assert _columnNamesProperty.getType() == String[].class;
+        _overriddenPropertyWidgets.put(_columnNamesProperty,
+                inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 
-		// chain combo boxes
-		datastorePropertyWidget.addComboListener(new Listener<Datastore>() {
-			@Override
-			public void onItemSelected(Datastore item) {
-				schemaNamePropertyWidget.setDatastore(item);
-			}
-		});
-		schemaNamePropertyWidget.addComboListener(new Listener<Schema>() {
-			@Override
-			public void onItemSelected(Schema item) {
-				// update the table name when schema is selected
-				tableNamePropertyWidget.setSchema(item);
-			}
-		});
-		tableNamePropertyWidget.addComboListener(new Listener<Table>() {
-			@Override
-			public void onItemSelected(Table item) {
-				// update the column combo boxes when the table is selected
-				inputColumnsPropertyWidget.setTable(item);
-			}
-		});
+        // chain combo boxes
+        datastorePropertyWidget.connectToSchemaNamePropertyWidget(schemaNamePropertyWidget);
+        schemaNamePropertyWidget.connectToTableNamePropertyWidget(tableNamePropertyWidget);
 
-		// initialize
-		schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
-		tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
-		inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
-	}
+        tableNamePropertyWidget.addComboListener(new Listener<Table>() {
+            @Override
+            public void onItemSelected(Table item) {
+                // update the column combo boxes when the table is selected
+                inputColumnsPropertyWidget.setTable(item);
+            }
+        });
 
-	@Override
-	protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-		final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
-				"images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-						_inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
+        // initialize
+        schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
+        tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+        inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
+    }
 
-		final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
-				IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
-						_additionalErrorLogValuesProperty), false);
+    @Override
+    protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
+        final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
+                "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
+                        _inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
 
-		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
-		propertyTaskPanes.add(taskPane);
-		propertyTaskPanes.add(errorHandlingPane);
-		return propertyTaskPanes;
-	}
+        final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
+                IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,
+                        _additionalErrorLogValuesProperty), false);
 
-	@Override
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
-			return _overriddenPropertyWidgets.get(propertyDescriptor);
-		}
-		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
-	}
+        final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+        propertyTaskPanes.add(taskPane);
+        propertyTaskPanes.add(errorHandlingPane);
+        return propertyTaskPanes;
+    }
+
+    @Override
+    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
+            return _overriddenPropertyWidgets.get(propertyDescriptor);
+        }
+        return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+    }
 }

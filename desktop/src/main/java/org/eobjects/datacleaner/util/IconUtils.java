@@ -143,27 +143,27 @@ public final class IconUtils {
         // prevent instantiation
     }
 
-    public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
+    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
         String imagePath = getDescriptorImagePath(descriptor, classLoader);
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
-    public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
+    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
         return getDescriptorIcon(descriptor, ICON_SIZE_MEDIUM);
     }
 
-    public static Icon getDatastoreIcon(Datastore datastore, int newWidth) {
+    public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
         String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
-    public static Icon getDatastoreIcon(Datastore datastore) {
+    public static ImageIcon getDatastoreIcon(Datastore datastore) {
         String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static Icon getComponentCategoryIcon(ComponentCategory category) {
+    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
         Class<? extends ComponentCategory> categoryClass = category.getClass();
 
         final String bundledIconPath = getImagePathForClass(categoryClass);

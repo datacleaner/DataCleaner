@@ -20,19 +20,22 @@
 package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
@@ -49,12 +52,21 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     private final String _shortMessage;
     private final ComponentJobBuilderPresenter _presenter;
 
-    public ComponentConfigurationDialog(AbstractBeanJobBuilder<?, ?, ?> componentBuilder,
+    public ComponentConfigurationDialog(
+            AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> componentBuilder,
             AnalysisJobBuilder analysisJobBuilder, ComponentJobBuilderPresenter presenter) {
-        super(null, ImageManager.get().getImage("images/window/banner-logo.png"));
+        // super(null,
+        // ImageManager.get().getImage("images/window/banner-logo.png"));
+        super(null, getBannerImage(componentBuilder));
 
         _shortMessage = LabelUtils.getLabel(componentBuilder);
         _presenter = presenter;
+    }
+
+    private static Image getBannerImage(AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> componentBuilder) {
+        final ImageIcon descriptorIcon = IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(),
+                IconUtils.ICON_SIZE_LARGE);
+        return descriptorIcon.getImage();
     }
 
     @Override
@@ -80,7 +92,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     @Override
     protected JComponent getDialogContent() {
         final JComponent configurationComponent = _presenter.createJComponent();
-        
+
         final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
         closeButton.addActionListener(new ActionListener() {
             @Override
@@ -93,16 +105,16 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         toolBar.add(new NeopostToolbarButton());
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
-        
+
         final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
-        
+
         final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);
-        
+
         return panel;
     }
 }

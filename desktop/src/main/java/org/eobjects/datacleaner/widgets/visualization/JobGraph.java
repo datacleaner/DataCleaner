@@ -306,7 +306,7 @@ public final class JobGraph {
                 } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Your job is almost ready.";
-                    subTitle = "Jobs needs to either 'Analyze' or 'Write' something.\n"
+                    subTitle = "Jobs need to either 'Analyze' or 'Write' something.\n"
                             + "So add one or more such components.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else {
@@ -322,7 +322,7 @@ public final class JobGraph {
                 float subTitleFontSize;
                 if (size.width < 650) {
                     titleFontSize = 30f;
-                    subTitleFontSize = 16f;
+                    subTitleFontSize = 17f;
                 } else {
                     titleFontSize = 35f;
                     subTitleFontSize = 20f;

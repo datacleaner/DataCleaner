@@ -44,7 +44,7 @@ public class PropertyWidgetCollection {
         _beanJobBuilder = beanJobBuilder;
         _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
         _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
-        
+
         logger.debug("id={} - init", System.identityHashCode(this));
     }
 

@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -50,10 +51,14 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractJobBuilderPanel.class);
 
     private final ImageManager imageManager = ImageManager.get();
     private final DCTaskPaneContainer _taskPaneContainer;
@@ -149,11 +154,29 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     }
 
     private final void init() {
+        final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = getJobBuilder();
+
         final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
+
+        final Set<ConfiguredPropertyDescriptor> unconfiguredPropertyDescriptors = new HashSet<>();
+        unconfiguredPropertyDescriptors.addAll(componentBuilder.getDescriptor().getConfiguredProperties());
+
         for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
             buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
                     propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
-                    propertyTaskPane.getTitle(), getJobBuilder(), propertyTaskPane.isExpanded());
+                    propertyTaskPane.getTitle(), componentBuilder, propertyTaskPane.isExpanded());
+
+            unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
+        }
+
+        if (!unconfiguredPropertyDescriptors.isEmpty()) {
+            for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
+                logger.warn("No property widget was found in task panes for property: {}", property);
+                
+                // add it to the property widget collection just to be sure
+                final PropertyWidget<?> propertyWidget = createPropertyWidget(componentBuilder, property);
+                getPropertyWidgetCollection().registerWidget(property, propertyWidget);
+            }
         }
     }
 

@@ -317,12 +317,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public InputColumn<?>[] getValue() {
         final List<InputColumn<?>> result = getSelectedInputColumns();
-        
+
         if (logger.isDebugEnabled()) {
             final List<String> names = CollectionUtils.map(result, new HasNameMapper());
             logger.debug("getValue() returning: {}", names);
         }
-        
+
         return result.toArray(new InputColumn<?>[result.size()]);
     }
 
@@ -359,17 +359,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
-        // we need to save the current value before we update the components
-        // here. Otherwise any previous selections will be lost.
-        final InputColumn<?>[] value = getValue();
-        getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
-
-        updateComponents(value);
-    }
-
-    @Override
     public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
     }
 
@@ -378,6 +367,21 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         super.onPanelRemove();
         getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
         getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+    }
+
+    @Override
+    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+            List<MutableInputColumn<?>> outputColumns) {
+        if (transformerJobBuilder == getBeanJobBuilder()) {
+            return;
+        }
+
+        // we need to save the current value before we update the components
+        // here. Otherwise any previous selections will be lost.
+        final InputColumn<?>[] value = getValue();
+        getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
+
+        updateComponents(value);
     }
 
     @Override
@@ -400,7 +404,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             setValue(new InputColumn[0]);
             return;
         }
-        
+
         if (logger.isDebugEnabled()) {
             final List<String> names = CollectionUtils.map(values, new HasNameMapper());
             logger.debug("setValue({})", names);

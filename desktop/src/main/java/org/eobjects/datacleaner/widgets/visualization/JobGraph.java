@@ -295,19 +295,19 @@ public final class JobGraph {
                     imagePath = "images/window/canvas-bg-table.png";
                 } else if (_analysisJobBuilder.getComponentCount() == 0) {
                     title = "Start building ...";
-                    subTitle = "Add components to your job. Components define 'what to do'.\n"
-                            + "Right-click the canvas or use the 'Transform' and 'Analyze' buttons above.";
+                    subTitle = "Add components to your job. Right-click the canvas\n"
+                            + "to explore the library of available components.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else if (graph.getEdgeCount() == 0) {
-                    title = "Connect the pieces";
-                    subTitle = "Click the source table and drag a connection\n"
-                            + "with your mouse while holding down the Shift button.";
+                    title = "Connect the pieces ...";
+                    subTitle = "Right-click the source table and select 'Link to ...'.\n"
+                            + "This directs the flow of data to the component.";
                     imagePath = "images/window/canvas-bg-connect.png";
                 } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
-                    title = "Almost ready to run ...";
-                    subTitle = "Your job is almost ready. But any job needs to\n"
-                            + "either perform a 'Write' or 'Analyze' action.";
+                    title = "Your job is almost ready.";
+                    subTitle = "Jobs needs to either 'Analyze' or 'Write' something.\n"
+                            + "So add one or more such components.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else {
                     title = null;

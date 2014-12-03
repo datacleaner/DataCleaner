@@ -107,14 +107,7 @@ public class ChangeRequirementMenuBuilder {
 
         // if this JobBuilder is a FilterJobBuilder, remove it from the list of
         // available filters
-        final List<FilterJobBuilder<?, ?>> fjbs;
-        if (_componentBuilder instanceof FilterJobBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
-                    .getFilterJobBuilders());
-            fjbs.remove(_componentBuilder);
-        } else {
-            fjbs = _componentBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
-        }
+        final List<FilterJobBuilder<?, ?>> fjbs = getFilterJobBuilders();
 
         for (final FilterJobBuilder<?, ?> fjb : fjbs) {
             final JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
@@ -165,6 +158,18 @@ public class ChangeRequirementMenuBuilder {
         return popup;
     }
 
+    private List<FilterJobBuilder<?, ?>> getFilterJobBuilders() {
+        final List<FilterJobBuilder<?, ?>> fjbs;
+        if (_componentBuilder instanceof FilterJobBuilder<?, ?>) {
+            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
+                    .getFilterJobBuilders());
+            fjbs.remove(_componentBuilder);
+        } else {
+            fjbs = _componentBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
+        }
+        return fjbs;
+    }
+
     private boolean validateRequirementSource(FilterJobBuilder<?, ?> fjb) {
         if (_componentBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
             AbstractBeanWithInputColumnsBuilder<?, ?, ?> abstractBeanWithInputColumnsBuilder = (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) _componentBuilder;
@@ -174,6 +179,9 @@ public class ChangeRequirementMenuBuilder {
     }
 
     protected void onRequirementChanged() {
+    }
 
+    public boolean isFilterRequirementsAvailable() {
+        return !getFilterJobBuilders().isEmpty();
     }
 }

@@ -95,7 +95,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 			// notification
 			return;
 		}
-		E existingValue = getValue();
+		final E existingValue = getValue();
 		if (EqualsBuilder.equals(value, existingValue)) {
 			return;
 		}

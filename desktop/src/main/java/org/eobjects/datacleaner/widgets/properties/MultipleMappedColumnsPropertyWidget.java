@@ -35,7 +35,6 @@ import javax.swing.JComponent;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.apache.metamodel.util.MutableRef;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -62,10 +61,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
     private final MinimalPropertyWidget<String[]> _mappedColumnNamesPropertyWidget;
 
-    // indicates whether there is currently undergoing a source column listener
-    // action
-    private volatile boolean _sourceColumnUpdating;
-
     /**
      * Constructs the property widget
      * 
@@ -86,7 +81,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
         _tableRef = new MutableRef<Table>();
         _mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
-        _sourceColumnUpdating = false;
 
         final InputColumn<?>[] currentValue = getCurrentValue();
         final String[] currentMappedColumnsValue = (String[]) beanJobBuilder
@@ -165,10 +159,8 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
                 if (isBatchUpdating()) {
                     return;
                 }
-                _sourceColumnUpdating = true;
-                fireValueChanged();
                 _mappedColumnNamesPropertyWidget.fireValueChanged();
-                _sourceColumnUpdating = false;
+                fireValueChanged();
             }
         });
         return sourceColumnComboBox;
@@ -194,7 +186,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
             @Override
             public void onItemSelected(InputColumn<?> item, boolean selected) {
-                _sourceColumnUpdating = true;
                 decoratedSourceColumnComboBox.setVisible(selected);
             }
         });
@@ -205,7 +196,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
                     return;
                 }
                 _mappedColumnNamesPropertyWidget.fireValueChanged();
-                _sourceColumnUpdating = false;
             }
         });
 
@@ -251,14 +241,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
             @Override
             public boolean isSet() {
-                final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
-                for (InputColumn<?> inputColumn : inputColumns) {
-                    SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
-                    if (comboBox.getSelectedItem() == null) {
-                        return false;
-                    }
-                }
-                return true;
+                return MultipleMappedColumnsPropertyWidget.this.isSet();
             }
 
             @Override
@@ -268,22 +251,10 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
             @Override
             protected void setValue(String[] value) {
-                if (_sourceColumnUpdating) {
-                    // setValue of the mapped columns will be called prematurely
-                    // (with previous value) by change notifications of the
-                    // input columns property.
-                    logger.debug("MappedColumnNames.setValue(...) skipped - source columns are updating");
-                    return;
-                }
-
                 if (logger.isDebugEnabled()) {
                     logger.debug("MappedColumnNames.setValue({})", Arrays.toString(value));
                 }
 
-                if (EqualsBuilder.equals(value, getValue())) {
-                    logger.debug("MappedColumnNames.setValue(...) skipped - not a changed value");
-                    return;
-                }
                 final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
                 for (int i = 0; i < inputColumns.length; i++) {
                     final InputColumn<?> inputColumn = inputColumns[i];

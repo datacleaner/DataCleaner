@@ -147,7 +147,7 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 
         final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
                 "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnArrayProperty));
+                        _inputColumnArrayProperty, _columnNameArrayProperty));
         final ConfiguredPropertyTaskPane outputMappingTaskPane = new ConfiguredPropertyTaskPane("Output mapping",
                 IconUtils.MENU_OPTIONS, Arrays.asList(_outputColumnsProperty, _joinSemanticProperty,
                         _cacheLookupsProperty));

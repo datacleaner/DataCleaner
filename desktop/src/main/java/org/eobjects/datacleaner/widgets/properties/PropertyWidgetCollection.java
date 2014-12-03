@@ -26,11 +26,15 @@ import java.util.Map;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains the {@link PropertyWidget}s of a particular component
  */
 public class PropertyWidgetCollection {
+
+    private static final Logger logger = LoggerFactory.getLogger(PropertyWidgetCollection.class);
 
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets;
@@ -40,6 +44,8 @@ public class PropertyWidgetCollection {
         _beanJobBuilder = beanJobBuilder;
         _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
         _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
+        
+        logger.debug("id={} - init", System.identityHashCode(this));
     }
 
     public Collection<PropertyWidget<?>> getWidgets() {
@@ -93,6 +99,24 @@ public class PropertyWidgetCollection {
      */
     public void onConfigurationChanged() {
         final Collection<PropertyWidget<?>> widgets = getWidgets();
+
+        if (logger.isDebugEnabled()) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("id=");
+            sb.append(System.identityHashCode(this));
+            sb.append(" - onConfigurationChanged() - notifying widgets:");
+            sb.append(widgets.size());
+            for (PropertyWidget<?> widget : widgets) {
+                final String propertyName = widget.getPropertyDescriptor().getName();
+                final String propertyWidgetClassName = widget.getClass().getSimpleName();
+                sb.append("\n - ");
+                sb.append(propertyName);
+                sb.append(": ");
+                sb.append(propertyWidgetClassName);
+            }
+
+            logger.debug(sb.toString());
+        }
 
         for (PropertyWidget<?> widget : widgets) {
             @SuppressWarnings("unchecked")

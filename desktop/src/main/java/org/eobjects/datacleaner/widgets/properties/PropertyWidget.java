@@ -32,7 +32,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 public interface PropertyWidget<E> {
 
 	public void initialize(E value);
-	
+
 	public JComponent getWidget();
 
 	public ConfiguredPropertyDescriptor getPropertyDescriptor();

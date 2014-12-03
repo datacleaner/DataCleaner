@@ -198,7 +198,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
                 @Override
                 protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-                    PropertyWidget<?> propertyWidget = createPropertyWidget(getJobBuilder(), propertyDescriptor);
+                    final PropertyWidget<?> propertyWidget = createPropertyWidget(getJobBuilder(), propertyDescriptor);
                     getPropertyWidgetCollection().registerWidget(propertyDescriptor, propertyWidget);
                     return propertyWidget;
                 }

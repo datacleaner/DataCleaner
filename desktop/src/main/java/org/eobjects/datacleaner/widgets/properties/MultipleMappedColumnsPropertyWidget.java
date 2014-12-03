@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -271,9 +272,16 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
                     // setValue of the mapped columns will be called prematurely
                     // (with previous value) by change notifications of the
                     // input columns property.
+                    logger.debug("MappedColumnNames.setValue(...) skipped - source columns are updating");
                     return;
                 }
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("MappedColumnNames.setValue({})", Arrays.toString(value));
+                }
+
                 if (EqualsBuilder.equals(value, getValue())) {
+                    logger.debug("MappedColumnNames.setValue(...) skipped - not a changed value");
                     return;
                 }
                 final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
@@ -296,37 +304,25 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         };
     }
 
-    @Override
-    public InputColumn<?>[] getValue() {
-        final InputColumn<?>[] checkedInputColumns = super.getValue();
-        if (!isVisible()) {
-            return checkedInputColumns;
-        }
-        final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-        for (InputColumn<?> inputColumn : checkedInputColumns) {
-            // exclude input columns that have not been mapped yet
-            final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
-            if (comboBox != null) {
-                if (comboBox.getSelectedItem() != null) {
-                    result.add(inputColumn);
-                }
-            }
-        }
-        return result.toArray(new InputColumn[result.size()]);
-    }
-
     private String[] getMappedColumnNames() {
         final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
         final List<String> result = new ArrayList<String>();
         for (InputColumn<?> inputColumn : inputColumns) {
-            SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
-            if (comboBox != null) {
-                Column column = comboBox.getSelectedItem();
-                if (column != null) {
+            final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+            if (comboBox == null) {
+                result.add(null);
+            } else {
+                final Column column = comboBox.getSelectedItem();
+                if (column == null) {
+                    result.add(null);
+                } else {
                     result.add(column.getName());
                 }
             }
         }
+
+        logger.debug("getMappedColumnNames() returning: {}", result);
+
         return result.toArray(new String[result.size()]);
     }
 

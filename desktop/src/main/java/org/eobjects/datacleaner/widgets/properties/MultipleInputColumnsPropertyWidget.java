@@ -43,6 +43,8 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
 import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
@@ -68,12 +70,16 @@ import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Property widget for multiple input columns. Displays these as checkboxes.
  */
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
+
+    private static final Logger logger = LoggerFactory.getLogger(MultipleInputColumnsPropertyWidget.class);
 
     // border for the button panel and search box to make them "indented"
     // similar to the check boxes.
@@ -320,6 +326,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 }
             }
         }
+        
+        if (logger.isDebugEnabled()) {
+            final List<String> names = CollectionUtils.map(result, new HasNameMapper());
+            logger.debug("getValue() returning: {}", names);
+        }
+        
         return result.toArray(new InputColumn<?>[result.size()]);
     }
 
@@ -379,10 +391,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     protected void setValue(final InputColumn<?>[] values) {
         if (values == null) {
+            logger.debug("setValue(null) - delegating to setValue([])");
             setValue(new InputColumn[0]);
             return;
         }
         
+        if (logger.isDebugEnabled()) {
+            final List<String> names = CollectionUtils.map(values, new HasNameMapper());
+            logger.debug("setValue({})", names);
+        }
+
         // if checkBoxes is empty it means that the value is being set before
         // initializing the widget. This can occur in subclasses and automatic
         // creating of checkboxes should be done.

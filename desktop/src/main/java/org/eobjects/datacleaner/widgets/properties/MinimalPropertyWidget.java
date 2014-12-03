@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Minimalistic abstract implementation of the {@link PropertyWidget} interface.
  * 
- * @author Kasper Sørensen
- * 
  * @param <E>
  */
 public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
@@ -44,7 +42,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 
-	private transient volatile int _updating;
+	private transient int _updating;
 
 	public MinimalPropertyWidget(
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,

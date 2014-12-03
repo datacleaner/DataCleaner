@@ -292,7 +292,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         final List<E> result = new ArrayList<E>();
         for (final InputColumn<?> inputColumn : inputColumns) {
             final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-            if (comboBox == null) {
+            if (comboBox == null || !comboBox.isVisible()) {
                 result.add(null);
             } else {
                 final E value = comboBox.getSelectedItem();

@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * changed.</li>
  * </ul>
  * 
- * @author Kasper Sørensen
- * 
  * @param <E>
  */
 public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E> {

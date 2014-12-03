@@ -48,7 +48,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
     private ConfiguredPropertyDescriptor mappedColumnsProperty;
     private AnalysisJobBuilder ajb;
     private MultipleMappedColumnsPropertyWidget propertyWidget;
-    private PropertyWidget<String[]> mappedColumnNamesPropertyWidget;
+    private MultipleMappedColumnsPropertyWidget.MappedColumnNamesPropertyWidget mappedColumnNamesPropertyWidget;
     private TransformerJobBuilder<MockMultipleMappedColumnsTransformer> tjb;
     private InputColumn<?> source1;
     private InputColumn<?> source2;
@@ -113,8 +113,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
         });
 
         propertyWidget.initialize(null);
-
-        // TODO: set up property widget factory, which is listening on "tjb".
+        mappedColumnNamesPropertyWidget.initialize(null);
     }
 
     public void testRemoveColumnRemovesString() throws Exception {
@@ -165,7 +164,6 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
     }
 
     public void testCustomMutableTable() throws Exception {
-        propertyWidget.initialize(null);
         final Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxes = propertyWidget.getCheckBoxes();
         final Map<InputColumn<?>, SourceColumnComboBox> comboBoxes = propertyWidget.getMappedColumnComboBoxes();
 

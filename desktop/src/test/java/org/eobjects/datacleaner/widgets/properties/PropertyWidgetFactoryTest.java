@@ -185,11 +185,17 @@ public class PropertyWidgetFactoryTest extends TestCase {
         PropertyWidget<Object> widget = (PropertyWidget<Object>) propertyWidgetFactory.create(propertyName);
         assertNotNull(widget);
         assertEquals(widgetClass, widget.getClass());
+        
+        widget.initialize(null);
 
         assertEquals(propertyName, widget.getPropertyDescriptor().getName());
 
+        final boolean equals = EqualsBuilder.equals(initialValue, widget.getValue());
+        if (!equals) {
+            assertEquals(ArrayUtils.toString(initialValue), ArrayUtils.toString(widget.getValue()));
+        }
         assertTrue("Expected: " + initialValue + ", actual: " + widget.getValue(),
-                EqualsBuilder.equals(initialValue, widget.getValue()));
+                equals);
         widget.onValueTouched(setValue);
         assertTrue(widget.isSet());
         assertTrue(

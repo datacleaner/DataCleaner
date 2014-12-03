@@ -31,6 +31,8 @@ import java.util.WeakHashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -42,9 +44,6 @@ import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.EqualsBuilder;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
@@ -54,13 +53,41 @@ import org.apache.metamodel.util.EqualsBuilder;
  */
 public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
+    public class MappedInputColumnsPropertyWidget extends MinimalPropertyWidget<InputColumn<?>[]> {
+
+        public MappedInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+                ConfiguredPropertyDescriptor propertyDescriptor) {
+            super(beanJobBuilder, propertyDescriptor);
+        }
+
+        @Override
+        public JComponent getWidget() {
+            // do not return a visual widget
+            return null;
+        }
+
+        @Override
+        public boolean isSet() {
+            return MultipleMappedInputColumnsPropertyWidget.this.isSet();
+        }
+
+        @Override
+        public InputColumn<?>[] getValue() {
+            return getMappedInputColumns();
+        }
+
+        @Override
+        protected void setValue(InputColumn<?>[] value) {
+            if (MultipleMappedInputColumnsPropertyWidget.this.isUpdating()) {
+                return;
+            }
+            setMappedInputColumns(value);
+        }
+    }
+
     private final WeakHashMap<InputColumn<?>, DCComboBox<InputColumn<?>>> _mappedInputColumnComboBoxes;
     private final ConfiguredPropertyDescriptor _mappedInputColumnsProperty;
-    private final MinimalPropertyWidget<InputColumn<?>[]> _mappedInputColumnsPropertyWidget;
-
-    // indicates whether there is currently undergoing a input column listener
-    // action
-    private volatile boolean _mappedInputColumnUpdating;
+    private final MappedInputColumnsPropertyWidget _mappedInputColumnsPropertyWidget;
 
     /**
      * Constructs the property widget
@@ -80,8 +107,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         _mappedInputColumnComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<InputColumn<?>>>();
         _mappedInputColumnsProperty = mappedColumnsProperty;
 
-        _mappedInputColumnsPropertyWidget = createMappedColumnNamesPropertyWidget();
-        _mappedInputColumnUpdating = false;
+        _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(beanJobBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
         final InputColumn<?>[] currentMappedColumnsValue = (InputColumn<?>[]) beanJobBuilder
@@ -160,10 +186,8 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
                 if (isBatchUpdating()) {
                     return;
                 }
-                _mappedInputColumnUpdating = true;
                 fireValueChanged();
                 _mappedInputColumnsPropertyWidget.fireValueChanged();
-                _mappedInputColumnUpdating = false;
             }
         });
         return comboBox;
@@ -189,7 +213,6 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
             @Override
             public void onItemSelected(InputColumn<?> item, boolean selected) {
-                _mappedInputColumnUpdating = true;
                 decoratedSourceColumnComboBox.setVisible(selected);
             }
         });
@@ -200,7 +223,6 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
                     return;
                 }
                 _mappedInputColumnsPropertyWidget.fireValueChanged();
-                _mappedInputColumnUpdating = false;
             }
         });
 
@@ -226,68 +248,12 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         return sourceColumnComboBox;
     }
 
-    public PropertyWidget<InputColumn<?>[]> getMappedInputColumnsPropertyWidget() {
+    public MappedInputColumnsPropertyWidget getMappedInputColumnsPropertyWidget() {
         return _mappedInputColumnsPropertyWidget;
     }
 
-    private MinimalPropertyWidget<InputColumn<?>[]> createMappedColumnNamesPropertyWidget() {
-        MinimalPropertyWidget<InputColumn<?>[]> propertyWidget = new MinimalPropertyWidget<InputColumn<?>[]>(
-                getBeanJobBuilder(), _mappedInputColumnsProperty) {
-
-            @Override
-            public JComponent getWidget() {
-                // do not return a visual widget
-                return null;
-            }
-
-            @Override
-            public boolean isSet() {
-                final InputColumn<?>[] inputColumns = MultipleMappedInputColumnsPropertyWidget.this.getValue();
-                for (InputColumn<?> inputColumn : inputColumns) {
-                    DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
-                    if (comboBox.getSelectedItem() == null) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public InputColumn<?>[] getValue() {
-                return getMappedColumns();
-            }
-
-            @Override
-            protected void setValue(InputColumn<?>[] value) {
-                if (_mappedInputColumnUpdating) {
-                    // setValue of the mapped columns will be called prematurely
-                    // (with previous value) by change notifications of the
-                    // input columns property.
-                    return;
-                }
-                if (EqualsBuilder.equals(value, getValue())) {
-                    return;
-                }
-                final InputColumn<?>[] inputColumns = MultipleMappedInputColumnsPropertyWidget.this.getValue();
-                for (int i = 0; i < inputColumns.length; i++) {
-                    final InputColumn<?> inputColumn = inputColumns[i];
-                    final InputColumn<?> mappedColumn;
-                    if (value == null) {
-                        mappedColumn = null;
-                    } else if (i < value.length) {
-                        mappedColumn = value[i];
-                    } else {
-                        mappedColumn = null;
-                    }
-                    final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
-                    comboBox.setEditable(true);
-                    comboBox.setSelectedItem(mappedColumn);
-                    comboBox.setEditable(false);
-                }
-            }
-        };
-
-        return propertyWidget;
+    public ConfiguredPropertyDescriptor getMappedInputColumnsProperty() {
+        return _mappedInputColumnsProperty;
     }
 
     @Override
@@ -306,16 +272,38 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         return result.toArray(new InputColumn[result.size()]);
     }
 
-    private InputColumn<?>[] getMappedColumns() {
-        final InputColumn<?>[] inputColumns = MultipleMappedInputColumnsPropertyWidget.this.getValue();
+    public void setMappedInputColumns(InputColumn<?>[] value) {
+        final List<InputColumn<?>> inputColumns = MultipleMappedInputColumnsPropertyWidget.this
+                .getSelectedInputColumns();
+        for (int i = 0; i < inputColumns.size(); i++) {
+            final InputColumn<?> inputColumn = inputColumns.get(i);
+            final InputColumn<?> mappedColumn;
+            if (value == null) {
+                mappedColumn = null;
+            } else if (i < value.length) {
+                mappedColumn = value[i];
+            } else {
+                mappedColumn = null;
+            }
+            final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
+            comboBox.setVisible(true);
+            comboBox.setEditable(true);
+            comboBox.setSelectedItem(mappedColumn);
+            comboBox.setEditable(false);
+        }
+    }
+
+    public InputColumn<?>[] getMappedInputColumns() {
+        final List<InputColumn<?>> inputColumns = MultipleMappedInputColumnsPropertyWidget.this
+                .getSelectedInputColumns();
         final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
         for (InputColumn<?> inputColumn : inputColumns) {
-            DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
-            if (comboBox != null) {
-                InputColumn<?> column = comboBox.getSelectedItem();
-                if (column != null) {
-                    result.add(column);
-                }
+            final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
+            if (comboBox == null) {
+                result.add(null);
+            } else {
+                final InputColumn<?> column = comboBox.getSelectedItem();
+                result.add(column);
             }
         }
         return result.toArray(new InputColumn[result.size()]);

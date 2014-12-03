@@ -318,14 +318,24 @@ public final class JobGraph {
                 final int yOffset = size.height - 150;
                 final int xOffset = 150;
 
+                float titleFontSize;
+                float subTitleFontSize;
+                if (size.width < 650) {
+                    titleFontSize = 30f;
+                    subTitleFontSize = 16f;
+                } else {
+                    titleFontSize = 35f;
+                    subTitleFontSize = 20f;
+                }
+
                 if (title != null) {
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(35f));
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(titleFontSize));
                     g.drawString(title, xOffset, yOffset);
                 }
 
                 if (subTitle != null) {
                     final String[] lines = subTitle.split("\n");
-                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(20f));
+                    g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
                     int y = yOffset + 10;
                     for (String line : lines) {
                         y = y + 30;

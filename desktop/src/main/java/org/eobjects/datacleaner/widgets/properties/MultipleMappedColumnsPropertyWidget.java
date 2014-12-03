@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
-    private class MappedColumnNamesPropertyWidget extends MinimalPropertyWidget<String[]> {
+    public class MappedColumnNamesPropertyWidget extends MinimalPropertyWidget<String[]> {
 
         public MappedColumnNamesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
                 ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -79,6 +79,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
         @Override
         protected void setValue(String[] value) {
+            if (MultipleMappedColumnsPropertyWidget.this.isUpdating()) {
+                return;
+            }
             setMappedColumnNames(value);
         }
     }
@@ -88,7 +91,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
     private final MutableRef<Table> _tableRef;
     private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
-    private final MinimalPropertyWidget<String[]> _mappedColumnNamesPropertyWidget;
+    private final MappedColumnNamesPropertyWidget _mappedColumnNamesPropertyWidget;
 
     /**
      * Constructs the property widget
@@ -135,9 +138,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
             logger.debug("setMappedColumnNames({})", Arrays.toString(mappedColumnNames));
         }
 
-        final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
-        for (int i = 0; i < inputColumns.length; i++) {
-            final InputColumn<?> inputColumn = inputColumns[i];
+        final List<InputColumn<?>> inputColumns = MultipleMappedColumnsPropertyWidget.this.getSelectedInputColumns();
+        for (int i = 0; i < inputColumns.size(); i++) {
+            final InputColumn<?> inputColumn = inputColumns.get(i);
             final String mappedColumnName;
             if (mappedColumnNames == null) {
                 mappedColumnName = null;
@@ -147,6 +150,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
                 mappedColumnName = null;
             }
             final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+            comboBox.setVisible(true);
             comboBox.setEditable(true);
             comboBox.setSelectedItem(mappedColumnName);
             comboBox.setEditable(false);
@@ -288,7 +292,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         return sourceColumnComboBox;
     }
 
-    public PropertyWidget<String[]> getMappedColumnNamesPropertyWidget() {
+    public MappedColumnNamesPropertyWidget getMappedColumnNamesPropertyWidget() {
         return _mappedColumnNamesPropertyWidget;
     }
 

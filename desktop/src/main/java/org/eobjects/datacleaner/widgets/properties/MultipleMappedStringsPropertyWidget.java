@@ -35,7 +35,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 
 /**
@@ -43,263 +42,232 @@ import org.jdesktop.swingx.JXTextField;
  * string values. This widget looks like the
  * {@link MultipleInputColumnsPropertyWidget}, but is enhanced with string text
  * fields.
- * 
- * @author Kasper Sørensen
  */
-public class MultipleMappedStringsPropertyWidget extends
-		MultipleInputColumnsPropertyWidget {
+public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
-	private final WeakHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
-	private final ConfiguredPropertyDescriptor _mappedStringsProperty;
-	private final MinimalPropertyWidget<String[]> _mappedStringPropertyWidget;
+    public class MappedStringsPropertyWidget extends MinimalPropertyWidget<String[]> {
 
-	// indicates whether there is currently undergoing a string listener action
-	private volatile boolean _stringsUpdating;
+        public MappedStringsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+                ConfiguredPropertyDescriptor propertyDescriptor) {
+            super(beanJobBuilder, propertyDescriptor);
+        }
 
-	/**
-	 * Constructs the property widget
-	 * 
-	 * @param beanJobBuilder
-	 *            the transformer job builder for the table lookup
-	 * @param inputColumnsProperty
-	 *            the property represeting the columns to use for settig up
-	 *            conditional lookup (InputColumn[])
-	 * @param mappedStringsProperty
-	 *            the property representing the mapped strings (String[])
-	 */
-	public MultipleMappedStringsPropertyWidget(
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor inputColumnsProperty,
-			ConfiguredPropertyDescriptor mappedStringsProperty) {
-		super(beanJobBuilder, inputColumnsProperty);
-		_mappedTextFields = new WeakHashMap<InputColumn<?>, JXTextField>();
-		_mappedStringsProperty = mappedStringsProperty;
+        @Override
+        public JComponent getWidget() {
+            // do not return a visual widget
+            return null;
+        }
 
-		_mappedStringPropertyWidget = createMappedStringsPropertyWidget();
+        @Override
+        public boolean isSet() {
+            return MultipleMappedStringsPropertyWidget.this.isSet();
+        }
 
-		_stringsUpdating = false;
+        @Override
+        public String[] getValue() {
+            return getMappedStrings();
+        }
 
-		final InputColumn<?>[] currentValue = getCurrentValue();
-		final String[] currentMappedStringsValue = (String[]) beanJobBuilder
-				.getConfiguredProperty(mappedStringsProperty);
-		if (currentValue != null && currentMappedStringsValue != null) {
-			// first create combo's, then set value (so combo is ready before it
-			// is requested)
+        @Override
+        protected void setValue(final String[] value) {
+            if (MultipleMappedStringsPropertyWidget.this.isUpdating()) {
+                return;
+            }
+            setMappedStrings(value);
+        }
+    }
 
-			_mappedStringPropertyWidget.setValue(currentMappedStringsValue);
-			final int minLength = Math.min(currentValue.length,
-					currentMappedStringsValue.length);
-			for (int i = 0; i < minLength; i++) {
-				final InputColumn<?> inputColumn = currentValue[i];
-				final String mappedString = currentMappedStringsValue[i];
-				createTextField(inputColumn, mappedString);
-			}
+    private final WeakHashMap<InputColumn<?>, JXTextField> _mappedTextFields;
+    private final ConfiguredPropertyDescriptor _mappedStringsProperty;
+    private final MappedStringsPropertyWidget _mappedStringsPropertyWidget;
 
-			setValue(currentValue);
-		}
-	}
+    /**
+     * Constructs the property widget
+     * 
+     * @param beanJobBuilder
+     *            the transformer job builder for the table lookup
+     * @param inputColumnsProperty
+     *            the property represeting the columns to use for settig up
+     *            conditional lookup (InputColumn[])
+     * @param mappedStringsProperty
+     *            the property representing the mapped strings (String[])
+     */
+    public MultipleMappedStringsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedStringsProperty) {
+        super(beanJobBuilder, inputColumnsProperty);
+        _mappedTextFields = new WeakHashMap<InputColumn<?>, JXTextField>();
+        _mappedStringsProperty = mappedStringsProperty;
 
-	@Override
-	protected boolean isAllInputColumnsSelectedIfNoValueExist() {
-		return false;
-	}
+        _mappedStringsPropertyWidget = new MappedStringsPropertyWidget(beanJobBuilder, mappedStringsProperty);
 
-	private JXTextField createTextField(InputColumn<?> inputColumn,
-			String mappedString) {
-		final JXTextField textField = WidgetFactory.createTextField();
-		_mappedTextFields.put(inputColumn, textField);
+        final InputColumn<?>[] currentValue = getCurrentValue();
+        final String[] currentMappedStringsValue = (String[]) beanJobBuilder
+                .getConfiguredProperty(mappedStringsProperty);
+        if (currentValue != null && currentMappedStringsValue != null) {
+            // first create combo's, then set value (so combo is ready before it
+            // is requested)
 
-		if (mappedString == null) {
-			mappedString = getDefaultMappedString(inputColumn);
-		}
-		if (mappedString != null) {
-			textField.setText(mappedString);
-		}
-		textField.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
-				if (isBatchUpdating()) {
-					return;
-				}
-				_stringsUpdating = true;
-				fireValueChanged();
-				_mappedStringPropertyWidget.fireValueChanged();
-				_stringsUpdating = false;
-			}
-		});
-		return textField;
-	}
+            _mappedStringsPropertyWidget.setValue(currentMappedStringsValue);
+            final int minLength = Math.min(currentValue.length, currentMappedStringsValue.length);
+            for (int i = 0; i < minLength; i++) {
+                final InputColumn<?> inputColumn = currentValue[i];
+                final String mappedString = currentMappedStringsValue[i];
+                createTextField(inputColumn, mappedString);
+            }
 
-	/**
-	 * Subclasses can override this method to set a default value for a column
-	 * when it is selected.
-	 * 
-	 * @param inputColumn
-	 * @return
-	 */
-	protected String getDefaultMappedString(InputColumn<?> inputColumn) {
-		return "";
-	}
+            setValue(currentValue);
+        }
+    }
 
-	@Override
-	protected JComponent decorateCheckBox(
-			final DCCheckBox<InputColumn<?>> checkBox) {
-		final JXTextField textField;
-		if (_mappedTextFields.containsKey(checkBox.getValue())) {
-			textField = _mappedTextFields.get(checkBox.getValue());
-		} else {
-			textField = createTextField(checkBox.getValue(), null);
-		}
-		checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
-			@Override
-			public void onItemSelected(InputColumn<?> item, boolean selected) {
-				textField.setVisible(selected);
-				updateUI();
-			}
-		});
-		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
-			@Override
-			public void onItemSelected(InputColumn<?> item, boolean selected) {
-				if (isBatchUpdating()) {
-					return;
-				}
-				_mappedStringPropertyWidget.fireValueChanged();
-			}
-		});
+    @Override
+    protected boolean isAllInputColumnsSelectedIfNoValueExist() {
+        return false;
+    }
 
-		textField.setVisible(checkBox.isSelected());
+    private JXTextField createTextField(InputColumn<?> inputColumn, String mappedString) {
+        final JXTextField textField = WidgetFactory.createTextField();
+        _mappedTextFields.put(inputColumn, textField);
 
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(checkBox, BorderLayout.CENTER);
-		panel.add(textField, BorderLayout.EAST);
-		return panel;
-	}
+        if (mappedString == null) {
+            mappedString = getDefaultMappedString(inputColumn);
+        }
+        if (mappedString != null) {
+            textField.setText(mappedString);
+        }
+        textField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                if (isBatchUpdating()) {
+                    return;
+                }
+                fireValueChanged();
+                _mappedStringsPropertyWidget.fireValueChanged();
+            }
+        });
+        return textField;
+    }
 
-	public PropertyWidget<String[]> getMappedStringsPropertyWidget() {
-		return _mappedStringPropertyWidget;
-	}
+    /**
+     * Subclasses can override this method to set a default value for a column
+     * when it is selected.
+     * 
+     * @param inputColumn
+     * @return
+     */
+    protected String getDefaultMappedString(InputColumn<?> inputColumn) {
+        return "";
+    }
 
-	private MinimalPropertyWidget<String[]> createMappedStringsPropertyWidget() {
-		return new MinimalPropertyWidget<String[]>(getBeanJobBuilder(),
-				_mappedStringsProperty) {
+    @Override
+    protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
+        final JXTextField textField;
+        if (_mappedTextFields.containsKey(checkBox.getValue())) {
+            textField = _mappedTextFields.get(checkBox.getValue());
+        } else {
+            textField = createTextField(checkBox.getValue(), null);
+        }
+        checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
+            @Override
+            public void onItemSelected(InputColumn<?> item, boolean selected) {
+                textField.setVisible(selected);
+                updateUI();
+            }
+        });
+        checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
+            @Override
+            public void onItemSelected(InputColumn<?> item, boolean selected) {
+                if (isBatchUpdating()) {
+                    return;
+                }
+                _mappedStringsPropertyWidget.fireValueChanged();
+            }
+        });
 
-			@Override
-			public JComponent getWidget() {
-				// do not return a visual widget
-				return null;
-			}
+        textField.setVisible(checkBox.isSelected());
 
-			@Override
-			public boolean isSet() {
-				final InputColumn<?>[] inputColumns = MultipleMappedStringsPropertyWidget.this
-						.getValue();
-				for (InputColumn<?> inputColumn : inputColumns) {
-					JXTextField textField = _mappedTextFields.get(inputColumn);
-					if (StringUtils.isNullOrEmpty(textField.getText())) {
-						return false;
-					}
-				}
-				return true;
-			}
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(checkBox, BorderLayout.CENTER);
+        panel.add(textField, BorderLayout.EAST);
+        return panel;
+    }
 
-			@Override
-			public String[] getValue() {
-				return getMappedStrings();
-			}
+    public ConfiguredPropertyDescriptor getMappedStringsProperty() {
+        return _mappedStringsProperty;
+    }
 
-			@Override
-			protected void setValue(String[] value) {
-				if (_stringsUpdating) {
-					// setValue of the strings will be called prematurely
-					// (with previous value) by change notifications of the
-					// input columns property.
-					return;
-				}
-				
-				if (value == null) {
-					value = new String[0];
-				}
+    public MappedStringsPropertyWidget getMappedStringsPropertyWidget() {
+        return _mappedStringsPropertyWidget;
+    }
 
-				if (EqualsBuilder.equals(value, getValue())) {
-					return;
-				}
-				final InputColumn<?>[] inputColumns = MultipleMappedStringsPropertyWidget.this
-						.getValue();
+    @Override
+    public InputColumn<?>[] getValue() {
+        InputColumn<?>[] checkedInputColumns = super.getValue();
+        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        for (InputColumn<?> inputColumn : checkedInputColumns) {
+            // exclude input columns that have not been mapped yet
+            final JXTextField textField = _mappedTextFields.get(inputColumn);
+            if (textField != null && textField.isVisible()) {
+                if (!StringUtils.isNullOrEmpty(textField.getText())) {
+                    result.add(inputColumn);
+                }
+            }
+        }
+        return result.toArray(new InputColumn[result.size()]);
+    }
 
-				if (inputColumns.length != value.length) {
-					// disregard this invalid value update
-					return;
-				}
+    public void setMappedStrings(String[] value) {
+        final List<InputColumn<?>> inputColumns = MultipleMappedStringsPropertyWidget.this.getSelectedInputColumns();
 
-				for (int i = 0; i < inputColumns.length; i++) {
-					final InputColumn<?> inputColumn = inputColumns[i];
-					final String mappedString;
-					if (value == null) {
-						mappedString = getDefaultMappedString(inputColumn);
-					} else if (i < value.length) {
-						mappedString = value[i];
-					} else {
-						mappedString = getDefaultMappedString(inputColumn);
-					}
-					final JXTextField textField = _mappedTextFields
-							.get(inputColumn);
+        for (int i = 0; i < inputColumns.size(); i++) {
+            final InputColumn<?> inputColumn = inputColumns.get(i);
+            final String mappedString;
+            if (value == null) {
+                mappedString = getDefaultMappedString(inputColumn);
+            } else if (i < value.length) {
+                mappedString = value[i];
+            } else {
+                mappedString = getDefaultMappedString(inputColumn);
+            }
+            final JXTextField textField = _mappedTextFields.get(inputColumn);
+            textField.setVisible(true);
 
-					final String previousText = textField.getText();
-					if (!mappedString.equals(previousText)) {
-						textField.setText(mappedString);
-					}
-				}
-			}
-		};
-	}
+            final String previousText = textField.getText();
+            if (!mappedString.equals(previousText)) {
+                textField.setText(mappedString);
+            }
+        }
+    }
 
-	@Override
-	public InputColumn<?>[] getValue() {
-		InputColumn<?>[] checkedInputColumns = super.getValue();
-		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-		for (InputColumn<?> inputColumn : checkedInputColumns) {
-			// exclude input columns that have not been mapped yet
-			final JXTextField textField = _mappedTextFields.get(inputColumn);
-			if (textField != null && textField.isVisible()) {
-				if (!StringUtils.isNullOrEmpty(textField.getText())) {
-					result.add(inputColumn);
-				}
-			}
-		}
-		return result.toArray(new InputColumn[result.size()]);
-	}
+    public String[] getMappedStrings() {
+        final List<InputColumn<?>> inputColumns = MultipleMappedStringsPropertyWidget.this.getSelectedInputColumns();
+        final List<String> result = new ArrayList<String>();
+        for (InputColumn<?> inputColumn : inputColumns) {
+            final JXTextField textField = _mappedTextFields.get(inputColumn);
+            if (textField == null) {
+                result.add(null);
+            } else {
+                final String value = textField.getText();
+                result.add(value);
+            }
+        }
 
-	private String[] getMappedStrings() {
-		final InputColumn<?>[] inputColumns = MultipleMappedStringsPropertyWidget.this
-				.getValue();
-		final List<String> result = new ArrayList<String>();
-		for (InputColumn<?> inputColumn : inputColumns) {
-			JXTextField textField = _mappedTextFields.get(inputColumn);
-			if (textField != null) {
-				String value = textField.getText();
-				if (!StringUtils.isNullOrEmpty(value)) {
-					result.add(value);
-				}
-			}
-		}
+        return result.toArray(new String[result.size()]);
+    }
 
-		return result.toArray(new String[result.size()]);
-	}
+    @Override
+    protected void selectAll() {
+        for (JXTextField textField : _mappedTextFields.values()) {
+            textField.setVisible(true);
+        }
+        super.selectAll();
+    }
 
-	@Override
-	protected void selectAll() {
-		for (JXTextField textField : _mappedTextFields.values()) {
-			textField.setVisible(true);
-		}
-		super.selectAll();
-	}
-
-	@Override
-	protected void selectNone() {
-		for (JXTextField textField : _mappedTextFields.values()) {
-			textField.setVisible(false);
-		}
-		super.selectNone();
-	}
+    @Override
+    protected void selectNone() {
+        for (JXTextField textField : _mappedTextFields.values()) {
+            textField.setVisible(false);
+        }
+        super.selectNone();
+    }
 }

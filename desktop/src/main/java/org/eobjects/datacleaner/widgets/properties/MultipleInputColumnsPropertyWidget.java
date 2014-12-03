@@ -316,6 +316,17 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     @Override
     public InputColumn<?>[] getValue() {
+        final List<InputColumn<?>> result = getSelectedInputColumns();
+        
+        if (logger.isDebugEnabled()) {
+            final List<String> names = CollectionUtils.map(result, new HasNameMapper());
+            logger.debug("getValue() returning: {}", names);
+        }
+        
+        return result.toArray(new InputColumn<?>[result.size()]);
+    }
+
+    protected List<InputColumn<?>> getSelectedInputColumns() {
         final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
         final Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes.values();
         for (final DCCheckBox<InputColumn<?>> cb : checkBoxes) {
@@ -326,13 +337,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 }
             }
         }
-        
-        if (logger.isDebugEnabled()) {
-            final List<String> names = CollectionUtils.map(result, new HasNameMapper());
-            logger.debug("getValue() returning: {}", names);
-        }
-        
-        return result.toArray(new InputColumn<?>[result.size()]);
+        return result;
     }
 
     @Override

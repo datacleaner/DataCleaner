@@ -39,8 +39,6 @@ import com.google.inject.util.Providers;
 /**
  * Module with ad hoc variables for limited scoping. Useful module to use as an
  * argument to {@link Injector#createChildInjector(Module...)};
- * 
- * @author Kasper Sørensen
  */
 final class AdHocModule implements Module {
 
@@ -81,21 +79,21 @@ final class AdHocModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
-		Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
-		for (Entry<TypeLiteral<?>, Object> entry : entrySet) {
+	    final Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
+		for (final Entry<TypeLiteral<?>, Object> entry : entrySet) {
 			@SuppressWarnings("unchecked")
-			TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
+			final TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
 
-			Object providerOrInstance = entry.getValue();
+			final Object providerOrInstance = entry.getValue();
 
-			logger.info("Binding ad-hoc dependency for {}: {}", bindingLiteral, providerOrInstance);
+			logger.debug("Binding ad-hoc dependency for {}: {}", bindingLiteral, providerOrInstance);
 
 			if (providerOrInstance instanceof Provider) {
-				Provider<?> provider = (Provider<?>) providerOrInstance;
-				com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
+			    final Provider<?> provider = (Provider<?>) providerOrInstance;
+			    final com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
 				binder.bind(bindingLiteral).toProvider(guiceProvider);
 			} else if (providerOrInstance instanceof com.google.inject.Provider) {
-				com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
+			    final com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
 				binder.bind(bindingLiteral).toProvider(guiceProvider);
 			} else {
 				binder.bind(bindingLiteral).toInstance(providerOrInstance);

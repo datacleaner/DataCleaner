@@ -54,6 +54,35 @@ import org.slf4j.LoggerFactory;
  */
 public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
+    private class MappedColumnNamesPropertyWidget extends MinimalPropertyWidget<String[]> {
+
+        public MappedColumnNamesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+                ConfiguredPropertyDescriptor propertyDescriptor) {
+            super(beanJobBuilder, propertyDescriptor);
+        }
+
+        @Override
+        public JComponent getWidget() {
+            // do not return a visual widget
+            return null;
+        }
+
+        @Override
+        public boolean isSet() {
+            return MultipleMappedColumnsPropertyWidget.this.isSet();
+        }
+
+        @Override
+        public String[] getValue() {
+            return getMappedColumnNames();
+        }
+
+        @Override
+        protected void setValue(String[] value) {
+            setMappedColumnNames(value);
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MultipleMappedColumnsPropertyWidget.class);
 
     private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
@@ -80,7 +109,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         _mappedColumnsProperty = mappedColumnsProperty;
 
         _tableRef = new MutableRef<Table>();
-        _mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
+        _mappedColumnNamesPropertyWidget = new MappedColumnNamesPropertyWidget(beanJobBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
         final String[] currentMappedColumnsValue = (String[]) beanJobBuilder
@@ -98,6 +127,29 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
             }
 
             setValue(currentValue);
+        }
+    }
+
+    public void setMappedColumnNames(String[] mappedColumnNames) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("setMappedColumnNames({})", Arrays.toString(mappedColumnNames));
+        }
+
+        final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
+        for (int i = 0; i < inputColumns.length; i++) {
+            final InputColumn<?> inputColumn = inputColumns[i];
+            final String mappedColumnName;
+            if (mappedColumnNames == null) {
+                mappedColumnName = null;
+            } else if (i < mappedColumnNames.length) {
+                mappedColumnName = mappedColumnNames[i];
+            } else {
+                mappedColumnName = null;
+            }
+            final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+            comboBox.setEditable(true);
+            comboBox.setSelectedItem(mappedColumnName);
+            comboBox.setEditable(false);
         }
     }
 
@@ -171,6 +223,16 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         return table.getColumnByName(inputColumn.getName());
     }
 
+    /**
+     * Gets the {@link ConfiguredPropertyDescriptor} of the property that has
+     * the column names that are being mapped to.
+     * 
+     * @return
+     */
+    public ConfiguredPropertyDescriptor getMappedColumnsProperty() {
+        return _mappedColumnsProperty;
+    }
+
     @Override
     protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
         final SourceColumnComboBox sourceColumnComboBox;
@@ -230,57 +292,13 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
         return _mappedColumnNamesPropertyWidget;
     }
 
-    private MinimalPropertyWidget<String[]> createMappedColumnNamesPropertyWidget() {
-        return new MinimalPropertyWidget<String[]>(getBeanJobBuilder(), _mappedColumnsProperty) {
-
-            @Override
-            public JComponent getWidget() {
-                // do not return a visual widget
-                return null;
-            }
-
-            @Override
-            public boolean isSet() {
-                return MultipleMappedColumnsPropertyWidget.this.isSet();
-            }
-
-            @Override
-            public String[] getValue() {
-                return getMappedColumnNames();
-            }
-
-            @Override
-            protected void setValue(String[] value) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("MappedColumnNames.setValue({})", Arrays.toString(value));
-                }
-
-                final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
-                for (int i = 0; i < inputColumns.length; i++) {
-                    final InputColumn<?> inputColumn = inputColumns[i];
-                    final String mappedColumnName;
-                    if (value == null) {
-                        mappedColumnName = null;
-                    } else if (i < value.length) {
-                        mappedColumnName = value[i];
-                    } else {
-                        mappedColumnName = null;
-                    }
-                    final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
-                    comboBox.setEditable(true);
-                    comboBox.setSelectedItem(mappedColumnName);
-                    comboBox.setEditable(false);
-                }
-            }
-        };
-    }
-
-    private String[] getMappedColumnNames() {
-        final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
+    public String[] getMappedColumnNames() {
+        final List<InputColumn<?>> selectedInputColumns = getSelectedInputColumns();
         final List<String> result = new ArrayList<String>();
-        for (InputColumn<?> inputColumn : inputColumns) {
+        for (InputColumn<?> inputColumn : selectedInputColumns) {
             final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
             if (comboBox == null) {
+                logger.warn("No SourceColumnComboBox found for input column: {}", inputColumn);
                 result.add(null);
             } else {
                 final Column column = comboBox.getSelectedItem();

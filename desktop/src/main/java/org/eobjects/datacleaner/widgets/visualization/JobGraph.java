@@ -266,8 +266,8 @@ public final class JobGraph {
 
             @Override
             public void paint(Graphics g) {
-                GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0, visualizationViewer
-                        .getHeight(), WidgetUtils.BG_COLOR_BRIGHT);
+                final GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0,
+                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHT);
                 if (g instanceof Graphics2D) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setPaint(paint);
@@ -275,6 +275,13 @@ public final class JobGraph {
                     g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
                 }
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
+
+                final Dimension size = getPanel().getSize();
+                if (size.height < 300) {
+                    // don't show the background hints - it will be too
+                    // disturbing
+                    return;
+                }
 
                 final String title;
                 final String subTitle;
@@ -308,7 +315,6 @@ public final class JobGraph {
                     imagePath = null;
                 }
 
-                final Dimension size = getPanel().getSize();
                 final int yOffset = size.height - 150;
                 final int xOffset = 150;
 

@@ -29,9 +29,11 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
+import org.elasticsearch.common.collect.IdentityHashSet;
 import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.metadata.HasMetadataProperties;
@@ -67,8 +69,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
     private volatile boolean _transformed;
 
-    public JobGraphLayoutTransformer(AnalysisJobBuilder analysisJobBuilder,
-            DirectedGraph<Object, JobGraphLink> graph) {
+    public JobGraphLayoutTransformer(AnalysisJobBuilder analysisJobBuilder, DirectedGraph<Object, JobGraphLink> graph) {
         _analysisJobBuilder = analysisJobBuilder;
         _graph = graph;
         createPoints();
@@ -103,14 +104,14 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     private void createPrerequisitePoints(final Object vertex, final int vertexX) {
-        List<Object> prerequisites = getPrerequisites(vertex);
+        final List<Object> prerequisites = getPrerequisites(vertex);
 
         // sort so that the longest trails will be plotted first
         Collections.sort(prerequisites, longestTrailComparator);
 
         for (Object prerequisiteVertex : prerequisites) {
             if (!_points.containsKey(prerequisiteVertex)) {
-                final int x = vertexX - 1;
+                final int x = Math.max(0, vertexX - 1);
                 final Point point = createPoint(prerequisiteVertex, x, false);
                 _points.put(prerequisiteVertex, point);
 
@@ -226,21 +227,30 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
     }
 
     private int getAccumulatedPrerequisiteCount(Object obj) {
+        final Set<JobGraphLink> visitedEdges = new IdentityHashSet<>();
+        return getAccumulatedPrerequisiteCount(obj, visitedEdges);
+    }
+
+    private int getAccumulatedPrerequisiteCount(Object obj, Set<JobGraphLink> visitedEdges) {
         Collection<JobGraphLink> edges = _graph.getInEdges(obj);
         if (edges == null || edges.isEmpty()) {
             return 0;
         }
         int max = 0;
         for (JobGraphLink edge : edges) {
-            assert edge.getTo() == obj;
-            final Object from = edge.getFrom();
-            if (obj == from) {
-                // strange case where an edge is both going from and to the same
-                // vertex.
-                return max;
+            final boolean added = visitedEdges.add(edge);
+            if (added) {
+                assert edge.getTo() == obj;
+                final Object from = edge.getFrom();
+                if (obj == from) {
+                    // strange case where an edge is both going from and to the
+                    // same
+                    // vertex.
+                    return max;
+                }
+                final int count = getAccumulatedPrerequisiteCount(from, visitedEdges) + 1;
+                max = Math.max(max, count);
             }
-            final int count = getAccumulatedPrerequisiteCount(from) + 1;
-            max = Math.max(max, count);
         }
         return max;
     }

@@ -67,7 +67,11 @@ public final class ResourceManager {
 
     public List<URL> getUrls(String path, ClassLoader... classLoaders) {
         if (classLoaders == null || classLoaders.length == 0) {
-            classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
+            if (ClassLoaderUtils.getParentClassLoader().equals(getClass().getClassLoader())) {
+                classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader() };
+            } else {
+                classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader(), getClass().getClassLoader() };
+            }
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("Custom classloaders specified: {}", Arrays.toString(classLoaders));

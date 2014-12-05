@@ -42,8 +42,9 @@ public class RemoveComponentMenuItem extends JMenuItem implements ActionListener
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AbstractBeanJobBuilder<?, ?, ?> _componentBuilder;
 
-    public RemoveComponentMenuItem(AnalysisJobBuilder analysisJobBuilder, AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
-        super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE));
+    public RemoveComponentMenuItem(AnalysisJobBuilder analysisJobBuilder,
+            AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+        super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE, IconUtils.ICON_SIZE_SMALL));
         _analysisJobBuilder = analysisJobBuilder;
         _componentBuilder = componentBuilder;
         addActionListener(this);

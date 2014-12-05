@@ -30,7 +30,7 @@ public class RenameComponentMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
 
     public RenameComponentMenuItem(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
-        super("Rename component", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME));
+        super("Rename component", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL));
         addActionListener(new RenameComponentActionListener(componentBuilder) {
             @Override
             protected void onNameChanged() {

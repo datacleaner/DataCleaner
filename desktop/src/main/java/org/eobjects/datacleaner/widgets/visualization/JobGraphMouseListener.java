@@ -108,6 +108,10 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onComponentDoubleClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
+        showConfigurationDialog(componentBuilder);
+    }
+
+    private void showConfigurationDialog(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
@@ -144,13 +148,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         popup.add(createLinkMenuItem(table));
 
         final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
-                IconUtils.ACTION_PREVIEW));
+                IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
         final Datastore datastore = analysisJobBuilder.getDatastore();
         final List<MetaModelInputColumn> inputColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
         previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_windowContext, datastore, inputColumns));
         popup.add(previewMenuItem);
-
+        popup.addSeparator();
         popup.add(new RemoveSourceTableMenuItem(analysisJobBuilder, table));
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
@@ -161,8 +165,18 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param componentBuilder
      * @param me
      */
-    public void onComponentRightClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
+    public void onComponentRightClicked(final AbstractBeanJobBuilder<?, ?, ?> componentBuilder, final MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
+
+        final JMenuItem configureComponentMenuItem = new JMenuItem("Configure ...", ImageManager.get().getImageIcon(
+                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
+        configureComponentMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showConfigurationDialog(componentBuilder);
+            }
+        });
+        popup.add(configureComponentMenuItem);
 
         if (componentBuilder instanceof InputColumnSourceJob || componentBuilder instanceof HasFilterOutcomes) {
             popup.add(createLinkMenuItem(componentBuilder));
@@ -173,20 +187,22 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (componentBuilder instanceof TransformerJobBuilder) {
             final TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
-                    IconUtils.ACTION_PREVIEW));
+                    IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
             previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
             previewMenuItem.setEnabled(componentBuilder.isConfigured());
             popup.add(previewMenuItem);
         }
 
         popup.add(new ChangeRequirementMenu(componentBuilder));
+        popup.addSeparator();
         popup.add(new RemoveComponentMenuItem(_graphContext.getAnalysisJobBuilder(), componentBuilder));
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
     private JMenuItem createLinkMenuItem(final Object from) {
         final ImageManager imageManager = ImageManager.get();
-        final JMenuItem menuItem = new JMenuItem("Link to ...", imageManager.getImageIcon(IconUtils.ACTION_ADD));
+        final JMenuItem menuItem = new JMenuItem("Link to ...", imageManager.getImageIcon(IconUtils.ACTION_ADD,
+                IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

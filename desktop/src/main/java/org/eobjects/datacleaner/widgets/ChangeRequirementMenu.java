@@ -33,8 +33,8 @@ public class ChangeRequirementMenu extends JMenu {
 
     public ChangeRequirementMenu(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
         super("Set requirement");
-        setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH));
-        
+        setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+
         final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(componentBuilder);
         if (menuBuilder.isFilterRequirementsAvailable()) {
             final List<JMenuItem> menuItems = menuBuilder.createMenuItems();
@@ -44,6 +44,6 @@ public class ChangeRequirementMenu extends JMenu {
         } else {
             setEnabled(false);
         }
-        
+
     }
 }

@@ -47,6 +47,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -57,6 +58,7 @@ import org.eobjects.analyzer.job.InputColumnSourceJob;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.ComponentBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.result.AnalyzerResult;
@@ -471,13 +473,19 @@ public final class JobGraph {
                 if (obj == MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
                     return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
                 }
-                if (obj instanceof AbstractBeanJobBuilder) {
-                    return IconUtils.getDescriptorIcon(((AbstractBeanJobBuilder<?, ?, ?>) obj).getDescriptor(),
-                            IconUtils.ICON_SIZE_LARGE);
+                if (obj instanceof ComponentBuilder) {
+                    final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
+                    final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+                    final boolean configured;
+                    if (componentBuilder.getInput().length == 0) {
+                        configured = true;
+                    } else {
+                        configured = componentBuilder.isConfigured(false);
+                    }
+                    return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
                 }
                 if (obj instanceof FilterOutcome) {
-                    return imageManager.getImageIcon("images/component-types/filter-outcome.png",
-                            IconUtils.ICON_SIZE_MEDIUM);
+                    return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
                 }
                 if (obj instanceof Table) {
                     return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
@@ -485,7 +493,7 @@ public final class JobGraph {
                 if (obj instanceof Class) {
                     Class<?> cls = (Class<?>) obj;
                     if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                        return imageManager.getImageIcon("images/model/result.png", IconUtils.ICON_SIZE_LARGE);
+                        return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
                     }
                 }
                 return imageManager.getImageIcon(IconUtils.STATUS_ERROR);

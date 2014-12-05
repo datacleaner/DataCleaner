@@ -74,6 +74,7 @@ public final class IconUtils {
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
+    public static final String MODEL_RESULT = "images/model/result.png";
 
     public static final String MENU_OPEN = "images/actions/open.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
@@ -129,6 +130,7 @@ public final class IconUtils {
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
+    public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
@@ -141,6 +143,23 @@ public final class IconUtils {
 
     private IconUtils() {
         // prevent instantiation
+    }
+
+    public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, boolean configured, int iconWidth) {
+        final ImageIcon descriptorIcon = getDescriptorIcon(descriptor, iconWidth);
+        if (configured) {
+            return descriptorIcon;
+        }
+
+        // add a small error symbol to unconfigured components
+        final int offset = 4;
+        final int decorationSize = iconWidth / 2;
+        final Image errorImage = _imageManager.getImage(STATUS_ERROR, decorationSize);
+        final BufferedImage bufferedImage = new BufferedImage(iconWidth + offset, iconWidth + offset,
+                BufferedImage.TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(descriptorIcon.getImage(), offset, 0, null);
+        bufferedImage.getGraphics().drawImage(errorImage, 0, iconWidth + offset - decorationSize, null);
+        return new ImageIcon(bufferedImage);
     }
 
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
@@ -376,7 +395,8 @@ public final class IconUtils {
             return imagePath;
         } else if (datastore instanceof JdbcDatastore) {
             JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-            if (considerOrderdbSpecialization && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
+            if (considerOrderdbSpecialization
+                    && "jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
                 imagePath = "images/datastore-types/orderdb.png";
             } else {
                 String driverClass = jdbcDatastore.getDriverClass();

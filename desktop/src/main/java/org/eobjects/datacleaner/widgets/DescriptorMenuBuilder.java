@@ -30,10 +30,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.apache.metamodel.util.CollectionUtils;
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.util.CollectionUtils2;
+import org.eobjects.datacleaner.util.DeprecatedComponentPredicate;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +58,9 @@ public abstract class DescriptorMenuBuilder {
     }
 
     public DescriptorMenuBuilder(Collection<? extends BeanDescriptor<?>> descriptors, boolean buildSubmenus) {
-        _descriptors = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
+        final Collection<? extends BeanDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
+                new DeprecatedComponentPredicate());
+        _descriptors = CollectionUtils2.sorted(filteredDescriptors, new DisplayNameComparator());
         _buildSubmenus = buildSubmenus;
     }
 
@@ -76,9 +80,9 @@ public abstract class DescriptorMenuBuilder {
             }
             return;
         }
-        
+
         final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
-        
+
         // build sub menus
         {
             for (BeanDescriptor<?> descriptor : _descriptors) {

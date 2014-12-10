@@ -40,50 +40,45 @@ import org.apache.metamodel.util.ImmutableRef;
 import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)
-public class TestToolAnalyzerSwingResultRenderer implements
-		Renderer<TestToolAnalyzerResult, JComponent> {
+public class TestToolAnalyzerSwingResultRenderer implements Renderer<TestToolAnalyzerResult, JComponent> {
 
-	@Inject
-	InjectorBuilder injectorBuilder;
+    @Inject
+    InjectorBuilder injectorBuilder;
 
-	@Override
-	public RendererPrecedence getPrecedence(TestToolAnalyzerResult result) {
-		return RendererPrecedence.HIGH;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(TestToolAnalyzerResult result) {
+        return RendererPrecedence.HIGH;
+    }
 
-	@Override
-	public JComponent render(TestToolAnalyzerResult result) {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new VerticalLayout());
+    @Override
+    public JComponent render(TestToolAnalyzerResult result) {
+        DCPanel panel = new DCPanel();
+        panel.setLayout(new VerticalLayout());
 
-		DCLabel label = DCLabel.dark("Test was succesfull!");
-		label.setFont(WidgetUtils.FONT_HEADER1);
-		label.setIcon(ImageManager.getInstance().getImageIcon(
-				"images/status/valid.png"));
-		if (!result.isSuccesfull()) {
-			label.setText("Test failed!");
-			label.setIcon(ImageManager.getInstance().getImageIcon(
-					"images/status/error.png"));
-		}
-		panel.add(label);
+        DCLabel label = DCLabel.dark("Test was succesfull!");
+        label.setFont(WidgetUtils.FONT_HEADER1);
+        label.setIcon(ImageManager.get().getImageIcon("images/status/valid.png"));
+        if (!result.isSuccesfull()) {
+            label.setText("Test failed!");
+            label.setIcon(ImageManager.get().getImageIcon("images/status/error.png"));
+        }
+        panel.add(label);
 
-		AnnotatedRowsResult errorRowsResult = result.getErrorRowsResult();
-		if (!result.isSuccesfull()) {
-			AnnotatedRowsResultSwingRenderer annotatedRowResultRenderer = injectorBuilder
-					.getInstance(AnnotatedRowsResultSwingRenderer.class);
-			DCPanel errorRowsPanel = annotatedRowResultRenderer
-					.render(errorRowsResult);
+        AnnotatedRowsResult errorRowsResult = result.getErrorRowsResult();
+        if (!result.isSuccesfull()) {
+            AnnotatedRowsResultSwingRenderer annotatedRowResultRenderer = injectorBuilder
+                    .getInstance(AnnotatedRowsResultSwingRenderer.class);
+            DCPanel errorRowsPanel = annotatedRowResultRenderer.render(errorRowsResult);
 
-			String text = errorRowsResult.getAnnotatedRowCount() + " errornous records";
-			DCCollapsiblePanel errorCollapsiblePanel = new DCCollapsiblePanel(
-					text, text, false,
-					ImmutableRef.<JComponent> of(errorRowsPanel));
+            String text = errorRowsResult.getAnnotatedRowCount() + " errornous records";
+            DCCollapsiblePanel errorCollapsiblePanel = new DCCollapsiblePanel(text, text, false,
+                    ImmutableRef.<JComponent> of(errorRowsPanel));
 
-			DCPanel innerPanel = errorCollapsiblePanel.toPanel();
-			innerPanel.setBorder(new EmptyBorder(4, 10, 4, 10));
-			panel.add(innerPanel);
-		}
+            DCPanel innerPanel = errorCollapsiblePanel.toPanel();
+            innerPanel.setBorder(new EmptyBorder(4, 10, 4, 10));
+            panel.add(innerPanel);
+        }
 
-		return panel;
-	}
+        return panel;
+    }
 }

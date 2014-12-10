@@ -41,7 +41,7 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
 
     val jpanel = new StackedAreaAnalyzerResultSwingRenderer().render(result);
 
-    LookAndFeelManager.getInstance().init();
+    LookAndFeelManager.get().init();
 
     val window = new JFrame("Example window")
     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)

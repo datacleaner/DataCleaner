@@ -6,7 +6,7 @@
 		<configuration-name>DataCleaner configuration</configuration-name>
 		<configuration-description>Configures DataCleaner's initial environment.
 			This includes example datastores and example reference data.</configuration-description>
-		<configuration-version>3.7</configuration-version>
+		<configuration-version>4.0</configuration-version>
 		<author>DataCleaner.org</author>
 	</configuration-metadata>
 

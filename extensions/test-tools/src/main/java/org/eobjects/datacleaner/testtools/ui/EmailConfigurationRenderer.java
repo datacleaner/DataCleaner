@@ -33,7 +33,7 @@ public class EmailConfigurationRenderer extends DefaultListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.get();
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value,

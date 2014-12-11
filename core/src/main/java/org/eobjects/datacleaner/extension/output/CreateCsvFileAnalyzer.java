@@ -40,6 +40,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.HasLabelAdvice;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -53,7 +54,7 @@ import org.apache.metamodel.util.Resource;
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(WriteDataCategory.class)
 @Distributed(false)
-public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
+public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
     @Configured(order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
@@ -90,6 +91,14 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
         file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+    }
+    
+    @Override
+    public String getSuggestedLabel() {
+        if (file == null) {
+            return null;
+        }
+        return file.getName();
     }
 
     @Override

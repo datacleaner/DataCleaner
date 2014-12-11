@@ -115,7 +115,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         // add a max rows filter
         final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
-        maxRowFilter.getConfigurableBean().setMaxRows(_previewRows);
+        maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();

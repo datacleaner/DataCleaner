@@ -88,9 +88,8 @@ public final class ImageManager {
             URL url = resourceManager.getUrl(imagePath, classLoaders);
 
             if (url == null && classLoaders != null) {
-                return getImage(imagePath, null);
-            }
-            else if (url == null) {
+                return getImage(imagePath, new ClassLoader[0]);
+            } else if (url == null) {
                 logger.warn("Image path ({}) could not be resolved", imagePath);
                 throw new IllegalArgumentException("Could not read image: '" + imagePath
                         + "' (url could not be resolved)");

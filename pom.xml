@@ -8,7 +8,7 @@
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>18.0</guava.version>
-		<analyzerbeans.version>1.0.4</analyzerbeans.version>
+		<analyzerbeans.version>1.0.5</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -131,9 +131,13 @@
 		</contributor>
 	</contributors>
 	<issueManagement>
-		<system>trac</system>
-		<url>http://eobjects.org/trac</url>
+		<system>GitHub</system>
+		<url>https://github.com/datacleaner/DataCleaner/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/datacleaner/DataCleaner</url>
+	</ciManagement>
 	<licenses>
 		<license>
 			<name>Lesser General Public License</name>
@@ -144,7 +148,7 @@
 		<url>https://github.com/datacleaner/DataCleaner</url>
 		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
-	  <tag>HEAD</tag>
+		<tag>HEAD</tag>
   </scm>
 	<mailingLists>
 		<mailingList>
@@ -439,13 +443,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${javadoc.version}</version>
-				<configuration>
-					<links>
-						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
-						<link>http://metamodel.eobjects.org/apidocs/</link>
-						<link>http://sassyreader.eobjects.org/apidocs/</link>
-					</links>
-				</configuration>
 				<reportSets>
 					<reportSet>
 						<id>aggregate</id>

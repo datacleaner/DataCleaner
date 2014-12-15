@@ -132,7 +132,7 @@
 	</contributors>
 	<issueManagement>
 		<system>trac</system>
-		<url>http://eobjects.org/trac</url>
+		<url>https://github.com/datacleaner/DataCleaner/issues</url>
 	</issueManagement>
 	<licenses>
 		<license>
@@ -144,7 +144,7 @@
 		<url>https://github.com/datacleaner/DataCleaner</url>
 		<connection>scm:git:https://github.com/datacleaner/DataCleaner.git</connection>
 		<developerConnection>scm:git:https://github.com/datacleaner/DataCleaner.git</developerConnection>
-	  <tag>HEAD</tag>
+		<tag>3.7.x</tag>
   </scm>
 	<mailingLists>
 		<mailingList>
@@ -439,13 +439,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${javadoc.version}</version>
-				<configuration>
-					<links>
-						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
-						<link>http://metamodel.eobjects.org/apidocs/</link>
-						<link>http://sassyreader.eobjects.org/apidocs/</link>
-					</links>
-				</configuration>
 				<reportSets>
 					<reportSet>
 						<id>aggregate</id>

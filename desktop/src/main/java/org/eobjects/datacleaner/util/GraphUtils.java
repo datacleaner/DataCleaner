@@ -22,7 +22,9 @@ package org.eobjects.datacleaner.util;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.MouseWheelEvent;
 import java.util.Arrays;
 
 import org.apache.commons.collections15.Transformer;
@@ -34,11 +36,10 @@ import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.util.ArrowFactory;
 
 /**
  * Contains features related to layout and styling of JUNG based graphs.
- * 
- * @author Kasper Sørensen
  */
 public class GraphUtils {
 
@@ -47,6 +48,8 @@ public class GraphUtils {
     private GraphUtils() {
         // prevent instantiation
     }
+    
+    public static final Shape ARROW_SHAPE = ArrowFactory.getWedgeArrow(10, 10);
 
     public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
         final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
@@ -67,9 +70,17 @@ public class GraphUtils {
         renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
         renderContext.setEdgeFontTransformer(GraphUtils.<E> createFontTransformer());
         renderContext.setVertexFontTransformer(GraphUtils.<V> createFontTransformer());
-
-        final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
+        
+        final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                // avoid zooming
+                return;
+            }
+        };
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+        graphMouse.setZoomAtMouse(false);
+        
         visualizationViewer.setGraphMouse(graphMouse);
     }
 
@@ -86,7 +97,7 @@ public class GraphUtils {
                 if (input instanceof HasName) {
                     str = ((HasName) input).getName();
                 } else if (input instanceof Object[]) {
-                    str = Arrays.toString((Object[])input);
+                    str = Arrays.toString((Object[]) input);
                 } else {
                     str = input.toString();
                 }

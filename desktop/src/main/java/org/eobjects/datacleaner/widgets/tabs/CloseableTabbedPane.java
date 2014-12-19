@@ -291,12 +291,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
     }
 
     @Override
-    public void removeNotify() {
-        super.removeNotify();
-        closeAllTabs();
-    }
-
-    @Override
     public Color getForegroundAt(int index) {
         if (getSelectedIndex() == index) {
             return WidgetUtils.BG_COLOR_DARKEST;

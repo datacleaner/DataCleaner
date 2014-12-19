@@ -38,6 +38,7 @@ import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.HasLabelAdvice;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
 import org.apache.metamodel.util.FileResource;
@@ -47,55 +48,64 @@ import org.apache.metamodel.util.FileResource;
 @Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
 @Categorized(WriteDataCategory.class)
 @Distributed(false)
-public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer {
+public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
-	@Configured
-	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
-	File file = new File("DataCleaner-staging.xlsx");
+    @Configured
+    @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
+    File file = new File("DataCleaner-staging.xlsx");
 
-	@Configured
-	String sheetName;
+    @Configured
+    String sheetName;
 
-	@Validate
-	public void validate() {
-		if (sheetName.indexOf(".") != -1) {
-			throw new IllegalStateException("Sheet name cannot contain dots (.)");
-		}
-	}
+    @Override
+    public String getSuggestedLabel() {
+        if (file == null || sheetName == null) {
+            return null;
+        }
+        return file.getName() + " - " + sheetName;
+    }
 
-	@Override
-	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
-	}
+    @Validate
+    public void validate() {
+        if (sheetName.indexOf(".") != -1) {
+            throw new IllegalStateException("Sheet name cannot contain dots (.)");
+        }
+    }
 
-	@Override
-	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
-		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
-	}
+    @Override
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor,
+            String categoryName) {
+        final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
+        sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
+    }
 
-	@Override
-	public OutputWriter createOutputWriter() {
-		String[] headers = new String[columns.length];
-		for (int i = 0; i < headers.length; i++) {
-			headers[i] = columns[i].getName();
-		}
-		return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
-	}
+    @Override
+    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
+        final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
+        sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
+    }
 
-	@Override
-	protected WriteDataResult getResultInternal(int rowCount) {
-		Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
-		WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
-		return result;
-	}
+    @Override
+    public OutputWriter createOutputWriter() {
+        String[] headers = new String[columns.length];
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] = columns[i].getName();
+        }
+        return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
+    }
 
-	public void setFile(File file) {
-		this.file = file;
-	}
+    @Override
+    protected WriteDataResult getResultInternal(int rowCount) {
+        Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
+        WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
+        return result;
+    }
 
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
-	}
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+    }
 }

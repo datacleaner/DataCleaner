@@ -27,8 +27,6 @@ import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException
  * Interface for all job builder presenter objects. These are objects that are
  * used to present the configuration screen (eg. the builder objects) of a
  * component.
- * 
- * @author Kasper Sørensen
  */
 public interface ComponentJobBuilderPresenter {
 
@@ -56,14 +54,4 @@ public interface ComponentJobBuilderPresenter {
 	 *             in case one or more properties have not been configured
 	 */
 	public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
-
-	/**
-	 * Invoked when a configured property changes.
-	 */
-	public void onConfigurationChanged();
-	
-    /**
-     * Invoked when the requirement for this component changes.
-     */
-    public void onRequirementChanged();
 }

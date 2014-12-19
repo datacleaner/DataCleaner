@@ -39,11 +39,9 @@ public class DCBannerPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Image DEFAULT_LEFT_IMAGE = ImageManager.get()
-            .getImage("images/window/banner-logo.png");
+    private static final Image DEFAULT_LEFT_IMAGE = ImageManager.get().getImage("images/window/banner-logo.png");
     private static final Image DEFAULT_BG_IMAGE = ImageManager.get().getImage("images/window/banner-bg.png");
-    private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.get().getImage(
-            "images/window/banner-right.png");
+    private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.get().getImage("images/window/banner-right.png");
 
     private static final int DEFAULT_HEIGHT = 80;
 
@@ -140,7 +138,9 @@ public class DCBannerPanel extends JPanel {
         }
 
         if (_leftImage != null) {
-            g.drawImage(_leftImage, x, y, this);
+            final int imageHeight = _leftImage.getHeight(this);
+            int imageY = (getHeight() - imageHeight) / 2;
+            g.drawImage(_leftImage, x + 5, imageY, this);
         }
 
         if (_rightImage != null) {
@@ -160,7 +160,7 @@ public class DCBannerPanel extends JPanel {
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             }
 
-            final int titleX = _titleIndent + 10;
+            final int titleX = _titleIndent + 15;
 
             // draw title 1
             g.setFont(WidgetUtils.FONT_BANNER);

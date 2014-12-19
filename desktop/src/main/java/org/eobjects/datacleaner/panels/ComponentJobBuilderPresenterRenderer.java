@@ -27,6 +27,7 @@ import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -36,51 +37,47 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Renders/creates the default panels that present component job builders.
- * 
- * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class ComponentJobBuilderPresenterRenderer implements
-		Renderer<AbstractBeanJobBuilder<?, ?, ?>, ComponentJobBuilderPresenter> {
+        Renderer<AbstractBeanJobBuilder<?, ?, ?>, ComponentJobBuilderPresenter> {
 
-	@Inject
-	@Provided
-	WindowContext windowContext;
+    @Inject
+    @Provided
+    WindowContext windowContext;
 
-	@Inject
-	@Provided
-	AnalyzerBeansConfiguration configuration;
+    @Inject
+    @Provided
+    AnalyzerBeansConfiguration configuration;
 
-	@Inject
-	@Provided
-	InjectorBuilder injectorBuilder;
+    @Inject
+    @Provided
+    InjectorBuilder injectorBuilder;
 
-	@Override
-	public RendererPrecedence getPrecedence(
-			AbstractBeanJobBuilder<?, ?, ?> renderable) {
-		return RendererPrecedence.LOW;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+        return RendererPrecedence.LOW;
+    }
 
-	@Override
-	public ComponentJobBuilderPresenter render(
-			AbstractBeanJobBuilder<?, ?, ?> renderable) {
-		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder
-				.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER,
-						renderable).getInstance(PropertyWidgetFactory.class);
+    @Override
+    public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+        final AnalysisJobBuilder analysisJobBuilder = renderable.getAnalysisJobBuilder();
 
-		if (renderable instanceof FilterJobBuilder) {
-			FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;
-			return new FilterJobBuilderPanel(fjb, windowContext,
-					propertyWidgetFactory);
-		} else if (renderable instanceof TransformerJobBuilder) {
-			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-			return new TransformerJobBuilderPanel(tjb, windowContext,
-					propertyWidgetFactory, configuration);
-		} else if (renderable instanceof AnalyzerJobBuilder) {
-			AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
-			return new AnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
-		}
-		throw new UnsupportedOperationException();
-	}
+        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder
+                .with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable)
+                .with(AnalysisJobBuilder.class, analysisJobBuilder).getInstance(PropertyWidgetFactory.class);
+
+        if (renderable instanceof FilterJobBuilder) {
+            FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;
+            return new FilterJobBuilderPanel(fjb, windowContext, propertyWidgetFactory);
+        } else if (renderable instanceof TransformerJobBuilder) {
+            TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
+            return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
+        } else if (renderable instanceof AnalyzerJobBuilder) {
+            AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
+            return new AnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
+        }
+        throw new UnsupportedOperationException();
+    }
 
 }

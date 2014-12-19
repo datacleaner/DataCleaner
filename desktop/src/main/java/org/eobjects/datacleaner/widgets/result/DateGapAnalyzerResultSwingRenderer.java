@@ -313,7 +313,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
                 .addTransformer(ConvertToStringTransformer.class).addInputColumn(customerNumberColumn)
                 .getOutputColumns().get(0);
 
-        DateGapAnalyzer dga = ajb.addAnalyzer(DateGapAnalyzer.class).getConfigurableBean();
+        DateGapAnalyzer dga = ajb.addAnalyzer(DateGapAnalyzer.class).getComponentInstance();
         dga.setFromColumn(orderDateColumn);
         dga.setToColumn(shippedDateColumn);
         dga.setGroupColumn(customerNumberAsStringColumn);

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -45,8 +46,6 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.SchemaNamePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.TableNamePropertyWidget;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the
@@ -123,19 +122,9 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
                 inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 
         // chain combo boxes
-        datastorePropertyWidget.addComboListener(new Listener<Datastore>() {
-            @Override
-            public void onItemSelected(Datastore item) {
-                schemaNamePropertyWidget.setDatastore(item);
-            }
-        });
-        schemaNamePropertyWidget.addComboListener(new Listener<Schema>() {
-            @Override
-            public void onItemSelected(Schema item) {
-                // update the table name when schema is selected
-                tableNamePropertyWidget.setSchema(item);
-            }
-        });
+        datastorePropertyWidget.connectToSchemaNamePropertyWidget(schemaNamePropertyWidget);
+        schemaNamePropertyWidget.connectToTableNamePropertyWidget(tableNamePropertyWidget);
+
         tableNamePropertyWidget.addComboListener(new Listener<Table>() {
             @Override
             public void onItemSelected(Table item) {
@@ -158,7 +147,7 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 
         final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
                 "images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-                        _inputColumnArrayProperty));
+                        _inputColumnArrayProperty, _columnNameArrayProperty));
         final ConfiguredPropertyTaskPane outputMappingTaskPane = new ConfiguredPropertyTaskPane("Output mapping",
                 IconUtils.MENU_OPTIONS, Arrays.asList(_outputColumnsProperty, _joinSemanticProperty,
                         _cacheLookupsProperty));

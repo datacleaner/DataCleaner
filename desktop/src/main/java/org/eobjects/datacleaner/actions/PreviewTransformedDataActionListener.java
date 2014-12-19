@@ -30,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobReader;
@@ -62,27 +61,27 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     public static final int DEFAULT_PREVIEW_ROWS = 200;
 
     private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final TransformerJobBuilder<?> _transformerJobBuilder;
     private final WindowContext _windowContext;
-    private final AnalyzerBeansConfiguration _configuration;
     private final int _previewRows;
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
-            TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
-        this(windowContext, transformerJobBuilderPresenter, analysisJobBuilder, transformerJobBuilder, configuration,
-                DEFAULT_PREVIEW_ROWS);
+            TransformerJobBuilder<?> transformerJobBuilder) {
+        this(windowContext, null, transformerJobBuilder);
     }
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
-            TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration, int previewRows) {
+            TransformerJobBuilderPresenter transformerJobBuilderPresenter,
+            TransformerJobBuilder<?> transformerJobBuilder) {
+        this(windowContext, transformerJobBuilderPresenter, transformerJobBuilder, DEFAULT_PREVIEW_ROWS);
+    }
+
+    public PreviewTransformedDataActionListener(WindowContext windowContext,
+            TransformerJobBuilderPresenter transformerJobBuilderPresenter,
+            TransformerJobBuilder<?> transformerJobBuilder, int previewRows) {
         _windowContext = windowContext;
         _transformerJobBuilderPresenter = transformerJobBuilderPresenter;
-        _analysisJobBuilder = analysisJobBuilder;
         _transformerJobBuilder = transformerJobBuilder;
-        _configuration = configuration;
         _previewRows = previewRows;
     }
 
@@ -98,7 +97,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             _transformerJobBuilderPresenter.applyPropertyValues();
         }
 
-        final AnalysisJobBuilder ajb = copy(_analysisJobBuilder);
+        final AnalysisJobBuilder ajb = copy(_transformerJobBuilder.getAnalysisJobBuilder());
 
         TransformerJobBuilder<?> tjb = findTransformerJobBuilder(ajb, _transformerJobBuilder);
 
@@ -116,7 +115,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         // add a max rows filter
         final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
-        maxRowFilter.getConfigurableBean().setMaxRows(_previewRows);
+        maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
@@ -167,17 +166,19 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
     private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
             TransformerJobBuilder<?> transformerJobBuilder) {
-        int transformerIndex = _analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
+        final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
+        final int transformerIndex = analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
         return ajb.getTransformerJobBuilders().get(transformerIndex);
     }
 
     private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
         // the easiest/safest way to copy a job is by writing and reading it
         // using the JAXB reader/writers.
+        final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
         final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final JaxbJobWriter writer = new JaxbJobWriter(_configuration);
+        final JaxbJobWriter writer = new JaxbJobWriter(analysisJobBuilder.getConfiguration());
         writer.write(analysisJob, baos);
 
         final AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(

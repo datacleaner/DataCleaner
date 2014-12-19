@@ -22,21 +22,15 @@ package org.eobjects.datacleaner.widgets;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.AnyComponentRequirement;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterJob;
@@ -60,22 +54,15 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
 
-    private static final String NO_REQUIREMENT_TEXT = "(No requirement)";
-    private static final String ANY_REQUIREMENT_TEXT = "All records";
-
     private static final ImageManager imageManager = ImageManager.get();
 
-    private static final Icon selectedRequirementIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
-            IconUtils.ICON_SIZE_SMALL);
-    private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
-            IconUtils.ICON_SIZE_SMALL);
     private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH,
             IconUtils.ICON_SIZE_SMALL);
 
     private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
 
     public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
-        super(NO_REQUIREMENT_TEXT, filterIcon);
+        super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, filterIcon);
         _jobBuilder = jobBuilder;
         addActionListener(this);
         updateText();
@@ -83,91 +70,17 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final ComponentRequirement currentComponentRequirement = _jobBuilder.getComponentRequirement();
-        logger.info("Current requirement: {}", currentComponentRequirement);
-
-        final Collection<FilterOutcome> currentFilterOutcomes = currentComponentRequirement == null ? Collections
-                .<FilterOutcome> emptyList() : currentComponentRequirement.getProcessingDependencies();
-
         final JPopupMenu popup = new JPopupMenu();
 
-        final JMenuItem noFilterMenuItem = new JMenuItem(NO_REQUIREMENT_TEXT);
-        noFilterMenuItem
-                .setToolTipText("Do not apply any specific requirements on this component, except for those that are transitively inherited by the configuration.");
-        noFilterMenuItem.addActionListener(new ActionListener() {
+        final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(_jobBuilder) {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                _jobBuilder.setComponentRequirement(null);
+            protected void onRequirementChanged() {
                 updateText();
             }
-        });
-        popup.add(noFilterMenuItem);
-
-        final JMenuItem anyFilterMenuItem = new JMenuItem(ANY_REQUIREMENT_TEXT);
-        anyFilterMenuItem
-                .setToolTipText("Explicitly accept all records into this component, regardless of any other transitive requirements.");
-        anyFilterMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _jobBuilder.setComponentRequirement(AnyComponentRequirement.get());
-                updateText();
-            }
-        });
-        if (AnyComponentRequirement.get().equals(_jobBuilder.getComponentRequirement())) {
-            anyFilterMenuItem.setIcon(selectedRequirementIcon);
-        }
-        popup.add(anyFilterMenuItem);
-
-        // if this JobBuilder is a FilterJobBuilder, remove it from the list of
-        // available filters
-        final List<FilterJobBuilder<?, ?>> fjbs;
-        if (_jobBuilder instanceof FilterJobBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(_jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders());
-            fjbs.remove(_jobBuilder);
-        } else {
-            fjbs = _jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
-        }
-
-        for (final FilterJobBuilder<?, ?> fjb : fjbs) {
-            final JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
-
-            if (!fjb.isConfigured()) {
-                filterMenuItem.setIcon(unconfiguredFilterIcon);
-                filterMenuItem.setEnabled(false);
-                filterMenuItem.setToolTipText("Filter is not correctly configured");
-            } else if (!_jobBuilder.validateRequirementSource(fjb)) {
-                filterMenuItem.setEnabled(false);
-                filterMenuItem.setToolTipText("Requirement not possible");
-            } else {
-                final FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
-                final Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
-                for (final String category : categoryNames) {
-                    final JMenuItem categoryMenuItem = new JMenuItem(category);
-                    try {
-                        final Enum<?> outcomeCategory = fjbDescriptor.getOutcomeCategoryByName(category);
-                        final FilterOutcome filterOutcome = fjb.getFilterOutcome(outcomeCategory);
-                        if (currentFilterOutcomes.contains(filterOutcome)) {
-                            filterMenuItem.setIcon(selectedRequirementIcon);
-                            categoryMenuItem.setIcon(selectedRequirementIcon);
-                        }
-                    } catch (Exception ex) {
-                        logger.info("Filterjob matching threw exception, probably because of incomplete configuration",
-                                ex);
-                    }
-
-                    categoryMenuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            _jobBuilder.setRequirement(fjb, category);
-                            updateText();
-                        }
-                    });
-
-                    filterMenuItem.add(categoryMenuItem);
-                }
-
-            }
-            popup.add(filterMenuItem);
+        };
+        final List<JMenuItem> menuItems = menuBuilder.createMenuItems();
+        for (JMenuItem menuItem : menuItems) {
+            popup.add(menuItem);
         }
 
         popup.show(this, 0, getHeight());
@@ -181,9 +94,9 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             public void run() {
                 final ComponentRequirement requirement = _jobBuilder.getComponentRequirement();
                 if (requirement == null) {
-                    setText(NO_REQUIREMENT_TEXT);
+                    setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
                 } else if (AnyComponentRequirement.get().equals(requirement)) {
-                    setText(ANY_REQUIREMENT_TEXT);
+                    setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
                 } else {
                     if (requirement instanceof FilterOutcome) {
                         FilterOutcome filterOutcome = (FilterOutcome) requirement;

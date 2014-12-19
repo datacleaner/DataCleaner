@@ -19,9 +19,6 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.util.List;
-
-import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 
 /**
@@ -38,10 +35,4 @@ public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPrese
 	@Override
 	public TransformerJobBuilder<?> getJobBuilder();
 
-	/**
-	 * Invoked when the output columns of this transformer changes.
-	 * 
-	 * @param outputColumns
-	 */
-	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns);
 }

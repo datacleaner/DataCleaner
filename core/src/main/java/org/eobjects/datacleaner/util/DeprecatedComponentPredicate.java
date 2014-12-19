@@ -17,34 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.visualization;
+package org.eobjects.datacleaner.util;
 
-import java.util.List;
+import org.apache.metamodel.util.Predicate;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
+import org.eobjects.analyzer.util.ReflectionUtils;
 
-import org.apache.metamodel.util.BaseObject;
+/**
+ * Predicate that discards all {@link ComponentDescriptor} that represent a
+ * {@link Deprecated} component.
+ */
+public class DeprecatedComponentPredicate implements Predicate<ComponentDescriptor<?>> {
 
-final class VisualizeJobLink extends BaseObject {
-
-	private final Object _from;
-	private final Object _to;
-
-	public VisualizeJobLink(Object from, Object to) {
-		_from = from;
-		_to = to;
-	}
-
-	public Object getFrom() {
-		return _from;
-	}
-
-	public Object getTo() {
-		return _to;
-	}
-
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		identifiers.add(_from);
-		identifiers.add(_to);
-	}
+    @Override
+    public Boolean eval(ComponentDescriptor<?> descriptor) {
+        Class<?> componentClass = descriptor.getComponentClass();
+        boolean isDeprecated = ReflectionUtils.isAnnotationPresent(componentClass, Deprecated.class);
+        return !isDeprecated;
+    }
 
 }

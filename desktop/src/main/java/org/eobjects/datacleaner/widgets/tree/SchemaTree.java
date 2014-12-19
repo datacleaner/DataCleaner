@@ -37,19 +37,20 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.guice.Nullable;
+import org.eobjects.datacleaner.util.DragDropUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
@@ -92,13 +93,15 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         setCellRenderer(this);
         setOpaque(false);
         addTreeWillExpandListener(this);
+        setDragEnabled(true);
+        setTransferHandler(DragDropUtils.createSourceTransferHandler());
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
 
-        Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
+        final Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
 
         if (_analysisJobBuilder != null) {
             addMouseListener(injector.getInstance(SchemaMouseListener.class));
@@ -123,24 +126,24 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private void updateTree() {
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
+        final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
         rootNode.setUserObject(_datastoreConnection.getDatastore());
-        SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
+        final SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
         schemaNavigator.refreshSchemas();
         Schema[] schemas = schemaNavigator.getSchemas();
 
         // make sure that information schemas are arranged at the top
         Arrays.sort(schemas, new SchemaComparator());
 
-        for (Schema schema : schemas) {
-            DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(schema);
+        for (final Schema schema : schemas) {
+            final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(schema);
             schemaNode.add(new DefaultMutableTreeNode(LOADING_TABLES_STRING));
             rootNode.add(schemaNode);
         }
-        DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
+        final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
-
+    
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
         // Do nothing
     }

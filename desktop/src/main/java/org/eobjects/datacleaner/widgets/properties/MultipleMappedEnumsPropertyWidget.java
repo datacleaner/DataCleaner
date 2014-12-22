@@ -64,7 +64,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 
         @Override
         public boolean isSet() {
-            return MappedEnumsPropertyWidget.this.isSet();
+            return MultipleMappedEnumsPropertyWidget.this.isSet();
         }
 
         @Override

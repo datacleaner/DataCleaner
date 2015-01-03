@@ -39,6 +39,7 @@ public class DemoConfiguration {
     public static final String JOB_COPY_EMPLOYEES_TO_CUSTOMERS = "jobs/Copy employees to customer table.analysis.xml";
     public static final String JOB_ORDERDB_DUPLICATE_DETECTION = "jobs/OrderDB Customers Duplicate detection.analysis.xml";
     public static final String JOB_ORDERDB_DUPLICATE_TRAINING = "jobs/OrderDB Customers dedup Training.analysis.xml";
+    public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = "jobs/US Customer STATE check.analysis.xml";
 
     public static final String OTHER_DEDUP_MODEL_SFDC_USERS = "jobs/sfdc_dupe_model_users.dedupmodel.xml";
     public static final String OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS = "jobs/orderdb_customers_dupe_model.dedupmodel.xml";

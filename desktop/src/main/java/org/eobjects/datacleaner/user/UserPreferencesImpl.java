@@ -243,6 +243,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_CUSTOMER_PROFILING));
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_ADDRESS_CLEANSING));
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION));
+            recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS));
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_PHONE_CLEANSING));
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_EXPORT_ORDERS_DATA));
             recentJobFiles.add(new File(dcHome, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING));

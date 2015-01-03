@@ -143,6 +143,7 @@ public final class DataCleanerHome {
                 copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
                 copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
                 copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
+                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
             }
         }
 

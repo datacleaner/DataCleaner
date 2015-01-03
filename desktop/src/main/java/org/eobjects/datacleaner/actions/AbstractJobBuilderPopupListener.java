@@ -21,13 +21,16 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.Component;
 
+import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.widgets.ChangeRequirementMenu;
 
 /**
  * Abstract class containing the action method that will display a popup with
@@ -53,7 +56,8 @@ public abstract class AbstractJobBuilderPopupListener {
     }
 
     public void showPopup(Component parentComponent, int x, int y) {
-        final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", IconUtils.ACTION_RENAME);
+        final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
+        final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
         renameMenuItem.addActionListener(new RenameComponentActionListener(_jobBuilder) {
             @Override
             protected void onNameChanged() {
@@ -74,6 +78,7 @@ public abstract class AbstractJobBuilderPopupListener {
         JPopupMenu popup = new JPopupMenu();
         popup.add(renameMenuItem);
         popup.add(removeMenuItem);
+        popup.add(new ChangeRequirementMenu(_jobBuilder));
         popup.show(parentComponent, x, y);
     }
 

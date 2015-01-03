@@ -163,7 +163,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         return panel;
     }
 
-    private DCBannerPanel createBanner(Image bannerImage) {
+    protected DCBannerPanel createBanner(Image bannerImage) {
         if (bannerImage == null) {
             return null;
         } else {

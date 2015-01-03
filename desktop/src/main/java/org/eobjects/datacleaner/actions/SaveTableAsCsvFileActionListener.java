@@ -93,7 +93,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
                 PropertyWidgetFactory.class);
 
-        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(csvOutputAnalyzerBuilder, false,
+        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(csvOutputAnalyzerBuilder,
                 propertyWidgetFactory);
 
         final AbstractDialog dialog = new AbstractDialog(_windowContext) {

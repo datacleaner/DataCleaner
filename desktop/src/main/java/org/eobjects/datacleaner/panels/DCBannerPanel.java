@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -29,11 +30,10 @@ import javax.swing.JPanel;
 
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 
 /**
  * Renders a DataCleaner-banner as a panel
- * 
- * @author Kasper Sørensen
  */
 public class DCBannerPanel extends JPanel {
 
@@ -91,6 +91,10 @@ public class DCBannerPanel extends JPanel {
             _titleIndent = leftImage.getWidth(this);
         }
         setOpaque(false);
+
+        final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
+        layout.setAlignOnBaseline(true);
+        setLayout(layout);
     }
 
     public String getTitle1() {

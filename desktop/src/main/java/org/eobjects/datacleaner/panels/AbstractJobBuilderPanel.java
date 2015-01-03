@@ -35,7 +35,6 @@ import javax.swing.JScrollPane;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -66,7 +65,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     private final PropertyWidgetCollection _propertyWidgetCollection;
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final BeanDescriptor<?> _descriptor;
-    private final ChangeRequirementButton _requirementButton;
     private final JComponent _buttonPanel;
 
     protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
@@ -77,13 +75,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
             int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        this(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, beanJobBuilder,
-                propertyWidgetFactory, true);
-    }
-
-    protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-            PropertyWidgetFactory propertyWidgetFactory, boolean displayRequirementButton) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
                 WidgetUtils.BG_COLOR_BRIGHTEST);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
@@ -98,13 +89,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
         add(scrolleable, BorderLayout.CENTER);
 
-        if (displayRequirementButton && beanJobBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
-            _requirementButton = new ChangeRequirementButton(
-                    (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) beanJobBuilder);
-        } else {
-            _requirementButton = null;
-        }
-
         _buttonPanel = createTopButtonPanel();
         add(_buttonPanel, BorderLayout.NORTH);
     }
@@ -116,14 +100,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     protected JComponent createTopButtonPanel() {
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        if (_requirementButton != null) {
-            buttonPanel.add(_requirementButton);
-        }
         return buttonPanel;
-    }
-
-    public ChangeRequirementButton getRequirementButton() {
-        return _requirementButton;
     }
 
     protected JXTaskPaneContainer getTaskPaneContainer() {
@@ -172,7 +149,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
         if (!unconfiguredPropertyDescriptors.isEmpty()) {
             for (ConfiguredPropertyDescriptor property : unconfiguredPropertyDescriptors) {
                 logger.warn("No property widget was found in task panes for property: {}", property);
-                
+
                 // add it to the property widget collection just to be sure
                 final PropertyWidget<?> propertyWidget = createPropertyWidget(componentBuilder, property);
                 getPropertyWidgetCollection().registerWidget(property, propertyWidget);
@@ -300,11 +277,13 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     /**
      * Convenience method made available to subclasses to inform that the
      * requirement on this component has changed
+     * 
+     * @deprecated no longer has any effect since
+     *             {@link ChangeRequirementButton} has been removed from this
+     *             panel
      */
+    @Deprecated
     protected void onRequirementChanged() {
-        if (_requirementButton != null) {
-            _requirementButton.updateText();
-        }
     }
 
     /**

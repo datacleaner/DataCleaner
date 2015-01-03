@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.LabelUtils;
-import org.eobjects.analyzer.util.StringUtils;
 
 /**
  * {@link ActionListener} used when renaming a component, such as an analyzer, a
@@ -34,24 +33,22 @@ import org.eobjects.analyzer.util.StringUtils;
  */
 public abstract class RenameComponentActionListener implements ActionListener {
 
-	private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
+    private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
 
-	public RenameComponentActionListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder) {
-		_jobBuilder = jobBuilder;
-	}
+    public RenameComponentActionListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder) {
+        _jobBuilder = jobBuilder;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final String originalValue = LabelUtils.getLabel(_jobBuilder);
-		final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
-		if (!StringUtils.isNullOrEmpty(newValue)) {
-			if (!originalValue.equals(newValue)) {
-				_jobBuilder.setName(newValue);
-				onNameChanged();
-			}
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final String originalValue = LabelUtils.getLabel(_jobBuilder);
+        final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
+        if (!originalValue.equals(newValue)) {
+            _jobBuilder.setName(newValue);
+            onNameChanged();
+        }
+    }
 
-	protected abstract void onNameChanged();
+    protected abstract void onNameChanged();
 
 }

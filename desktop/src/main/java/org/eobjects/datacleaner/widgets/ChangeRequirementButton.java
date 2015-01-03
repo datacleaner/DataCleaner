@@ -35,7 +35,7 @@ import org.eobjects.analyzer.job.AnyComponentRequirement;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
+import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
 import org.eobjects.analyzer.util.LabelUtils;
@@ -53,15 +53,13 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
-
     private static final ImageManager imageManager = ImageManager.get();
-
     private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH,
-            IconUtils.ICON_SIZE_SMALL);
+            IconUtils.ICON_SIZE_MEDIUM);
 
-    private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
+    private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
 
-    public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
+    public ChangeRequirementButton(AbstractBeanJobBuilder<?, ?, ?> jobBuilder) {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, filterIcon);
         _jobBuilder = jobBuilder;
         addActionListener(this);

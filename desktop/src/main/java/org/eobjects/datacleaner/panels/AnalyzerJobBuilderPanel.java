@@ -45,19 +45,14 @@ public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements 
     private final AnalyzerJobBuilder<?> _analyzerJobBuilder;
 
     public AnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
-        this(analyzerJobBuilder, true, propertyWidgetFactory);
-    }
-
-    public AnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder, boolean displayRequirementButton,
-            PropertyWidgetFactory propertyWidgetFactory) {
-        this(WATERMARK_IMAGE, 95, 95, analyzerJobBuilder, displayRequirementButton, propertyWidgetFactory);
+        this(WATERMARK_IMAGE, 95, 95, analyzerJobBuilder, propertyWidgetFactory);
     }
 
     public AnalyzerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, AnalyzerJobBuilder<?> analyzerJobBuilder, boolean displayRequirementButton,
+            int watermarkVerticalPosition, AnalyzerJobBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, analyzerJobBuilder,
-                propertyWidgetFactory, displayRequirementButton);
+                propertyWidgetFactory);
         _analyzerJobBuilder = analyzerJobBuilder;
     }
 
@@ -106,6 +101,5 @@ public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements 
 
     @Override
     public void onRequirementChanged(AnalyzerJobBuilder<?> ajb) {
-        onRequirementChanged();
     }
 }

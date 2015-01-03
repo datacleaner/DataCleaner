@@ -43,7 +43,7 @@ final class CompletenessAnalyzerJobBuilderPresenter extends AnalyzerJobBuilderPa
 
     public CompletenessAnalyzerJobBuilderPresenter(AnalyzerJobBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        super(analyzerJobBuilder, true, propertyWidgetFactory);
+        super(analyzerJobBuilder, propertyWidgetFactory);
 
         _inputColumnProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Values");
         _conditionEnumProperty = analyzerJobBuilder.getDescriptor().getConfiguredProperty("Conditions");

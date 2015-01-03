@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -41,6 +40,9 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Ref;
 import org.eobjects.analyzer.beans.api.ComponentMessage;
 import org.eobjects.analyzer.beans.api.ExecutionLogMessage;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -81,11 +83,7 @@ import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.Ref;
 
 /**
  * Window in which the result (and running progress information) of job
@@ -332,12 +330,7 @@ public final class ResultWindow extends AbstractWindow {
 
         final DCBannerPanel banner = new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"),
                 bannerTitle);
-        banner.setLayout(null);
         _tabbedPane.bindTabTitleToBanner(banner);
-
-        final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
-        layout.setAlignOnBaseline(true);
-        banner.setLayout(layout);
 
         for (JComponent pluggableButton : _pluggableButtons) {
             banner.add(pluggableButton);

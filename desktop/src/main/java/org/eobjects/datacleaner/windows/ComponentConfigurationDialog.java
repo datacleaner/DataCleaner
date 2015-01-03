@@ -33,11 +33,15 @@ import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.LabelUtils;
+import org.eobjects.datacleaner.actions.RenameComponentActionListener;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
+import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.NeopostToolbarButton;
 import org.eobjects.datacleaner.widgets.visualization.JobGraph;
 
@@ -49,8 +53,8 @@ public class ComponentConfigurationDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final String _shortMessage;
     private final ComponentJobBuilderPresenter _presenter;
+    private final AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> _componentBuilder;
 
     public ComponentConfigurationDialog(
             AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> componentBuilder,
@@ -59,7 +63,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(null, getBannerImage(componentBuilder));
 
-        _shortMessage = LabelUtils.getLabel(componentBuilder);
+        _componentBuilder = componentBuilder;
         _presenter = presenter;
     }
 
@@ -76,12 +80,41 @@ public class ComponentConfigurationDialog extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return _shortMessage;
+        return getBannerTitle2(false);
     }
 
     @Override
     protected String getBannerTitle() {
-        return _shortMessage;
+        return _componentBuilder.getDescriptor().getDisplayName();
+    }
+
+    private String getBannerTitle2(boolean onlyIfDifferentThanTitle1) {
+        final String title2 = LabelUtils.getLabel(_componentBuilder);
+        if (onlyIfDifferentThanTitle1 && getBannerTitle().equals(title2)) {
+            return null;
+        }
+        return title2;
+    }
+
+    @Override
+    protected DCBannerPanel createBanner(Image bannerImage) {
+        final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle());
+        banner.setTitle2(getBannerTitle2(true));
+
+        final JButton renameButton = new JButton("Rename", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME,
+                IconUtils.ICON_SIZE_MEDIUM));
+        renameButton.addActionListener(new RenameComponentActionListener(_componentBuilder) {
+            @Override
+            protected void onNameChanged() {
+                banner.setTitle2(getBannerTitle2(true));
+                banner.updateUI();
+            }
+        });
+        
+        banner.add(new ChangeRequirementButton(_componentBuilder));
+        banner.add(renameButton);
+
+        return banner;
     }
 
     @Override

@@ -94,7 +94,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, excelOutputAnalyzerBuilder).getInstance(
                 PropertyWidgetFactory.class);
 
-        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(excelOutputAnalyzerBuilder, false,
+        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(excelOutputAnalyzerBuilder,
                 propertyWidgetFactory);
 
         final AbstractDialog dialog = new AbstractDialog(_windowContext) {

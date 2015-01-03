@@ -154,9 +154,8 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
     @Override
     public void onRemove(TransformerJobBuilder<?> tjb) {
     }
-
+    
     @Override
-    public void onRequirementChanged(TransformerJobBuilder<?> tjb) {
-        onRequirementChanged();
+    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
     }
 }

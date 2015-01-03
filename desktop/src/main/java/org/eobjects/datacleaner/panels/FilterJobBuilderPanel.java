@@ -135,9 +135,8 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
     @Override
     public void onRemove(FilterJobBuilder<?, ?> fjb) {
     }
-
+    
     @Override
-    public void onRequirementChanged(FilterJobBuilder<?, ?> fjb) {
-        onRequirementChanged();
+    public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
     }
 }

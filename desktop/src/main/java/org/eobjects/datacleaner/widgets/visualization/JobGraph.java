@@ -30,7 +30,6 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,21 +50,13 @@ import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentRequirement;
 import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.HasComponentRequirement;
-import org.eobjects.analyzer.job.HasFilterOutcomes;
-import org.eobjects.analyzer.job.InputColumnSinkJob;
-import org.eobjects.analyzer.job.InputColumnSourceJob;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.ComponentBuilder;
-import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
@@ -79,10 +70,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
@@ -143,39 +132,13 @@ public final class JobGraph {
         return _panel;
     }
 
-    public void refresh() {
-        refresh(false, false);
-    }
-
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
     }
 
-    public void refresh(boolean displayColumns, boolean displayOutcomes) {
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(_analysisJobBuilder);
-
-        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
-
-        final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
-        for (Table table : sourceTables) {
-            addNodes(graph, sourceColumnFinder, table, displayColumns, displayOutcomes, -1);
-        }
-
-        final List<TransformerJobBuilder<?>> tjbs = _analysisJobBuilder.getTransformerJobBuilders();
-        for (TransformerJobBuilder<?> tjb : tjbs) {
-            addNodes(graph, sourceColumnFinder, tjb, displayColumns, displayOutcomes, -1);
-        }
-
-        final List<AnalyzerJobBuilder<?>> ajbs = _analysisJobBuilder.getAnalyzerJobBuilders();
-        for (AnalyzerJobBuilder<?> ajb : ajbs) {
-            addNodes(graph, sourceColumnFinder, ajb, displayColumns, displayOutcomes, -1);
-        }
-
-        final List<FilterJobBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterJobBuilders();
-        for (FilterJobBuilder<?, ?> fjb : fjbs) {
-            addNodes(graph, sourceColumnFinder, fjb, displayColumns, displayOutcomes, -1);
-        }
+    public void refresh() {
+        final JobGraphNodeBuilder nodeBuilder = new JobGraphNodeBuilder(_analysisJobBuilder);
+        final DirectedGraph<Object, JobGraphLink> graph = nodeBuilder.buildGraph();
 
         final JComponent newComponent = createJComponent(graph);
         _panel.removeAll();
@@ -504,116 +467,6 @@ public final class JobGraph {
         return scrollPane;
     }
 
-    private void addNodes(DirectedGraph<Object, JobGraphLink> graph, SourceColumnFinder scf, Object item,
-            boolean displayColumns, boolean displayFilterOutcomes, int recurseCount) {
-        if (item == null) {
-            throw new IllegalArgumentException("Node item cannot be null");
-        }
+    
 
-        if (!displayColumns && item instanceof InputColumn) {
-            return;
-        } else if (!displayFilterOutcomes && item instanceof FilterOutcome) {
-            return;
-        }
-        if (!graph.containsVertex(item)) {
-            graph.addVertex(item);
-
-            if (recurseCount == 0) {
-                return;
-            }
-
-            // decrement recurseCount
-            recurseCount--;
-
-            if (item instanceof InputColumnSinkJob) {
-                InputColumn<?>[] inputColumns = ((InputColumnSinkJob) item).getInput();
-                for (InputColumn<?> inputColumn : inputColumns) {
-                    if (displayColumns) {
-                        // add the column itself
-                        addNodes(graph, scf, inputColumn, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, inputColumn, item, null);
-                    } else {
-                        // add the origin of the column
-                        if (inputColumn.isVirtualColumn()) {
-                            InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
-                            if (source != null) {
-                                addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(graph, source, item, null);
-                            }
-                        }
-
-                        if (inputColumn.isPhysicalColumn()) {
-                            Table table = inputColumn.getPhysicalColumn().getTable();
-                            if (table != null) {
-                                addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                                addEdge(graph, table, item, null);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (item instanceof FilterOutcome) {
-                final HasFilterOutcomes source = scf.findOutcomeSource((FilterOutcome) item);
-                if (source != null) {
-                    addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                    addEdge(graph, source, item, null);
-                }
-            }
-
-            if (item instanceof HasComponentRequirement) {
-                final HasComponentRequirement hasComponentRequirement = (HasComponentRequirement) item;
-                final Collection<FilterOutcome> filterOutcomes = getProcessingDependencyFilterOutcomes(hasComponentRequirement);
-                for (final FilterOutcome filterOutcome : filterOutcomes) {
-                    if (displayFilterOutcomes) {
-                        // add the filter outcome itself
-                        addNodes(graph, scf, filterOutcome, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, filterOutcome, item, null);
-                    } else {
-                        // add the origin of the filter outcome
-                        final HasFilterOutcomes source = scf.findOutcomeSource(filterOutcome);
-                        if (source != null) {
-                            addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                            addEdge(graph, source, item, hasComponentRequirement.getComponentRequirement());
-                        }
-                    }
-                }
-            }
-
-            if (item instanceof InputColumn) {
-                InputColumn<?> inputColumn = (InputColumn<?>) item;
-                if (inputColumn.isVirtualColumn()) {
-                    InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
-                    if (source != null) {
-                        addNodes(graph, scf, source, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, source, item, null);
-                    }
-                }
-
-                if (inputColumn.isPhysicalColumn()) {
-                    final Table table = inputColumn.getPhysicalColumn().getTable();
-                    if (table != null) {
-                        addNodes(graph, scf, table, displayColumns, displayFilterOutcomes, recurseCount);
-                        addEdge(graph, table, item, null);
-                    }
-                }
-            }
-        }
-    }
-
-    private Collection<FilterOutcome> getProcessingDependencyFilterOutcomes(HasComponentRequirement item) {
-        final ComponentRequirement componentRequirement = item.getComponentRequirement();
-        if (componentRequirement == null) {
-            return Collections.emptyList();
-        }
-        return componentRequirement.getProcessingDependencies();
-    }
-
-    private void addEdge(DirectedGraph<Object, JobGraphLink> graph, Object from, Object to,
-            ComponentRequirement requirement) {
-        JobGraphLink link = new JobGraphLink(from, to, requirement);
-        if (!graph.containsEdge(link)) {
-            graph.addEdge(link, from, to, EdgeType.DIRECTED);
-        }
-    }
 }

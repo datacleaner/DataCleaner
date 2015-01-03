@@ -50,6 +50,11 @@ final class JobGraphLink {
     }
 
     @Override
+    public String toString() {
+        return "JobGraphLink[" + _from + "->" + _to + "]";
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

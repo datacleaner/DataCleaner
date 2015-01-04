@@ -127,78 +127,78 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-transformers</artifactId>
-			<version>${project.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-filters</artifactId>
+			<artifactId>DataCleaner-basic-transformers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
+			<artifactId>DataCleaner-basic-filters</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-reference-data</artifactId>
+			<artifactId>DataCleaner-basic-analyzers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-date-gap</artifactId>
+			<artifactId>DataCleaner-reference-data</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-value-distribution</artifactId>
+			<artifactId>DataCleaner-date-gap</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-standardizers</artifactId>
+			<artifactId>DataCleaner-value-distribution</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-pattern-finder</artifactId>
+			<artifactId>DataCleaner-standardizers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-i18n</artifactId>
+			<artifactId>DataCleaner-pattern-finder</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-h2</artifactId>
+			<artifactId>DataCleaner-i18n</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-berkeleydb</artifactId>
+			<artifactId>DataCleaner-env-h2</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-el</artifactId>
+			<artifactId>DataCleaner-env-berkeleydb</artifactId>
+			<version>${project.version}</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-el</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>

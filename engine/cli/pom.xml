@@ -94,12 +94,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-berkeleydb</artifactId>
+			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-xml-config</artifactId>
+			<artifactId>DataCleaner-env-xml-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

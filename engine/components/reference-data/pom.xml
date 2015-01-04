@@ -9,22 +9,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<artifactId>DataCleaner-pattern-finder</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-pattern-finder</artifactId>
+			<artifactId>DataCleaner-value-distribution</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-value-distribution</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
+			<artifactId>DataCleaner-basic-analyzers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

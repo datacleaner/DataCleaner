@@ -8,13 +8,6 @@
 	<artifactId>DataCleaner-env-cluster</artifactId>
 
 	<dependencies>
-		<!-- Required dependencies -->
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<!-- Logging dependency for test -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -25,7 +18,7 @@
 		<!-- Servlet+JSP dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-xml-config</artifactId>
+			<artifactId>DataCleaner-env-xml-config</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
@@ -40,31 +33,31 @@
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
+			<artifactId>DataCleaner-basic-analyzers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-value-distribution</artifactId>
+			<artifactId>DataCleaner-value-distribution</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-transformers</artifactId>
+			<artifactId>DataCleaner-basic-transformers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-basic-filters</artifactId>
+			<artifactId>DataCleaner-basic-filters</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-writers</artifactId>
+			<artifactId>DataCleaner-writers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

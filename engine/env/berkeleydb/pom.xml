@@ -8,11 +8,6 @@
 	<artifactId>DataCleaner-env-berkeleydb</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>berkeleydb</groupId>
 			<artifactId>je</artifactId>
 			<version>3.2.76</version>

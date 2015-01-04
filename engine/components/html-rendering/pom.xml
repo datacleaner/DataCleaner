@@ -48,7 +48,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

@@ -30,18 +30,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-api</artifactId>
+			<artifactId>DataCleaner-engine-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
+			<artifactId>DataCleaner-testware</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

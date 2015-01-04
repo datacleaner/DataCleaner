@@ -6,12 +6,4 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-data-structures</artifactId>
-	<description>Components which manipulate rich data structures (lists, maps and more) for AnalyzerBeans</description>
-	<dependencies>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-engine-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
 </project>

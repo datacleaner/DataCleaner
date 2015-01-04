@@ -7,11 +7,4 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-json</artifactId>
-	<dependencies>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
 </project>

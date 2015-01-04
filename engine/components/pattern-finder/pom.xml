@@ -9,12 +9,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-html-rendering</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<artifactId>DataCleaner-html-rendering</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

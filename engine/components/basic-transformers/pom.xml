@@ -1,13 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eobjects.analyzerbeans</groupId>
-		<artifactId>AnalyzerBeans-components</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner-components</artifactId>
+		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>AnalyzerBeans-basic-transformers</artifactId>
-	<description>Basic transformers for AnalyzerBeans</description>
-
+	<artifactId>DataCleaner-basic-transformers</artifactId>
 	<build>
 		<plugins>
 			<plugin>
@@ -49,7 +47,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>

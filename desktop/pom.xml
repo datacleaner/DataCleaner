@@ -62,23 +62,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-cli</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-engine-cli</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-h2</artifactId>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-env-h2</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>
@@ -137,7 +132,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
 		</dependency>
 
 		<!-- Logging dependencies -->
@@ -152,9 +146,9 @@
 
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

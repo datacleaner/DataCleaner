@@ -1,17 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eobjects.analyzerbeans</groupId>
-		<artifactId>AnalyzerBeans-env</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner-env</artifactId>
+		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>AnalyzerBeans-cluster</artifactId>
-	<description>Clustered (master-slave) set-up of AnalyzerBeans</description>
+	<artifactId>DataCleaner-env-cluster</artifactId>
 
 	<dependencies>
 		<!-- Required dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -25,7 +24,7 @@
 
 		<!-- Servlet+JSP dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-xml-config</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
@@ -40,31 +39,31 @@
 
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-value-distribution</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-transformers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-filters</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-writers</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

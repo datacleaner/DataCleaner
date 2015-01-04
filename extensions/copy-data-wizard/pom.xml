@@ -61,14 +61,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-basic-filters</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-filters</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-writers</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-writers</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

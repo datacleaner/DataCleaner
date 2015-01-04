@@ -70,9 +70,9 @@
 	<dependencies>
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

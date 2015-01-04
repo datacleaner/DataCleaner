@@ -61,9 +61,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-analyzers</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

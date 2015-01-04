@@ -1,5 +1,5 @@
 /**
- * AnalyzerBeans
+ * DataCleaner (community edition)
  * Copyright (C) 2014 Neopost - Customer Information Management
  *
  * This copyrighted material is made available to anyone wishing to use, modify,

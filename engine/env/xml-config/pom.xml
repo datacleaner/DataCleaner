@@ -1,12 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eobjects.analyzerbeans</groupId>
-		<artifactId>AnalyzerBeans-env</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner-env</artifactId>
+		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>AnalyzerBeans-xml-config</artifactId>
-	<description>Reader of XML based configuration and job files</description>
+	<artifactId>DataCleaner-env-xml-config</artifactId>
 	<build>
 		<plugins>
 			<plugin>
@@ -127,78 +126,78 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-transformers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-filters</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-basic-analyzers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-reference-data</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-date-gap</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-value-distribution</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-standardizers</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-pattern-finder</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-i18n</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-h2</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-berkeleydb</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>AnalyzerBeans-el</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>

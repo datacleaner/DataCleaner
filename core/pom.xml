@@ -11,8 +11,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-cli</artifactId>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-engine-cli</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -37,9 +38,9 @@
 
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

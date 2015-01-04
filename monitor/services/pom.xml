@@ -27,9 +27,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-cluster</artifactId>
-			<version>${analyzerbeans.version}</version>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-cluster</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- GWT servlet server side -->

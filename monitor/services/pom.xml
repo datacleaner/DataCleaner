@@ -28,7 +28,7 @@
 
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-cluster</artifactId>
+			<artifactId>DataCleaner-env-cluster</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

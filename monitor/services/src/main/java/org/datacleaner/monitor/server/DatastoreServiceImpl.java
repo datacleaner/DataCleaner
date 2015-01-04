@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.List;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreConnection;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.shared.DatastoreConnectionException;
-import org.eobjects.datacleaner.monitor.shared.DatastoreService;
-import org.eobjects.datacleaner.monitor.shared.model.ColumnIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SchemaIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TableIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.DatastoreConnectionException;
+import org.datacleaner.monitor.shared.DatastoreService;
+import org.datacleaner.monitor.shared.model.ColumnIdentifier;
+import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.datacleaner.monitor.shared.model.SchemaIdentifier;
+import org.datacleaner.monitor.shared.model.TableIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;

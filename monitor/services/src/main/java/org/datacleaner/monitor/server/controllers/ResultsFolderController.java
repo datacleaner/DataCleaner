@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +26,12 @@ import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.Map.Entry;
 
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.html.BaseHeadElement;
-import org.eobjects.analyzer.result.html.FlotChartLocator;
-import org.eobjects.analyzer.result.html.HeadElement;
-import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.result.html.BaseHeadElement;
+import org.datacleaner.result.html.FlotChartLocator;
+import org.datacleaner.result.html.HeadElement;
+import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.apache.metamodel.util.Predicate;
 import org.springframework.stereotype.Component;
 

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -26,13 +26,13 @@ import java.security.Principal;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.server.security.TenantResolver;
-import org.eobjects.datacleaner.monitor.server.security.User;
-import org.eobjects.datacleaner.monitor.server.security.UserBean;
-import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.server.security.TenantResolver;
+import org.datacleaner.monitor.server.security.User;
+import org.datacleaner.monitor.server.security.UserBean;
+import org.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

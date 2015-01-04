@@ -17,18 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.shared;
+package org.datacleaner.monitor.shared;
 
 import java.util.Collection;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.JobMetrics;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

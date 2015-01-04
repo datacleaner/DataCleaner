@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.security;
+package org.datacleaner.monitor.server.security;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -30,7 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
+import org.datacleaner.monitor.shared.model.DCSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

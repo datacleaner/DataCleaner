@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.awt.GraphicsEnvironment;
 import java.util.List;
@@ -28,15 +28,15 @@ import junit.framework.TestCase;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
-import org.eobjects.analyzer.beans.CompletenessAnalyzer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

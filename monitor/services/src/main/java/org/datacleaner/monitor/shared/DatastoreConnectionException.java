@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.shared;
+package org.datacleaner.monitor.shared;
 
 /**
  * Exception thrown when connecting to a datastore is not possible.

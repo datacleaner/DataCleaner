@@ -17,15 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling;
+package org.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

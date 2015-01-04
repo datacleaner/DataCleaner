@@ -5,7 +5,7 @@
 
 	<servlet>
 		<servlet-name>slaveServlet</servlet-name>
-		<servlet-class>org.eobjects.analyzer.cluster.http.SlaveServlet</servlet-class>
+		<servlet-class>org.datacleaner.cluster.http.SlaveServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	

@@ -185,7 +185,7 @@
 					included in the commercial editions of DataCleaner.
 					You can also
 					develop your own alert notification handlers, by implementing the
-					<emphasis>org.eobjects.datacleaner.monitor.alertnotification.AlertNotifier
+					<emphasis>org.datacleaner.monitor.alertnotification.AlertNotifier
 					</emphasis>
 					interface in Java.
 				</para>

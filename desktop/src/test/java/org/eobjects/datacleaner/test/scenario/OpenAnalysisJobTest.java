@@ -17,20 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.test.scenario;
+package org.datacleaner.test.scenario;
 
 import java.awt.GraphicsEnvironment;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.vfs2.FileObject;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.util.VFSUtils;
-import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.windows.AbstractWindow;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.util.VFSUtils;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

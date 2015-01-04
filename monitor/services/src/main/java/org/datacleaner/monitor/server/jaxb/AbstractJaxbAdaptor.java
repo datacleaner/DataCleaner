@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,7 +32,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.datacleaner.util.JaxbValidationEventHandler;
 
 /**
  * Utility abstract class for making it easier to implement a writer object for

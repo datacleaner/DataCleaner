@@ -9,11 +9,11 @@
 		</layout>
 	</appender>
 	
-	<logger name="org.eobjects">
+	<logger name="org.datacleaner">
 		<level value="info" />
 	</logger>
 	
-	<logger name="org.eobjects.analyzer.test">
+	<logger name="org.datacleaner.test">
 		<level value="debug" />
 	</logger>
 	

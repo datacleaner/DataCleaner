@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,23 +34,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.jaxb.MetricType;
-import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricValues;
-import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbMetricAdaptor;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.jaxb.MetricType;
+import org.datacleaner.monitor.jaxb.MetricsType;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricValues;
+import org.datacleaner.monitor.server.MetricValueProducer;
+import org.datacleaner.monitor.server.jaxb.JaxbMetricAdaptor;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.JobMetrics;
+import org.datacleaner.monitor.shared.model.MetricGroup;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

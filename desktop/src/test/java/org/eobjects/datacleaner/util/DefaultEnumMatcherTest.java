@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.util;
+package org.datacleaner.util;
 
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.HasName;
-import org.eobjects.analyzer.util.HasAliases;
+import org.datacleaner.util.HasAliases;
 
 public class DefaultEnumMatcherTest extends TestCase {
 

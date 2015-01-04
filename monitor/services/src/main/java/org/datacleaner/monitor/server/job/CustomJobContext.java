@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,24 +31,24 @@ import java.util.Set;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.eobjects.analyzer.beans.api.Converter;
-import org.eobjects.analyzer.configuration.InjectionManager;
-import org.eobjects.analyzer.descriptors.ComponentDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.job.BeanConfiguration;
-import org.eobjects.analyzer.job.ComponentConfigurationException;
-import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
-import org.eobjects.analyzer.job.NoSuchComponentException;
-import org.eobjects.analyzer.util.convert.StringConverter;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.jaxb.CustomJavaComponentJob;
-import org.eobjects.datacleaner.monitor.jaxb.PropertiesType;
-import org.eobjects.datacleaner.monitor.jaxb.PropertiesType.Property;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.XmlJobContext;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbCustomJavaComponentJobAdaptor;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.beans.api.Converter;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfigurationException;
+import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.NoSuchComponentException;
+import org.datacleaner.util.convert.StringConverter;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.jaxb.CustomJavaComponentJob;
+import org.datacleaner.monitor.jaxb.PropertiesType;
+import org.datacleaner.monitor.jaxb.PropertiesType.Property;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.XmlJobContext;
+import org.datacleaner.monitor.server.jaxb.JaxbCustomJavaComponentJobAdaptor;
+import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

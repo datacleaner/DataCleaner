@@ -17,34 +17,34 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.quartz;
+package org.datacleaner.monitor.scheduling.quartz;
 
 import java.util.Date;
 import java.util.Map;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.InjectionManager;
-import org.eobjects.analyzer.descriptors.ComponentDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
-import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
-import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
-import org.eobjects.datacleaner.monitor.events.JobTriggeredEvent;
-import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.JobEngine;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.scheduling.api.VariableProvider;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
-import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
-import org.eobjects.datacleaner.monitor.server.job.ExecutionLoggerImpl;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.events.JobExecutedEvent;
+import org.datacleaner.monitor.events.JobFailedEvent;
+import org.datacleaner.monitor.events.JobTriggeredEvent;
+import org.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.monitor.scheduling.api.VariableProvider;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.scheduling.model.TriggerType;
+import org.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
+import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFolder;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;

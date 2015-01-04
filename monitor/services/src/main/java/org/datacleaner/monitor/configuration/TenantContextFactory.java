@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
  * Factory object for {@link TenantContext} objects

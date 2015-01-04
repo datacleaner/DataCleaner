@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.bootstrap;
+package org.datacleaner.bootstrap;
 
 import java.awt.Image;
 import java.net.URL;
@@ -26,17 +26,17 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.eobjects.analyzer.beans.BooleanAnalyzer;
-import org.eobjects.analyzer.beans.DateAndTimeAnalyzer;
-import org.eobjects.analyzer.beans.NumberAnalyzer;
-import org.eobjects.analyzer.beans.StringAnalyzer;
-import org.eobjects.analyzer.cli.CliArguments;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.util.ResourceManager;
+import org.datacleaner.beans.BooleanAnalyzer;
+import org.datacleaner.beans.DateAndTimeAnalyzer;
+import org.datacleaner.beans.NumberAnalyzer;
+import org.datacleaner.beans.StringAnalyzer;
+import org.datacleaner.cli.CliArguments;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.util.ResourceManager;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.junit.Ignore;

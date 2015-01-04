@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -25,17 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.DataSetResult;
-import org.eobjects.analyzer.result.ListResult;
-import org.eobjects.analyzer.result.NumberResult;
-import org.eobjects.analyzer.result.SimpleAnalysisResult;
-import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.descriptors.PlaceholderComponentJob;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.result.DataSetResult;
+import org.datacleaner.result.ListResult;
+import org.datacleaner.result.NumberResult;
+import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.util.ChangeAwareObjectInputStream;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;

@@ -17,23 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.io.File;
 import java.util.regex.Pattern;
 
-import org.eobjects.analyzer.beans.api.Analyzer;
-import org.eobjects.analyzer.beans.api.AnalyzerBean;
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.UpdateableDatastore;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.reference.StringPattern;
-import org.eobjects.analyzer.reference.SynonymCatalog;
-import org.eobjects.analyzer.result.NumberResult;
+import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.beans.api.AnalyzerBean;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.filter.ValidationCategory;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.UpdateableDatastore;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.InputRow;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.result.NumberResult;
 import org.junit.Ignore;
 
 @Ignore

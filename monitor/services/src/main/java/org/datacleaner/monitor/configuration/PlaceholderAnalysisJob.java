@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,20 +26,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
-import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.BeanConfiguration;
-import org.eobjects.analyzer.job.FilterJob;
-import org.eobjects.analyzer.job.ImmutableAnalyzerJob;
-import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
-import org.eobjects.analyzer.job.TransformerJob;
-import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalysisJobMetadata;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.FilterJob;
+import org.datacleaner.job.ImmutableAnalyzerJob;
+import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.TransformerJob;
+import org.datacleaner.util.PreviewTransformedDataAnalyzer;
 
 /**
  * {@link AnalysisJob} which replaces the {@link Datastore} of another

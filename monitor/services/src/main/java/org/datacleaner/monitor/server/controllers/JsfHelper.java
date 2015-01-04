@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.datacleaner.Version;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.server.security.User;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.Version;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

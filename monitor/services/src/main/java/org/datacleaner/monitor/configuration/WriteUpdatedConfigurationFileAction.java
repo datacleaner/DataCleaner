@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.bind.JAXBException;
 
-import org.eobjects.analyzer.configuration.jaxb.Configuration;
-import org.eobjects.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
 

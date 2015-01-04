@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.util.List;
 import java.util.Map;
@@ -25,17 +25,17 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MutableInputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerChangeListener;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.widgets.DCCheckBox;
-import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.TransformerChangeListener;
+import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.widgets.DCCheckBox;
+import org.datacleaner.widgets.SourceColumnComboBox;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;

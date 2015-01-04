@@ -35,7 +35,7 @@
 				<value>godday</value>
 			</value-list-dictionary>
 			<custom-dictionary
-				class-name="org.eobjects.analyzer.configuration.SampleCustomDictionary">
+				class-name="org.datacleaner.configuration.SampleCustomDictionary">
 				<property name="Name" value="custom_dict" />
 				<property name="Values" value="5" />
 				<property name="Datastore" value="my_jdbc_connection" />
@@ -58,7 +58,7 @@
 				<synonym-column-path>CUSTOMERS.PHONE</synonym-column-path>
 			</datastore-synonym-catalog>
 			<custom-synonym-catalog
-				class-name="org.eobjects.analyzer.configuration.SampleCustomSynonymCatalog">
+				class-name="org.datacleaner.configuration.SampleCustomSynonymCatalog">
 				<property name="Name" value="custom_syn" />
 				<property name="Values"
 					value="[[DNK,Denmark,Danmark],[GBR,Great Britain,UK,United Kingdom],[NLD,Netherlands]]" />

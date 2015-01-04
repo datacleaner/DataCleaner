@@ -17,34 +17,34 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule;
-import org.eobjects.datacleaner.monitor.jaxb.TriggerType;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.datacleaner.monitor.jaxb.ExecutionType;
+import org.datacleaner.monitor.jaxb.Schedule;
+import org.datacleaner.monitor.jaxb.TriggerType;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
 
 /**
  * Component responsible for writing a {@link ExecutionLog} to an XML
  * outputstream.
  */
-public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
+public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.datacleaner.monitor.jaxb.ExecutionLog> {
 
     public JaxbExecutionLogWriter() {
-        super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
+        super(org.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
     public void write(ExecutionLog executionLog, OutputStream out) {
-        final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbObj = createExecutionLog(executionLog);
+        final org.datacleaner.monitor.jaxb.ExecutionLog jaxbObj = createExecutionLog(executionLog);
 
         marshal(jaxbObj, out);
     }
 
-    private org.eobjects.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(ExecutionLog executionLog) {
-        final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog result = new org.eobjects.datacleaner.monitor.jaxb.ExecutionLog();
+    private org.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(ExecutionLog executionLog) {
+        final org.datacleaner.monitor.jaxb.ExecutionLog result = new org.datacleaner.monitor.jaxb.ExecutionLog();
 
         result.setResultId(executionLog.getResultId());
         result.setExecutionStatus(createExecutionStatus(executionLog.getExecutionStatus()));
@@ -62,7 +62,7 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.dat
         return result;
     }
 
-    private TriggerType createTriggerType(org.eobjects.datacleaner.monitor.scheduling.model.TriggerType triggerType) {
+    private TriggerType createTriggerType(org.datacleaner.monitor.scheduling.model.TriggerType triggerType) {
         switch (triggerType) {
         case PERIODIC:
             return TriggerType.PERIODIC;

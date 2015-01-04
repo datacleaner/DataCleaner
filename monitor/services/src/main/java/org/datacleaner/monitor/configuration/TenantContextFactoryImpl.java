@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.eobjects.analyzer.configuration.InjectionManagerFactory;
-import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.Repository;
+import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

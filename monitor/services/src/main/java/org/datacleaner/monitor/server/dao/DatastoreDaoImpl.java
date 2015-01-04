@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.dao;
+package org.datacleaner.monitor.server.dao;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,14 +38,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.eobjects.analyzer.configuration.DatastoreXmlExternalizer;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
-import org.eobjects.analyzer.configuration.jaxb.Configuration;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.configuration.DatastoreXmlExternalizer;
+import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;

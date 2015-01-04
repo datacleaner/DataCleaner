@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +27,19 @@ import junit.framework.TestCase;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
-import org.eobjects.analyzer.connection.PojoDatastore;
-import org.eobjects.analyzer.data.MutableInputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerChangeListener;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.DatastoreCatalogImpl;
+import org.datacleaner.connection.PojoDatastore;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.TransformerChangeListener;
+import org.datacleaner.job.builder.TransformerJobBuilder;
 
 public class TableNamePropertyWidgetTest extends TestCase {
 

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -26,13 +26,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreConnection;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.beans.convert.ConvertToStringTransformer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;

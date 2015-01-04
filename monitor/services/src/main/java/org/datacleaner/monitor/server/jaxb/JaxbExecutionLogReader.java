@@ -17,36 +17,36 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.jaxb.ExecutionType;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.scheduling.model.TriggerType;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
  * Reader of {@link ExecutionLog} objects.
  */
-public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
+public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.monitor.jaxb.ExecutionLog> {
 
     public JaxbExecutionLogReader() {
-        super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
+        super(org.datacleaner.monitor.jaxb.ExecutionLog.class);
     }
 
     public ExecutionLog read(InputStream inputStream, JobIdentifier jobIdentifier, TenantIdentifier tenant) {
-        org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
+        org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
         ExecutionLog executionLog = convert(jaxbExecutionLog, jobIdentifier, tenant);
         return executionLog;
     }
 
-    private ExecutionLog convert(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
+    private ExecutionLog convert(org.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
             JobIdentifier jobIdentifier, TenantIdentifier tenant) {
 
         final ExecutionLog executionLog = new ExecutionLog();
@@ -57,7 +57,7 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.dat
             executionLog.setExecutionStatus(ExecutionStatus.valueOf(jaxbExecutionStatus.toString()));
         }
 
-        final org.eobjects.datacleaner.monitor.jaxb.TriggerType jaxbTriggerType = jaxbExecutionLog.getTriggerType();
+        final org.datacleaner.monitor.jaxb.TriggerType jaxbTriggerType = jaxbExecutionLog.getTriggerType();
         if (jaxbTriggerType != null) {
             executionLog.setTriggerType(TriggerType.valueOf(jaxbTriggerType.toString()));
         }

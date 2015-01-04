@@ -56,11 +56,11 @@
 	</storage-provider>
 
 	<classpath-scanner>
-		<package recursive="true">org.eobjects.analyzer.beans</package>
-		<package>org.eobjects.analyzer.result.renderer</package>
-		<package recursive="true">org.eobjects.datacleaner.extension</package>
-		<package>org.eobjects.datacleaner.panels</package>
-		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
+		<package recursive="true">org.datacleaner.beans</package>
+		<package>org.datacleaner.result.renderer</package>
+		<package recursive="true">org.datacleaner.extension</package>
+		<package>org.datacleaner.panels</package>
+		<package recursive="true">org.datacleaner.widgets.result</package>
 		<package recursive="true">com.hi</package>
 		<package recursive="true">com.neopost</package>
 	</classpath-scanner>

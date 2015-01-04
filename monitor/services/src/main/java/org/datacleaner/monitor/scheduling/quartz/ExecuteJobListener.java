@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.quartz;
+package org.datacleaner.monitor.scheduling.quartz;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;

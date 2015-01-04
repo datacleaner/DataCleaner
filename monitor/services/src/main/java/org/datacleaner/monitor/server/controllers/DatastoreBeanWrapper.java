@@ -17,18 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.eobjects.analyzer.connection.CompositeDatastore;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.FileDatastore;
-import org.eobjects.analyzer.connection.JdbcDatastore;
-import org.eobjects.analyzer.connection.ResourceDatastore;
-import org.eobjects.analyzer.connection.UsernameDatastore;
+import org.datacleaner.connection.CompositeDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FileDatastore;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.ResourceDatastore;
+import org.datacleaner.connection.UsernameDatastore;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.Resource;

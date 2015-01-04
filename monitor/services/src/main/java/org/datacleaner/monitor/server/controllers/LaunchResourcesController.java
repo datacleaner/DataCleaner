@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,16 +27,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
-import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.repository.Repository;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.ConfigurationInterceptor;
+import org.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.datacleaner.monitor.server.job.DataCleanerJobContext;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;

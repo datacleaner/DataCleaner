@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -25,20 +25,20 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.StringAnalyzer;
-import org.eobjects.analyzer.beans.transform.ConcatenatorTransformer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.data.ELInputColumn;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MutableInputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
-import org.eobjects.datacleaner.actions.ReorderColumnsActionListener;
-import org.eobjects.datacleaner.widgets.DCCheckBox;
+import org.datacleaner.beans.StringAnalyzer;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.data.ELInputColumn;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
+import org.datacleaner.actions.ReorderColumnsActionListener;
+import org.datacleaner.widgets.DCCheckBox;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.util.CollectionUtils;

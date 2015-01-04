@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets;
+package org.datacleaner.widgets;
 
 import javax.swing.JComponent;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.standardize.EmailStandardizerTransformer;
-import org.eobjects.analyzer.descriptors.Descriptors;
+import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
+import org.datacleaner.descriptors.Descriptors;
 
 public class DescriptorMenuItemTest extends TestCase {
 

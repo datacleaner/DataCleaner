@@ -17,11 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.windows;
+package org.datacleaner.windows;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.windows.AboutDialog.LicensedProject;
+import org.datacleaner.windows.AboutDialog.LicensedProject;
 
 import junit.framework.TestCase;
 

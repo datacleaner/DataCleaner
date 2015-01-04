@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.repository.file;
+package org.datacleaner.repository.file;
 
 import java.io.File;
 import java.io.FileFilter;

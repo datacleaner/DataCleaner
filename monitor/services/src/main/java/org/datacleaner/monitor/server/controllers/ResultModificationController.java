@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.util.Date;
 import java.util.Map;
@@ -25,17 +25,17 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.analyzer.beans.convert.ConvertToDateTransformer;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.beans.convert.ConvertToDateTransformer;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.dao.ResultDao;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

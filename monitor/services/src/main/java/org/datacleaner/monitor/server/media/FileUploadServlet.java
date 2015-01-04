@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.media;
+package org.datacleaner.monitor.server.media;
 
 import java.io.File;
 import java.io.IOException;

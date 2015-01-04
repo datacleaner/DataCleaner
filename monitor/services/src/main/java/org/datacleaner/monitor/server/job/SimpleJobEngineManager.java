@@ -17,18 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.JobEngine;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.job.JobEngineManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

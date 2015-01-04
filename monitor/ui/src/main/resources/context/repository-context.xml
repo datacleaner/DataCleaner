@@ -5,27 +5,27 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
+	<bean id="repository" class="org.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File" value="repository" />
 	</bean>
 
 	<bean id="metricValueProducer"
-		class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
+		class="org.datacleaner.monitor.server.DefaultMetricValueProducer">
 	</bean>
 
 	<!-- Development mode launch artifact provider. Finds JAR files in directories 
 		relative to the build structure. If none are found, will fall back to the 
 		JNLP file available on datacleaner.org -->
 	<bean id="launchArtifactProvider"
-		class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider" />
+		class="org.datacleaner.monitor.server.DevModeLaunchArtifactProvider" />
 
 	<!-- Example launch artifact provider based on external folder -->
-	<!-- <bean name="launchArtifactProvider" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
+	<!-- <bean name="launchArtifactProvider" class="org.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
 	<!-- <constructor-arg type="java.io.File" value="/opt/datacleaner/signed_jars"/> -->
 	<!-- </bean> -->
 
 	<bean id="htmlAnalysisResultWriterFactory"
-		class="org.eobjects.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory">
+		class="org.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory">
 		<property name="resourcesDirectory"
 			value="http://eobjects.org/resources/datacleaner-html-rendering" />
 	</bean>

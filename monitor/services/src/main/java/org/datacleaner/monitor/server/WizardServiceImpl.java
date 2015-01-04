@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,23 +26,23 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
-import org.eobjects.datacleaner.monitor.server.dao.WizardDao;
-import org.eobjects.datacleaner.monitor.shared.WizardService;
-import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.wizard.WizardSession;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.dao.DatastoreDao;
+import org.datacleaner.monitor.server.dao.WizardDao;
+import org.datacleaner.monitor.shared.WizardService;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
+import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.model.WizardPage;
+import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
+import org.datacleaner.monitor.wizard.WizardSession;
+import org.datacleaner.monitor.wizard.datastore.DatastoreWizard;
+import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.datacleaner.monitor.wizard.job.JobWizard;
+import org.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.apache.metamodel.util.Func;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

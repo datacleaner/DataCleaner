@@ -23,7 +23,7 @@
 <module>
 	<inherits name='com.google.gwt.user.User' />
 	
-	<inherits name='org.eobjects.datacleaner.monitor.Api' />
+	<inherits name='org.datacleaner.monitor.Api' />
 
 	<source path='shared' />
 	

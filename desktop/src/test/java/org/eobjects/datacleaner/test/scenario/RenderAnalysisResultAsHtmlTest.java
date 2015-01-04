@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.test.scenario;
+package org.datacleaner.test.scenario;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,16 +27,16 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
-import org.eobjects.analyzer.result.html.HtmlFragment;
-import org.eobjects.analyzer.result.renderer.HtmlRenderingFormat;
-import org.eobjects.analyzer.result.renderer.RendererFactory;
-import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.result.html.HtmlAnalysisResultWriter;
+import org.datacleaner.result.html.HtmlFragment;
+import org.datacleaner.result.renderer.HtmlRenderingFormat;
+import org.datacleaner.result.renderer.RendererFactory;
+import org.datacleaner.util.ChangeAwareObjectInputStream;
+import org.datacleaner.guice.DCModule;
 import org.apache.metamodel.util.ImmutableRef;
 
 import com.google.inject.Guice;
@@ -59,7 +59,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
         AnalysisResult analysisResult;
         try (ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file))) {
-            is.addRenamedPackage("org.eobjects.datacleaner.output.beans", "org.eobjects.datacleaner.extension.output");
+            is.addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");
             analysisResult = (AnalysisResult) is.readObject();
         }
 

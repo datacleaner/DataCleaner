@@ -12,9 +12,9 @@
 	</datastore-catalog>
 	
 	<classpath-scanner>
-		<excluded-rendering-format>org.eobjects.analyzer.result.renderer.TextRenderingFormat</excluded-rendering-format>
-		<excluded-rendering-format>org.eobjects.analyzer.result.renderer.SwingRenderingFormat</excluded-rendering-format>
-		<package>org.eobjects.analyzer.result</package>
+		<excluded-rendering-format>org.datacleaner.result.renderer.TextRenderingFormat</excluded-rendering-format>
+		<excluded-rendering-format>org.datacleaner.result.renderer.SwingRenderingFormat</excluded-rendering-format>
+		<package>org.datacleaner.result</package>
 	</classpath-scanner>
 
 </configuration>

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,26 +29,26 @@ import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.ComponentDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.HasAnalyzerResultBeanDescriptor;
-import org.eobjects.analyzer.descriptors.MetricDescriptor;
-import org.eobjects.analyzer.descriptors.MetricParameters;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.AnalyzerJobHelper;
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.job.InputColumnSinkJob;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.util.CollectionUtils2;
-import org.eobjects.analyzer.util.LabelUtils;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor;
+import org.datacleaner.descriptors.MetricDescriptor;
+import org.datacleaner.descriptors.MetricParameters;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.AnalyzerJobHelper;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.util.CollectionUtils2;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricJobEngine;
+import org.datacleaner.monitor.shared.model.MetricGroup;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.Predicate;

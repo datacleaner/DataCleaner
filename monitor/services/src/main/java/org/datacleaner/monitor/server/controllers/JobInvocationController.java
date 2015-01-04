@@ -17,29 +17,29 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.connection.PojoDatastore;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
-import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
-import org.eobjects.analyzer.job.runner.AnalysisRunner;
-import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.connection.PojoDatastore;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunner;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.job.DataCleanerJobContext;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.CollectionUtils;

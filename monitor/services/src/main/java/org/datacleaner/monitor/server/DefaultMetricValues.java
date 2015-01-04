@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.eobjects.analyzer.descriptors.MetricDescriptor;
-import org.eobjects.analyzer.descriptors.MetricParameters;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
-import org.eobjects.datacleaner.monitor.job.MetricValues;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.descriptors.MetricDescriptor;
+import org.datacleaner.descriptors.MetricParameters;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricJobEngine;
+import org.datacleaner.monitor.job.MetricValues;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Default {@link MetricValues} implementation, calculates the metric values

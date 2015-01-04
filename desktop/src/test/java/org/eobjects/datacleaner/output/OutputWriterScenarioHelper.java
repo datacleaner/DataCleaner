@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output;
+package org.datacleaner.output;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MockInputColumn;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MockInputColumn;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.util.DateUtils;
 import org.apache.metamodel.util.Month;

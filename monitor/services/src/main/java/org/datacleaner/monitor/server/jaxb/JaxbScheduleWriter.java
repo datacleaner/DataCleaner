@@ -17,22 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.OutputStream;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.jaxb.Alert;
-import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
-import org.eobjects.datacleaner.monitor.jaxb.VariableProvider;
-import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
-import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.jaxb.Alert;
+import org.datacleaner.monitor.jaxb.AlertSeverityType;
+import org.datacleaner.monitor.jaxb.Schedule;
+import org.datacleaner.monitor.jaxb.Schedule.Alerts;
+import org.datacleaner.monitor.jaxb.VariableProvider;
+import org.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.datacleaner.monitor.scheduling.model.AlertSeverity;
+import org.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.datacleaner.monitor.scheduling.model.TriggerType;
+import org.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
 
 /**
  * Jaxb based Schedule writer for .schedule.xml files.

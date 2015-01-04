@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,27 +40,27 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.JaxbPojoDatastoreAdaptor;
-import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
-import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType;
-import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType.Package;
-import org.eobjects.analyzer.configuration.jaxb.Configuration;
-import org.eobjects.analyzer.configuration.jaxb.ConfigurationMetadataType;
-import org.eobjects.analyzer.configuration.jaxb.DatastoreCatalogType;
-import org.eobjects.analyzer.configuration.jaxb.MultithreadedTaskrunnerType;
-import org.eobjects.analyzer.configuration.jaxb.ObjectFactory;
-import org.eobjects.analyzer.configuration.jaxb.PojoTableType;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.connection.DatastoreConnection;
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.JaxbPojoDatastoreAdaptor;
+import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType;
+import org.datacleaner.configuration.jaxb.ClasspathScannerType.Package;
+import org.datacleaner.configuration.jaxb.Configuration;
+import org.datacleaner.configuration.jaxb.ConfigurationMetadataType;
+import org.datacleaner.configuration.jaxb.DatastoreCatalogType;
+import org.datacleaner.configuration.jaxb.MultithreadedTaskrunnerType;
+import org.datacleaner.configuration.jaxb.ObjectFactory;
+import org.datacleaner.configuration.jaxb.PojoTableType;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.util.JaxbValidationEventHandler;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.ConfigurationFactory;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.server.ConfigurationInterceptor;
+import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableSchema;

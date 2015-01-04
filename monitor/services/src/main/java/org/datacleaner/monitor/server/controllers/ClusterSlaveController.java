@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,13 +27,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.analyzer.cluster.SlaveJobInterceptor;
-import org.eobjects.analyzer.cluster.http.SlaveServletHelper;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.cluster.SlaveJobInterceptor;
+import org.datacleaner.cluster.http.SlaveServletHelper;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

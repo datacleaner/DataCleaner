@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
 	<name>Basic transformers</name>
-	<package>org.eobjects.analyzer.beans</package>
+	<package>org.datacleaner.beans</package>
 	<description>A basic set of general purpose transformations for data type conversion, parsing, search/replace and more.</description>
-	<icon>org/eobjects/analyzer/beans/BasicTransformersIcon.png</icon>
+	<icon>org/datacleaner/beans/BasicTransformersIcon.png</icon>
 </extension>

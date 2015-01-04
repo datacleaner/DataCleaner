@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.Serializable;
 import java.util.Map;
 
-import org.eobjects.analyzer.configuration.InjectionManager;
-import org.eobjects.analyzer.descriptors.ComponentDescriptor;
-import org.eobjects.analyzer.job.BeanConfiguration;
-import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
-import org.eobjects.datacleaner.monitor.job.JobEngine;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.springframework.stereotype.Component;
 
 /**

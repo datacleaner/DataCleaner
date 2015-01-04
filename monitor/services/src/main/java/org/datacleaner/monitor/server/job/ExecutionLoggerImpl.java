@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -27,16 +27,16 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
-import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
-import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.events.JobExecutedEvent;
+import org.datacleaner.monitor.events.JobFailedEvent;
+import org.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;

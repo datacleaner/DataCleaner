@@ -17,11 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
-import org.eobjects.analyzer.util.StringUtils;
+import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.MetaModelException;

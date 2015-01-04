@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -27,27 +27,27 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
-import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
-import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricValues;
-import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
-import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFile.Type;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.dashboard.DashboardService;
+import org.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
+import org.datacleaner.monitor.dashboard.model.DashboardGroup;
+import org.datacleaner.monitor.dashboard.model.TimelineData;
+import org.datacleaner.monitor.dashboard.model.TimelineDataRow;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricValues;
+import org.datacleaner.monitor.server.dao.ResultDao;
+import org.datacleaner.monitor.server.dao.TimelineDao;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFile.Type;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;

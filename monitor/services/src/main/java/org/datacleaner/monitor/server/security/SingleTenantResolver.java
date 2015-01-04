@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.security;
+package org.datacleaner.monitor.server.security;
 
 /**
  * Tenant resolver implementation for a single-tenant deployment.

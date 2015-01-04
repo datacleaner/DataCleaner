@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.util.Arrays;
@@ -27,16 +27,16 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.eobjects.analyzer.beans.api.RenderingFormat;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
-import org.eobjects.analyzer.descriptors.DescriptorProvider;
-import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
-import org.eobjects.analyzer.job.concurrent.TaskRunner;
-import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.analyzer.result.renderer.TextRenderingFormat;
-import org.eobjects.analyzer.util.CollectionUtils2;
-import org.eobjects.datacleaner.util.ExtensionFilter;
+import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.result.renderer.SwingRenderingFormat;
+import org.datacleaner.result.renderer.TextRenderingFormat;
+import org.datacleaner.util.CollectionUtils2;
+import org.datacleaner.util.ExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.dao;
+package org.datacleaner.monitor.server.dao;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,20 +25,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.server.TimelineReader;
-import org.eobjects.datacleaner.monitor.server.WriteTimelineAction;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.Repository;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.repository.RepositoryNode;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.dashboard.model.DashboardGroup;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.datacleaner.monitor.server.TimelineReader;
+import org.datacleaner.monitor.server.WriteTimelineAction;
+import org.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.RepositoryNode;
+import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

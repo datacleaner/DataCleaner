@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.security;
+package org.datacleaner.monitor.server.security;
 
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
 
 /**
  * Defines the interface of a monitor user.

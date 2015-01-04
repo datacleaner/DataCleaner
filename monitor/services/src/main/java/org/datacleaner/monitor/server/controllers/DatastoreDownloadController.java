@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,12 +29,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.FileDatastore;
-import org.eobjects.analyzer.connection.ResourceDatastore;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.FileDatastore;
+import org.datacleaner.connection.ResourceDatastore;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.datastore;
+package org.datacleaner.output.datastore;
 
 import java.io.File;
 import java.util.Arrays;
@@ -25,11 +25,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.output.OutputWriterScenarioHelper;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.output.OutputWriter;
+import org.datacleaner.output.OutputWriterScenarioHelper;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;

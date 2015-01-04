@@ -23,7 +23,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>org.eobjects.datacleaner.monitor.jaxb</packageName>
+					<packageName>org.datacleaner.monitor.jaxb</packageName>
 					<schemaDirectory>src/main/resources</schemaDirectory>
 					<outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
 				</configuration>

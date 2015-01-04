@@ -17,32 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.quartz;
+package org.datacleaner.monitor.scheduling.quartz;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eobjects.analyzer.beans.api.ComponentMessage;
-import org.eobjects.analyzer.beans.api.ExecutionLogMessage;
-import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.job.FilterJob;
-import org.eobjects.analyzer.job.TransformerJob;
-import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
-import org.eobjects.analyzer.job.runner.AnalysisListener;
-import org.eobjects.analyzer.job.runner.AnalysisListenerAdaptor;
-import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
-import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.SimpleAnalysisResult;
-import org.eobjects.analyzer.util.LabelUtils;
-import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.util.ProgressCounter;
-import org.eobjects.datacleaner.util.SystemProperties;
+import org.datacleaner.beans.api.ComponentMessage;
+import org.datacleaner.beans.api.ExecutionLogMessage;
+import org.datacleaner.data.InputRow;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.FilterJob;
+import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.runner.AnalysisJobMetrics;
+import org.datacleaner.job.runner.AnalysisListener;
+import org.datacleaner.job.runner.AnalysisListenerAdaptor;
+import org.datacleaner.job.runner.AnalyzerMetrics;
+import org.datacleaner.job.runner.RowProcessingMetrics;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.result.SimpleAnalysisResult;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.util.ProgressCounter;
+import org.datacleaner.util.SystemProperties;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
 

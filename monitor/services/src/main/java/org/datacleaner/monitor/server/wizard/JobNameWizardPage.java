@@ -17,18 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.wizard;
+package org.datacleaner.monitor.server.wizard;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
-import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
-import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
+import org.datacleaner.monitor.wizard.WizardPageController;
+import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.datacleaner.monitor.wizard.job.JobWizardContext;
 
 /**
  * Page for entering a name for a job.

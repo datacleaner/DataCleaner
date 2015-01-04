@@ -17,33 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.io.File;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.ExcelDatastore;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.reference.SimpleDictionary;
-import org.eobjects.analyzer.reference.SimpleStringPattern;
-import org.eobjects.analyzer.reference.SimpleSynonymCatalog;
-import org.eobjects.analyzer.reference.StringPattern;
-import org.eobjects.analyzer.reference.SynonymCatalog;
-import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
-import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.beans.filter.ValidationCategory;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MockInputColumn;
+import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.SimpleDictionary;
+import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.reference.SimpleSynonymCatalog;
+import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.apache.metamodel.util.EqualsBuilder;
 
 import com.google.inject.Guice;

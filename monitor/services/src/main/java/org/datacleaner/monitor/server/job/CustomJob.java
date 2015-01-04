@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.Serializable;
 
 import javax.inject.Inject;
 
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.Initialize;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.api.Initialize;
 
 /**
  * Interface for jobs that can be run and scheduled in DataCleaner using the

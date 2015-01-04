@@ -17,22 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
-import org.eobjects.datacleaner.monitor.job.MetricValues;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricJobEngine;
+import org.datacleaner.monitor.job.MetricValues;
+import org.datacleaner.monitor.server.job.DataCleanerJobEngine;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

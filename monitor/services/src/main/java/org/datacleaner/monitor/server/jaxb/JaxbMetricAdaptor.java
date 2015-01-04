@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,10 +26,10 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.datacleaner.monitor.jaxb.MetricType;
-import org.eobjects.datacleaner.monitor.jaxb.MetricType.Children;
-import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.jaxb.MetricType;
+import org.datacleaner.monitor.jaxb.MetricType.Children;
+import org.datacleaner.monitor.jaxb.MetricsType;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Utility class which has the responsibility of converting from and to

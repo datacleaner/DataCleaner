@@ -12,7 +12,7 @@
 		</filter>
 	</appender>
 
-	<logger name="org.eobjects">
+	<logger name="org.datacleaner">
 		<level value="error" />
 	</logger>
 

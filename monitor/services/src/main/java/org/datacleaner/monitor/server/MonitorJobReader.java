@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.SourceColumnMapping;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
-import org.eobjects.analyzer.job.JaxbJobReader;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.SourceColumnMapping;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalysisJobMetadata;
+import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.monitor.configuration.PlaceholderDatastore;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.Func;
 

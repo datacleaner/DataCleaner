@@ -17,23 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.alertnotification;
+package org.datacleaner.monitor.alertnotification;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.MetricValues;
-import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.MetricValues;
+import org.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.server.MetricValueProducer;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.NumberComparator;
 import org.apache.metamodel.util.Ref;

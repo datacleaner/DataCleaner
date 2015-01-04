@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.result;
+package org.datacleaner.widgets.result;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.valuedist.SingleValueDistributionResult;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.analyzer.result.SingleValueFrequency;
-import org.eobjects.analyzer.result.ValueCountListImpl;
-import org.eobjects.analyzer.storage.RowAnnotationImpl;
+import org.datacleaner.beans.valuedist.SingleValueDistributionResult;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MockInputColumn;
+import org.datacleaner.result.SingleValueFrequency;
+import org.datacleaner.result.ValueCountListImpl;
+import org.datacleaner.storage.RowAnnotationImpl;
 
 public class ValueDistributionResultSwingRendererGroupDelegateTest extends
 		TestCase {

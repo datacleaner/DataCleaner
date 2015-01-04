@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.cluster;
+package org.datacleaner.monitor.cluster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.eobjects.analyzer.cluster.ClusterManager;
-import org.eobjects.analyzer.cluster.http.HttpClusterManager;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.cluster.ClusterManager;
+import org.datacleaner.cluster.http.HttpClusterManager;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
  * Factory for HTTP based {@link ClusterManager}s.

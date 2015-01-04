@@ -17,10 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.job.ExecutionLogger;
 
 /**
  * Simple implementation of {@link CustomJobCallback}.

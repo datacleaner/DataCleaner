@@ -17,22 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.eobjects.datacleaner.repository.Repository;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFileResourceTypeHandler;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
+import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFileResourceTypeHandler;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

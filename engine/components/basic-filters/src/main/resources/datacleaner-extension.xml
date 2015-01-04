@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
 	<name>Basic filters</name>
-	<package>org.eobjects.analyzer.beans.filter</package>
+	<package>org.datacleaner.beans.filter</package>
 	<description>A basic set of general purpose filters for null checking, equals checking, range filtering and more.</description>
-	<icon>org/eobjects/analyzer/beans/BasicFiltersIcon.png</icon>
+	<icon>org/datacleaner/beans/BasicFiltersIcon.png</icon>
 </extension>

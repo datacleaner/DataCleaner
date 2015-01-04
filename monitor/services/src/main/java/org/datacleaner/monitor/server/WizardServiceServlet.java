@@ -17,19 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.eobjects.datacleaner.monitor.shared.WizardService;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.WizardService;
+import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.model.WizardPage;
+import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 

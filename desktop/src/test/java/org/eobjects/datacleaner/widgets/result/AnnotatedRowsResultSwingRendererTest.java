@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.result;
+package org.datacleaner.widgets.result;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.analyzer.data.MockInputRow;
-import org.eobjects.analyzer.result.AnnotatedRowsResult;
-import org.eobjects.analyzer.storage.InMemoryRowAnnotationFactory;
-import org.eobjects.analyzer.storage.RowAnnotation;
-import org.eobjects.analyzer.storage.RowAnnotationFactory;
-import org.eobjects.datacleaner.user.UserPreferencesImpl;
-import org.eobjects.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer.AnnotatedRowResultPanel;
-import org.eobjects.datacleaner.widgets.table.DCTable;
+import org.datacleaner.connection.DatastoreCatalogImpl;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.MockInputColumn;
+import org.datacleaner.data.MockInputRow;
+import org.datacleaner.result.AnnotatedRowsResult;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotation;
+import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer.AnnotatedRowResultPanel;
+import org.datacleaner.widgets.table.DCTable;
 
 public class AnnotatedRowsResultSwingRendererTest extends TestCase {
 

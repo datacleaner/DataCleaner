@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output;
+package org.datacleaner.output;
 
 import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.datacleaner.output.csv.CsvOutputWriterFactory;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;

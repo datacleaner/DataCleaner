@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.OutputColumns;
-import org.eobjects.analyzer.beans.api.Transformer;
-import org.eobjects.analyzer.beans.api.TransformerBean;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.InputRow;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.beans.api.TransformerBean;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.InputRow;
 
 @TransformerBean("mock multi mapped columns")
 public class MockMultipleMappedColumnsTransformer implements Transformer<String> {

@@ -17,11 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.listeners;
+package org.datacleaner.monitor.server.listeners;
 
-import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
-import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.alertnotification.AlertNotificationService;
+import org.datacleaner.monitor.events.JobExecutedEvent;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

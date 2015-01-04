@@ -17,15 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.XmlJobContext;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.XmlJobContext;
 
 /**
  * Specialized {@link JobContext} for jobs that are typical DataCleaner

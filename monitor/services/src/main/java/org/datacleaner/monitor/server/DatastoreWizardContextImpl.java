@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.Locale;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.wizard.datastore.DatastoreWizard;
+import org.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.apache.metamodel.util.Func;
 
 /**

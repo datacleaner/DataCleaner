@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,20 +31,20 @@ import java.util.Map.Entry;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.job.ComponentJob;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.job.ComponentJob;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.result.html.HtmlAnalysisResultWriter;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.FileFilters;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
@@ -169,7 +169,7 @@ public class ResultFileController {
 
         final boolean headers;
         final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate;
-        if (org.eobjects.analyzer.util.StringUtils.isNullOrEmpty(componentParamName)) {
+        if (org.datacleaner.util.StringUtils.isNullOrEmpty(componentParamName)) {
             jobInclusionPredicate = new TruePredicate<Entry<ComponentJob, AnalyzerResult>>();
             headers = true;
         } else {

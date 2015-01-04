@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.datastore;
+package org.datacleaner.output.datastore;
 
 import junit.framework.TestCase;
 

@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.Serializable;
 
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.Validate;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.api.Validate;
 
 /**
  * A sample {@link CustomJob} used to show examples of DataCleaner's

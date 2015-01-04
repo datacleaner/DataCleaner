@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.alertnotification;
+package org.datacleaner.monitor.alertnotification;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 
 /**
  * Defines an interface for the component which handles alert notifications for

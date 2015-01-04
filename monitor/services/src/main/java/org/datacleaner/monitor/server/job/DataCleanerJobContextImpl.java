@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,19 +28,19 @@ import java.util.Map;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalysisJobMetadata;
-import org.eobjects.analyzer.job.JaxbJobReader;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.MetricValueUtils;
-import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalysisJobMetadata;
+import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.server.MetricValueUtils;
+import org.datacleaner.monitor.server.MonitorJobReader;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.JobMetrics;
+import org.datacleaner.monitor.shared.model.MetricGroup;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.util.FileFilters;
 
 /**
  * The {@link JobContext} implementation for DataCleaner analysis jobs. This

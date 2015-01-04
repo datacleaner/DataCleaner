@@ -17,15 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.guice;
+package org.datacleaner.guice;
 
 import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.lifecycle.MemberInjectionPoint;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.lifecycle.MemberInjectionPoint;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

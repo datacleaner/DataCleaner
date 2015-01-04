@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.user;
+package org.datacleaner.user;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -28,10 +28,10 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.util.VFSUtils;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.util.VFSUtils;
 
 public class UserPreferencesImplTest extends TestCase {
 

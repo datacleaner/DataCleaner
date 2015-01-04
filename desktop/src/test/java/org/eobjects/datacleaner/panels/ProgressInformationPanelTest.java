@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.panels;
+package org.datacleaner.panels;
 
 import java.sql.SQLException;
 
@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.panels.result.ProgressInformationPanel;
+import org.datacleaner.panels.result.ProgressInformationPanel;
 import org.apache.metamodel.MetaModelException;
 
 public class ProgressInformationPanelTest extends TestCase {

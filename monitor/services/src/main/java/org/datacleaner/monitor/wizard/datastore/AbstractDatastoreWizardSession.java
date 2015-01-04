@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.wizard.datastore;
+package org.datacleaner.monitor.wizard.datastore;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
-import org.eobjects.datacleaner.monitor.server.dao.DatastoreDaoImpl;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.server.dao.DatastoreDao;
+import org.datacleaner.monitor.server.dao.DatastoreDaoImpl;
 import org.w3c.dom.Element;
 
 /**

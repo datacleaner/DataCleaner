@@ -17,14 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.datacleaner.monitor.server.job;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.job.JobEngine;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.job.JobEngineManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

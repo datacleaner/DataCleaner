@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.properties;
+package org.datacleaner.widgets.properties;
 
 import java.awt.Component;
 import java.util.Arrays;
@@ -26,18 +26,18 @@ import javax.inject.Provider;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
-import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.reference.SimpleDictionary;
-import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.user.UserPreferencesImpl;
-import org.eobjects.datacleaner.widgets.DCCheckBox;
-import org.eobjects.datacleaner.windows.ReferenceDataDialog;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.SimpleDictionary;
+import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.widgets.DCCheckBox;
+import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 

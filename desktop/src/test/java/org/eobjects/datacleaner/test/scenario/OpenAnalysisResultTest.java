@@ -17,19 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.test.scenario;
+package org.datacleaner.test.scenario;
 
 import java.awt.GraphicsEnvironment;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.vfs2.FileObject;
-import org.eobjects.analyzer.util.VFSUtils;
-import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.user.UserPreferencesImpl;
-import org.eobjects.datacleaner.windows.AbstractWindow;
-import org.eobjects.datacleaner.windows.ResultWindow;
+import org.datacleaner.util.VFSUtils;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.user.UserPreferencesImpl;
+import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.windows.ResultWindow;
 
 public class OpenAnalysisResultTest extends TestCase {
 

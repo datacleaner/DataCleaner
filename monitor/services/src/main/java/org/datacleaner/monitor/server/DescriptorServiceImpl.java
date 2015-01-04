@@ -17,27 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.analyzer.job.NoSuchComponentException;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
-import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
-import org.eobjects.datacleaner.monitor.shared.DescriptorNotFoundException;
-import org.eobjects.datacleaner.monitor.shared.DescriptorService;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.job.NoSuchComponentException;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.MetricJobContext;
+import org.datacleaner.monitor.job.MetricJobEngine;
+import org.datacleaner.monitor.server.dao.ResultDao;
+import org.datacleaner.monitor.shared.DescriptorNotFoundException;
+import org.datacleaner.monitor.shared.DescriptorService;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.JobMetrics;
+import org.datacleaner.monitor.shared.model.MetricGroup;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

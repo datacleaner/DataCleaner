@@ -17,10 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.listeners;
+package org.datacleaner.monitor.server.listeners;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.monitor.events.JobFailedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;

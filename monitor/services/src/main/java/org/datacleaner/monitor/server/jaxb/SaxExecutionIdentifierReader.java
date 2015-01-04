@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -32,9 +32,9 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
+import org.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.datacleaner.monitor.scheduling.model.TriggerType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.jaxb.CustomJavaComponentJob;
+import org.datacleaner.monitor.jaxb.CustomJavaComponentJob;
 
 /**
  * Simple JAXB adaptor for {@link CustomJavaJob}s.

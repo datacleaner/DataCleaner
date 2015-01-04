@@ -17,19 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.dao;
+package org.datacleaner.monitor.server.dao;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.wizard.Wizard;
-import org.eobjects.datacleaner.monitor.wizard.WizardSession;
+import org.datacleaner.monitor.shared.model.DCUserInputException;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.datacleaner.monitor.shared.model.WizardPage;
+import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
+import org.datacleaner.monitor.wizard.Wizard;
+import org.datacleaner.monitor.wizard.WizardSession;
 import org.apache.metamodel.util.Func;
 
 /**

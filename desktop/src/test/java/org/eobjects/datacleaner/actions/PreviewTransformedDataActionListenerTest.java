@@ -17,27 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.actions;
+package org.datacleaner.actions;
 
 import javax.swing.table.TableModel;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.filter.NumberRangeFilter;
-import org.eobjects.analyzer.beans.filter.RangeFilterCategory;
-import org.eobjects.analyzer.beans.standardize.EmailStandardizerTransformer;
-import org.eobjects.analyzer.beans.transform.StringLengthTransformer;
-import org.eobjects.analyzer.beans.transform.TokenizerTransformer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
-import org.eobjects.analyzer.connection.JdbcDatastore;
-import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.datacleaner.beans.filter.NumberRangeFilter;
+import org.datacleaner.beans.filter.RangeFilterCategory;
+import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
+import org.datacleaner.beans.transform.StringLengthTransformer;
+import org.datacleaner.beans.transform.TokenizerTransformer;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.DatastoreCatalogImpl;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.TransformerJobBuilder;
 
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 

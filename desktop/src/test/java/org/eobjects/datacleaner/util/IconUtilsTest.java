@@ -17,10 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.util;
+package org.datacleaner.util;
 
-import org.eobjects.analyzer.beans.writers.InsertIntoTableAnalyzer;
-import org.eobjects.analyzer.descriptors.Descriptors;
+import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
+import org.datacleaner.descriptors.Descriptors;
 
 import junit.framework.TestCase;
 

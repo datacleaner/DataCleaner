@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.quartz;
+package org.datacleaner.monitor.scheduling.quartz;
 
 import java.util.Arrays;
 

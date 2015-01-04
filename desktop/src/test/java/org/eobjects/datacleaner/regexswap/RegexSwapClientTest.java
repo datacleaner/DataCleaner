@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.regexswap;
+package org.datacleaner.regexswap;
 
 import java.util.Collection;
 import java.util.List;

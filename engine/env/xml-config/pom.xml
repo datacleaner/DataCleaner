@@ -14,7 +14,7 @@
 				<configuration>
 					<instrumentation>
 						<excludes>
-							<exclude>org/eobjects/analyzer/**/jaxb/**/*.class</exclude>
+							<exclude>org/datacleaner/**/jaxb/**/*.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>
@@ -40,7 +40,7 @@
 						<phase>generate-sources</phase>
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated/configuration-src</generateDirectory>
-							<generatePackage>org.eobjects.analyzer.configuration.jaxb</generatePackage>
+							<generatePackage>org.datacleaner.configuration.jaxb</generatePackage>
 							<schemaIncludes>
 								<value>configuration.xsd</value>
 							</schemaIncludes>
@@ -54,7 +54,7 @@
 						<phase>generate-sources</phase>
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated/job-src</generateDirectory>
-							<generatePackage>org.eobjects.analyzer.job.jaxb</generatePackage>
+							<generatePackage>org.datacleaner.job.jaxb</generatePackage>
 							<schemaIncludes>
 								<value>job.xsd</value>
 							</schemaIncludes>

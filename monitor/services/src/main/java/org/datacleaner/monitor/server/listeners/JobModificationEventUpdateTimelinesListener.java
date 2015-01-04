@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.listeners;
+package org.datacleaner.monitor.server.listeners;
 
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
-import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.datacleaner.monitor.events.JobModificationEvent;
+import org.datacleaner.monitor.server.dao.TimelineDao;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

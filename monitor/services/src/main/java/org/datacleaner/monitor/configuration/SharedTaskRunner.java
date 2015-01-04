@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
-import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
-import org.eobjects.analyzer.job.concurrent.TaskListener;
-import org.eobjects.analyzer.job.concurrent.TaskRunnable;
-import org.eobjects.analyzer.job.concurrent.TaskRunner;
-import org.eobjects.analyzer.job.tasks.Task;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskListener;
+import org.datacleaner.job.concurrent.TaskRunnable;
+import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.job.tasks.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;

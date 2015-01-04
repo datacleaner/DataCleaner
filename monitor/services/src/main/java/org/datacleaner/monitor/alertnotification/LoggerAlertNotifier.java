@@ -17,13 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.alertnotification;
+package org.datacleaner.monitor.alertnotification;
 
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.configuration.ResultContext;
-import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.datacleaner.monitor.configuration.ResultContext;
+import org.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.apache.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

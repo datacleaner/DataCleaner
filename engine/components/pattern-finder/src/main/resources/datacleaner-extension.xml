@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
 	<name>Pattern finder</name>
-	<package>org.eobjects.analyzer.beans.stringpattern</package>
+	<package>org.datacleaner.beans.stringpattern</package>
 	<description>Find string patterns in your text data and group values against the patterns that they match to.</description>
-	<icon>org/eobjects/analyzer/beans/stringpattern/PatternFinderIcon.png</icon>
+	<icon>org/datacleaner/beans/stringpattern/PatternFinderIcon.png</icon>
 </extension>

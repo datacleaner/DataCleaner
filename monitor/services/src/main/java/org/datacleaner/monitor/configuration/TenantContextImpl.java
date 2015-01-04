@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.InjectionManagerFactory;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.JobEngine;
-import org.eobjects.datacleaner.monitor.job.JobEngineManager;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.repository.Repository;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.monitor.job.JobContext;
+import org.datacleaner.monitor.job.JobEngine;
+import org.datacleaner.monitor.job.JobEngineManager;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

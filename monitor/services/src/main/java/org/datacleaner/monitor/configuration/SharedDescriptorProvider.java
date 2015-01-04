@@ -17,21 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.configuration;
 
 import java.util.Collection;
 
-import org.eobjects.analyzer.beans.api.Analyzer;
-import org.eobjects.analyzer.beans.api.Filter;
-import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.beans.api.RenderingFormat;
-import org.eobjects.analyzer.beans.api.Transformer;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
-import org.eobjects.analyzer.descriptors.DescriptorProvider;
-import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
-import org.eobjects.analyzer.descriptors.RendererBeanDescriptor;
-import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.beans.api.Filter;
+import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.RendererBeanDescriptor;
+import org.datacleaner.descriptors.TransformerBeanDescriptor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -54,9 +54,9 @@ public class SharedDescriptorProvider implements DescriptorProvider {
                 // use a hard-coded descriptor provider (will only occur in test
                 // scenarios)
                 ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
-                scanner.scanPackage("org.eobjects.analyzer.beans", true);
-                scanner.scanPackage("org.eobjects.analyzer.result.renderer", false);
-                scanner.scanPackage("org.eobjects.datacleaner.extension", true);
+                scanner.scanPackage("org.datacleaner.beans", true);
+                scanner.scanPackage("org.datacleaner.result.renderer", false);
+                scanner.scanPackage("org.datacleaner.extension", true);
                 scanner.scanPackage("com.hi", true);
                 scanner.scanPackage("com.neopost", true);
                 _delegate = scanner;

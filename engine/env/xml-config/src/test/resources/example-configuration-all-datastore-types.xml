@@ -254,7 +254,7 @@
 		</composite-datastore>
 
 		<custom-datastore
-			class-name="org.eobjects.analyzer.configuration.SampleCustomDatastore">
+			class-name="org.datacleaner.configuration.SampleCustomDatastore">
 			<property name="Name" value="my_custom" />
 			<property name="Xml file" value="pom.xml" />
 			<property name="Description" value="custom" />

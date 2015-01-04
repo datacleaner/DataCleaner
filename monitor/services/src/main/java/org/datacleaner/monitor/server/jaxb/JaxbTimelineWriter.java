@@ -17,31 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.jaxb;
+package org.datacleaner.monitor.server.jaxb;
 
 import java.io.OutputStream;
 import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions;
-import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
-import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.VerticalAxisOption;
-import org.eobjects.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
-import org.eobjects.datacleaner.monitor.dashboard.model.LatestNumberOfDaysHAxisOption;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType;
-import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis;
-import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.FixedAxis;
-import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.RollingAxis;
-import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.VerticalAxis;
-import org.eobjects.datacleaner.monitor.jaxb.MetricType;
-import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
-import org.eobjects.datacleaner.monitor.jaxb.Timeline;
-import org.eobjects.datacleaner.monitor.server.TimelineReader;
-import org.eobjects.datacleaner.monitor.server.TimelineWriter;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.datacleaner.monitor.dashboard.model.ChartOptions;
+import org.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
+import org.datacleaner.monitor.dashboard.model.ChartOptions.VerticalAxisOption;
+import org.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
+import org.datacleaner.monitor.dashboard.model.LatestNumberOfDaysHAxisOption;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.datacleaner.monitor.jaxb.ChartOptionsType;
+import org.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis;
+import org.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.FixedAxis;
+import org.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.RollingAxis;
+import org.datacleaner.monitor.jaxb.ChartOptionsType.VerticalAxis;
+import org.datacleaner.monitor.jaxb.MetricType;
+import org.datacleaner.monitor.jaxb.MetricsType;
+import org.datacleaner.monitor.jaxb.Timeline;
+import org.datacleaner.monitor.server.TimelineReader;
+import org.datacleaner.monitor.server.TimelineWriter;
+import org.datacleaner.monitor.shared.model.JobIdentifier;
+import org.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Jaxb based {@link TimelineReader} of .analysis.timeline.xml files.

@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.datacleaner.monitor.server;
 
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
+import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
 import org.apache.metamodel.util.Action;
 
 public class WriteTimelineAction implements Action<OutputStream> {

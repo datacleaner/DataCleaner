@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column path="ORDERS.ORDERDATE" id="col1" />
+			<column path="ORDERS.REQUIREDDATE" id="col2" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Convert to date" />
+			<input ref="col1" />
+			<output id="date1" name="date 1" />
+		</transformer>
+		<transformer>
+			<descriptor ref="Convert to date" />
+			<input ref="col2" />
+			<output id="date2" name="date 2" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="Date gap analyzer" />
+			<input ref="date1" name="From column" />
+			<input ref="date2" name="To column" />
+		</analyzer>
+	</analysis>
+
+</job>

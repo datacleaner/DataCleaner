@@ -1,0 +1,7 @@
+age name             email
+12  John Doe         john.doe@company.com
+41  Jane Doe         jane.doe@company.com
+32  Bar, Foo         foo.bar@company.com
+54  Mrs. Foobar Foo  foobar.foo@company.com
+65  Sørensen, Kasper kasper@eobjects.org
+23  Asbjørn Leeth    asbjorn@eobjects.org

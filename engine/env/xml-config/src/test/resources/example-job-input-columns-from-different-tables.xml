@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<!-- These two columns originate from different tables, making it impossible 
+				to concatenate them (see transformer below) -->
+			<column id="col_emp_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_cust_ln" path="PUBLIC.CUSTOMERS.CONTACTLASTNAME" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Concatenator" />
+			<input ref="col_emp_ln" />
+			<input ref="col_cust_ln" />
+			<output id="concat" name="Lastnames concatenated" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="concat" />
+		</analyzer>
+	</analysis>
+
+</job>

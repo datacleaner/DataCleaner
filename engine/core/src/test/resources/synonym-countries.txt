@@ -1,0 +1,3 @@
+DNK,Denmark,Danmark,DK
+ALB,Albania
+GBR,Great britain,Great Britain,UK,United kingdom,United Kingdom,England

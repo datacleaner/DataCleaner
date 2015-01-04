@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analysis result</title>
+<script type="text/javascript" src="analysis-result.js"></script>
+<link rel="shortcut icon" href="analysis-result-icon.png" />
+<script type="text/javascript">
+	var analysisResult = {};
+</script>
+</head>
+<body>
+	<div class="analysisResultContainer">
+		<div class="analysisResultHeader"></div>
+		<div id="analysisResultDescriptorGroup_DuplicateDetection"
+			class="analysisResultDescriptorGroup DuplicateDetection">
+			<div class="analyzerResult DuplicateDetection">
+				<div class="analyzerResultHeader">
+					<h2>Duplicate detection (10 columns)</h2>
+				</div>
+
+				<div class="analyzerResultContent">
+					<div class="error">
+						<p>Component job: Foo</p>
+						<p>Analyzer result: Bar</p>
+						<pre>Foo
+bar
+baz</pre>
+					</div>
+					
+					<div class="warning">
+						<p>Component job: Foo</p>
+						<p>Analyzer result: Bar</p>
+					</div>
+					
+					<div class="error">
+						<p>Component job: Foo</p>
+						<p>Analyzer result: Bar</p>
+						<pre>Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz
+Foo
+bar
+baz</pre>
+					</div>
+				</div>
+			</div>
+			<div class="analyzerResultFooter"></div>
+		</div>
+	</div>
+	</div>
+</body>
+</html>

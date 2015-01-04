@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.analyzerbeans</groupId>
+		<artifactId>AnalyzerBeans</artifactId>
+		<version>1.0.6-SNAPSHOT</version>
+	</parent>
+	<artifactId>AnalyzerBeans-core</artifactId>
+	<description>Core module of AnalyzerBeans, provides a bare-bones engine for composing and executing AnalyzerBeans jobs</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-full</artifactId>
+			<version>${metamodel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-hbase</artifactId>
+			<version>${metamodel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-sas</artifactId>
+			<version>${metamodel.extras.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-dbase</artifactId>
+			<version>${metamodel.extras.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-access</artifactId>
+			<version>${metamodel.extras.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<version>2.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.maven.scm</groupId>
+					<artifactId>maven-scm-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.maven.scm</groupId>
+					<artifactId>maven-scm-provider-svnexe</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
+			by HTTP components (4.x) at some point. -->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.gentyref</groupId>
+			<artifactId>gentyref</artifactId>
+		</dependency>
+
+		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 
+			is used -->
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>asm5</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+
+		<!-- Logging dependencies -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<!-- Testware -->
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

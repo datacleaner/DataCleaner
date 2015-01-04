@@ -1,0 +1,9 @@
+"name",email,birthdate
+"John Doe",john.doe@company.com,1980-01-01
+"Jane Doe",jane.doe@company.com,1980-02-05
+"Bar, Foo",foo.bar@company.com,1999-8-02
+"Mrs. Foobar Foo",foobar.foo@company.com,1979-12-31
+"Santa Claus",santa@claus.com,1638-12-31
+"Spammer",blabla,messy_value
+"Sørensen, Kasper",kasper@eobjects.org,1982-03-11
+"Asbjørn Leeth",asbjorn@eobjects.org,1880-01-01

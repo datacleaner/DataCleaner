@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="employees_csv" />
+		<columns>
+			<column id="col_name" path="name" />
+			<column id="col_email" path="email" />
+			<column id="col_birthdate_str" path="birthdate" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Convert to date" />
+			<input ref="col_birthdate_str" />
+			<output id="col_birthdate" />
+		</transformer>
+
+		<filter>
+			<descriptor ref="Not null" />
+			<input ref="col_birthdate" />
+			<outcome id="has_birthdate" category="VALID" />
+			<outcome id="no_birthdate" category="INVALID" />
+		</filter>
+
+		<transformer requires="has_birthdate">
+			<descriptor ref="Date to age" />
+			<input ref="col_birthdate" />
+			<output id="age_days" />
+			<output id="age_years" name="Age in years" />
+		</transformer>
+
+		<filter>
+			<descriptor ref="Number range" />
+			<properties>
+				<property name="Lowest value" value="18" />
+				<property name="Highest value" value="18" />
+			</properties>
+			<input ref="age_years" />
+			<outcome category="LOWER" id="is_child" />
+			<outcome category="VALID" id="is_eighteen" />
+			<outcome category="HIGHER" id="is_adult" />
+		</filter>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="is_child">
+			<descriptor ref="Number analyzer" />
+			<input ref="age_years" />
+		</analyzer>
+
+		<analyzer requires="is_eighteen">
+			<descriptor ref="Number analyzer" />
+			<input ref="age_years" />
+		</analyzer>
+
+		<analyzer requires="is_adult">
+			<descriptor ref="Number analyzer" />
+			<input ref="age_years" />
+		</analyzer>
+
+		<analyzer requires="is_child">
+			<descriptor ref="Value distribution" />
+			<input ref="col_name" />
+		</analyzer>
+
+		<analyzer requires="is_adult">
+			<descriptor ref="Value distribution" />
+			<input ref="col_name" />
+		</analyzer>
+	</analysis>
+
+</job>

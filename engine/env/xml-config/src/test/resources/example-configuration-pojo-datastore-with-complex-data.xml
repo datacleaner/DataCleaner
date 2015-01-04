@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<datastore-catalog>
+		<pojo-datastore name="pojo">
+			<schema-name>my_schema</schema-name>
+			<table>
+				<name>table1</name>
+				<columns>
+					<column>
+						<name>Foo</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Bar</name>
+						<type>MAP</type>
+					</column>
+					<column>
+						<name>Baz</name>
+						<type>LIST</type>
+					</column>
+					<column>
+						<name>bytes</name>
+						<type>BINARY</type>
+					</column>
+				</columns>
+				<rows>
+					<row>
+						<v>Hello</v>
+						<v>
+							<e><k>greeting</k><v>hello</v></e>
+							<e><k>person</k><v>world</v></e>
+						</v>
+						<v>[hello,world]</v>
+						<v>
+							<i class="java.lang.Byte">1</i>
+							<i class="java.lang.Byte">2</i>
+							<i class="java.lang.Byte">3</i>
+							<i class="java.lang.Byte">4</i>
+							<i class="java.lang.Byte">5</i>
+						</v>
+					</row>
+					<row>
+						<v>There</v>
+						<v>
+							<e><k>greeting</k><v>hi, there you!</v></e>
+							<e>
+								<k>person</k>
+								<v>
+									<e><k>Firstname</k><v>Kasper</v></e>
+									<e><k>Lastname</k><v>Sørensen</v></e>
+								</v>
+							</e>
+						</v>
+						<v />
+						<v />
+					</row>
+					<row>
+						<v>World</v>
+						<v />
+						<v>[Sørensen,Kasper]</v>
+						<v>[-1,-2,-3,-4,-5]</v>
+					</row>
+				</rows>
+			</table>
+		</pojo-datastore>
+
+	</datastore-catalog>
+
+	<multithreaded-taskrunner />
+
+	<storage-provider>
+		<in-memory max-rows-threshold="500" />
+	</storage-provider>
+
+</configuration>

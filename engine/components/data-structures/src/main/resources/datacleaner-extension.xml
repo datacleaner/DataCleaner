@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Data structures transformations</name>
+	<package>org.eobjects.analyzer.beans.datastructures</package>
+	<description>Work with complex and nested data structures such as lists and maps.</description>
+	<icon>org/eobjects/analyzer/beans/datastructures/DataStructuresIcon.png</icon>
+</extension>

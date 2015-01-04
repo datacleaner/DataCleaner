@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Distribution analyzers</name>
+	<package>org.eobjects.analyzer.beans</package>
+	<description>Find and verify distributions/frequencies of the values that occur in your data.</description>
+	<icon>org/eobjects/analyzer/beans/DistributionAnalyzersIcon.png</icon>
+</extension>

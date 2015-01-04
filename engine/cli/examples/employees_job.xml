@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Job metadata is purely for human inspection purposes -->
+	<job-metadata>
+		<author>Kasper Sørensen</author>
+		<created-date>2010-08-29</created-date>
+		<updated-date>2010-09-11</updated-date>
+		<job-name>employees example</job-name>
+		<job-description>An example showing various features based on a simple CSV file
+			with a person listing</job-description>
+		<job-version>2</job-version>
+	</job-metadata>
+
+	<!-- The source part of the job describes which data context to use and 
+		which columns to inspect. The data context reference should be resolvable 
+		in the configuration file that comes along with the job file (in this case: 
+		employees_conf.xml) -->
+	<source>
+		<data-context ref="employees_csv" />
+		<columns>
+			<column id="col_name" path="name" />
+			<column id="col_email" path="email" />
+			<column id="col_birthdate" path="birthdate" />
+		</columns>
+	</source>
+
+	<!-- The transformation part of the job describes how the input data will 
+		be transformed before analysis -->
+	<transformation>
+		<!-- A transformer for extracting/decomposing/standardizing an email address -->
+		<transformer>
+			<descriptor ref="Email standardizer" />
+			<input ref="col_email" />
+			<output id="col_username" name="Email username" />
+			<output id="col_domain" name="Email domain" />
+		</transformer>
+
+		<!-- Extracts firstname, lastname, middlename and titulation from the "fullname" 
+			column. -->
+		<transformer>
+			<descriptor ref="Name standardizer" />
+			<input ref="col_name" />
+			<output id="col_firstname" name="First name" />
+			<output id="col_lastname" />
+			<output id="col_middlename" />
+			<output id="col_titulation" />
+		</transformer>
+
+		<!-- A transformer for converting a string value to a date value. -->
+		<transformer>
+			<descriptor ref="Convert to date" />
+			<input ref="col_birthdate" />
+			<output id="col_birthdate_as_date" name="Birthdate (as date)" />
+		</transformer>
+
+		<!-- A chained transformer. This transformer calculates the age (in days 
+			and years) based on the date-value created in the previous transformer. -->
+		<transformer>
+			<descriptor ref="Date to age" />
+			<input ref="col_birthdate_as_date" />
+			<output id="col_age_in_days" name="Age in days" />
+			<output id="col_age_in_years" name="Age in years" />
+		</transformer>
+	</transformation>
+
+	<!-- The analysis part of the job file describes the analysises run -->
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col_username" />
+			<input ref="col_domain" />
+			<input ref="col_firstname" />
+			<input ref="col_lastname" />
+			<input ref="col_titulation" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="Value distribution" />
+			<input ref="col_lastname" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="Value distribution" />
+			<input ref="col_domain" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="Number analyzer" />
+			<input ref="col_age_in_days" />
+			<input ref="col_age_in_years" />
+		</analyzer>
+		
+		<analyzer name="First name patterns">
+			<descriptor ref="Pattern finder"/>
+			<input ref="col_firstname"/>
+		</analyzer>
+		
+		<analyzer name="Full name patterns">
+			<descriptor ref="Pattern finder"/>
+			<input ref="col_name"/>
+		</analyzer>
+	</analysis>
+
+</job>

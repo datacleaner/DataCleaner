@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Write data</name>
+	<package>org.eobjects.analyzer.beans.writers</package>
+	<description>Insert and update the data of datastores.</description>
+	<icon>org/eobjects/analyzer/beans/writers/WritersIcon.png</icon>
+</extension>

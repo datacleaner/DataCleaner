@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://eobjects.org/analyzerbeans/metadata/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<schema>
+		<name>PUBLIC</name>
+		<annotation>
+			<name>LocalizedName</name>
+			<parameter>
+				<key>en</key>
+				<value>main</value>
+			</parameter>
+		</annotation>
+
+		<table>
+			<name>EMPLOYEES</name>
+			<column>
+				<name>EMPLOYEENUMBER</name>
+				<annotation>
+					<name>PrimaryKey</name>
+				</annotation>
+			</column>
+		</table>
+
+		<table>
+			<name>CUSTOMERS</name>
+			<annotation>
+				<name>LocalizedName</name>
+				<parameter>
+					<key>en</key>
+					<value>customers</value>
+				</parameter>
+				<parameter>
+					<key>da</key>
+					<value>kunder</value>
+				</parameter>
+			</annotation>
+
+			<column-group>
+				<name>contact-name</name>
+				<column>
+					<name>CONTACTLASTNAME</name>
+					<annotation>
+						<name>LocalizedName</name>
+						<parameter>
+							<key>en</key>
+							<value>Last name</value>
+						</parameter>
+						<parameter>
+							<key>da</key>
+							<value>Efternavn</value>
+						</parameter>
+					</annotation>
+				</column>
+				<column>
+					<name>CONTACTFIRSTNAME</name>
+					<annotation>
+						<name>LocalizedName</name>
+						<parameter>
+							<key>en</key>
+							<value>First name</value>
+						</parameter>
+						<parameter>
+							<key>da</key>
+							<value>Fornavn</value>
+						</parameter>
+					</annotation>
+				</column>
+			</column-group>
+
+			<column>
+				<name>CUSTOMERNUMBER</name>
+				<annotation>
+					<name>PrimaryKey</name>
+				</annotation>
+			</column>
+
+			<column>
+				<name>SALESREPEMPLOYEENUMBER</name>
+				<annotation>
+					<name>ForeignKey</name>
+					<parameter>
+						<key>ForeignDatastore</key>
+						<value>orderdb</value>
+					</parameter>
+					<parameter>
+						<key>ForeignSchema</key>
+						<value>PUBLIC</value>
+					</parameter>
+					<parameter>
+						<key>ForeignTable</key>
+						<value>EMPLOYEES</value>
+					</parameter>
+					<parameter>
+						<key>ForeignColumn</key>
+						<value>EMPLOYEENUMBER</value>
+					</parameter>
+				</annotation>
+			</column>
+		</table>
+	</schema>
+
+</metadata>

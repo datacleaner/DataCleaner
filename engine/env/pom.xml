@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.analyzerbeans</groupId>
+		<artifactId>AnalyzerBeans</artifactId>
+		<version>1.0.6-SNAPSHOT</version>
+	</parent>
+	<artifactId>AnalyzerBeans-env</artifactId>
+	<description>Additional environment modules for AnalyzerBeans. These modules provide more deployment options and adapters that make AnalyzerBeans utilize various environments.</description>
+	<packaging>pom</packaging>
+	<modules>
+		<module>berkeleydb</module>
+		<module>h2</module>
+		<module>xml-config</module>
+		<module>cluster</module>
+	</modules>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

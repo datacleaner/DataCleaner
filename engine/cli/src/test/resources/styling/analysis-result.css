@@ -1,0 +1,447 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu|Open+Sans);
+
+body {
+	margin: 0px;
+	font-size: 13px;
+	font-family: 'Open Sans', sans-serif;
+	color: black;
+}
+
+div.analyzerResult {
+	font-family: 'Open Sans', sans-serif;
+}
+
+div.analysisResultHeader {
+	height: 33px;
+	background-color: #333;
+	margin: 0px;
+	padding: 0px;
+}
+
+div.analysisResultContainer {
+}
+
+p,div,span,ul,ol,li,table,tr,td,th,h1,h2,h3,h4,h5,a {
+	margin: 0;
+	padding: 0;
+	line-height: normal;
+	font-size: 1em;
+}
+
+h1 {
+	font-size: 1.8em;
+}
+
+h2 {
+	font-size: 1.6em;
+}
+
+h3 {
+	font-size: 1.4em;
+}
+
+h4 {
+	font-size: 1.2em;
+}
+
+h5 {
+	font-size: 1.1em;
+}
+
+table {
+	border: none;
+	border-spacing: 0;
+}
+
+p,div,span,ul,ol,li,table,td,a {
+}
+
+h1,h2,h3,h4,h5 {
+	font-family: 'Ubuntu', sans-serif;
+	color: #377FCF;
+	font-weight: normal;
+	font-style: normal;
+}
+
+a {
+	color: #377FCF;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #377FCF;
+	text-decoration: underline;
+}
+
+div.analyzerResultContent {
+	background-color: white;
+	padding: 4px;
+	border: 2px solid #eee;
+	border-radius: 6px;
+	clear: both;
+	margin-top: 4px;
+	margin-bottom: 20px;
+	overflow: auto;
+}
+
+ul.analysisResultToc {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+}
+
+ul.analysisResultToc li {
+	padding-left: 26px !important;
+	background-image : url("analyzer.png");
+	background-position:  4px center !important;
+	background-repeat: no-repeat !important;
+}
+
+ul.analysisResultToc li.PatternFinder {
+	background-image: url("type_pattern_finder.png");
+}
+
+ul.analysisResultToc li.DuplicateDetection {
+	background-image: url("type_duplicate_detection.png");
+}
+
+ul.analysisResultToc li.BooleanAnalyzer {
+	background-image: url("type_boolean.png");
+}
+
+ul.analysisResultToc li.CharacterSetDistribution {
+	background-image: url("type_charset.png");
+}
+
+ul.analysisResultToc li.ScatterPlot {
+	background-image: url("type_scatter.png");
+}
+
+ul.analysisResultToc li.DensityPlot {
+	background-image: url("type_density.png");
+}
+
+ul.analysisResultToc li.StackedAreaPlot {
+	background-image: url("type_stacked_area.png");
+}
+
+ul.analysisResultToc li.InsertIntoTable {
+	background-image: url("type_insert.png");
+}
+
+ul.analysisResultToc li.UpdateTable {
+	background-image: url("type_update.png");
+}
+
+ul.analysisResultToc li.ValueDistribution {
+	background-image: url("type_value_distribution.png");
+}
+
+ul.analysisResultToc li.ValueMatcher {
+	background-image: url("type_value_matcher.png");
+}
+
+ul.analysisResultToc li.StringAnalyzer  {
+	background-image: url("type_string_analyzer.png");
+}
+
+ul.analysisResultToc li.CompletenessAnalyzer  {
+	background-image: url("type_completeness_analyzer.png");
+}
+
+ul.analysisResultToc li.PentahoJobResult  {
+	background-image: url("type_pentaho_job.png");
+}
+
+ul.analysisResultToc li.DateGapAnalyzer {
+	background-image: url("type_date_gap_analyzer.png");
+}
+
+ul.analysisResultToc li.Date_timeAnalyzer {
+	background-image: url("type_date_time_analyzer.png");
+}
+
+ul.analysisResultToc li.ReferenceDataMatcher {
+	background-image: url("type_match.png");
+}
+
+ul.analysisResultToc li.NumberAnalyzer {
+	background-image: url("type_number.png");
+}
+
+ul.analysisResultToc li.WeekdayDistribution {
+	background-image: url("type_weekday_distribution.png");
+}
+
+div.analyzerResultFooter {
+	clear: both;
+}
+
+pre {
+	background-color: white;
+	margin: 10px;
+	border: 2px solid #eee;
+	border-radius: 6px;
+	padding: 10px;
+	max-height: 200px;
+	overflow: auto;
+}
+
+table {
+	border-top: 1px solid #eee;
+	border-left: 1px solid #eee;
+}
+
+table td,table th {
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	text-align: center;
+	white-space: nowrap;
+	border-bottom: 1px solid #eee;
+	border-right: 1px solid #eee;
+}
+
+table th {
+	background-color: #333;
+	border-bottom: 1px solid #333;
+	border-right: 1px solid #333;
+	color: white;
+}
+
+table tr.odd td {
+	background-color: #f6f6f6;
+}
+
+/*
+ * JQuery UI overrides
+ */
+.ui-widget {
+	font-size: 1em;
+}
+
+.ui-widget-overlay {
+	background: black;
+	opacity: 0.3;
+}
+
+.ui-widget-header {
+	background-color: transparent;
+	border: none;
+	background-image: none;
+}
+
+.ui-tabs {
+	font-family: 'Open Sans', sans-serif;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	border-radius: 0px !important;
+	border: none;
+}
+
+.ui-tabs .ui-tabs-nav {
+	display: inline-block;
+	padding-left: 20px;
+	padding-bottom: 0px;
+	background-color: #333;
+	border-radius: 0px !important;
+	white-space: nowrap;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	top: 4px;
+	display: inline-block;
+	float: none;
+	margin-bottom: 0px;
+	margin-right: 4px;
+	border: none;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	padding: 4px;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding: 20px;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default.ui-tabs-selected {
+	padding-bottom: 0px;
+	background-color: white;
+	font-weight: normal;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default.ui-tabs-selected a {
+	color: #333;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default {
+	background-color: #555;
+	color: white;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-default a {
+	color: white;
+}
+
+/**
+ * A few common/reusable styles
+ */
+.warning {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 4px;
+	padding-left: 36px;
+	min-height: 40px;
+	background-image: url("warning.png");
+	background-repeat: no-repeat;
+	background-position: 0px 4px;
+	background-color: #f4f4d3;
+	border: 1px solid #a0a0a0;
+}
+
+.error {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 4px;
+	padding-left: 36px;
+	min-height: 40px;
+	background-image: url("error.png");
+	background-repeat: no-repeat;
+	background-position: 0px 4px;
+	background-color: #f4f4d3;
+	border: 1px solid #a0a0a0;
+}
+
+/*
+ * Crosstab tables
+ */
+.drillToDetailsPanel {
+	max-height: 500px;
+	overflow: auto;
+}
+
+.drillToDetailsPanel h3 {
+	display: inline;
+}
+
+table.crosstabTable {
+	margin-bottom: 4px;
+	border-top-left-radius: 6px;
+}
+
+table.crosstabTable td.empty {
+	background-color: #eee;
+	border-bottom: 1px solid #eee;
+	border-right: 1px solid #eee;
+	border-top-left-radius: 6px;
+}
+
+table.crosstabTable td.value .decimal {
+	font-size: 0.9em;
+	color: #666;
+	display: none;
+}
+
+table.crosstabTable td.value:hover .decimal {
+	display: inline;
+}
+
+table.crosstabTable td.crosstabVerticalHeader {
+	width: 200px;
+	white-space: normal;
+}
+
+table.crosstabTable td.crosstabHorizontalHeader,table.crosstabTable td.crosstabVerticalHeader
+	{
+	background-color: #333;
+	color: white;
+	border-bottom: 1px solid #333;
+	border-right: 1px solid #333;
+}
+
+a.drillToDetailsLink {
+	padding-right: 16px;
+	background-image: url("drill-to-detail.png");
+	background-position: right;
+	background-repeat: no-repeat;
+	min-height: 16px;
+	text-decoration: none;
+	color: #666;
+}
+
+a.drillToDetailsLink:hover {
+	color: #377FCF;
+	text-decoration: underline;
+}
+
+/*
+ * Value distribution result
+ */
+div.valueDistributionGroupPanel {
+	clear: both;
+}
+ 
+div.valueDistributionChart {
+	width: 400px;
+	height: 330px;
+	float: left;
+}
+
+div.valueDistributionChart table {
+	border-top: none;
+	border-left: none;
+}
+
+div.valueDistributionChart table td, div.valueDistributionChart table th {
+	border-bottom: none;
+	border-right: none;
+}
+
+table.valueDistributionValueTable {
+	min-width: 200px; float : left;
+	margin-left: 10px;
+	margin-bottom: 6px;
+	float: left;
+}
+
+table.valueDistributionSummaryTable {
+	min-width: 200px;
+	float: left;
+	margin-left: 10px;
+}
+
+/**
+ * Duplicate detection
+ */
+div.duplicateGroup {
+	clear: both;
+	min-height: 200px;
+}
+ 
+div.duplicateGroupTable {
+	float: left;
+}
+ 
+div.duplicateGroupGraph {
+	width: 300px;
+	height: 200px;
+	float: right;
+	border: 1px solid #eee;
+	background-color: #f6f6f6;
+}
+
+/*
+ * Annotated rows
+ */
+table.annotatedRowsTable {
+	font-size: 0.85em;
+}
+
+table.annotatedRowsTable td.highlighted {
+	background-color: #377FCF;
+	color: white;
+}

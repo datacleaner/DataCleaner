@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Job metadata is purely for human inspection purposes -->
+	<job-metadata>
+		<author>Kasper Sørensen</author>
+		<created-date>2010-09-13</created-date>
+		<updated-date>2010-09-13</updated-date>
+		<job-name>Pattern finder job</job-name>
+		<job-version>1</job-version>
+	</job-metadata>
+
+	<source>
+		<data-context ref="all_datastores" />
+		<columns>
+			<column id="col_title" path="PUBLIC.EMPLOYEES.JOBTITLE" />
+			<column id="col_email" path="employees.csv.employees.email" />
+			<column id="col_name" path="employees.csv.employees.name" />
+		</columns>
+	</source>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="Pattern finder" />
+			<input ref="col_title" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="Pattern finder" />
+			<properties>
+				<property name="Predefined token name" value="Domain suffix" />
+				<property name="Predefined token regexes" value="[\.com,\.org]" />
+			</properties>
+			<input ref="col_email" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="Pattern finder" />
+			<properties>
+				<property name="Discriminate text case" value="false" />
+				<property name="Enable mixed tokens" value="false" />
+			</properties>
+			<input ref="col_name" />
+		</analyzer>
+	</analysis>
+
+</job>

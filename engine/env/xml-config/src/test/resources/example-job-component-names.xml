@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_email" path="PUBLIC.EMPLOYEES.EMAIL" />
+		</columns>
+	</source>
+
+	<transformation>
+		<filter name="single_word_1">
+			<descriptor ref="Single word" />
+			<input ref="col_fn" />
+			<outcome category="VALID" id="single_word_fn" />
+		</filter>
+
+		<filter name="not_null_1">
+			<descriptor ref="Not null" />
+			<input ref="col_email" />
+			<outcome category="VALID" id="has_email" />
+			<outcome category="INVALID" id="no_email" />
+		</filter>
+
+		<transformer name="email_std_1">
+			<descriptor ref="Email standardizer" />
+			<input ref="col_email" />
+			<output id="col_username" name="username" />
+			<output id="col_domain" name="domain" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="has_email" name="analyzer_1">
+			<descriptor ref="String analyzer" />
+			<input ref="col_username" />
+		</analyzer>
+	</analysis>
+
+</job>

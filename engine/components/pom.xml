@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.analyzerbeans</groupId>
+		<artifactId>AnalyzerBeans</artifactId>
+		<version>1.0.6-SNAPSHOT</version>
+	</parent>
+	<artifactId>AnalyzerBeans-components</artifactId>
+	<description>Parent for all additional components to AnalyzerBeans. Child modules represent optional components that typically require additional dependencies, which is why they have been separated for the sake of dependency mangement and flexibility in application composition.</description>
+	<packaging>pom</packaging>
+	<modules>
+		<module>html-rendering</module>
+		<module>basic-transformers</module>
+		<module>basic-filters</module>
+		<module>basic-analyzers</module>
+		<module>data-structures</module>
+		<module>uniqueness</module>
+		<module>referential-integrity</module>
+		<module>json</module>
+		<module>standardizers</module>
+		<module>pattern-finder</module>
+		<module>value-distribution</module>
+		<module>date-gap</module>
+		<module>reference-data</module>
+		<module>writers</module>
+		<module>el</module>
+		<module>javascript</module>
+		<module>i18n</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

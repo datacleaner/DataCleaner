@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Configuration with all the reference data types</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="my_jdbc_connection">
+			<url>jdbc:hsqldb:file:../../cli/examples/orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+	</datastore-catalog>
+
+	<reference-data-catalog>
+		<dictionaries>
+			<datastore-dictionary name="datastore_dict"
+				description="dict_ds">
+				<datastore-name>my_jdbc_connection</datastore-name>
+				<column-path>EMPLOYEES.LASTNAME</column-path>
+			</datastore-dictionary>
+			<text-file-dictionary name="textfile_dict"
+				description="dict_txt">
+				<filename>../../core/src/test/resources/lastnames.txt</filename>
+				<encoding>UTF-8</encoding>
+			</text-file-dictionary>
+			<value-list-dictionary name="valuelist_dict"
+				description="dict_simple">
+				<value>hello</value>
+				<value>hi</value>
+				<value>greetings</value>
+				<value>godday</value>
+			</value-list-dictionary>
+			<custom-dictionary
+				class-name="org.eobjects.analyzer.configuration.SampleCustomDictionary">
+				<property name="Name" value="custom_dict" />
+				<property name="Values" value="5" />
+				<property name="Datastore" value="my_jdbc_connection" />
+				<property name="Description" value="dict_custom" />
+			</custom-dictionary>
+		</dictionaries>
+
+		<synonym-catalogs>
+			<text-file-synonym-catalog name="textfile_syn"
+				description="syn_txt">
+				<filename>../../components/reference-data/src/test/resources/synonym-countries.txt</filename>
+				<encoding>UTF-8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-synonym-catalog>
+			<datastore-synonym-catalog name="datastore_syn"
+				description="syn_ds">
+				<datastore-name>my_jdbc_connection</datastore-name>
+				<master-term-column-path>CUSTOMERS.CUSTOMERNAME</master-term-column-path>
+				<synonym-column-path>CUSTOMERS.CUSTOMERNUMBER</synonym-column-path>
+				<synonym-column-path>CUSTOMERS.PHONE</synonym-column-path>
+			</datastore-synonym-catalog>
+			<custom-synonym-catalog
+				class-name="org.eobjects.analyzer.configuration.SampleCustomSynonymCatalog">
+				<property name="Name" value="custom_syn" />
+				<property name="Values"
+					value="[[DNK,Denmark,Danmark],[GBR,Great Britain,UK,United Kingdom],[NLD,Netherlands]]" />
+				<property name="Description" value="syn_custom" />
+			</custom-synonym-catalog>
+		</synonym-catalogs>
+
+		<string-patterns>
+			<regex-pattern name="regex danish email" description="pattern_reg">
+				<expression>[a-z]+@[a-z]+\.dk</expression>
+				<match-entire-string>true</match-entire-string>
+			</regex-pattern>
+			<simple-pattern name="simple email" description="pattern_simple">
+				<expression>aaaa@aaaaa.aa</expression>
+			</simple-pattern>
+		</string-patterns>
+	</reference-data-catalog>
+
+	<multithreaded-taskrunner />
+
+	<storage-provider>
+		<h2-database>
+			<temp-directory>target/temp</temp-directory>
+		</h2-database>
+	</storage-provider>
+
+</configuration>

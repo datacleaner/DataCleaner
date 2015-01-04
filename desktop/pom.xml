@@ -24,7 +24,7 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<classpathPrefix>lib</classpathPrefix>
-							<mainClass>org.eobjects.datacleaner.Main</mainClass>
+							<mainClass>org.datacleaner.Main</mainClass>
 							<useUniqueVersions>false</useUniqueVersions>
 						</manifest>
 						<manifestEntries>

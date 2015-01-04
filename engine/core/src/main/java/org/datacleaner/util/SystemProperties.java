@@ -24,17 +24,93 @@ import org.datacleaner.job.AnalysisJob;
 import com.google.common.base.Strings;
 
 /**
- * Represents commonly referenced system properties which AnalyzerBeans makes
+ * Represents commonly referenced system properties which DataCleaner makes
  * use of.
  */
 public class SystemProperties {
+    
+    /**
+     * Property which in case of a "true" value makes the UI visible even with
+     * command line parameters.
+     */
+    public static final String UI_VISIBLE = "datacleaner.ui.visible";
+
+    /**
+     * Identifies the name of a client that is embedding datacleaner.
+     */
+    public static final String EMBED_CLIENT = "datacleaner.embed.client";
+
+    /**
+     * Property which in case of a "true" value makes DataCleaner work in
+     * "Sandbox" mode which means that it will not assume there's any
+     * {@link DataCleanerHome} folder and will not attempt to write any
+     * {@link UserPreferences} file etc.
+     */
+    public static final String SANDBOX = "datacleaner.sandbox";
+
+    /**
+     * Property used for keeping the license key for commercial DataCleaner
+     * editions.
+     */
+    public static final String LICENSE_KEY = "datacleaner.license.key";
+
+    /**
+     * Identifies the name of the current DataCleaner edition
+     */
+    public static final String EDITION_NAME = "datacleaner.edition.name";
+
+    /**
+     * Property for the hostname of the DC monitor app
+     */
+    public static final String MONITOR_HOSTNAME = "datacleaner.monitor.hostname";
+
+    /**
+     * Property for the port of the DC monitor app
+     */
+    public static final String MONITOR_PORT = "datacleaner.monitor.port";
+
+    /**
+     * Property for the context path of the DC monitor app
+     */
+    public static final String MONITOR_CONTEXT = "datacleaner.monitor.context";
+
+    /**
+     * Property for the tenant of the DC monitor app
+     */
+    public static final String MONITOR_TENANT = "datacleaner.monitor.tenant";
+
+    /**
+     * Property for determining of the DC monitor app is running on HTTPS.
+     */
+    public static final String MONITOR_HTTPS = "datacleaner.monitor.https";
+
+    /**
+     * Property for for the username of the DC monitor app
+     */
+    public static final String MONITOR_USERNAME = "datacleaner.monitor.username";
+
+    /**
+     * Property for the security mode. Set to "CAS" for CAS security, otherwise
+     * will default to HTTP BASIC security.
+     */
+    public static final String MONITOR_SECURITY_MODE = "datacleaner.monitor.security.mode";
+
+    /**
+     * Property for the CAS server url, eg. "https://localhost:8443/cas"
+     */
+    public static final String MONITOR_CAS_URL = "datacleaner.monitor.security.casserverurl";
+
+    /**
+     * Property for disabling expected row count in userlogs"
+     */
+    public static final String MONITOR_LOG_ROWCOUNT = "datacleaner.userlog.rowcount";
 
     /**
      * Determines if the select clause of queries in AnalyzerBeans should be
      * optimized. If set to "true", AnalyzerBeans may disregard columns set in a
      * {@link AnalysisJob} that are not consumed by any component in the job.
      */
-    public static final String QUERY_SELECTCLAUSE_OPTIMIZE = "analyzerbeans.query.selectclause.optimize";
+    public static final String QUERY_SELECTCLAUSE_OPTIMIZE = "datacleaner.query.selectclause.optimize";
 
     /**
      * Gets a system property string, or a replacement value if the property is

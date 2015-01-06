@@ -20,9 +20,21 @@
 package org.eobjects.datacleaner.extension.output;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Comparator;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvDataContext;
+import org.apache.metamodel.csv.CsvWriter;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.eobjects.analyzer.beans.api.Alias;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
@@ -31,23 +43,22 @@ import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Distributed;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
+import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.HasLabelAdvice;
+import org.eobjects.analyzer.util.sort.SortMergeWriter;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.user.UserPreferences;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
 
 @AnalyzerBean("Create CSV file")
 @Alias("Write to CSV file")
@@ -72,13 +83,22 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Configured(order = 5, required = false)
     boolean includeHeader = true;
 
+    @Configured(order = 6, required = false)
+    InputColumn<?> columnToBeSortedOn ;
+
     @Inject
     @Provided
     UserPreferences userPreferences;
 
+    private File _tempFile;
+
+    @Initialize
+    public void initTempFile() throws Exception {
+        _tempFile = File.createTempFile("csv_file_analyzer", ".csv");
+    }
+
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor,
-            String categoryName) {
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
@@ -92,7 +112,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String displayName = descriptor.getDisplayName();
         file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         if (file == null) {
@@ -107,16 +127,94 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
-        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, escapeChar,
-                includeHeader, columns);
+        return CsvOutputWriterFactory.getWriter(_tempFile.getPath(), headers, separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }
 
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
+        final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, FileHelper.DEFAULT_ENCODING,
+                separatorChar, quoteChar, escapeChar, false, true);
+        final CsvDataContext tempDataContext = new CsvDataContext(_tempFile, csvConfiguration);
+        final Table table = tempDataContext.getDefaultSchema().getTable(0);
+
+        final Comparator<? super Row> comparator = new Comparator<Row>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public int compare(Row row1, Row row2) {
+                Comparable<Object> value1 = (Comparable<Object>) row1.getValue(columnToBeSortedOn.getPhysicalColumn().getColumnNumber());
+                Comparable<Object> value2 = (Comparable<Object>) row2.getValue(columnToBeSortedOn.getPhysicalColumn().getColumnNumber());
+                int comparableResult = value1.compareTo(value2) ;
+                if(comparableResult != 0) {
+                    return comparableResult ;
+                } else {
+                    // The values of the data at the row, and column to be sorted on are 
+                    // exactly the same. Now look at other values of all the columns to 
+                    // find if the two rows are same.
+                    int numberOfSelectItems = row1.getSelectItems().length ;
+                    for(int i = 0; i < numberOfSelectItems; i++) {
+                        Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
+                        Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
+                        if(rowValue1.compareTo(rowValue2) == 0) {
+                            continue;
+                        } else {
+                            return rowValue1.compareTo(rowValue2) ;
+                        }
+                    }
+                }
+                
+                return comparableResult;
+            }
+        };
+
+        final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
+        final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
+
+            @Override
+            protected void writeHeader(Writer writer) throws IOException {
+                final String[] columnNames = table.getColumnNames();
+                final String line = csvWriter.buildLine(columnNames);
+                writer.write(line);
+                writer.append('\n');
+            }
+
+            @Override
+            protected void writeRow(Writer writer, Row row, int count) throws IOException {
+                for(int i = 0; i < count; i++) {
+                    final Object[] values = row.getValues();
+                    final String[] stringValues = new String[values.length];
+                    for (int j = 0; j < stringValues.length; j++) {
+                        final Object obj = values[j];
+                        if (obj != null) {
+                            stringValues[j] = obj.toString();
+                        }
+                    }
+                    final String line = csvWriter.buildLine(stringValues);
+                    writer.write(line);
+                    writer.append('\n'); // TODO: Figure out if needed
+                }
+            }
+
+            @Override
+            protected Writer createWriter(File file) {
+                return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);
+            }
+        };
+
+        // read from the temp file and sort it into the final file
+        final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
+        try {
+            while (dataSet.next()) {
+                final Row row = dataSet.getRow();
+                sortMergeWriter.append(row);
+            }
+        } finally {
+            dataSet.close();
+        }
+
+        sortMergeWriter.write(file);
+
         final Resource resource = new FileResource(file);
-        final Datastore datastore = new CsvDatastore(file.getName(), resource, file.getAbsolutePath(), quoteChar,
-                separatorChar, escapeChar, FileHelper.DEFAULT_ENCODING, false, true,
-                CsvConfiguration.DEFAULT_COLUMN_NAME_LINE);
+        final Datastore datastore = new CsvDatastore(file.getName(), resource, csvConfiguration);
         return new WriteDataResultImpl(rowCount, datastore, null, null);
     }
 

@@ -190,7 +190,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     }
                     final String line = csvWriter.buildLine(stringValues);
                     writer.write(line);
-                    writer.append('\n'); // TODO: Figure out if needed
+                    writer.append('\n');
                 }
             }
 

@@ -21,9 +21,12 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -68,8 +71,8 @@ import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.actions.AnalyzeButtonActionListener;
-import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.ComponentBuilderTabTextActionListener;
+import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.RenameComponentActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
@@ -223,16 +226,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
-        _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
-        _saveAsButton = createToolBarButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
+        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
 
         _transformButton = createToolbarButton(
                 "Transform",
-                IconUtils.TRANSFORMER_IMAGEPATH,
+                null,
                 "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>");
-        _analyzeButton = createToolbarButton("Analyze", IconUtils.ANALYZER_IMAGEPATH,
+        _analyzeButton = createToolbarButton("Analyze", null,
                 "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
-        _executeButton = createToolBarButton("Execute", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE));
+        _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
                 openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
@@ -319,15 +322,29 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return true;
     }
 
-    private JButton createToolBarButton(String text, ImageIcon imageIcon) {
-        final JButton button = new JButton(text, imageIcon);
-        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        button.setFocusPainted(false);
-        return button;
-    }
-
     private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
-        JButton button = createToolBarButton(text, imageManager.getImageIcon(iconPath));
+        final ImageIcon icon;
+        if (iconPath == null) {
+            icon = null;
+        } else {
+            icon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+        }
+        final JButton button = new JButton(text, icon);
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BRIGHT);
+            }
+        });
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        button.setBorder(new EmptyBorder(10, 4, 10, 4));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setFocusPainted(false);
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
             popupBubble.attachTo(button);
@@ -660,11 +677,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         });
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(createToolbarButton("New", IconUtils.ACTION_NEW, null));
+        toolBar.add(createToolbarButton("Open", IconUtils.MENU_OPEN, null));
         toolBar.add(_saveButton);
         toolBar.add(_saveAsButton);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_transformButton);
+        toolBar.add(createToolbarButton("Clean", null, null));
         toolBar.add(_analyzeButton);
+        toolBar.add(createToolbarButton("Write", null, null));
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
 

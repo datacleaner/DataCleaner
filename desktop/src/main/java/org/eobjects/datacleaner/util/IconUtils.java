@@ -80,7 +80,9 @@ public final class IconUtils {
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
+    public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
+    public static final String ACTION_SAVE = "images/actions/save.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
     public static final String ACTION_RENAME = "images/actions/rename.png";

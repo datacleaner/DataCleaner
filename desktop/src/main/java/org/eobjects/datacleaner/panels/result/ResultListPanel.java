@@ -62,7 +62,7 @@ public class ResultListPanel extends DCPanel {
     private final ProgressInformationPanel _progressInformationPanel;
 
     public ResultListPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _rendererFactory = rendererFactory;
         _progressInformationPanel = progressInformationPanel;
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
@@ -78,7 +78,7 @@ public class ResultListPanel extends DCPanel {
 
         final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
 
-        final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         taskPanePanel.setLayout(new BorderLayout());
         taskPane.add(taskPanePanel);
 

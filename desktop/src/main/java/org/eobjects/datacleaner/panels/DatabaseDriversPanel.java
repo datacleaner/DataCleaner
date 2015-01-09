@@ -84,7 +84,7 @@ public class DatabaseDriversPanel extends DCPanel {
     @Inject
     protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;
         _userPreferences = userPreferences;
         _databaseDriverCatalog = databaseDriverCatalog;

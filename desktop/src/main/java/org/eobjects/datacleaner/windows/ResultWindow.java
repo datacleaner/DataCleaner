@@ -315,7 +315,7 @@ public final class ResultWindow extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
 
         String bannerTitle = "Analysis results";

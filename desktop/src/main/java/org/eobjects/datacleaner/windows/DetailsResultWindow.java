@@ -103,7 +103,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 			}
 		}
 
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 		panel.setLayout(new BorderLayout());
 		panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
@@ -119,7 +119,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 		ImageIcon icon = imageManager.getImageIcon("images/actions/drill-to-detail.png");
 		JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
-		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		taskPanePanel.setLayout(new BorderLayout());
 		taskPanePanel.add(component);

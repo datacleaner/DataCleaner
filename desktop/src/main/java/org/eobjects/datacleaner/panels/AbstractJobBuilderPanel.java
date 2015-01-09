@@ -75,8 +75,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
     protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
             int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
-                WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _beanJobBuilder = beanJobBuilder;

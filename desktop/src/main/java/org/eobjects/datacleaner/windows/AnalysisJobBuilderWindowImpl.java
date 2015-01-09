@@ -263,7 +263,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _editingContentView.add(_tabbedPane, BorderLayout.CENTER);
         _editingContentView.add(graphPanel, BorderLayout.CENTER);
 
-        _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new BorderLayout());
         _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
         _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
@@ -676,7 +676,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 

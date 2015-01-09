@@ -67,7 +67,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	@Inject
 	protected SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
 			InjectorBuilder injectorBuilder) {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_injectorBuilder = injectorBuilder;

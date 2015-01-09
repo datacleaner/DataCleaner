@@ -78,7 +78,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     public OpenAnalysisJobPanel(final FileObject file, final AnalyzerBeansConfiguration configuration,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener) {
-        super(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _file = file;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 

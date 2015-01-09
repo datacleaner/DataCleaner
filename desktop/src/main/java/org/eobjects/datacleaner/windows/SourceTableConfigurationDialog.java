@@ -109,11 +109,11 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(_columnListTable, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);

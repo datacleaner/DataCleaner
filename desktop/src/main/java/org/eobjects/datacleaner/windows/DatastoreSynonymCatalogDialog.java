@@ -94,7 +94,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
-        _treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
 
         _datastoreComboBox.addActionListener(new ActionListener() {

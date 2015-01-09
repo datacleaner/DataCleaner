@@ -98,7 +98,7 @@ public class DatastorePanel extends DCPanel {
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
             WelcomePanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;

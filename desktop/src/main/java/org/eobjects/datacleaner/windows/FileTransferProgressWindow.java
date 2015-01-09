@@ -67,8 +67,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
 
     public FileTransferProgressWindow(WindowContext windowContext, Action<Void> cancelCallback, String[] filenames) {
         super(windowContext);
-        setTopBackgroundColor(WidgetUtils.BG_COLOR_DARK);
-        setBottomBackgroundColor(WidgetUtils.BG_COLOR_LESS_DARK);
+        setBackgroundColor(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 
         _filenames = filenames;
 

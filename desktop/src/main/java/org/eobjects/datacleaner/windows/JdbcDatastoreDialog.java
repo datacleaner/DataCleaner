@@ -393,11 +393,11 @@ public class JdbcDatastoreDialog extends AbstractDialog {
         toolBar.add(Box.createHorizontalStrut(4));
         toolBar.add(saveButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         formContainerPanel.setLayout(new BorderLayout());
         formContainerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
         formContainerPanel.add(formPanel, BorderLayout.NORTH);

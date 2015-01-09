@@ -97,7 +97,7 @@ public class ReorderColumnsActionListener implements ActionListener {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         buttonPanel.add(button);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.setLayout(new BorderLayout());
         panel.add(tablePanel, BorderLayout.CENTER);

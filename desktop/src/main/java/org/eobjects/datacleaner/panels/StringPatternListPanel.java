@@ -69,7 +69,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	@Inject
 	protected StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
 			WindowContext windowContext, UserPreferences userPreferences) {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_windowContext = windowContext;

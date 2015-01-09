@@ -135,7 +135,7 @@ public class OptionsDialog extends AbstractWindow {
         directoriesPanel.add(DCLabel.dark("Written datastores:"));
         directoriesPanel.add(saveDatastoreDirectoryField);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new VerticalLayout(4));
         panel.add(getQuickAnalysisPanel());
         panel.add(directoriesPanel);
@@ -281,7 +281,7 @@ public class OptionsDialog extends AbstractWindow {
         // use ActionListener to initialize components
         actionListener.actionPerformed(null);
 
-        final DCPanel networkTabPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel networkTabPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         networkTabPanel.setLayout(new BorderLayout());
         networkTabPanel.add(proxyCheckBox, BorderLayout.NORTH);
         networkTabPanel.add(proxyPanel, BorderLayout.CENTER);
@@ -290,7 +290,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getPerformanceTab() {
-        DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         int row = 0;
 
@@ -334,7 +334,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getMemoryTab() {
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         final JLabel maxMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
         final JLabel totalMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
@@ -415,14 +415,14 @@ public class OptionsDialog extends AbstractWindow {
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
         final DCBannerPanel banner = new DCBannerPanel("Options");
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);

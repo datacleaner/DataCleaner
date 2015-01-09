@@ -224,7 +224,7 @@ public class AboutDialog extends AbstractDialog {
         headerPanel.add(Box.createVerticalStrut(20));
         headerPanel.add(licenseHeader);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setBorder(new EmptyBorder(4, 4, 4, 4));
         panel.setLayout(new BorderLayout());
         panel.add(headerPanel, BorderLayout.NORTH);
@@ -268,8 +268,8 @@ public class AboutDialog extends AbstractDialog {
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
-        contentPanel.add(DCLabel
-                .dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Neopost - Customer Information Management"));
+        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)
+                + " Neopost - Customer Information Management"));
         contentPanel.add(Box.createVerticalStrut(20));
         contentPanel.add(DCPanel.around(neopostButton));
 
@@ -292,7 +292,7 @@ public class AboutDialog extends AbstractDialog {
         contentPanel.add(buttonPanel);
 
         final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,
-                WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         mainPanel.setLayout(new VerticalLayout());
         mainPanel.add(contentPanel);

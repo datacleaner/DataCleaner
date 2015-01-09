@@ -139,11 +139,11 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);

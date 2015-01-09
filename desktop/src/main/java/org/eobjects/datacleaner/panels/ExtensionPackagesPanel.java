@@ -73,7 +73,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
     @Inject
     protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
 

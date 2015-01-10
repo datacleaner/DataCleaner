@@ -251,7 +251,7 @@ public final class IconUtils {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
+        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
             // plugins get a special icon
             return "images/component-types/plugin.png";
         }

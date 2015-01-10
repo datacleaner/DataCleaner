@@ -35,14 +35,14 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
 
     public void testScanOnlySingleJar() throws Exception {
         // File that only contains various transformers
-        File pluginFile1 = new File("src/test/resources/AnalyzerBeans-basic-transformers.jar");
+        File pluginFile1 = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
 
         ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
         assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
         Collection<TransformerBeanDescriptor<?>> transformerBeanDescriptors = provider.getTransformerBeanDescriptors();
         assertEquals(0, transformerBeanDescriptors.size());
         File[] files = new File[] { pluginFile1 };
-        provider = provider.scanPackage("org.eobjects", true, ClassLoaderUtils.createClassLoader(files), false, files);
+        provider = provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(files), false, files);
         assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
         
         transformerBeanDescriptors = provider.getTransformerBeanDescriptors();
@@ -95,9 +95,10 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
 
     public void testScanJarFilesOnClasspath() throws Exception {
         // File that contains 24 transformers including XmlDecoderTransformer
-        File pluginFile1 = new File("src/test/resources/AnalyzerBeans-basic-transformers.jar");
+        File pluginFile1 = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
         // File that contains 2 writers including InsertIntoTableAnalyzer
-        File pluginFile2 = new File("src/test/resources/AnalyzerBeans-writers-0.41.jar");
+        File pluginFile2 = new File("src/test/resources/extensions/DataCleaner-writers.jar");
+        assertTrue(pluginFile2.exists());
 
         File[] files = new File[] { pluginFile1, pluginFile2 };
         ClassLoader classLoader = ClassLoaderUtils.createClassLoader(files);
@@ -107,7 +108,7 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
         assertEquals(0, provider.getTransformerBeanDescriptors().size());
 
-        provider = provider.scanPackage("org.eobjects", true, classLoader, true);
+        provider = provider.scanPackage("org.datacleaner", true, classLoader, true);
         assertEquals(27, provider.getTransformerBeanDescriptors().size());
 
         boolean foundXmlDecoderTransformer = false;

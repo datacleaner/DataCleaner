@@ -25,9 +25,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.SerializationUtils;
-
 import junit.framework.TestCase;
+
+import org.datacleaner.util.ChangeAwareObjectInputStream;
 
 public class SimpleSynonymCatalogTest extends TestCase {
 
@@ -46,7 +46,9 @@ public class SimpleSynonymCatalogTest extends TestCase {
         SynonymCatalog sc;
         try (FileInputStream in = new FileInputStream(
                 "src/test/resources/analyzerbeans-0.34-simple-synonym-catalog.ser")) {
-            sc = (SynonymCatalog) SerializationUtils.deserialize(in);
+            ChangeAwareObjectInputStream changeAware = new ChangeAwareObjectInputStream(in);
+            sc = (SynonymCatalog) changeAware.readObject();
+            changeAware.close();
         }
 
         assertEquals("DNK", sc.getMasterTerm("DNK"));

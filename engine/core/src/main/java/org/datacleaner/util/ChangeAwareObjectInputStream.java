@@ -134,12 +134,9 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("org.datacleaner.result.DateGapAnalyzerResult",
                 "org.datacleaner.beans.dategap.DateGapAnalyzerResult");
         addRenamedClass("org.datacleaner.util.TimeInterval", "org.datacleaner.beans.dategap.TimeInterval");
-        addRenamedClass("org.datacleaner.result.StringAnalyzerResult",
-                "org.datacleaner.beans.StringAnalyzerResult");
-        addRenamedClass("org.datacleaner.result.NumberAnalyzerResult",
-                "org.datacleaner.beans.NumberAnalyzerResult");
-        addRenamedClass("org.datacleaner.result.BooleanAnalyzerResult",
-                "org.datacleaner.beans.BooleanAnalyzerResult");
+        addRenamedClass("org.datacleaner.result.StringAnalyzerResult", "org.datacleaner.beans.StringAnalyzerResult");
+        addRenamedClass("org.datacleaner.result.NumberAnalyzerResult", "org.datacleaner.beans.NumberAnalyzerResult");
+        addRenamedClass("org.datacleaner.result.BooleanAnalyzerResult", "org.datacleaner.beans.BooleanAnalyzerResult");
         addRenamedClass("org.datacleaner.result.DateAndTimeAnalyzerResult",
                 "org.datacleaner.beans.DateAndTimeAnalyzerResult");
 
@@ -152,22 +149,20 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
                 "org.datacleaner.beans.valuedist.SingleValueDistributionResult");
         addRenamedClass("org.datacleaner.beans.valuedist.ValueDistributionResult",
                 "org.datacleaner.beans.valuedist.GroupedValueDistributionResult");
-        addRenamedClass("org.datacleaner.beans.valuedist.ValueCount",
-                "org.datacleaner.result.SingleValueFrequency");
+        addRenamedClass("org.datacleaner.beans.valuedist.ValueCount", "org.datacleaner.result.SingleValueFrequency");
         addRenamedClass("org.datacleaner.result.ValueCount", "org.datacleaner.result.SingleValueFrequency");
-        addRenamedClass("org.datacleaner.beans.valuedist.ValueCountList",
-                "org.datacleaner.result.ValueCountList");
+        addRenamedClass("org.datacleaner.beans.valuedist.ValueCountList", "org.datacleaner.result.ValueCountList");
         addRenamedClass("org.datacleaner.beans.valuedist.ValueCountListImpl",
                 "org.datacleaner.result.ValueCountListImpl");
 
         // duplicate detection analyzer changed
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
                 "com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer");
-        
+
         // General namespace change as of DC 4.0
         addRenamedPackage("org.eobjects.datacleaner", "org.datacleaner");
         addRenamedPackage("org.eobjects.analyzer", "org.datacleaner");
-        
+
         // DataCleaner output writers package changed
         addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");
     }
@@ -194,45 +189,33 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
         final String originalClassName = resultClassDescriptor.getName();
 
-        if (renamedClasses.containsKey(originalClassName)) {
-            final String className = renamedClasses.get(originalClassName);
-            logger.info("Class '{}' was encountered. Returning class descriptor of new class name: '{}'",
-                    originalClassName, className);
-            return getClassDescriptor(className, resultClassDescriptor);
-        } else {
-            final Set<Entry<String, String>> entrySet = renamedPackages.entrySet();
-            for (Entry<String, String> entry : entrySet) {
-                final String legacyPackage = entry.getKey();
-                if (originalClassName.startsWith(legacyPackage)) {
-                    final String className = originalClassName.replaceFirst(legacyPackage, entry.getValue());
-                    logger.info("Class '{}' was encountered. Returning class descriptor of new class name: '{}'",
-                            originalClassName, className);
-                    return getClassDescriptor(className, resultClassDescriptor);
-                }
-            }
+        final String className = getClassNameRenamed(originalClassName);
+        if (className != originalClassName) {
+            return getClassDescriptor(className, false, resultClassDescriptor);
         }
 
         if (INTERFACES_WITH_SERIAL_ID_CHANGES.contains(originalClassName)) {
-            final ObjectStreamClass newClassDescriptor = ObjectStreamClass.lookup(resolveClass(originalClassName));
+            final ObjectStreamClass newClassDescriptor = ObjectStreamClass
+                    .lookup(resolveClass(originalClassName, false));
             return newClassDescriptor;
         }
 
         return resultClassDescriptor;
     }
 
-    private ObjectStreamClass getClassDescriptor(final String className, final ObjectStreamClass originalClassDescriptor)
-            throws ClassNotFoundException {
-        
+    private ObjectStreamClass getClassDescriptor(final String className, final boolean checkRenames,
+            final ObjectStreamClass originalClassDescriptor) throws ClassNotFoundException {
+
         if (originalClassDescriptor == null) {
             logger.warn("Original ClassDescriptor resolved to null for '{}'", className);
         }
 
-        final Class<?> newClass = resolveClass(className);
+        final Class<?> newClass = resolveClass(className, checkRenames);
         final ObjectStreamClass newClassDescriptor = ObjectStreamClass.lookupAny(newClass);
         if (newClassDescriptor == null) {
             logger.warn("New ClassDescriptor resolved to null for {}", newClass);
         }
-        
+
         final String[] newFieldNames = getFieldNames(newClassDescriptor);
         final String[] originalFieldNames = getFieldNames(originalClassDescriptor);
         if (!EqualsBuilder.equals(originalFieldNames, newFieldNames)) {
@@ -264,11 +247,19 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         if (className.startsWith("org.eobjects.metamodel") || className.startsWith("[Lorg.eobjects.metamodel")) {
             return super.resolveClass(desc);
         }
-        return resolveClass(className);
+        return resolveClass(className, true);
     }
 
-    private Class<?> resolveClass(String className) throws ClassNotFoundException {
-        logger.debug("Resolving class '{}'", className);
+    private Class<?> resolveClass(final String classNameParameter, boolean checkRenames) throws ClassNotFoundException {
+        logger.debug("Resolving class '{}'", classNameParameter);
+
+        final String className;
+        if (checkRenames) {
+            className = getClassNameRenamed(classNameParameter);
+        } else {
+            className = classNameParameter;
+        }
+
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
@@ -301,6 +292,33 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
             throw e;
         }
+    }
+
+    private String getClassNameRenamed(String className) {
+        // handle array definitions
+        if (className.startsWith("[L")) {
+            return "[L" + getClassNameRenamed(className.substring(2));
+        }
+
+        // handle direct entries for renamed class
+        final String directlyRenamedClassName = renamedClasses.get(className);
+        if (directlyRenamedClassName != null) {
+            return directlyRenamedClassName;
+        }
+
+        // handle renamed packages
+        final Set<Entry<String, String>> entrySet = renamedPackages.entrySet();
+        for (Entry<String, String> entry : entrySet) {
+            final String legacyPackage = entry.getKey();
+            if (className.startsWith(legacyPackage)) {
+                final String renamedClassName = className.replaceFirst(legacyPackage, entry.getValue());
+                logger.info("Class '{}' was encountered. Returning new class name: '{}'", className, renamedClassName);
+                return renamedClassName;
+            }
+        }
+
+        // ok no rename happened
+        return className;
     }
 
     private String[] getFieldNames(ObjectStreamClass classDescriptor) {

@@ -35,8 +35,8 @@ class WriteDataResultHtmlRendererTest extends AssertionsForJUnit {
     val descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true);
 
     val htmlRenderers = descriptorProvider.getRendererBeanDescriptorsForRenderingFormat(classOf[HtmlRenderingFormat]);
-    Assert.assertEquals("AnnotationBasedRendererBeanDescriptor[org.datacleaner.beans.writers.WriteDataResultHtmlRenderer]," +
-      "AnnotationBasedRendererBeanDescriptor[org.datacleaner.beans.DefaultAnalyzerResultHtmlRenderer]", htmlRenderers.mkString(","))
+    Assert.assertEquals("AnnotationBasedRendererBeanDescriptor[org.datacleaner.beans.DefaultAnalyzerResultHtmlRenderer]," +
+      "AnnotationBasedRendererBeanDescriptor[org.datacleaner.beans.writers.WriteDataResultHtmlRenderer]", htmlRenderers.mkString(","))
 
     val conf = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
     val rendererFactory = new RendererFactory(conf);

@@ -159,9 +159,13 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
                 "com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer");
 
+        
         // General namespace change as of DC 4.0
         addRenamedPackage("org.eobjects.datacleaner", "org.datacleaner");
         addRenamedPackage("org.eobjects.analyzer", "org.datacleaner");
+        
+        // Change from eobjects.org MetaModel to Apache MetaModel
+        addRenamedPackage("org.eobjects.metamodel", "org.apache.metamodel");
 
         // DataCleaner output writers package changed
         addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");

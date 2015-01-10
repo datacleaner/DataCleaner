@@ -139,7 +139,6 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         final AnalysisResult analysisResult;
         try {
             ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(fileObject.getContent().getInputStream());
-            is.addRenamedPackage("org.datacleaner.output.beans", "org.datacleaner.extension.output");
             try {
                 is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
                 analysisResult = (AnalysisResult) is.readObject();

@@ -25,13 +25,16 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.datacleaner.util.ChangeAwareObjectInputStream;
 
 public class RowAnnotationImplTest extends TestCase {
 
     public void testDeserializeOlderVersion() throws Exception {
         Object obj;
         try (InputStream in = new FileInputStream("src/test/resources/old_row_annotation_impl.ser")) {
-            obj = SerializationUtils.deserialize(in);
+            ChangeAwareObjectInputStream changeAware = new ChangeAwareObjectInputStream(in);
+            obj = changeAware.readObject();
+            changeAware.close();
         }
 
         assertTrue(obj instanceof RowAnnotationImpl);

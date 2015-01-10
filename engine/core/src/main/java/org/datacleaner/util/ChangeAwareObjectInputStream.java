@@ -98,7 +98,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         INTERFACES_WITH_SERIAL_ID_CHANGES.add("org.datacleaner.beans.writers.WriteDataResult");
     }
 
-    private static final Comparator<String> comparator = new Comparator<String>() {
+    private static final Comparator<String> packageNameComparator = new Comparator<String>() {
         @Override
         public int compare(String o1, String o2) {
             if (EqualsBuilder.equals(o1, o2)) {
@@ -120,7 +120,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
     public ChangeAwareObjectInputStream(InputStream in) throws IOException {
         super(in);
-        renamedPackages = new TreeMap<String, String>(comparator);
+        renamedPackages = new TreeMap<String, String>(packageNameComparator);
         renamedClasses = new HashMap<String, String>();
         additionalClassLoaders = new ArrayList<ClassLoader>();
 
@@ -159,11 +159,10 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
                 "com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer");
 
-        
         // General namespace change as of DC 4.0
         addRenamedPackage("org.eobjects.datacleaner", "org.datacleaner");
         addRenamedPackage("org.eobjects.analyzer", "org.datacleaner");
-        
+
         // Change from eobjects.org MetaModel to Apache MetaModel
         addRenamedPackage("org.eobjects.metamodel", "org.apache.metamodel");
 
@@ -299,6 +298,10 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
     }
 
     private String getClassNameRenamed(String className) {
+        return getClassNameRenamed(className, true);
+    }
+
+    private String getClassNameRenamed(String className, boolean includeRenamedPackages) {
         // handle array definitions
         if (className.startsWith("[L")) {
             return "[L" + getClassNameRenamed(className.substring(2));
@@ -307,17 +310,22 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         // handle direct entries for renamed class
         final String directlyRenamedClassName = renamedClasses.get(className);
         if (directlyRenamedClassName != null) {
+            logger.info("Class '{}' was encountered. Returning new class name: '{}'", className,
+                    directlyRenamedClassName);
             return directlyRenamedClassName;
         }
 
-        // handle renamed packages
-        final Set<Entry<String, String>> entrySet = renamedPackages.entrySet();
-        for (Entry<String, String> entry : entrySet) {
-            final String legacyPackage = entry.getKey();
-            if (className.startsWith(legacyPackage)) {
-                final String renamedClassName = className.replaceFirst(legacyPackage, entry.getValue());
-                logger.info("Class '{}' was encountered. Returning new class name: '{}'", className, renamedClassName);
-                return renamedClassName;
+        if (includeRenamedPackages) {
+            // handle renamed packages
+            final Set<Entry<String, String>> entrySet = renamedPackages.entrySet();
+            for (Entry<String, String> entry : entrySet) {
+                final String legacyPackage = entry.getKey();
+                if (className.startsWith(legacyPackage)) {
+                    final String renamedClassName = className.replaceFirst(legacyPackage, entry.getValue());
+                    logger.info("Class '{}' was encountered. Adapting to new class name: '{}'", className,
+                            renamedClassName);
+                    return getClassNameRenamed(renamedClassName, false);
+                }
             }
         }
 

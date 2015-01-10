@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,9 +36,8 @@ import nu.validator.htmlparser.sax.HtmlParser;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.PropertyConfigurator;
-import org.datacleaner.result.AnalysisResult;
 import org.apache.metamodel.util.FileHelper;
-import org.w3c.tidy.Tidy;
+import org.datacleaner.result.AnalysisResult;
 import org.xml.sax.Attributes;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -218,39 +214,6 @@ public class MainTest extends TestCase {
         assertEquals("SUCCESS!", result.split("\n")[0].trim());
 
         assertEquals("", _stringWriter.toString());
-    }
-
-    public void testRunFromUrlJobAndConf() throws Throwable {
-        // first check if we have a connection
-        try {
-            InetAddress.getByName("eobjects.org");
-        } catch (UnknownHostException e) {
-            System.err.println("Skipping test " + getClass().getSimpleName() + "." + getName()
-                    + " since we don't seem to be able to reach eobjects.org");
-            e.printStackTrace();
-            return;
-        }
-
-        String filename = "target/test_run_from_url_job_and_conf.html";
-        Main.main(("-ot HTML -of " + filename + " -job http://eobjects.org/resources/example_repo/DC/jobs/random_number_generation.analysis.xml -conf http://eobjects.org/resources/example_repo/DC/conf.xml")
-                .split(" "));
-
-        File file = new File(filename);
-        assertTrue(file.exists());
-        String result = FileHelper.readFileAsString(file);
-        String[] lines = result.split("\n");
-
-        assertEquals("<html>", lines[1]);
-
-        Tidy tidy = new Tidy();
-        StringWriter writer = new StringWriter();
-        tidy.setTrimEmptyElements(false);
-        tidy.setErrout(new PrintWriter(writer));
-        tidy.parse(FileHelper.getReader(file), System.out);
-
-        String parserOutput = writer.toString();
-        assertTrue("Parser output was:\n" + parserOutput,
-                parserOutput.indexOf("no warnings or errors were found") != -1);
     }
 
     public void testWriteHtmlToFile() throws Throwable {

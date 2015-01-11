@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.api;
 
+import javax.inject.Named;
+
 import org.datacleaner.data.InputRow;
 import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.HasAnalyzerResult;
@@ -34,7 +36,10 @@ import org.datacleaner.result.HasAnalyzerResult;
  * no @Configured InputColumns are found in the class, the analyzer will not be
  * able to execute.
  * 
- * @see AnalyzerBean
+ * Use of the {@link Named} annotation is required for the {@link Analyzer} to
+ * by automatically discovered.
+ * 
+ * @see Named
  * 
  * @param <R>
  *            the result type of this analyzer.

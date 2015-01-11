@@ -43,9 +43,7 @@ import java.lang.annotation.Target;
  * execution and thus will typically be stateful.</li>
  * </ul>
  * 
- * @see FilterBean
- * @see TransformerBean
- * @see AnalyzerBean
+ * @see Component
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

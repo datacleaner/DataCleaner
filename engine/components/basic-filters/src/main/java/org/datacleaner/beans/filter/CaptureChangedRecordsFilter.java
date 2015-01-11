@@ -32,7 +32,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Distributed;
 import org.datacleaner.beans.api.FileProperty;
 import org.datacleaner.beans.api.FileProperty.FileAccessMode;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.Optimizeable;
 import org.datacleaner.beans.api.QueryOptimizedFilter;
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * "last modified" field. After each execution, the greatest timestamp is
  * recorded and picked up successively by the next run.
  */
-@FilterBean("Capture changed records")
+@Named("Capture changed records")
 @Description("Include only records that have changed since the last time you ran the job. This filter assumes a field containing the timestamp of the latest change for each record, and stores the greatest encountered value in order to update the filter's future state.")
 @Distributed(false)
 @Categorized({ FilterCategory.class, DateAndTimeCategory.class })

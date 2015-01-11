@@ -22,14 +22,15 @@ package org.datacleaner.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.result.ListResult;
 
-@AnalyzerBean("Analyzer without reducer")
+@Named("Analyzer without reducer")
 public class MockAnalyzerWithoutReducer implements Analyzer<ListResult<String>> {
 
     @Configured

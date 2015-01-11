@@ -20,13 +20,13 @@
 package org.datacleaner.job.tasks;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.OutputRowCollector;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.junit.Ignore;
@@ -36,32 +36,32 @@ import org.junit.Ignore;
  * (1,42)-(2,42)-(3,42), if the input is 3.
  */
 @Ignore
-@TransformerBean("Mock multi row transformer")
-public class MockMultiRowTransformer implements Transformer<Number> {
+@Named("Mock multi row transformer")
+public class MockMultiRowTransformer implements Transformer {
 
-	@Inject
-	@Configured("Count to what?")
-	InputColumn<Number> countToColumn;
+    @Inject
+    @Configured("Count to what?")
+    InputColumn<Number> countToColumn;
 
-	@Inject
-	@Provided
-	OutputRowCollector outputRowCollector;
-	
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(2);
-	}
+    @Inject
+    @Provided
+    OutputRowCollector outputRowCollector;
 
-	@Override
-	public Number[] transform(InputRow inputRow) {
-		Number countTo = inputRow.getValue(countToColumn);
-		if (countTo != null) {
-			int max = Math.abs(countTo.intValue());
-			for (int i = 0; i < max; i++) {
-				outputRowCollector.putValues(i + 1, 42);
-			}
-		}
-		return null;
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(2, Number.class);
+    }
+
+    @Override
+    public Number[] transform(InputRow inputRow) {
+        Number countTo = inputRow.getValue(countToColumn);
+        if (countTo != null) {
+            int max = Math.abs(countTo.intValue());
+            for (int i = 0; i < max; i++) {
+                outputRowCollector.putValues(i + 1, 42);
+            }
+        }
+        return null;
+    }
 
 }

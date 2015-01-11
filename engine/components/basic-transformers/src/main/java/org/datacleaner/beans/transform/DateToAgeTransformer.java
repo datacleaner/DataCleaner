@@ -26,7 +26,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -49,10 +49,10 @@ import org.joda.time.Years;
  * 
  * 
  */
-@TransformerBean("Date to age")
+@Named("Date to age")
 @Description("Turn a Date-column into columns of age (both in years and in days).")
 @Categorized({ DateAndTimeCategory.class })
-public class DateToAgeTransformer implements Transformer<Integer> {
+public class DateToAgeTransformer implements Transformer {
 
 	@Configured("Date column")
 	InputColumn<Date> dateColumn;
@@ -61,7 +61,7 @@ public class DateToAgeTransformer implements Transformer<Integer> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns("Age in days", "Age in years");
+		return new OutputColumns(Integer.class, "Age in days", "Age in years");
 	}
 
 	@Override

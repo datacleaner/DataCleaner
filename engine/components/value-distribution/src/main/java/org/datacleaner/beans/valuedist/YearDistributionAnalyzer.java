@@ -31,8 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
@@ -47,7 +48,7 @@ import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.CrosstabResult;
 
-@AnalyzerBean("Year distribution")
+@Named("Year distribution")
 @Description("Finds the distribution of years from Date values.")
 @Concurrent(true)
 @Categorized(DateAndTimeCategory.class)

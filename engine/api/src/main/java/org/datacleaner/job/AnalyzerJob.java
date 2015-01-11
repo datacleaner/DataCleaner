@@ -20,14 +20,12 @@
 package org.datacleaner.job;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 
 /**
  * {@link ComponentJob} subinterface for {@link Analyzer}s.
  * 
  * @see Analyzer
- * @see AnalyzerBean
  */
 public interface AnalyzerJob extends ConfigurableBeanJob<AnalyzerBeanDescriptor<?>> {
 

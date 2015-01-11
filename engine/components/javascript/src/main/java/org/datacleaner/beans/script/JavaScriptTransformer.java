@@ -27,7 +27,7 @@ import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.ScriptingCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -42,11 +42,11 @@ import org.slf4j.LoggerFactory;
 /**
  * A transformer that uses userwritten JavaScript to generate a value
  */
-@TransformerBean("JavaScript transformer (simple)")
+@Named("JavaScript transformer (simple)")
 @Alias("JavaScript transformer")
 @Description("Supply your own piece of JavaScript to do a custom transformation")
 @Categorized({ ScriptingCategory.class })
-public class JavaScriptTransformer implements Transformer<Object> {
+public class JavaScriptTransformer implements Transformer {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(JavaScriptTransformer.class);
@@ -75,7 +75,7 @@ public class JavaScriptTransformer implements Transformer<Object> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		OutputColumns outputColumns = new OutputColumns("JavaScript output");
+		OutputColumns outputColumns = new OutputColumns(Object.class, "JavaScript output");
 		if (returnType == ReturnType.NUMBER) {
 			outputColumns.setColumnType(0, Number.class);
 		} else if (returnType == ReturnType.BOOLEAN) {

@@ -23,10 +23,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Close;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Initialize;
@@ -35,7 +36,7 @@ import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.result.NumberResult;
 
-@AnalyzerBean("Row-processing mock")
+@Named("Row-processing mock")
 public class AnalyzerMock implements Analyzer<NumberResult> {
 
     private static List<AnalyzerMock> instances = new LinkedList<AnalyzerMock>();

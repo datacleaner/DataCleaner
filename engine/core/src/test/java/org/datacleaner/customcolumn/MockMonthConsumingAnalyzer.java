@@ -22,14 +22,15 @@ package org.datacleaner.customcolumn;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.result.ListResult;
 
-@AnalyzerBean("Mock Month Consuming analyzer")
+@Named("Mock Month Consuming analyzer")
 public class MockMonthConsumingAnalyzer implements Analyzer<ListResult<InputRow>> {
 
 	@Configured

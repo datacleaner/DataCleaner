@@ -22,22 +22,22 @@ package org.datacleaner.cluster;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
 /**
  * Dummy transformer that will throw an exception. Used only for testing.
  */
-@TransformerBean("Example transformer that will fail")
-public class MockTransformerThatWillFail implements Transformer<String> {
+@Named("Example transformer that will fail")
+public class MockTransformerThatWillFail implements Transformer {
 
     @Configured
     InputColumn<?> input;
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(1);
+        return new OutputColumns(1, String.class);
     }
 
     @Override

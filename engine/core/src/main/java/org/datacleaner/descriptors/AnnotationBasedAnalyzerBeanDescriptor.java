@@ -20,40 +20,35 @@
 package org.datacleaner.descriptors;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Distributed;
 import org.datacleaner.beans.api.NoAnalyzerResultReducer;
 import org.datacleaner.result.AnalyzerResultReducer;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 
 final class AnnotationBasedAnalyzerBeanDescriptor<A extends Analyzer<?>> extends
         AbstractHasAnalyzerResultBeanDescriptor<A> implements AnalyzerBeanDescriptor<A> {
 
     private static final long serialVersionUID = 1L;
 
-    private final String _displayName;
-
     protected AnnotationBasedAnalyzerBeanDescriptor(Class<A> analyzerClass) throws DescriptorException {
         super(analyzerClass, true);
 
-        AnalyzerBean analyzerAnnotation = ReflectionUtils.getAnnotation(analyzerClass, AnalyzerBean.class);
-        if (analyzerAnnotation == null) {
-            throw new DescriptorException(analyzerClass + " doesn't implement the AnalyzerBean annotation");
+        if (!ReflectionUtils.is(analyzerClass, Analyzer.class)) {
+            throw new DescriptorException(analyzerClass + " does not implement " + Analyzer.class.getName());
         }
-
-        String displayName = analyzerAnnotation.value();
-        if (StringUtils.isNullOrEmpty(displayName)) {
-            displayName = ReflectionUtils.explodeCamelCase(analyzerClass.getSimpleName(), false);
-        }
-        _displayName = displayName.trim();
 
         visitClass();
     }
 
     @Override
-    public String getDisplayName() {
-        return _displayName;
+    @SuppressWarnings("deprecation")
+    protected String getDisplayNameIfNotNamed(Class<?> cls) {
+        org.eobjects.analyzer.beans.api.AnalyzerBean annotation = ReflectionUtils.getAnnotation(cls,
+                org.eobjects.analyzer.beans.api.AnalyzerBean.class);
+        if (annotation == null) {
+            return null;
+        }
+        return annotation.value();
     }
 
     @Override

@@ -26,15 +26,15 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Generate UUID")
+@Named("Generate UUID")
 @Description("Generates a universally unique ID")
 @Categorized(NumbersCategory.class)
-public class GenerateUUIDTransformer implements Transformer<String> {
+public class GenerateUUIDTransformer implements Transformer {
 
     @Configured
     @Description("A column which represent the scope for which the ID will be generated. "
@@ -50,7 +50,7 @@ public class GenerateUUIDTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns("Generated UUID");
+        return new OutputColumns(String.class, "Generated UUID");
     }
 
     @Override

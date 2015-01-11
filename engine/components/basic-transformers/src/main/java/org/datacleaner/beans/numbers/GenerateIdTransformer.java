@@ -27,15 +27,15 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Generate ID")
+@Named("Generate ID")
 @Description("Generates a unique and sequential record ID")
 @Categorized(NumbersCategory.class)
-public class GenerateIdTransformer implements Transformer<Integer> {
+public class GenerateIdTransformer implements Transformer {
 
 	@Configured
 	@Description("A column which represent the scope for which the ID will be generated. "
@@ -59,7 +59,7 @@ public class GenerateIdTransformer implements Transformer<Integer> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns("Generated ID");
+		return new OutputColumns(Integer.class, "Generated ID");
 	}
 
 	@Override

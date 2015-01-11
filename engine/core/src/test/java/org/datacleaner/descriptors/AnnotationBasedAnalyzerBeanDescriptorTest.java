@@ -23,10 +23,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Distributed;
 import org.datacleaner.beans.mock.AnalyzerMock;
 import org.datacleaner.reference.Dictionary;
@@ -47,7 +48,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
         assertEquals("One more mock", descriptor.getDisplayName());
     }
 
-    @AnalyzerBean("One more mock")
+    @Named("One more mock")
     @Distributed(false)
     public static class OneMoreMockAnalyzer extends AnalyzerMock {
 
@@ -60,7 +61,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
         }
     }
     
-    @AnalyzerBean("Third analyzer mock")
+    @Named("Third analyzer mock")
     @Distributed(reducer = MockResultReducer.class)
     public static class ThirdMockAnalyzer extends AnalyzerMock {
 
@@ -154,7 +155,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
         }
     }
 
-    @AnalyzerBean("invalid analyzer")
+    @Named("invalid analyzer")
     public abstract class InvalidAnalyzer implements Analyzer<AnalyzerResult> {
     }
 }

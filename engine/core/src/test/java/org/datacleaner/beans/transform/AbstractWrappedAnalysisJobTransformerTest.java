@@ -25,11 +25,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -46,9 +50,6 @@ import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.util.SimpleTableDef;
 
 public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
@@ -122,7 +123,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
                 + "delegate=MetaModelInputRow[Row[values=[Kasper]]]]", values.get(1).toString());
     }
 
-    @TransformerBean("MockWrappedAnalysisJobTransformer")
+    @Named("MockWrappedAnalysisJobTransformer")
     public static class MockWrappedAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {
 
         @Configured

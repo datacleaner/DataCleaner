@@ -23,13 +23,13 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.Validate;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@FilterBean("String value range")
+@Named("String value range")
 @Description("A filter that filters out values outside a specified value range")
 @Categorized(FilterCategory.class)
 public class StringValueRangeFilter implements Filter<RangeFilterCategory> {

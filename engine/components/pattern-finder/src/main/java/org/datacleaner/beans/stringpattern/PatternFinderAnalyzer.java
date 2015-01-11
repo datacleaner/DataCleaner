@@ -30,8 +30,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.ColumnProperty;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
@@ -50,7 +51,7 @@ import org.datacleaner.util.NullTolerableComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AnalyzerBean("Pattern finder")
+@Named("Pattern finder")
 @Description("The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.")
 @Concurrent(true)
 public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {

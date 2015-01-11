@@ -25,16 +25,16 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MockInputColumn;
 
-@TransformerBean("XML decoder")
+@Named("XML decoder")
 @Description("Decodes XML content into plain text")
 @Categorized({ StringManipulationCategory.class })
-public class XmlDecoderTransformer implements Transformer<String> {
+public class XmlDecoderTransformer implements Transformer {
 
     @Configured
     InputColumn<String> column;
@@ -49,7 +49,7 @@ public class XmlDecoderTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(column.getName() + " (XML decoded)");
+        return new OutputColumns(String.class, column.getName() + " (XML decoded)");
     }
 
     @Override

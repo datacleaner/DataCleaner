@@ -26,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.csv.CsvWriter;
@@ -34,7 +36,6 @@ import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -44,7 +45,7 @@ import org.datacleaner.data.InputRow;
 import org.datacleaner.util.WriteBuffer;
 import org.datacleaner.util.sort.SortMergeWriter;
 
-@AnalyzerBean("Unique key check")
+@Named("Unique key check")
 @Description("Check your keys (or other fields) for uniqueness")
 @Concurrent(true)
 public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerResult> {

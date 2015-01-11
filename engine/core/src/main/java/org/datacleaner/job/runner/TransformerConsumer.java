@@ -39,13 +39,13 @@ import org.datacleaner.util.SourceColumnFinder;
  */
 final class TransformerConsumer extends AbstractRowProcessingConsumer implements RowProcessingConsumer {
 
-    private final Transformer<?> _transformer;
+    private final Transformer _transformer;
     private final TransformerJob _transformerJob;
     private final InputColumn<?>[] _inputColumns;
     private final boolean _concurrent;
     private RowIdGenerator _idGenerator;
 
-    public TransformerConsumer(Transformer<?> transformer, TransformerJob transformerJob,
+    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
             InputColumn<?>[] inputColumns, SourceColumnFinder sourceColumnFinder) {
         super(null, null, transformerJob, transformerJob, sourceColumnFinder);
         _transformer = transformer;
@@ -54,7 +54,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         _concurrent = determineConcurrent();
     }
     
-    public TransformerConsumer(Transformer<?> transformer, TransformerJob transformerJob,
+    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
             InputColumn<?>[] inputColumns, RowProcessingPublishers publishers) {
         super(publishers, transformerJob, transformerJob);
         _transformer = transformer;
@@ -92,7 +92,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     }
 
     @Override
-    public Transformer<?> getComponent() {
+    public Transformer getComponent() {
         return _transformer;
     }
 
@@ -127,7 +127,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         }
     }
 
-    private void unregisterListener(Transformer<?> transformer) {
+    private void unregisterListener(Transformer transformer) {
         final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = _transformerJob.getDescriptor()
                 .getProvidedPropertiesByType(OutputRowCollector.class);
         for (ProvidedPropertyDescriptor descriptor : outputRowCollectorProperties) {
@@ -138,7 +138,7 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
         }
     }
 
-    private void registerListener(final Transformer<?> transformer, final InputRow row, final FilterOutcomes outcomes,
+    private void registerListener(final Transformer transformer, final InputRow row, final FilterOutcomes outcomes,
             final RowProcessingChain chain, final InputColumn<?>[] outputColumns) {
         final Set<ProvidedPropertyDescriptor> outputRowCollectorProperties = _transformerJob.getDescriptor()
                 .getProvidedPropertiesByType(OutputRowCollector.class);

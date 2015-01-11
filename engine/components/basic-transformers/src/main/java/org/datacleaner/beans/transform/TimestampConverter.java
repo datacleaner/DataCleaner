@@ -26,17 +26,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.apache.metamodel.util.HasName;
 
-@TransformerBean("Timestamp converter")
+@Named("Timestamp converter")
 @Description("Convert a timestamp (string or number) to a date field. Epoch is assumed to be 1970-01-01.")
 @Categorized({ DateAndTimeCategory.class })
-public class TimestampConverter implements Transformer<Date> {
+public class TimestampConverter implements Transformer {
 
 	public static enum Unit implements HasName {
 		DAYS("Days", 24 * 60 * 60 * 1000), HOURS("Hours", 60 * 60 * 1000), MINUTES("Minutes", 60 * 1000), SECONDS("Seconds",
@@ -69,7 +69,7 @@ public class TimestampConverter implements Transformer<Date> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(timestampColumn.getName() + " (as date)");
+		return new OutputColumns(Date.class, timestampColumn.getName() + " (as date)");
 	}
 
 	@Override

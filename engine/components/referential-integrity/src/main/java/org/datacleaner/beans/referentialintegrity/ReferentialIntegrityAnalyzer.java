@@ -20,10 +20,10 @@
 package org.datacleaner.beans.referentialintegrity;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Close;
 import org.datacleaner.beans.api.ColumnProperty;
@@ -42,7 +42,7 @@ import org.datacleaner.data.InputRow;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
-@AnalyzerBean("Referential integrity")
+@Named("Referential integrity")
 @Description("Check the integrity of a foreign key by checking that every value can be resolved in another table (which may be in a different datastore altogether).")
 @Categorized(ValidationCategory.class)
 public class ReferentialIntegrityAnalyzer implements Analyzer<ReferentialIntegrityAnalyzerResult> {

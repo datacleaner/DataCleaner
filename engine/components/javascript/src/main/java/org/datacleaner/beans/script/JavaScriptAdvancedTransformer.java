@@ -32,7 +32,7 @@ import org.datacleaner.beans.api.OutputRowCollector;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.ScriptingCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -49,11 +49,11 @@ import org.slf4j.LoggerFactory;
  * A transformer that uses userwritten JavaScript to generate a transformer
  * object
  */
-@TransformerBean("JavaScript transformer (advanced)")
+@Named("JavaScript transformer (advanced)")
 @Description("Supply your own piece of JavaScript to do a custom transformation")
 @Categorized({ ScriptingCategory.class })
 @Concurrent(false)
-public class JavaScriptAdvancedTransformer implements Transformer<Object> {
+public class JavaScriptAdvancedTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(JavaScriptAdvancedTransformer.class);
 

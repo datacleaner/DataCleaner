@@ -19,8 +19,6 @@
  */
 package org.datacleaner.beans;
 
-import java.util.Set;
-
 import javax.swing.table.TableModel;
 
 import junit.framework.TestCase;
@@ -29,21 +27,18 @@ import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 
-@SuppressWarnings("deprecation")
 public class StringAnalyzerTest extends TestCase {
 
     private InputColumn<String> c1;
     private InputColumn<String> c2;
     private StringAnalyzer stringAnalyzer;
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -161,7 +156,6 @@ public class StringAnalyzerTest extends TestCase {
     }
 
     public void testNoRows() throws Exception {
-        @SuppressWarnings("unchecked")
         StringAnalyzer stringAnalyzer = new StringAnalyzer(c1, c2);
 
         CrosstabResult result = stringAnalyzer.getResult();

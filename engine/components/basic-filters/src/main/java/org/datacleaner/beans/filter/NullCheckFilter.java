@@ -27,7 +27,7 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.QueryOptimizedFilter;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
@@ -40,7 +40,7 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.HasName;
 
-@FilterBean("Null check")
+@Named("Null check")
 @Alias("Not null")
 @Description("Filter rows that contain null values.")
 @Categorized(FilterCategory.class)

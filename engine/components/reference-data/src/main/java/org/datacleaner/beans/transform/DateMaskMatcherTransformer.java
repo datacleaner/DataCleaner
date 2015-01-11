@@ -27,7 +27,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.data.InputColumn;
@@ -35,10 +35,10 @@ import org.datacleaner.data.InputRow;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-@TransformerBean("Date mask matcher")
+@Named("Date mask matcher")
 @Description("Matches String values against a set of date masks, producing a corresponding set of output columns, specifying whether or not the strings could be interpreted as dates given those date masks")
 @Categorized({ MatchingAndStandardizationCategory.class, DateAndTimeCategory.class })
-public class DateMaskMatcherTransformer implements Transformer<Object> {
+public class DateMaskMatcherTransformer implements Transformer {
 
 	public static final String[] DEFAULT_DATE_MASKS = new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy",
 			"MM/dd/yy", "d MMM yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss.S" };

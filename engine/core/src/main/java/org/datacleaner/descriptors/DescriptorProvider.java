@@ -81,7 +81,7 @@ public interface DescriptorProvider {
      * @param transformerClass
      * @return
      */
-    public <T extends Transformer<?>> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
+    public <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
             Class<T> transformerClass);
 
     /**

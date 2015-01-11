@@ -24,17 +24,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.apache.metamodel.util.HasName;
 
-@TransformerBean("Generate timestamp")
+@Named("Generate timestamp")
 @Description("Generates a timestamp representing the millisecond or nanosecond of processing the record")
 @Categorized({ NumbersCategory.class, DateAndTimeCategory.class })
-public class GenerateTimestampTransformer implements Transformer<Long> {
+public class GenerateTimestampTransformer implements Transformer {
 
     public static enum Unit implements HasName {
         SECOND("Second"), MILLISECOND("Millisecond"), NANOSECOND("Nanosecond");
@@ -62,7 +62,7 @@ public class GenerateTimestampTransformer implements Transformer<Long> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns("Generated timestamp");
+        return new OutputColumns(Long.class, "Generated timestamp");
     }
 
     @Override

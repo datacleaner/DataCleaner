@@ -21,22 +21,23 @@ package org.datacleaner.beans.mock;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Transformer mock")
+@Named("Transformer mock")
 @Alias("Mock transformer")
-public class TransformerMock implements Transformer<Integer> {
+public class TransformerMock implements Transformer {
 
     @Configured
     InputColumn<String>[] input;
-    
+
     @Configured
     Integer someInteger = 1;
 
@@ -49,7 +50,7 @@ public class TransformerMock implements Transformer<Integer> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(input.length);
+        return new OutputColumns(input.length, Integer.class);
     }
 
     @Override

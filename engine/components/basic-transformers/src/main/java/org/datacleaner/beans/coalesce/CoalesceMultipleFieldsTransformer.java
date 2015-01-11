@@ -23,26 +23,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.beans.categories.CompositionCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TransformerBean("Fuse / Coalesce fields")
+@Named("Fuse / Coalesce fields")
 @Alias("Coalesce multiple fields")
 @Description("Lets you combine multiple fields into one, selecting the first value that is non-null.\n\n"
         + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
         + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
-public class CoalesceMultipleFieldsTransformer implements Transformer<Object> {
+public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);
 
@@ -84,7 +85,7 @@ public class CoalesceMultipleFieldsTransformer implements Transformer<Object> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        final OutputColumns outputColumns = new OutputColumns(_units.length);
+        final OutputColumns outputColumns = new OutputColumns(_units.length, Object.class);
         for (int i = 0; i < _units.length; i++) {
             final CoalesceUnit unit = _units[i];
             final Class<?> dataType = unit.getOutputDataType(_input);

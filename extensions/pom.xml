@@ -35,8 +35,6 @@
 			</activation>
 			<modules>
 				<module>sample</module>
-				<module>phonetic</module>
-				<module>test-tools</module>
 				<module>network-tools</module>
 				<module>visualization</module>
 				<module>pentaho-job-engine</module>

@@ -50,7 +50,7 @@ import org.datacleaner.util.StringUtils;
  * @param <T>
  *            the transformer type being configured
  */
-public final class TransformerJobBuilder<T extends Transformer<?>> extends
+public final class TransformerJobBuilder<T extends Transformer> extends
         AbstractBeanWithInputColumnsBuilder<TransformerBeanDescriptor<T>, T, TransformerJobBuilder<T>> implements
         InputColumnSourceJob, InputColumnSinkJob, HasComponentRequirement {
 
@@ -81,7 +81,7 @@ public final class TransformerJobBuilder<T extends Transformer<?>> extends
             return Collections.emptyList();
         }
 
-        final Transformer<?> component = getComponentInstance();
+        final Transformer component = getComponentInstance();
         final TransformerBeanDescriptor<T> descriptor = getDescriptor();
 
         final InjectionManager injectionManager = getAnalysisJobBuilder().getConfiguration().getInjectionManager(null);
@@ -139,10 +139,7 @@ public final class TransformerJobBuilder<T extends Transformer<?>> extends
         // manually set
         for (int i = 0; i < expectedCols; i++) {
             final String proposedName = getColumnName(outputColumns, i);
-            Class<?> dataType = outputColumns.getColumnType(i);
-            if (dataType == null) {
-                dataType = descriptor.getOutputDataType();
-            }
+            final Class<?> dataType = outputColumns.getColumnType(i);
 
             final TransformedInputColumn<?> col = (TransformedInputColumn<?>) _outputColumns.get(i);
             col.setInitialName(proposedName);

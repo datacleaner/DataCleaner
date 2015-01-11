@@ -14,17 +14,6 @@
 			<artifactId>DataCleaner-monitor-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javax.el-api</artifactId>
-					<groupId>javax.el</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

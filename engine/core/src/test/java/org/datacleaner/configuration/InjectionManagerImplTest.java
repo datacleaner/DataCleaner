@@ -22,11 +22,12 @@ package org.datacleaner.configuration;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.MutableRef;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -43,7 +44,6 @@ import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.convert.StringConverter;
-import org.apache.metamodel.util.MutableRef;
 import org.junit.Ignore;
 
 public class InjectionManagerImplTest extends TestCase {
@@ -51,7 +51,7 @@ public class InjectionManagerImplTest extends TestCase {
     private static final MutableRef<List<String>> listRef = new MutableRef<List<String>>();
 
     @Ignore
-    @AnalyzerBean("Fancy transformer")
+    @Named("Fancy transformer")
     public static class FancyTransformer implements Analyzer<AnnotatedRowsResult> {
 
         @Provided

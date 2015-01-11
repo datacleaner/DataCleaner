@@ -21,11 +21,14 @@ package org.datacleaner.beans.filter;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.FilterBean;
 import org.datacleaner.beans.api.NumberProperty;
 import org.datacleaner.beans.api.QueryOptimizedFilter;
 import org.datacleaner.beans.api.Validate;
@@ -33,10 +36,8 @@ import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.HasLabelAdvice;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
 
-@FilterBean("Max rows")
+@Named("Max rows")
 @Description("Sets a maximum number of rows to process.")
 @Categorized(FilterCategory.class)
 @Distributed(false)

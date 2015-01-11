@@ -25,8 +25,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -36,7 +37,7 @@ import org.datacleaner.data.InputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AnalyzerBean("Date gap analyzer")
+@Named("Date gap analyzer")
 @Description("Analyze the periodic gaps between FROM and TO dates.")
 @Categorized(DateAndTimeCategory.class)
 public class DateGapAnalyzer implements Analyzer<DateGapAnalyzerResult> {

@@ -80,8 +80,8 @@ public class CompletenessAnalyzerTest extends TestCase {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
             
             AnalyzerJobBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
-            analyzer.getConfigurableBean().setValueColumns(ajb.getSourceColumns().toArray(new InputColumn[0]));
-            analyzer.getConfigurableBean().fillAllConditions(Condition.NOT_BLANK_OR_NULL);
+            analyzer.getComponentInstance().setValueColumns(ajb.getSourceColumns().toArray(new InputColumn[0]));
+            analyzer.getComponentInstance().fillAllConditions(Condition.NOT_BLANK_OR_NULL);
             
             assertTrue(analyzer.isConfigured(true));
         } finally {

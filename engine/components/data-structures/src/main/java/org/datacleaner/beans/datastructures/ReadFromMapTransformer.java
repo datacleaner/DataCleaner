@@ -30,7 +30,7 @@ import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.OutputRowCollector;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -40,10 +40,10 @@ import org.datacleaner.data.InputRow;
  * 
  * 
  */
-@TransformerBean("Read keys and values from map")
+@Named("Read keys and values from map")
 @Description("Reads all key/value pairs of a map, creating a record for each pair")
 @Categorized(DataStructuresCategory.class)
-public class ReadFromMapTransformer implements Transformer<Object> {
+public class ReadFromMapTransformer implements Transformer {
 
 	@Inject
 	@Configured

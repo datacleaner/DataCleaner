@@ -20,6 +20,7 @@
 package org.datacleaner.beans.convert;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Categorized;
@@ -27,7 +28,6 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.beans.categories.ConversionCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -35,10 +35,10 @@ import org.datacleaner.data.InputRow;
 /**
  * Attempts to convert anything to a Boolean value
  */
-@TransformerBean("Convert to boolean")
+@Named("Convert to boolean")
 @Description("Converts anything to a boolean (or null).")
 @Categorized({ ConversionCategory.class })
-public class ConvertToBooleanTransformer implements Transformer<Boolean> {
+public class ConvertToBooleanTransformer implements Transformer {
 
 	public static final String[] DEFAULT_TRUE_TOKENS = new String[] { "true", "yes", "1", "x" };
 	public static final String[] DEFAULT_FALSE_TOKENS = new String[] { "false", "no", "0", "-" };
@@ -73,11 +73,11 @@ public class ConvertToBooleanTransformer implements Transformer<Boolean> {
 		for (int i = 0; i < names.length; i++) {
 			names[i] = input[i].getName() + " (as boolean)";
 		}
-		return new OutputColumns(names);
+		return new OutputColumns(Boolean.class, names);
 	}
 
 	@Override
-	public Boolean[] transform(InputRow inputRow) {
+	public Object[] transform(InputRow inputRow) {
 		Boolean[] result = new Boolean[input.length];
 		for (int i = 0; i < input.length; i++) {
 			Object value = inputRow.getValue(input[i]);

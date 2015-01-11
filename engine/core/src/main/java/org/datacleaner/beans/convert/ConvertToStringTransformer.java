@@ -28,26 +28,26 @@ import java.sql.Clob;
 import java.util.Arrays;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.beans.categories.ConversionCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
-import org.apache.metamodel.util.FileHelper;
 
 /**
  * Attempts to convert anything to a String value.
  */
-@TransformerBean("Convert to string")
+@Named("Convert to string")
 @Description("Converts anything to a string (or null).")
 @Categorized({ ConversionCategory.class })
-public class ConvertToStringTransformer implements Transformer<String> {
+public class ConvertToStringTransformer implements Transformer {
 
     @Inject
     @Configured
@@ -63,7 +63,7 @@ public class ConvertToStringTransformer implements Transformer<String> {
         for (int i = 0; i < names.length; i++) {
             names[i] = input[i].getName() + " (as string)";
         }
-        return new OutputColumns(names);
+        return new OutputColumns(String.class, names);
     }
 
     @Override

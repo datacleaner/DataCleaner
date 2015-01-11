@@ -120,7 +120,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public <T extends Transformer<?>> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(Class<T> arg0) {
+    public <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(Class<T> arg0) {
         return getDelegate().getTransformerBeanDescriptorForClass(arg0);
     }
 

@@ -27,7 +27,7 @@ import org.datacleaner.data.InputRow;
 /**
  * An abstract {@link Transformer} that supports batch/chunked operations.
  */
-public abstract class BatchTransformer implements Transformer<Object>, BatchTransformation<InputRow, Object[]> {
+public abstract class BatchTransformer implements Transformer, BatchTransformation<InputRow, Object[]> {
 
     private final BatchTransformationBuffer<InputRow, Object[]> _batchTransformationBuffer;
 

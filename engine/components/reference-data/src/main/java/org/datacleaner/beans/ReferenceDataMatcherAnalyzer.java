@@ -22,9 +22,10 @@ package org.datacleaner.beans;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -43,7 +44,7 @@ import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 
-@AnalyzerBean("Reference data matcher")
+@Named("Reference data matcher")
 @Alias("Matching analyzer")
 @Description("Check your data values against multiple forms of reference data in one simple analyzer step.\n"
 		+ "This analyzer provides a handy shortcut for doing matching with dictionaries, synonym lookups or string patterns matching, retrieving matching matrices for all matches.")
@@ -108,10 +109,9 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
 			}
 
 			if (isSynonymCatalogLookupEnabled()) {
-				outputColumns = new OutputColumns(synonymCatalogs.length);
+				outputColumns = new OutputColumns(synonymCatalogs.length, Boolean.class);
 				for (int j = 0; j < synonymCatalogs.length; j++) {
 					SynonymCatalog synonymCatalog = synonymCatalogs[j];
-					outputColumns.setColumnType(j, Boolean.class);
 					outputColumns.setColumnName(j, columns[i].getName()
 							+ " in " + synonymCatalog.getName());
 				}

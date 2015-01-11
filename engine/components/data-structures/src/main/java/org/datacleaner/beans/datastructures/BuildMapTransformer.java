@@ -30,9 +30,12 @@ import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
+import org.datacleaner.beans.api.MappedProperty;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -42,21 +45,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Transformer for building maps based on values in a row.
  */
-@TransformerBean("Build key/value map")
+@Named("Build key/value map")
 @Alias("Build map")
 @Description("Build a map with a variable amount of keys and values. "
         + "Adds the capability to store complex structures with named entries within it.")
 @Categorized(DataStructuresCategory.class)
-public class BuildMapTransformer implements Transformer<Map<String, ?>> {
+public class BuildMapTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);
 
+    private static final String PROPERTY_VALUES = "Values";
+
     @Inject
-    @Configured
+    @Configured(PROPERTY_VALUES)
     InputColumn<?>[] values;
 
     @Inject
     @Configured
+    @MappedProperty(PROPERTY_VALUES)
     String[] keys;
 
     @Inject

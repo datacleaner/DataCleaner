@@ -22,8 +22,9 @@ package org.datacleaner.beans;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.ColumnProperty;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 
  */
-@AnalyzerBean("String analyzer")
+@Named("String analyzer")
 @Description("The String analyzer is used to collect a variety of typical metrics on string values.\nMetrics include statistics on character case, words, diacritics, white-spaces and more...")
 @Concurrent(true)
 public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {

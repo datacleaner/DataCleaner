@@ -23,13 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -322,7 +323,7 @@ public class FilterRequirementMergingTest extends TestCase {
         assertEquals(5, list.size());
     }
 
-    @FilterBean("Even/odd record filter")
+    @Named("Even/odd record filter")
     public static class EvenOddFilter implements Filter<EvenOddFilter.Category> {
 
         public static enum Category {

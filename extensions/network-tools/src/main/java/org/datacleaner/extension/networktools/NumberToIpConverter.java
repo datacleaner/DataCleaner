@@ -24,21 +24,21 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Convert number to IP")
+@Named("Convert number to IP")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts a number representation of an IPv4 address to it's regular string representation.")
-public class NumberToIpConverter implements Transformer<String> {
+public class NumberToIpConverter implements Transformer {
 
 	@Configured("IP number column")
 	InputColumn<Number> ipColumn;
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(ipColumn.getName() + " (IP as number)");
+		return new OutputColumns(String.class, ipColumn.getName() + " (IP as number)");
 	}
 
 	@Override

@@ -29,7 +29,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -38,10 +38,10 @@ import org.datacleaner.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
-@TransformerBean("Read & parse JSON document")
+@Named("Read & parse JSON document")
 @Description("Parses a JSON document (as a string) and materializes the data structure it represents")
 @Categorized(DataStructuresCategory.class)
-public class ParseJsonTransformer implements Transformer<Object> {
+public class ParseJsonTransformer implements Transformer {
 
     @Inject
     @Configured(order = 1)

@@ -28,7 +28,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.NumberProperty;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -36,10 +36,10 @@ import org.datacleaner.data.InputRow;
 /**
  * Simple transformer for incrementing a number
  */
-@TransformerBean("Increment number")
+@Named("Increment number")
 @Description("Increment an id, a version or any other number.")
 @Categorized(NumbersCategory.class)
-public class IncrementNumberTransformer implements Transformer<Number> {
+public class IncrementNumberTransformer implements Transformer {
 
     @Configured
     InputColumn<Number> _number;
@@ -50,7 +50,7 @@ public class IncrementNumberTransformer implements Transformer<Number> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(_number.getName() + " (incremented)");
+        return new OutputColumns(String.class, _number.getName() + " (incremented)");
     }
 
     @Override

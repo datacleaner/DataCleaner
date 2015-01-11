@@ -161,8 +161,8 @@ public class MainTest extends TestCase {
 
         assertEquals("Transformers:", lines[0]);
 
-        assertTrue(out.indexOf("name: Email standardizer") != -1);
-        assertTrue(out.indexOf("Output type is: String") != -1);
+        assertTrue(out, out.indexOf("name: Email standardizer") != -1);
+        assertTrue(out, out.indexOf(" - Consumes a single input column (type: String)") != -1);
     }
 
     public void testListFilters() throws Throwable {
@@ -174,7 +174,8 @@ public class MainTest extends TestCase {
         assertEquals("Filters:", lines[0]);
 
         assertTrue(out.indexOf("name: Null check") != -1);
-        assertTrue(out.indexOf("- Outcome category: NOT_NULL") != -1);
+        assertTrue(out.indexOf("- Outcome: NOT_NULL") != -1);
+        assertTrue(out.indexOf("- Outcome: NULL") != -1);
     }
 
     public void testListAnalyzers() throws Throwable {

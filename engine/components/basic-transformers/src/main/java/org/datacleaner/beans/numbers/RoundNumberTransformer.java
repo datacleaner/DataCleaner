@@ -25,7 +25,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.NumberProperty;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -33,10 +33,10 @@ import org.datacleaner.data.InputRow;
 /**
  * Simple transformer for rounding a number
  */
-@TransformerBean("Round number")
+@Named("Round number")
 @Description("Transformation for rounding a number, typically to the nearest integer, nearest ten, hundred or thousand.")
 @Categorized(NumbersCategory.class)
-public class RoundNumberTransformer implements Transformer<Integer> {
+public class RoundNumberTransformer implements Transformer {
 
     @Configured
     InputColumn<Number> _number;
@@ -48,7 +48,7 @@ public class RoundNumberTransformer implements Transformer<Integer> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(_number.getName() + " (rounded)");
+        return new OutputColumns(String.class, _number.getName() + " (rounded)");
     }
     
     @Override

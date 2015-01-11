@@ -27,7 +27,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -60,11 +60,11 @@ import org.datacleaner.data.InputRow;
  * OPTIONAL: A .png file with the fully classified class name as it's path (see
  * src/main/resources).
  */
-@TransformerBean("Hello world transformer")
+@Named("Hello world transformer")
 @Categorized(StringManipulationCategory.class)
 @Description("Put your description of your transformer here")
 @Concurrent(true)
-public class HelloWorldTransformer implements Transformer<String> {
+public class HelloWorldTransformer implements Transformer {
 
 	// REQUIRED: One or more InputColumn based
 	@Configured
@@ -79,7 +79,7 @@ public class HelloWorldTransformer implements Transformer<String> {
 	@Override
 	public OutputColumns getOutputColumns() {
 		String[] columnNames = { nameColumn.getName() + " (greeting)" };
-		return new OutputColumns(columnNames);
+		return new OutputColumns(String.class, columnNames);
 	}
 
 	@Override

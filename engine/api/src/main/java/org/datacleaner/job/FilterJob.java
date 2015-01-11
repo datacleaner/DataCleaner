@@ -19,13 +19,13 @@
  */
 package org.datacleaner.job;
 
+import org.datacleaner.beans.api.Filter;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 
 /**
  * Represents a job that filters/categorizes incoming rows.
  * 
  * @see Filter
- * @See FilterBean
  */
 public interface FilterJob extends ConfigurableBeanJob<FilterBeanDescriptor<?, ?>>, HasFilterOutcomes {
 

@@ -28,16 +28,16 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.apache.metamodel.util.DateUtils;
 
-@TransformerBean("Date difference / period length")
+@Named("Date difference / period length")
 @Description("Calculates the length of a period made of two dates")
 @Categorized({ DateAndTimeCategory.class })
-public class DateDiffTransformer implements Transformer<Number> {
+public class DateDiffTransformer implements Transformer {
 
 	@Configured(order = 1)
 	InputColumn<Date> fromColumn;
@@ -81,7 +81,7 @@ public class DateDiffTransformer implements Transformer<Number> {
 			columnNames.add("Milliseconds from " + from + " to " + to);
 		}
 
-		return new OutputColumns(columnNames.toArray(new String[columnNames.size()]));
+		return new OutputColumns(Number.class, columnNames.toArray(new String[columnNames.size()]));
 	}
 
 	@Override

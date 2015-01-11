@@ -30,7 +30,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -44,10 +44,10 @@ import org.datacleaner.util.NamedPatternMatch;
  * 
  * 
  */
-@TransformerBean("Name standardizer")
+@Named("Name standardizer")
 @Description("Identify the various parts of a full name column and turn it into separate, standardized tokens.")
 @Categorized({ MatchingAndStandardizationCategory.class })
-public class NameStandardizerTransformer implements Transformer<String> {
+public class NameStandardizerTransformer implements Transformer {
 
 	public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",
 			"TITULATION FIRSTNAME LASTNAME", "FIRSTNAME MIDDLENAME LASTNAME", "TITULATION. FIRSTNAME MIDDLENAME LASTNAME",
@@ -90,7 +90,7 @@ public class NameStandardizerTransformer implements Transformer<String> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns("Firstname", "Lastname", "Middlename", "Titulation");
+		return new OutputColumns(String.class, "Firstname", "Lastname", "Middlename", "Titulation");
 	}
 
 	@Override

@@ -19,22 +19,23 @@
  */
 package org.datacleaner.job.builder;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Single input column transformer")
-public class SingleInputColumnTransformer implements Transformer<String> {
+@Named("Single input column transformer")
+public class SingleInputColumnTransformer implements Transformer {
 
     @Configured
     InputColumn<String> input;
-    
+
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns("one","two");
+        return new OutputColumns(String.class, "one", "two");
     }
 
     @Override

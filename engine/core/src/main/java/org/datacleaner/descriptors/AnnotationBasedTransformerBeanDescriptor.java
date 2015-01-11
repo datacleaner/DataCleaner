@@ -21,16 +21,12 @@ package org.datacleaner.descriptors;
 
 import org.datacleaner.beans.api.Distributed;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 
-final class AnnotationBasedTransformerBeanDescriptor<T extends Transformer<?>> extends AbstractBeanDescriptor<T>
+final class AnnotationBasedTransformerBeanDescriptor<T extends Transformer> extends AbstractBeanDescriptor<T>
         implements TransformerBeanDescriptor<T> {
 
     private static final long serialVersionUID = 1L;
-
-    private final String _displayName;
 
     protected AnnotationBasedTransformerBeanDescriptor(Class<T> transformerClass) throws DescriptorException {
         super(transformerClass, false);
@@ -39,29 +35,18 @@ final class AnnotationBasedTransformerBeanDescriptor<T extends Transformer<?>> e
             throw new DescriptorException(transformerClass + " does not implement " + Transformer.class.getName());
         }
 
-        final TransformerBean transformerAnnotation = ReflectionUtils.getAnnotation(transformerClass, TransformerBean.class);
-        if (transformerAnnotation == null) {
-            throw new DescriptorException(transformerClass + " doesn't implement the TransformerBean annotation");
-        }
-
-        String displayName = transformerAnnotation.value();
-        if (StringUtils.isNullOrEmpty(displayName)) {
-            displayName = ReflectionUtils.explodeCamelCase(transformerClass.getSimpleName(), false);
-        }
-        _displayName = displayName.trim();
-
         visitClass();
     }
 
     @Override
-    public String getDisplayName() {
-        return _displayName;
-    }
-
-    @Override
-    public Class<?> getOutputDataType() {
-        Class<?> typeParameter = ReflectionUtils.getTypeParameter(getComponentClass(), Transformer.class, 0);
-        return typeParameter;
+    @SuppressWarnings("deprecation")
+    protected String getDisplayNameIfNotNamed(Class<?> cls) {
+        org.eobjects.analyzer.beans.api.TransformerBean annotation = ReflectionUtils.getAnnotation(cls,
+                org.eobjects.analyzer.beans.api.TransformerBean.class);
+        if (annotation == null) {
+            return null;
+        }
+        return annotation.value();
     }
 
     @Override

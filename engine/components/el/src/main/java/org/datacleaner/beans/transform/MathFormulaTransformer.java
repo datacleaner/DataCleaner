@@ -33,7 +33,7 @@ import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.NumbersCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -42,11 +42,11 @@ import org.datacleaner.util.StringUtils;
 import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
 
-@TransformerBean("Math formula")
+@Named("Math formula")
 @Description("Provide a mathematical formula to perform arbitrary calculations.\n"
         + "Formulas support basic operators like plus (+), minus (-), divide (/), multiply (*) and modulus (%).")
 @Categorized({ NumbersCategory.class })
-public class MathFormulaTransformer implements Transformer<Number> {
+public class MathFormulaTransformer implements Transformer {
 
     @Configured
     InputColumn<Number>[] _input;
@@ -60,7 +60,7 @@ public class MathFormulaTransformer implements Transformer<Number> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns("Formula result");
+        return new OutputColumns(Number.class, "Formula result");
     }
 
     @Initialize

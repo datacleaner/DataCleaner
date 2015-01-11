@@ -24,17 +24,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
 import com.ibm.icu.text.Transliterator;
 
-@TransformerBean("Transliterate")
+@Named("Transliterate")
 @Description("Converts non-latin characters to latin (or even ASCII) characters.")
 @Categorized(StringManipulationCategory.class)
-public class TransliterateTransformer implements Transformer<String> {
+public class TransliterateTransformer implements Transformer {
 
 	@Configured
 	InputColumn<String> column;
@@ -48,7 +48,7 @@ public class TransliterateTransformer implements Transformer<String> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(column.getName() + " (transliterated)");
+		return new OutputColumns(String.class, column.getName() + " (transliterated)");
 	}
 
 	@Override

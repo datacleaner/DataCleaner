@@ -22,8 +22,9 @@ package org.datacleaner.widgets.properties;
 import java.io.File;
 import java.util.regex.Pattern;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.connection.Datastore;
@@ -37,7 +38,7 @@ import org.datacleaner.result.NumberResult;
 import org.junit.Ignore;
 
 @Ignore
-@AnalyzerBean("Many properties!!!")
+@Named("Many properties!!!")
 public class ManyPropertiesAnalyzer implements Analyzer<NumberResult> {
 
 	@Configured

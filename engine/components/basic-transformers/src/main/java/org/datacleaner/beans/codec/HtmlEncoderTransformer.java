@@ -24,7 +24,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -32,10 +32,10 @@ import org.datacleaner.data.MockInputColumn;
 
 import com.google.common.html.HtmlEscapers;
 
-@TransformerBean("HTML encoder")
+@Named("HTML encoder")
 @Description("Encodes/escapes plain text into HTML content")
 @Categorized({ StringManipulationCategory.class })
-public class HtmlEncoderTransformer implements Transformer<String> {
+public class HtmlEncoderTransformer implements Transformer {
 
     @Configured
     InputColumn<String> column;
@@ -50,7 +50,7 @@ public class HtmlEncoderTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(column.getName() + " (HTML encoded)");
+        return new OutputColumns(String.class, column.getName() + " (HTML encoded)");
     }
 
     @Override

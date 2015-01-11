@@ -1,5 +1,6 @@
 package org.datacleaner.visualization
 
+import javax.inject.Named
 import org.datacleaner.beans.api.Analyzer
 import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.beans.api.Categorized
@@ -10,7 +11,7 @@ import org.datacleaner.data.InputRow
 import org.datacleaner.beans.api.Initialize
 import org.datacleaner.beans.api.Validate
 
-@AnalyzerBean("Stacked area plot")
+@Named("Stacked area plot")
 @Description("Plots a number of related measures in a stacked area chart. Useful visualization for showing the relative influence of each measure compared to the sum of measures.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {

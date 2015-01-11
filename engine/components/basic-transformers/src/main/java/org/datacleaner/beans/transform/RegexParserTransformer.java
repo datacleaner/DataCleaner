@@ -27,17 +27,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.beans.categories.ScriptingCategory;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Regex parser")
+@Named("Regex parser")
 @Description("Parses strings using a regular expression and transforms it into substrings based on regex groups")
 @Categorized({ StringManipulationCategory.class, ScriptingCategory.class, MatchingAndStandardizationCategory.class })
-public class RegexParserTransformer implements Transformer<String> {
+public class RegexParserTransformer implements Transformer {
 
     @Configured
     InputColumn<String> column;
@@ -52,7 +52,7 @@ public class RegexParserTransformer implements Transformer<String> {
         for (int i = 0; i < columns.length; i++) {
             columns[i] = column.getName() + " (group " + (i + 1) + ")";
         }
-        return new OutputColumns(column.getName() + " (matched part)", columns);
+        return new OutputColumns(String.class, column.getName() + " (matched part)", columns);
     }
 
     @Override

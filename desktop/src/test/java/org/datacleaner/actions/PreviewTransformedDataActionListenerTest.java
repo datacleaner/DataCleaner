@@ -23,16 +23,17 @@ import javax.swing.table.TableModel;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.filter.NumberRangeFilter;
 import org.datacleaner.beans.filter.RangeFilterCategory;
+import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
-import org.datacleaner.beans.transform.StringLengthTransformer;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -54,8 +55,8 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(EmailStandardizerTransformer.class));
-        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(StringLengthTransformer.class));
-        descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(NumberRangeFilter.class));
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
+        descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
         configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(descriptorProvider);
 
@@ -94,9 +95,10 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
     }
 
     public void testChainedTransformers() throws Exception {
-        TransformerJobBuilder<StringLengthTransformer> lengthTransformerBuilder = analysisJobBuilder
-                .addTransformer(StringLengthTransformer.class);
+        TransformerJobBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
+                .addTransformer(ConcatenatorTransformer.class);
         lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
+        lengthTransformerBuilder.addInputColumn(new ConstantInputColumn("foo"));
 
         // first simple run
         {
@@ -104,38 +106,39 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
                     lengthTransformerBuilder);
             TableModel tableModel = action.call();
 
-            assertEquals(2, tableModel.getColumnCount());
+            assertEquals(3, tableModel.getColumnCount());
             assertEquals("Username", tableModel.getColumnName(0));
-            assertEquals("Username length", tableModel.getColumnName(1));
+            assertEquals("\"foo\"", tableModel.getColumnName(1));
+            assertEquals("Concat of Username,\"foo\"", tableModel.getColumnName(2));
 
             assertEquals(23, tableModel.getRowCount());
 
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 assertTrue(tableModel.getValueAt(i, 0).toString().indexOf('@') == -1);
-                Object lengthValue = tableModel.getValueAt(i, 1);
-                assertNotNull(lengthValue);
-                assertTrue(lengthValue instanceof Number);
+                Object concatValue = tableModel.getValueAt(i, 1);
+                assertNotNull(concatValue);
+                assertTrue(concatValue instanceof String);
             }
 
             assertEquals("dmurphy", tableModel.getValueAt(0, 0).toString());
-            assertEquals("7", tableModel.getValueAt(0, 1).toString());
+            assertEquals("dmurphyfoo", tableModel.getValueAt(0, 2).toString());
 
             assertEquals("mpatterso", tableModel.getValueAt(1, 0).toString());
-            assertEquals("9", tableModel.getValueAt(1, 1).toString());
+            assertEquals("mpattersofoo", tableModel.getValueAt(1, 2).toString());
         }
 
         // add a filter
-        FilterJobBuilder<NumberRangeFilter, RangeFilterCategory> numberRange = analysisJobBuilder
-                .addFilter(NumberRangeFilter.class);
-        numberRange.addInputColumn(lengthTransformerBuilder.getOutputColumnByName("Username length"));
-        numberRange.setConfiguredProperty("Lowest value", 8d);
-        numberRange.setConfiguredProperty("Highest value", 500d);
+        FilterJobBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
+                .addFilter(StringLengthRangeFilter.class);
+        rangeFilter.addInputColumn(lengthTransformerBuilder.getOutputColumnByName("Concat of Username,\"foo\""));
+        rangeFilter.setConfiguredProperty("Minimum length", 5);
+        rangeFilter.setConfiguredProperty("Maximum length", 20);
 
         // add a multi-row transformer
         TransformerJobBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
                 .addTransformer(TokenizerTransformer.class);
         tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
-        tokenizer.setRequirement(numberRange.getFilterOutcome(RangeFilterCategory.VALID));
+        tokenizer.setRequirement(rangeFilter.getFilterOutcome(RangeFilterCategory.VALID));
         tokenizer.setConfiguredProperty("Token target", TokenizerTransformer.TokenTarget.ROWS);
         tokenizer.setConfiguredProperty("Number of tokens", 50);
         tokenizer.setConfiguredProperty("Delimiters", new char[] { 'p' });
@@ -147,23 +150,16 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
                     tokenizer);
             TableModel tableModel = action.call();
 
-            // rows changed from 23 -> 29
-            assertEquals(15, tableModel.getRowCount());
+            assertEquals(29, tableModel.getRowCount());
 
-            assertEquals("mpatterso", tableModel.getValueAt(0, 0).toString());
-            assertEquals("m", tableModel.getValueAt(0, 1).toString());
+            assertEquals("dmurphy", tableModel.getValueAt(0, 0).toString());
+            assertEquals("dmur", tableModel.getValueAt(0, 1).toString());
 
-            assertEquals("mpatterso", tableModel.getValueAt(1, 0).toString());
-            assertEquals("atterso", tableModel.getValueAt(1, 1).toString());
+            assertEquals("dmurphy", tableModel.getValueAt(1, 0).toString());
+            assertEquals("hy", tableModel.getValueAt(1, 1).toString());
 
-            assertEquals("jfirrelli", tableModel.getValueAt(2, 0).toString());
-            assertEquals("jfirrelli", tableModel.getValueAt(2, 1).toString());
-
-            assertEquals("wpatterson", tableModel.getValueAt(3, 0).toString());
-            assertEquals("w", tableModel.getValueAt(3, 1).toString());
-
-            assertEquals("wpatterson", tableModel.getValueAt(4, 0).toString());
-            assertEquals("atterson", tableModel.getValueAt(4, 1).toString());
+            assertEquals("mpatterso", tableModel.getValueAt(2, 0).toString());
+            assertEquals("m", tableModel.getValueAt(2, 1).toString());
         }
     }
 }

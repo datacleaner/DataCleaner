@@ -24,7 +24,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -34,10 +34,10 @@ import org.datacleaner.data.InputRow;
  * 
  * 
  */
-@TransformerBean("Concatenator")
+@Named("Concatenator")
 @Description("Concatenate several column values into one.")
 @Categorized({ StringManipulationCategory.class })
-public class ConcatenatorTransformer implements Transformer<String> {
+public class ConcatenatorTransformer implements Transformer {
 
 	@Configured
 	InputColumn<?>[] columns;
@@ -68,7 +68,7 @@ public class ConcatenatorTransformer implements Transformer<String> {
 				break;
 			}
 		}
-		return new OutputColumns(sb.toString());
+		return new OutputColumns(String.class, sb.toString());
 	}
 
 	@Override

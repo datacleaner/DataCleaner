@@ -24,8 +24,8 @@ import java.io.OutputStream;
 
 import javax.xml.bind.JAXBElement;
 
-import org.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
+import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 
 /**
  * JAXB adaptor for {@link PentahoJobType}.

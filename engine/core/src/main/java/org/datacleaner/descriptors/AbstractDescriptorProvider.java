@@ -59,7 +59,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      * @param transformerClass
      * @return
      */
-    protected <A extends Transformer<?>> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
+    protected <A extends Transformer> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
         return null;
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <T extends Transformer<?>> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
+    public final <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
             Class<T> transformerClass) {
         for (TransformerBeanDescriptor<?> descriptor : getTransformerBeanDescriptors()) {
             if (descriptor.getComponentClass() == transformerClass) {

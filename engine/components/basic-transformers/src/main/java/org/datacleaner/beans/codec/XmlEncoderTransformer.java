@@ -24,7 +24,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -33,10 +33,10 @@ import org.datacleaner.data.MockInputColumn;
 import com.google.common.escape.Escaper;
 import com.google.common.xml.XmlEscapers;
 
-@TransformerBean("XML encoder")
+@Named("XML encoder")
 @Description("Encodes/escapes plain text into XML content")
 @Categorized({ StringManipulationCategory.class })
-public class XmlEncoderTransformer implements Transformer<String> {
+public class XmlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat {
         Content, Attribute
@@ -58,7 +58,7 @@ public class XmlEncoderTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(column.getName() + " (XML encoded)");
+        return new OutputColumns(String.class, column.getName() + " (XML encoded)");
     }
 
     @Override

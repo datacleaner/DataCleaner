@@ -28,7 +28,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -36,10 +36,10 @@ import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
 
-@TransformerBean("URL standardizer")
+@Named("URL standardizer")
 @Description("Retrieve the individual parts of an URL, including protocol, domain, port, path and querystring.")
 @Categorized({ MatchingAndStandardizationCategory.class })
-public class UrlStandardizerTransformer implements Transformer<String> {
+public class UrlStandardizerTransformer implements Transformer {
 
 	public static final String[] PATTERNS = { "PROTOCOL://DOMAIN:PORTPATH\\?QUERYSTRING",
 			"PROTOCOL://DOMAINPATH\\?QUERYSTRING", "PROTOCOL://DOMAIN:PORTPATH", "PROTOCOL://DOMAIN:PORT\\?QUERYSTRING",
@@ -81,7 +81,7 @@ public class UrlStandardizerTransformer implements Transformer<String> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns("Protocol", "Domain", "Port", "Path", "Querystring");
+		return new OutputColumns(String.class, "Protocol", "Domain", "Port", "Path", "Querystring");
 	}
 
 	@Override

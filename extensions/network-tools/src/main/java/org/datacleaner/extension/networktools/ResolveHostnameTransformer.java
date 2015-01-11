@@ -27,17 +27,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TransformerBean("Resolve hostname")
+@Named("Resolve hostname")
 @Categorized(NetworkToolsCategory.class)
 @Description("Resolves the IP of a hostname")
-public class ResolveHostnameTransformer implements Transformer<String> {
+public class ResolveHostnameTransformer implements Transformer {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ResolveHostnameTransformer.class);
@@ -47,7 +47,7 @@ public class ResolveHostnameTransformer implements Transformer<String> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(hostnameColumn.getName() + " (ip address)");
+		return new OutputColumns(String.class, hostnameColumn.getName() + " (ip address)");
 	}
 
 	@Override

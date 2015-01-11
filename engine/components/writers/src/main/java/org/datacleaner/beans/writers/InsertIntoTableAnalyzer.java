@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.BatchUpdateScript;
@@ -46,7 +47,6 @@ import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.ColumnProperty;
 import org.datacleaner.beans.api.ComponentContext;
@@ -76,7 +76,7 @@ import org.datacleaner.util.WriteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AnalyzerBean("Insert into table")
+@Named("Insert into table")
 @Description("Insert records into a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to insert these values into the table.")
 @Categorized(WriteDataCategory.class)
 @Concurrent(true)

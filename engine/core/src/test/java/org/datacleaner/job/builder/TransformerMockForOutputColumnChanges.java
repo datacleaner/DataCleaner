@@ -19,12 +19,13 @@
  */
 package org.datacleaner.job.builder;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.test.MockTransformer;
 
-@TransformerBean("TransformerMockForOutputColumnChanges")
+@Named("TransformerMockForOutputColumnChanges")
 public class TransformerMockForOutputColumnChanges extends MockTransformer {
 
     @Configured
@@ -32,6 +33,6 @@ public class TransformerMockForOutputColumnChanges extends MockTransformer {
     
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(_outputColumnNames);
+        return new OutputColumns(String.class, _outputColumnNames);
     }
 }

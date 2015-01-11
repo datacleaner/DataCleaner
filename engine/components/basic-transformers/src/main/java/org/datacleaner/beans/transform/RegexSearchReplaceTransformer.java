@@ -27,15 +27,15 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Regex search/replace")
+@Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
 @Categorized({ StringManipulationCategory.class })
-public class RegexSearchReplaceTransformer implements Transformer<String> {
+public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)
     InputColumn<String> valueColumn;
@@ -50,7 +50,7 @@ public class RegexSearchReplaceTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(valueColumn.getName() + " (replaced '" + searchPattern.pattern() + "')");
+        return new OutputColumns(String.class, valueColumn.getName() + " (replaced '" + searchPattern.pattern() + "')");
     }
 
     @Override

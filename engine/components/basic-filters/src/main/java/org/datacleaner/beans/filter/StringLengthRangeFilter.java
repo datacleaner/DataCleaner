@@ -23,13 +23,13 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.NumberProperty;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@FilterBean("String length range")
+@Named("String length range")
 @Description("Filter rows based on the length of strings.")
 @Categorized(FilterCategory.class)
 public class StringLengthRangeFilter implements Filter<RangeFilterCategory> {

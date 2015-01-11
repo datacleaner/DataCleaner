@@ -432,15 +432,10 @@ public final class CliRunner implements Closeable {
                 }
             }
 
-            if (descriptor instanceof TransformerBeanDescriptor<?>) {
-                Class<?> dataType = ((TransformerBeanDescriptor<?>) descriptor).getOutputDataType();
-                write(" - Output type is: " + dataType.getSimpleName());
-            }
-
             if (descriptor instanceof FilterBeanDescriptor<?, ?>) {
                 Set<String> categoryNames = ((FilterBeanDescriptor<?, ?>) descriptor).getOutcomeCategoryNames();
                 for (String categoryName : categoryNames) {
-                    write(" - Outcome category: " + categoryName);
+                    write(" - Outcome: " + categoryName);
                 }
             }
         }

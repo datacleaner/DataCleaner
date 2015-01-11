@@ -22,12 +22,12 @@ package org.datacleaner.widgets.properties;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("mock multi mapped columns")
-public class MockMultipleMappedColumnsTransformer implements Transformer<String> {
+@Named("mock multi mapped columns")
+public class MockMultipleMappedColumnsTransformer implements Transformer {
 
 	@Configured
 	InputColumn<String>[] inputColumns;
@@ -37,7 +37,7 @@ public class MockMultipleMappedColumnsTransformer implements Transformer<String>
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(2);
+		return new OutputColumns(2, String.class);
 	}
 
 	@Override

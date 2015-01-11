@@ -34,7 +34,7 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.QueryOptimizedFilter;
 import org.datacleaner.beans.api.Validate;
@@ -50,7 +50,7 @@ import org.datacleaner.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;
 
-@FilterBean("Equals")
+@Named("Equals")
 @Description("A filter that excludes values that are not equal (=) to specific set of valid values")
 @Categorized(FilterCategory.class)
 @Distributed(true)

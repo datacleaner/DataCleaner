@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.api;
 
+import javax.inject.Named;
+
 import org.datacleaner.data.InputRow;
 
 /**
@@ -29,6 +31,9 @@ import org.datacleaner.data.InputRow;
  * category can then be used to set up a requirement for succeeding row
  * processing.
  * 
+ * Use of the {@link Named} annotation is required for the filter to be
+ * automatically discovered.
+ * 
  * A sub-interface of Filter exists, {@link QueryOptimizedFilter}, which allows
  * filter functionality to be pushed down to the query in certain circumstances
  * where it is desirable to do so.
@@ -38,12 +43,12 @@ import org.datacleaner.data.InputRow;
  */
 public interface Filter<C extends Enum<C>> {
 
-	/**
-	 * Categorizes/filters a single row.
-	 * 
-	 * @param inputRow
-	 *            the row to categorize.
-	 * @return an enum representing the category applied to the row.
-	 */
-	public C categorize(InputRow inputRow);
+    /**
+     * Categorizes/filters a single row.
+     * 
+     * @param inputRow
+     *            the row to categorize.
+     * @return an enum representing the category applied to the row.
+     */
+    public C categorize(InputRow inputRow);
 }

@@ -170,7 +170,7 @@ public final class RowProcessingPublishers {
                 rowPublisher.addAnalyzerBean(analyzer, analyzerJob, localInputColumns);
             } else if (componentJob instanceof TransformerJob) {
                 final TransformerJob transformerJob = (TransformerJob) componentJob;
-                final Transformer<?> transformer = transformerJob.getDescriptor().newInstance();
+                final Transformer transformer = transformerJob.getDescriptor().newInstance();
                 rowPublisher.addTransformerBean(transformer, transformerJob, localInputColumns);
             } else if (componentJob instanceof FilterJob) {
                 final FilterJob filterJob = (FilterJob) componentJob;

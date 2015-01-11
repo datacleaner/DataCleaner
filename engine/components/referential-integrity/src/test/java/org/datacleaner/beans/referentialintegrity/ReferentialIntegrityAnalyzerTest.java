@@ -47,7 +47,7 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
 
         AnalyzerJobBuilder<ReferentialIntegrityAnalyzer> analyzer = jobBuilder
                 .addAnalyzer(ReferentialIntegrityAnalyzer.class);
-        ReferentialIntegrityAnalyzer referentialIntegrity = analyzer.getConfigurableBean();
+        ReferentialIntegrityAnalyzer referentialIntegrity = analyzer.getComponentInstance();
         InputColumn<?> salesRepEmployeeNumber = jobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER");
         referentialIntegrity.foreignKey = salesRepEmployeeNumber;
         referentialIntegrity.cacheLookups = true;

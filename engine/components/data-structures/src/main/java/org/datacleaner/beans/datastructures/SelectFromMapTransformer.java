@@ -28,9 +28,12 @@ import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
+import org.datacleaner.beans.api.MappedProperty;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -38,21 +41,24 @@ import org.datacleaner.data.InputRow;
 /**
  * Transformer for selecting values from maps.
  */
-@TransformerBean("Select values from key/value map")
+@Named("Select values from key/value map")
 @Description("Given a specified list of keys, this transformer will select the values from a key/value map and place them as columns within the record")
 @Categorized(DataStructuresCategory.class)
-public class SelectFromMapTransformer implements Transformer<Object> {
+public class SelectFromMapTransformer implements Transformer {
+
+    private static final String PROPERTY_KEYS = "Keys";
 
     @Inject
     @Configured
     InputColumn<Map<String, ?>> mapColumn;
 
     @Inject
-    @Configured
+    @Configured(PROPERTY_KEYS)
     String[] keys;
 
     @Inject
     @Configured
+    @MappedProperty(PROPERTY_KEYS)
     Class<?>[] types;
 
     @Inject

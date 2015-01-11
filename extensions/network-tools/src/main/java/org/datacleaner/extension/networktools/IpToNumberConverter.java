@@ -24,17 +24,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TransformerBean("Convert IP to number")
+@Named("Convert IP to number")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
-public class IpToNumberConverter implements Transformer<Number> {
+public class IpToNumberConverter implements Transformer {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(IpToNumberConverter.class);
@@ -44,7 +44,7 @@ public class IpToNumberConverter implements Transformer<Number> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(ipColumn.getName() + " (IP as number)");
+		return new OutputColumns(Number.class, ipColumn.getName() + " (IP as number)");
 	}
 
 	@Override

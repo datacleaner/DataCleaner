@@ -24,17 +24,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.beans.convert.ConvertToStringTransformer;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.reference.Dictionary;
 
-@TransformerBean("Dictionary matcher")
+@Named("Dictionary matcher")
 @Description("Matches string values against a set of dictionaries, producing a corresponding set of output columns specifying whether or not the values exist in those dictionaries")
 @Categorized({ MatchingAndStandardizationCategory.class })
-public class DictionaryMatcherTransformer implements Transformer<Object> {
+public class DictionaryMatcherTransformer implements Transformer {
 
 	@Configured
 	Dictionary[] _dictionaries;

@@ -20,22 +20,20 @@
 package org.datacleaner.beans.valuedist;
 
 import java.util.Collection;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueCountList;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
-import org.apache.metamodel.schema.MutableColumn;
 
 public class ValueDistributionAnalyzerTest extends TestCase {
 

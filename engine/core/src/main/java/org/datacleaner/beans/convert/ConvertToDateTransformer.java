@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
@@ -34,7 +35,6 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.beans.categories.ConversionCategory;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.data.InputColumn;
@@ -48,10 +48,10 @@ import org.joda.time.format.DateTimeFormatter;
 /**
  * Attempts to convert anything to a Date value
  */
-@TransformerBean("Convert to date")
+@Named("Convert to date")
 @Description("Converts anything to a date (or null).")
 @Categorized({ ConversionCategory.class, DateAndTimeCategory.class })
-public class ConvertToDateTransformer implements Transformer<Date> {
+public class ConvertToDateTransformer implements Transformer {
 
     private static final String[] prototypePatterns = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy" };
 
@@ -105,7 +105,7 @@ public class ConvertToDateTransformer implements Transformer<Date> {
         for (int i = 0; i < names.length; i++) {
             names[i] = input[i].getName() + " (as date)";
         }
-        return new OutputColumns(names);
+        return new OutputColumns(Date.class, names);
     }
 
     @Override

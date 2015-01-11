@@ -26,7 +26,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.reference.SynonymCatalog;
@@ -38,10 +38,10 @@ import org.datacleaner.util.HasLabelAdvice;
  * 
  * 
  */
-@TransformerBean("Synonym lookup")
+@Named("Synonym lookup")
 @Alias("Synonym replacement")
 @Description("Replaces strings with their synonyms")
-public class SynonymLookupTransformer implements Transformer<String>, HasLabelAdvice {
+public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured
     InputColumn<String> column;
@@ -70,7 +70,7 @@ public class SynonymLookupTransformer implements Transformer<String>, HasLabelAd
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(new String[] { column.getName() + " (synonyms replaced)" });
+        return new OutputColumns(String.class, new String[] { column.getName() + " (synonyms replaced)" });
     }
     
     @Override

@@ -22,12 +22,12 @@ package org.datacleaner.job.runner;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Close;
 import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
@@ -126,7 +126,7 @@ public class AnalysisRunnerImplTest extends TestCase {
         }
     }
 
-    @AnalyzerBean("Test analyzer")
+    @Named("Test analyzer")
     public static class TestAnalyzer extends MockAnalyzer {
 
         @Configured
@@ -153,7 +153,7 @@ public class AnalysisRunnerImplTest extends TestCase {
 
     }
 
-    @TransformerBean("Test transformer1")
+    @Named("Test transformer1")
     public static class TestTransformer1 extends MockTransformer {
         @Close(onFailure = false)
         public void closeIfSuccessful() {
@@ -161,7 +161,7 @@ public class AnalysisRunnerImplTest extends TestCase {
         }
     }
 
-    @TransformerBean("Test transformer2")
+    @Named("Test transformer2")
     public static class TestTransformer2 extends MockTransformer {
         @Close(onSuccess = false)
         public void closeIfFailure() {
@@ -169,7 +169,7 @@ public class AnalysisRunnerImplTest extends TestCase {
         }
     }
 
-    @TransformerBean("Test transformer3")
+    @Named("Test transformer3")
     public static class TestTransformer3 extends MockTransformer {
         @Close
         public void closeAlways() {

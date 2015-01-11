@@ -30,15 +30,15 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Extract date part")
+@Named("Extract date part")
 @Description("Extract the parts of a date (year, month, day etc.)")
 @Categorized({ DateAndTimeCategory.class })
-public class DatePartTransformer implements Transformer<Number> {
+public class DatePartTransformer implements Transformer {
 
 	public static enum WeekDay {
 		MONDAY(Calendar.MONDAY), TUESDAY(Calendar.TUESDAY), WEDNESDAY(Calendar.WEDNESDAY), THURSDAY(Calendar.THURSDAY), FRIDAY(
@@ -151,7 +151,7 @@ public class DatePartTransformer implements Transformer<Number> {
 			columnNames.add(columnName + " (year)");
 		}
 
-		return new OutputColumns(columnNames.toArray(new String[columnNames.size()]));
+		return new OutputColumns(Number.class, columnNames.toArray(new String[columnNames.size()]));
 	}
 
 	@Override

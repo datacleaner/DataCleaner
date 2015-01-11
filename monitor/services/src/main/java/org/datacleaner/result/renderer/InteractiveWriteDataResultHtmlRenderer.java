@@ -32,10 +32,10 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
-import org.datacleaner.result.html.HtmlFragment;
-import org.datacleaner.result.html.SimpleHtmlFragment;
 import org.datacleaner.monitor.server.security.TenantResolver;
 import org.datacleaner.monitor.server.security.UserBean;
+import org.datacleaner.result.html.HtmlFragment;
+import org.datacleaner.result.html.SimpleHtmlFragment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

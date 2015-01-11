@@ -25,14 +25,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.result.ListResult;
 
-@AnalyzerBean("Mock analyzer")
+@Named("Mock analyzer")
 @Concurrent(true)
 public class MockAnalyzer implements Analyzer<ListResult<InputRow>> {
 

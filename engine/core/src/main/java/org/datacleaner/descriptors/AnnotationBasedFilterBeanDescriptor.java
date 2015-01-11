@@ -26,17 +26,13 @@ import java.util.Set;
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Distributed;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
 import org.datacleaner.beans.api.QueryOptimizedFilter;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 
 final class AnnotationBasedFilterBeanDescriptor<F extends Filter<C>, C extends Enum<C>> extends
         AbstractBeanDescriptor<F> implements FilterBeanDescriptor<F, C> {
 
     private static final long serialVersionUID = 1L;
-
-    private final String _displayName;
 
     protected AnnotationBasedFilterBeanDescriptor(Class<F> filterClass) throws DescriptorException {
         super(filterClass, false);
@@ -45,23 +41,18 @@ final class AnnotationBasedFilterBeanDescriptor<F extends Filter<C>, C extends E
             throw new DescriptorException(filterClass + " does not implement " + Filter.class.getName());
         }
 
-        FilterBean filterAnnotation = ReflectionUtils.getAnnotation(filterClass, FilterBean.class);
-        if (filterAnnotation == null) {
-            throw new DescriptorException(filterClass + " doesn't implement the FilterBean annotation");
-        }
-
-        String displayName = filterAnnotation.value();
-        if (StringUtils.isNullOrEmpty(displayName)) {
-            displayName = ReflectionUtils.explodeCamelCase(filterClass.getSimpleName(), false);
-        }
-        _displayName = displayName.trim();
-
         visitClass();
     }
 
     @Override
-    public String getDisplayName() {
-        return _displayName;
+    @SuppressWarnings("deprecation")
+    protected String getDisplayNameIfNotNamed(Class<?> cls) {
+        org.eobjects.analyzer.beans.api.FilterBean annotation = ReflectionUtils.getAnnotation(cls,
+                org.eobjects.analyzer.beans.api.FilterBean.class);
+        if (annotation == null) {
+            return null;
+        }
+        return annotation.value();
     }
 
     @SuppressWarnings("unchecked")

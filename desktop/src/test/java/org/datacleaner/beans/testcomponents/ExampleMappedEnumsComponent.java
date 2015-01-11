@@ -23,12 +23,12 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.MappedProperty;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Example mapped enums transformer")
-public class ExampleMappedEnumsComponent implements Transformer<String> {
+@Named("Example mapped enums transformer")
+public class ExampleMappedEnumsComponent implements Transformer {
 
     public static enum SomeEnum {
         ONE, TWO, THREE, FOUR, FIVE, SIX
@@ -43,7 +43,7 @@ public class ExampleMappedEnumsComponent implements Transformer<String> {
     
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(columns.length);
+        return new OutputColumns(columns.length, String.class);
     }
 
     @Override

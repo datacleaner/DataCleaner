@@ -25,9 +25,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -45,7 +45,7 @@ import org.datacleaner.storage.RowAnnotationFactory;
 
 import com.ibm.icu.text.UnicodeSet;
 
-@AnalyzerBean("Character set distribution")
+@Named("Character set distribution")
 @Description("Inspects and maps text characters according to character set affinity, such as Latin, Hebrew, Cyrillic, Chinese and more.")
 @Concurrent(true)
 public class CharacterSetDistributionAnalyzer implements

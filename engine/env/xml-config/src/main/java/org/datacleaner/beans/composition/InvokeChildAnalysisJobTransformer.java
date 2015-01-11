@@ -30,7 +30,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.FileProperty;
 import org.datacleaner.beans.api.FileProperty.FileAccessMode;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.CompositionCategory;
 import org.datacleaner.beans.transform.AbstractWrappedAnalysisJobTransformer;
 import org.datacleaner.data.InputColumn;
@@ -40,7 +40,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 
-@TransformerBean("Invoke child Analysis job")
+@Named("Invoke child Analysis job")
 @Description("Wraps another (external) Analysis job's transformations and invokes them as an integrated part of the current job. Using this transformation you can compose parent and child jobs for more coarse or more fine granularity of transformations.")
 @Categorized(CompositionCategory.class)
 public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJobTransformer {

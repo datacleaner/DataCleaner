@@ -22,17 +22,18 @@ package org.datacleaner.util.batch;
 import java.util.Collections;
 import java.util.List;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.TransformerBean;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import javax.inject.Named;
+
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.InputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TransformerBean("Mock batcher")
+@Named("Mock batcher")
 public class MockBatchTransformer extends BatchTransformer {
 
     private static final Logger logger = LoggerFactory.getLogger(MockBatchTransformer.class);
@@ -42,13 +43,12 @@ public class MockBatchTransformer extends BatchTransformer {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns("BAZ");
+        return new OutputColumns(String.class, "BAZ");
     }
 
     @Override
     public void map(BatchSource<InputRow> source, BatchSink<Object[]> sink) {
         logger.info("map({} records)", source.size());
-        ;
 
         List<InputRow> list = source.toList();
         List<String> values = CollectionUtils.map(list, new Func<InputRow, String>() {

@@ -26,16 +26,16 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.apache.metamodel.util.HasName;
 
-@TransformerBean("Text case transformer")
+@Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized({ StringManipulationCategory.class })
-public class TextCaseTransformer implements Transformer<String> {
+public class TextCaseTransformer implements Transformer {
 
     /**
      * Enum depicting the modes of operation for the text case modifications.
@@ -71,7 +71,7 @@ public class TextCaseTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(valueColumn.getName() + " (" + mode.getName() + ")");
+        return new OutputColumns(String.class, valueColumn.getName() + " (" + mode.getName() + ")");
     }
 
     @Override

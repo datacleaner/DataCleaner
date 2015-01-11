@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Named;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Close;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
@@ -48,7 +50,6 @@ import org.datacleaner.test.ActivityAwareMultiThreadedTaskRunner;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.SchemaNavigator;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Tests that a job where one of the row processing consumers fail is gracefully
@@ -60,7 +61,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
 
     private static final AtomicBoolean closed = new AtomicBoolean();
 
-    @AnalyzerBean("Errornous analyzer")
+    @Named("Errornous analyzer")
     public static class ErrornousAnalyzer implements Analyzer<NumberResult> {
 
         private final AtomicInteger counter = new AtomicInteger(0);

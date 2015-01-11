@@ -23,13 +23,13 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.CharIterator;
 
-@FilterBean("Single word")
+@Named("Single word")
 @Description("Filters single word values from multiple word values.")
 @Categorized(FilterCategory.class)
 public class SingleWordFilter implements Filter<ValidationCategory> {

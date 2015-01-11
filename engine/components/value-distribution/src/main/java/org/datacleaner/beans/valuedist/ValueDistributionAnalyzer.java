@@ -25,9 +25,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.ColumnProperty;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
@@ -44,7 +44,7 @@ import org.datacleaner.util.NullTolerableComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AnalyzerBean("Value distribution")
+@Named("Value distribution")
 @Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions to the typical usage-pattern.")
 @Concurrent(true)
 public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {

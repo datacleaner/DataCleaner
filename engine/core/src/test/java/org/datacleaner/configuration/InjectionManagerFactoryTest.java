@@ -23,11 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import junit.framework.TestCase;
 
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.ColumnProperty;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -45,7 +45,7 @@ import org.junit.Ignore;
 public class InjectionManagerFactoryTest extends TestCase {
 
     @Ignore
-    @AnalyzerBean("Fancy analyzer")
+    @Named("Fancy analyzer")
     public static class FancyAnalyzer implements Analyzer<NumberResult> {
 
         @Inject

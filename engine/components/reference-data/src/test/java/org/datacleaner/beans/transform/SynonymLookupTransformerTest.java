@@ -36,7 +36,7 @@ public class SynonymLookupTransformerTest extends TestCase {
         MockInputColumn<String> col = new MockInputColumn<String>("my col", String.class);
 
         // with retain original value
-        Transformer<String> transformer = new SynonymLookupTransformer(col, sc, true);
+        Transformer transformer = new SynonymLookupTransformer(col, sc, true);
         assertEquals(1, transformer.getOutputColumns().getColumnCount());
         assertEquals("my col (synonyms replaced)", transformer.getOutputColumns().getColumnName(0));
 

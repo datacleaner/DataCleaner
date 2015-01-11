@@ -27,15 +27,17 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.categories.DateAndTimeCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Format date")
+@Named("Format date")
 @Description("Allows you to format a date as a string by applying your own date format.")
 @Categorized({ DateAndTimeCategory.class })
-public class FormatDateTransformer implements Transformer<String> {
+public class FormatDateTransformer implements Transformer {
 
     @Configured("Date")
     InputColumn<Date> dateColumn;
@@ -45,7 +47,7 @@ public class FormatDateTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(dateColumn.getName() + " (formatted)");
+        return new OutputColumns(String.class, dateColumn.getName() + " (formatted)");
     }
 
     @Override

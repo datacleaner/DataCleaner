@@ -28,7 +28,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -38,10 +38,10 @@ import org.datacleaner.data.InputRow;
  * 
  * 
  */
-@TransformerBean("Select values from list")
+@Named("Select values from list")
 @Description("Given a specified list of indices, this transformer will select the values from a list and place them as columns within the record")
 @Categorized(DataStructuresCategory.class)
-public class SelectFromListTransformer implements Transformer<Object> {
+public class SelectFromListTransformer implements Transformer {
 
 	@Inject
 	@Configured

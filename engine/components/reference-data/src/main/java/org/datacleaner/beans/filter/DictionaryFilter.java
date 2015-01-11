@@ -24,13 +24,13 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.reference.Dictionary;
 
-@FilterBean("Validate in dictionary")
+@Named("Validate in dictionary")
 @Alias("Dictionary lookup")
 @Description("Filters values based on their existence in a dictionary")
 @Categorized(FilterCategory.class)

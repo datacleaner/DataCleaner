@@ -15,11 +15,5 @@
 			<artifactId>DataCleaner-monitor-services</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 </project>

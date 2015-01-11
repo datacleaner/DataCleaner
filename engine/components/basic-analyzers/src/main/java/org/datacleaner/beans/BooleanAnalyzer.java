@@ -26,8 +26,9 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
@@ -43,7 +44,7 @@ import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.ValueCombination;
 
-@AnalyzerBean("Boolean analyzer")
+@Named("Boolean analyzer")
 @Description("Inspect your boolean values. How is the distribution of true/false? Are there null values?")
 public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 

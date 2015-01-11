@@ -20,9 +20,9 @@
 package org.datacleaner.extension.output;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -34,16 +34,15 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.descriptors.TransformerBeanDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.HasLabelAdvice;
-import org.datacleaner.extension.output.AbstractOutputWriterAnalyzer;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.HasLabelAdvice;
 
-@AnalyzerBean("Create staging table")
+@Named("Create staging table")
 @Alias("Write to Datastore")
 @Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(WriteDataCategory.class)

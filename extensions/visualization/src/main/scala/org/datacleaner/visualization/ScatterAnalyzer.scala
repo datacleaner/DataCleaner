@@ -16,7 +16,7 @@ import org.datacleaner.util.LabelUtils
 import org.datacleaner.beans.api.Description
 import org.datacleaner.beans.api.Categorized
 
-@AnalyzerBean("Scatter plot")
+@Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {

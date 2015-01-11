@@ -57,7 +57,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 		{
 			TransformerJobBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
 			buildMap.addInputColumns(ajb.getSourceColumns());
-			BuildMapTransformer bean = buildMap.getConfigurableBean();
+			BuildMapTransformer bean = buildMap.getComponentInstance();
 			bean.setKeys(new String[] { "empno", "email_address" });
 			bean.setRetainKeyOrder(true);
 			bean.setIncludeNullValues(true);
@@ -74,7 +74,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 			TransformerJobBuilder<BuildListTransformer> buildList = ajb.addTransformer(BuildListTransformer.class);
 			buildList.addInputColumn(ajb.getSourceColumnByName("firstname"));
 			buildList.addInputColumn(ajb.getSourceColumnByName("lastname"));
-			BuildListTransformer bean = buildList.getConfigurableBean();
+			BuildListTransformer bean = buildList.getComponentInstance();
 			bean.setIncludeNullValues(false);
 			List<MutableInputColumn<?>> outputColumns = buildList.getOutputColumns();
 			assertEquals(1, outputColumns.size());
@@ -92,7 +92,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 			TransformerJobBuilder<ReadFromListTransformer> extractFromList = ajb
 					.addTransformer(ReadFromListTransformer.class);
 			extractFromList.addInputColumn(listColumn);
-			ReadFromListTransformer bean = extractFromList.getConfigurableBean();
+			ReadFromListTransformer bean = extractFromList.getComponentInstance();
 			bean.setVerifyTypes(true);
 			bean.setElementType(String.class);
 			List<MutableInputColumn<?>> outputColumns = extractFromList.getOutputColumns();
@@ -107,7 +107,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 			TransformerJobBuilder<SelectFromMapTransformer> extractFromMap = ajb
 					.addTransformer(SelectFromMapTransformer.class);
 			extractFromMap.addInputColumn(mapColumn);
-			SelectFromMapTransformer bean = extractFromMap.getConfigurableBean();
+			SelectFromMapTransformer bean = extractFromMap.getComponentInstance();
 			bean.setKeys(new String[] { "empno", "email_address" });
 			bean.setTypes(new Class[] { Number.class, String.class });
 			bean.setVerifyTypes(true);

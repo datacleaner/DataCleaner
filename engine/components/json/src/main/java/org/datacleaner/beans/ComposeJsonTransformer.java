@@ -27,7 +27,7 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -35,10 +35,10 @@ import org.datacleaner.data.InputRow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-@TransformerBean("Compose & write JSON document")
+@Named("Compose & write JSON document")
 @Description("Creates a string representation of a data structure as a JSON (JavaScript Object Notation) document")
 @Categorized(DataStructuresCategory.class)
-public class ComposeJsonTransformer implements Transformer<String> {
+public class ComposeJsonTransformer implements Transformer {
 
     @Inject
     @Configured
@@ -63,7 +63,7 @@ public class ComposeJsonTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(data.getName() + " (as JSON)");
+        return new OutputColumns(String.class, data.getName() + " (as JSON)");
     }
 
     @Override

@@ -30,7 +30,7 @@ import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.OutputRowCollector;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -38,10 +38,10 @@ import org.datacleaner.data.InputRow;
 /**
  * Transformer for extracting elements from lists.
  */
-@TransformerBean("Read elements from list")
+@Named("Read elements from list")
 @Description("Reads all elements of a list, creating a record for each value")
 @Categorized(DataStructuresCategory.class)
-public class ReadFromListTransformer implements Transformer<Object> {
+public class ReadFromListTransformer implements Transformer {
 
 	@Inject
 	@Configured

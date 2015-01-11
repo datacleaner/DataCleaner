@@ -23,9 +23,10 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -37,9 +38,8 @@ import org.datacleaner.data.InputRow;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.StringUtils;
-import org.apache.metamodel.util.HasName;
 
-@AnalyzerBean("Completeness analyzer")
+@Named("Completeness analyzer")
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
 @Categorized(ValidationCategory.class)
 public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult> {

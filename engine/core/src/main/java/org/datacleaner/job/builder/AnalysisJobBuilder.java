@@ -326,7 +326,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return result;
     }
 
-    public <T extends Transformer<?>> TransformerJobBuilder<T> addTransformer(Class<T> transformerClass) {
+    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(Class<T> transformerClass) {
         TransformerBeanDescriptor<T> descriptor = _configuration.getDescriptorProvider()
                 .getTransformerBeanDescriptorForClass(transformerClass);
         if (descriptor == null) {
@@ -339,11 +339,11 @@ public final class AnalysisJobBuilder implements Closeable {
         return Collections.unmodifiableList(_transformerJobBuilders);
     }
 
-    public <T extends Transformer<?>> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor) {
+    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor) {
         return addTransformer(descriptor, null, null, null);
     }
 
-    public <T extends Transformer<?>> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor,
+    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties, ComponentRequirement requirement,
             Map<String, String> metadataProperties) {
         final TransformerJobBuilder<T> transformer = new TransformerJobBuilder<T>(this, descriptor,
@@ -352,7 +352,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return addTransformer(transformer);
     }
 
-    public <T extends Transformer<?>> TransformerJobBuilder<T> addTransformer(TransformerJobBuilder<T> tjb) {
+    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerJobBuilder<T> tjb) {
         if (tjb.getComponentRequirement() == null) {
             tjb.setComponentRequirement(_defaultRequirement);
         }

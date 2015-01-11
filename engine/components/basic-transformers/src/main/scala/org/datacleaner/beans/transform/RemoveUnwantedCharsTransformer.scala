@@ -1,7 +1,7 @@
 package org.datacleaner.beans.transform
 
+import javax.inject.Named
 import org.datacleaner.beans.api.Transformer
-import org.datacleaner.beans.api.TransformerBean
 import org.datacleaner.beans.api.Description
 import org.datacleaner.beans.api.Categorized
 import org.datacleaner.beans.categories.StringManipulationCategory
@@ -11,10 +11,10 @@ import org.datacleaner.beans.api.OutputColumns
 import org.datacleaner.data.InputRow
 import org.datacleaner.util.CharIterator
 
-@TransformerBean("Remove unwanted characters")
+@Named("Remove unwanted characters")
 @Description("Removes characters from strings that are not wanted. Use it to cleanse codes and identifiers that may have additional dashes, punctuations, unwanted letters etc.")
 @Categorized(Array(classOf[StringManipulationCategory]))
-class RemoveUnwantedCharsTransformer(col: InputColumn[String]) extends Transformer[String] {
+class RemoveUnwantedCharsTransformer(col: InputColumn[String]) extends Transformer {
 
   @Configured
   var column: InputColumn[String] = col;
@@ -34,14 +34,14 @@ class RemoveUnwantedCharsTransformer(col: InputColumn[String]) extends Transform
 
   def this() = this(null)
 
-  def getOutputColumns() = new OutputColumns(column.getName() + " (cleansed)");
+  def getOutputColumns() = new OutputColumns(classOf[String], column.getName() + " (cleansed)");
 
-  def transform(row: InputRow): Array[String] = {
+  def transform(row: InputRow): Array[Object] = {
     val value = row.getValue(column);
     return transform(value);
   }
 
-  def transform(value: String): Array[String] = {
+  def transform(value: String): Array[Object] = {
     if (value == null) {
       return Array(null);
     }

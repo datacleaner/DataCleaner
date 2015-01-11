@@ -101,7 +101,7 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
     }
 
     @Override
-    protected <A extends Transformer<?>> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
+    protected <A extends Transformer> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
         if (!_autoDiscover) {
             return null;
         }
@@ -174,7 +174,7 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
     public void setTransformerClassNames(Collection<String> classNames) throws ClassNotFoundException {
         for (String className : classNames) {
             @SuppressWarnings("unchecked")
-            Class<? extends Transformer<?>> c = (Class<? extends Transformer<?>>) Class.forName(className);
+            Class<? extends Transformer> c = (Class<? extends Transformer>) Class.forName(className);
             TransformerBeanDescriptor<?> descriptor = getTransformerBeanDescriptorForClass(c);
             if (descriptor == null || !_transformerBeanDescriptors.contains(descriptor)) {
                 addTransformerBeanDescriptor(Descriptors.ofTransformer(c));

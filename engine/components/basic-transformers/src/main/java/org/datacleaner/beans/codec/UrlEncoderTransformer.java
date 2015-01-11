@@ -24,7 +24,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -34,10 +34,10 @@ import org.apache.metamodel.util.HasName;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 
-@TransformerBean("URL encoder")
+@Named("URL encoder")
 @Description("Encodes/escapes a URL or part of a URL")
 @Categorized({ StringManipulationCategory.class })
-public class UrlEncoderTransformer implements Transformer<String> {
+public class UrlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat implements HasName {
         FORM_PARAMETER("Form parameter"), FRAGMENT("URL fragment"), PATH_SEGMENT("Path segment");
@@ -70,7 +70,7 @@ public class UrlEncoderTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(column.getName() + " (URL encoded)");
+        return new OutputColumns(String.class, column.getName() + " (URL encoded)");
     }
 
     @Override

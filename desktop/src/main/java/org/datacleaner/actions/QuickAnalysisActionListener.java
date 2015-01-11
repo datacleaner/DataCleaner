@@ -83,7 +83,7 @@ public class QuickAnalysisActionListener implements ActionListener {
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(getColumns());
 
-        final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
+        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy.loadFromUserPreferences(_userPreferences);
 
         quickAnalysisStrategy.configureAnalysisJobBuilder(ajb);
 

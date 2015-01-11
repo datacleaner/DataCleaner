@@ -23,7 +23,7 @@ import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.categories.ScriptingCategory;
@@ -37,7 +37,7 @@ import org.mozilla.javascript.ScriptableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@FilterBean("JavaScript filter")
+@Named("JavaScript filter")
 @Description("Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
 @Categorized({ ScriptingCategory.class })
 public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {

@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math.stat.descriptive.moment.SecondMoment;
 import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
 import org.datacleaner.beans.api.Concurrent;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
@@ -58,7 +58,7 @@ import org.datacleaner.storage.RowAnnotationFactory;
  * <li>Variance</li>
  * </ul>
  */
-@AnalyzerBean("Number analyzer")
+@Named("Number analyzer")
 @Description("Provides insight into number-column values.")
 @Concurrent(true)
 public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {

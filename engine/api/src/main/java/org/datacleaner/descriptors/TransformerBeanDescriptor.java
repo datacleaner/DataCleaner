@@ -24,18 +24,7 @@ import org.datacleaner.beans.api.Transformer;
 /**
  * Descriptor interface for {@link Transformer}s.
  * 
- * 
- * 
  * @param <B>
  */
-public interface TransformerBeanDescriptor<B extends Transformer<?>> extends BeanDescriptor<B> {
-
-    /**
-     * Gets the output data's default data type. Note that individual output
-     * columns of the transformer can override this data type.
-     * 
-     * @return the default data type of the transformed columns.
-     */
-    public Class<?> getOutputDataType();
-
+public interface TransformerBeanDescriptor<B extends Transformer> extends BeanDescriptor<B> {
 }

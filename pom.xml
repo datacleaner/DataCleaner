@@ -37,7 +37,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
-		<module>core</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -48,7 +47,6 @@
 			</activation>
 			<modules>
 				<module>engine</module>
-				<module>core</module>
 				<module>desktop</module>
 				<module>monitor</module>
 				<module>extensions</module>
@@ -60,7 +58,6 @@
 			<id>quick</id>
 			<modules>
 				<module>engine</module>
-				<module>core</module>
 				<module>desktop</module>
 				<module>monitor</module>
 				<module>extensions</module>
@@ -70,7 +67,6 @@
 			<id>desktop</id>
 			<modules>
 				<module>engine</module>
-				<module>core</module>
 				<module>desktop</module>
 			</modules>
 		</profile>
@@ -78,7 +74,6 @@
 			<id>monitor</id>
 			<modules>
 				<module>engine</module>
-				<module>core</module>
 				<module>monitor</module>
 			</modules>
 		</profile>

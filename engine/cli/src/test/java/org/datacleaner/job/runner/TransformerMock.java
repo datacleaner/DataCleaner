@@ -26,13 +26,13 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Transformer mock")
+@Named("Transformer mock")
 @Alias("Mock transformer")
-public class TransformerMock implements Transformer<Integer> {
+public class TransformerMock implements Transformer {
 
     @Configured
     InputColumn<?>[] input;
@@ -46,7 +46,7 @@ public class TransformerMock implements Transformer<Integer> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(input.length);
+        return new OutputColumns(input.length, Integer.class);
     }
 
     @Override

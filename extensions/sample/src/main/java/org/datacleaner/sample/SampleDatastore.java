@@ -45,7 +45,7 @@ public class SampleDatastore extends UsageAwareDatastore<DataContext> {
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
-        return new PerformanceCharacteristicsImpl(false);
+        return new PerformanceCharacteristicsImpl(false, true);
     }
 
     @Override

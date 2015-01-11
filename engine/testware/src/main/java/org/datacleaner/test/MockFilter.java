@@ -24,11 +24,11 @@ import java.io.File;
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@FilterBean("Mock filter")
+@Named("Mock filter")
 public class MockFilter implements Filter<MockFilter.Category> {
 
     public static enum Category {

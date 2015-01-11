@@ -1,6 +1,7 @@
 package org.datacleaner.beans
+
+import javax.inject.Named
 import org.datacleaner.beans.api.Analyzer
-import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.beans.api.Configured
 import org.datacleaner.beans.api.RendererBean
 import org.datacleaner.data.InputColumn
@@ -18,7 +19,7 @@ import org.datacleaner.result.html.ComponentHtmlRenderingContext
 
 class DefaultAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 
-  @AnalyzerBean("Example analyzer")
+  @Named("Example analyzer")
   class ExampleAnalyzer(col: InputColumn[_]) extends Analyzer[ExampleResult] {
 
     @Configured

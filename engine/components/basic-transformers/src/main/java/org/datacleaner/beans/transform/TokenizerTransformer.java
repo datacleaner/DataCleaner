@@ -31,7 +31,9 @@ import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.OutputRowCollector;
 import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -42,10 +44,10 @@ import org.apache.metamodel.util.HasName;
  * 
  * 
  */
-@TransformerBean("Tokenizer")
+@Named("Tokenizer")
 @Description("Tokenizes a String value (splits into substrings).")
 @Categorized({ StringManipulationCategory.class })
-public class TokenizerTransformer implements Transformer<String> {
+public class TokenizerTransformer implements Transformer {
 
     public static enum TokenTarget implements HasName {
         COLUMNS, ROWS;
@@ -99,9 +101,9 @@ public class TokenizerTransformer implements Transformer<String> {
             for (int i = 0; i < names.length; i++) {
                 names[i] = column.getName() + " (token " + (i + 1) + ")";
             }
-            return new OutputColumns(names);
+            return new OutputColumns(String.class, names);
         } else {
-            return new OutputColumns(column.getName() + " (token)");
+            return new OutputColumns(String.class, column.getName() + " (token)");
         }
     }
 

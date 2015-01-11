@@ -45,13 +45,14 @@ import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.SystemProperties;
+import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,8 +93,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private File extensionsDirectory;
 
     private MonitorConnection monitorConnection;
-
-    private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
     public UserPreferencesImpl(FileObject userPreferencesFile) {
         _userPreferencesFile = userPreferencesFile;
@@ -420,16 +419,6 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
             System.clearProperty("https.proxyUser");
             System.clearProperty("https.proxyPassword");
         }
-    }
-
-    @Override
-    public QuickAnalysisStrategy getQuickAnalysisStrategy() {
-        return quickAnalysisStrategy;
-    }
-
-    @Override
-    public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy) {
-        this.quickAnalysisStrategy = quickAnalysisStrategy;
     }
 
     @Override

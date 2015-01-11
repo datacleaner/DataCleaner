@@ -234,7 +234,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     private TransformerConsumer createConsumer(TransformerJobBuilder<?> transformerJobBuilder) {
         TransformerJob transformerJob = transformerJobBuilder.toTransformerJob();
         TransformerBeanDescriptor<?> descriptor = transformerJob.getDescriptor();
-        Transformer<?> transformer = descriptor.newInstance();
+        Transformer transformer = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, transformer, transformerJob.getConfiguration());
 

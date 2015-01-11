@@ -144,7 +144,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getQuickAnalysisPanel() {
-        final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
+        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy.loadFromUserPreferences(_userPreferences);
         final JXTextField columnsTextField = WidgetFactory.createTextField("Columns");
         columnsTextField.setColumns(2);
         columnsTextField.setDocument(new NumberDocument());
@@ -165,7 +165,7 @@ public class OptionsDialog extends AbstractWindow {
                     int columns = Integer.parseInt(columnsTextField.getText());
                     QuickAnalysisStrategy newStrategy = new QuickAnalysisStrategy(columns,
                             valueDistributionCheckBox.isSelected(), patternFinderCheckBox.isSelected());
-                    _userPreferences.setQuickAnalysisStrategy(newStrategy);
+                    QuickAnalysisStrategy.saveToUserPreferences(newStrategy, _userPreferences);
                 } catch (NumberFormatException e) {
                     // skip this action, could not parse columns
                 }

@@ -24,16 +24,18 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.StringUtils;
 
-@TransformerBean("Whitespace trimmer")
+@Named("Whitespace trimmer")
 @Description("Trims your String values either on left, right or both sides.")
 @Categorized({ StringManipulationCategory.class })
-public class WhitespaceTrimmerTransformer implements Transformer<String> {
+public class WhitespaceTrimmerTransformer implements Transformer {
 
 	@Configured
 	InputColumn<String>[] columns;
@@ -65,7 +67,7 @@ public class WhitespaceTrimmerTransformer implements Transformer<String> {
 			String name = column.getName() + " (trimmed)";
 			names[i] = name;
 		}
-		return new OutputColumns(names);
+		return new OutputColumns(String.class, names);
 	}
 
 	@Override

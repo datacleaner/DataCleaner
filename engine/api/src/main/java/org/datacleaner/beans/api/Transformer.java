@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.api;
 
+import javax.inject.Named;
+
 import org.datacleaner.data.InputRow;
 
 /**
@@ -34,8 +36,8 @@ import org.datacleaner.data.InputRow;
  * annotation. If no @Configured InputColumns are found in the class, the
  * transformer will not be able to execute.
  * 
- * Use of the @TransformerBean annotation is required for transformers in order
- * to be automatically discovered.
+ * Use of the {@link Named} annotation is required for transformers in order to
+ * be automatically discovered.
  * 
  * While the above description covers most common usage of the transformer
  * interface, there are however a few ways to build even more advanced
@@ -46,7 +48,7 @@ import org.datacleaner.data.InputRow;
  * <li>Transformers can specify that their output type is Object and specify
  * more specific types in the {@link #getOutputColumns()} method.</li> </li>
  * 
- * @see TransformerBean
+ * @see Named
  * @see Configured
  * @see OutputRowCollector
  * @see OutputColumns
@@ -54,22 +56,22 @@ import org.datacleaner.data.InputRow;
  * @param <E>
  *            the type of the new/transformed values
  */
-public interface Transformer<E> {
+public interface Transformer {
 
-	/**
-	 * Gets the output columns (given the current configuration) of this
-	 * transformer.
-	 * 
-	 * @return an object with the information needed to create the output
-	 *         columns
-	 */
-	public OutputColumns getOutputColumns();
+    /**
+     * Gets the output columns (given the current configuration) of this
+     * transformer.
+     * 
+     * @return an object with the information needed to create the output
+     *         columns
+     */
+    public OutputColumns getOutputColumns();
 
-	/**
-	 * Transforms a row of input values to the corresponding transformed values
-	 * 
-	 * @param inputRow
-	 * @return an array of transformed values.
-	 */
-	public E[] transform(InputRow inputRow);
+    /**
+     * Transforms a row of input values to the corresponding transformed values
+     * 
+     * @param inputRow
+     * @return an array of transformed values.
+     */
+    public Object[] transform(InputRow inputRow);
 }

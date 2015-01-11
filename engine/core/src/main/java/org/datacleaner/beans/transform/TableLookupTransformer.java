@@ -25,7 +25,16 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.query.CompiledQuery;
+import org.apache.metamodel.query.OperatorType;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.QueryParameter;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.beans.api.Alias;
 import org.datacleaner.beans.api.Close;
 import org.datacleaner.beans.api.ColumnProperty;
@@ -40,7 +49,6 @@ import org.datacleaner.beans.api.Provided;
 import org.datacleaner.beans.api.SchemaProperty;
 import org.datacleaner.beans.api.TableProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
 import org.datacleaner.beans.api.Validate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -48,14 +56,6 @@ import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.HasLabelAdvice;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.CompiledQuery;
-import org.apache.metamodel.query.OperatorType;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.query.QueryParameter;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,11 +65,11 @@ import com.google.common.cache.Cache;
  * A transformer that can do a lookup (like a left join) based on a set of
  * columns in any datastore.
  */
-@TransformerBean("Table lookup")
+@Named("Table lookup")
 @Alias("Datastore lookup")
 @Description("Perform a lookup based on a table in any of your registered datastore (like a LEFT join).")
 @Concurrent(true)
-public class TableLookupTransformer implements Transformer<Object>, HasLabelAdvice {
+public class TableLookupTransformer implements Transformer, HasLabelAdvice {
 
     private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);
 

@@ -25,16 +25,18 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.StringProperty;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+
+import javax.inject.Named;
+
 import org.datacleaner.beans.api.Validate;
 import org.datacleaner.beans.categories.StringManipulationCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Plain search/replace")
+@Named("Plain search/replace")
 @Description("Search and replace text in String values.")
 @Categorized({ StringManipulationCategory.class })
-public class PlainSearchReplaceTransformer implements Transformer<String> {
+public class PlainSearchReplaceTransformer implements Transformer{
 
     @Configured(value = "Value", order = 1)
     InputColumn<String> valueColumn;
@@ -59,7 +61,7 @@ public class PlainSearchReplaceTransformer implements Transformer<String> {
 
     @Override
     public OutputColumns getOutputColumns() {
-        return new OutputColumns(valueColumn.getName() + " (replaced '" + searchString + "')");
+        return new OutputColumns(String.class, valueColumn.getName() + " (replaced '" + searchString + "')");
     }
 
     @Override

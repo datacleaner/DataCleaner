@@ -24,11 +24,11 @@ import java.util.Date;
 import org.datacleaner.beans.api.Categorized;
 import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.FilterBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.FilterCategory;
 import org.datacleaner.data.InputColumn;
 
-@FilterBean("Date range")
+@Named("Date range")
 @Description("A filter that filters out rows where a number value is outside a specified range")
 @Categorized(FilterCategory.class)
 public class DateRangeFilter extends AbstractQueryOptimizedRangeFilter<Date> {

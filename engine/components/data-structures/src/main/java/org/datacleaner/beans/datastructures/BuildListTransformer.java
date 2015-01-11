@@ -30,7 +30,7 @@ import org.datacleaner.beans.api.Configured;
 import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.DataStructuresCategory;
 import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.InputRow;
@@ -40,13 +40,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Transformer for building lists based on values in a row.
  */
-@TransformerBean("Build list")
+@Named("Build list")
 @Description("Build a list containing a variable amount of elements. Adds the capability to save multiple values in a single field.")
 @Categorized(DataStructuresCategory.class)
-public class BuildListTransformer implements Transformer<List<?>> {
+public class BuildListTransformer implements Transformer {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(BuildMapTransformer.class);
+    private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);
 
     @Inject
     @Configured
@@ -84,8 +83,7 @@ public class BuildListTransformer implements Transformer<List<?>> {
                 sb.append(",");
             }
         }
-        OutputColumns outputColumns = new OutputColumns(
-                new String[] { sb.toString() }, new Class[] { List.class });
+        OutputColumns outputColumns = new OutputColumns(new String[] { sb.toString() }, new Class[] { List.class });
         return outputColumns;
     }
 
@@ -103,8 +101,7 @@ public class BuildListTransformer implements Transformer<List<?>> {
         for (InputColumn<?> column : values) {
             final Object value = row.getValue(column);
             if (!includeNullValues && value == null) {
-                logger.debug("Ignoring null value for {} in row: {}",
-                        column.getName(), row);
+                logger.debug("Ignoring null value for {} in row: {}", column.getName(), row);
             } else {
                 list.add(value);
             }

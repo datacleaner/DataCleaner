@@ -25,17 +25,17 @@ import org.datacleaner.beans.api.Description;
 import org.datacleaner.beans.api.Initialize;
 import org.datacleaner.beans.api.OutputColumns;
 import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
+import javax.inject.Named;
 import org.datacleaner.beans.categories.ScriptingCategory;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.ExpressionBasedInputColumn;
 import org.datacleaner.data.InputRow;
 
-@TransformerBean("Expression language (EL) transformer")
+@Named("Expression language (EL) transformer")
 @Description("Generates a column based on an EL expression")
 @Categorized({ ScriptingCategory.class })
-public class ELTransformer implements Transformer<String> {
+public class ELTransformer implements Transformer {
 
 	@Configured
 	String _expression;
@@ -44,7 +44,7 @@ public class ELTransformer implements Transformer<String> {
 
 	@Override
 	public OutputColumns getOutputColumns() {
-		return new OutputColumns(1);
+		return new OutputColumns(1, String.class);
 	}
 
 	@Initialize

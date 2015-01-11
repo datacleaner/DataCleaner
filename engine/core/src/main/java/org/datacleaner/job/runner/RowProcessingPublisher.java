@@ -343,7 +343,7 @@ public final class RowProcessingPublisher {
         addConsumer(new AnalyzerConsumer(analyzer, analyzerJob, inputColumns, _publishers));
     }
 
-    public void addTransformerBean(Transformer<?> transformer, TransformerJob transformerJob,
+    public void addTransformerBean(Transformer transformer, TransformerJob transformerJob,
             InputColumn<?>[] inputColumns) {
         addConsumer(new TransformerConsumer(transformer, transformerJob, inputColumns, _publishers));
     }

@@ -1,7 +1,6 @@
 package org.datacleaner.visualization
 
 import org.datacleaner.data.InputColumn
-import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.beans.api.Analyzer
 import org.datacleaner.beans.api.Configured
 import org.datacleaner.beans.api.Categorized
@@ -14,7 +13,7 @@ import org.datacleaner.data.InputRow
 import org.datacleaner.util.LabelUtils
 import org.datacleaner.beans.api.Provided
 
-@AnalyzerBean("Density plot")
+@Named("Density plot")
 @Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {

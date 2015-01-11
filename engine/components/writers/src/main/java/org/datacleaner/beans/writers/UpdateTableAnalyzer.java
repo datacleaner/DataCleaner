@@ -28,36 +28,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.ColumnProperty;
-import org.datacleaner.beans.api.ComponentContext;
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.ExecutionLogMessage;
-import org.datacleaner.beans.api.FileProperty;
-import org.datacleaner.beans.api.MappedProperty;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.SchemaProperty;
-import org.datacleaner.beans.api.TableProperty;
-import org.datacleaner.beans.api.FileProperty.FileAccessMode;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Validate;
-import org.datacleaner.beans.convert.ConvertToBooleanTransformer;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.FileDatastore;
-import org.datacleaner.connection.UpdateableDatastore;
-import org.datacleaner.connection.UpdateableDatastoreConnection;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
-import org.datacleaner.util.HasLabelAdvice;
-import org.datacleaner.util.SchemaNavigator;
-import org.datacleaner.util.WriteBuffer;
 import org.apache.metamodel.BatchUpdateScript;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
@@ -76,10 +49,37 @@ import org.apache.metamodel.update.RowUpdationBuilder;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.beans.api.Categorized;
+import org.datacleaner.beans.api.ColumnProperty;
+import org.datacleaner.beans.api.ComponentContext;
+import org.datacleaner.beans.api.Concurrent;
+import org.datacleaner.beans.api.Configured;
+import org.datacleaner.beans.api.Description;
+import org.datacleaner.beans.api.ExecutionLogMessage;
+import org.datacleaner.beans.api.FileProperty;
+import org.datacleaner.beans.api.FileProperty.FileAccessMode;
+import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.beans.api.MappedProperty;
+import org.datacleaner.beans.api.Provided;
+import org.datacleaner.beans.api.SchemaProperty;
+import org.datacleaner.beans.api.TableProperty;
+import org.datacleaner.beans.api.Validate;
+import org.datacleaner.beans.convert.ConvertToBooleanTransformer;
+import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.FileDatastore;
+import org.datacleaner.connection.UpdateableDatastore;
+import org.datacleaner.connection.UpdateableDatastoreConnection;
+import org.datacleaner.data.InputColumn;
+import org.datacleaner.data.InputRow;
+import org.datacleaner.util.HasLabelAdvice;
+import org.datacleaner.util.SchemaNavigator;
+import org.datacleaner.util.WriteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@AnalyzerBean("Update table")
+@Named("Update table")
 @Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore.")
 @Categorized(WriteDataCategory.class)
 @Concurrent(true)

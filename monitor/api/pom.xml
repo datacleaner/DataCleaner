@@ -86,8 +86,14 @@
 		<!-- DataCleaner core dependency -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
+			<artifactId>DataCleaner-engine-cli</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.el-api</artifactId>
+					<groupId>javax.el</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Middleware: Spring, Quartz etc. -->

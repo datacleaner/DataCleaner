@@ -38,25 +38,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.AnalyzerBean;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.FilterBean;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.beans.api.TransformerBean;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.job.concurrent.TaskListener;
-import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.tasks.Task;
-import org.datacleaner.util.ClassLoaderUtils;
+import javax.inject.Named;
+
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.beans.api.Filter;
+import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.job.concurrent.TaskListener;
+import org.datacleaner.job.concurrent.TaskRunner;
+import org.datacleaner.job.tasks.Task;
+import org.datacleaner.util.ClassLoaderUtils;
 import org.kohsuke.asm5.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +68,12 @@ import org.slf4j.LoggerFactory;
  * This implementation also supports adding single descriptors by using the
  * add... methods.
  * 
- * Classes with either of these annotations will be picked up by the classpath
- * scanner:
- * <ul>
- * <li>{@link AnalyzerBean}</li>
- * <li>{@link TransformerBean}</li>
- * <li>{@link FilterBean}</li>
+ * Classes with the {@link Named} annotation will be picked by the classpath
+ * scanner. Furthermore the legacy annotations {@link org.eobjects.analyzer.beans.api.AnalyzerBean},
+ * {@link org.eobjects.analyzer.beans.api.TransformerBean} and {@link org.eobjects.analyzer.beans.api.FilterBean} are currently being checked
+ * for.
+ * 
  * <li>{@link RendererBean}</li>
- * </ul>
  * 
  * 
  */
@@ -527,7 +524,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             final boolean strictClassLoader) throws IOException {
         try {
             final ClassReader classReader = new ClassReader(inputStream);
-            final BeanClassVisitor visitor = new BeanClassVisitor(classLoader, _renderingFormatPredicate);
+            final DCClassVisitor visitor = new DCClassVisitor(classLoader, _renderingFormatPredicate);
             classReader.accept(visitor, ClassReader.SKIP_CODE);
 
             Class<?> beanClass = visitor.getBeanClass();
@@ -548,7 +545,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
             }
             if (visitor.isTransformer()) {
                 @SuppressWarnings("unchecked")
-                Class<? extends Transformer<?>> transformerClass = (Class<? extends Transformer<?>>) beanClass;
+                Class<? extends Transformer> transformerClass = (Class<? extends Transformer>) beanClass;
                 logger.info("Adding transformer class: {}", beanClass);
                 addTransformerClass(transformerClass);
             }
@@ -582,8 +579,8 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         return this;
     }
 
-    public ClasspathScanDescriptorProvider addTransformerClass(Class<? extends Transformer<?>> clazz) {
-        TransformerBeanDescriptor<? extends Transformer<?>> descriptor = _transformerBeanDescriptors.get(clazz
+    public ClasspathScanDescriptorProvider addTransformerClass(Class<? extends Transformer> clazz) {
+        TransformerBeanDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
                 .getName());
         if (descriptor == null) {
             try {

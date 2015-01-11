@@ -324,7 +324,7 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
                     final String renamedClassName = className.replaceFirst(legacyPackage, entry.getValue());
                     logger.info("Class '{}' was encountered. Adapting to new class name: '{}'", className,
                             renamedClassName);
-                    return getClassNameRenamed(renamedClassName, false);
+                    return getClassNameRenamed(renamedClassName, includeRenamedPackages);
                 }
             }
         }

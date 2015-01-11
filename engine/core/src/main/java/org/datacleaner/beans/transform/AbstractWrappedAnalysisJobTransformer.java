@@ -47,7 +47,7 @@ import org.datacleaner.job.runner.ConsumeRowHandler;
  * is configured/set might differ. Some implementations might simply have a
  * hardcoded job configured, others might dynamically load it from a file.
  */
-public abstract class AbstractWrappedAnalysisJobTransformer implements Transformer<Object> {
+public abstract class AbstractWrappedAnalysisJobTransformer implements Transformer {
 
     @Inject
     @Provided

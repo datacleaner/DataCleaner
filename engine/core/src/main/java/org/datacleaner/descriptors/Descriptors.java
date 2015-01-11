@@ -102,7 +102,7 @@ public class Descriptors {
      * @param transformerClass
      * @return
      */
-    public static <T extends Transformer<?>> TransformerBeanDescriptor<T> ofTransformer(Class<T> transformerClass) {
+    public static <T extends Transformer> TransformerBeanDescriptor<T> ofTransformer(Class<T> transformerClass) {
         return new AnnotationBasedTransformerBeanDescriptor<T>(transformerClass);
     }
 

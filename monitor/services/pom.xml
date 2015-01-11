@@ -9,16 +9,109 @@
 	<name>DataCleaner - monitor services</name>
 
 	<dependencies>
+		<!-- DataCleaner core / environment -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-monitor-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-env-cluster</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- DataCleaner components -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-transformers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-filters</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-basic-analyzers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-data-structures</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-standardizers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-reference-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-referential-integrity</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-uniqueness</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-pattern-finder</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-value-distribution</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-date-gap</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-javascript</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-writers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-i18n</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-html-rendering</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-json</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-el</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.el-api</artifactId>
+					<groupId>javax.el</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- GWT servlet server side -->

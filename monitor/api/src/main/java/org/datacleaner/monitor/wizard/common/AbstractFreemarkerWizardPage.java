@@ -67,11 +67,6 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
                 throw (RuntimeException) e;
             }
             
-            if (e instanceof FileNotFoundException) {
-                URL url = templateFriendlyClass.getResource(templateFilename);
-                System.out.println(url);
-            }
-            
             throw new IllegalStateException("Could not render freemarker template: " + templateFilename, e);
         }
 

@@ -83,17 +83,11 @@
 	</build>
 
 	<dependencies>
-		<!-- DataCleaner core dependency -->
+		<!-- DataCleaner core / environment -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>javax.el-api</artifactId>
-					<groupId>javax.el</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

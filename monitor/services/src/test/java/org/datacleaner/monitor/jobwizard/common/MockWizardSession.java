@@ -21,16 +21,20 @@ package org.datacleaner.monitor.jobwizard.common;
 
 import java.util.List;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.datacleaner.user.QuickAnalysisStrategy;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.test.MockAnalyzer;
 
 /**
  * Session implementation for the Quick Analysis wizard.
@@ -74,8 +78,10 @@ final class MockWizardSession extends DataCleanerJobWizardSession {
 
     @Override
     public AnalysisJobBuilder createJob() {
-        final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(100, true, true);
-        quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
+        final List<MetaModelInputColumn> sourceCols = _analysisJobBuilder.getSourceColumns();
+        final AnalyzerBeanDescriptor<MockAnalyzer> descriptor = Descriptors.ofAnalyzer(MockAnalyzer.class);
+        final AnalyzerJobBuilder<MockAnalyzer> analyzer = _analysisJobBuilder.addAnalyzer(descriptor);
+        analyzer.addInputColumns(sourceCols);
         return _analysisJobBuilder;
     }
 }

@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
 
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.data.DataSet;
@@ -137,7 +136,7 @@ public class CsvConfigurationDetection {
 
         char[] sampleChars = readSampleBuffer(sample, encoding);
 
-        if (StringUtils.indexOf('\n', sampleChars) == -1 && StringUtils.indexOf('\r', sampleChars) == -1) {
+        if (indexOf('\n', sampleChars) == -1 && indexOf('\r', sampleChars) == -1) {
             throw new IllegalStateException("No newline in first " + sampleChars.length + " chars");
         }
 
@@ -243,6 +242,15 @@ public class CsvConfigurationDetection {
 
         return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, encoding, separatorChar, quoteChar,
                 escapeChar, false, multiline);
+    }
+
+    private int indexOf(char c, char[] sampleChars) {
+        for (int i = 0; i < sampleChars.length; i++) {
+            if (c == sampleChars[i]) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     protected char[] readSampleBuffer(byte[] bytes, final String charSet) throws IllegalStateException {

@@ -23,11 +23,9 @@ class WriteDataResultHtmlRendererTest extends AssertionsForJUnit {
     val context = new DefaultHtmlRenderingContext();
 
     Assert.assertEquals("""<div>
-                 
-                 <p>Executed 2 inserts</p>
-                 <p>Executed 3 updates</p>
-                 
-               </div>""".replaceAll("\r\n", "\n"), htmlFragment.getBodyElements().get(0).toHtml(context).replaceAll("\r\n", "\n"));
+  <p>Executed 2 inserts</p>
+  <p>Executed 3 updates</p>
+</div>""".replaceAll("\r\n", "\n"), htmlFragment.getBodyElements().get(0).toHtml(context).replaceAll("\r\n", "\n"));
   }
 
   @Test

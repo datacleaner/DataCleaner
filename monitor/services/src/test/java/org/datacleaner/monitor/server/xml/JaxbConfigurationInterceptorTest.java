@@ -57,7 +57,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         _configurationFactory = new ConfigurationFactory();
         _configurationFactory.setNumThreads(10);
-        _configurationFactory.setScannedPackages(Arrays.asList("org.eobjects", "com.hi"));
+        _configurationFactory.setScannedPackages(Arrays.asList("org.datacleaner", "com.hi"));
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 

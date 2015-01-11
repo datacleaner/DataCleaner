@@ -27,7 +27,7 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.datacleaner.util.ClassLoaderUtils;
+import org.datacleaner.classloader.ClassLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

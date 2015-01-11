@@ -34,7 +34,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.StringManipulationCategory;
 import org.apache.metamodel.util.HasName;
 
 /**

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.writers;
 
-import org.datacleaner.beans.categories.AbstractComponentCategory;
+import org.datacleaner.components.categories.AbstractComponentCategory;
 
 public class WriteDataCategory extends AbstractComponentCategory {
 	

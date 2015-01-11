@@ -33,7 +33,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.beans.categories.DateAndTimeCategory;
+import org.datacleaner.components.categories.DateAndTimeCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

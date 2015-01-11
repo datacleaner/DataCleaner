@@ -29,7 +29,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.ScriptingCategory;
+import org.datacleaner.components.categories.ScriptingCategory;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 

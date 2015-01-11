@@ -24,7 +24,7 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 
 public class AnnotationBasedFilterDescriptorTest extends TestCase {
 

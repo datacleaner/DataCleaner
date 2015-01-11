@@ -27,7 +27,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.ResultModificationEvent;

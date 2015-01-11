@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;

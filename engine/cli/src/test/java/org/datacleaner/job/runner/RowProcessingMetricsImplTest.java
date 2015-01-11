@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.filter.EqualsFilter;
-import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.ValidationCategory;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;

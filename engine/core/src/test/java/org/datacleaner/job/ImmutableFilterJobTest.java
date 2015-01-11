@@ -25,7 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterBeanDescriptor;

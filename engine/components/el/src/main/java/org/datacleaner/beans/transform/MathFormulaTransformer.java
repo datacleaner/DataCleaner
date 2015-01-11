@@ -36,7 +36,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.NumbersCategory;
+import org.datacleaner.components.categories.NumbersCategory;
 import org.datacleaner.util.StringUtils;
 
 import de.odysseus.el.ExpressionFactoryImpl;

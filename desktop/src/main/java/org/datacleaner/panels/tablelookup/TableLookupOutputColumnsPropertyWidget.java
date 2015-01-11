@@ -28,7 +28,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.panels.DCPanel;

@@ -25,10 +25,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.convert.ConvertToBooleanTransformer;
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
-import org.datacleaner.beans.mock.AnalyzerMock;
-import org.datacleaner.beans.mock.TransformerMock;
+import org.datacleaner.components.convert.ConvertToBooleanTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
+import org.datacleaner.components.mock.AnalyzerMock;
+import org.datacleaner.components.mock.TransformerMock;
 import org.datacleaner.descriptors.AnnotationBasedAnalyzerBeanDescriptorTest.OneMoreMockAnalyzer;
 
 public class SimpleDescriptorProviderTest extends TestCase {

@@ -26,7 +26,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;

@@ -28,7 +28,7 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.beans.categories.FilterCategory;
+import org.datacleaner.components.categories.FilterCategory;
 import org.datacleaner.reference.StringPattern;
 
 @Named("Validate with string pattern")

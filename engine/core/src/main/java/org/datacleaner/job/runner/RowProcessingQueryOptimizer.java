@@ -33,7 +33,7 @@ import org.apache.metamodel.query.Query;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.QueryOptimizedFilter;
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.job.ComponentJob;

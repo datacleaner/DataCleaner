@@ -30,7 +30,7 @@ import java.util.Map;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.util.ClassLoaderUtils;
+import org.datacleaner.classloader.ClassLoaderUtils;
 import org.datacleaner.classloader.ExtensionClassLoader;
 import org.datacleaner.classloader.CompoundClassLoader;
 import org.datacleaner.util.FileFilters;

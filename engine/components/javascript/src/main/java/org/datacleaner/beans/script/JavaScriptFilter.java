@@ -29,7 +29,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.StringProperty;
-import org.datacleaner.beans.categories.ScriptingCategory;
+import org.datacleaner.components.categories.ScriptingCategory;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;

@@ -27,8 +27,8 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;

@@ -34,7 +34,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.DateAndTimeCategory;
+import org.datacleaner.components.categories.DateAndTimeCategory;
 
 @Named("Extract date part")
 @Description("Extract the parts of a date (year, month, day etc.)")

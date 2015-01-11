@@ -19,7 +19,7 @@
  */
 package org.datacleaner.extension.networktools;
 
-import org.datacleaner.beans.categories.AbstractComponentCategory;
+import org.datacleaner.components.categories.AbstractComponentCategory;
 
 public class NetworkToolsCategory extends AbstractComponentCategory {
 

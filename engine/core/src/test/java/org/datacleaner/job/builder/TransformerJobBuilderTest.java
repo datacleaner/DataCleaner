@@ -29,9 +29,9 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
-import org.datacleaner.beans.mock.TransformerMock;
-import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.mock.TransformerMock;
+import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.ConstantInputColumn;

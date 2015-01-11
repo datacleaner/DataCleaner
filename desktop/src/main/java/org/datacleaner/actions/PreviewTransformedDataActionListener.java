@@ -30,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
@@ -44,6 +43,7 @@ import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.datacleaner.windows.DataSetWindow;

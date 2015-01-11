@@ -24,7 +24,7 @@ import java.util.Date;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
 import org.joda.time.Days;

@@ -34,7 +34,7 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
-import org.datacleaner.beans.categories.ValidationCategory;
+import org.datacleaner.components.categories.ValidationCategory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.StringUtils;

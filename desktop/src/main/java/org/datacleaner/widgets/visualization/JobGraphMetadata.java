@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 public class JobGraphMetadata {

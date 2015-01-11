@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.api.NumberProperty;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.util.Percentage;

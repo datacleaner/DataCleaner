@@ -27,7 +27,7 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.beans.categories.FilterCategory;
+import org.datacleaner.components.categories.FilterCategory;
 import org.datacleaner.util.CharIterator;
 
 @Named("Single word")

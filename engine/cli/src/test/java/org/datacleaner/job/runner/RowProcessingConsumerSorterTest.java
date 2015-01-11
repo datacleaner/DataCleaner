@@ -33,7 +33,7 @@ import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.beans.coalesce.CoalesceUnit;
-import org.datacleaner.beans.convert.ConvertToStringTransformer;
+import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;

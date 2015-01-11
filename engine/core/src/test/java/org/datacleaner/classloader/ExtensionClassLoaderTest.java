@@ -20,7 +20,6 @@ package org.datacleaner.classloader;
 
 import java.io.File;
 
-import org.datacleaner.util.ClassLoaderUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

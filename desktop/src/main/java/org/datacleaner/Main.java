@@ -30,10 +30,10 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileType;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.datacleaner.util.ClassLoaderUtils;
 import org.datacleaner.bootstrap.Bootstrap;
 import org.datacleaner.bootstrap.BootstrapOptions;
 import org.datacleaner.bootstrap.DefaultBootstrapOptions;
+import org.datacleaner.classloader.ClassLoaderUtils;
 import org.datacleaner.user.DataCleanerHome;
 
 /**

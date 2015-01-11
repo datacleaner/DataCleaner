@@ -42,7 +42,7 @@ import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.beans.categories.DateAndTimeCategory;
+import org.datacleaner.components.categories.DateAndTimeCategory;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;

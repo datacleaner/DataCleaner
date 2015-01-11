@@ -30,8 +30,8 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
-import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;

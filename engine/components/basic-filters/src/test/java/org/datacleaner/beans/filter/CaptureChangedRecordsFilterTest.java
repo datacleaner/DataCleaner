@@ -22,7 +22,7 @@ package org.datacleaner.beans.filter;
 import java.io.File;
 import java.util.Date;
 
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.apache.metamodel.util.FileHelper;

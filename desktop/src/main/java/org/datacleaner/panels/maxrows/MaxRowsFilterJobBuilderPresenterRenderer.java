@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.beans.filter.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;

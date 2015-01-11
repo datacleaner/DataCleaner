@@ -35,7 +35,7 @@ import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.ScriptingCategory;
+import org.datacleaner.components.categories.ScriptingCategory;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Function;

@@ -25,9 +25,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.filter.MaxRowsFilter;
-import org.datacleaner.beans.filter.MaxRowsFilter.Category;
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MetaModelInputColumn;

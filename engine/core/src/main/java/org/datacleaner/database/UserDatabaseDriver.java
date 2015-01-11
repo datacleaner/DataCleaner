@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.apache.commons.vfs2.FileObject;
-import org.datacleaner.util.ClassLoaderUtils;
+import org.datacleaner.classloader.ClassLoaderUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.DriverWrapper;

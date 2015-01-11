@@ -28,7 +28,7 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.NumberProperty;
-import org.datacleaner.beans.categories.FilterCategory;
+import org.datacleaner.components.categories.FilterCategory;
 
 @Named("String length range")
 @Description("Filter rows based on the length of strings.")

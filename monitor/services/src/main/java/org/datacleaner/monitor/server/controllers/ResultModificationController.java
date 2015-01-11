@@ -25,7 +25,7 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;

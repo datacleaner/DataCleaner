@@ -27,9 +27,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;

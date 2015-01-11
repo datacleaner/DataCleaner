@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.datacleaner.beans.transform.TableLookupTransformer;
+import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;

@@ -31,7 +31,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.Distributed;
-import org.datacleaner.beans.mock.AnalyzerMock;
+import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.result.NumberResult;
 

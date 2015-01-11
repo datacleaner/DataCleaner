@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalyzerJob;

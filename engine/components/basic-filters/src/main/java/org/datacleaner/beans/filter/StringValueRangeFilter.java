@@ -28,7 +28,7 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Validate;
-import org.datacleaner.beans.categories.FilterCategory;
+import org.datacleaner.components.categories.FilterCategory;
 
 @Named("String value range")
 @Description("A filter that filters out values outside a specified value range")

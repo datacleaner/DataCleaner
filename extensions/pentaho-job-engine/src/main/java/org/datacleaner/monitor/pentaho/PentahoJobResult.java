@@ -31,7 +31,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.CrosstabResult;

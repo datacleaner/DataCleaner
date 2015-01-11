@@ -31,7 +31,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.NumbersCategory;
+import org.datacleaner.components.categories.NumbersCategory;
 
 @Named("Generate ID")
 @Description("Generates a unique and sequential record ID")

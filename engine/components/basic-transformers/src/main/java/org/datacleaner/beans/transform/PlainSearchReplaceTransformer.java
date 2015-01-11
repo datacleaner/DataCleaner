@@ -30,7 +30,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
-import org.datacleaner.beans.categories.StringManipulationCategory;
+import org.datacleaner.components.categories.StringManipulationCategory;
 
 @Named("Plain search/replace")
 @Description("Search and replace text in String values.")

@@ -23,7 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.mock.AnalyzerMock;
+import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;

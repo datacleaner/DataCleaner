@@ -41,11 +41,11 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.api.Validate;
-import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.beans.convert.ConvertToBooleanTransformer;
-import org.datacleaner.beans.convert.ConvertToDateTransformer;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
-import org.datacleaner.beans.convert.ConvertToStringTransformer;
+import org.datacleaner.components.categories.FilterCategory;
+import org.datacleaner.components.convert.ConvertToBooleanTransformer;
+import org.datacleaner.components.convert.ConvertToDateTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;

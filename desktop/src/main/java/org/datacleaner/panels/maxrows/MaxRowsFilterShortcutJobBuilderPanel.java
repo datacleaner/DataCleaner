@@ -22,11 +22,11 @@ package org.datacleaner.panels.maxrows;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.panels.FilterJobBuilderPanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;

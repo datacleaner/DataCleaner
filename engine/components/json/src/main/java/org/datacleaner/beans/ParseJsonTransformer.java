@@ -32,7 +32,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.beans.categories.DataStructuresCategory;
+import org.datacleaner.components.categories.DataStructuresCategory;
 import org.datacleaner.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

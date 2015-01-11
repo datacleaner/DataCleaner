@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.beans.filter.MaxRowsFilter;
-import org.datacleaner.beans.filter.MaxRowsFilter.Category;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;

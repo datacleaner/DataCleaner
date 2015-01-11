@@ -34,7 +34,7 @@ import java.util.Set;
 import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
 import org.elasticsearch.common.collect.IdentityHashSet;
-import org.datacleaner.beans.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
 import org.slf4j.Logger;

@@ -39,7 +39,7 @@ import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.QueryOptimizedFilter;
-import org.datacleaner.beans.categories.FilterCategory;
+import org.datacleaner.components.categories.FilterCategory;
 
 @Named("Null check")
 @Alias("Not null")

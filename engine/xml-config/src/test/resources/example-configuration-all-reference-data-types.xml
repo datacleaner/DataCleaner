@@ -8,7 +8,7 @@
 
 	<datastore-catalog>
 		<jdbc-datastore name="my_jdbc_connection">
-			<url>jdbc:hsqldb:file:../../../desktop/src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<url>jdbc:hsqldb:file:../../desktop/src/test/resources/cli-examples/orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
@@ -24,7 +24,7 @@
 			</datastore-dictionary>
 			<text-file-dictionary name="textfile_dict"
 				description="dict_txt">
-				<filename>../../core/src/test/resources/lastnames.txt</filename>
+				<filename>../core/src/test/resources/lastnames.txt</filename>
 				<encoding>UTF-8</encoding>
 			</text-file-dictionary>
 			<value-list-dictionary name="valuelist_dict"
@@ -46,7 +46,7 @@
 		<synonym-catalogs>
 			<text-file-synonym-catalog name="textfile_syn"
 				description="syn_txt">
-				<filename>../../../components/reference-data/src/test/resources/synonym-countries.txt</filename>
+				<filename>../../components/reference-data/src/test/resources/synonym-countries.txt</filename>
 				<encoding>UTF-8</encoding>
 				<case-sensitive>false</case-sensitive>
 			</text-file-synonym-catalog>

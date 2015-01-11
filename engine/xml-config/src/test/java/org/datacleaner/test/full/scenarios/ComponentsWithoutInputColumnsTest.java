@@ -40,7 +40,7 @@ public class ComponentsWithoutInputColumnsTest extends TestCase {
 
 	public void testScenario() throws Throwable {
 		CsvDatastore datastore = new CsvDatastore("my database",
-				"../../core/src/test/resources/example-name-lengths.csv");
+				"../core/src/test/resources/example-name-lengths.csv");
 		ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner", true);
 		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
 				.replace(new DatastoreCatalogImpl(datastore)).replace(descriptorProvider);

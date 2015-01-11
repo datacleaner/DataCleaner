@@ -89,19 +89,19 @@
 		</cassandra-datastore>
 
 		<dbase-datastore name="my_dbase" description="dbf">
-			<filename>../../core/src/test/resources/report.dbf</filename>
+			<filename>../core/src/test/resources/report.dbf</filename>
 		</dbase-datastore>
 		
 		<odb-datastore name="my_odb" description="odb">
-			<filename>../../core/src/test/resources/openoffice_db.odb</filename>
+			<filename>../core/src/test/resources/openoffice_db.odb</filename>
 		</odb-datastore>
 
 		<sas-datastore name="my_sas" description="folder of sas7bdat files">
-			<directory>../../core/src/test/resources/sas</directory>
+			<directory>../core/src/test/resources/sas</directory>
 		</sas-datastore>
 
 		<fixed-width-datastore name="my_fixed_width_1">
-			<filename>../../core/src/test/resources/employees-fixed-width.txt</filename>
+			<filename>../core/src/test/resources/employees-fixed-width.txt</filename>
 			<width-specification>
 				<fixed-value-width>19</fixed-value-width>
 			</width-specification>

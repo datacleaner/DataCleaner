@@ -95,6 +95,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-xml-config</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>

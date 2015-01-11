@@ -67,14 +67,14 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
     public void testScanPackageRecursive() throws Exception {
         ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
         Collection<AnalyzerBeanDescriptor<?>> analyzerDescriptors = descriptorProvider.scanPackage(
-                "org.datacleaner.beans.mock", true).getAnalyzerBeanDescriptors();
+                "org.datacleaner.components.mock", true).getAnalyzerBeanDescriptors();
         Object[] array = analyzerDescriptors.toArray();
-        assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[org.datacleaner.beans.mock.AnalyzerMock]]",
+        assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[org.datacleaner.components.mock.AnalyzerMock]]",
                 Arrays.toString(array));
 
         Collection<TransformerBeanDescriptor<?>> transformerBeanDescriptors = descriptorProvider
                 .getTransformerBeanDescriptors();
-        assertEquals("[AnnotationBasedTransformerBeanDescriptor[org.datacleaner.beans.mock.TransformerMock]]",
+        assertEquals("[AnnotationBasedTransformerBeanDescriptor[org.datacleaner.components.mock.TransformerMock]]",
                 Arrays.toString(transformerBeanDescriptors.toArray()));
 
         analyzerDescriptors = new ClasspathScanDescriptorProvider(taskRunner).scanPackage(

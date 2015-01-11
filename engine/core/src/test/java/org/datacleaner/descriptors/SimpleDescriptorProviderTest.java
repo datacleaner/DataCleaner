@@ -54,11 +54,10 @@ public class SimpleDescriptorProviderTest extends TestCase {
 
         assertEquals(2, descriptorProvider.getTransformerBeanDescriptors().size());
 
-        assertEquals("AnnotationBasedAnalyzerBeanDescriptor[org.datacleaner.beans.mock.AnalyzerMock]",
-                descriptorProvider.getAnalyzerBeanDescriptorForClass(AnalyzerMock.class).toString());
+        assertEquals("AnnotationBasedAnalyzerBeanDescriptor[" + AnalyzerMock.class.getName() + "]", descriptorProvider
+                .getAnalyzerBeanDescriptorForClass(AnalyzerMock.class).toString());
 
-        assertEquals(
-                "AnnotationBasedTransformerBeanDescriptor[org.datacleaner.beans.convert.ConvertToBooleanTransformer]",
+        assertEquals("AnnotationBasedTransformerBeanDescriptor[" + ConvertToBooleanTransformer.class.getName() + "]",
                 descriptorProvider.getTransformerBeanDescriptorForClass(ConvertToBooleanTransformer.class).toString());
     }
 

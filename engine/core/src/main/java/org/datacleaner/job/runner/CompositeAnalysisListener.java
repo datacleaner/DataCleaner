@@ -22,12 +22,12 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.beans.api.ComponentMessage;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * {@link AnalysisListener} that wraps a list of inner listeners. Makes life

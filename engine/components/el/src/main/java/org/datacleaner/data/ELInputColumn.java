@@ -25,6 +25,9 @@ import javax.el.ELException;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
+import org.datacleaner.api.ExpressionBasedInputColumn;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

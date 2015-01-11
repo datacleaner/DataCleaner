@@ -74,7 +74,7 @@ public class ExtensionClassLoaderTest {
         final ClassLoader c1 = new ExtensionClassLoader(parent1, globalParent, "Extension1");
         final Class<?> bazTransformer1 = c1.loadClass("foo.bar.transformer.BazTransformer");
         Assert.assertNotNull(bazTransformer1);
-        final ClassLoader classLoader = org.datacleaner.beans.api.Transformer.class.getClassLoader();
+        final ClassLoader classLoader = org.datacleaner.api.Transformer.class.getClassLoader();
         Assert.assertFalse(classLoader.toString().startsWith("Extension Classloader for: Extension1"));
     }
 }

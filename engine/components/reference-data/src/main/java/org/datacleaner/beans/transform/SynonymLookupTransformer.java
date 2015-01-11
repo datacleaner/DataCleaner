@@ -21,16 +21,17 @@ package org.datacleaner.beans.transform;
 
 import java.util.StringTokenizer;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.reference.SynonymCatalog;
-import org.datacleaner.util.HasLabelAdvice;
 
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with

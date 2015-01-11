@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
-import org.datacleaner.beans.api.StringProperty;
+import org.datacleaner.api.StringProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.util.DCDocumentListener;

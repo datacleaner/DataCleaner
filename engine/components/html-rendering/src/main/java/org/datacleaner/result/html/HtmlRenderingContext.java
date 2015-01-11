@@ -19,9 +19,9 @@
  */
 package org.datacleaner.result.html;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * Represents the context of generating/rendering HTML results. This interface

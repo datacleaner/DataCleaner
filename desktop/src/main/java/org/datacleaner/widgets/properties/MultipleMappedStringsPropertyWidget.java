@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.util.StringUtils;

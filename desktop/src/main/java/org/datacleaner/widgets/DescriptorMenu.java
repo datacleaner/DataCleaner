@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JMenu;
 
-import org.datacleaner.beans.api.ComponentCategory;
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.util.IconUtils;
 
 /**

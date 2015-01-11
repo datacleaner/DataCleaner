@@ -28,14 +28,14 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.datacleaner.beans.api.Transformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

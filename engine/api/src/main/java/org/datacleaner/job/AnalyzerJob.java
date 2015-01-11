@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 
 /**

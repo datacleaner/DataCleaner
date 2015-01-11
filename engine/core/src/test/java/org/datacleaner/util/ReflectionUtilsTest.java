@@ -24,8 +24,8 @@ import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassA;

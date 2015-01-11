@@ -22,10 +22,10 @@ package org.datacleaner.monitor.job;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.Metric;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 

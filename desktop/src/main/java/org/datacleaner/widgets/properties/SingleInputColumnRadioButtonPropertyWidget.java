@@ -30,7 +30,6 @@ import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
@@ -42,6 +41,7 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;

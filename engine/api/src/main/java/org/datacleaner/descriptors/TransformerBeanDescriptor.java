@@ -19,7 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Transformer;
 
 /**
  * Descriptor interface for {@link Transformer}s.

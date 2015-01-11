@@ -19,13 +19,13 @@
  */
 package org.eobjects.analyzer.beans.api;
 
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
 
 /**
  * Legacy {@link Analyzer} interface.
  * 
- * @deprecated use {@link org.datacleaner.beans.api.Analyzer} instead
+ * @deprecated use {@link org.datacleaner.api.Analyzer} instead
  */
-public interface Analyzer<R extends AnalyzerResult> extends org.datacleaner.beans.api.Analyzer<R> {
+public interface Analyzer<R extends AnalyzerResult> extends org.datacleaner.api.Analyzer<R> {
 
 }

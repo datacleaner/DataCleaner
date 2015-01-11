@@ -19,12 +19,12 @@
  */
 package org.datacleaner.test.mock;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.renderer.Renderable;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderable;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 
 public class MockRenderers {

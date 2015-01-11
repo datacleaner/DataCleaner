@@ -21,8 +21,8 @@ package org.datacleaner.job;
 
 import java.util.List;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.apache.metamodel.schema.Column;
 
 /**

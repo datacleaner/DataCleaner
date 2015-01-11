@@ -21,9 +21,9 @@ package org.datacleaner.widgets.result;
 
 import java.util.Arrays;
 
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.ResultProducer;
 import org.datacleaner.result.renderer.RendererFactory;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.windows.DetailsResultWindow;
 

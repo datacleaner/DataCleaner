@@ -22,7 +22,7 @@ package org.datacleaner.job.runner;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskRunner;

@@ -19,9 +19,9 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.Converter;
 import org.datacleaner.util.HasAliases;
 
 /**

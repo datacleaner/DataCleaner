@@ -21,14 +21,14 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.JobAndResult;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.HasAnalyzerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

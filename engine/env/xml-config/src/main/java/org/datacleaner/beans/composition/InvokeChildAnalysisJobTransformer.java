@@ -25,15 +25,16 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.FileProperty;
-import org.datacleaner.beans.api.FileProperty.FileAccessMode;
 import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.beans.categories.CompositionCategory;
 import org.datacleaner.beans.transform.AbstractWrappedAnalysisJobTransformer;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

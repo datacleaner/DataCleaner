@@ -25,9 +25,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.storage.H2StorageProvider;
 import org.datacleaner.storage.SqlDatabaseUtils;
 import org.datacleaner.util.ReflectionUtils;

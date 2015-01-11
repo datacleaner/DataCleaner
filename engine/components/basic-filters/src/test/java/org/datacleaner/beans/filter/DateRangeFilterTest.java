@@ -22,25 +22,25 @@ package org.datacleaner.beans.filter;
 import java.util.Date;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.metamodel.util.DateUtils;
+import org.apache.metamodel.util.Month;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.util.DateUtils;
-import org.apache.metamodel.util.Month;
-
-import junit.framework.TestCase;
 
 public class DateRangeFilterTest extends TestCase {
 

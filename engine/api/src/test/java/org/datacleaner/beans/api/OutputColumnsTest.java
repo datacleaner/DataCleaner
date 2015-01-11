@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.api;
 
+import org.datacleaner.api.OutputColumns;
+
 import junit.framework.TestCase;
 
 @SuppressWarnings("deprecation")
@@ -86,8 +88,8 @@ public class OutputColumnsTest extends TestCase {
         assertEquals(2, oc.getColumnCount());
         assertEquals("foo", oc.getColumnName(0));
         assertEquals("bar", oc.getColumnName(1));
-        assertNull(oc.getColumnType(0));
-        assertNull(oc.getColumnType(1));
+        assertEquals(Object.class, oc.getColumnType(0));
+        assertEquals(Object.class, oc.getColumnType(1));
     }
 
     public void testConstructUnequalLength() throws Exception {

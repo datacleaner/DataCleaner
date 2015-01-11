@@ -19,9 +19,9 @@
  */
 package org.datacleaner.configuration;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Transformer;
 
 /**
  * Component that manages injections made into components such as

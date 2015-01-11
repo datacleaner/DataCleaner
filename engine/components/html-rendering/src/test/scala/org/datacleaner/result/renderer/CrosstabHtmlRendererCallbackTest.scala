@@ -8,7 +8,7 @@ import org.junit.Assert
 import org.scalatest.junit.AssertionsForJUnit
 import org.datacleaner.result.ResultProducer
 import org.datacleaner.storage.InMemoryRowAnnotationFactory
-import org.datacleaner.data.InputRow
+import org.datacleaner.api.InputRow
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.storage.RowAnnotationImpl
 import org.datacleaner.result.DefaultResultProducer
@@ -16,7 +16,7 @@ import org.datacleaner.result.CrosstabResult
 import org.datacleaner.result.AnnotatedRowsResult
 import org.datacleaner.result.NumberResult
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
-import org.datacleaner.data.InputColumn
+import org.datacleaner.api.InputColumn
 import org.datacleaner.data.MockInputColumn
 
 class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {

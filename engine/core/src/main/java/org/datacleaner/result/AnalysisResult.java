@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 

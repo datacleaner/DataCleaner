@@ -21,8 +21,8 @@ package org.datacleaner.result.renderer;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.html.HtmlFragment;

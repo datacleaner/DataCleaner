@@ -19,11 +19,11 @@
  */
 package org.datacleaner.beans.referentialintegrity;
 
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;

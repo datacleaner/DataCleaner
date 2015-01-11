@@ -21,8 +21,8 @@ package org.datacleaner.job.runner;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.reference.AbstractReferenceData;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceValues;

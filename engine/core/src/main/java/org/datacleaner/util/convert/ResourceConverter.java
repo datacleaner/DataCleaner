@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;

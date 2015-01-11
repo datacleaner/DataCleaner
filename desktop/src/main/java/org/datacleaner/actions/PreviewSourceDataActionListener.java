@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.windows.DataSetWindow;
 import org.apache.metamodel.DataContext;

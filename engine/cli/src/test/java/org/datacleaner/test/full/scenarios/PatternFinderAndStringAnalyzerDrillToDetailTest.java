@@ -23,6 +23,9 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
@@ -32,8 +35,6 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.job.builder.TransformerJobBuilder;
@@ -41,7 +42,6 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.DefaultResultProducer;

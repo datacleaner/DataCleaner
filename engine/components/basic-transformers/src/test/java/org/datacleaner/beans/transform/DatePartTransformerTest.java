@@ -25,7 +25,7 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.beans.transform.DatePartTransformer.WeekDay;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;

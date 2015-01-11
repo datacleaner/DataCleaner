@@ -26,10 +26,10 @@ import java.util.Queue;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.concurrent.StatusAwareTaskListener;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.NumberResult;
 
 public class AnalysisResultFutureImplTest extends TestCase {

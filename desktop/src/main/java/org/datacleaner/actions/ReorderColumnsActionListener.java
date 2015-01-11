@@ -36,7 +36,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;

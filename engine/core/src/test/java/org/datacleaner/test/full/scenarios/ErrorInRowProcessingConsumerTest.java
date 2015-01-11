@@ -30,15 +30,16 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.Column;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
@@ -49,7 +50,6 @@ import org.datacleaner.result.NumberResult;
 import org.datacleaner.test.ActivityAwareMultiThreadedTaskRunner;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.CollectionUtils2;
-import org.datacleaner.util.SchemaNavigator;
 
 /**
  * Tests that a job where one of the row processing consumers fail is gracefully

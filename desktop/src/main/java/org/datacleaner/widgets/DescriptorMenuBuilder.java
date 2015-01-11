@@ -31,7 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.datacleaner.beans.api.ComponentCategory;
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.beans.writers.WriteDataCategory;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.util.CollectionUtils2;

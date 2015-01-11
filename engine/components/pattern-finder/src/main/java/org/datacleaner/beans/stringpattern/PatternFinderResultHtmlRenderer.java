@@ -21,8 +21,8 @@ package org.datacleaner.beans.stringpattern;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;

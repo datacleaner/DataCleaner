@@ -27,10 +27,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;

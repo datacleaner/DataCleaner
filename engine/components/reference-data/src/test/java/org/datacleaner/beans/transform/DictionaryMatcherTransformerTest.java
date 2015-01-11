@@ -26,6 +26,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
@@ -46,7 +47,6 @@ import org.datacleaner.reference.SimpleSynonym;
 import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
-import org.datacleaner.result.AnalyzerResult;
 
 public class DictionaryMatcherTransformerTest extends TestCase {
 

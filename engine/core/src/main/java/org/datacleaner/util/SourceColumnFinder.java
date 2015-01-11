@@ -30,8 +30,8 @@ import java.util.TreeSet;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.data.ExpressionBasedInputColumn;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.ExpressionBasedInputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;

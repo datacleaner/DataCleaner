@@ -21,7 +21,7 @@ package org.datacleaner.beans;
 
 import java.util.StringTokenizer;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.AverageBuilder;

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.api;
 
+import org.datacleaner.api.FileProperty;
+
 import junit.framework.TestCase;
 
 public class FilePropertyTest extends TestCase {

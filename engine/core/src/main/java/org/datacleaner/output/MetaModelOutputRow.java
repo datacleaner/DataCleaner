@@ -20,8 +20,8 @@
 package org.datacleaner.output;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 
 /**
  * {@link OutputRow} implementation for the

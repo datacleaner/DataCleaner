@@ -21,16 +21,16 @@ package org.datacleaner.panels;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;

@@ -24,9 +24,9 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.repository.RepositoryFile;

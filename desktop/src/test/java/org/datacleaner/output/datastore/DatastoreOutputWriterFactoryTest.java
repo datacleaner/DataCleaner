@@ -25,9 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.OutputWriterScenarioHelper;
 import org.apache.metamodel.DataContext;

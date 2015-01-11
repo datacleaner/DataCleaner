@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.datacleaner.api.AnalyzerResult;
+
 /**
  * A very simple AnalyzerResult that simply holds a list of values
  * 

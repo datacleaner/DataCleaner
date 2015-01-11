@@ -25,13 +25,14 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.tasks.Task;

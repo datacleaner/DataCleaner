@@ -38,7 +38,7 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.ExclusionPredicate;
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;

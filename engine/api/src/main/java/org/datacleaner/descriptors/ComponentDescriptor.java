@@ -23,12 +23,12 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.ComponentCategory;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.Validate;
 
 /**
  * Defines an interface for descriptors of components that support

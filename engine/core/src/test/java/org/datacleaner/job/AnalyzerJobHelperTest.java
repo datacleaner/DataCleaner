@@ -21,10 +21,10 @@ package org.datacleaner.job;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;

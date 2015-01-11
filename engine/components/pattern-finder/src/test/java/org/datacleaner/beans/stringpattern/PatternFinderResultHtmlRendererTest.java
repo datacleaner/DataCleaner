@@ -23,8 +23,8 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.Descriptors;

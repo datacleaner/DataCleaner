@@ -19,14 +19,14 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.ComponentMessage;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * An {@link AnalysisListener} that does nothing. Useful base-class for

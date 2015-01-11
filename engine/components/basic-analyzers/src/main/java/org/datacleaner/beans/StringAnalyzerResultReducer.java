@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AbstractCrosstabResultReducer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;

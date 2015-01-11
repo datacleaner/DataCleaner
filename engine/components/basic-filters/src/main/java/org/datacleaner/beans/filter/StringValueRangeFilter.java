@@ -19,15 +19,16 @@
  */
 package org.datacleaner.beans.filter;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Filter;
 import javax.inject.Named;
-import org.datacleaner.beans.api.Validate;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Validate;
 import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 
 @Named("String value range")
 @Description("A filter that filters out values outside a specified value range")

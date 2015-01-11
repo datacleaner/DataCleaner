@@ -27,12 +27,12 @@ import javax.inject.Named;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.MutableRef;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Provided;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;

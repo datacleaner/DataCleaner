@@ -25,12 +25,12 @@ import javax.inject.Named;
 
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.TruePredicate;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RenderingFormat;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.util.ReflectionUtils;
 import org.kohsuke.asm5.AnnotationVisitor;
 import org.kohsuke.asm5.Attribute;

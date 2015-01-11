@@ -27,6 +27,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
@@ -40,7 +41,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;

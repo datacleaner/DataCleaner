@@ -21,14 +21,15 @@ package org.datacleaner.job.runner;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 
 @Named("Transformer mock")
 @Alias("Mock transformer")

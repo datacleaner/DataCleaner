@@ -21,7 +21,7 @@ package org.datacleaner.reference;
 
 import java.io.Serializable;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 
 /**

@@ -19,13 +19,13 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.ComponentContext;
-import org.datacleaner.beans.api.ComponentMessage;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.ComponentContext;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * Listener interface for analysis execution. Typically the user interface and

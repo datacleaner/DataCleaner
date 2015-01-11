@@ -28,7 +28,8 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.metamodel.util.HasName;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SharedExecutorService;
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

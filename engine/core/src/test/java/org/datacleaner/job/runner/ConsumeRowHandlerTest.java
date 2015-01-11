@@ -22,11 +22,11 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.PojoDatastore;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AnalysisJob;

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 

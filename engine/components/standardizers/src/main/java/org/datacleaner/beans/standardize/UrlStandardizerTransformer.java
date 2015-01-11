@@ -22,16 +22,17 @@ package org.datacleaner.beans.standardize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.beans.categories.MatchingAndStandardizationCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;

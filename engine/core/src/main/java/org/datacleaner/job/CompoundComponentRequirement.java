@@ -23,8 +23,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.datacleaner.data.InputRow;
-import org.datacleaner.job.runner.FilterOutcomes;
+import org.datacleaner.api.InputRow;
 
 /**
  * Represents an outcome that is a product of multiple other outcomes and thus

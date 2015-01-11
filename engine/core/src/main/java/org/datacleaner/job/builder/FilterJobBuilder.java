@@ -25,7 +25,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.datacleaner.beans.api.Filter;
+import org.datacleaner.api.Filter;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.ComponentRequirement;

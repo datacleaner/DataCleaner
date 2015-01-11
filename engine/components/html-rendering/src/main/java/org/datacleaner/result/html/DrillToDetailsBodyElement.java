@@ -21,8 +21,8 @@ package org.datacleaner.result.html;
 
 import java.util.List;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 

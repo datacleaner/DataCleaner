@@ -26,9 +26,9 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.mock.AnalyzerMock;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.test.MockFilter;
 
 public class ConfiguredPropertyDescriptorImplTest extends TestCase {

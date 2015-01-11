@@ -19,8 +19,8 @@
  */
 package org.datacleaner.beans;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;

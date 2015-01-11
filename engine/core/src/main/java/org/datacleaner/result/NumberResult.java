@@ -19,7 +19,9 @@
  */
 package org.datacleaner.result;
 
-import org.datacleaner.beans.api.Alias;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Metric;
 
 /**
  * Very simple result type for analyzers that simply return a number (maybe a

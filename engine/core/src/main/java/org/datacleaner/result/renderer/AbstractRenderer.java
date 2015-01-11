@@ -19,8 +19,9 @@
  */
 package org.datacleaner.result.renderer;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererPrecedence;
+import org.datacleaner.api.Renderable;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererPrecedence;
 
 /**
  * Abstract implementation of the {@link Renderable} interface. Only implements

@@ -21,7 +21,7 @@ package org.datacleaner.result.renderer;
 
 import java.util.Set;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionPoint;

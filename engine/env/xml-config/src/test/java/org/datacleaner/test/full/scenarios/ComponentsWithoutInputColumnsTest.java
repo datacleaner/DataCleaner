@@ -23,12 +23,12 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;

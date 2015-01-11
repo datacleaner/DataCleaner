@@ -19,11 +19,12 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.util.SourceColumnFinder;
 
 final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements RowProcessingConsumer {

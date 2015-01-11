@@ -25,8 +25,8 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;

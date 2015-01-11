@@ -23,7 +23,7 @@ import java.util.LinkedList;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.result.CrosstabResult;

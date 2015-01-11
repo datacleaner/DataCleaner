@@ -28,6 +28,7 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.DataSetTableModel;
 import org.apache.metamodel.data.InMemoryDataSet;
 import org.apache.metamodel.data.Row;
+import org.datacleaner.api.AnalyzerResult;
 
 public class DataSetResult implements TableModelResult, AnalyzerResult {
 

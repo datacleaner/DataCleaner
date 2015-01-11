@@ -19,16 +19,17 @@
  */
 package org.datacleaner.beans.script;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Filter;
 import javax.inject.Named;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.StringProperty;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.StringProperty;
 import org.datacleaner.beans.categories.ScriptingCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;

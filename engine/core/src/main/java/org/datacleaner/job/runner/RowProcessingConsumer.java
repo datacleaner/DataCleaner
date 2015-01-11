@@ -19,10 +19,11 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.FilterOutcomes;
 
 /**
  * Interface for objects that recieve rows from the RowProcessingPublisher.

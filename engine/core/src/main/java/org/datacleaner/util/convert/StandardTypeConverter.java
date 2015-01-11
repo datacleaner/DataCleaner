@@ -34,8 +34,8 @@ import java.util.regex.PatternSyntaxException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Converter;
 import org.datacleaner.beans.convert.ConvertToDateTransformer;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.util.ChangeAwareObjectInputStream;

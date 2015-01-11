@@ -22,8 +22,7 @@ package org.datacleaner.job;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.datacleaner.data.InputRow;
-import org.datacleaner.job.runner.FilterOutcomes;
+import org.datacleaner.api.InputRow;
 
 /**
  * An outcome that represents "Any outcome", ie. all other requirements/outcomes

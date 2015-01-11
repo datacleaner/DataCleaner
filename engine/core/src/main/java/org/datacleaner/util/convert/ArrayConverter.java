@@ -20,12 +20,11 @@
 package org.datacleaner.util.convert;
 
 import java.lang.reflect.Array;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.util.CharIterator;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;

@@ -39,9 +39,16 @@ import java.util.TreeMap;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.apache.metamodel.util.HasName;
 import org.apache.metamodel.util.LegacyDeserializationObjectInputStream;
-import org.datacleaner.beans.api.ComponentCategory;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.Renderable;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.reference.TextFileDictionary;
@@ -159,9 +166,20 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
                 "com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer");
 
+        // Classes moved in DC 4.0
+        addRenamedClass("org.eobjects.analyzer.data.InputRow", InputRow.class);
+        addRenamedClass("org.eobjects.analyzer.data.InputColumn", InputColumn.class);
+        addRenamedClass("org.eobjects.analyzer.result.AnalyzerResult", AnalyzerResult.class);
+        addRenamedClass("org.eobjects.analyzer.result.AnalyzerResultReducer", AnalyzerResultReducer.class);
+        addRenamedClass("org.eobjects.analyzer.result.HasAnalyzerResult", HasAnalyzerResult.class);
+        addRenamedClass("org.eobjects.analyzer.result.Metric", Metric.class);
+        addRenamedClass("org.eobjects.analyzer.result.renderer.Renderable", Renderable.class);
+        addRenamedClass("org.eobjects.analyzer.util.SchemaNavigator", SchemaNavigator.class);
+
         // General namespace change as of DC 4.0
         addRenamedPackage("org.eobjects.datacleaner", "org.datacleaner");
         addRenamedPackage("org.eobjects.analyzer", "org.datacleaner");
+        addRenamedPackage("org.datacleaner.beans.api", "org.datacleaner.api");
 
         // Change from eobjects.org MetaModel to Apache MetaModel
         addRenamedPackage("org.eobjects.metamodel", "org.apache.metamodel");

@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;

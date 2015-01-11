@@ -21,8 +21,8 @@ package org.datacleaner.reference;
 
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
 
 /**
  * A synonym catalog represents a set of synonyms which are related.

@@ -30,10 +30,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.datacleaner.beans.api.Filter;
 import org.datacleaner.job.builder.FilterChangeListener;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.actions.DisplayOptionsForFilterOutcomeActionListener;
+import org.datacleaner.api.Filter;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

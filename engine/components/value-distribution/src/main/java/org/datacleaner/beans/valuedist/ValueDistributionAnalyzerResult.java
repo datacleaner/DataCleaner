@@ -19,8 +19,8 @@
  */
 package org.datacleaner.beans.valuedist;
 
+import org.datacleaner.api.Metric;
 import org.datacleaner.result.AbstractValueCountingAnalyzerResult;
-import org.datacleaner.result.Metric;
 
 /**
  * Defines abstract methods, metrics etc. for analyzer results of the Value

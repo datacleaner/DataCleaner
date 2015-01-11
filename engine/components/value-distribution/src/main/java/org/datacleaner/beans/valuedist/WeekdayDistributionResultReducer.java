@@ -22,7 +22,7 @@ package org.datacleaner.beans.valuedist;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.AnalyzerResultReducer;
 
 /**
  * {@link AnalyzerResultReducer} for results of the date-part distribution

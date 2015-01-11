@@ -24,10 +24,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import org.datacleaner.api.ExpressionBasedInputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
-import org.datacleaner.data.ExpressionBasedInputColumn;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.apache.metamodel.util.CollectionUtils;

@@ -19,10 +19,10 @@
  */
 package org.datacleaner.widgets.result;
 
-import org.datacleaner.beans.api.RendererBean;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.bootstrap.WindowContext;
 
 @RendererBean(SwingRenderingFormat.class)

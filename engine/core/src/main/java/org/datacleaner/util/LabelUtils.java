@@ -24,7 +24,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.reference.SimpleSynonym;
 import org.datacleaner.reference.Synonym;
 import org.datacleaner.reference.SynonymCatalog;

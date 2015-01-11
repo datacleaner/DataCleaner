@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.schema.Table;
 import org.springframework.mock.jndi.SimpleNamingContext;
 

@@ -20,14 +20,14 @@
 package org.datacleaner.test;
 
 import javax.inject.Inject;
-
-import org.datacleaner.beans.api.ComponentContext;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+
+import org.datacleaner.api.ComponentContext;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 
 @Named("Mock transformer")
 public class MockTransformer implements Transformer {

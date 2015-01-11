@@ -21,11 +21,11 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Field;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.beans.api.Converter;
-import org.datacleaner.beans.api.Description;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.Converter;
+import org.datacleaner.api.Description;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 

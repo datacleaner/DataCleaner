@@ -38,7 +38,7 @@ import java.util.Set;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

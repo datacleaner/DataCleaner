@@ -22,11 +22,11 @@ package org.datacleaner.descriptors;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.Transformer;
 
 /**
  * Contains static factory and utility methods for descriptors within this

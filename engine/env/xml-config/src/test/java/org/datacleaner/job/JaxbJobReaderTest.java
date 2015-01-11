@@ -29,6 +29,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.convert.ConvertToDateTransformer;
 import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
@@ -43,7 +45,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -53,11 +55,9 @@ import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.util.ToStringComparator;
 
 public class JaxbJobReaderTest extends TestCase {

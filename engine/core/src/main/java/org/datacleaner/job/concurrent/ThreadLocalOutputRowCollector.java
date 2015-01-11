@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.concurrent;
 
-import org.datacleaner.beans.api.OutputRowCollector;
+import org.datacleaner.api.OutputRowCollector;
 
 /**
  * Thread local implementation of the {@link OutputRowCollector} interface.

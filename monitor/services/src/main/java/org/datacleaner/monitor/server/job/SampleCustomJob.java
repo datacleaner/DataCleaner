@@ -21,8 +21,8 @@ package org.datacleaner.monitor.server.job;
 
 import java.io.Serializable;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Validate;
 
 /**
  * A sample {@link CustomJob} used to show examples of DataCleaner's

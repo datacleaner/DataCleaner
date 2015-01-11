@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 
 /**
  * Interface for job objects that consume input columns in a job.

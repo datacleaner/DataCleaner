@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 
 /**
  * Result reducer for {@link CharacterSetDistributionResult}s

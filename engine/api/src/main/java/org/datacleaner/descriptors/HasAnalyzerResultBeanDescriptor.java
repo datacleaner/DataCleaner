@@ -19,8 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.HasAnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.HasAnalyzerResult;
 
 /**
  * Descriptor interface for beans that produce {@link AnalyzerResult}s.

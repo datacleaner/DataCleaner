@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.Transformer;
 
 /**
  * A simple descriptor provider with a method signature suitable externalizing

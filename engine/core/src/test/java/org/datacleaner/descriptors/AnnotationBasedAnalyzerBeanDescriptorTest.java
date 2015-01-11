@@ -27,12 +27,12 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Distributed;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.beans.mock.AnalyzerMock;
 import org.datacleaner.reference.Dictionary;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
 import org.datacleaner.result.NumberResult;
 
 public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {

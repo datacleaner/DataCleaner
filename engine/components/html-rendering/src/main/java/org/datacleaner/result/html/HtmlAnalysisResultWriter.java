@@ -31,21 +31,21 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.datacleaner.beans.api.Renderer;
+import org.apache.metamodel.util.Predicate;
+import org.apache.metamodel.util.Ref;
+import org.apache.metamodel.util.TruePredicate;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.AnalysisResultWriter;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.ComponentJobComparator;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
-import org.apache.metamodel.util.Predicate;
-import org.apache.metamodel.util.Ref;
-import org.apache.metamodel.util.TruePredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

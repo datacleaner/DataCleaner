@@ -22,7 +22,8 @@ package org.datacleaner.result;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.util.convert.StringConverter;
 
 /**

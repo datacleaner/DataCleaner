@@ -27,10 +27,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.Metric;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 

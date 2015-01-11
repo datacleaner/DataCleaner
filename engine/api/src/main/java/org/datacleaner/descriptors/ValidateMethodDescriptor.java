@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Validate;
 
 /**
  * Descriptor for a validation method. The most common way of registering a

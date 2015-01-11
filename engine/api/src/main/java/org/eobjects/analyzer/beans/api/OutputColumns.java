@@ -22,10 +22,10 @@ package org.eobjects.analyzer.beans.api;
 /**
  * Legacy {@link OutputColumns} class.
  * 
- * @deprecated use {@link org.datacleaner.beans.api.OutputColumns} instead.
+ * @deprecated use {@link org.datacleaner.api.OutputColumns} instead.
  */
 @Deprecated
-public class OutputColumns extends org.datacleaner.beans.api.OutputColumns {
+public class OutputColumns extends org.datacleaner.api.OutputColumns {
 
     private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.result.renderer;
 
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 
 public class TextRenderingFormat implements RenderingFormat<CharSequence> {
 

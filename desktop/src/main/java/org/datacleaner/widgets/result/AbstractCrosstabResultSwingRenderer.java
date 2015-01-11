@@ -34,7 +34,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.datacleaner.beans.api.Provided;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabResult;
@@ -45,6 +44,7 @@ import org.datacleaner.result.renderer.CrosstabRendererCallback;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.api.Provided;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;

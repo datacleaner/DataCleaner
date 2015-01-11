@@ -19,8 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedTransformerBeanDescriptor<T extends Transformer> extends AbstractBeanDescriptor<T>

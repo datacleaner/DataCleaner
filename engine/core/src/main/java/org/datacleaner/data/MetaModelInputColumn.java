@@ -19,6 +19,7 @@
  */
 package org.datacleaner.data;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;

@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;

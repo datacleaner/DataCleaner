@@ -23,10 +23,10 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 

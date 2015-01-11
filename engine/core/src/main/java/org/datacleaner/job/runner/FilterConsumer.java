@@ -19,14 +19,15 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Optimizeable;
-import org.datacleaner.beans.api.QueryOptimizedFilter;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Optimizeable;
+import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.ImmutableFilterOutcome;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SourceColumnFinder;

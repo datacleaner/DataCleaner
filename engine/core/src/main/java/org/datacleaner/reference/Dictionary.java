@@ -19,8 +19,8 @@
  */
 package org.datacleaner.reference;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
 
 /**
  * A dictionary represents a set of values grouped together with a label.

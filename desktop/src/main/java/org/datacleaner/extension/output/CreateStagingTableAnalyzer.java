@@ -22,11 +22,12 @@ package org.datacleaner.extension.output;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.beans.writers.WriteDataCategory;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
@@ -40,7 +41,6 @@ import org.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.HasLabelAdvice;
 
 @Named("Create staging table")
 @Alias("Write to Datastore")

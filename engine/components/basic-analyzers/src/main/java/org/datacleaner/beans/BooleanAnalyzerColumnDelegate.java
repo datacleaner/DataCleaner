@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 

@@ -21,7 +21,7 @@ package org.datacleaner.beans.transform;
 
 import java.util.Arrays;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 

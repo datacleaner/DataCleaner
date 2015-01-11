@@ -19,8 +19,8 @@
  */
 package org.datacleaner.reference;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
 
 /**
  * A string pattern defines a pattern to which you can match strings to see if

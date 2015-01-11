@@ -31,7 +31,7 @@ import org.apache.commons.math.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.result.AbstractCrosstabResultReducer;
 import org.datacleaner.result.Crosstab;

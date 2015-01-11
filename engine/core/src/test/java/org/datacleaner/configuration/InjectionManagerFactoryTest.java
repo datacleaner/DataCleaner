@@ -27,12 +27,12 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.ColumnProperty;
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ColumnProperty;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;

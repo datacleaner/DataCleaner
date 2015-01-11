@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
 
 /**
  * A mock-implementation of the {@link MetricDescriptor} interface. Use this only for testing purposes

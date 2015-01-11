@@ -24,8 +24,8 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.BooleanAnalyzerResult;
-import org.datacleaner.beans.api.RendererBean;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.AbstractRenderer;

@@ -24,19 +24,19 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;

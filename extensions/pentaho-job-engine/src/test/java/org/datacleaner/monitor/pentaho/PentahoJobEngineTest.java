@@ -25,9 +25,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.InjectionManagerFactoryImpl;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;

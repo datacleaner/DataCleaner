@@ -19,7 +19,7 @@
  */
 package org.datacleaner.configuration;
 
-import org.datacleaner.beans.api.ComponentContext;
+import org.datacleaner.api.ComponentContext;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisListener;

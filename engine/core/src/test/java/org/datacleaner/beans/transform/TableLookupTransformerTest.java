@@ -25,11 +25,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.OutputRowCollector;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.beans.transform.TableLookupTransformer.JoinSemantic;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 

@@ -19,11 +19,11 @@
  */
 package org.datacleaner.beans;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
-import org.datacleaner.result.Metric;
 
 @Distributed(reducer = NumberAnalyzerResultReducer.class)
 public class NumberAnalyzerResult extends CrosstabResult {

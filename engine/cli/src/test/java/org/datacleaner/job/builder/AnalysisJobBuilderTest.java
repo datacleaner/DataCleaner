@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.convert.ConvertToStringTransformer;
@@ -40,7 +41,6 @@ import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MutableInputColumn;

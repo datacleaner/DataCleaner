@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.datacleaner.api.InputColumn;
+
 /**
  * A mock implementation of the InputRow interface. Allows for adhoc generation
  * of a row using the put(...) method.

@@ -23,9 +23,9 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;

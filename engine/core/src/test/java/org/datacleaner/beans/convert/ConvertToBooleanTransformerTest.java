@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.convert;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 
 import junit.framework.TestCase;

@@ -26,9 +26,9 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.Converter;
 
 /**
  * A custom {@link Converter} for encrypting sensitive strings, such as

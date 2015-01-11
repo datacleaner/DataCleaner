@@ -24,14 +24,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.datacleaner.beans.api.ComponentCategory;
-import org.datacleaner.beans.api.Description;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
-import org.datacleaner.result.HasAnalyzerResult;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 

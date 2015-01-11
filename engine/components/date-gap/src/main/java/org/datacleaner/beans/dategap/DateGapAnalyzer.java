@@ -27,13 +27,13 @@ import java.util.SortedSet;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.categories.DateAndTimeCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

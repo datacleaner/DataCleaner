@@ -22,7 +22,7 @@ package org.datacleaner.beans.valuedist;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.CrosstabResult;

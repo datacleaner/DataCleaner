@@ -24,7 +24,7 @@ import java.util.Arrays;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;

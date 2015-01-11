@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.tasks;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.ConsumeRowHandler;
 import org.datacleaner.job.runner.RowProcessingConsumer;

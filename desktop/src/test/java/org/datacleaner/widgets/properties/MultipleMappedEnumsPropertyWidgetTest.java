@@ -30,11 +30,11 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 

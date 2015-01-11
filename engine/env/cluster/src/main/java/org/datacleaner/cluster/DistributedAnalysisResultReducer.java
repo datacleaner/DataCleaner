@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
@@ -35,8 +37,6 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

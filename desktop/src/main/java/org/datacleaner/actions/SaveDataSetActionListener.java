@@ -31,9 +31,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.output.OutputRow;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;

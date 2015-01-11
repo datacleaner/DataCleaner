@@ -38,6 +38,7 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
+import org.datacleaner.connection.SchemaNavigator;
 
 public class SchemaNavigatorTest extends TestCase {
 

@@ -1,8 +1,8 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.beans.api.Provided
-import org.datacleaner.beans.api.RendererBean
-import org.datacleaner.beans.api.Renderer
-import org.datacleaner.beans.api.RendererPrecedence
+import org.datacleaner.api.Provided
+import org.datacleaner.api.RendererBean
+import org.datacleaner.api.Renderer
+import org.datacleaner.api.RendererPrecedence
 import org.datacleaner.result.html.HtmlFragment
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 import org.datacleaner.result.renderer.RendererFactory

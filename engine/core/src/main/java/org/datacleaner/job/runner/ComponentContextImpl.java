@@ -19,8 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.ComponentContext;
-import org.datacleaner.beans.api.ComponentMessage;
+import org.datacleaner.api.ComponentContext;
+import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 

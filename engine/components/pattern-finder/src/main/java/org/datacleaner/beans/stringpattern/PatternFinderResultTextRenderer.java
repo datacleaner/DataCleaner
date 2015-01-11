@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;

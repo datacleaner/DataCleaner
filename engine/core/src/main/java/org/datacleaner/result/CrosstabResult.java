@@ -19,6 +19,8 @@
  */
 package org.datacleaner.result;
 
+import org.datacleaner.api.AnalyzerResult;
+
 public class CrosstabResult implements AnalyzerResult {
 
 	private static final long serialVersionUID = 1L;

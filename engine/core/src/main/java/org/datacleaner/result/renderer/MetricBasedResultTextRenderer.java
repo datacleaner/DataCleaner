@@ -22,14 +22,14 @@ package org.datacleaner.result.renderer;
 import java.util.Collection;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
 import org.datacleaner.descriptors.ResultDescriptor;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.util.LabelUtils;
 
 /**

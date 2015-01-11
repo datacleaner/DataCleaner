@@ -21,10 +21,10 @@ package org.datacleaner.result.renderer;
 
 import java.lang.reflect.Method;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 
 /**
  * A very simple renderer that "renders" the toString() method of results, if a specialized toString() method is available.

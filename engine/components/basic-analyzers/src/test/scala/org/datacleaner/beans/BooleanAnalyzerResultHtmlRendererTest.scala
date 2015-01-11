@@ -1,5 +1,5 @@
 package org.datacleaner.beans
-import org.datacleaner.beans.api.RendererBean
+import org.datacleaner.api.RendererBean
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider

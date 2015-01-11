@@ -31,7 +31,7 @@ import javax.inject.Qualifier;
 /**
  * Legacy {@link Configured} annotation.
  * 
- * @deprecated use {@link org.datacleaner.beans.api.Configured} instead
+ * @deprecated use {@link org.datacleaner.api.Configured} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })

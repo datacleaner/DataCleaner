@@ -26,8 +26,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.lifecycle.MemberInjectionPoint;

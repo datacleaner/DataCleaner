@@ -29,7 +29,7 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderResult;
 import org.datacleaner.connection.Datastore;

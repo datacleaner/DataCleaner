@@ -28,9 +28,8 @@ import java.util.TreeSet;
 
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.job.AnalysisJobMetadata;
-import org.datacleaner.util.SchemaNavigator;
-
 import org.apache.metamodel.schema.Column;
 
 /**

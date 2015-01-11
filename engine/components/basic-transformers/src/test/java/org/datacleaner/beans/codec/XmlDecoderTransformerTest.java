@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.codec;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.beans.codec.XmlDecoderTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;

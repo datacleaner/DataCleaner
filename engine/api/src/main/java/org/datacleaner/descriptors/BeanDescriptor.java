@@ -21,8 +21,8 @@ package org.datacleaner.descriptors;
 
 import java.util.Set;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.HasAliases;
 
 /**

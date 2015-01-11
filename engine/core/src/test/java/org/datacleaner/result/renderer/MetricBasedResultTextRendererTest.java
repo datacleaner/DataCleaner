@@ -19,7 +19,7 @@
  */
 package org.datacleaner.result.renderer;
 
-import org.datacleaner.beans.api.RendererPrecedence;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.result.NumberResult;
 
 import junit.framework.TestCase;

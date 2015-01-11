@@ -1,12 +1,12 @@
 package org.datacleaner.beans
 import org.datacleaner.result.html.BodyElement
 import org.datacleaner.result.html.HtmlRenderingContext
-import org.datacleaner.result.AnalyzerResult
+import org.datacleaner.api.AnalyzerResult
 import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor
 import org.datacleaner.job.ComponentJob
 import scala.collection.JavaConversions._
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor
-import org.datacleaner.data.InputColumn
+import org.datacleaner.api.InputColumn
 import org.datacleaner.job.ConfigurableBeanJob
 import org.datacleaner.descriptors.MetricParameters
 import org.datacleaner.job.ConfigurableBeanJob

@@ -22,10 +22,10 @@ package org.datacleaner.beans.transform;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.OutputRowCollector;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.beans.transform.TokenizerTransformer.TokenTarget;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.apache.metamodel.schema.MutableColumn;

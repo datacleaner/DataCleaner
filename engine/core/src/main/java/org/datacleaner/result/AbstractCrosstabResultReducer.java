@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.metamodel.util.NumberComparator;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
 
 /**
  * Abstract reducer class for {@link CrosstabResult}s that are two dimensional

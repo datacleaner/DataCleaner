@@ -22,8 +22,7 @@ package org.datacleaner.job;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.datacleaner.data.InputRow;
-import org.datacleaner.job.runner.FilterOutcomes;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.util.LabelUtils;
 
 public class SimpleComponentRequirement implements ComponentRequirement {

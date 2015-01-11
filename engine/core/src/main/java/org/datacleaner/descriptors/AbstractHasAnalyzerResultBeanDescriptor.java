@@ -21,9 +21,9 @@ package org.datacleaner.descriptors;
 
 import java.util.Set;
 
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
-import org.datacleaner.result.HasAnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

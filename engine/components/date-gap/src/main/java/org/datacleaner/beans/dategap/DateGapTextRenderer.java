@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.util.StringUtils;

@@ -19,8 +19,8 @@
  */
 package org.datacleaner.test;
 
-import org.datacleaner.beans.api.ComponentMessage;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.InputColumn;
 
 public class MockTransformerMessage implements ComponentMessage {
 

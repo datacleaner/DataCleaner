@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.AnalyzerJobHelper;
 import org.datacleaner.job.ComponentJob;

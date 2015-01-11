@@ -28,13 +28,13 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.beans.mock.TransformerMock;
 import org.datacleaner.beans.transform.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.ConstantInputColumn;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -113,7 +113,7 @@ public class TransformerJobBuilderTest extends TestCase {
             tjb.setConfiguredProperty("Input", "hello");
             fail("Exception expected");
         } catch (IllegalArgumentException e) {
-            assertEquals("Invalid value type: java.lang.String, expected: org.datacleaner.data.InputColumn",
+            assertEquals("Invalid value type: java.lang.String, expected: org.datacleaner.api.InputColumn",
                     e.getMessage());
         }
     }

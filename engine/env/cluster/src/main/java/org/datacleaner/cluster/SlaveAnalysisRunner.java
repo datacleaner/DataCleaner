@@ -19,8 +19,8 @@
  */
 package org.datacleaner.cluster;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisListener;

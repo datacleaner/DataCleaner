@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.datacleaner.api.Metric;
 import org.datacleaner.util.LabelUtils;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;

@@ -27,13 +27,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.api.Renderable;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.BeanConfiguration;
 import org.datacleaner.job.ImmutableBeanConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.result.renderer.Renderable;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

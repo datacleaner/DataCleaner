@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.coalesce;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.util.convert.ArrayConverter;
 import org.datacleaner.util.convert.StandardTypeConverter;
 

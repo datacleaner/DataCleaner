@@ -30,11 +30,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.query.Query;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.QueryOptimizedFilter;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;

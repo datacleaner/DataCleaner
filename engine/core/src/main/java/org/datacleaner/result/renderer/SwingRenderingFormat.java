@@ -21,7 +21,7 @@ package org.datacleaner.result.renderer;
 
 import javax.swing.JComponent;
 
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 
 public class SwingRenderingFormat implements RenderingFormat<JComponent> {
 

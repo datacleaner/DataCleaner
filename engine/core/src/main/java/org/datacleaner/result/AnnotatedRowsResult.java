@@ -30,9 +30,10 @@ import java.util.TreeSet;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;

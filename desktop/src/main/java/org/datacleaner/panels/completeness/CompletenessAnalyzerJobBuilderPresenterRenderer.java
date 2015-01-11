@@ -21,10 +21,10 @@ package org.datacleaner.panels.completeness;
 
 import javax.inject.Inject;
 
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.CompletenessAnalyzer;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.guice.InjectorBuilder;

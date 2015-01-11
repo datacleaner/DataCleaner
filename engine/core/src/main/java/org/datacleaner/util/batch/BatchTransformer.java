@@ -19,10 +19,10 @@
  */
 package org.datacleaner.util.batch;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Transformer;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Transformer;
 
 /**
  * An abstract {@link Transformer} that supports batch/chunked operations.

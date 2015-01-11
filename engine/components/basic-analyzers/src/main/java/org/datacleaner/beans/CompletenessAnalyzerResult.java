@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans;
 
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.result.AnnotatedRowsResult;
-import org.datacleaner.result.Metric;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.result;
 
+import org.datacleaner.api.AnalyzerResult;
+
 
 /**
  * Result producers produce AnalyzerResults. Typically they are used to

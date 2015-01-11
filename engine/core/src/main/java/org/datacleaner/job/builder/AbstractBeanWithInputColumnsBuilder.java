@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.EqualsBuilder;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentRequirement;

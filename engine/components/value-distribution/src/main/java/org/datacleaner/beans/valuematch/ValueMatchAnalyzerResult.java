@@ -25,12 +25,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.result.AbstractValueCountingAnalyzerResult;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CompositeValueFrequency;
-import org.datacleaner.result.Metric;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.storage.RowAnnotation;

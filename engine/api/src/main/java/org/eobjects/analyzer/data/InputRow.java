@@ -22,6 +22,6 @@ package org.eobjects.analyzer.data;
 /**
  * Legacy {@link InputRow} interface
  */
-public interface InputRow extends org.datacleaner.data.InputRow {
+public interface InputRow extends org.datacleaner.api.InputRow {
 
 }

@@ -32,11 +32,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.datacleaner.beans.api.RendererPrecedence;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.LabelUtils;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;

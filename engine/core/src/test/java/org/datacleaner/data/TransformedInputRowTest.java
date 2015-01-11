@@ -27,6 +27,7 @@ import org.apache.metamodel.data.SimpleDataSetHeader;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableColumn;
+import org.datacleaner.api.InputColumn;
 
 public class TransformedInputRowTest extends TestCase {
 

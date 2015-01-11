@@ -27,13 +27,13 @@ import javax.inject.Named;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.result.NumberResult;
 
 @Named("Row-processing mock")

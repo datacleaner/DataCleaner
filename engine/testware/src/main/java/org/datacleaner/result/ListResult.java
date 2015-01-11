@@ -21,6 +21,8 @@ package org.datacleaner.result;
 
 import java.util.List;
 
+import org.datacleaner.api.AnalyzerResult;
+
 /**
  * A very simple AnalyzerResult that simply holds a list of values
  * 

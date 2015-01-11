@@ -22,7 +22,7 @@ package org.datacleaner.output;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.util.DateUtils;

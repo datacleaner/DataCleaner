@@ -19,8 +19,8 @@
  */
 package org.datacleaner.beans.script;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.util.ReflectionUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;

@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Initialize;
 
 /**
  * Descriptor for an initialize method. The most common way of registering an

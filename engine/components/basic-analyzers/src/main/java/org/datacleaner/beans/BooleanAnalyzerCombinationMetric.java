@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.beans.convert.ConvertToBooleanTransformer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;

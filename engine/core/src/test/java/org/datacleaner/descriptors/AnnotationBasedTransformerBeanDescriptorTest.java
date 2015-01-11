@@ -23,7 +23,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.OutputRowCollector;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.job.tasks.MockMultiRowTransformer;
 
 public class AnnotationBasedTransformerBeanDescriptorTest extends TestCase {

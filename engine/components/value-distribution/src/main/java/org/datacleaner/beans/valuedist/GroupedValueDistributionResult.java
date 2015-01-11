@@ -21,7 +21,7 @@ package org.datacleaner.beans.valuedist;
 
 import java.util.Collection;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;

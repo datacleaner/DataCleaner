@@ -28,14 +28,15 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.FileProperty;
-import org.datacleaner.beans.api.FileProperty.FileAccessMode;
-import org.datacleaner.beans.api.Provided;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.beans.writers.WriteDataCategory;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
@@ -47,7 +48,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.HasLabelAdvice;
 
 @Named("Create CSV file")
 @Alias("Write to CSV file")

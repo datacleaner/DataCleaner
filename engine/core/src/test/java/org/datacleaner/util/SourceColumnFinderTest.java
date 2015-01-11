@@ -23,10 +23,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.customcolumn.MockConvertToMonthObjectTransformer;
 import org.datacleaner.customcolumn.Month;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 

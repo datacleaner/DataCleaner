@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisJobFailedException;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.JobStatus;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * An analysis result which is errornous because of a single issue, typically

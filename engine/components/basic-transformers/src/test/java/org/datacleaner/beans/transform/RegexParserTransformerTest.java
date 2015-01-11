@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 

@@ -23,11 +23,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;

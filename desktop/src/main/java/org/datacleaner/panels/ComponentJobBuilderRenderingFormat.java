@@ -19,7 +19,7 @@
  */
 package org.datacleaner.panels;
 
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 
 /**

@@ -25,17 +25,17 @@ import javax.inject.Named;
 
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.NumberProperty;
-import org.datacleaner.beans.api.QueryOptimizedFilter;
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.NumberProperty;
+import org.datacleaner.api.QueryOptimizedFilter;
+import org.datacleaner.api.Validate;
 import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
-import org.datacleaner.util.HasLabelAdvice;
 
 @Named("Max rows")
 @Description("Sets a maximum number of rows to process.")

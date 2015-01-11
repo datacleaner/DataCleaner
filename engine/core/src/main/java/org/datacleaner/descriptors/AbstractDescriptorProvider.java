@@ -24,11 +24,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RenderingFormat;
+import org.datacleaner.api.Transformer;
 
 /**
  * Abstract descriptor provider implementation that implements most trivial

@@ -14,7 +14,7 @@ import org.datacleaner.result.SimpleAnalysisResult
 import org.datacleaner.job.ComponentJob
 import org.datacleaner.result.AnalysisResult
 import org.datacleaner.configuration.AnalyzerBeansConfiguration
-import org.datacleaner.result.AnalyzerResult
+import org.datacleaner.api.AnalyzerResult
 import org.datacleaner.job.ImmutableAnalyzerJob
 import org.apache.metamodel.util.FileHelper
 import java.io.File

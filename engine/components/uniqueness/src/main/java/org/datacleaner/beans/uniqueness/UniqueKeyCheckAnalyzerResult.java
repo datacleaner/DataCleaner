@@ -21,8 +21,8 @@ package org.datacleaner.beans.uniqueness;
 
 import java.util.Map;
 
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.Metric;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Metric;
 
 /**
  * {@link AnalyzerResult} class for {@link UniqueKeyCheckAnalyzer}.

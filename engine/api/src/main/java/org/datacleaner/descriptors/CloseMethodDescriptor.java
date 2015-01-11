@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Close;
+import org.datacleaner.api.Close;
 
 /**
  * Descriptor for a close method. The most common way of registering a close

@@ -22,8 +22,7 @@ package org.datacleaner.job;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.datacleaner.data.InputRow;
-import org.datacleaner.job.runner.FilterOutcomes;
+import org.datacleaner.api.InputRow;
 
 /**
  * Represents a requirement set on a {@link ComponentJob}, to only run it

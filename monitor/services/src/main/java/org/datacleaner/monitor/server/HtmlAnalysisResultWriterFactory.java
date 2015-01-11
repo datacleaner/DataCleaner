@@ -21,8 +21,8 @@ package org.datacleaner.monitor.server;
 
 import java.util.Map.Entry;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.html.BaseHeadElement;
 import org.datacleaner.result.html.FlotChartLocator;
 import org.datacleaner.result.html.HeadElement;

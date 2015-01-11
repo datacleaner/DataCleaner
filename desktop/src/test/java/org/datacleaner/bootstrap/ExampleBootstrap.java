@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.BooleanAnalyzer;
 import org.datacleaner.beans.DateAndTimeAnalyzer;
 import org.datacleaner.beans.NumberAnalyzer;
@@ -33,7 +34,6 @@ import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.util.ResourceManager;

@@ -27,15 +27,15 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.RendererBean;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.actions.SaveDataSetActionListener;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;

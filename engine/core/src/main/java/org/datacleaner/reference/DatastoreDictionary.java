@@ -27,14 +27,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Provided;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.Provided;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.schema.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -19,8 +19,8 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.result.Metric;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Metric;
 
 public abstract class AbstractMetricDescriptor implements MetricDescriptor {
 

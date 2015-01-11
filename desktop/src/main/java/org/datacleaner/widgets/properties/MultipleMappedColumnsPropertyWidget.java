@@ -36,7 +36,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.MutableRef;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.panels.DCPanel;

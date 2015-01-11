@@ -21,12 +21,12 @@ package org.datacleaner.descriptors;
 
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RenderingFormat;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.job.AnalysisJob;
 
 /**

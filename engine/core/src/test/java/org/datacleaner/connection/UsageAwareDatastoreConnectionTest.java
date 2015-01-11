@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.MutableRef;
 

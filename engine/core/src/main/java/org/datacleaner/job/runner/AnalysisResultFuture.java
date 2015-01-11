@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * Represents the result of an analysis. The analysis may still be running,

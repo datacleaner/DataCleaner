@@ -19,8 +19,8 @@
  */
 package org.datacleaner.output;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 
 /**
  * Represents a row that is being written to some output (typically a file or a database)

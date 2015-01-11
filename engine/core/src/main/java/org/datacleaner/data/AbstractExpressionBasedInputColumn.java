@@ -20,6 +20,7 @@
 package org.datacleaner.data;
 
 import org.apache.metamodel.schema.Column;
+import org.datacleaner.api.ExpressionBasedInputColumn;
 
 abstract class AbstractExpressionBasedInputColumn<E> extends AbstractInputColumn<E> implements ExpressionBasedInputColumn<E> {
 	

@@ -21,16 +21,17 @@ package org.datacleaner.sample;
 
 import java.util.Random;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.beans.categories.StringManipulationCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 
 /**
  * A sample transformer that appends a greeting to a name column's values.

@@ -21,7 +21,7 @@ package org.datacleaner.beans.transform;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.reference.SynonymCatalog;

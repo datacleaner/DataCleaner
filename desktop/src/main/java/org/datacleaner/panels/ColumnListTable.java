@@ -43,12 +43,12 @@ import javax.swing.table.TableModel;
 
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QueryActionListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;

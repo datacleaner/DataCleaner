@@ -22,8 +22,8 @@ package org.eobjects.analyzer.result;
 /**
  * Legacy {@link AnalyzerResult} interface.
  * 
- * @deprecated use {@link org.datacleaner.result.AnalyzerResult} instead.
+ * @deprecated use {@link org.datacleaner.api.AnalyzerResult} instead.
  */
-public interface AnalyzerResult extends org.datacleaner.result.AnalyzerResult {
+public interface AnalyzerResult extends org.datacleaner.api.AnalyzerResult {
 
 }

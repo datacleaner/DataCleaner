@@ -21,9 +21,9 @@ package org.datacleaner.beans.standardize;
 
 import java.util.Arrays;
 
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.beans.standardize.UrlStandardizerTransformer;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MockInputRow;
 
 import junit.framework.TestCase;

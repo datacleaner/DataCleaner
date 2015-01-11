@@ -21,8 +21,8 @@ package org.datacleaner.storage;
 
 import java.util.Map;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 
 /**
  * The RowAnnotationFactory represents a mechanism used to annotate/label rows

@@ -28,10 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.LabelUtils;

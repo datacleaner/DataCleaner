@@ -21,12 +21,12 @@ package org.datacleaner.beans;
 
 import java.util.Date;
 
-import org.datacleaner.beans.api.Description;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.beans.convert.ConvertToDateTransformer;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabResult;
-import org.datacleaner.result.Metric;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.categories;
 
-import org.datacleaner.beans.api.ComponentCategory;
+import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

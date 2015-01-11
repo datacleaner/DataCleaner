@@ -23,6 +23,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.datacleaner.api.HasLabelAdvice;
+
 import junit.framework.TestCase;
 
 public class LabelUtilsTest extends TestCase {

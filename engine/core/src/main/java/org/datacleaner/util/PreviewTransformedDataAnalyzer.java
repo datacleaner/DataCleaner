@@ -26,11 +26,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 
 /**
  * A dummy analyzer used by the Preview Data button (

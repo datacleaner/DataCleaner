@@ -19,11 +19,11 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

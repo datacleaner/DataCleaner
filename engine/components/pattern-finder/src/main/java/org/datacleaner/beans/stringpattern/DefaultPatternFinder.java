@@ -22,7 +22,7 @@ package org.datacleaner.beans.stringpattern;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;

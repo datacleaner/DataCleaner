@@ -21,7 +21,8 @@ package org.datacleaner.job.runner;
 
 import java.util.List;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.job.FilterOutcomes;
 
 /**
  * Result type of {@link ConsumeRowHandler}.

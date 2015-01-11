@@ -19,8 +19,8 @@
  */
 package org.datacleaner.util.convert;
 
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.Converter;
 
 @Convertable(MyConvertable.DefaultConverter.class)
 public class MyConvertable {

@@ -23,6 +23,6 @@ package org.eobjects.analyzer.data;
 /**
  * Legacy {@link InputColumn} interface
  */
-public interface InputColumn<E> extends org.datacleaner.data.InputColumn<E> {
+public interface InputColumn<E> extends org.datacleaner.api.InputColumn<E> {
 
 }

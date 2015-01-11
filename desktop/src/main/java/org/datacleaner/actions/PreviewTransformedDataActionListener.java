@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
@@ -41,7 +42,6 @@ import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;

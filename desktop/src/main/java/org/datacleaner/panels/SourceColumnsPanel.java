@@ -28,11 +28,11 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
 import org.datacleaner.util.IconUtils;

@@ -22,8 +22,8 @@ package org.datacleaner.beans.coalesce;
 import java.util.Arrays;
 import java.util.List;
 
-import org.datacleaner.beans.api.Convertable;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Convertable;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;

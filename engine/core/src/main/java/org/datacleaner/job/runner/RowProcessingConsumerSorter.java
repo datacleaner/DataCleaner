@@ -27,10 +27,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.data.ExpressionBasedInputColumn;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.ExpressionBasedInputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 

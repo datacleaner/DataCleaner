@@ -19,7 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 
 /**
  * Container class for metric parameters.

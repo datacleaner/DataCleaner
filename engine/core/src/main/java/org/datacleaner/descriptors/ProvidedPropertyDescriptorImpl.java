@@ -21,11 +21,10 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Field;
 
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.SchemaNavigator;
-
 import org.apache.metamodel.DataContext;
 
 final class ProvidedPropertyDescriptorImpl extends AbstractPropertyDescriptor implements ProvidedPropertyDescriptor {

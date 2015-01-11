@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.SingleValueFrequency;

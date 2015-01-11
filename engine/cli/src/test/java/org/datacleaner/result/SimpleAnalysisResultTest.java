@@ -25,6 +25,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 

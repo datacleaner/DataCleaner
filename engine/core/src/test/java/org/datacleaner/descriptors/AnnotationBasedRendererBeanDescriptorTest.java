@@ -21,11 +21,11 @@ package org.datacleaner.descriptors;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderable;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.result.renderer.ToStringTextRenderer;
-import org.datacleaner.result.renderer.Renderable;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.test.mock.MockRenderers.InvalidRenderer1;
 import org.datacleaner.test.mock.MockRenderers.InvalidRenderer2;

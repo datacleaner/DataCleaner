@@ -25,6 +25,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 
 public class SimpleAnalysisResultTest extends TestCase {

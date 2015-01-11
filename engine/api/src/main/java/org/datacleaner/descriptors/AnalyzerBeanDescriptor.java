@@ -19,7 +19,7 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
 
 /**
  * Descriptor interface for {@link Analyzer}s.

@@ -31,6 +31,8 @@ import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

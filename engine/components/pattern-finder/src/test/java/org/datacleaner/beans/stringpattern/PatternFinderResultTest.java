@@ -19,7 +19,7 @@
  */
 package org.datacleaner.beans.stringpattern;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.result.Crosstab;
 

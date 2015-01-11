@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.reference.SimpleStringPattern;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
-import org.datacleaner.result.Metric;
 import org.datacleaner.result.QueryParameterizableMetric;
 
 /**

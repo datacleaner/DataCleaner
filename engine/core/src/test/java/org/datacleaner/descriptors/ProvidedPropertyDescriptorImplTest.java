@@ -28,7 +28,7 @@ import javax.inject.Inject;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Provided;
+import org.datacleaner.api.Provided;
 
 public class ProvidedPropertyDescriptorImplTest extends TestCase {
 

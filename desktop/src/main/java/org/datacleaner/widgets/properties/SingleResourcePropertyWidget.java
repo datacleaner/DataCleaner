@@ -27,8 +27,8 @@ import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.beans.api.FileProperty;
-import org.datacleaner.beans.api.FileProperty.FileAccessMode;
+import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.util.StringUtils;

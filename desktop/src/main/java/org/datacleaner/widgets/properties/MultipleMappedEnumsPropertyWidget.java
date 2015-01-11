@@ -30,7 +30,7 @@ import javax.swing.JComponent;
 import javax.swing.ListCellRenderer;
 
 import org.apache.metamodel.util.LazyRef;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.panels.DCPanel;

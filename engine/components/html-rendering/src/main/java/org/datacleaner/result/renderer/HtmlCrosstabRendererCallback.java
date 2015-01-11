@@ -22,7 +22,7 @@ package org.datacleaner.result.renderer;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
 
-import org.datacleaner.result.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;

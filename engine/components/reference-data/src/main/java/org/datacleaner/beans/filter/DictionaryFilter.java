@@ -19,15 +19,16 @@
  */
 package org.datacleaner.beans.filter;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Filter;
 import javax.inject.Named;
+
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.reference.Dictionary;
 
 @Named("Validate in dictionary")

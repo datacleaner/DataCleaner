@@ -42,7 +42,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.AccessDatastoreType;
 import org.datacleaner.configuration.jaxb.BerkeleyDbStorageProviderType;

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.util.convert;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 
 public class NullConverter implements Converter<Object> {
 

@@ -32,8 +32,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;

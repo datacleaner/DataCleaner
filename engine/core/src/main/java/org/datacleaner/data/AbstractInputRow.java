@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.datacleaner.api.ExpressionBasedInputColumn;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+
 /**
  * Abstract implementation of the InputRow.
  */

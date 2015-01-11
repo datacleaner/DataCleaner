@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.IdGenerator;
 import org.datacleaner.util.InputColumnComparator;
 import org.apache.metamodel.schema.Column;

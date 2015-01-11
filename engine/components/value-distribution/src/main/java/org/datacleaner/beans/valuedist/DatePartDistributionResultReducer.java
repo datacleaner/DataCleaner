@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.result.AbstractCrosstabResultReducer;
-import org.datacleaner.result.AnalyzerResultReducer;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabResult;

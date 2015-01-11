@@ -21,9 +21,9 @@ package org.datacleaner.monitor.jobwizard.quickanalysis;
 
 import java.util.List;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage;

@@ -21,10 +21,12 @@ package org.datacleaner.beans.filter;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.query.Query;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.NullCheckFilter.EvaluationMode;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -32,8 +34,6 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.test.TestHelper;
-import org.datacleaner.util.SchemaNavigator;
-import org.apache.metamodel.query.Query;
 
 public class NullCheckFilterTest extends TestCase {
 

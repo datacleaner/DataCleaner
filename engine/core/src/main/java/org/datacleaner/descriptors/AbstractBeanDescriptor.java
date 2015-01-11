@@ -25,7 +25,7 @@ import java.util.TreeSet;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Alias;
+import org.datacleaner.api.Alias;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

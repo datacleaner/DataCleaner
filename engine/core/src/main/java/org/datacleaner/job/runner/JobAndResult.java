@@ -19,8 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalyzerResult;
 
 /**
  * Represents a reference to a component job (Typically AnalyzerJob) and it's

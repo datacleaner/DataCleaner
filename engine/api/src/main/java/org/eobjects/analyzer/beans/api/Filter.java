@@ -23,8 +23,8 @@ package org.eobjects.analyzer.beans.api;
 /**
  * Legacy {@link Filter} interface.
  * 
- * @deprecated use {@link org.datacleaner.beans.api.Filter} instead.
+ * @deprecated use {@link org.datacleaner.api.Filter} instead.
  */
 @Deprecated
-public interface Filter<C extends Enum<C>> extends org.datacleaner.beans.api.Filter<C> {
+public interface Filter<C extends Enum<C>> extends org.datacleaner.api.Filter<C> {
 }

@@ -21,8 +21,8 @@ package org.datacleaner.widgets.result;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.valuedist.SingleValueDistributionResult;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.result.SingleValueFrequency;
 import org.datacleaner.result.ValueCountListImpl;

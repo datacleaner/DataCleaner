@@ -24,11 +24,11 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.NoAnalyzerResultReducer;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
-import org.datacleaner.result.Metric;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.util.ReflectionUtils;
 
 /**

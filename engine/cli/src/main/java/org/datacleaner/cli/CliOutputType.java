@@ -19,7 +19,7 @@
  */
 package org.datacleaner.cli;
 
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.result.AnalysisResultWriter;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;

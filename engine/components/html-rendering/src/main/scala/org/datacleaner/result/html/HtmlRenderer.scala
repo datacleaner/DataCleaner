@@ -1,8 +1,8 @@
 package org.datacleaner.result.html
 
-import org.datacleaner.beans.api.Renderer
-import org.datacleaner.beans.api.RendererPrecedence
-import org.datacleaner.result.renderer.Renderable
+import org.datacleaner.api.Renderer
+import org.datacleaner.api.RendererPrecedence
+import org.datacleaner.api.Renderable
 import scala.xml.Node
 import scala.xml.Elem
 

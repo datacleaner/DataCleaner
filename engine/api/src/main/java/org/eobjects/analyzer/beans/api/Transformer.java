@@ -19,15 +19,15 @@
  */
 package org.eobjects.analyzer.beans.api;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 
 /**
  * Legacy {@link Transformer} interface.
  * 
- * @deprecated use {@link org.datacleaner.beans.api.Transformer} instead.
+ * @deprecated use {@link org.datacleaner.api.Transformer} instead.
  */
 @Deprecated
-public interface Transformer<E> extends org.datacleaner.beans.api.Transformer {
+public interface Transformer<E> extends org.datacleaner.api.Transformer {
 
     @Override
     public E[] transform(InputRow inputRow);

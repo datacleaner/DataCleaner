@@ -21,7 +21,7 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Method;
 
-import org.datacleaner.beans.api.Close;
+import org.datacleaner.api.Close;
 
 final class InitializeMethodDescriptorImpl extends AbstractMethodDescriptor implements InitializeMethodDescriptor {
 

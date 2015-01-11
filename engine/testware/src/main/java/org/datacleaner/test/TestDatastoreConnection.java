@@ -20,8 +20,8 @@
 package org.datacleaner.test;
 
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.UpdateableDataContext;

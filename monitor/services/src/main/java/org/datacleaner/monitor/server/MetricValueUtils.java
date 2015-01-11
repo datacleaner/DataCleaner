@@ -29,7 +29,8 @@ import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor;
@@ -41,7 +42,6 @@ import org.datacleaner.job.AnalyzerJobHelper;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.events;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;

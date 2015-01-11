@@ -19,8 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.OutputRowCollector;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputRowCollector;
 
 /**
  * Interface for components that generate {@link InputRow} id's. These should be

@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.metamodel.util.HasName;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;

@@ -27,14 +27,14 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.datacleaner.beans.api.Description;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Metric;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.CrosstabResult;
-import org.datacleaner.result.Metric;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;

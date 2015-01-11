@@ -23,12 +23,12 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map.Entry;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.AnalysisResultWriter;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.util.LabelUtils;

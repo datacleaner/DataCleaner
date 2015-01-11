@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.NullCheckFilter.NullCheckCategory;
 import org.datacleaner.beans.transform.TableLookupTransformer;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;

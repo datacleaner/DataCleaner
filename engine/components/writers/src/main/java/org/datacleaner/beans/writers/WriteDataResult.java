@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans.writers;
 
-import org.datacleaner.beans.api.Distributed;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.Metric;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.Metric;
 import org.apache.metamodel.schema.Table;
 
 /**

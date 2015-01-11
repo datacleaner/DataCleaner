@@ -22,9 +22,9 @@ package org.datacleaner.panels.datastructures;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.datastructures.BuildMapTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerBeanDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;

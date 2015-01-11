@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.OutputWriter;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;

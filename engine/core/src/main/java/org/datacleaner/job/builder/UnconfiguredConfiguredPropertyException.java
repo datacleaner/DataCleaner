@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.builder;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 
 /**

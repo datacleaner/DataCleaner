@@ -26,10 +26,10 @@ import javax.inject.Named;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

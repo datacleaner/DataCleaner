@@ -21,10 +21,10 @@ package org.datacleaner.lifecycle;
 
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;

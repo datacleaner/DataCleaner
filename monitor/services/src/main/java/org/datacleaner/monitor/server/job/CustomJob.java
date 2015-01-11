@@ -23,8 +23,8 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Initialize;
 
 /**
  * Interface for jobs that can be run and scheduled in DataCleaner using the

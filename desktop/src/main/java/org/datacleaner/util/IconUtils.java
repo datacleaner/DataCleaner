@@ -28,7 +28,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.apache.metamodel.schema.Column;
-import org.datacleaner.beans.api.ComponentCategory;
+import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CompositeDatastore;
@@ -47,7 +48,6 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterBeanDescriptor;

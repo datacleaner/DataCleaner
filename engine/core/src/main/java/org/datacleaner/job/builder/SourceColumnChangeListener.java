@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job.builder;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 
 /**
  * Listener interface for receiving notifications when source columns are being

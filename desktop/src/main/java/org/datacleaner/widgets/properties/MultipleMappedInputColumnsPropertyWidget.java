@@ -33,7 +33,7 @@ import javax.swing.JComponent;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;

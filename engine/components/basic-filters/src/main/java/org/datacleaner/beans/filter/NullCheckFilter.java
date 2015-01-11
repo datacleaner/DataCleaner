@@ -22,23 +22,24 @@ package org.datacleaner.beans.filter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
 import javax.inject.Named;
-import org.datacleaner.beans.api.QueryOptimizedFilter;
-import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
-import org.datacleaner.util.HasLabelAdvice;
+
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.QueryOptimizedFilter;
+import org.datacleaner.beans.categories.FilterCategory;
 
 @Named("Null check")
 @Alias("Not null")

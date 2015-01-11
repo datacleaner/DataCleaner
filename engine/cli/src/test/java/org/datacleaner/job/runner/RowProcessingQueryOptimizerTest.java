@@ -24,10 +24,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.beans.StringAnalyzer;
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.Transformer;
 import org.datacleaner.beans.filter.MaxRowsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.NullCheckFilter.NullCheckCategory;
@@ -39,7 +40,6 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.FilterBeanDescriptor;

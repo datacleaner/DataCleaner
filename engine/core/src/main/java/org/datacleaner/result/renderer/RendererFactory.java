@@ -21,9 +21,10 @@ package org.datacleaner.result.renderer;
 
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererPrecedence;
-import org.datacleaner.beans.api.RenderingFormat;
+import org.datacleaner.api.Renderable;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererPrecedence;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.RendererBeanDescriptor;

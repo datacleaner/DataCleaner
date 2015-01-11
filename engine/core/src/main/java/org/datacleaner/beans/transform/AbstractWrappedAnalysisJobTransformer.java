@@ -26,15 +26,15 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Close;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.OutputRowCollector;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Close;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.ConsumeRowHandler;

@@ -27,9 +27,9 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
-import org.datacleaner.beans.api.ParameterizableMetric;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.Metric;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Metric;
+import org.datacleaner.api.ParameterizableMetric;
 import org.datacleaner.util.NullTolerableComparator;
 
 public class DateGapAnalyzerResult implements AnalyzerResult {

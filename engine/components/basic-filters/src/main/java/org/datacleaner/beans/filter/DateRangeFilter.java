@@ -21,12 +21,13 @@ package org.datacleaner.beans.filter;
 
 import java.util.Date;
 
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
 import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.categories.FilterCategory;
-import org.datacleaner.data.InputColumn;
 
 @Named("Date range")
 @Description("A filter that filters out rows where a number value is outside a specified range")

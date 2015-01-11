@@ -31,12 +31,12 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.beans.api.Analyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;

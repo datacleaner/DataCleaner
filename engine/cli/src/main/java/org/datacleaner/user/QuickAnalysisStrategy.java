@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.BooleanAnalyzer;
 import org.datacleaner.beans.DateAndTimeAnalyzer;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
-import org.datacleaner.beans.api.Analyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.util.ReflectionUtils;

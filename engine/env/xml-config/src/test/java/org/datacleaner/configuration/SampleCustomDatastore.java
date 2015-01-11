@@ -21,7 +21,7 @@ package org.datacleaner.configuration;
 
 import java.io.File;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreConnectionImpl;

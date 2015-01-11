@@ -22,10 +22,8 @@ package org.datacleaner.connection;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.datacleaner.util.SchemaNavigator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.apache.metamodel.DataContext;
 
 public class DatastoreConnectionImpl<E extends DataContext> extends UsageAwareDatastoreConnection<E> {

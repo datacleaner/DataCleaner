@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.datacleaner.beans.api.Transformer;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.descriptors.TransformerBeanDescriptor;
 
 /**

@@ -19,8 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.beans.api.ComponentMessage;
-import org.datacleaner.beans.api.ExecutionLogMessage;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.ExecutionLogMessage;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.util.LabelUtils;

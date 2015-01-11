@@ -21,14 +21,14 @@ package org.datacleaner.beans.filter;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
 
 public class EqualsFilterTest extends TestCase {
     

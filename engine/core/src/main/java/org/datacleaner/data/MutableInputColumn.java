@@ -19,6 +19,8 @@
  */
 package org.datacleaner.data;
 
+import org.datacleaner.api.InputColumn;
+
 /**
  * Represents a column that is mutable (editable by the user).
  * 

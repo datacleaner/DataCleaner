@@ -22,7 +22,7 @@ package org.datacleaner.result.renderer;
 import java.text.NumberFormat;
 import java.util.List;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabResult;

@@ -24,7 +24,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;

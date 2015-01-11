@@ -26,7 +26,7 @@ import static org.datacleaner.util.ReflectionUtils.isTable;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;

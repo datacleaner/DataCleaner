@@ -24,10 +24,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ConfigurableBeanJob;

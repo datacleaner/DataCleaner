@@ -21,7 +21,7 @@ package org.datacleaner.beans.writers;
 
 import java.util.Collection;
 
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.AnalyzerResultReducer;
 
 /**
  * Reducer class for {@link WriteDataResult}s.

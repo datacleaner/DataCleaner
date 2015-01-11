@@ -31,7 +31,7 @@ import java.util.Set;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;

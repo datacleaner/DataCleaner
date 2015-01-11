@@ -22,7 +22,7 @@ package org.datacleaner.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceValues;

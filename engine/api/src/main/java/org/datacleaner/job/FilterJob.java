@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.datacleaner.beans.api.Filter;
+import org.datacleaner.api.Filter;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 
 /**

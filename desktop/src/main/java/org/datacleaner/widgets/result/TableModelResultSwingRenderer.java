@@ -22,7 +22,7 @@ package org.datacleaner.widgets.result;
 import javax.swing.JComponent;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.result.TableModelResult;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;

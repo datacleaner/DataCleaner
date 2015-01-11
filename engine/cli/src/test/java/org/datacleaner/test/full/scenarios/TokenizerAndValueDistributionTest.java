@@ -25,6 +25,8 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
@@ -32,7 +34,6 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -43,7 +44,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.test.TestHelper;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;

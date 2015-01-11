@@ -19,7 +19,7 @@
  */
 package org.datacleaner.result.renderer;
 
-import org.datacleaner.beans.api.Renderer;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
 
 /**

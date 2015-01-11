@@ -29,6 +29,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.cluster.ClusterTestHelper;
@@ -38,7 +39,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
-import org.datacleaner.result.AnalyzerResult;
 
 public class SimpleMainAppForManualTesting {
 

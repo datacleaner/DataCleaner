@@ -29,9 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.ColumnProperty;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ColumnProperty;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;

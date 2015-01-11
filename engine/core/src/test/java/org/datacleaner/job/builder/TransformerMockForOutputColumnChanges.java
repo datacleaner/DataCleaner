@@ -21,8 +21,8 @@ package org.datacleaner.job.builder;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.OutputColumns;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.OutputColumns;
 import org.datacleaner.test.MockTransformer;
 
 @Named("TransformerMockForOutputColumnChanges")

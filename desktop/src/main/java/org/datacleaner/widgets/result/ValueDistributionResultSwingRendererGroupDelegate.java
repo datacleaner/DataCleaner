@@ -39,12 +39,12 @@ import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.LabelUtils;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;

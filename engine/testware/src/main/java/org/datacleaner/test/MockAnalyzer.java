@@ -24,12 +24,13 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.datacleaner.beans.api.Analyzer;
 import javax.inject.Named;
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.result.ListResult;
 
 @Named("Mock analyzer")

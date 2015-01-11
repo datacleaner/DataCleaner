@@ -19,7 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.job.FilterOutcomes;
 
 /**
  * Defines a callback for {@link RowProcessingConsumer}s to request a

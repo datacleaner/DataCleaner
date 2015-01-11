@@ -19,7 +19,7 @@
  */
 package org.datacleaner.job;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.BeanDescriptor;
 
 /**

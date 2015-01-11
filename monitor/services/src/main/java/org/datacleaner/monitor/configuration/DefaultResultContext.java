@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.descriptors.PlaceholderComponentJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.DataSetResult;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.result.NumberResult;

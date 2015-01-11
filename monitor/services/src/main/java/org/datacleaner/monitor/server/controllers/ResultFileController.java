@@ -31,10 +31,10 @@ import java.util.Map.Entry;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;

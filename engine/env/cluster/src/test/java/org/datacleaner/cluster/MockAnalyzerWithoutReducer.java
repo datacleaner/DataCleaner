@@ -24,10 +24,10 @@ import java.util.List;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.result.ListResult;
 
 @Named("Analyzer without reducer")

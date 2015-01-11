@@ -38,7 +38,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.datacleaner.beans.api.RendererBean;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -47,6 +46,7 @@ import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.panels.DCPanel;

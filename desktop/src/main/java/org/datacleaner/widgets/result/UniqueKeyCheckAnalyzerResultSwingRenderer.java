@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 
-import org.datacleaner.beans.api.RendererBean;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.uniqueness.UniqueKeyCheckAnalyzerResult;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;

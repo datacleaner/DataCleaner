@@ -21,6 +21,8 @@ package org.datacleaner.result;
 
 import java.io.Serializable;
 
+import org.datacleaner.api.AnalyzerResult;
+
 /**
  * Default result producer implementation
  */

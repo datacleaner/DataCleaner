@@ -19,12 +19,13 @@
  */
 package org.datacleaner.cluster;
 
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.OutputColumns;
-import org.datacleaner.beans.api.Transformer;
 import javax.inject.Named;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 
 /**
  * Dummy transformer that will throw an exception. Used only for testing.

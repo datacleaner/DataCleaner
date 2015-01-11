@@ -22,7 +22,7 @@ package org.datacleaner.descriptors;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Filter;
+import org.datacleaner.api.Filter;
 
 /**
  * Descriptor interface for {@link Filter}s.

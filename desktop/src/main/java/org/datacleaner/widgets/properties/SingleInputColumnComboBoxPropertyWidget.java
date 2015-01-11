@@ -27,7 +27,7 @@ import java.util.Vector;
 import javax.inject.Inject;
 import javax.swing.DefaultComboBoxModel;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;

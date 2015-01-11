@@ -22,7 +22,8 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.job.FilterOutcomes;
 
 /**
  * Delegate execution object for {@link ConsumeRowHandler}. Contains state

@@ -27,17 +27,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Concurrent;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Initialize;
-import org.datacleaner.beans.api.Provided;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.datacleaner.util.HasLabelAdvice;
 import org.datacleaner.util.StringUtils;
 
 @Named("Value matcher")

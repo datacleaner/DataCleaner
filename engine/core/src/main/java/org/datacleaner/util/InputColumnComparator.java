@@ -22,9 +22,8 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.TransformedInputColumn;
-
 import org.apache.metamodel.schema.Column;
 
 /**

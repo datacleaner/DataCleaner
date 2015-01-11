@@ -21,6 +21,8 @@ package org.datacleaner.result;
 
 import javax.swing.table.TableModel;
 
+import org.datacleaner.api.AnalyzerResult;
+
 /**
  * Interface for all AnalyzerResults that can be represented/visualized as a
  * {@link TableModel}.

@@ -22,7 +22,7 @@ package org.datacleaner.util.convert;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.datacleaner.beans.api.Converter;
+import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.SimpleInjectionPoint;
 import org.slf4j.Logger;

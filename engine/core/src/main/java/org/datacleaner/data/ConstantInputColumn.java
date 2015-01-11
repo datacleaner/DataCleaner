@@ -19,6 +19,8 @@
  */
 package org.datacleaner.data;
 
+import org.datacleaner.api.InputRow;
+
 /**
  * Defines an InputColumn which has a fixed/constant value, regardless of the
  * row.

@@ -24,14 +24,15 @@ import java.io.File;
 import javax.inject.Named;
 
 import org.apache.metamodel.util.FileResource;
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Categorized;
-import org.datacleaner.beans.api.Configured;
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.FileProperty;
-import org.datacleaner.beans.api.FileProperty.FileAccessMode;
-import org.datacleaner.beans.api.Validate;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Validate;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.beans.writers.WriteDataCategory;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
@@ -42,7 +43,6 @@ import org.datacleaner.descriptors.TransformerBeanDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.excel.ExcelOutputWriterFactory;
-import org.datacleaner.util.HasLabelAdvice;
 
 @Named("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")

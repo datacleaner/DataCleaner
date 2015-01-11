@@ -24,13 +24,13 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.UpdateableDatastore;
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;

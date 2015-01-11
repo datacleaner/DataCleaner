@@ -21,9 +21,9 @@ package org.datacleaner.cluster;
 
 import java.util.Collection;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.result.AnalyzerResult;
-import org.datacleaner.result.AnalyzerResultReducer;
 
 /**
  * Exception raised when performing the reduction by a

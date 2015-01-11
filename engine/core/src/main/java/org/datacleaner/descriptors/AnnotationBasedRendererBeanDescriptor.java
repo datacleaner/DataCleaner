@@ -21,10 +21,10 @@ package org.datacleaner.descriptors;
 
 import java.lang.reflect.Modifier;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.result.renderer.Renderable;
+import org.datacleaner.api.Renderable;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -25,8 +25,8 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;

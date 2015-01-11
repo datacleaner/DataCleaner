@@ -21,7 +21,7 @@ package org.datacleaner.job;
 
 import java.io.Serializable;
 
-import org.datacleaner.beans.api.Filter;
+import org.datacleaner.api.Filter;
 
 /**
  * Represents an outcome of a {@link Filter}.

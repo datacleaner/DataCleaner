@@ -29,10 +29,10 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.result.AnalyzerResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;

@@ -21,7 +21,7 @@ package org.datacleaner.cluster;
 
 import java.util.Collection;
 
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.result.ListResult;
 
 /**

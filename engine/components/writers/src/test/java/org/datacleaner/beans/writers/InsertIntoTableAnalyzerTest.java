@@ -26,7 +26,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
-import org.datacleaner.beans.api.ComponentContext;
+import org.datacleaner.api.ComponentContext;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
@@ -36,7 +37,6 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;

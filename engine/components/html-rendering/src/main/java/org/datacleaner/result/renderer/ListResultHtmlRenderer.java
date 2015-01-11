@@ -24,10 +24,10 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.beans.api.Description;
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RendererPrecedence;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.html.SimpleHtmlFragment;

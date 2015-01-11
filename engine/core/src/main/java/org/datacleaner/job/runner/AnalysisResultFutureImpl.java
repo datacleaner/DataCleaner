@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.concurrent.StatusAwareTaskListener;
 import org.datacleaner.result.AbstractAnalysisResult;
-import org.datacleaner.result.AnalyzerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

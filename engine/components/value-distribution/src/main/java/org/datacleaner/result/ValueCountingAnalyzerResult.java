@@ -21,6 +21,8 @@ package org.datacleaner.result;
 
 import java.util.Collection;
 
+import org.datacleaner.api.AnalyzerResult;
+
 /**
  * Interface for analyzer results that generally work as "value counters". Such
  * results have counted the occurrence of certain values, as well as some

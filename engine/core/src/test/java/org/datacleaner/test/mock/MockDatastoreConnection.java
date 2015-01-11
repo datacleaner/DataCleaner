@@ -21,7 +21,7 @@ package org.datacleaner.test.mock;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.util.SchemaNavigator;
+import org.datacleaner.connection.SchemaNavigator;
 import org.apache.metamodel.DataContext;
 
 public final class MockDatastoreConnection implements DatastoreConnection {

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.result;
 
+import org.datacleaner.api.AnalyzerResult;
+
 import junit.framework.TestCase;
 
 public class DefaultResultProducerTest extends TestCase {

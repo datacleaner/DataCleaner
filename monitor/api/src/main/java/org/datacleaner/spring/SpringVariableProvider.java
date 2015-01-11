@@ -26,7 +26,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.datacleaner.beans.api.Provided;
+import org.datacleaner.api.Provided;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.scheduling.api.VariableProvider;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;

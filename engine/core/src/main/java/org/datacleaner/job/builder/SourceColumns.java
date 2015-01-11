@@ -22,7 +22,7 @@ package org.datacleaner.job.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.datacleaner.data.InputColumn;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.InputColumnSourceJob;
 
 public final class SourceColumns implements InputColumnSourceJob {

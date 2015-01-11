@@ -21,7 +21,6 @@ package org.datacleaner.connection;
 
 import java.io.Closeable;
 
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.DataContext;
 
 /**

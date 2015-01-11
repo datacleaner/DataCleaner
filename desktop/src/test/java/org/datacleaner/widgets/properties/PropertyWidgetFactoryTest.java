@@ -24,11 +24,11 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.ExcelDatastore;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.Descriptors;

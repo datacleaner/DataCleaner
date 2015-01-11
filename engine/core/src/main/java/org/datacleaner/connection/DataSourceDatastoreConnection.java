@@ -21,7 +21,6 @@ package org.datacleaner.connection;
 
 import javax.sql.DataSource;
 
-import org.datacleaner.util.SchemaNavigator;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.jdbc.JdbcDataContext;
 import org.apache.metamodel.schema.TableType;

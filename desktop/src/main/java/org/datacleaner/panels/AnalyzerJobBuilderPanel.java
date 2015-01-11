@@ -21,7 +21,7 @@ package org.datacleaner.panels;
 
 import java.awt.Image;
 
-import org.datacleaner.beans.api.Analyzer;
+import org.datacleaner.api.Analyzer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;

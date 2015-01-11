@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.FilterOutcomes;
 
 /**
  * Default implementation of {@link FilterOutcomes}

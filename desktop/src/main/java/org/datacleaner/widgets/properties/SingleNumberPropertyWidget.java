@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.beans.api.NumberProperty;
+import org.datacleaner.api.NumberProperty;
 import org.datacleaner.beans.convert.ConvertToNumberTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;

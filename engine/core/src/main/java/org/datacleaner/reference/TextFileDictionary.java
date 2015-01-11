@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Initialize;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.filemonitor.FileMonitor;
 import org.datacleaner.util.filemonitor.FileMonitorFactory;

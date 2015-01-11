@@ -19,10 +19,10 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Analyzer;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.NoAnalyzerResultReducer;
-import org.datacleaner.result.AnalyzerResultReducer;
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedAnalyzerBeanDescriptor<A extends Analyzer<?>> extends

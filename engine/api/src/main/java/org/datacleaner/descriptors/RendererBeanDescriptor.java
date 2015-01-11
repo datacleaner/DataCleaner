@@ -19,10 +19,10 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.beans.api.Renderer;
-import org.datacleaner.beans.api.RendererBean;
-import org.datacleaner.beans.api.RenderingFormat;
-import org.datacleaner.result.renderer.Renderable;
+import org.datacleaner.api.Renderable;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RenderingFormat;
 
 /**
  * Defines an abstract descriptor for renderer beans.

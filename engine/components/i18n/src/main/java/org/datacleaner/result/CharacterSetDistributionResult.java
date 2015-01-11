@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CharacterSetDistributionAnalyzer;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.data.InputColumn;
 
 /**
  * Represents the result of a {@link CharacterSetDistributionAnalyzer} analyzer

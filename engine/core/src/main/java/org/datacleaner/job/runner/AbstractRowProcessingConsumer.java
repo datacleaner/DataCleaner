@@ -23,12 +23,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.datacleaner.data.InputColumn;
-import org.datacleaner.data.InputRow;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.util.SourceColumnFinder;

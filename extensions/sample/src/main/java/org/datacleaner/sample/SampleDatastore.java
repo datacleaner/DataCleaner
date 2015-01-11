@@ -19,7 +19,7 @@
  */
 package org.datacleaner.sample;
 
-import org.datacleaner.beans.api.Configured;
+import org.datacleaner.api.Configured;
 import org.datacleaner.connection.DatastoreConnectionImpl;
 import org.datacleaner.connection.PerformanceCharacteristics;
 import org.datacleaner.connection.PerformanceCharacteristicsImpl;

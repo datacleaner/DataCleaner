@@ -33,8 +33,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.coalesce.CoalesceUnit;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;

@@ -23,10 +23,10 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.datacleaner.beans.api.Alias;
-import org.datacleaner.beans.api.Distributed;
-import org.datacleaner.beans.api.Filter;
-import org.datacleaner.beans.api.QueryOptimizedFilter;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedFilterBeanDescriptor<F extends Filter<C>, C extends Enum<C>> extends

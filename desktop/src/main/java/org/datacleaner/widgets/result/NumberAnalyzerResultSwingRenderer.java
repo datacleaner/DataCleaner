@@ -23,13 +23,13 @@ import java.awt.BasicStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.NumberAnalyzerResult;
-import org.datacleaner.beans.api.RendererBean;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.data.InputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;

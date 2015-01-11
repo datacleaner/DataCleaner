@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import org.apache.metamodel.util.Action;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.pentaho.JaxbPentahoJobTypeAdaptor;
 import org.datacleaner.monitor.pentaho.PentahoCarteClient;
@@ -37,7 +38,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.job.AbstractJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
 
 /**
  * Wizard session for creating Pentaho jobs

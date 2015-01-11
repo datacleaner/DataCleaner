@@ -1,13 +1,12 @@
 package org.datacleaner.visualization
 
 import org.datacleaner.beans.api.Analyzer
-import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.beans.api.Configured
 import org.datacleaner.beans.api.Provided
 import org.datacleaner.data.InputColumn
 import org.datacleaner.data.InputRow
 import javax.inject.Inject
-import org.datacleaner.beans.api.AnalyzerBean
+import javax.inject.Named
 import org.datacleaner.beans.api.Configured
 import org.datacleaner.beans.api.Provided
 import org.datacleaner.storage.RowAnnotationFactory

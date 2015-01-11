@@ -2,7 +2,6 @@ package org.datacleaner.visualization
 
 import java.lang.Number
 
-import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.beans.api.Categorized
 import org.datacleaner.beans.api.Description
 import org.datacleaner.beans.api.Initialize

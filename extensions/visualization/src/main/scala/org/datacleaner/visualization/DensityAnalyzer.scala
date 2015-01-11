@@ -6,6 +6,7 @@ import org.datacleaner.beans.api.Configured
 import org.datacleaner.beans.api.Categorized
 import org.datacleaner.beans.api.Description
 import javax.inject.Inject
+import javax.inject.Named
 import scala.collection.mutable.Map
 import org.datacleaner.storage.RowAnnotationFactory
 import org.datacleaner.storage.RowAnnotation

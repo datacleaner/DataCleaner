@@ -2,7 +2,6 @@ package org.datacleaner.visualization
 
 import java.io.File
 import scala.collection.JavaConversions.mapAsJavaMap
-import org.datacleaner.beans.api.AnalyzerBean
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow

@@ -46,11 +46,11 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
         
         transformerBeanDescriptors = provider.getTransformerBeanDescriptors();
-        assertEquals(27, transformerBeanDescriptors.size());
+        assertEquals(23, transformerBeanDescriptors.size());
 
         transformerBeanDescriptors = new TreeSet<>(transformerBeanDescriptors);
         
-        assertEquals("org.datacleaner.beans.coalesce.CoalesceDatesTransformer", transformerBeanDescriptors
+        assertEquals("org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer", transformerBeanDescriptors
                 .iterator().next().getComponentClass().getName());
     }
 
@@ -109,7 +109,7 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(0, provider.getTransformerBeanDescriptors().size());
 
         provider = provider.scanPackage("org.datacleaner", true, classLoader, true);
-        assertEquals(27, provider.getTransformerBeanDescriptors().size());
+        assertEquals(23, provider.getTransformerBeanDescriptors().size());
 
         boolean foundXmlDecoderTransformer = false;
         for (TransformerBeanDescriptor<?> transformerBeanDescriptor : provider.getTransformerBeanDescriptors()) {

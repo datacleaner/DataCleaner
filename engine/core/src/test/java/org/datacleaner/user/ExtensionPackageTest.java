@@ -41,7 +41,7 @@ public class ExtensionPackageTest extends TestCase {
 
         assertTrue(extensionPackage.isLoaded());
         assertEquals(0, extensionPackage.getLoadedAnalyzers());
-        assertEquals(27, extensionPackage.getLoadedTransformers());
+        assertEquals(23, extensionPackage.getLoadedTransformers());
         assertEquals(0, extensionPackage.getLoadedFilters());
     }
 }

@@ -213,10 +213,6 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
         final String originalClassName = resultClassDescriptor.getName();
 
-        if (originalClassName.indexOf("InputColumn") != -1) {
-            System.out.println("!§!!"); // TODO
-        }
-
         final String className = getClassNameRenamed(originalClassName);
         if (className != originalClassName) {
             return getClassDescriptor(className, false, resultClassDescriptor);

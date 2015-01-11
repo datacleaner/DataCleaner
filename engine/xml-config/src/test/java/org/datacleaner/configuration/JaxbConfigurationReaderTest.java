@@ -348,8 +348,14 @@ public class JaxbConfigurationReaderTest extends TestCase {
                     && !"my hbase".equals(name) && !"my_sfdc_ds".equals(name) && !"my_sugarcrm".equals(name)
                     && !"my es index".equals(name)) {
                 Datastore datastore = datastoreCatalog.getDatastore(name);
-                DataContext dc = datastore.openConnection().getDataContext();
-                assertNotNull(dc);
+                DataContext dc;
+                try {
+                    DatastoreConnection connection = datastore.openConnection();
+                    dc = connection.getDataContext();
+                    assertNotNull(dc);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Failed to read from datastore: " + name, e);
+                }
             }
         }
 

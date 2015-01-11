@@ -8,7 +8,7 @@
 
 	<datastore-catalog>
 		<jdbc-datastore name="my_jdbc_connection" description="jdbc_con">
-			<url>jdbc:hsqldb:file:../../clie/examples/orderdb;readonly=true</url>
+			<url>jdbc:hsqldb:file:../../desktop/src/test/resources/cli-examples/orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
@@ -111,7 +111,7 @@
 		</fixed-width-datastore>
 
 		<fixed-width-datastore name="my_fixed_width_2">
-			<filename>../../core/src/test/resources/employees-fixed-width-variable-columns.txt</filename>
+			<filename>../core/src/test/resources/employees-fixed-width-variable-columns.txt</filename>
 			<width-specification>
 				<value-width>4</value-width>
 				<value-width>17</value-width>

@@ -202,5 +202,12 @@
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

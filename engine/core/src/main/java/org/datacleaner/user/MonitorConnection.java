@@ -26,12 +26,12 @@ import java.net.URISyntaxException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.CASMonitorHttpClient;
-import org.datacleaner.util.HttpBasicMonitorHttpClient;
-import org.datacleaner.util.MonitorHttpClient;
 import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.SystemProperties;
-import org.datacleaner.util.SimpleWebServiceHttpClient;
+import org.datacleaner.util.http.CASMonitorHttpClient;
+import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
+import org.datacleaner.util.http.MonitorHttpClient;
+import org.datacleaner.util.http.SimpleWebServiceHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

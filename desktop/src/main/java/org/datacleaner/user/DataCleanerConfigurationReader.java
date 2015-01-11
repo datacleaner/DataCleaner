@@ -37,6 +37,7 @@ import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.storage.InMemoryStorageProvider;
+import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.ResourceManager;

@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.datacleaner.classloader.ClassLoaderUtils;
+import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 
 import junit.framework.TestCase;

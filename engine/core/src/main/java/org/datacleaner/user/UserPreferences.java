@@ -27,6 +27,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.UserDatabaseDriver;
+import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;

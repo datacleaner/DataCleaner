@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.user;
+package org.datacleaner.extensions;
 
 import java.io.File;
 import java.io.Serializable;
@@ -30,9 +30,6 @@ import java.util.Map;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.classloader.ClassLoaderUtils;
-import org.datacleaner.classloader.ExtensionClassLoader;
-import org.datacleaner.classloader.CompoundClassLoader;
 import org.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

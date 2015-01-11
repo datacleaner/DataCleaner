@@ -32,7 +32,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.classloader.ClassLoaderUtils;
+import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.Version;

@@ -23,8 +23,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.user.ExtensionPackage;
-
 import junit.framework.TestCase;
 
 public class ExtensionReaderTest extends TestCase {

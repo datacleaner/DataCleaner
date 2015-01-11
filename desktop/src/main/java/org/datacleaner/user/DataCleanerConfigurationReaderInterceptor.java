@@ -26,6 +26,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
+import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.FileHelper;

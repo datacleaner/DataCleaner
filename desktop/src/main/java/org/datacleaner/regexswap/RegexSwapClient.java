@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.client.HttpClient;
-import org.datacleaner.util.HttpXmlUtils;
+import org.datacleaner.util.http.HttpXmlUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

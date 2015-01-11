@@ -33,7 +33,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.datacleaner.bootstrap.Bootstrap;
 import org.datacleaner.bootstrap.BootstrapOptions;
 import org.datacleaner.bootstrap.DefaultBootstrapOptions;
-import org.datacleaner.classloader.ClassLoaderUtils;
+import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.user.DataCleanerHome;
 
 /**

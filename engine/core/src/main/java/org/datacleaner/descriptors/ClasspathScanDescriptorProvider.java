@@ -51,7 +51,7 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.classloader.ClassLoaderUtils;
+import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;

@@ -16,12 +16,15 @@
  * Inc. 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
  * 
  */
-package org.datacleaner.classloader;
+package org.datacleaner.extensions;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.datacleaner.extensions.ClassLoaderUtils;
+import org.datacleaner.extensions.CompoundClassLoader;
+import org.datacleaner.extensions.ExtensionClassLoader;
 import org.junit.Assert;
 import org.junit.Test;
 

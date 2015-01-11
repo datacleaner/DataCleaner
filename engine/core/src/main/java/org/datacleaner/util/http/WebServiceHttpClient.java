@@ -17,39 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
+package org.datacleaner.util.http;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 
 /**
- * Represents an exception occurring because a HTTP response was invalid
- * (typically based on status code).
+ * Defines a HTTP client for external web service connectivity over HTTP.
  */
-public class InvalidHttpResponseException extends RuntimeException {
+public interface WebServiceHttpClient {
 
-	private static final long serialVersionUID = 1L;
-	private final HttpResponse _response;
-	private final String _url;
-
-	public InvalidHttpResponseException(String url, HttpResponse response) {
-		_response = response;
-		_url = url;
-	}
-
-	@Override
-	public String getMessage() {
-		return "Invalid HTTP response status code: " + getStatusCode() + " (" + _url + ")";
-	}
-
-	public String getUrl() {
-		return _url;
-	}
-
-	public HttpResponse getResponse() {
-		return _response;
-	}
-
-	public int getStatusCode() {
-		return _response.getStatusLine().getStatusCode();
-	}
+    public HttpResponse execute(HttpUriRequest request) throws Exception;
 }

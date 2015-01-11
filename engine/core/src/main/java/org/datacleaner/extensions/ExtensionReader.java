@@ -35,10 +35,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.user.ExtensionPackage;
 import org.datacleaner.util.FileFilters;
-import org.datacleaner.util.HttpXmlUtils;
 import org.datacleaner.util.ResourceManager;
+import org.datacleaner.util.http.HttpXmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

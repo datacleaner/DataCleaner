@@ -36,8 +36,8 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
-import org.datacleaner.user.ExtensionPackage;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.IconUtils;

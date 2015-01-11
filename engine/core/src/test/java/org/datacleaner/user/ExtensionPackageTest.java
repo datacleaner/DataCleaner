@@ -22,7 +22,7 @@ package org.datacleaner.user;
 import java.io.File;
 
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
-import org.datacleaner.user.ExtensionPackage;
+import org.datacleaner.extensions.ExtensionPackage;
 
 import junit.framework.TestCase;
 

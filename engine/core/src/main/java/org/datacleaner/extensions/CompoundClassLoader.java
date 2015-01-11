@@ -16,7 +16,7 @@
  * Inc. 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
  * 
  */
-package org.datacleaner.classloader;
+package org.datacleaner.extensions;
 
 import java.net.URL;
 import java.util.ArrayList;

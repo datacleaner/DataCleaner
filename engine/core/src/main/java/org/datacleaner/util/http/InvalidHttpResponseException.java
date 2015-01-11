@@ -17,25 +17,39 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
-
-import java.io.Closeable;
+package org.datacleaner.util.http;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
 
 /**
- * Defines a HTTP client for DataCleaner monitor connectivity.
- * 
- * A monitor http client is STATEFUL and must be closed after usage. This is
- * because some implementations will contain security tokens etc. which is
- * reused accross requests.
+ * Represents an exception occurring because a HTTP response was invalid
+ * (typically based on status code).
  */
-public interface MonitorHttpClient extends WebServiceHttpClient, Closeable {
+public class InvalidHttpResponseException extends RuntimeException {
 
-    @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception;
+	private static final long serialVersionUID = 1L;
+	private final HttpResponse _response;
+	private final String _url;
 
-    @Override
-    public void close();
+	public InvalidHttpResponseException(String url, HttpResponse response) {
+		_response = response;
+		_url = url;
+	}
+
+	@Override
+	public String getMessage() {
+		return "Invalid HTTP response status code: " + getStatusCode() + " (" + _url + ")";
+	}
+
+	public String getUrl() {
+		return _url;
+	}
+
+	public HttpResponse getResponse() {
+		return _response;
+	}
+
+	public int getStatusCode() {
+		return _response.getStatusLine().getStatusCode();
+	}
 }

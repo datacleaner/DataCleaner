@@ -30,12 +30,12 @@ import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.FileDownloadListener;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
-import org.datacleaner.user.ExtensionPackage;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.HttpXmlUtils;
-import org.datacleaner.util.SimpleWebServiceHttpClient;
-import org.datacleaner.util.WebServiceHttpClient;
+import org.datacleaner.util.http.HttpXmlUtils;
+import org.datacleaner.util.http.SimpleWebServiceHttpClient;
+import org.datacleaner.util.http.WebServiceHttpClient;
 import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
+package org.datacleaner.util.http;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -29,6 +29,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.datacleaner.util.http.CASMonitorHttpClient;
 
 public class CASMonitorHttpClientTest {
 

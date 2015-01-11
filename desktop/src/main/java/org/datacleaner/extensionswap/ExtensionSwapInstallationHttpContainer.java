@@ -31,7 +31,7 @@ import javax.swing.SwingUtilities;
 
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.user.UsageLogger;
-import org.datacleaner.util.InvalidHttpResponseException;
+import org.datacleaner.util.http.InvalidHttpResponseException;
 import org.apache.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;

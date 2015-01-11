@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.datacleaner.util.HttpXmlUtils;
+import org.datacleaner.util.http.HttpXmlUtils;
 
 /**
  * The default authentication service implementation, that uses the RESTful web

@@ -19,7 +19,7 @@
  */
 package org.datacleaner.extensionswap;
 
-import org.datacleaner.user.ExtensionPackage;
+import org.datacleaner.extensions.ExtensionPackage;
 
 /**
  * Represents an {@link ExtensionPackage} in the online extension swap.

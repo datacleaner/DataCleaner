@@ -1,9 +1,10 @@
 package org.datacleaner.visualization
 
 import java.awt.Color
-import org.datacleaner.beans.api.Renderer
-import org.datacleaner.beans.api.RendererBean
-import org.datacleaner.beans.api.RendererPrecedence
+import org.datacleaner.api.Renderer
+import org.datacleaner.api.RendererBean
+import org.datacleaner.api.RendererPrecedence
+import org.datacleaner.api.Provided
 import org.datacleaner.result.renderer.SwingRenderingFormat
 import org.datacleaner.util.ChartUtils
 import org.jfree.chart.ChartPanel
@@ -21,7 +22,6 @@ import org.jfree.chart.entity.XYItemEntity
 import org.datacleaner.result.DefaultResultProducer
 import org.datacleaner.result.AnnotatedRowsResult
 import org.datacleaner.widgets.result.DrillToDetailsCallbackImpl
-import org.datacleaner.beans.api.Provided
 import org.datacleaner.result.renderer.RendererFactory
 import org.datacleaner.bootstrap.WindowContext
 import javax.inject.Inject

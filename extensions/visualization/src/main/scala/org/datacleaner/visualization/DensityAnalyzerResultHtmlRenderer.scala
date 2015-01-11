@@ -1,13 +1,13 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.beans.api.Renderer
+import org.datacleaner.api.Renderer
+import org.datacleaner.api.RendererBean
+import org.datacleaner.api.RendererPrecedence
+import org.datacleaner.api.RendererBean
 import org.datacleaner.result.html.HtmlFragment
-import org.datacleaner.beans.api.RendererBean
 import org.datacleaner.result.renderer.HtmlRenderingFormat
-import org.datacleaner.beans.api.RendererPrecedence
 import org.datacleaner.result.html.HtmlRenderingContext
 import org.datacleaner.result.html.SimpleHtmlFragment
-import org.datacleaner.beans.api.RendererBean
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 import org.datacleaner.result.html.HtmlRenderer
 

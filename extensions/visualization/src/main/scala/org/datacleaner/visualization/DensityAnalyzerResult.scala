@@ -1,7 +1,7 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.AnalyzerResult
-import org.datacleaner.data.InputColumn
+import org.datacleaner.api.AnalyzerResult
+import org.datacleaner.api.InputColumn
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
 

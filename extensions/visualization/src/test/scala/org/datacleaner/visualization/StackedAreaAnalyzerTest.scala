@@ -2,8 +2,8 @@ package org.datacleaner.visualization
 
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
+import org.datacleaner.api.InputColumn
 import org.datacleaner.data.MockInputColumn
-import org.datacleaner.data.InputColumn
 import org.datacleaner.data.MockInputRow
 import org.junit.Assert
 

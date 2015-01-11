@@ -1,19 +1,19 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.beans.api.Analyzer
-import org.datacleaner.beans.api.Configured
-import org.datacleaner.beans.api.Provided
-import org.datacleaner.data.InputColumn
-import org.datacleaner.data.InputRow
 import javax.inject.Inject
 import javax.inject.Named
-import org.datacleaner.beans.api.Configured
-import org.datacleaner.beans.api.Provided
+import org.datacleaner.api.Analyzer
+import org.datacleaner.api.Configured
+import org.datacleaner.api.Provided
+import org.datacleaner.api.InputColumn
+import org.datacleaner.api.InputRow
+import org.datacleaner.api.Configured
+import org.datacleaner.api.Provided
+import org.datacleaner.api.Description
+import org.datacleaner.api.Categorized
 import org.datacleaner.storage.RowAnnotationFactory
 import scala.collection.mutable.Map
 import org.datacleaner.util.LabelUtils
-import org.datacleaner.beans.api.Description
-import org.datacleaner.beans.api.Categorized
 
 @Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")

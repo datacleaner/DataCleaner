@@ -1,7 +1,7 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.beans.api.ComponentCategory
-import org.datacleaner.beans.categories.AbstractComponentCategory
+import org.datacleaner.api.ComponentCategory
+import org.datacleaner.components.categories.AbstractComponentCategory
 
 class VisualizationCategory extends AbstractComponentCategory {
 

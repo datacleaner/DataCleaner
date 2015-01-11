@@ -1,10 +1,10 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.beans.api.RendererBean
+import org.datacleaner.api.RendererBean
 import org.datacleaner.result.renderer.SwingRenderingFormat
-import org.datacleaner.beans.api.Renderer
+import org.datacleaner.api.Renderer
 import javax.swing.JPanel
-import org.datacleaner.beans.api.RendererPrecedence
+import org.datacleaner.api.RendererPrecedence
 import org.jfree.chart.ChartFactory
 import org.jfree.data.xy.XYDataset
 import org.jfree.data.xy.XYSeriesCollection
@@ -17,7 +17,7 @@ import org.jfree.chart.ChartMouseEvent
 import org.jfree.chart.entity.XYItemEntity
 import org.datacleaner.bootstrap.WindowContext
 import javax.inject.Inject
-import org.datacleaner.beans.api.Provided
+import org.datacleaner.api.Provided
 import org.datacleaner.widgets.result.DrillToDetailsCallbackImpl
 import org.datacleaner.result.ResultProducer
 import org.datacleaner.result.DefaultResultProducer

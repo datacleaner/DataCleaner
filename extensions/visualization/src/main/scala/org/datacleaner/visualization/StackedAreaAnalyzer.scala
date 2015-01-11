@@ -1,14 +1,14 @@
 package org.datacleaner.visualization
 
 import javax.inject.Named
-import org.datacleaner.beans.api.Analyzer
-import org.datacleaner.beans.api.Categorized
-import org.datacleaner.beans.api.Configured
-import org.datacleaner.beans.api.Description
-import org.datacleaner.data.InputColumn
-import org.datacleaner.data.InputRow
-import org.datacleaner.beans.api.Initialize
-import org.datacleaner.beans.api.Validate
+import org.datacleaner.api.Analyzer
+import org.datacleaner.api.Categorized
+import org.datacleaner.api.Configured
+import org.datacleaner.api.Description
+import org.datacleaner.api.InputColumn
+import org.datacleaner.api.InputRow
+import org.datacleaner.api.Initialize
+import org.datacleaner.api.Validate
 
 @Named("Stacked area plot")
 @Description("Plots a number of related measures in a stacked area chart. Useful visualization for showing the relative influence of each measure compared to the sum of measures.")

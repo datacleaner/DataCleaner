@@ -18,6 +18,7 @@
 		<spring.security.version>3.2.1.RELEASE</spring.security.version>
 		<quartz.version>2.1.6</quartz.version>
 		<freemarker.version>2.3.19</freemarker.version>
+		<icu4j.version>4.8.1.1</icu4j.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -628,6 +629,11 @@
 				<groupId>com.googlecode.gentyref</groupId>
 				<artifactId>gentyref</artifactId>
 				<version>1.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ibm.icu</groupId>
+				<artifactId>icu4j</artifactId>
+				<version>${icu4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang</groupId>

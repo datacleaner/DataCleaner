@@ -1,10 +1,10 @@
 package org.datacleaner.visualization
 
-import org.datacleaner.result.AnalyzerResult
+import org.datacleaner.api.AnalyzerResult
+import org.datacleaner.api.InputRow
+import org.datacleaner.api.InputColumn
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
-import org.datacleaner.data.InputRow
-import org.datacleaner.data.InputColumn
 
 class ScatterAnalyzerResult(groups: List[ScatterGroup], variable1: InputColumn[_], variable2: InputColumn[_], groupColumn: InputColumn[_]) extends AnalyzerResult {
 

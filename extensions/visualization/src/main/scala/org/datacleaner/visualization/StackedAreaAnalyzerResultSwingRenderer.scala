@@ -1,19 +1,19 @@
 package org.datacleaner.visualization
 
 import org.datacleaner.bootstrap.WindowContext
-import org.datacleaner.beans.api.RendererBean
-import org.datacleaner.beans.api.RendererPrecedence
-import javax.swing.JPanel
-import org.datacleaner.beans.api.Provided
+import org.datacleaner.api.RendererBean
+import org.datacleaner.api.RendererPrecedence
+import org.datacleaner.api.Provided
+import org.datacleaner.api.Renderer
 import org.datacleaner.result.renderer.RendererFactory
-import javax.inject.Inject
-import org.datacleaner.beans.api.Renderer
 import org.datacleaner.result.renderer.SwingRenderingFormat
+import org.datacleaner.util.ChartUtils
+import javax.swing.JPanel
+import javax.inject.Inject
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.ChartFactory
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
-import org.datacleaner.util.ChartUtils
 import org.jfree.chart.ChartPanel
 import org.jfree.ui.RectangleEdge
 

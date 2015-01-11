@@ -1,10 +1,10 @@
 package org.datacleaner.visualization
 
+import org.datacleaner.api.InputRow
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
-import scala.collection.mutable.Map
-import org.datacleaner.data.InputRow
 import org.datacleaner.util.LabelUtils
+import scala.collection.mutable.Map
 import scala.collection.mutable.LinkedHashMap
 
 /**

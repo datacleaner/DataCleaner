@@ -1,9 +1,9 @@
 package org.datacleaner.visualization
 
+import org.datacleaner.api.RendererBean
 import org.datacleaner.result.html.HtmlRenderer
 import org.datacleaner.result.html.HtmlRenderingContext
 import org.datacleaner.result.html.SimpleHtmlFragment
-import org.datacleaner.beans.api.RendererBean
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 
 @RendererBean(classOf[HtmlRenderingFormat])

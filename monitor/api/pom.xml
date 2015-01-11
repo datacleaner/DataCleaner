@@ -86,7 +86,7 @@
 		<!-- DataCleaner core dependency -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-engine-cli</artifactId>
+			<artifactId>DataCleaner-core</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

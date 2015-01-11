@@ -2,24 +2,32 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
-		<artifactId>DataCleaner-engine</artifactId>
+		<artifactId>DataCleaner</artifactId>
 		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-env</artifactId>
+	<artifactId>DataCleaner-components</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>berkeleydb</module>
-		<module>h2</module>
-		<module>xml-config</module>
-		<module>cluster</module>
+		<module>html-rendering</module>
+		<module>basic-transformers</module>
+		<module>basic-filters</module>
+		<module>basic-analyzers</module>
+		<module>data-structures</module>
+		<module>uniqueness</module>
+		<module>referential-integrity</module>
+		<module>json</module>
+		<module>standardizers</module>
+		<module>pattern-finder</module>
+		<module>value-distribution</module>
+		<module>date-gap</module>
+		<module>reference-data</module>
+		<module>writers</module>
+		<module>el</module>
+		<module>javascript</module>
+		<module>i18n</module>
 	</modules>
-	
+
 	<dependencies>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-engine-core</artifactId>

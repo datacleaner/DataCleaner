@@ -46,7 +46,10 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>api</module>
+				<module>testware</module>
 				<module>engine</module>
+				<module>components</module>
 				<module>desktop</module>
 				<module>monitor</module>
 				<module>extensions</module>
@@ -57,7 +60,10 @@
 			<!-- Quick profile for skipping certain optional build operations -->
 			<id>quick</id>
 			<modules>
+				<module>api</module>
+				<module>testware</module>
 				<module>engine</module>
+				<module>components</module>
 				<module>desktop</module>
 				<module>monitor</module>
 				<module>extensions</module>
@@ -66,14 +72,20 @@
 		<profile>
 			<id>desktop</id>
 			<modules>
+				<module>api</module>
+				<module>testware</module>
 				<module>engine</module>
+				<module>components</module>
 				<module>desktop</module>
 			</modules>
 		</profile>
 		<profile>
 			<id>monitor</id>
 			<modules>
+				<module>api</module>
+				<module>testware</module>
 				<module>engine</module>
+				<module>components</module>
 				<module>monitor</module>
 			</modules>
 		</profile>

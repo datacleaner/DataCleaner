@@ -24,10 +24,10 @@ import java.awt.GraphicsEnvironment;
 import junit.framework.TestCase;
 
 import org.apache.commons.vfs2.FileObject;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindowImpl;
@@ -60,6 +60,7 @@ public class OpenAnalysisJobTest extends TestCase {
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
+        assertTrue(file.exists());
 
         injector = OpenAnalysisJobActionListener.open(file, configuration, injector);
         AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);

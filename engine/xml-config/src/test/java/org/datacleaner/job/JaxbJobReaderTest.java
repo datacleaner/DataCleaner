@@ -63,7 +63,7 @@ import org.apache.metamodel.util.ToStringComparator;
 public class JaxbJobReaderTest extends TestCase {
 
     private final DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
-            "org.datacleaner.beans", true).scanPackage("org.datacleaner.result", true);
+            "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
     private final AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog)

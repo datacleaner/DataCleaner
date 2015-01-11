@@ -12,6 +12,7 @@
 	<modules>
 		<module>core</module>
 		<module>env</module>
+		<module>xml-config</module>
 	</modules>
 
 </project>

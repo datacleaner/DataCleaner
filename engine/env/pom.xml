@@ -10,7 +10,6 @@
 	<modules>
 		<module>berkeleydb</module>
 		<module>h2</module>
-		<module>xml-config</module>
 		<module>cluster</module>
 	</modules>
 	

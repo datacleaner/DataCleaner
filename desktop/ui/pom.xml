@@ -182,16 +182,6 @@
 			<version>2.0.16</version>
 		</dependency>
 		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>looks</artifactId>
-			<version>2.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fifesoft</groupId>
-			<artifactId>rsyntaxtextarea</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.simplericity.macify</groupId>
 			<artifactId>macify</artifactId>
 			<version>1.6</version>
@@ -210,11 +200,6 @@
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-io</artifactId>
 			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<version>1.0.17</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleframework</groupId>

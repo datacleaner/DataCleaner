@@ -27,33 +27,33 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.RendererBean;
-import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.GroupedValueDistributionResult;
+import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
 import org.datacleaner.result.SingleValueFrequency;
-import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
+import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.widgets.DCCollapsiblePanel;
 import org.datacleaner.windows.ResultWindow;
-import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Ref;
 import org.jdesktop.swingx.VerticalLayout;
 
 import com.google.inject.Guice;
@@ -189,7 +189,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModule());
+        Injector injector = Guice.createInjector(new DCModuleImpl());
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

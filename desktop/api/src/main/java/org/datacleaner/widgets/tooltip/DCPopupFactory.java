@@ -28,8 +28,6 @@ import javax.swing.PopupFactory;
 
 /**
  * Specialized {@link PopupFactory} for {@link DCToolTip}s.
- * 
- * @author Kasper Sørensen
  */
 public class DCPopupFactory extends PopupFactory {
 

@@ -24,6 +24,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
@@ -32,6 +33,8 @@ import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.guice.DCModuleImpl;
+import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.reference.Dictionary;
@@ -41,10 +44,7 @@ import org.datacleaner.reference.SimpleSynonymCatalog;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableReferenceDataCatalog;
-import org.apache.metamodel.util.EqualsBuilder;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -62,7 +62,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
     private SimpleStringPattern stringPattern3 = new SimpleStringPattern("sp3", "");
 
     public void testCreateAllPropertyTypes() throws Exception {
-        Injector injector = Guice.createInjector(new DCModule());
+        Injector injector = Guice.createInjector(new DCModuleImpl());
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
         MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
                 .getReferenceDataCatalog();

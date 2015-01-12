@@ -38,26 +38,27 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.actions.PreviewSourceDataActionListener;
+import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.writers.WriteDataResult;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.ResourceDatastore;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.actions.PreviewSourceDataActionListener;
-import org.datacleaner.api.RendererBean;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
 import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -220,7 +221,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             analyzeButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = Guice.createInjector(new DCModule(_parentModule, null));
+                    Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
                     AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
                     window.setDatastore(datastore);
                     window.open();

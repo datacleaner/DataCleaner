@@ -27,13 +27,11 @@ import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.writers.WriteDataResult;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.output.OutputRow;
 import org.datacleaner.output.OutputWriter;
 
-public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteDataResult> {
+public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteDataResult>, PrecedingComponentConsumer {
 
 	private final AtomicInteger rowCount = new AtomicInteger(0);
 
@@ -56,35 +54,6 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteData
 	protected abstract WriteDataResult getResultInternal(int rowCount);
 
 	public abstract OutputWriter createOutputWriter();
-
-	/**
-	 * Subclasses should implement this method with any configuration logic such
-	 * as setting filenames etc. when the output writer analyzer is being
-	 * created.
-	 * 
-	 * @param analysisJobBuilder
-	 *            the job builder being used to build this component
-	 * @param descriptor
-	 *            the descriptor of the filter that succeeds this component
-	 * @param categoryName
-	 *            the outcome category of the filter that succeeds this
-	 *            component
-	 */
-	public abstract void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterBeanDescriptor<?, ?> descriptor,
-			String categoryName);
-
-	/**
-	 * Subclasses should implement this method with any configuration logic such
-	 * as setting filenames etc. when the output writer analyzer is being
-	 * created.
-	 * 
-	 * @param analysisJobBuilder
-	 *            the job builder being used to build this component
-	 * @param descriptor
-	 *            the descriptor of the transformer that succeeds this component
-	 */
-	public abstract void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder,
-			TransformerBeanDescriptor<?> descriptor);
 
 	@Override
 	public final void run(InputRow row, int distinctCount) {

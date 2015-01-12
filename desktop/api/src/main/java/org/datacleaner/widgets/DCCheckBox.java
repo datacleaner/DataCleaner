@@ -39,9 +39,7 @@ import org.datacleaner.util.WidgetUtils;
  * A checkbox that carries a value, which is convenient for modelling the object
  * that the checkbox represents (such as a Dictionary, a Datastore etc.)
  * 
- * @author Kasper Sørensen
- * 
- * @param <E>
+ * @param <E> the type of element that the checkbox represents
  */
 public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListener {
 

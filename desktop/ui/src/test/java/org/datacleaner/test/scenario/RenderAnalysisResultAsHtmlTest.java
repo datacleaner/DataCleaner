@@ -27,17 +27,18 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.ImmutableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.datacleaner.guice.DCModule;
-import org.apache.metamodel.util.ImmutableRef;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -52,7 +53,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
-        DCModule module = new DCModule();
+        DCModule module = new DCModuleImpl();
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 

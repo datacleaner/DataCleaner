@@ -17,35 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.actions;
+package org.datacleaner.util;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.util.Comparator;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.datacleaner.descriptors.ComponentDescriptor;
 
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.guice.DCModuleImpl;
-import org.datacleaner.windows.AnalysisJobBuilderWindow;
+/**
+ * Comparator of {@link ComponentDescriptor} objects, which sorts based on
+ * display name.
+ */
+public class DisplayNameComparator implements Comparator<ComponentDescriptor<?>>, Serializable {
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+    private static final long serialVersionUID = 1L;
 
-@Singleton
-public final class NewAnalysisJobActionListener implements ActionListener {
-
-	private final DCModule _parentModule;
-
-	@Inject
-	protected NewAnalysisJobActionListener(DCModule parentModule) {
-		_parentModule = parentModule;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
-		injector.getInstance(AnalysisJobBuilderWindow.class).open();
-	}
+    @Override
+    public int compare(ComponentDescriptor<?> o1, ComponentDescriptor<?> o2) {
+        return o1.getDisplayName().compareTo(o2.getDisplayName());
+    }
 
 }

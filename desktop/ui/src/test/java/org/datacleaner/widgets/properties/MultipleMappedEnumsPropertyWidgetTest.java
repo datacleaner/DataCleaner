@@ -28,14 +28,15 @@ import junit.framework.TestCase;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.VFS;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.guice.DCModule;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
@@ -44,7 +45,7 @@ import com.google.inject.Injector;
 public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
 
     public void testRestoreEnumValuesFromFile() throws Exception {
-        final DCModule dcModule = new DCModule();
+        final DCModule dcModule = new DCModuleImpl();
         final FileObject file = VFS.getManager().resolveFile("src/test/resources/mapped_columns_job.analysis.xml");
         final Injector injector1 = Guice.createInjector(dcModule);
         final AnalyzerBeansConfiguration configuration = injector1.getInstance(AnalyzerBeansConfiguration.class);

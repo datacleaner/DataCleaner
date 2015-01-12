@@ -39,35 +39,35 @@ import javax.swing.JScrollBar;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
 import org.datacleaner.beans.dategap.TimeInterval;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.DetailsResultWindow;
-import org.apache.metamodel.schema.Table;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -285,7 +285,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
     public static void main(String[] args) throws Throwable {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModule(VFSUtils.getFileSystemManager().resolveFile("."), null));
+        Injector injector = Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."),
+                null));
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

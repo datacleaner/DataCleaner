@@ -27,15 +27,17 @@ import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
 import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -44,7 +46,6 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.ResultWindow;
-import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -132,7 +133,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
+                Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
 
                 ResultWindow window = injector.getInstance(ResultWindow.class);
                 window.open();

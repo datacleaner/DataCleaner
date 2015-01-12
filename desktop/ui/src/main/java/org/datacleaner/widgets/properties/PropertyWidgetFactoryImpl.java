@@ -81,6 +81,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         }
     }
     
+    @Override
     public PropertyWidgetCollection getPropertyWidgetCollection() {
         return _propertyWidgetCollection;
     }
@@ -210,16 +211,18 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         return null;
     }
 
+    @Override
     public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
         return _beanJobBuilder;
     }
 
-    public Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor) {
+    protected Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor) {
         return _injectorBuilder.inherit(TYPELITERAL_BEAN_JOB_BUILDER)
                 .with(ConfiguredPropertyDescriptor.class, propertyDescriptor)
                 .with(PropertyDescriptor.class, propertyDescriptor).createInjector();
     }
 
+    @Override
     public PropertyWidget<?> create(String propertyName) {
         BeanDescriptor<?> descriptor = _beanJobBuilder.getDescriptor();
         ConfiguredPropertyDescriptor propertyDescriptor = descriptor.getConfiguredProperty(propertyName);
@@ -236,6 +239,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
      * @param propertyDescriptor
      * @return
      */
+    @Override
     public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
         final PropertyWidget<?> result;
 

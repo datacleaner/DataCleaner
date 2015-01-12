@@ -27,6 +27,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -55,7 +56,7 @@ public class OpenAnalysisJobTest extends TestCase {
             return;
         }
 
-        DCModule module = new DCModule();
+        DCModule module = new DCModuleImpl();
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 

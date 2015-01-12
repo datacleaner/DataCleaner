@@ -27,6 +27,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.ResultWindow;
@@ -51,7 +52,7 @@ public class OpenAnalysisResultTest extends TestCase {
             return;
         }
 
-        DCModule module = new DCModule();
+        DCModule module = new DCModuleImpl();
 
         FileObject file = VFSUtils.getFileSystemManager().resolveFile(
                 "src/test/resources/all_analyzers.analysis.result.dat");

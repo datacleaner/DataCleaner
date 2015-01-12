@@ -37,7 +37,7 @@ public class DCModuleTest extends TestCase {
     public void testAnalysisJobBuilderReferenceWithParentModule() throws Exception {
         final Field field = getClass().getDeclaredField("injectedBuilderField");
 
-        final DCModule module1 = new DCModule();
+        final DCModule module1 = new DCModuleImpl();
         final Injector injector1 = Guice.createInjector(module1);
         final AnalysisJobBuilder ajb1 = injector1.getInstance(AnalysisJobBuilder.class);
         final AnalyzerBeansConfiguration conf1 = injector1.getInstance(AnalyzerBeansConfiguration.class);
@@ -46,7 +46,7 @@ public class DCModuleTest extends TestCase {
         
         assertSame(ajb1, ajb2);
 
-        final DCModule module2 = new DCModule(module1, new AnalysisJobBuilder(conf1));
+        final DCModule module2 = new DCModuleImpl(module1, new AnalysisJobBuilder(conf1));
         final Injector injector2 = Guice.createInjector(module2);
         final AnalyzerBeansConfiguration conf2 = injector2.getInstance(AnalyzerBeansConfiguration.class);
         final AnalysisJobBuilder ajb3 = injector2.getInstance(AnalysisJobBuilder.class);

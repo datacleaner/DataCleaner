@@ -32,8 +32,6 @@ import org.datacleaner.util.WidgetUtils;
 /**
  * Defines a panel that wraps a {@link DCTable} (including headers, scrollbars
  * etc).
- * 
- * @author Kasper Sørensen
  */
 final class DCTablePanel extends DCPanel {
 

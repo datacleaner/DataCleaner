@@ -23,6 +23,7 @@ import java.awt.BasicStroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.beans.NumberAnalyzer;
@@ -30,20 +31,19 @@ import org.datacleaner.beans.NumberAnalyzerResult;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.guice.DCModule;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
 import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.table.DCTable;
 import org.datacleaner.windows.ResultWindow;
-import org.apache.metamodel.schema.Table;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -144,7 +144,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
     public static void main(String[] args) throws Exception {
         LookAndFeelManager.get().init();
 
-        Injector injector = Guice.createInjector(new DCModule(VFSUtils.getFileSystemManager().resolveFile("."), null));
+        Injector injector = Guice.createInjector(new DCModuleImpl(VFSUtils.getFileSystemManager().resolveFile("."), null));
 
         // run a small job
         final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

@@ -22,7 +22,6 @@ package org.datacleaner.widgets.properties;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 
-import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -41,8 +40,6 @@ public interface PropertyWidgetFactory {
     public PropertyWidgetCollection getPropertyWidgetCollection();
 
     public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder();
-
-    public Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor);
 
     public PropertyWidget<?> create(String propertyName);
 

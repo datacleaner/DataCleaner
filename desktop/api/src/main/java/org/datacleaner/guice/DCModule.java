@@ -17,24 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util;
+package org.datacleaner.guice;
 
-import java.io.Serializable;
-import java.util.Comparator;
-
-import org.datacleaner.descriptors.BeanDescriptor;
+import com.google.inject.Module;
 
 /**
- * Comparator of {@link BeanDescriptor} objects, which sorts based on display
- * name.
+ * Google Guice module for DataCleaner. Defines the main contextual components
+ * of a DataCleaner session.
  */
-public class DisplayNameComparator implements Comparator<BeanDescriptor<?>>, Serializable {
+public interface DCModule extends Module {
 
-	private static final long serialVersionUID = 1L;
-
-	@Override
-	public int compare(BeanDescriptor<?> o1, BeanDescriptor<?> o2) {
-		return o1.getDisplayName().compareTo(o2.getDisplayName());
-	}
-
+    
 }

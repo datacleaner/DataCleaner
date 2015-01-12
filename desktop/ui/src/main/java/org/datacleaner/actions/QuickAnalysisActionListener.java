@@ -24,16 +24,17 @@ import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.QuickAnalysisStrategy;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.WidgetUtils;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -92,7 +93,7 @@ public class QuickAnalysisActionListener implements ActionListener {
                 throw new IllegalStateException("Unknown job configuration issue!");
             }
 
-            Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
+            Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
 
             RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
             actionListener.actionPerformed(event);

@@ -31,18 +31,18 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
-import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.IconUtils;
@@ -202,7 +202,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
         DCWindowContext windowContext = new DCWindowContext(new AnalyzerBeansConfigurationImpl(),
                 new UserPreferencesImpl(null), null);
-        InjectorBuilder injectorBuilder = Guice.createInjector(new DCModule()).getInstance(InjectorBuilder.class);
+        InjectorBuilder injectorBuilder = Guice.createInjector(new DCModuleImpl()).getInstance(InjectorBuilder.class);
 
         UserPreferences userPreferences = new UserPreferencesImpl(null);
         ExecuteJobWithoutAnalyzersDialog dialog = new ExecuteJobWithoutAnalyzersDialog(injectorBuilder, windowContext,

@@ -39,8 +39,6 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * 
  * Renderers like this are optional, but allows for absolute control over the
  * User Interface which may be useful for certain types of extensions.
- * 
- * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class HelloWorldTransformerBuilderRenderer implements

@@ -39,22 +39,21 @@ import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.apache.commons.vfs2.provider.url.UrlFileName;
 import org.apache.http.client.HttpClient;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.Version;
+import org.datacleaner.actions.DownloadFilesActionListener;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.cli.CliRunner;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.Version;
-import org.datacleaner.actions.DownloadFilesActionListener;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.extensionswap.ExtensionSwapClient;
 import org.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
-import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.macos.MacOSManager;
 import org.datacleaner.user.DataCleanerHome;
 import org.datacleaner.user.MonitorConnection;
@@ -63,13 +62,14 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.DCUncaughtExceptionHandler;
 import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.MonitorConnectionDialog;
 import org.datacleaner.windows.WelcomeDialog;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +160,7 @@ public final class Bootstrap {
         final String configurationFilePath = arguments.getConfigurationFile();
         final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml", initialUserPreferences);
 
-        Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
+        Injector injector = Guice.createInjector(new DCModuleImpl(DataCleanerHome.get(), configurationFile));
 
         // configuration loading can be multithreaded, so begin early
         final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);

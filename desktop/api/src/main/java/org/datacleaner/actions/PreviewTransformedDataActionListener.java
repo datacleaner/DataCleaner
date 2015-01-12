@@ -21,8 +21,6 @@ package org.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,10 +28,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.job.builder.FilterJobBuilder;
@@ -41,11 +39,9 @@ import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.util.SourceColumnFinder;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.datacleaner.util.PreviewTransformedDataAnalyzer;
+import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.windows.DataSetWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,17 +168,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     }
 
     private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
-        // the easiest/safest way to copy a job is by writing and reading it
-        // using the JAXB reader/writers.
-        final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
         final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final JaxbJobWriter writer = new JaxbJobWriter(analysisJobBuilder.getConfiguration());
-        writer.write(analysisJob, baos);
-
-        final AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(
-                baos.toByteArray()));
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(original.getConfiguration(), analysisJob);
         return ajb;
     }
 }

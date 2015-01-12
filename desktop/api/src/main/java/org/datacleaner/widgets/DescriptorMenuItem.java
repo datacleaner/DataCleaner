@@ -40,9 +40,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tooltip.DCToolTip;
 
 /**
- * MenuItem for a bean descriptor.
- * 
- * @author Kasper Sørensen
+ * MenuItem for a component descriptor.
  */
 public class DescriptorMenuItem extends JMenuItem {
 

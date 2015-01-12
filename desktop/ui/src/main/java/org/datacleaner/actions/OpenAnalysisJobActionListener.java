@@ -30,8 +30,12 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.Version;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.extensions.ExtensionPackage;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.JaxbJobReader;
@@ -39,13 +43,10 @@ import org.datacleaner.job.NoSuchComponentException;
 import org.datacleaner.job.NoSuchDatastoreException;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.util.ChangeAwareObjectInputStream;
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.Version;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
@@ -155,7 +156,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             _userPreferences.addRecentJobFile(fileObject);
         }
 
-        final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
+        final Injector injector = Guice.createInjector(new DCModuleImpl(parentModule, null) {
             public FileObject getJobFilename() {
                 return fileObject;
             };
@@ -258,7 +259,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             _userPreferences.addRecentJobFile(fileObject);
         }
 
-        Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
+        Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb) {
             public FileObject getJobFilename() {
                 return fileObject;
             };

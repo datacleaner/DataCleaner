@@ -8,7 +8,7 @@
 
 	<datastore-catalog>
 		<jdbc-datastore name="my_jdbc_connection" description="jdbc_con">
-			<url>jdbc:hsqldb:file:../../desktop/src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<url>jdbc:hsqldb:file:../../desktop/ui/src/test/resources/cli-examples/orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
@@ -31,11 +31,11 @@
 		</salesforce-datastore>
 
 		<xml-datastore name="my_dom_xml" description="dom xml">
-			<filename>../../core/src/test/resources/example-xml-file.xml</filename>
+			<filename>../core/src/test/resources/example-xml-file.xml</filename>
 		</xml-datastore>
 
 		<xml-datastore name="my_sax_xml" description="sax xml">
-			<filename>../../core/src/test/resources/example-xml-file.xml</filename>
+			<filename>../core/src/test/resources/example-xml-file.xml</filename>
 			<table-def>
 				<rowXpath>/greetings/greeting</rowXpath>
 				<valueXpath>/greetings/greeting/how</valueXpath>
@@ -44,21 +44,21 @@
 		</xml-datastore>
 
 		<csv-datastore name="my_csv" description="csv">
-			<filename>../../core/src/test/resources/employees.csv</filename>
+			<filename>../core/src/test/resources/employees.csv</filename>
 			<quote-char>"</quote-char>
 			<separator-char>,</separator-char>
 		</csv-datastore>
 
 		<excel-datastore name="my_excel_2003" description="xls">
-			<filename>../../core/src/test/resources/Spreadsheet2003.xls</filename>
+			<filename>../core/src/test/resources/Spreadsheet2003.xls</filename>
 		</excel-datastore>
 		
 		<json-datastore name="my_json">
-			<filename>../../core/src/test/resources/example.json</filename>
+			<filename>../core/src/test/resources/example.json</filename>
 		</json-datastore>
 
 		<access-datastore name="my_access" description="mdb">
-			<filename>../../core/src/test/resources/developers.mdb</filename>
+			<filename>../core/src/test/resources/developers.mdb</filename>
 		</access-datastore>
 		
 		<elasticsearch-datastore name="my es index" description="yay, search!">

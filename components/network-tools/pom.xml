@@ -7,7 +7,6 @@
 	</parent>
 	<artifactId>DataCleaner-network-tools</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner - 'network tools' extension</name>
 
 	<build>
 		<plugins>

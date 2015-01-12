@@ -21,6 +21,9 @@
 		<module>value-distribution</module>
 		<module>date-gap</module>
 		<module>reference-data</module>
+		<module>sample</module>
+		<module>visualization</module>
+		<module>network-tools</module>
 		<module>writers</module>
 		<module>el</module>
 		<module>javascript</module>

@@ -5,11 +5,9 @@
 		<artifactId>DataCleaner</artifactId>
 		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-extensions</artifactId>
-	<name>DataCleaner extensions modules</name>
-	<description>A collection of extensions, typically shared through the online extension swap.</description>
-	<url>http://datacleaner.org/extensions</url>
+	<artifactId>DataCleaner-monitor-extensions</artifactId>
 	<packaging>pom</packaging>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -41,20 +39,6 @@
 				<module>salesforce-datastore-wizard</module>
 				<module>sugarcrm-datastore-wizard</module>
 				<module>quick-analysis-wizard</module>
-				<module>copy-data-wizard</module>
-				<module>completeness-analysis-wizard</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>quick</id>
-			<modules>
-				<module>csv-datastore-wizard</module>
-				<module>excel-datastore-wizard</module>
-				<module>salesforce-datastore-wizard</module>
-				<module>sugarcrm-datastore-wizard</module>
-				<module>quick-analysis-wizard</module>
-				<module>pentaho-job-engine</module>
-				<module>jdbc-datastore-wizards</module>
 				<module>copy-data-wizard</module>
 				<module>completeness-analysis-wizard</module>
 			</modules>

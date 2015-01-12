@@ -2,10 +2,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
-		<artifactId>DataCleaner-extensions</artifactId>
+		<artifactId>DataCleaner-monitor-extensions</artifactId>
 		<version>4.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-completeness-analysis-wizard</artifactId>
+	<artifactId>DataCleaner-monitor-copy-data-wizard</artifactId>
 
 	<build>
 		<plugins>
@@ -60,7 +60,12 @@
 
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-basic-analyzers</artifactId>
+			<artifactId>DataCleaner-basic-filters</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-writers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

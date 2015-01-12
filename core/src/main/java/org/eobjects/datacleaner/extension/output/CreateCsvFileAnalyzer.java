@@ -139,23 +139,26 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();
             headers.add(columnName);
-            if(columnName.equals(columnToBeSortedOn.getName())){
-                indexOfColumnToBeSortedOn = i ;
+            if(columnToBeSortedOn != null) {
+                if(columnName.equals(columnToBeSortedOn.getName())){
+                    indexOfColumnToBeSortedOn = i ;
+                }
             }
         }
 
-        if(indexOfColumnToBeSortedOn == -1) {
-            this.isColumnToBeSortedOnPresentInInput  = false ;
-            indexOfColumnToBeSortedOn = columns.length ;
-            headers.add(columnToBeSortedOn.getName()) ;
-            InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1] ;
-            for(int i = 0; i < columns.length; i++){
-                newColumns[i] = columns[i] ;
+        if(columnToBeSortedOn != null) {
+            if(indexOfColumnToBeSortedOn == -1) {
+                this.isColumnToBeSortedOnPresentInInput  = false ;
+                indexOfColumnToBeSortedOn = columns.length ;
+                headers.add(columnToBeSortedOn.getName()) ;
+                InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1] ;
+                for(int i = 0; i < columns.length; i++){
+                    newColumns[i] = columns[i] ;
+                }
+                newColumns[columns.length]  = columnToBeSortedOn ;
+                columns = newColumns ;
             }
-            newColumns[columns.length]  = columnToBeSortedOn ;
-            columns = newColumns ;
         }
-        
        
         
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);

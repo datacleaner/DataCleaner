@@ -57,6 +57,7 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.CompareUtils;
 import org.eobjects.analyzer.util.HasLabelAdvice;
 import org.eobjects.analyzer.util.sort.SortMergeWriter;
 import org.eobjects.datacleaner.output.OutputWriter;
@@ -135,6 +136,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
+        InputColumn<?>[] inputColumns = columns ;
         List<String> headers = new ArrayList<String>() ;
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();
@@ -156,12 +158,12 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     newColumns[i] = columns[i] ;
                 }
                 newColumns[columns.length]  = columnToBeSortedOn ;
-                columns = newColumns ;
+                inputColumns = newColumns ;
             }
         }
        
         
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
+        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, inputColumns);
     }
 
     @Override
@@ -180,7 +182,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                 public int compare(Row row1, Row row2) {
                     Comparable<Object> value1 = (Comparable<Object>) row1.getValue(indexOfColumnToBeSortedOn);
                     Comparable<Object> value2 = (Comparable<Object>) row2.getValue(indexOfColumnToBeSortedOn);
-                    int comparableResult = value1.compareTo(value2) ;
+                    int comparableResult = CompareUtils.compare(value1, value2) ;
                     if(comparableResult != 0) {
                         return comparableResult ;
                     } else {
@@ -191,10 +193,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                         for(int i = 0; i < numberOfSelectItems; i++) {
                             Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
                             Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
-                            if(rowValue1.compareTo(rowValue2) == 0) {
+                            if(CompareUtils.compare(rowValue1, rowValue2) == 0) {
                                 continue;
                             } else {
-                                return rowValue1.compareTo(rowValue2) ;
+                                return CompareUtils.compare(rowValue1, rowValue2) ;
                             }
                         }
                     }
@@ -212,23 +214,23 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     if(!isColumnToBeSortedOnPresentInInput) {
                         headers.remove(columnToBeSortedOn.getName()) ;
                     }
-                    
+                        
                     final String[] columnNames = headers.toArray(new String[0]);
                     final String line = csvWriter.buildLine(columnNames);
                     writer.write(line);
                     writer.append('\n');
                 }
-
+    
                 @Override
                 protected void writeRow(Writer writer, Row row, int count) throws IOException {
                     for(int i = 0; i < count; i++) {
                         List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues())) ;
-                            if(!isColumnToBeSortedOnPresentInInput) {
-                                valuesList.remove(indexOfColumnToBeSortedOn) ;
-                            }
-                        
+                        if(!isColumnToBeSortedOnPresentInInput) {
+                            valuesList.remove(indexOfColumnToBeSortedOn) ;
+                        }
+                            
                         final Object[] values = valuesList.toArray(new Object[0]) ;
-
+    
                         final String[] stringValues = new String[values.length];
                         for (int j = 0; j < stringValues.length; j++) {
                             final Object obj = values[j];
@@ -241,7 +243,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                         writer.append('\n');
                     }
                 }
-
+    
                 @Override
                 protected Writer createWriter(File file) {
                     return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);

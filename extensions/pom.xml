@@ -34,9 +34,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>sample</module>
-				<module>network-tools</module>
-				<module>visualization</module>
 				<module>pentaho-job-engine</module>
 				<module>jdbc-datastore-wizards</module>
 				<module>csv-datastore-wizard</module>
@@ -56,7 +53,6 @@
 				<module>salesforce-datastore-wizard</module>
 				<module>sugarcrm-datastore-wizard</module>
 				<module>quick-analysis-wizard</module>
-				<module>visualization</module>
 				<module>pentaho-job-engine</module>
 				<module>jdbc-datastore-wizards</module>
 				<module>copy-data-wizard</module>

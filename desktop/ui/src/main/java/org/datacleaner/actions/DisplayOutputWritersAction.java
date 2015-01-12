@@ -33,7 +33,7 @@ import javax.swing.JPopupMenu;
 
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ComponentCategory;
-import org.datacleaner.beans.writers.WriteDataCategory;
+import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;

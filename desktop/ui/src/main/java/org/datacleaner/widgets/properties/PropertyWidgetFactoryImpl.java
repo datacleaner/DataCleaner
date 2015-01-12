@@ -38,16 +38,15 @@ import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
+import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.widgets.DCComboBox;
 
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 /**
  * Represents a factory and a catalog of widgets used for @Configured
@@ -55,22 +54,14 @@ import com.google.inject.TypeLiteral;
  * properties should keep it's reference to the property widget factory and use
  * it to retrieve the properties in case of listener callbacks.
  */
-public final class PropertyWidgetFactory {
-
-    /**
-     * Convenient type literal that can be used with Guice's binding mechanism
-     * to bind to the {@link AbstractBeanJobBuilder} argument of this class's
-     * constructor.
-     */
-    public static final TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>> TYPELITERAL_BEAN_JOB_BUILDER = new TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>>() {
-    };
+public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
 
     private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final InjectorBuilder _injectorBuilder;
     private final PropertyWidgetCollection _propertyWidgetCollection;
 
     @Inject
-    protected PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
+    protected PropertyWidgetFactoryImpl(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
         _beanJobBuilder = beanJobBuilder;
         _injectorBuilder = injectorBuilder;
         _propertyWidgetCollection = new PropertyWidgetCollection(beanJobBuilder);
@@ -157,7 +148,7 @@ public final class PropertyWidgetFactory {
             if (mappedProperty.getAnnotation(TableProperty.class) != null
                     && mappedToProperty.getAnnotation(SchemaProperty.class) != null) {
 
-                final TableNamePropertyWidget tablePropertyWidget = new TableNamePropertyWidget(getBeanJobBuilder(),
+                final SingleTableNamePropertyWidget tablePropertyWidget = new SingleTableNamePropertyWidget(getBeanJobBuilder(),
                         mappedProperty);
                 final SchemaNamePropertyWidget schemaPropertyWidget;
                 if (mappedToPropertyWidget == null) {
@@ -183,11 +174,11 @@ public final class PropertyWidgetFactory {
             if (mappedProperty.getAnnotation(ColumnProperty.class) != null
                     && mappedToProperty.getAnnotation(TableProperty.class) != null) {
 
-                final TableNamePropertyWidget tablePropertyWidget;
+                final SingleTableNamePropertyWidget tablePropertyWidget;
                 if (mappedToPropertyWidget == null) {
-                    tablePropertyWidget = new TableNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
+                    tablePropertyWidget = new SingleTableNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
                 } else {
-                    tablePropertyWidget = (TableNamePropertyWidget) mappedToPropertyWidget;
+                    tablePropertyWidget = (SingleTableNamePropertyWidget) mappedToPropertyWidget;
                 }
 
                 if (mappedProperty.isArray()) {
@@ -199,7 +190,7 @@ public final class PropertyWidgetFactory {
                 } else {
                     // mapped column name
 
-                    final ColumnNamePropertyWidget columnPropertyWidget = new ColumnNamePropertyWidget(mappedProperty,
+                    final SingleColumnNamePropertyWidget columnPropertyWidget = new SingleColumnNamePropertyWidget(mappedProperty,
                             getBeanJobBuilder());
                     tablePropertyWidget.addComboListener(new DCComboBox.Listener<Table>() {
                         @Override

@@ -26,8 +26,6 @@ import org.datacleaner.windows.DCWindow;
 
 /**
  * Interface for component that manages the context of the UI in DataCleaner.
- * 
- * @author Kasper Sørensen
  */
 public interface WindowContext {
 

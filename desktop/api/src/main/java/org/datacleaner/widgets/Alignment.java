@@ -27,9 +27,6 @@ import javax.swing.SwingConstants;
 /**
  * Compensates for differences in integer constants defined in various parts of
  * the Swing API.
- * 
- * @author Kasper Sørensen
- * 
  */
 public enum Alignment {
 

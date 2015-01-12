@@ -13,8 +13,21 @@
 		<!-- DataCleaner core / environment -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-api</artifactId>
+			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- Swing UI component libraries -->
+		<dependency>
+			<groupId>org.swinglabs.swingx</groupId>
+			<artifactId>swingx-core</artifactId>
+			<version>1.6.5-1</version>
+		</dependency>
+		
+		<!-- Guice is used for Dependency Injection in the desktop app -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
 		</dependency>
 
 		<!-- Test dependencies -->

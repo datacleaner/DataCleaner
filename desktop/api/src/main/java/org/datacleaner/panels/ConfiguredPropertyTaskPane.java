@@ -24,10 +24,7 @@ import java.util.List;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 
 /**
- * Defines a task pane with configured properties for a transformer, analyzer or
- * filter.
- * 
- * @author Kasper Sørensen
+ * Defines a task pane with configured properties for a component.
  */
 public final class ConfiguredPropertyTaskPane {
 

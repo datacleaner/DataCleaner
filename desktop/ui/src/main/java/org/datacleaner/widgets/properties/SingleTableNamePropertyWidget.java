@@ -36,12 +36,12 @@ import org.apache.metamodel.util.MutableRef;
  * Alternative String property widget, specifically built for components that
  * need a {@link Table} name drop down.
  */
-public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
+public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String> {
 
     private final DCComboBox<Table> _comboBox;
     private final MutableRef<Schema> _schemaRef;
 
-    public TableNamePropertyWidget(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public SingleTableNamePropertyWidget(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
         super(beanJobBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<Table>();

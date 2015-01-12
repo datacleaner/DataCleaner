@@ -24,8 +24,6 @@ import org.datacleaner.job.builder.TransformerJobBuilder;
 /**
  * Interface for presenter widgets that present {@link TransformerJobBuilder}
  * objects.
- * 
- * @author Kasper Sørensen
  */
 public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPresenter {
 

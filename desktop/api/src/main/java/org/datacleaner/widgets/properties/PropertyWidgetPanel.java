@@ -38,8 +38,6 @@ import org.jdesktop.swingx.JXLabel;
 /**
  * A panel which presents multiple property widgets and their labels in a
  * form-like view.
- * 
- * @author kasper
  */
 public abstract class PropertyWidgetPanel extends DCPanel {
 

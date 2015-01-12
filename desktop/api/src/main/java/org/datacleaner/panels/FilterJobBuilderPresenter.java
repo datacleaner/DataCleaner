@@ -24,8 +24,6 @@ import org.datacleaner.job.builder.FilterJobBuilder;
 /**
  * Interface for presenter widgets that present {@link FilterJobBuilder}
  * objects.
- * 
- * @author Kasper Sørensen
  */
 public interface FilterJobBuilderPresenter extends ComponentJobBuilderPresenter {
 

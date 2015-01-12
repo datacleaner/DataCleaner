@@ -68,6 +68,7 @@ import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.api.Validate;
 import org.datacleaner.api.FileProperty.FileAccessMode;
+import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.CsvDatastore;

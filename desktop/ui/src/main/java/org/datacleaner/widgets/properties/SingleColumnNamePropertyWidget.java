@@ -33,13 +33,13 @@ import org.apache.metamodel.util.MutableRef;
 /**
  * Property widget for a {@link String} that represents a {@link Column} name.
  */
-public final class ColumnNamePropertyWidget extends AbstractPropertyWidget<String> {
+public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget<String> {
 
     private final SourceColumnComboBox _comboBox;
     private final MutableRef<Table> _tableRef;
 
     @Inject
-    public ColumnNamePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+    public SingleColumnNamePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
             AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
         super(beanJobBuilder, propertyDescriptor);
 

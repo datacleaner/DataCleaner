@@ -131,7 +131,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
         _comboBox.setEditable(false);
     }
 
-    public void connectToTableNamePropertyWidget(final TableNamePropertyWidget tableNamePropertyWidget) {
+    public void connectToTableNamePropertyWidget(final SingleTableNamePropertyWidget tableNamePropertyWidget) {
         addComboListener(new Listener<Schema>() {
             @Override
             public void onItemSelected(Schema item) {

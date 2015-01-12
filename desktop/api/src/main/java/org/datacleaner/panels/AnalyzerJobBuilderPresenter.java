@@ -17,18 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.bootstrap;
+package org.datacleaner.panels;
+
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
 
 /**
- * Represents the action listener invoked when the user quits DataCleaner.
- * 
- * Typically the exit call will stop the process completely, but for embedded
- * use it might instead simply change the state of the surrounding application
- * or similar.
- * 
- * @author Kasper Sørensen
+ * Interface for presenter widgets that present
+ * {@link AnalyzerJobBuilder} objects.
  */
-public interface ExitActionListener {
+public interface AnalyzerJobBuilderPresenter extends ComponentJobBuilderPresenter {
 
-	public void exit(int statusCode);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalyzerJobBuilder<?> getJobBuilder();
+
 }

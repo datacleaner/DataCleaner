@@ -46,7 +46,7 @@ import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.properties.SchemaNamePropertyWidget;
 import org.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
-import org.datacleaner.widgets.properties.TableNamePropertyWidget;
+import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the
@@ -104,7 +104,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final TableNamePropertyWidget tableNamePropertyWidget = new TableNamePropertyWidget(analyzerJobBuilder,
+        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(analyzerJobBuilder,
                 _tableNameProperty);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 

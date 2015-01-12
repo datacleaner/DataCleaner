@@ -73,7 +73,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final SingleDatastorePropertyWidget datastoreWidget1 = new SingleDatastorePropertyWidget(tjb,
                 datastoreProperty, datastoreCatalog);
         final SchemaNamePropertyWidget schemaWidget1 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final TableNamePropertyWidget tableWidget1 = new TableNamePropertyWidget(tjb, tableProperty);
+        final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty);
         datastoreWidget1.connectToSchemaNamePropertyWidget(schemaWidget1);
         schemaWidget1.connectToTableNamePropertyWidget(tableWidget1);
         collection1.registerWidget(tableProperty, tableWidget1);
@@ -81,7 +81,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final SingleDatastorePropertyWidget datastoreWidget2 = new SingleDatastorePropertyWidget(tjb,
                 datastoreProperty, datastoreCatalog);
         final SchemaNamePropertyWidget schemaWidget2 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final TableNamePropertyWidget tableWidget2 = new TableNamePropertyWidget(tjb, tableProperty);
+        final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty);
         datastoreWidget2.connectToSchemaNamePropertyWidget(schemaWidget2);
         schemaWidget2.connectToTableNamePropertyWidget(tableWidget2);
         collection2.registerWidget(tableProperty, tableWidget2);

@@ -28,7 +28,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.beans.writers.WriteDataCategory;
+import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.SimpleComponentRequirement;

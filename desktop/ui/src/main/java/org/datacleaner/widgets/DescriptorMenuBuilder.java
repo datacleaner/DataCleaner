@@ -32,7 +32,7 @@ import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ComponentCategory;
-import org.datacleaner.beans.writers.WriteDataCategory;
+import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.DeprecatedComponentPredicate;

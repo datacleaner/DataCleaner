@@ -30,7 +30,7 @@ import javax.swing.ImageIcon;
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.writers.WriteDataCategory;
+import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -48,13 +48,12 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
+import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterBeanDescriptor;
 import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.database.DatabaseDriverCatalog;
-import org.datacleaner.database.DatabaseDriverDescriptor;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and

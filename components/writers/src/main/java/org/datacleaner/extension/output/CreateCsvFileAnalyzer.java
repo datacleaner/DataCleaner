@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
@@ -38,33 +39,32 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
-import org.eobjects.analyzer.beans.api.Alias;
-import org.eobjects.analyzer.beans.api.AnalyzerBean;
-import org.eobjects.analyzer.beans.api.Categorized;
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.Description;
-import org.eobjects.analyzer.beans.api.Distributed;
-import org.eobjects.analyzer.beans.api.FileProperty;
-import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
-import org.eobjects.analyzer.beans.api.Initialize;
-import org.eobjects.analyzer.beans.api.Provided;
-import org.eobjects.analyzer.beans.writers.WriteDataCategory;
-import org.eobjects.analyzer.beans.writers.WriteDataResult;
-import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
-import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
-import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.util.CompareUtils;
-import org.eobjects.analyzer.util.HasLabelAdvice;
-import org.eobjects.analyzer.util.sort.SortMergeWriter;
-import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
-import org.eobjects.datacleaner.user.UserPreferences;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
+import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.FileProperty.FileAccessMode;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Provided;
+import org.datacleaner.beans.writers.WriteDataCategory;
+import org.datacleaner.beans.writers.WriteDataResult;
+import org.datacleaner.beans.writers.WriteDataResultImpl;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.output.OutputWriter;
+import org.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.CompareUtils;
+import org.datacleaner.util.sort.SortMergeWriter;
 
-@AnalyzerBean("Create CSV file")
+@Named("Create CSV file")
 @Alias("Write to CSV file")
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(WriteDataCategory.class)

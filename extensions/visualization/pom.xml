@@ -52,7 +52,7 @@
 		<dependency>
 			<!-- Include DataCleaner as a provided dependency -->
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-desktop</artifactId>
+			<artifactId>DataCleaner-desktop-api</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

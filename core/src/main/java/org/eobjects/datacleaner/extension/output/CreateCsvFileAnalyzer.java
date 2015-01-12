@@ -22,7 +22,10 @@ package org.eobjects.datacleaner.extension.output;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -90,11 +93,20 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Provided
     UserPreferences userPreferences;
 
-    private File _tempFile;
+    private File _targetFile;
+    
+    private int indexOfColumnToBeSortedOn = -1 ;
+
+    private boolean isColumnToBeSortedOnPresentInInput = true ; 
+
 
     @Initialize
     public void initTempFile() throws Exception {
-        _tempFile = File.createTempFile("csv_file_analyzer", ".csv");
+        if(columnToBeSortedOn != null) {
+            _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+        } else {
+            _targetFile = file ;
+        }
     }
 
     @Override
@@ -123,96 +135,130 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
-        final String[] headers = new String[columns.length];
-        for (int i = 0; i < headers.length; i++) {
-            headers[i] = columns[i].getName();
+        List<String> headers = new ArrayList<String>() ;
+        for (int i = 0; i < columns.length; i++) {
+            String columnName = columns[i].getName();
+            headers.add(columnName);
+            if(columnName.equals(columnToBeSortedOn.getName())){
+                indexOfColumnToBeSortedOn = i ;
+            }
         }
-        return CsvOutputWriterFactory.getWriter(_tempFile.getPath(), headers, separatorChar, quoteChar, escapeChar, includeHeader, columns);
+
+        if(indexOfColumnToBeSortedOn == -1) {
+            this.isColumnToBeSortedOnPresentInInput  = false ;
+            indexOfColumnToBeSortedOn = columns.length ;
+            headers.add(columnToBeSortedOn.getName()) ;
+            InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1] ;
+            for(int i = 0; i < columns.length; i++){
+                newColumns[i] = columns[i] ;
+            }
+            newColumns[columns.length]  = columnToBeSortedOn ;
+            columns = newColumns ;
+        }
+        
+       
+        
+        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }
 
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
         final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, FileHelper.DEFAULT_ENCODING,
                 separatorChar, quoteChar, escapeChar, false, true);
-        final CsvDataContext tempDataContext = new CsvDataContext(_tempFile, csvConfiguration);
-        final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-        final Comparator<? super Row> comparator = new Comparator<Row>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public int compare(Row row1, Row row2) {
-                Comparable<Object> value1 = (Comparable<Object>) row1.getValue(columnToBeSortedOn.getPhysicalColumn().getColumnNumber());
-                Comparable<Object> value2 = (Comparable<Object>) row2.getValue(columnToBeSortedOn.getPhysicalColumn().getColumnNumber());
-                int comparableResult = value1.compareTo(value2) ;
-                if(comparableResult != 0) {
-                    return comparableResult ;
-                } else {
-                    // The values of the data at the row, and column to be sorted on are 
-                    // exactly the same. Now look at other values of all the columns to 
-                    // find if the two rows are same.
-                    int numberOfSelectItems = row1.getSelectItems().length ;
-                    for(int i = 0; i < numberOfSelectItems; i++) {
-                        Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
-                        Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
-                        if(rowValue1.compareTo(rowValue2) == 0) {
-                            continue;
-                        } else {
-                            return rowValue1.compareTo(rowValue2) ;
+        if (columnToBeSortedOn != null) {
+            
+            final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
+            final Table table = tempDataContext.getDefaultSchema().getTable(0);
+
+            final Comparator<? super Row> comparator = new Comparator<Row>() {
+                @SuppressWarnings("unchecked")
+                @Override 
+                public int compare(Row row1, Row row2) {
+                    Comparable<Object> value1 = (Comparable<Object>) row1.getValue(indexOfColumnToBeSortedOn);
+                    Comparable<Object> value2 = (Comparable<Object>) row2.getValue(indexOfColumnToBeSortedOn);
+                    int comparableResult = value1.compareTo(value2) ;
+                    if(comparableResult != 0) {
+                        return comparableResult ;
+                    } else {
+                        // The values of the data at the row, and column to be sorted on are 
+                        // exactly the same. Now look at other values of all the columns to 
+                        // find if the two rows are same.
+                        int numberOfSelectItems = row1.getSelectItems().length ;
+                        for(int i = 0; i < numberOfSelectItems; i++) {
+                            Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
+                            Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
+                            if(rowValue1.compareTo(rowValue2) == 0) {
+                                continue;
+                            } else {
+                                return rowValue1.compareTo(rowValue2) ;
+                            }
                         }
                     }
-                }
                 
-                return comparableResult;
-            }
-        };
+                    return comparableResult;
+                }
+            };
 
-        final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
-        final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
+            final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
+            final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
 
-            @Override
-            protected void writeHeader(Writer writer) throws IOException {
-                final String[] columnNames = table.getColumnNames();
-                final String line = csvWriter.buildLine(columnNames);
-                writer.write(line);
-                writer.append('\n');
-            }
-
-            @Override
-            protected void writeRow(Writer writer, Row row, int count) throws IOException {
-                for(int i = 0; i < count; i++) {
-                    final Object[] values = row.getValues();
-                    final String[] stringValues = new String[values.length];
-                    for (int j = 0; j < stringValues.length; j++) {
-                        final Object obj = values[j];
-                        if (obj != null) {
-                            stringValues[j] = obj.toString();
-                        }
+                @Override
+                protected void writeHeader(Writer writer) throws IOException {
+                    List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
+                    if(!isColumnToBeSortedOnPresentInInput) {
+                        headers.remove(columnToBeSortedOn.getName()) ;
                     }
-                    final String line = csvWriter.buildLine(stringValues);
+                    
+                    final String[] columnNames = headers.toArray(new String[0]);
+                    final String line = csvWriter.buildLine(columnNames);
                     writer.write(line);
                     writer.append('\n');
                 }
+
+                @Override
+                protected void writeRow(Writer writer, Row row, int count) throws IOException {
+                    for(int i = 0; i < count; i++) {
+                        List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues())) ;
+                            if(!isColumnToBeSortedOnPresentInInput) {
+                                valuesList.remove(indexOfColumnToBeSortedOn) ;
+                            }
+                        
+                        final Object[] values = valuesList.toArray(new Object[0]) ;
+
+                        final String[] stringValues = new String[values.length];
+                        for (int j = 0; j < stringValues.length; j++) {
+                            final Object obj = values[j];
+                            if (obj != null) {
+                                stringValues[j] = obj.toString();
+                            }
+                        }
+                        final String line = csvWriter.buildLine(stringValues);
+                        writer.write(line);
+                        writer.append('\n');
+                    }
+                }
+
+                @Override
+                protected Writer createWriter(File file) {
+                    return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);
+                }
+            };
+
+            // read from the temp file and sort it into the final file
+            final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
+            try {
+                while (dataSet.next()) {
+                    final Row row = dataSet.getRow();
+                    sortMergeWriter.append(row);
+                }
+            } finally {
+                dataSet.close();
             }
 
-            @Override
-            protected Writer createWriter(File file) {
-                return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);
-            }
-        };
-
-        // read from the temp file and sort it into the final file
-        final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
-        try {
-            while (dataSet.next()) {
-                final Row row = dataSet.getRow();
-                sortMergeWriter.append(row);
-            }
-        } finally {
-            dataSet.close();
+            sortMergeWriter.write(file);
         }
-
-        sortMergeWriter.write(file);
-
+        
         final Resource resource = new FileResource(file);
         final Datastore datastore = new CsvDatastore(file.getName(), resource, csvConfiguration);
         return new WriteDataResultImpl(rowCount, datastore, null, null);

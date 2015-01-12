@@ -32,7 +32,6 @@ import org.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.datacleaner.user.QuickAnalysisStrategy;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 
@@ -90,8 +89,8 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                     protected WizardPageController nextPageController(final List<Column> selectedColumns) {
                         _analysisJobBuilder.addSourceColumns(selectedColumns);
 
-                        final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(5, false, false);
-                        quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
+                        final QuickAnalysisBuilder builder = new QuickAnalysisBuilder(5, false, false);
+                        builder.configureAnalysisJobBuilder(_analysisJobBuilder);
 
                         return new SelectValueDistributionColumnsPage(2, selectedTable) {
                             @Override

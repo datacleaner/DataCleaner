@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-completeness-analysis-wizard</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - 'completeness analysis' wizard extension</name>
 
 	<build>
 		<plugins>

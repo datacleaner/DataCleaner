@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-csv-datastore-wizard</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - CSV datastore wizard extension</name>
 
 	<dependencies>
 		<dependency>

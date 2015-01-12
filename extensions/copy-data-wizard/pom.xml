@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-copy-data-wizard</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - 'copy data' wizard extension</name>
 
 	<build>
 		<plugins>

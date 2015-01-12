@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-jdbc-datastore-wizards</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - JDBC datastore wizard(s) extension</name>
 
 	<dependencies>
 		<dependency>

@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-excel-datastore-wizard</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - Excel datastore wizard extension</name>
 
 	<dependencies>
 		<dependency>

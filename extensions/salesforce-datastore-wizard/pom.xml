@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-salesforce-datastore-wizard</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - Salesforce.com datastore wizard extension</name>
 
 	<dependencies>
 		<dependency>

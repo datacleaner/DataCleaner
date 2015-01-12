@@ -1,11 +1,11 @@
 package org.datacleaner.monitor.jobwizard.completeness
-import org.datacleaner.monitor.wizard.WizardPageController
 import org.apache.metamodel.schema.Table
-import org.datacleaner.job.builder.AnalysisJobBuilder
 import scala.collection.JavaConversions._
-import org.datacleaner.beans.CompletenessAnalyzer
 import scala.collection.JavaConversions
-import org.datacleaner.data.InputColumn
+import org.datacleaner.monitor.wizard.WizardPageController
+import org.datacleaner.job.builder.AnalysisJobBuilder
+import org.datacleaner.beans.CompletenessAnalyzer
+import org.datacleaner.api.InputColumn
 import org.datacleaner.monitor.shared.model.DCUserInputException
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage
 import org.datacleaner.monitor.wizard.job.JobWizardContext

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -137,6 +138,11 @@ final class AnalysisJobBuilderImportHelper {
         if (originalInputColumn.isPhysicalColumn()) {
             Column physicalColumn = originalInputColumn.getPhysicalColumn();
             return _builder.getSourceColumnByName(physicalColumn.getQualifiedLabel());
+        }
+
+        if (originalInputColumn instanceof ExpressionBasedInputColumn) {
+            // we can use the original here - the expression is independent
+            return originalInputColumn;
         }
 
         final InputColumnSourceJob originalSourceJob = sourceColumnFinder.findInputColumnSource(originalInputColumn);

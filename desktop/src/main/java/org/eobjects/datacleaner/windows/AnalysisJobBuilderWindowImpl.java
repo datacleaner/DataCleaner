@@ -333,7 +333,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setForeground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+                button.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
             }
             
             @Override
@@ -342,7 +342,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
         button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        button.setBorder(new EmptyBorder(10, 4, 10, 4));
+        
+        if (icon == null) {
+            button.setBorder(new EmptyBorder(10, 8, 10, 8));
+        } else {
+            button.setBorder(new EmptyBorder(10, 4, 10, 4));
+        }
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setFocusPainted(false);
         if (popupDescription != null) {

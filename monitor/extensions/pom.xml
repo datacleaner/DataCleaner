@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
-		<artifactId>DataCleaner</artifactId>
+		<artifactId>DataCleaner-monitor</artifactId>
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-extensions</artifactId>

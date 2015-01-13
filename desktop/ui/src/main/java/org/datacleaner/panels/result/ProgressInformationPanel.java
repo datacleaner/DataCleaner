@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Icon;
 import javax.swing.JTextArea;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
@@ -41,7 +42,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.windows.ResultWindow;
-import org.apache.metamodel.schema.Table;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.VerticalLayout;
 import org.joda.time.LocalTime;
@@ -85,7 +85,7 @@ public class ProgressInformationPanel extends DCPanel {
         _executionLogTextArea.setText("--- DataCleaner progress information user-log ---");
         _executionLogTextArea.setEditable(false);
 
-        _progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        _progressBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         _progressBarPanel.setLayout(new VerticalLayout(4));
 
         final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", ICON_PROGRESS);

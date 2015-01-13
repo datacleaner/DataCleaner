@@ -30,11 +30,11 @@ import javax.swing.JToolBar;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.ColumnListTable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
@@ -109,11 +109,11 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(_columnListTable, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);

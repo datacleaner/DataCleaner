@@ -41,9 +41,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.Nullable;
@@ -51,6 +51,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
@@ -69,7 +70,6 @@ import org.datacleaner.widgets.database.OracleDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.SQLServerDatabaseConnectionPresenter;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -393,11 +393,11 @@ public class JdbcDatastoreDialog extends AbstractDialog {
         toolBar.add(Box.createHorizontalStrut(4));
         toolBar.add(saveButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         formContainerPanel.setLayout(new BorderLayout());
         formContainerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
         formContainerPanel.add(formPanel, BorderLayout.NORTH);
@@ -413,7 +413,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
                 + "If you see an additional panel, this provides an alternative means of connecting "
                 + "without having to know the URL format for your specific database type."), BorderLayout.NORTH);
         outerPanel.add(formContainerPanel, BorderLayout.CENTER);
-        
+
         outerPanel.setPreferredSize(getDialogWidth(), 500);
 
         return outerPanel;

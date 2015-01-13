@@ -36,25 +36,25 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.reference.DatastoreDictionary;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.tree.SchemaTree;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Injector;
@@ -102,7 +102,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         _splitPane.setBorder(null);
         _splitPane.setDividerLocation(320);
 
-        _treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
         _datastoreComboBox.addActionListener(new ActionListener() {
             @Override

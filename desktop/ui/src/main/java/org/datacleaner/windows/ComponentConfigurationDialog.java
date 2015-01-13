@@ -29,16 +29,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 
+import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ChangeRequirementButton;
@@ -139,11 +139,11 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(toolBarPanel, BorderLayout.SOUTH);

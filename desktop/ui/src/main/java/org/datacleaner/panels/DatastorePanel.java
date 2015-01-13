@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -51,11 +52,10 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -80,8 +80,6 @@ import com.google.inject.Injector;
 /**
  * A panel that presents a datastore and shows edit/remove buttons. This panel
  * is placed as a child inside the {@link WelcomePanel}.
- * 
- * @author Kasper Sørensen
  */
 public class DatastorePanel extends DCPanel {
 
@@ -98,7 +96,7 @@ public class DatastorePanel extends DCPanel {
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
             WelcomePanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;

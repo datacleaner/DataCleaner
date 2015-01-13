@@ -21,9 +21,12 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -46,11 +49,27 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.commons.vfs2.FileObject;
+import org.datacleaner.Version;
+import org.datacleaner.actions.AnalyzeButtonActionListener;
+import org.datacleaner.actions.ComponentBuilderTabTextActionListener;
+import org.datacleaner.actions.HideTabTextActionListener;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.actions.RenameComponentActionListener;
+import org.datacleaner.actions.RunAnalysisActionListener;
+import org.datacleaner.actions.SaveAnalysisJobActionListener;
+import org.datacleaner.actions.TransformButtonActionListener;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Renderer;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.JobFile;
+import org.datacleaner.guice.Nullable;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
@@ -61,25 +80,6 @@ import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.Version;
-import org.datacleaner.actions.AnalyzeButtonActionListener;
-import org.datacleaner.actions.HideTabTextActionListener;
-import org.datacleaner.actions.ComponentBuilderTabTextActionListener;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.actions.RenameComponentActionListener;
-import org.datacleaner.actions.RunAnalysisActionListener;
-import org.datacleaner.actions.SaveAnalysisJobActionListener;
-import org.datacleaner.actions.TransformButtonActionListener;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.Renderer;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.database.DatabaseDriverCatalog;
-import org.datacleaner.guice.InjectorBuilder;
-import org.datacleaner.guice.JobFile;
-import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.AbstractJobBuilderPanel;
 import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.datacleaner.panels.ComponentJobBuilderPresenter;
@@ -94,10 +94,13 @@ import org.datacleaner.panels.SourceColumnsPanel;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CollapsibleTreePanel;
@@ -223,16 +226,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
-        _saveButton = createToolBarButton("Save", imageManager.getImageIcon("images/actions/save.png"));
-        _saveAsButton = createToolBarButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
+        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
 
         _transformButton = createToolbarButton(
                 "Transform",
-                IconUtils.TRANSFORMER_IMAGEPATH,
+                null,
                 "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>");
-        _analyzeButton = createToolbarButton("Analyze", IconUtils.ANALYZER_IMAGEPATH,
+        _analyzeButton = createToolbarButton("Analyze", null,
                 "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
-        _executeButton = createToolBarButton("Execute", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE));
+        _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
                 openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
@@ -263,7 +266,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _editingContentView.add(_tabbedPane, BorderLayout.CENTER);
         _editingContentView.add(graphPanel, BorderLayout.CENTER);
 
-        _contentContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new BorderLayout());
         _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
         _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
@@ -319,15 +322,34 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return true;
     }
 
-    private JButton createToolBarButton(String text, ImageIcon imageIcon) {
-        final JButton button = new JButton(text, imageIcon);
-        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        button.setFocusPainted(false);
-        return button;
-    }
-
     private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
-        JButton button = createToolBarButton(text, imageManager.getImageIcon(iconPath));
+        final ImageIcon icon;
+        if (iconPath == null) {
+            icon = null;
+        } else {
+            icon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+        }
+        final JButton button = new JButton(text, icon);
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setForeground(WidgetUtils.BG_COLOR_BRIGHT);
+            }
+        });
+        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        
+        if (icon == null) {
+            button.setBorder(new EmptyBorder(10, 8, 10, 8));
+        } else {
+            button.setBorder(new EmptyBorder(10, 4, 10, 4));
+        }
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setFocusPainted(false);
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
             popupBubble.attachTo(button);
@@ -660,11 +682,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         });
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(createToolbarButton("New", IconUtils.ACTION_NEW, null));
+        toolBar.add(createToolbarButton("Open", IconUtils.MENU_OPEN, null));
         toolBar.add(_saveButton);
         toolBar.add(_saveAsButton);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_transformButton);
+        toolBar.add(createToolbarButton("Clean", null, null));
         toolBar.add(_analyzeButton);
+        toolBar.add(createToolbarButton("Write", null, null));
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
 
@@ -676,7 +702,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final LicenceAndEditionStatusLabel statusLabel = new LicenceAndEditionStatusLabel(_glassPane);
         statusBar.add(statusLabel);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 

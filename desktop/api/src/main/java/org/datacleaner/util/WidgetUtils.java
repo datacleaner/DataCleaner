@@ -52,9 +52,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.windows.AbstractWindow;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
@@ -132,6 +130,7 @@ public final class WidgetUtils {
     // white
     public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
+    
     // #e1e1e1 (silver-ish)
     public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
 
@@ -141,11 +140,15 @@ public final class WidgetUtils {
     // #a0a0a0
     public static final Color BG_COLOR_MEDIUM = new ColorUIResource(130, 140, 150);
 
-    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(85, 95, 100);
+    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(55, 55, 55);
 
-    public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
+    public static final Color BG_COLOR_DARK = new ColorUIResource(33, 33, 33);
 
-    public static final Color BG_COLOR_DARKEST = new ColorUIResource(37, 40, 45);
+    public static final Color BG_COLOR_DARKEST = ColorUIResource.BLACK;
+
+    public static final Color COLOR_DEFAULT_BACKGROUND = BG_COLOR_BRIGHTEST;
+    public static final Color COLOR_WELL_BACKGROUND = BG_COLOR_BRIGHT;
+    public static final Color COLOR_ALTERNATIVE_BACKGROUND = BG_COLOR_DARK;
 
     // additional colors, only intended for special widget coloring such as
     // charts etc.
@@ -335,11 +338,6 @@ public final class WidgetUtils {
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage) {
-        if (SystemProperties.getBoolean(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, false)) {
-            logger.warn("Window hiding is enabled. NOT showing error message: {} - {}", shortMessage, detailedMessage);
-            return;
-        }
-
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
         final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage);
@@ -350,11 +348,6 @@ public final class WidgetUtils {
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage,
             final Throwable exception) {
-        if (SystemProperties.getBoolean(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, false)) {
-            logger.warn("Window hiding is enabled. NOT showing error message: {} - {}", shortMessage, detailedMessage);
-            return;
-        }
-
         final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
         if (exception == null) {
             showErrorMessage(shortMessage, detailedMessage);

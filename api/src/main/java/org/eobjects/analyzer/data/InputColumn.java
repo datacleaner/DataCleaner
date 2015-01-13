@@ -19,10 +19,12 @@
  */
 package org.eobjects.analyzer.data;
 
-
 /**
  * Legacy {@link InputColumn} interface
+ * 
+ * @deprecated use {@link org.datacleaner.api.InputColumn} instead.
  */
+@Deprecated
 public interface InputColumn<E> extends org.datacleaner.api.InputColumn<E> {
 
 }

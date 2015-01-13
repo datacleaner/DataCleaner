@@ -43,15 +43,15 @@ import javax.swing.table.TableModel;
 
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QueryActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.table.DCTable;
@@ -205,7 +205,7 @@ public final class ColumnListTable extends DCPanel {
 
             return panel;
         }
-
+        
         final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);
         return new JLabel(column.getName(), icon, JLabel.LEFT);
     }

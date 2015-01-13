@@ -38,19 +38,19 @@ import javax.swing.tree.TreePath;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.reference.DatastoreSynonymCatalog;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -94,7 +94,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
-        _treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
 
         _datastoreComboBox.addActionListener(new ActionListener() {
@@ -247,7 +247,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         mainPanel.add(descriptionLabel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         mainPanel.setPreferredSize(getDialogWidth(), 230);
 
         return mainPanel;

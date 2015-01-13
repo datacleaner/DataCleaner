@@ -34,6 +34,10 @@ import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.DataSetTableModel;
+import org.apache.metamodel.query.Query;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
@@ -41,10 +45,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.data.DataSetTableModel;
-import org.apache.metamodel.query.Query;
 
 public class DataSetWindow extends AbstractWindow {
 
@@ -81,7 +81,8 @@ public class DataSetWindow extends AbstractWindow {
         _nextPageButton.setEnabled(false);
     }
 
-    public DataSetWindow(final String title, final Callable<TableModel> tableModelCallable, final WindowContext windowContext) {
+    public DataSetWindow(final String title, final Callable<TableModel> tableModelCallable,
+            final WindowContext windowContext) {
         super(windowContext);
         _table = new DCTable();
         _query = null;
@@ -205,7 +206,7 @@ public class DataSetWindow extends AbstractWindow {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel buttonPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 10));
         buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
         buttonPanel.add(_previousPageButton);

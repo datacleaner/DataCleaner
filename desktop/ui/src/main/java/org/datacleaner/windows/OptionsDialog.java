@@ -41,15 +41,16 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.metamodel.util.Func;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.storage.StorageProvider;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatabaseDriversPanel;
 import org.datacleaner.panels.ExtensionPackagesPanel;
+import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.user.QuickAnalysisStrategy;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
@@ -65,7 +66,6 @@ import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.widgets.tabs.Tab;
-import org.apache.metamodel.util.Func;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -135,7 +135,7 @@ public class OptionsDialog extends AbstractWindow {
         directoriesPanel.add(DCLabel.dark("Written datastores:"));
         directoriesPanel.add(saveDatastoreDirectoryField);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new VerticalLayout(4));
         panel.add(getQuickAnalysisPanel());
         panel.add(directoriesPanel);
@@ -144,7 +144,8 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getQuickAnalysisPanel() {
-        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy.loadFromUserPreferences(_userPreferences);
+        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy
+                .loadFromUserPreferences(_userPreferences);
         final JXTextField columnsTextField = WidgetFactory.createTextField("Columns");
         columnsTextField.setColumns(2);
         columnsTextField.setDocument(new NumberDocument());
@@ -281,7 +282,7 @@ public class OptionsDialog extends AbstractWindow {
         // use ActionListener to initialize components
         actionListener.actionPerformed(null);
 
-        final DCPanel networkTabPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel networkTabPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         networkTabPanel.setLayout(new BorderLayout());
         networkTabPanel.add(proxyCheckBox, BorderLayout.NORTH);
         networkTabPanel.add(proxyPanel, BorderLayout.CENTER);
@@ -290,7 +291,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getPerformanceTab() {
-        DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         int row = 0;
 
@@ -334,7 +335,7 @@ public class OptionsDialog extends AbstractWindow {
     }
 
     private DCPanel getMemoryTab() {
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         final JLabel maxMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
         final JLabel totalMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
@@ -415,14 +416,14 @@ public class OptionsDialog extends AbstractWindow {
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(closeButton);
 
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
         final DCBannerPanel banner = new DCBannerPanel("Options");
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);

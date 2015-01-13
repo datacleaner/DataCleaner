@@ -55,8 +55,6 @@ import cern.colt.Arrays;
 
 /**
  * Panel for configuring extension packages.
- * 
- * @author Kasper Sørensen
  */
 public class ExtensionPackagesPanel extends DCPanel {
 
@@ -73,7 +71,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
     @Inject
     protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
 

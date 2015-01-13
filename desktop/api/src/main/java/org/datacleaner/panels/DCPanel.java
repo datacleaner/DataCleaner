@@ -74,6 +74,19 @@ public class DCPanel extends JPanel {
         this(null, 0, 0);
     }
 
+    public DCPanel(Color bgColor) {
+        this(null, 0, 0, bgColor, bgColor);
+    }
+
+    /**
+     * 
+     * @param topColor
+     * @param bottomColor
+     * 
+     * @deprecated since version 4 we no longer encourage gradient background.
+     *             Use {@link #DCPanel(Color)} instead.
+     */
+    @Deprecated
     public DCPanel(Color topColor, Color bottomColor) {
         this(null, 0, 0, topColor, bottomColor);
     }
@@ -89,6 +102,22 @@ public class DCPanel extends JPanel {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, null, null);
     }
 
+    public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color bgColor) {
+        this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, bgColor, bgColor);
+    }
+
+    /**
+     * 
+     * @param watermark
+     * @param horizontalAlignmentInPercent
+     * @param verticalAlignmentInPercent
+     * @param topColor
+     * @param bottomColor
+     * 
+     * @deprecated since version 4 we no longer encourage gradient background.
+     *             Use {@link #DCPanel(Image, int, int, Color)} instead.
+     */
+    @Deprecated
     public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color topColor,
             Color bottomColor) {
         super();

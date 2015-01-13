@@ -48,8 +48,7 @@ public class SchemaTreePanel extends DCPanel {
 
 	@Inject
 	protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
-		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
-				WidgetUtils.BG_COLOR_BRIGHT);
+		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_injectorBuilder = injectorBuilder;
 		setLayout(new BorderLayout());
 		setDatastore(null, false);

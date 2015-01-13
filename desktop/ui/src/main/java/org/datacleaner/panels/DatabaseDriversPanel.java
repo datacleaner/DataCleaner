@@ -66,8 +66,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the panel in the Options dialog where the user can get an overview
  * and configure database drivers.
- * 
- * @author Kasper Sørensen
  */
 public class DatabaseDriversPanel extends DCPanel {
 
@@ -84,7 +82,7 @@ public class DatabaseDriversPanel extends DCPanel {
     @Inject
     protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;
         _userPreferences = userPreferences;
         _databaseDriverCatalog = databaseDriverCatalog;

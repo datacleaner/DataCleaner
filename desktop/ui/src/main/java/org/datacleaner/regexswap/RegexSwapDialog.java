@@ -66,8 +66,6 @@ import org.joda.time.DateTime;
 
 /**
  * A dialog for browsing the online RegexSwap repository.
- * 
- * @author Kasper Sørensen
  */
 public class RegexSwapDialog extends AbstractDialog {
 
@@ -218,12 +216,12 @@ public class RegexSwapDialog extends AbstractDialog {
 	protected JComponent getDialogContent() {
 		final JPanel regexDetailsPanel = createRegexDetailsPanel();
 
-		final DCPanel treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+		final DCPanel treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		treePanel.setBorder(WidgetUtils.BORDER_WIDE);
 		treePanel.setLayout(new BorderLayout());
 		treePanel.add(WidgetUtils.scrolleable(_categoryTree), BorderLayout.CENTER);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
+		final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 		panel.setLayout(new BorderLayout());
 		panel.add(new CollapsibleTreePanel(treePanel), BorderLayout.WEST);
 		panel.add(regexDetailsPanel, BorderLayout.CENTER);
@@ -239,11 +237,11 @@ public class RegexSwapDialog extends AbstractDialog {
 		toolBar.add(_importRegexButton);
 		toolBar.add(_viewOnlineButton);
 
-		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
+		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+		final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 		panel.setLayout(new BorderLayout());
 		panel.add(_regexSelectionTable.toPanel(), BorderLayout.NORTH);
 		panel.add(WidgetUtils.scrolleable(_regexDescriptionLabel), BorderLayout.CENTER);

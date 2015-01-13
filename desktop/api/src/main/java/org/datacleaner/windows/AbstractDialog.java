@@ -71,12 +71,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         return _banner;
     }
 
-    protected void setTopBackgroundColor(Color topBackgroundColor) {
-        _topBackgroundColor = topBackgroundColor;
-    }
-
-    protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
-        _bottomBackgroundColor = bottomBackgroundColor;
+    protected void setBackgroundColor(Color backgroundColor) {
+        _topBackgroundColor = backgroundColor;
+        _bottomBackgroundColor = backgroundColor;
     }
 
     @Override
@@ -144,6 +141,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     protected final JComponent getWindowContent() {
+        @SuppressWarnings("deprecation")
         DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
         panel.setLayout(new BorderLayout());
 

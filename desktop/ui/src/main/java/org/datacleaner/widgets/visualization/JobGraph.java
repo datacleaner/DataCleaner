@@ -44,6 +44,9 @@ import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
@@ -52,18 +55,15 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,7 +232,7 @@ public final class JobGraph {
             @Override
             public void paint(Graphics g) {
                 final GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0,
-                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHT);
+                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHTEST);
                 if (g instanceof Graphics2D) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setPaint(paint);
@@ -466,7 +466,5 @@ public final class JobGraph {
         GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
         return scrollPane;
     }
-
-    
 
 }

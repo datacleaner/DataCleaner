@@ -21,7 +21,10 @@ package org.eobjects.analyzer.data;
 
 /**
  * Legacy {@link InputRow} interface
+ * 
+ * @deprecated use {@link org.datacleaner.api.InputRow} instead.
  */
+@Deprecated
 public interface InputRow extends org.datacleaner.api.InputRow {
 
 }

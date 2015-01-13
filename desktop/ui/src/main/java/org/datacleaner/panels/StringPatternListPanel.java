@@ -32,11 +32,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.regexswap.RegexSwapDialog;
 import org.datacleaner.regexswap.RegexSwapStringPattern;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -69,7 +69,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	@Inject
 	protected StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
 			WindowContext windowContext, UserPreferences userPreferences) {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_windowContext = windowContext;

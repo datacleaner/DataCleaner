@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Configuration with all the datastores</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="my_jdbc_connection" description="jdbc_con">
+			<url>jdbc:hsqldb:file:../../desktop/ui/src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+
+		<jdbc-datastore name="my_jdbc_datasource" description="jdbc_ds">
+			<datasource-jndi-url>java:comp/env/jdbc/mydb</datasource-jndi-url>
+		</jdbc-datastore>
+		
+		<sugar-crm-datastore name="my_sugarcrm" description="a SugarCRM instance">
+			<base-url>http://localhost/sugar</base-url>
+			<username>root</username>
+			<password>pwd</password>
+		</sugar-crm-datastore>
+		
+		<salesforce-datastore name="my_sfdc_ds" description="salesforce.com is an online CRM system">
+			<username>foo</username>
+			<password>bar</password>
+			<security-token>baz</security-token>
+		</salesforce-datastore>
+
+		<xml-datastore name="my_dom_xml" description="dom xml">
+			<filename>../core/src/test/resources/example-xml-file.xml</filename>
+		</xml-datastore>
+
+		<xml-datastore name="my_sax_xml" description="sax xml">
+			<filename>../core/src/test/resources/example-xml-file.xml</filename>
+			<table-def>
+				<rowXpath>/greetings/greeting</rowXpath>
+				<valueXpath>/greetings/greeting/how</valueXpath>
+				<valueXpath>/greetings/greeting/what</valueXpath>
+			</table-def>
+		</xml-datastore>
+
+		<csv-datastore name="my_csv" description="csv">
+			<filename>../core/src/test/resources/employees.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+		</csv-datastore>
+
+		<excel-datastore name="my_excel_2003" description="xls">
+			<filename>../core/src/test/resources/Spreadsheet2003.xls</filename>
+		</excel-datastore>
+		
+		<json-datastore name="my_json">
+			<filename>../core/src/test/resources/example.json</filename>
+		</json-datastore>
+
+		<access-datastore name="my_access" description="mdb">
+			<filename>../core/src/test/resources/developers.mdb</filename>
+		</access-datastore>
+		
+		<elasticsearch-datastore name="my es index" description="yay, search!">
+			<hostname>localhost</hostname>
+			<port>9300</port>
+			<cluster-name>my_es_cluster</cluster-name>
+			<index-name>my_index</index-name>
+		</elasticsearch-datastore>
+		
+		<cassandra-datastore name="my cassandra db" description="Apache Cassandra rocks">
+			<keyspace>my_keyspace</keyspace>
+			<hostname>localhost</hostname>
+			<port>9042</port>
+			<username>foo</username>
+			<password>bar</password>
+			<ssl>true</ssl>
+			<table-def>
+				<table-name>table</table-name>
+				<column>
+					<name>bah</name>
+					<type>STRING</type>
+				</column>
+				<column>
+					<name>baz</name>
+					<type>STRING</type>
+				</column>
+			</table-def>
+		</cassandra-datastore>
+
+		<dbase-datastore name="my_dbase" description="dbf">
+			<filename>../core/src/test/resources/report.dbf</filename>
+		</dbase-datastore>
+		
+		<odb-datastore name="my_odb" description="odb">
+			<filename>../core/src/test/resources/openoffice_db.odb</filename>
+		</odb-datastore>
+
+		<sas-datastore name="my_sas" description="folder of sas7bdat files">
+			<directory>../core/src/test/resources/sas</directory>
+		</sas-datastore>
+
+		<fixed-width-datastore name="my_fixed_width_1">
+			<filename>../core/src/test/resources/employees-fixed-width.txt</filename>
+			<width-specification>
+				<fixed-value-width>19</fixed-value-width>
+			</width-specification>
+			<encoding>UTF-8</encoding>
+			<header-line-number>0</header-line-number>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</fixed-width-datastore>
+
+		<fixed-width-datastore name="my_fixed_width_2">
+			<filename>../core/src/test/resources/employees-fixed-width-variable-columns.txt</filename>
+			<width-specification>
+				<value-width>4</value-width>
+				<value-width>17</value-width>
+				<value-width>19</value-width>
+			</width-specification>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</fixed-width-datastore>
+		
+		<hbase-datastore name="my hbase">
+			<zookeeper-hostname>localhost</zookeeper-hostname>
+			<zookeeper-port>2181</zookeeper-port>
+			<table-def>
+				<name>table1</name>
+				<column>
+					<family>fam1</family>
+					<name>foo</name>
+					<type>STRING</type>
+				</column>
+				<column>
+					<name>fam1:bar</name>
+					<type>STRING</type>
+				</column>
+				<column>
+					<name>fam2:baz</name>
+					<type>INTEGER</type>
+				</column>
+			</table-def>
+			<table-def>
+				<name>table2</name>
+				<column>
+					<name>fam3:hello</name>
+					<type>STRING</type>
+				</column>
+				<column>
+					<name>fam3:world</name>
+					<type>VARCHAR</type>
+				</column>
+			</table-def>
+		</hbase-datastore>
+		
+		<mongodb-datastore name="my mongo" description="a mongo db based datastore">
+			<hostname>localhost</hostname>
+			<port>27017</port>
+			<database-name>analyzerbeans_test</database-name>
+			<table-def>
+				<collection>my_col_1</collection>
+				<property>
+					<name>foo</name>
+					<type>VARCHAR</type>
+				</property>
+				<property>
+					<name>bar</name>
+					<type>INTEGER</type>
+				</property>
+				<property>
+					<name>baz</name>
+					<type>DATE</type>
+				</property>
+			</table-def>
+		</mongodb-datastore>
+
+		<couchdb-datastore name="my couch">
+			<hostname>localhost</hostname>
+			<username>user</username>
+			<password>pass</password>
+			<ssl>true</ssl>
+			<table-def>
+				<database>foobar</database>
+				<field>
+					<name>foo</name>
+					<type>MAP</type>
+				</field>
+				<field>
+					<name>bar</name>
+					<type>INTEGER</type>
+				</field>
+				<field>
+					<name>baz</name>
+					<type>VARCHAR</type>
+				</field>
+			</table-def>
+		</couchdb-datastore>
+
+		<pojo-datastore name="my_pojo"
+			description="A datastore based on plain values">
+			<schema-name>my_schema</schema-name>
+			<table>
+				<name>table1</name>
+				<columns>
+					<column>
+						<name>Foo</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Bar</name>
+						<type>INTEGER</type>
+					</column>
+				</columns>
+				<rows>
+					<row>
+						<v>Hello</v>
+						<v>1</v>
+					</row>
+					<row>
+						<v>There</v>
+						<v />
+					</row>
+					<row>
+						<v>World</v>
+						<v>3</v>
+					</row>
+				</rows>
+			</table>
+			<table>
+				<name>table2</name>
+				<columns>
+					<column>
+						<name>Baz</name>
+						<type>BOOLEAN</type>
+					</column>
+				</columns>
+				<rows>
+					<row>
+						<v>true</v>
+					</row>
+					<row>
+						<v>false</v>
+					</row>
+				</rows>
+			</table>
+		</pojo-datastore>
+
+		<composite-datastore name="my_composite"
+			description="comp">
+			<datastore-name>my_jdbc_connection</datastore-name>
+			<datastore-name>my_csv</datastore-name>
+			<datastore-name>my_excel_2003</datastore-name>
+			<datastore-name>my_access</datastore-name>
+		</composite-datastore>
+
+		<custom-datastore
+			class-name="org.datacleaner.configuration.SampleCustomDatastore">
+			<property name="Name" value="my_custom" />
+			<property name="Xml file" value="pom.xml" />
+			<property name="Description" value="custom" />
+		</custom-datastore>
+	</datastore-catalog>
+
+	<multithreaded-taskrunner />
+
+	<storage-provider>
+		<in-memory max-rows-threshold="500" />
+	</storage-provider>
+
+</configuration>

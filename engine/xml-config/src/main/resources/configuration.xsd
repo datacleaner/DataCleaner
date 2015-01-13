@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:ab="http://eobjects.org/analyzerbeans/configuration/1.0"
+	elementFormDefault="qualified">
+
+	<element name="configuration">
+		<complexType>
+			<sequence>
+				<element name="configuration-metadata" type="ab:configurationMetadataType"
+					minOccurs="0" maxOccurs="1" />
+				<element name="datastore-catalog" type="ab:datastoreCatalogType"
+					minOccurs="1" maxOccurs="1">
+					<annotation>
+						<documentation>
+							Defines the catalog of datastores that are usable
+							as input sources for the analysis jobs.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="reference-data-catalog" type="ab:referenceDataCatalogType"
+					minOccurs="0" maxOccurs="1">
+					<annotation>
+						<documentation>
+							Defines the catalog of reference data, containing
+							Dictionaries, Synonyms
+							etc.
+						</documentation>
+					</annotation>
+				</element>
+				<choice minOccurs="0" maxOccurs="1">
+					<element name="multithreaded-taskrunner" type="ab:multithreadedTaskrunnerType"
+						minOccurs="1" maxOccurs="1">
+						<annotation>
+							<documentation>
+								Defines a multi-threaded task runner, enabling
+								processing of records in parallel.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="singlethreaded-taskrunner" type="ab:singlethreadedTaskrunnerType"
+						minOccurs="1" maxOccurs="1">
+						<annotation>
+							<documentation>
+								Defines a single-threaded task runner, which means
+								all records will be processed sequentially, in the same thread.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="custom-taskrunner" type="ab:customElementType"
+						minOccurs="1" maxOccurs="1" />
+				</choice>
+				<element name="storage-provider" type="ab:storageProviderType"
+					minOccurs="0" maxOccurs="1" />
+				<choice minOccurs="0" maxOccurs="1">
+					<element name="classpath-scanner" minOccurs="1" maxOccurs="1"
+						type="ab:classpathScannerType">
+						<annotation>
+							<documentation>
+								Defines which java packages should be scanned for
+								components to use in AnalyzerBeans.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="custom-descriptor-provider" type="ab:customElementType"
+						minOccurs="1" maxOccurs="1" />
+				</choice>
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="storageProviderType">
+		<choice minOccurs="1" maxOccurs="1">
+			<element name="combined" type="ab:combinedStorageProviderType"
+				minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>
+						Select this storage provider to use a storage
+						provider that combines different technologies based on the
+						storage
+						entity type. This is the recommended storage provider
+						for typical
+						data profiling needs as it allows to combine
+						in-memory row
+						annotations (for previewing in profiling results)
+						with database
+						backed collections (for intermediary results).
+					</documentation>
+				</annotation>
+			</element>
+			<element name="in-memory" type="ab:inMemoryStorageProviderType"
+				minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>
+						Select this storage provider to store staging data
+						and intermediary results in memory. This is by far the best
+						performing storage provider but it also brings in the risk of
+						running out of memory for very large jobs.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="h2-database" type="ab:h2StorageProviderType"
+				minOccurs="1" maxOccurs="1">
+				<annotation>
+					<documentation>
+						This storage provider uses the H2 database engine
+						as
+						a backing store for intermediary results.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="hsqldb" type="ab:hsqldbStorageProviderType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="berkeley-db" type="ab:berkeleyDbStorageProviderType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="custom-storage-provider" type="ab:customElementType"
+				minOccurs="1" maxOccurs="1" />
+		</choice>
+	</complexType>
+
+	<complexType name="configurationMetadataType">
+		<sequence>
+			<element name="configuration-name" type="normalizedString"
+				minOccurs="0" maxOccurs="1" />
+			<element name="configuration-description" type="normalizedString"
+				minOccurs="0" maxOccurs="1" />
+			<element name="configuration-version" type="normalizedString"
+				minOccurs="0" maxOccurs="1" />
+			<element name="author" type="normalizedString" minOccurs="0"
+				maxOccurs="1" />
+			<element name="created-date" type="date" minOccurs="0"
+				maxOccurs="1" />
+			<element name="updated-date" type="date" minOccurs="0"
+				maxOccurs="1" />
+		</sequence>
+	</complexType>
+
+	<complexType name="classpathScannerType">
+		<sequence>
+			<element name="excluded-rendering-format" minOccurs="0"
+				maxOccurs="unbounded" type="string" />
+			<element name="package" minOccurs="1" maxOccurs="unbounded">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="recursive" type="boolean" use="optional" />
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="datastoreCatalogType">
+		<sequence>
+			<choice minOccurs="0" maxOccurs="unbounded">
+				<element name="jdbc-datastore" type="ab:jdbcDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a JDBC database
+							connection.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="access-datastore" type="ab:accessDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a MS Access database
+							file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="csv-datastore" type="ab:csvDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a Comma-separated
+							file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="salesforce-datastore" type="ab:salesforceDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a Salesforce.com
+							account.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="sugar-crm-datastore" type="ab:sugarCrmDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a SugarCRM system.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="hbase-datastore" type="ab:hbaseDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an Apache HBase
+							database.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="mongodb-datastore" type="ab:mongodbDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a MongoDB database.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="elasticsearch-datastore" type="ab:elasticSearchDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an ElasticSearch
+							index.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="cassandra-datastore" type="ab:cassandraDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an Cassandra
+							index.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="couchdb-datastore" type="ab:couchdbDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an Apache CouchDB
+							database.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="fixed-width-datastore" type="ab:fixedWidthDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a fixed width value
+							file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="sas-datastore" type="ab:sasDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a directory of SAS
+							data
+							sets.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="excel-datastore" type="ab:excelDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a MS Excel spreadsheet
+							file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="json-datastore" type="ab:jsonDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a JSON file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="dbase-datastore" type="ab:dbaseDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a dBase database file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="odb-datastore" type="ab:openOfficeDatabaseDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on a OpenOffice.org
+							database file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="xml-datastore" type="ab:xmlDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a datastore based on an XML file.
+						</documentation>
+					</annotation>
+				</element>
+				<element name="pojo-datastore" type="ab:pojoDatastoreType">
+					<annotation>
+						<documentation>
+							Defines an in-memory datastore based on Plain Old
+							Java Objects (POJOs).
+						</documentation>
+					</annotation>
+				</element>
+				<element name="composite-datastore" type="ab:compositeDatastoreType">
+					<annotation>
+						<documentation>
+							Defines a composite datastore, which allows to
+							virtually treat several datastores as a single datastore.
+						</documentation>
+					</annotation>
+				</element>
+			</choice>
+			<element name="custom-datastore" type="ab:customElementType"
+				minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>
+						Defines a custom datastore based on a class
+						implementing the Datastore interface.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="abstractDatastoreType" abstract="true">
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="jdbcDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<choice>
+						<sequence>
+							<element name="url" minOccurs="1" maxOccurs="1" type="string" />
+							<element name="driver" minOccurs="1" maxOccurs="1" type="string" />
+							<element name="username" minOccurs="0" maxOccurs="1"
+								type="string" />
+							<element name="password" minOccurs="0" maxOccurs="1"
+								type="string" />
+							<element name="multiple-connections" minOccurs="0"
+								maxOccurs="1" type="boolean" default="true">
+								<annotation>
+									<documentation>
+										Indicates whether multiple connections (aka.
+										connection pooling) may be created or not. Connection pooling
+										is preferred for performance reasons, but can safely be
+										disabled if not desired. The max number of connections cannot
+										be configured, but no more connections than the number of
+										threads in the task runner should be expected.
+									</documentation>
+								</annotation>
+							</element>
+						</sequence>
+						<element name="datasource-jndi-url" minOccurs="0"
+							maxOccurs="1" type="string" />
+					</choice>
+					<element name="table-types" minOccurs="0" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="table-type" minOccurs="1" maxOccurs="unbounded"
+									type="ab:tableTypeEnum" />
+							</sequence>
+						</complexType>
+					</element>
+					<element name="catalog-name" minOccurs="0" maxOccurs="1"
+						type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<simpleType name="tableTypeEnum">
+		<restriction base="string">
+			<enumeration value="TABLE" />
+			<enumeration value="VIEW" />
+			<enumeration value="SYSTEM_TABLE" />
+			<enumeration value="GLOBAL_TEMPORARY" />
+			<enumeration value="LOCAL_TEMPORARY" />
+			<enumeration value="ALIAS" />
+			<enumeration value="SYNONYM" />
+			<enumeration value="OTHER" />
+		</restriction>
+	</simpleType>
+
+	<complexType name="csvDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="filename" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="quote-char" type="token" minOccurs="0" />
+					<element name="separator-char" type="token" minOccurs="0" />
+					<element name="escape-char" type="token" minOccurs="0" />
+					<element name="encoding" type="token" minOccurs="0" />
+					<element name="fail-on-inconsistencies" type="boolean"
+						minOccurs="0" />
+					<element name="multiline-values" type="boolean" minOccurs="0" />
+					<element name="header-line-number" type="int" default="1"
+						minOccurs="0">
+						<annotation>
+							<documentation>
+								The row number (1-based) of the header line. If
+								no
+								header line is present, use 0.
+							</documentation>
+						</annotation>
+					</element>
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="salesforceDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="username" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="password" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="security-token" type="string" minOccurs="1"
+						maxOccurs="1" />
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="sugarCrmDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="base-url" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="username" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="password" type="string" minOccurs="1"
+						maxOccurs="1" />
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="pojoDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="schema-name" minOccurs="0" maxOccurs="1"
+						type="string" />
+					<element name="table" minOccurs="0" maxOccurs="unbounded"
+						type="ab:pojoTableType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="pojoTableType">
+		<sequence>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="columns" minOccurs="1" maxOccurs="1">
+				<complexType>
+					<sequence>
+						<element name="column" minOccurs="1" maxOccurs="unbounded">
+							<complexType>
+								<sequence>
+									<element name="name" minOccurs="1" maxOccurs="1"
+										type="normalizedString" />
+									<element name="type" minOccurs="1" maxOccurs="1"
+										type="normalizedString" />
+								</sequence>
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="rows" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<sequence>
+						<element name="row" minOccurs="0" maxOccurs="unbounded">
+							<complexType>
+								<sequence>
+									<choice>
+										<element name="v" minOccurs="1" maxOccurs="unbounded"
+											type="anyType" nillable="true" />
+									</choice>
+								</sequence>
+							</complexType>
+						</element>
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="hbaseDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="zookeeper-hostname" minOccurs="0" maxOccurs="1"
+						type="string" />
+					<element name="zookeeper-port" minOccurs="0" maxOccurs="1"
+						type="int" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="name" minOccurs="1" maxOccurs="1"
+									type="normalizedString" />
+								<element name="column" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="family" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="normalizedString" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="mongodbDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="database-name" minOccurs="1" maxOccurs="1"
+						type="string" />
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="collection" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="property" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="string" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="elasticSearchDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="hostname" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="cluster-name" minOccurs="1" maxOccurs="1"
+						type="string" />
+					<element name="index-name" minOccurs="1" maxOccurs="1"
+						type="string" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="document-type" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="field" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="string" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="cassandraDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="keyspace" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="hostname" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="table-name" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="column" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="string" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="couchdbDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="hostname" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="database" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="field" minOccurs="1" maxOccurs="unbounded">
+									<complexType>
+										<sequence>
+											<element name="name" minOccurs="1" maxOccurs="1"
+												type="string" />
+											<element name="type" minOccurs="0" maxOccurs="1"
+												type="normalizedString" />
+										</sequence>
+									</complexType>
+								</element>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="fixedWidthDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<all>
+					<element name="filename" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="width-specification" minOccurs="1"
+						maxOccurs="1">
+						<complexType>
+							<choice>
+								<element name="fixed-value-width" type="int" default="10"
+									minOccurs="1" />
+								<element name="value-width" minOccurs="1" maxOccurs="unbounded"
+									type="int" default="5" />
+							</choice>
+						</complexType>
+					</element>
+					<element name="encoding" type="token" minOccurs="0" />
+					<element name="header-line-number" type="int" default="1"
+						minOccurs="0">
+						<annotation>
+							<documentation>
+								The index (1-based) of the header line. If no
+								header line is present, use 0.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="fail-on-inconsistencies" type="boolean"
+						minOccurs="0" />
+				</all>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="sasDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="directory" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="excelDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="jsonDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="xmlDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
+						<complexType>
+							<sequence>
+								<element name="rowXpath" minOccurs="1" maxOccurs="1"
+									type="string" />
+								<element name="valueXpath" minOccurs="1" maxOccurs="unbounded"
+									type="string" />
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="accessDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="compositeDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="datastore-name" minOccurs="1" maxOccurs="unbounded"
+						type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="dbaseDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="openOfficeDatabaseDatastoreType">
+		<complexContent>
+			<extension base="ab:abstractDatastoreType">
+				<sequence>
+					<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="referenceDataCatalogType">
+		<sequence>
+			<element name="dictionaries" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<choice minOccurs="0" maxOccurs="unbounded">
+						<element name="text-file-dictionary" minOccurs="0"
+							maxOccurs="unbounded" type="ab:textFileDictionaryType" />
+						<element name="value-list-dictionary" minOccurs="0"
+							maxOccurs="unbounded" type="ab:valueListDictionaryType" />
+						<element name="datastore-dictionary" minOccurs="0"
+							maxOccurs="unbounded" type="ab:datastoreDictionaryType" />
+						<element name="custom-dictionary" minOccurs="0" maxOccurs="unbounded"
+							type="ab:customElementType" />
+					</choice>
+				</complexType>
+			</element>
+
+			<element name="synonym-catalogs" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<choice minOccurs="0" maxOccurs="unbounded">
+						<element name="text-file-synonym-catalog" minOccurs="0"
+							maxOccurs="unbounded" type="ab:textFileSynonymCatalogType" />
+						<element name="datastore-synonym-catalog" minOccurs="0"
+							maxOccurs="unbounded" type="ab:datastoreSynonymCatalogType" />
+						<element name="custom-synonym-catalog" minOccurs="0"
+							maxOccurs="unbounded" type="ab:customElementType" />
+					</choice>
+				</complexType>
+			</element>
+
+			<element name="string-patterns" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<choice minOccurs="0" maxOccurs="unbounded">
+						<element name="regex-pattern" minOccurs="0" maxOccurs="unbounded"
+							type="ab:regexPatternType" />
+						<element name="simple-pattern" minOccurs="0" maxOccurs="unbounded"
+							type="ab:simplePatternType" />
+					</choice>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="regexPatternType">
+		<sequence>
+			<element name="expression" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="match-entire-string" minOccurs="1" maxOccurs="1"
+				type="boolean">
+				<annotation>
+					<documentation>
+						Defines whether the regex matcher should match the
+						whole string or if just a subsequence match is sufficient.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="simplePatternType">
+		<sequence>
+			<element name="expression" minOccurs="1" maxOccurs="1" type="string" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="textFileSynonymCatalogType">
+		<sequence>
+			<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="encoding" minOccurs="0" maxOccurs="1" type="token" />
+			<element name="case-sensitive" minOccurs="0" maxOccurs="1"
+				type="boolean" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="datastoreSynonymCatalogType">
+		<sequence>
+			<element name="datastore-name" minOccurs="1" maxOccurs="1"
+				type="string" />
+			<element name="master-term-column-path" minOccurs="1"
+				maxOccurs="1" type="string" />
+			<element name="synonym-column-path" minOccurs="1" maxOccurs="unbounded"
+				type="string" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="textFileDictionaryType">
+		<sequence>
+			<element name="filename" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="encoding" minOccurs="0" maxOccurs="1" type="token" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="valueListDictionaryType">
+		<sequence>
+			<element name="value" minOccurs="1" maxOccurs="unbounded"
+				type="string" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="datastoreDictionaryType">
+		<sequence>
+			<element name="datastore-name" minOccurs="1" maxOccurs="1"
+				type="string" />
+			<element name="column-path" minOccurs="1" maxOccurs="1" type="string" />
+		</sequence>
+		<attribute name="name" type="string" use="required" />
+		<attribute name="description" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="inMemoryStorageProviderType">
+		<attribute name="max-rows-threshold" type="int" use="optional"
+			default="1000">
+			<annotation>
+				<documentation>
+					Sets a threshold upon the number of annotated rows to
+					store in memory. Any additional rows will be discarded, although
+					the counter will still handle them correctly.
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+	<complexType name="hsqldbStorageProviderType">
+		<sequence>
+			<element name="temp-directory" minOccurs="0" maxOccurs="1"
+				type="string">
+				<annotation>
+					<documentation>
+						Sets the path for the directory to use for on-disk
+						storage. This is optional as Hsqldb will otherwise automatically
+						assign a temporary directory for the purpose.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="h2StorageProviderType">
+		<sequence>
+			<element name="temp-directory" minOccurs="0" maxOccurs="1"
+				type="string">
+				<annotation>
+					<documentation>
+						Sets the path for the directory to use for on-disk
+						storage. This is optional as H2 will otherwise
+						automatically assign
+						a temporary directory for the purpose.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="combinedStorageProviderType">
+		<sequence>
+			<element name="collections-storage" minOccurs="1" maxOccurs="1"
+				type="ab:storageProviderType" />
+			<element name="row-annotation-storage" minOccurs="1"
+				maxOccurs="1" type="ab:storageProviderType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="berkeleyDbStorageProviderType">
+		<sequence>
+			<element name="clean-directory-on-startup" type="boolean"
+				minOccurs="0" maxOccurs="1" default="false" />
+		</sequence>
+	</complexType>
+
+	<complexType name="multithreadedTaskrunnerType">
+		<attribute name="max-threads" type="short" use="optional">
+			<annotation>
+				<documentation>
+					Sets the maximum available number of threads that the
+					thread pool may assign. Don't set this value lower than 5 as it may
+					cause serious performance penalties from threads waiting on each
+					other.
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+	<complexType name="singlethreadedTaskrunnerType">
+	</complexType>
+
+	<complexType name="customElementType">
+		<sequence>
+			<element name="property" minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>
+						Adds a property to this custom type. Properties are
+						mapped to fields in the corresponding class that are annotated
+						with the @Configured annotation.
+					</documentation>
+				</annotation>
+				<complexType>
+					<attribute name="name" use="required" type="string" />
+					<attribute name="value" use="required" type="string" />
+				</complexType>
+			</element>
+		</sequence>
+		<attribute name="class-name" type="string" use="required">
+			<annotation>
+				<documentation>
+					The java class name of this custom type.
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+</schema>

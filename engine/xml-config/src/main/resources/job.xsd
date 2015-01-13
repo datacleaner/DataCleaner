@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/analyzerbeans/job/1.0"
+	xmlns:ab="http://eobjects.org/analyzerbeans/job/1.0"
+	elementFormDefault="qualified">
+
+	<element name="job">
+		<complexType>
+			<sequence>
+				<element name="job-metadata" type="ab:jobMetadataType"
+					minOccurs="0" maxOccurs="1" />
+				<element name="source" type="ab:sourceType" minOccurs="0"
+					maxOccurs="1" />
+				<element name="transformation" type="ab:transformationType"
+					minOccurs="0" maxOccurs="1" />
+				<element name="analysis" type="ab:analysisType" minOccurs="1"
+					maxOccurs="1" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="jobMetadataType">
+		<all>
+			<element name="job-name" type="normalizedString" minOccurs="0"
+				maxOccurs="1" />
+			<element name="job-description" type="normalizedString"
+				minOccurs="0" maxOccurs="1" />
+			<element name="job-version" type="normalizedString"
+				minOccurs="0" maxOccurs="1" />
+			<element name="author" type="normalizedString" minOccurs="0"
+				maxOccurs="1" />
+			<element name="created-date" type="date" minOccurs="0"
+				maxOccurs="1" />
+			<element name="updated-date" type="date" minOccurs="0"
+				maxOccurs="1" />
+			<element name="metadata-properties" type="ab:metadataProperties"
+				minOccurs="0" maxOccurs="1" />
+		</all>
+	</complexType>
+
+	<complexType name="metadataProperties">
+		<sequence>
+			<element name="property" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute type="string" name="name" />
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="sourceType">
+		<sequence>
+			<element name="data-context" type="ab:dataContextType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="columns" type="ab:columnsType" minOccurs="0"
+				maxOccurs="1" />
+			<element name="variables" type="ab:variablesType" minOccurs="0"
+				maxOccurs="1" />
+		</sequence>
+	</complexType>
+
+	<complexType name="transformationType">
+		<choice minOccurs="0" maxOccurs="unbounded">
+			<element name="transformer" type="ab:transformerType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<element name="filter" type="ab:filterType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</choice>
+	</complexType>
+
+	<complexType name="analysisType">
+		<choice minOccurs="1" maxOccurs="unbounded">
+			<element name="analyzer" type="ab:analyzerType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</choice>
+	</complexType>
+
+	<complexType name="dataContextType">
+		<attribute name="ref" type="token" use="required" />
+	</complexType>
+
+	<complexType name="columnsType">
+		<sequence>
+			<element name="column" type="ab:columnType" minOccurs="1"
+				maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="columnType">
+		<attribute name="id" type="token" use="required" />
+		<attribute name="path" type="normalizedString" use="required">
+			<annotation>
+				<documentation>
+					The path to the column. The path is expected to be
+					qualified with prepending dots (.) to represent the schema and
+					table names of the column.
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="type" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="variablesType">
+		<sequence>
+			<element name="variable" type="ab:variableType" minOccurs="1"
+				maxOccurs="unbounded">
+				<annotation>
+					<documentation>
+						Represents a job-level variable that can be
+						referenced by certain properties, allowing for centralized
+						management of important configuration elements.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="variableType">
+		<attribute name="id" type="token" use="required" />
+		<attribute name="value" type="string" use="required">
+			<annotation>
+				<documentation>
+					Default value for this variable.
+				</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+
+	<complexType name="transformerType">
+		<sequence>
+			<element name="descriptor" type="ab:transformerDescriptorType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="metadata-properties" type="ab:metadataProperties"
+				minOccurs="0" maxOccurs="1" />
+			<element name="properties" type="ab:configuredPropertiesType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="input" type="ab:inputType" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="output" type="ab:outputType" minOccurs="1"
+				maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="requires" type="token" use="optional">
+			<annotation>
+				<documentation>
+					The ID of a filter outcome that should function as a
+					requirement for execution of this component. Requirements are
+					applied transitively to successive components. Use the keyword
+					'_all_' to override transitive behaviour and don't apply any
+					requirements
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="name" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="transformerDescriptorType">
+		<attribute name="ref" type="token" use="required" />
+	</complexType>
+
+	<complexType name="filterType">
+		<sequence>
+			<element name="descriptor" type="ab:filterDescriptorType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="metadata-properties" type="ab:metadataProperties"
+				minOccurs="0" maxOccurs="1" />
+			<element name="properties" type="ab:configuredPropertiesType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="input" type="ab:inputType" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="outcome" type="ab:outcomeType" minOccurs="1"
+				maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="requires" type="token" use="optional">
+			<annotation>
+				<documentation>
+					The ID of a filter outcome that should function as a
+					requirement for execution of this component. Requirements are
+					applied transitively to successive components. Use the keyword
+					'_all_' to override transitive behaviour and don't apply any
+					requirements
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="name" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="inputType">
+		<attribute name="ref" type="token" use="optional">
+			<annotation>
+				<documentation>
+					Reference for a column id defined elsewhere in the
+					job.
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="value" type="token" use="optional">
+			<annotation>
+				<documentation>
+					Defines a constant value to put as a placeholder for
+					a column in the datastore.
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="name" type="token" use="optional" />
+	</complexType>
+
+	<complexType name="outputType">
+		<attribute name="id" type="token" use="required" />
+		<attribute name="name" type="string" use="optional" />
+		<attribute name="hidden" type="boolean" use="optional"></attribute>
+	</complexType>
+
+	<complexType name="analyzerType">
+		<sequence>
+			<element name="descriptor" type="ab:analyzerDescriptorType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="metadata-properties" type="ab:metadataProperties"
+				minOccurs="0" maxOccurs="1" />
+			<element name="properties" type="ab:configuredPropertiesType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="input" type="ab:inputType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="requires" type="token" use="optional">
+			<annotation>
+				<documentation>
+					The ID of a filter outcome that should function as a
+					requirement for execution of this component. Requirements are
+					applied transitively to successive components. Use the keyword
+					'_all_' to override transitive behaviour and don't apply any
+					requirements
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="name" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="analyzerDescriptorType">
+		<attribute name="ref" type="token" use="required" />
+	</complexType>
+
+	<complexType name="filterDescriptorType">
+		<attribute name="ref" type="token" use="required" />
+	</complexType>
+
+	<complexType name="outcomeType">
+		<attribute name="id" type="token" use="required" />
+		<attribute name="category" type="string" use="required" />
+	</complexType>
+
+	<complexType name="configuredPropertiesType">
+		<sequence>
+			<element name="property" minOccurs="0" maxOccurs="unbounded">
+				<complexType>
+					<simpleContent>
+						<extension base="string">
+							<attribute name="name" type="string" use="required" />
+							<attribute name="ref" type="token" use="optional">
+								<annotation>
+									<documentation>
+										A reference to the id of a variable (defined in
+										the source section). If a ref is defined, the value of the
+										variable will be inserted instead of the value of this
+										property
+										element.
+									</documentation>
+								</annotation>
+							</attribute>
+							<attribute name="value" type="string" use="optional">
+								<annotation>
+									<documentation>The value of the property.</documentation>
+								</annotation>
+							</attribute>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+</schema>

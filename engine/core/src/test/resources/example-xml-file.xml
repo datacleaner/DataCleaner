@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<greetings>
+	<greeting>
+		<how>hello</how>
+		<what>world</what>
+	</greeting>
+	<greeting>
+		<how>hi</how>
+		<what>there</what>
+	</greeting>
+</greetings>

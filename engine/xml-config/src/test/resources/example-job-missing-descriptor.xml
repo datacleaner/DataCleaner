@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<job-metadata>
+		
+	</job-metadata>
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col1" path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER" />
+			<column id="col2" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col3" path="PUBLIC.EMPLOYEES.LASTNAME" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="tokenizerDescriptor" />
+			<input ref="col3" />
+			<output id="pp1" />
+			<output id="pp2" />
+			<output id="pp3" />
+		</transformer>
+
+		<transformer>
+			<descriptor ref="trimDescriptor" />
+			<input ref="col2" />
+			<output id="pp4" />
+		</transformer>
+
+		<transformer>
+			<descriptor ref="replaceEmptyStringWithNullDescriptor" />
+			<input ref="pp4" />
+			<output id="pp5" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col1" />
+			<input ref="col2" />
+			<input ref="pp1" />
+			<input ref="pp2" />
+			<input ref="pp3" />
+			<input ref="pp5" />
+		</analyzer>
+	</analysis>
+
+</job>

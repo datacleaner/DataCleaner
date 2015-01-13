@@ -6,15 +6,14 @@
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
 	<bean name="configurationFactory" lazy-init="false"
-		class="org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory">
+		class="org.datacleaner.monitor.configuration.ConfigurationFactory">
 		<property name="scannedPackages">
 			<list>
-				<value>org.eobjects.analyzer.beans</value>
-				<value>org.eobjects.analyzer.result.renderer</value>
-				<value>org.eobjects.datacleaner.output.beans</value>
-				<value>org.eobjects.datacleaner.panels</value>
-				<value>org.eobjects.datacleaner.widgets.result</value>
-				<value>org.eobjects.datacleaner.extension</value>
+				<value>org.datacleaner.beans</value>
+				<value>org.datacleaner.result.renderer</value>
+				<value>org.datacleaner.panels</value>
+				<value>org.datacleaner.widgets.result</value>
+				<value>org.datacleaner.extension</value>
 				<value>com.hi</value>
 				<value>com.neopost.cim</value>
 			</list>
@@ -24,24 +23,24 @@
 	</bean>
 
 	<bean id="injectionManagerFactory" name="injectionManagerFactory"
-		class="org.eobjects.datacleaner.spring.SpringInjectionManagerFactory" />
+		class="org.datacleaner.spring.SpringInjectionManagerFactory" />
 
 	<bean id="alertNotificationService" name="alertNotificationService"
-		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"
+		class="org.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"
 		autowire="constructor">
 		<property name="alertNotifiers">
 			<list>
 				<bean
-					class="org.eobjects.datacleaner.monitor.alertnotification.LoggerAlertNotifier" />
+					class="org.datacleaner.monitor.alertnotification.LoggerAlertNotifier" />
 			</list>
 		</property>
 	</bean>
 
 	<bean id="tenantContextFactory" name="tenantContextFactory"
-		class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl"
+		class="org.datacleaner.monitor.configuration.TenantContextFactoryImpl"
 		autowire="constructor" />
 
-	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
+	<context:component-scan base-package="org.datacleaner.monitor.server" />
 
 	<import resource="classpath:context/repository-context.xml" />
 	<import resource="classpath:context/scheduling-context.xml" />
@@ -57,9 +56,9 @@
 	<bean id="exceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" 
 		p:order="2">
-		<!-- Logs uncaught exceptions to the logger category 'org.eobjects.datacleaner.monitor.ExceptionResolver' -->
+		<!-- Logs uncaught exceptions to the logger category 'org.datacleaner.monitor.ExceptionResolver' -->
 		<property name="warnLogCategory"
-			value="org.eobjects.datacleaner.monitor.ExceptionResolver" />
+			value="org.datacleaner.monitor.ExceptionResolver" />
 	</bean>
 
 </beans>

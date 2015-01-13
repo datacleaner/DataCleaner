@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>JavaScript extension</name>
+	<package>org.datacleaner.beans.script</package>
+	<description>Use the JavaScript language to transform and analyze your data.</description>
+	<icon>org/datacleaner/beans/script/JavaScriptIcon.png</icon>
+</extension>

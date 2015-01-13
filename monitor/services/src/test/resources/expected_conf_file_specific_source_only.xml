@@ -1014,7 +1014,7 @@
     </reference-data-catalog>
     <multithreaded-taskrunner max-threads="10"/>
     <classpath-scanner>
-        <package recursive="true">org.eobjects</package>
+        <package recursive="true">org.datacleaner</package>
         <package recursive="true">com.hi</package>
     </classpath-scanner>
 </configuration>

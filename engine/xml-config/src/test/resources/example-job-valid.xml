@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<job-metadata>
+		
+	</job-metadata>
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_email" path="PUBLIC.EMPLOYEES.EMAIL" />
+		</columns>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Email standardizer" />
+			<input ref="col_email" />
+			<output id="col_username" name="username" />
+			<output id="col_domain" name="domain" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col_username" />
+			<input ref="col_domain" />
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+		</analyzer>
+	</analysis>
+
+</job>

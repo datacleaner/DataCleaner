@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="name" path="name" />
+		</columns>
+	</source>
+
+	<transformation>
+		<filter>
+			<descriptor ref="Max rows" />
+			<properties>
+				<property name="Max rows" value="5" />
+			</properties>
+			<outcome category="VALID" id="below_5" />
+			<outcome category="INVALID" id="null" />
+		</filter>
+
+		<transformer requires="below_5">
+			<descriptor ref="Expression language (EL) transformer" />
+			<properties>
+				<property name="Expression" value="Hi #{name}" />
+			</properties>
+			<output id="hi_name" />
+		</transformer>
+
+		<transformer requires="below_5">
+			<descriptor ref="Expression language (EL) transformer" />
+			<properties>
+				<property name="Expression" value="Hi world" />
+			</properties>
+			<output id="hi_world" />
+		</transformer>
+
+	</transformation>
+
+	<analysis>
+		<analyzer requires="below_5">
+			<descriptor ref="String analyzer" />
+			<input ref="name" />
+			<input value="Hello #{name}" />
+			<input ref="hi_name" />
+			<input ref="hi_world" />
+		</analyzer>
+	</analysis>
+
+</job>

@@ -1,0 +1,13 @@
+/.settings
+/.project
+/.classpath
+/target
+/examples
+/extensions
+/temp
+/datastores
+/conf.xml
+/userpreferences.dat
+/log4j.xml
+/log
+/jobs

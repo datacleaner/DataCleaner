@@ -32,7 +32,7 @@
 			which initially looks like this:
 		</para>
 		<programlisting lang="xml">
-			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&lt;bean&#160;name="repository"&#160;class="org.datacleaner.repository.file.FileRepository"&gt;
 			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
 			&lt;/bean&gt; </programlisting>
 		<para>You can modify the value attribute of the inner
@@ -42,7 +42,7 @@
 			in a unix environment:
 		</para>
 		<programlisting lang="xml">
-			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&lt;bean&#160;name="repository"&#160;class="org.datacleaner.repository.file.FileRepository"&gt;
 			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
 			&lt;/bean&gt; </programlisting>
 
@@ -80,13 +80,13 @@
 		</para>
 		<programlisting lang="xml">
 			&lt;bean&#160;name="launchArtifactProvider"&#160;lazy-init="true"
-			&#160;&#160;&#160;class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt; </programlisting>
+			&#160;&#160;&#160;class="org.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt; </programlisting>
 		<para>It needs to be replaced with a new &lt;bean&gt; element which
 			will look like this:
 		</para>
 		<programlisting lang="xml">
 			&lt;bean&#160;name="launchArtifactProvider"&#160;
-			&#160;&#160;&#160;&#160;lazy-init="true"&#160;class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"&gt;
+			&#160;&#160;&#160;&#160;lazy-init="true"&#160;class="org.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"&gt;
 			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/signed_jars"/&gt;
 			&lt;/bean&gt;</programlisting>
 	</section>
@@ -117,7 +117,7 @@
 		</para>
 
 		<programlisting lang="xml">
-			&lt;bean&#160;id="clusterManagerFactory"&#160;class="org.eobjects.datacleaner.monitor.cluster.HttpClusterManagerFactory"&gt;
+			&lt;bean&#160;id="clusterManagerFactory"&#160;class="org.datacleaner.monitor.cluster.HttpClusterManagerFactory"&gt;
 			&#160;&#160;&lt;property&#160;name="username"&#160;value="admin"&#160;/&gt;
 			&#160;&#160;&lt;property&#160;name="password"&#160;value="admin"&#160;/&gt;
 			&#160;&#160;&lt;property&#160;name="slaveServerUrls"&gt;

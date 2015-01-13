@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Example configuration</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="orderdb" description="our normal testdatabase">
+			<url>jdbc:hsqldb:file:src/test/resources/cli-examples/orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+
+		<csv-datastore name="employees_csv">
+			<filename>src/test/resources/cli-examples/employees.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<encoding>UTF-8</encoding>
+		</csv-datastore>
+
+		<composite-datastore name="all_datastores">
+			<datastore-name>orderdb</datastore-name>
+			<datastore-name>employees_csv</datastore-name>
+		</composite-datastore>
+	</datastore-catalog>
+
+	<multithreaded-taskrunner max-threads="20" />
+
+	<storage-provider>
+		<combined>
+			<collections-storage>
+				<berkeley-db />
+			</collections-storage>
+			<row-annotation-storage>
+				<in-memory max-rows-threshold="1000" />
+			</row-annotation-storage>
+		</combined>
+	</storage-provider>
+
+	<classpath-scanner>
+		<package recursive="true">org.datacleaner</package>
+		<package>org.datacleaner.result.renderer</package>
+	</classpath-scanner>
+
+</configuration>

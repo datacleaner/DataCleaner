@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<datastore-catalog>
+		<jdbc-datastore name="my database">
+			<url>jdbc:hsqldb:file:src/test/resources/orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+	</datastore-catalog>
+	
+	<classpath-scanner>
+		<excluded-rendering-format>org.datacleaner.result.renderer.TextRenderingFormat</excluded-rendering-format>
+		<excluded-rendering-format>org.datacleaner.result.renderer.SwingRenderingFormat</excluded-rendering-format>
+		<package>org.datacleaner.result</package>
+	</classpath-scanner>
+
+</configuration>

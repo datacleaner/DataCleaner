@@ -13,9 +13,9 @@
 	</reference-data-catalog>
 
 	<custom-taskrunner
-		class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner" />
+		class-name="org.datacleaner.monitor.configuration.SharedTaskRunner" />
 
 	<custom-descriptor-provider
-		class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider" />
+		class-name="org.datacleaner.monitor.configuration.SharedDescriptorProvider" />
 
 </configuration>

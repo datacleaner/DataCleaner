@@ -7,7 +7,6 @@
 	</parent>
 	<artifactId>DataCleaner-monitor-ui</artifactId>
 	<packaging>war</packaging>
-	<name>DataCleaner - monitor UI</name>
 
 	<build>
 		<plugins>

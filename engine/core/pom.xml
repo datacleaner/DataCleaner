@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner-engine</artifactId>
+		<version>4.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>DataCleaner-engine-core</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-full</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.metamodel</groupId>
+			<artifactId>MetaModel-hbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-sas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-dbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.metamodel-extras</groupId>
+			<artifactId>MetaModel-extras-access</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+		</dependency>
+		
+		<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
+			by HTTP components (4.x) at some point. -->
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.gentyref</groupId>
+			<artifactId>gentyref</artifactId>
+		</dependency>
+
+		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 
+			is used -->
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>asm5</artifactId>
+		</dependency>
+
+		<!-- Logging dependencies -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+
+		<!-- Testware -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/analyzerbeans/metadata/1.0"
+	xmlns:ab="http://eobjects.org/analyzerbeans/metadata/1.0"
+	elementFormDefault="qualified">
+
+	<element name="metadata">
+		<complexType>
+			<sequence>
+				<element name="annotation" minOccurs="0" maxOccurs="unbounded"
+					type="ab:annotationType" />
+				<element name="schema" minOccurs="0" maxOccurs="unbounded"
+					type="ab:schemaType" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="schemaType">
+		<sequence>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="annotation" minOccurs="0" maxOccurs="unbounded"
+				type="ab:annotationType" />
+			<element name="table" minOccurs="0" maxOccurs="unbounded"
+				type="ab:tableType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="tableType">
+		<sequence>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="annotation" minOccurs="0" maxOccurs="unbounded"
+				type="ab:annotationType" />
+			<element name="column-group" minOccurs="0" maxOccurs="unbounded"
+				type="ab:columnGroupType" />
+			<element name="column" minOccurs="0" maxOccurs="unbounded"
+				type="ab:columnType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="columnGroupType">
+		<sequence>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="annotation" minOccurs="0" maxOccurs="unbounded"
+				type="ab:annotationType" />
+			<element name="column" minOccurs="0" maxOccurs="unbounded"
+				type="ab:columnType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="columnType">
+		<sequence>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="annotation" minOccurs="0" maxOccurs="unbounded"
+				type="ab:annotationType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="annotationType">
+		<sequence>
+			<element name="name" type="string" minOccurs="1" maxOccurs="1" />
+			<element name="parameter" type="ab:parameterType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+
+	<complexType name="parameterType">
+		<sequence>
+			<element name="key" type="string" minOccurs="1" maxOccurs="1" />
+			<element name="value" type="string" minOccurs="1" maxOccurs="1" />
+		</sequence>
+	</complexType>
+
+</schema>

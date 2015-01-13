@@ -6,7 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-api</artifactId>
-	<name>DataCleaner - monitor API</name>
 
 	<build>
 		<plugins>
@@ -23,7 +22,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>org.eobjects.datacleaner.monitor.jaxb</packageName>
+					<packageName>org.datacleaner.monitor.jaxb</packageName>
 					<schemaDirectory>src/main/resources</schemaDirectory>
 					<outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
 				</configuration>
@@ -83,10 +82,15 @@
 	</build>
 
 	<dependencies>
-		<!-- DataCleaner core dependency -->
+		<!-- DataCleaner core / environment -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
+			<artifactId>DataCleaner-engine-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-xml-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

@@ -6,8 +6,6 @@
 		<version>4.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-widgets</artifactId>
-	<packaging>jar</packaging>
-	<name>DataCleaner - monitor reusable widgets</name>
 
 	<dependencies>
 		<!-- DataCleaner monitor services -->

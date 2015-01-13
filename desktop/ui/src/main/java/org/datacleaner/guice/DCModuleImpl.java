@@ -186,6 +186,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     protected void configure() {
         bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
         bind(InjectionManagerFactory.class).to(GuiceInjectionManagerFactory.class);
+        bind(DCModule.class).to(DCModuleImpl.class);
     }
 
     @Provides

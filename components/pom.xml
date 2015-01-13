@@ -35,6 +35,7 @@
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-engine-core</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

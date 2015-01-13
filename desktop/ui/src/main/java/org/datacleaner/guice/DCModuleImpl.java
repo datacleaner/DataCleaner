@@ -48,11 +48,14 @@ import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.PropertyDescriptor;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -84,7 +87,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.util.Modules;
 
 /**
  * Google Guice module for DataCleaner. Defines the main contextual components
@@ -186,7 +193,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     protected void configure() {
         bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
         bind(InjectionManagerFactory.class).to(GuiceInjectionManagerFactory.class);
-        bind(DCModule.class).to(DCModuleImpl.class);
+        bind(DCModule.class).toInstance(this);
     }
 
     @Provides
@@ -383,5 +390,23 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
+    }
+
+    @Override
+    public Injector createChildInjectorForComponent(ComponentBuilder componentBuilder) {
+        final ComponentBuilderModule componentBuilderModule = new ComponentBuilderModule(componentBuilder);
+        final Module module = Modules.override(this).with(componentBuilderModule);
+        return Guice.createInjector(module);
+    }
+
+    @Override
+    public Injector createChildInjectorForProperty(ComponentBuilder componentBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        final AdHocModule adHocModule = new AdHocModule();
+        adHocModule.bind(PropertyDescriptor.class, propertyDescriptor);
+        adHocModule.bind(ConfiguredPropertyDescriptor.class, propertyDescriptor);
+        final ComponentBuilderModule componentBuilderModule = new ComponentBuilderModule(componentBuilder);
+        final Module module = Modules.override(this).with(componentBuilderModule, adHocModule);
+        return Guice.createInjector(module);
     }
 }

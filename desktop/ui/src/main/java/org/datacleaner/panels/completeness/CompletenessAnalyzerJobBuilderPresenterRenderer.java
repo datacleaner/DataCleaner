@@ -25,9 +25,9 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -35,15 +35,13 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialized {@link Renderer} for a {@link AnalysisJobBuilder} for
  * {@link CompletenessAnalyzer}.
- * 
- * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class CompletenessAnalyzerJobBuilderPresenterRenderer implements
         Renderer<AnalyzerJobBuilder<CompletenessAnalyzer>, AnalyzerJobBuilderPresenter> {
 
     @Inject
-    InjectorBuilder injectorBuilder;
+    DCModule dcModule;
 
     @Override
     public RendererPrecedence getPrecedence(AnalyzerJobBuilder<CompletenessAnalyzer> ajb) {
@@ -55,8 +53,7 @@ public class CompletenessAnalyzerJobBuilderPresenterRenderer implements
 
     @Override
     public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<CompletenessAnalyzer> ajb) {
-        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(PropertyWidgetFactory.class);
 
         return new CompletenessAnalyzerJobBuilderPresenter(ajb, propertyWidgetFactory);
     }

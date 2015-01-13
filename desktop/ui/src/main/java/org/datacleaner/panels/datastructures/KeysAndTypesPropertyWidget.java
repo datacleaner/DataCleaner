@@ -48,154 +48,146 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 
-	private final ConfiguredPropertyDescriptor _typesProperty;
-	private final List<DCComboBox<Class<?>>> _comboBoxes;
+    private final ConfiguredPropertyDescriptor _typesProperty;
+    private final List<DCComboBox<Class<?>>> _comboBoxes;
 
-	@SuppressWarnings("rawtypes")
-	private final MinimalPropertyWidget<Class[]> _typesPropertyWidget;
+    @SuppressWarnings("rawtypes")
+    private final MinimalPropertyWidget<Class[]> _typesPropertyWidget;
 
-	@SuppressWarnings("rawtypes")
-	public KeysAndTypesPropertyWidget(
-			ConfiguredPropertyDescriptor keysProperty,
-			ConfiguredPropertyDescriptor typesProperty,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(keysProperty, beanJobBuilder);
-		_comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
-		_typesProperty = typesProperty;
-		_typesPropertyWidget = new MinimalPropertyWidget<Class[]>(
-				getBeanJobBuilder(), _typesProperty) {
+    @SuppressWarnings("rawtypes")
+    public KeysAndTypesPropertyWidget(ConfiguredPropertyDescriptor keysProperty,
+            ConfiguredPropertyDescriptor typesProperty, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+        super(keysProperty, beanJobBuilder);
+        _comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
+        _typesProperty = typesProperty;
+        _typesPropertyWidget = new MinimalPropertyWidget<Class[]>(getComponentBuilder(), _typesProperty) {
 
-			@Override
-			public JComponent getWidget() {
-				return null;
-			}
+            @Override
+            public JComponent getWidget() {
+                return null;
+            }
 
-			@Override
-			public Class[] getValue() {
-				final String[] keys = KeysAndTypesPropertyWidget.this
-						.getValue();
-				final List<Class<?>> result = new ArrayList<Class<?>>();
-				for (int i = 0; i < keys.length; i++) {
-					if (!StringUtils.isNullOrEmpty(keys[i])) {
-						final DCComboBox<Class<?>> comboBox = _comboBoxes
-								.get(i);
-						result.add(comboBox.getSelectedItem());
-					}
-				}
-				return result.toArray(new Class[result.size()]);
-			}
+            @Override
+            public Class[] getValue() {
+                final String[] keys = KeysAndTypesPropertyWidget.this.getValue();
+                final List<Class<?>> result = new ArrayList<Class<?>>();
+                for (int i = 0; i < keys.length; i++) {
+                    if (!StringUtils.isNullOrEmpty(keys[i])) {
+                        final DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
+                        result.add(comboBox.getSelectedItem());
+                    }
+                }
+                return result.toArray(new Class[result.size()]);
+            }
 
-			@Override
-			public boolean isSet() {
-				if (_comboBoxes.isEmpty()) {
-					return false;
-				}
-				for (DCComboBox<Class<?>> comboBox : _comboBoxes) {
-					if (comboBox.getSelectedItem() == null) {
-						return false;
-					}
-				}
-				return true;
-			}
+            @Override
+            public boolean isSet() {
+                if (_comboBoxes.isEmpty()) {
+                    return false;
+                }
+                for (DCComboBox<Class<?>> comboBox : _comboBoxes) {
+                    if (comboBox.getSelectedItem() == null) {
+                        return false;
+                    }
+                }
+                return true;
+            }
 
-			@Override
-			protected void setValue(Class[] value) {
-				if (EqualsBuilder.equals(value, getValue())) {
-					return;
-				}
+            @Override
+            protected void setValue(Class[] value) {
+                if (EqualsBuilder.equals(value, getValue())) {
+                    return;
+                }
 
-				if (value == null) {
-					value = new Class[0];
-				}
+                if (value == null) {
+                    value = new Class[0];
+                }
 
-				final String[] keys = KeysAndTypesPropertyWidget.this
-						.getValue();
-				if (keys.length != value.length) {
-					// disregard this invalid value update
-					return;
-				}
+                final String[] keys = KeysAndTypesPropertyWidget.this.getValue();
+                if (keys.length != value.length) {
+                    // disregard this invalid value update
+                    return;
+                }
 
-				for (int i = 0; i < keys.length; i++) {
-					DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
-					Class<?> selectedClass = value[i];
-					comboBox.setSelectedItem(selectedClass);
-				}
-			}
-		};
+                for (int i = 0; i < keys.length; i++) {
+                    DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
+                    Class<?> selectedClass = value[i];
+                    comboBox.setSelectedItem(selectedClass);
+                }
+            }
+        };
 
-		final String[] currentKeysValue = getCurrentValue();
-		final Class[] currentTypesValue = (Class[]) beanJobBuilder
-				.getConfiguredProperty(typesProperty);
-		if (currentTypesValue != null) {
-			// first create textfields, then set keys value
+        final String[] currentKeysValue = getCurrentValue();
+        final Class[] currentTypesValue = (Class[]) beanJobBuilder.getConfiguredProperty(typesProperty);
+        if (currentTypesValue != null) {
+            // first create textfields, then set keys value
 
-			for (int i = 0; i < currentTypesValue.length; i++) {
-				final Class<?> type = currentTypesValue[i];
-				createComboBox(type);
-			}
+            for (int i = 0; i < currentTypesValue.length; i++) {
+                final Class<?> type = currentTypesValue[i];
+                createComboBox(type);
+            }
 
-			setValue(currentKeysValue);
-			_typesPropertyWidget.onValueTouched(currentTypesValue);
-		}
-	}
+            setValue(currentKeysValue);
+            _typesPropertyWidget.onValueTouched(currentTypesValue);
+        }
+    }
 
-	private DCComboBox<Class<?>> createComboBox(Class<?> type) {
-		final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget
-				.createClassComboBox(true);
-		if (type != null) {
-			comboBox.setSelectedItem(type);
-		}
-		_comboBoxes.add(comboBox);
-		return comboBox;
-	}
+    private DCComboBox<Class<?>> createComboBox(Class<?> type) {
+        final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget.createClassComboBox(true);
+        if (type != null) {
+            comboBox.setSelectedItem(type);
+        }
+        _comboBoxes.add(comboBox);
+        return comboBox;
+    }
 
-	@Override
-	protected JComponent decorateTextField(JXTextField textField, int index) {
-		final DCComboBox<Class<?>> comboBox;
+    @Override
+    protected JComponent decorateTextField(JXTextField textField, int index) {
+        final DCComboBox<Class<?>> comboBox;
 
-		if (index < _comboBoxes.size()) {
-			comboBox = _comboBoxes.get(index);
-		} else {
-			comboBox = createComboBox(null);
-		}
+        if (index < _comboBoxes.size()) {
+            comboBox = _comboBoxes.get(index);
+        } else {
+            comboBox = createComboBox(null);
+        }
 
-		comboBox.addListener(new Listener<Class<?>>() {
-			@Override
-			public void onItemSelected(Class<?> item) {
-				_typesPropertyWidget.fireValueChanged();
-			}
-		});
+        comboBox.addListener(new Listener<Class<?>>() {
+            @Override
+            public void onItemSelected(Class<?> item) {
+                _typesPropertyWidget.fireValueChanged();
+            }
+        });
 
-		textField.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
-				// invoke later, because document events are fired before the
-				// textfield.getText() returns the new value
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						setUpdating(true);
-						_typesPropertyWidget.fireValueChanged();
-						setUpdating(false);
-					}
-				});
-			}
-		});
+        textField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                // invoke later, because document events are fired before the
+                // textfield.getText() returns the new value
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        setUpdating(true);
+                        _typesPropertyWidget.fireValueChanged();
+                        setUpdating(false);
+                    }
+                });
+            }
+        });
 
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(textField, BorderLayout.CENTER);
-		panel.add(comboBox, BorderLayout.EAST);
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(textField, BorderLayout.CENTER);
+        panel.add(comboBox, BorderLayout.EAST);
 
-		return panel;
-	}
+        return panel;
+    }
 
-	public PropertyWidget<?> getTypesPropertyWidget() {
-		return _typesPropertyWidget;
-	}
+    public PropertyWidget<?> getTypesPropertyWidget() {
+        return _typesPropertyWidget;
+    }
 
-	@Override
-	protected boolean isEmptyStringValid() {
-		return false;
-	}
+    @Override
+    protected boolean isEmptyStringValid() {
+        return false;
+    }
 }

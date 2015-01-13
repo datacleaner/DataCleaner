@@ -35,7 +35,6 @@ import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
 import org.datacleaner.panels.AnalyzerJobBuilderPanel;
@@ -63,19 +62,16 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
     private final AnalyzerBeansConfiguration _configuration;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
-    private final InjectorBuilder _injectorBuilder;
 
     @Inject
     protected SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
-            AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, DCModule parentModule,
-            InjectorBuilder injectorBuilder) {
+            AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, DCModule parentModule) {
         _datastore = datastore;
         _table = table;
         _windowContext = windowContext;
         _configuration = configuration;
         _parentModule = parentModule;
         _userPreferences = userPreferences;
-        _injectorBuilder = injectorBuilder;
     }
 
     @Override
@@ -91,9 +87,8 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
         excelOutputAnalyzerBuilder.getComponentInstance().setFile(new File(directory, _datastore.getName() + ".xlsx"));
         excelOutputAnalyzerBuilder.getComponentInstance().setSheetName(_table.getName());
 
-        final PropertyWidgetFactory propertyWidgetFactory = _injectorBuilder.with(
-                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, excelOutputAnalyzerBuilder).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
+                excelOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);
 
         final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(excelOutputAnalyzerBuilder,
                 propertyWidgetFactory);

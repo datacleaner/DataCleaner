@@ -25,7 +25,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +36,12 @@ public class PropertyWidgetCollection {
 
     private static final Logger logger = LoggerFactory.getLogger(PropertyWidgetCollection.class);
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+    private final ComponentBuilder _componentBuilder;
     private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets;
     private final Map<ConfiguredPropertyDescriptor, PropertyWidgetMapping> _propertyWidgetMappings;
 
-    public PropertyWidgetCollection(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        _beanJobBuilder = beanJobBuilder;
+    public PropertyWidgetCollection(ComponentBuilder componentBuilder) {
+        _componentBuilder = componentBuilder;
         _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
         _propertyWidgetMappings = new IdentityHashMap<ConfiguredPropertyDescriptor, PropertyWidgetMapping>();
 
@@ -88,7 +88,7 @@ public class PropertyWidgetCollection {
             _widgets.put(propertyDescriptor, widget);
             @SuppressWarnings("unchecked")
             PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-            Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+            Object value = _componentBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
             objectWidget.initialize(value);
         }
     }
@@ -122,7 +122,7 @@ public class PropertyWidgetCollection {
             @SuppressWarnings("unchecked")
             final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
             final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
-            final Object value = _beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+            final Object value = _componentBuilder.getConfiguredProperty(propertyDescriptor);
             objectWidget.onValueTouched(value);
         }
     }

@@ -22,7 +22,7 @@ package org.datacleaner.widgets.properties;
 import javax.inject.Inject;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 
 /**
  * Default {@link PropertyWidget} for number arrays.
@@ -30,8 +30,8 @@ import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 public class MultipleNumberPropertyWidget extends AbstractMultipleNumberPropertyWidget<Number[]> {
 
     @Inject
-    public MultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(propertyDescriptor, beanJobBuilder);
+    public MultipleNumberPropertyWidget(ComponentBuilder componentBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor);
     }
 }

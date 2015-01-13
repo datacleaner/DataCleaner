@@ -228,7 +228,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     private void updateComponents(final InputColumn<?>[] value) {
         // fetch available input columns
         final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                getBeanJobBuilder(), _dataType);
+                getComponentBuilder(), _dataType);
 
         final Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<InputColumn<?>>();
         inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());
@@ -372,21 +372,21 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     @Override
     public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
-        if (transformerJobBuilder == getBeanJobBuilder()) {
+        if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
 
         // we need to save the current value before we update the components
         // here. Otherwise any previous selections will be lost.
         final InputColumn<?>[] value = getValue();
-        getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
+        getComponentBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
 
         updateComponents(value);
     }
 
     @Override
     public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        if (transformerJobBuilder == getBeanJobBuilder()) {
+        if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
         updateComponents();

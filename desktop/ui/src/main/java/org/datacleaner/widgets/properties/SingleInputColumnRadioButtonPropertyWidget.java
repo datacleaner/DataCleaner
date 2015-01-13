@@ -134,7 +134,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     }
 
     private void updateComponents(InputColumn<?> value) {
-        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getBeanJobBuilder(), _dataType);
+        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getComponentBuilder(), _dataType);
 
         if (value != null) {
             if (!_inputColumns.contains(value)) {
@@ -288,7 +288,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
     @Override
     public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        if (transformerJobBuilder == getBeanJobBuilder()) {
+        if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
         updateComponents();

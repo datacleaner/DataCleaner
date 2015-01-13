@@ -33,6 +33,7 @@ import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
@@ -62,7 +63,11 @@ public class PropertyWidgetFactoryTest extends TestCase {
     private SimpleStringPattern stringPattern3 = new SimpleStringPattern("sp3", "");
 
     public void testCreateAllPropertyTypes() throws Exception {
-        Injector injector = Guice.createInjector(new DCModuleImpl());
+        final DCModule dcModule = new DCModuleImpl();
+        
+        Injector injector;
+        
+        injector = Guice.createInjector(dcModule);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
         MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
                 .getReferenceDataCatalog();
@@ -88,8 +93,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
         AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ajb.addAnalyzer(descriptor);
 
-        PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(InjectorBuilder.class)
-                .with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, beanJobBuilder).createInjector()
+        PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(beanJobBuilder)
                 .getInstance(PropertyWidgetFactory.class);
         assertNotNull(propertyWidgetFactory);
 
@@ -185,7 +189,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
         PropertyWidget<Object> widget = (PropertyWidget<Object>) propertyWidgetFactory.create(propertyName);
         assertNotNull(widget);
         assertEquals(widgetClass, widget.getClass());
-        
+
         widget.initialize(null);
 
         assertEquals(propertyName, widget.getPropertyDescriptor().getName());
@@ -194,8 +198,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
         if (!equals) {
             assertEquals(ArrayUtils.toString(initialValue), ArrayUtils.toString(widget.getValue()));
         }
-        assertTrue("Expected: " + initialValue + ", actual: " + widget.getValue(),
-                equals);
+        assertTrue("Expected: " + initialValue + ", actual: " + widget.getValue(), equals);
         widget.onValueTouched(setValue);
         assertTrue(widget.isSet());
         assertTrue(

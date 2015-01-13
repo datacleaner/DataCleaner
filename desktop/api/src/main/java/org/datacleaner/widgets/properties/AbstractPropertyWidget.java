@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.border.Border;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +54,9 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
     // or not". Subclasses can fire batch
     private volatile int _batchUpdateCounter;
 
-    public AbstractPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public AbstractPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(beanJobBuilder, propertyDescriptor);
+        super(componentBuilder, propertyDescriptor);
         _batchUpdateCounter = 0;
         _panel = new DCPanel() {
             private static final long serialVersionUID = 1L;

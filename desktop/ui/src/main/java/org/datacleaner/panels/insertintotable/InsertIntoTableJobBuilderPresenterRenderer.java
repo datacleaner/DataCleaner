@@ -25,11 +25,11 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -37,36 +37,34 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 /**
  * Specialized {@link Renderer} for a {@link AnalysisJobBuilder} for
  * {@link InsertIntoTableAnalyzer}.
- * 
- * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class InsertIntoTableJobBuilderPresenterRenderer implements
-		Renderer<AnalyzerJobBuilder<InsertIntoTableAnalyzer>, AnalyzerJobBuilderPresenter> {
+        Renderer<AnalyzerJobBuilder<InsertIntoTableAnalyzer>, AnalyzerJobBuilderPresenter> {
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	AnalyzerBeansConfiguration configuration;
+    @Inject
+    AnalyzerBeansConfiguration configuration;
 
-	@Inject
-	InjectorBuilder injectorBuilder;
+    @Inject
+    DCModule dcModule;
 
-	@Override
-	public RendererPrecedence getPrecedence(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
-		if (ajb.getDescriptor().getComponentClass() == InsertIntoTableAnalyzer.class) {
-			return RendererPrecedence.HIGH;
-		}
-		return RendererPrecedence.NOT_CAPABLE;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
+        if (ajb.getDescriptor().getComponentClass() == InsertIntoTableAnalyzer.class) {
+            return RendererPrecedence.HIGH;
+        }
+        return RendererPrecedence.NOT_CAPABLE;
+    }
 
-	@Override
-	public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
-		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);
+    @Override
+    public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
+                PropertyWidgetFactory.class);
 
-		return new InsertIntoTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration);
-	}
+        return new InsertIntoTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration);
+    }
 
 }

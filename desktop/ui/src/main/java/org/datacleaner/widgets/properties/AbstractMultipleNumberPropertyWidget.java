@@ -32,32 +32,29 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * {@link PropertyWidget} for Number arrays. Displays number arrays as a set of
  * text boxes and plus/minus buttons to grow/shrink the array.
- * 
- * @author Kasper Sørensen
  */
 public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPropertyWidget<N> {
 
 	private final NumberFormat _numberFormat = NumberFormat.getInstance();
 	private final DCPanel _textFieldPanel;
 
-	protected AbstractMultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+	protected AbstractMultipleNumberPropertyWidget(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+		super(componentBuilder, propertyDescriptor);
 
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));

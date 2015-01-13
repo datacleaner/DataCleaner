@@ -21,24 +21,22 @@ package org.datacleaner.widgets.properties;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-
-import com.google.inject.TypeLiteral;
+import org.datacleaner.job.builder.ComponentBuilder;
 
 /**
- * Represents a factory for {@link PropertyWidget}s. An implementation is expected to be able to deliver default widgets.
+ * Represents a factory for {@link PropertyWidget}s. An implementation is
+ * expected to be able to deliver default widgets.
  */
 public interface PropertyWidgetFactory {
 
-    /**
-     * Convenient type literal that can be used with Guice's binding mechanism
-     * to bind to the {@link AbstractBeanJobBuilder} argument of this class's
-     * constructor.
-     */
-    public static final TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>> TYPELITERAL_BEAN_JOB_BUILDER = new TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>>() {
-    };
-    
     public PropertyWidgetCollection getPropertyWidgetCollection();
 
+    public ComponentBuilder getComponentBuilder();
+
+    /**
+     * @deprecated use {@link #getComponentBuilder()} instead
+     */
+    @Deprecated
     public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder();
 
     public PropertyWidget<?> create(String propertyName);

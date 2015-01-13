@@ -26,9 +26,9 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.ValidationCategory;
-import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.panels.FilterJobBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -45,7 +45,7 @@ public class EqualsFilterJobBuilderPresenterRenderer implements
     WindowContext windowContext;
 
     @Inject
-    InjectorBuilder injectorBuilder;
+    DCModule dcModule;
 
     @Override
     public RendererPrecedence getPrecedence(FilterJobBuilder<EqualsFilter, ValidationCategory> fjb) {
@@ -57,8 +57,8 @@ public class EqualsFilterJobBuilderPresenterRenderer implements
 
     @Override
     public FilterJobBuilderPresenter render(FilterJobBuilder<EqualsFilter, ValidationCategory> fjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, fjb).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb).getInstance(
+                PropertyWidgetFactory.class);
 
         return new EqualsFilterJobBuilderPresenter(fjb, windowContext, propertyWidgetFactory);
     }

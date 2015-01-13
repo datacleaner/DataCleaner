@@ -25,10 +25,10 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -42,13 +42,13 @@ public class CoalesceMultipleFieldsTransformerJobBuilderPresenterRenderer implem
         Renderer<TransformerJobBuilder<CoalesceMultipleFieldsTransformer>, TransformerJobBuilderPresenter> {
 
     @Inject
-    InjectorBuilder injectorBuilder;
-
-    @Inject
     WindowContext windowContext;
 
     @Inject
     AnalyzerBeansConfiguration configuration;
+
+    @Inject
+    DCModule dcModule;
 
     @Override
     public RendererPrecedence getPrecedence(TransformerJobBuilder<CoalesceMultipleFieldsTransformer> tjb) {
@@ -60,8 +60,8 @@ public class CoalesceMultipleFieldsTransformerJobBuilderPresenterRenderer implem
 
     @Override
     public TransformerJobBuilderPresenter render(TransformerJobBuilder<CoalesceMultipleFieldsTransformer> tjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, tjb).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
+                PropertyWidgetFactory.class);
 
         return new CoalesceMultipleFieldsTransformerJobBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
                 configuration);

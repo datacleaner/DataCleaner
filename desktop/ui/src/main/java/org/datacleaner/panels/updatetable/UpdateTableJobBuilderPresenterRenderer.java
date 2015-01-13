@@ -25,11 +25,11 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -42,31 +42,31 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class UpdateTableJobBuilderPresenterRenderer implements
-		Renderer<AnalyzerJobBuilder<UpdateTableAnalyzer>, AnalyzerJobBuilderPresenter> {
+        Renderer<AnalyzerJobBuilder<UpdateTableAnalyzer>, AnalyzerJobBuilderPresenter> {
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	AnalyzerBeansConfiguration configuration;
+    @Inject
+    AnalyzerBeansConfiguration configuration;
 
-	@Inject
-	InjectorBuilder injectorBuilder;
+    @Inject
+    DCModule dcModule;
 
-	@Override
-	public RendererPrecedence getPrecedence(AnalyzerJobBuilder<UpdateTableAnalyzer> ajb) {
-		if (ajb.getDescriptor().getComponentClass() == UpdateTableAnalyzer.class) {
-			return RendererPrecedence.HIGH;
-		}
-		return RendererPrecedence.NOT_CAPABLE;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(AnalyzerJobBuilder<UpdateTableAnalyzer> ajb) {
+        if (ajb.getDescriptor().getComponentClass() == UpdateTableAnalyzer.class) {
+            return RendererPrecedence.HIGH;
+        }
+        return RendererPrecedence.NOT_CAPABLE;
+    }
 
-	@Override
-	public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<UpdateTableAnalyzer> ajb) {
-		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);
+    @Override
+    public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<UpdateTableAnalyzer> ajb) {
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
+                PropertyWidgetFactory.class);
 
-		return new UpdateTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration);
-	}
+        return new UpdateTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration);
+    }
 
 }

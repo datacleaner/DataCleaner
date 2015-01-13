@@ -32,6 +32,7 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerJobBuilder;
@@ -82,7 +83,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     private void updateComponents(InputColumn<?> currentValue) {
-        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getBeanJobBuilder(), _dataType);
+        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getComponentBuilder(), _dataType);
 
         if (currentValue != null) {
             if (!_inputColumns.contains(currentValue)) {
@@ -130,13 +131,13 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
             }
 
             final ConfiguredPropertyDescriptor propertyDescriptor = getPropertyDescriptor();
-            final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = getBeanJobBuilder();
+            final ComponentBuilder componentBuilder = getComponentBuilder();
 
-            final InputColumn<?> currentValue = (InputColumn<?>) beanJobBuilder
+            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder
                     .getConfiguredProperty(propertyDescriptor);
             if (currentValue != null) {
                 if (currentValue.equals(column)) {
-                    beanJobBuilder.setConfiguredProperty(propertyDescriptor, null);
+                    componentBuilder.setConfiguredProperty(propertyDescriptor, null);
                 }
             }
             updateComponents();
@@ -187,7 +188,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 
     @Override
     public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
-        if (transformerJobBuilder == getBeanJobBuilder()) {
+        if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
         updateComponents();

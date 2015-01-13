@@ -26,11 +26,11 @@ import javax.swing.event.DocumentEvent;
 import org.datacleaner.api.NumberProperty;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.util.Percentage;
-import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.NumberDocument;
+import org.datacleaner.util.Percentage;
+import org.datacleaner.util.ReflectionUtils;
 
 public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
@@ -38,9 +38,8 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
     private final JTextField _textField;
 
     @Inject
-    public SingleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+    public SingleNumberPropertyWidget(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor);
         _textField = new JTextField(5);
 
         _textField.setDocument(new NumberDocument(isDecimalAllowed(), isNegativeAllowed()));

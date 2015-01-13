@@ -21,18 +21,17 @@ package org.datacleaner.panels;
 
 import javax.inject.Inject;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
@@ -52,7 +51,7 @@ public class ComponentJobBuilderPresenterRenderer implements
 
     @Inject
     @Provided
-    InjectorBuilder injectorBuilder;
+    DCModule dcModule;
 
     @Override
     public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
@@ -61,11 +60,8 @@ public class ComponentJobBuilderPresenterRenderer implements
 
     @Override
     public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
-        final AnalysisJobBuilder analysisJobBuilder = renderable.getAnalysisJobBuilder();
-
-        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder
-                .with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable)
-                .with(AnalysisJobBuilder.class, analysisJobBuilder).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(renderable)
+                .getInstance(PropertyWidgetFactory.class);
 
         if (renderable instanceof FilterJobBuilder) {
             FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;

@@ -62,7 +62,6 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
     private final WindowContext _windowContext;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
-    private final InjectorBuilder _injectorBuilder;
     private AnalyzerBeansConfiguration _configuration;
 
     @Inject
@@ -75,7 +74,6 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         _parentModule = parentModule;
         _userPreferences = userPreferences;
         _configuration = configuration;
-        _injectorBuilder = injectorBuilder;
     }
 
     @Override
@@ -90,9 +88,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         File directory = _userPreferences.getConfiguredFileDirectory();
         csvOutputAnalyzerBuilder.getComponentInstance().setFile(new File(directory, _table.getName() + ".csv"));
 
-        final PropertyWidgetFactory propertyWidgetFactory = _injectorBuilder.with(
-                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
-                PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
+                csvOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);
 
         final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(csvOutputAnalyzerBuilder,
                 propertyWidgetFactory);

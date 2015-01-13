@@ -155,7 +155,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         super.onOutputChanged(transformerJobBuilder, outputColumns);
 
         final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                getBeanJobBuilder(), Object.class);
+                getComponentBuilder(), Object.class);
 
         final Collection<DCComboBox<InputColumn<?>>> comboBoxes = _mappedInputColumnComboBoxes.values();
         for (DCComboBox<InputColumn<?>> comboBox : comboBoxes) {
@@ -171,7 +171,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
 
     private DCComboBox<InputColumn<?>> createComboBox(InputColumn<?> inputColumn, InputColumn<?> mappedColumn) {
         final List<InputColumn<?>> availableInputColumns = getAnalysisJobBuilder().getAvailableInputColumns(
-                getBeanJobBuilder(), Object.class);
+                getComponentBuilder(), Object.class);
 
         final DCComboBox<InputColumn<?>> comboBox = new DCComboBox<InputColumn<?>>(availableInputColumns);
         if (mappedColumn != null) {

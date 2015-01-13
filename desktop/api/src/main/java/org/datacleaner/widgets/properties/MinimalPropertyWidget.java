@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +39,13 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
     private static final Logger logger = LoggerFactory.getLogger(MinimalPropertyWidget.class);
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+    private final ComponentBuilder _componentBuilder;
     private final ConfiguredPropertyDescriptor _propertyDescriptor;
 
     private transient int _updating;
 
-    public MinimalPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
-        _beanJobBuilder = beanJobBuilder;
+    public MinimalPropertyWidget(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+        _componentBuilder = componentBuilder;
         _propertyDescriptor = propertyDescriptor;
         _updating = 0;
     }
@@ -59,8 +59,19 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
         return _propertyDescriptor;
     }
 
+    /**
+     * 
+     * @return
+     * 
+     * @deprecated use {@link #getComponentBuilder()} instead.
+     */
+    @Deprecated
     public final AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
-        return _beanJobBuilder;
+        return (AbstractBeanJobBuilder<?, ?, ?>) _componentBuilder;
+    }
+
+    public final ComponentBuilder getComponentBuilder() {
+        return _componentBuilder;
     }
 
     @Override
@@ -83,7 +94,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     }
 
     protected final AnalysisJobBuilder getAnalysisJobBuilder() {
-        return _beanJobBuilder.getAnalysisJobBuilder();
+        return getBeanJobBuilder().getAnalysisJobBuilder();
     }
 
     @Override
@@ -141,13 +152,14 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     protected final void fireValueChanged(Object newValue) {
         setUpdating(true);
         try {
-            _beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
+            _componentBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
         } catch (Exception e) {
             // an exception will be thrown here if setting an invalid property
             // value (which may just be work in progress, so we don't make a
             // fuzz about it)
             if (logger.isWarnEnabled()) {
-                logger.warn("Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(), e);
+                logger.warn(
+                        "Unexpected exception when setting property: " + _propertyDescriptor + ": " + e.getMessage(), e);
             }
         } finally {
             setUpdating(false);

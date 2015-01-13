@@ -19,6 +19,10 @@
  */
 package org.datacleaner.guice;
 
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -27,5 +31,7 @@ import com.google.inject.Module;
  */
 public interface DCModule extends Module {
 
-    
+    public Injector createChildInjectorForComponent(ComponentBuilder componentBuilder);
+
+    public Injector createChildInjectorForProperty(ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor);
 }

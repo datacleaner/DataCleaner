@@ -29,17 +29,18 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.ColumnProperty;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.UpdateableDatastore;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.PropertyDescriptor;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
@@ -56,22 +57,22 @@ import com.google.inject.Injector;
  */
 public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-    private final InjectorBuilder _injectorBuilder;
+    private final ComponentBuilder _componentBuilder;
     private final PropertyWidgetCollection _propertyWidgetCollection;
+    private final DCModule _dcModule;
 
     @Inject
-    protected PropertyWidgetFactoryImpl(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
-        _beanJobBuilder = beanJobBuilder;
-        _injectorBuilder = injectorBuilder;
-        _propertyWidgetCollection = new PropertyWidgetCollection(beanJobBuilder);
+    protected PropertyWidgetFactoryImpl(ComponentBuilder componentBuilder, DCModule dcModule) {
+        _componentBuilder = componentBuilder;
+        _dcModule = dcModule;
+        _propertyWidgetCollection = new PropertyWidgetCollection(componentBuilder);
 
-        final Set<ConfiguredPropertyDescriptor> mappedProperties = beanJobBuilder.getDescriptor()
+        final Set<ConfiguredPropertyDescriptor> mappedProperties = componentBuilder.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(MappedProperty.class);
         for (ConfiguredPropertyDescriptor mappedProperty : mappedProperties) {
             MappedProperty annotation = mappedProperty.getAnnotation(MappedProperty.class);
             String mappedToName = annotation.value();
-            ConfiguredPropertyDescriptor mappedToProperty = beanJobBuilder.getDescriptor().getConfiguredProperty(
+            ConfiguredPropertyDescriptor mappedToProperty = componentBuilder.getDescriptor().getConfiguredProperty(
                     mappedToName);
 
             PropertyWidgetMapping propertyWidgetMapping = buildMappedPropertyWidget(mappedProperty, mappedToProperty);
@@ -80,7 +81,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             _propertyWidgetCollection.putMappedPropertyWidget(mappedToProperty, propertyWidgetMapping);
         }
     }
-    
+
     @Override
     public PropertyWidgetCollection getPropertyWidgetCollection() {
         return _propertyWidgetCollection;
@@ -115,7 +116,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             // save the "mappedToPropertyWidget" since it may be need to be
             // reused when there is a chain of dependencies between mapped
             // properties
-            final PropertyWidget<?> mappedToPropertyWidget = _propertyWidgetCollection.getMappedPropertyWidget(mappedToProperty);
+            final PropertyWidget<?> mappedToPropertyWidget = _propertyWidgetCollection
+                    .getMappedPropertyWidget(mappedToProperty);
 
             // mapped schema name
             if (mappedProperty.getAnnotation(SchemaProperty.class) != null
@@ -149,8 +151,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             if (mappedProperty.getAnnotation(TableProperty.class) != null
                     && mappedToProperty.getAnnotation(SchemaProperty.class) != null) {
 
-                final SingleTableNamePropertyWidget tablePropertyWidget = new SingleTableNamePropertyWidget(getBeanJobBuilder(),
-                        mappedProperty);
+                final SingleTableNamePropertyWidget tablePropertyWidget = new SingleTableNamePropertyWidget(
+                        getBeanJobBuilder(), mappedProperty);
                 final SchemaNamePropertyWidget schemaPropertyWidget;
                 if (mappedToPropertyWidget == null) {
                     schemaPropertyWidget = new SchemaNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
@@ -191,8 +193,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                 } else {
                     // mapped column name
 
-                    final SingleColumnNamePropertyWidget columnPropertyWidget = new SingleColumnNamePropertyWidget(mappedProperty,
-                            getBeanJobBuilder());
+                    final SingleColumnNamePropertyWidget columnPropertyWidget = new SingleColumnNamePropertyWidget(
+                            mappedProperty, getBeanJobBuilder());
                     tablePropertyWidget.addComboListener(new DCComboBox.Listener<Table>() {
                         @Override
                         public void onItemSelected(Table item) {
@@ -213,18 +215,21 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
 
     @Override
     public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
-        return _beanJobBuilder;
+        return (AbstractBeanJobBuilder<?, ?, ?>) _componentBuilder;
+    }
+    
+    @Override
+    public ComponentBuilder getComponentBuilder() {
+        return _componentBuilder;
     }
 
     protected Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor) {
-        return _injectorBuilder.inherit(TYPELITERAL_BEAN_JOB_BUILDER)
-                .with(ConfiguredPropertyDescriptor.class, propertyDescriptor)
-                .with(PropertyDescriptor.class, propertyDescriptor).createInjector();
+        return _dcModule.createChildInjectorForProperty(_componentBuilder, propertyDescriptor);
     }
 
     @Override
     public PropertyWidget<?> create(String propertyName) {
-        BeanDescriptor<?> descriptor = _beanJobBuilder.getDescriptor();
+        ComponentDescriptor<?> descriptor = _componentBuilder.getDescriptor();
         ConfiguredPropertyDescriptor propertyDescriptor = descriptor.getConfiguredProperty(propertyName);
         if (propertyDescriptor == null) {
             throw new IllegalArgumentException("No such property: " + propertyName);
@@ -279,7 +284,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             } else {
 
                 if (propertyDescriptor.isInputColumn()) {
-                    if (_beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
+                    if (_componentBuilder.getDescriptor().getConfiguredPropertiesByType(InputColumn.class, true).size() == 1) {
                         // if there is only a single input column property, it
                         // will
                         // be displayed using radiobuttons.

@@ -21,13 +21,13 @@ package org.datacleaner.sample.ui;
 
 import javax.inject.Inject;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.datacleaner.sample.HelloWorldTransformer;
@@ -42,29 +42,29 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class HelloWorldTransformerBuilderRenderer implements
-		Renderer<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> {
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	InjectorBuilder injectorBuilder;
+    @Inject
+    DCModule dcModule;
 
-	@Inject
-	AnalyzerBeansConfiguration configuration;
+    @Inject
+    AnalyzerBeansConfiguration configuration;
 
-	@Override
-	public RendererPrecedence getPrecedence(TransformerJobBuilder<?> renderable) {
-		if (renderable.getDescriptor().getComponentClass() == HelloWorldTransformer.class) {
-			return RendererPrecedence.HIGHEST;
-		}
-		return RendererPrecedence.NOT_CAPABLE;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(TransformerJobBuilder<?> renderable) {
+        if (renderable.getDescriptor().getComponentClass() == HelloWorldTransformer.class) {
+            return RendererPrecedence.HIGHEST;
+        }
+        return RendererPrecedence.NOT_CAPABLE;
+    }
 
-	@Override
-	public TransformerJobBuilderPresenter render(TransformerJobBuilder<?> tjb) {
-		PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, tjb).getInstance(PropertyWidgetFactory.class);
-		return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
-	}
+    @Override
+    public TransformerJobBuilderPresenter render(TransformerJobBuilder<?> tjb) {
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
+                PropertyWidgetFactory.class);
+        return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
+    }
 }

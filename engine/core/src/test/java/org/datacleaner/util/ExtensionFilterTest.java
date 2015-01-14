@@ -27,7 +27,9 @@ import junit.framework.TestCase;
 public class ExtensionFilterTest extends TestCase {
 
     public void testUseAsFilenameFilter() throws Exception {
-        File folder = new File("src/test/resources/extensions");
-        assertEquals("[DataCleaner-basic-transformers.jar, DataCleaner-writers.jar]", Arrays.toString(folder.list(FileFilters.JAR)));
+        final File folder = new File("src/test/resources/extensions");
+        final String[] files = folder.list(FileFilters.JAR);
+        Arrays.sort(files);
+        assertEquals("[DataCleaner-basic-transformers.jar, DataCleaner-writers.jar]", Arrays.toString(files));
     }
 }

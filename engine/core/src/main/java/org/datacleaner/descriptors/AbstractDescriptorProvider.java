@@ -36,53 +36,33 @@ import org.datacleaner.api.Transformer;
  */
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
+    private final boolean _autoDiscover;
+
+    /**
+     * @deprecated use {@link #AbstractDescriptorProvider(boolean)} instead.
+     */
+    @Deprecated
+    public AbstractDescriptorProvider() {
+        this(false);
+    }
+
+    /**
+     * Creates an {@link AbstractDescriptorProvider}
+     * 
+     * @param autoLoadDescriptorClasses
+     *            whether or not to automatically load descriptors when they are
+     *            requested by class names. This typically happens in
+     *            {@link #getAnalyzerBeanDescriptorForClass(Class)},
+     *            {@link #getTransformerBeanDescriptorForClass(Class)} or
+     *            {@link #getFilterBeanDescriptorForClass(Class)}
+     */
+    public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
+        _autoDiscover = autoLoadDescriptorClasses;
+    }
+    
     @Override
     public final AnalyzerBeanDescriptor<?> getAnalyzerBeanDescriptorByDisplayName(String name) {
         return getBeanDescriptorByDisplayName(name, getAnalyzerBeanDescriptors());
-    }
-
-    /**
-     * Overridable method for handling (and perhaps discovering) unfound
-     * analyzer descriptors by class.
-     * 
-     * @param analyzerClass
-     * @return
-     */
-    protected <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> notFoundAnalyzer(Class<A> analyzerClass) {
-        return null;
-    }
-
-    /**
-     * Overridable method for handling (and perhaps discovering) unfound
-     * transformer descriptors by class.
-     * 
-     * @param transformerClass
-     * @return
-     */
-    protected <A extends Transformer> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
-        return null;
-    }
-
-    /**
-     * Overridable method for handling (and perhaps discovering) unfound filter
-     * descriptors by class.
-     * 
-     * @param filterClass
-     * @return
-     */
-    protected FilterBeanDescriptor<?, ?> notFoundFilter(Class<?> filterClass) {
-        return null;
-    }
-
-    /**
-     * Overridable method for handling (and perhaps discovering) unfound
-     * renderer descriptors by class.
-     * 
-     * @param rendererClass
-     * @return
-     */
-    protected <R extends Renderer<?, ?>> RendererBeanDescriptor<R> notFoundRenderer(Class<R> rendererClass) {
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -200,5 +180,33 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
             }
         }
         return null;
+    }
+
+    private <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> notFoundAnalyzer(Class<A> analyzerClass) {
+        if (!_autoDiscover) {
+            return null;
+        }
+        return Descriptors.ofAnalyzer(analyzerClass);
+    }
+
+    private FilterBeanDescriptor<?, ?> notFoundFilter(Class<?> filterClass) {
+        if (!_autoDiscover) {
+            return null;
+        }
+        return Descriptors.ofFilterUnbound(filterClass);
+    }
+
+    private <R extends Renderer<?, ?>> RendererBeanDescriptor<R> notFoundRenderer(Class<R> rendererClass) {
+        if (!_autoDiscover) {
+            return null;
+        }
+        return Descriptors.ofRenderer(rendererClass);
+    }
+
+    private <T extends Transformer> TransformerBeanDescriptor<T> notFoundTransformer(Class<T> transformerClass) {
+        if (!_autoDiscover) {
+            return null;
+        }
+        return Descriptors.ofTransformer(transformerClass);
     }
 }

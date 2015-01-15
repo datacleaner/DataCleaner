@@ -66,46 +66,12 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
     private List<RendererBeanDescriptor<?>> _rendererBeanDescriptors = new ArrayList<RendererBeanDescriptor<?>>();
     private List<FilterBeanDescriptor<?, ?>> _filterBeanDescriptors = new ArrayList<FilterBeanDescriptor<?, ?>>();
 
-    private final boolean _autoDiscover;
-
     public SimpleDescriptorProvider() {
         this(true);
     }
 
     public SimpleDescriptorProvider(boolean autoDiscover) {
-        _autoDiscover = autoDiscover;
-    }
-
-    @Override
-    protected <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> notFoundAnalyzer(Class<A> analyzerClass) {
-        if (!_autoDiscover) {
-            return null;
-        }
-        return Descriptors.ofAnalyzer(analyzerClass);
-    }
-
-    @Override
-    protected FilterBeanDescriptor<?, ?> notFoundFilter(Class<?> filterClass) {
-        if (!_autoDiscover) {
-            return null;
-        }
-        return Descriptors.ofFilterUnbound(filterClass);
-    }
-
-    @Override
-    protected <R extends Renderer<?, ?>> RendererBeanDescriptor<R> notFoundRenderer(Class<R> rendererClass) {
-        if (!_autoDiscover) {
-            return null;
-        }
-        return Descriptors.ofRenderer(rendererClass);
-    }
-
-    @Override
-    protected <A extends Transformer> TransformerBeanDescriptor<A> notFoundTransformer(Class<A> transformerClass) {
-        if (!_autoDiscover) {
-            return null;
-        }
-        return Descriptors.ofTransformer(transformerClass);
+        super(autoDiscover);
     }
 
     public void addAnalyzerBeanDescriptor(AnalyzerBeanDescriptor<?> analyzerBeanDescriptor) {

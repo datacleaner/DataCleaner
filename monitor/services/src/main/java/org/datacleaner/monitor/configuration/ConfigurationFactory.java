@@ -58,11 +58,11 @@ public class ConfigurationFactory {
     private List<String> _scannedPackages;
     private Integer _numThreads;
     private boolean scanWebInfFolder = true;
-    
+
     public boolean isScanWebInfFolder() {
         return scanWebInfFolder;
     }
-    
+
     public void setScanWebInfFolder(boolean scanWebInfFolder) {
         this.scanWebInfFolder = scanWebInfFolder;
     }
@@ -101,11 +101,12 @@ public class ConfigurationFactory {
         }
 
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
-        
+
         final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
         excludedRenderingFormats.add(SwingRenderingFormat.class);
         excludedRenderingFormats.add(TextRenderingFormat.class);
-        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner, excludedRenderingFormats);
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner,
+                excludedRenderingFormats, true);
         final ClassLoader classLoader = getClass().getClassLoader();
         logger.info("Using classloader: {}", classLoader);
 
@@ -120,7 +121,7 @@ public class ConfigurationFactory {
             logger.debug("scanWebInfFolder is set to false, will not attempt loading JAR files from WEB-INF");
             return null;
         }
-        
+
         if (servletContext == null) {
             logger.warn("ServletContext is null, will not attempt loading JAR files from WEB-INF");
             return null;

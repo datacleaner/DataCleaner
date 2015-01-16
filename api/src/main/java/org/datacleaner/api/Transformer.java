@@ -44,6 +44,8 @@ import javax.inject.Named;
  * 
  * @see OutputRowCollector
  * @see OutputColumns
+ * 
+ * @since 4.0
  */
 public interface Transformer extends Component {
 

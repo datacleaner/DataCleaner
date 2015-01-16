@@ -68,6 +68,8 @@ import javax.inject.Named;
  * 
  * Life-cycle methods can be added to the class if properly annotated with
  * {@link Validate}, {@link Initialize} and {@link Close}.
+ * 
+ * @since 4.0
  */
 public interface Component {
 

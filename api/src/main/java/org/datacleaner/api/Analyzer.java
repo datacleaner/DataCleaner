@@ -42,6 +42,8 @@ import javax.inject.Named;
  * 
  * @param <R>
  *            the {@link AnalyzerResult} type of this analyzer.
+ * 
+ * @since 4.0
  */
 public interface Analyzer<R extends AnalyzerResult> extends Component, HasAnalyzerResult<R> {
 

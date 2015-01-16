@@ -40,6 +40,8 @@ import javax.inject.Named;
  * 
  * @param <C>
  *            an enum type with the available categories
+ * 
+ * @since 4.0
  */
 public interface Filter<C extends Enum<C>> extends Component {
 

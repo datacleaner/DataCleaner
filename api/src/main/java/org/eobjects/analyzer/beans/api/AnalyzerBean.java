@@ -27,10 +27,12 @@ import java.lang.annotation.Target;
 
 import javax.inject.Named;
 
+import org.datacleaner.api.Analyzer;
+
 /**
  * Legacy {@link AnalyzerBean} annotation.
  * 
- * @deprecated use {@link Named} instead.
+ * @deprecated use {@link Named} instead. See {@link Analyzer} for general instructions on building an analyzer.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

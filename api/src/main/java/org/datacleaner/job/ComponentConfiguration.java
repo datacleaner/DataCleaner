@@ -17,27 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.job;
 
-import java.util.EnumSet;
-import java.util.Set;
+import java.io.Serializable;
 
-import org.datacleaner.api.Filter;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 
 /**
- * Descriptor interface for {@link Filter}s.
- * 
- * @param <B>
+ * Represents the configuration (values of all
+ * {@link ConfiguredPropertyDescriptor}s) of a component.
  */
-public interface FilterBeanDescriptor<F extends Filter<C>, C extends Enum<C>> extends BeanDescriptor<F> {
+public interface ComponentConfiguration extends Serializable {
 
-	public Class<C> getOutcomeCategoryEnum();
-
-	public EnumSet<C> getOutcomeCategories();
-
-	public Set<String> getOutcomeCategoryNames();
-
-	public Enum<C> getOutcomeCategoryByName(String category);
-
-    public boolean isQueryOptimizable();
+    public Object getProperty(ConfiguredPropertyDescriptor propertyDescriptor);
 }

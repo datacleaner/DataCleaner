@@ -46,8 +46,8 @@ public class ImmutableBeanConfigurationTest extends TestCase {
         Map<ConfiguredPropertyDescriptor, Object> properties2 = new HashMap<ConfiguredPropertyDescriptor, Object>();
         properties2.put(propertyDescriptor, new String[] { "hello", "world" });
 
-        ImmutableBeanConfiguration conf1 = new ImmutableBeanConfiguration(properties1);
-        ImmutableBeanConfiguration conf2 = new ImmutableBeanConfiguration(properties2);
+        ImmutableComponentConfiguration conf1 = new ImmutableComponentConfiguration(properties1);
+        ImmutableComponentConfiguration conf2 = new ImmutableComponentConfiguration(properties2);
         assertEquals(conf1.hashCode(), conf2.hashCode());
         assertEquals(conf1, conf2);
     }

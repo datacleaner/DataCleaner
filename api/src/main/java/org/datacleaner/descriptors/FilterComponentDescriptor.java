@@ -19,15 +19,34 @@
  */
 package org.datacleaner.descriptors;
 
-import org.datacleaner.api.Analyzer;
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.datacleaner.api.Filter;
+import org.datacleaner.api.Optimizeable;
+import org.datacleaner.api.QueryOptimizedFilter;
 
 /**
- * Descriptor interface for {@link Analyzer}s.
- * 
- * 
+ * {@link ComponentDescriptor} interface for {@link Filter}s.
  * 
  * @param <B>
+ *            the type of {@link Filter}
  */
-public interface AnalyzerBeanDescriptor<B extends Analyzer<?>> extends HasAnalyzerResultBeanDescriptor<B>, BeanDescriptor<B> {
+public interface FilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends ComponentDescriptor<F> {
 
+    public Class<C> getOutcomeCategoryEnum();
+
+    public EnumSet<C> getOutcomeCategories();
+
+    public Set<String> getOutcomeCategoryNames();
+
+    public Enum<C> getOutcomeCategoryByName(String category);
+
+    /**
+     * Determine whether this {@link Filter} is query optimizable or not. See
+     * {@link QueryOptimizedFilter} and {@link Optimizeable} for more details.
+     * 
+     * @return true if this filter can be query optimized.
+     */
+    public boolean isQueryOptimizable();
 }

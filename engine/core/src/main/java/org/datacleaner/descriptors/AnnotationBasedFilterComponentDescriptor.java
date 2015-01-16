@@ -29,12 +29,12 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedFilterBeanDescriptor<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractBeanDescriptor<F> implements FilterBeanDescriptor<F, C> {
+final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends
+        AbstractComponentDescriptor<F> implements FilterComponentDescriptor<F, C> {
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedFilterBeanDescriptor(Class<F> filterClass) throws DescriptorException {
+    protected AnnotationBasedFilterComponentDescriptor(Class<F> filterClass) throws DescriptorException {
         super(filterClass, false);
 
         if (!ReflectionUtils.is(filterClass, Filter.class)) {

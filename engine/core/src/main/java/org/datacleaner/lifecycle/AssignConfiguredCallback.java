@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,10 @@ final class AssignConfiguredCallback implements LifeCycleCallback<Object, Compon
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final BeanConfiguration _beanConfiguration;
+	private final ComponentConfiguration _beanConfiguration;
 	private final ReferenceDataActivationManager _referenceDataActivationManager;
 
-	public AssignConfiguredCallback(BeanConfiguration beanConfiguration,
+	public AssignConfiguredCallback(ComponentConfiguration beanConfiguration,
 			ReferenceDataActivationManager referenceDataActivationManager) {
 		_beanConfiguration = beanConfiguration;
 		_referenceDataActivationManager = referenceDataActivationManager;

@@ -22,24 +22,26 @@ package org.datacleaner.api;
 import javax.inject.Named;
 
 /**
- * Interface for components that filter/categorize rows.
+ * Interface for a {@link Component} that filters/categorizes rows.
  * 
- * A filter will process incoming rows and label them with a category. A
+ * See {@link Component} for general information about all components. Like all
+ * components, {@link Analyzer} require a {@link Named} annotation in order to
+ * be discovered.
+ * 
+ * A {@link Filter} will process incoming rows and label them with a category. A
  * category is defined as a value in an enum. When a row is categorized, this
  * category can then be used to set up a requirement for succeeding row
  * processing.
  * 
- * Use of the {@link Named} annotation is required for the filter to be
- * automatically discovered.
- * 
  * A sub-interface of Filter exists, {@link QueryOptimizedFilter}, which allows
  * filter functionality to be pushed down to the query in certain circumstances
- * where it is desirable to do so.
+ * where it is desirable to do so. Also check out the {@link Optimizeable}
+ * annotation which may be useful when applying {@link QueryOptimizedFilter}.
  * 
  * @param <C>
  *            an enum type with the available categories
  */
-public interface Filter<C extends Enum<C>> {
+public interface Filter<C extends Enum<C>> extends Component {
 
     /**
      * Categorizes/filters a single row.

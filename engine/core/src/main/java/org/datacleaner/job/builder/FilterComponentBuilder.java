@@ -26,18 +26,25 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.datacleaner.api.Filter;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterComponentDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.ImmutableFilterJob;
 
-public final class FilterJobBuilder<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractBeanWithInputColumnsBuilder<FilterBeanDescriptor<F, C>, F, FilterJobBuilder<F, C>> implements
-        HasFilterOutcomes {
+/**
+ * A {@link ComponentBuilder} for {@link Filter}s.
+ *
+ * @param <F>
+ *            the type of {@link Filter} being built
+ * @param <C>
+ *            the {@link Filter}s category enum
+ */
+public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>> extends
+        AbstractComponentBuilder<FilterComponentDescriptor<F, C>, F, FilterComponentBuilder<F, C>> implements HasFilterOutcomes {
 
     // We keep a cached version of the resulting filter job because of
     // references coming from other objects, particular LazyFilterOutcome.
@@ -46,8 +53,8 @@ public final class FilterJobBuilder<F extends Filter<C>, C extends Enum<C>> exte
 
     private final List<FilterChangeListener> _localChangeListeners;
 
-    public FilterJobBuilder(AnalysisJobBuilder analysisJobBuilder, FilterBeanDescriptor<F, C> descriptor) {
-        super(analysisJobBuilder, descriptor, FilterJobBuilder.class);
+    public FilterComponentBuilder(AnalysisJobBuilder analysisJobBuilder, FilterComponentDescriptor<F, C> descriptor) {
+        super(analysisJobBuilder, descriptor, FilterComponentBuilder.class);
         _outcomes = new EnumMap<C, FilterOutcome>(descriptor.getOutcomeCategoryEnum());
         EnumSet<C> categories = descriptor.getOutcomeCategories();
         for (C category : categories) {
@@ -77,11 +84,12 @@ public final class FilterJobBuilder<F extends Filter<C>, C extends Enum<C>> exte
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
         if (_cachedJob == null) {
-            _cachedJob = new ImmutableFilterJob(getName(), getDescriptor(), new ImmutableBeanConfiguration(
+            _cachedJob = new ImmutableFilterJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
                     getConfiguredProperties()), componentRequirement, getMetadataProperties());
         } else {
             final ImmutableFilterJob newFilterJob = new ImmutableFilterJob(getName(), getDescriptor(),
-                    new ImmutableBeanConfiguration(getConfiguredProperties()), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(getConfiguredProperties()), componentRequirement,
+                    getMetadataProperties());
             if (!newFilterJob.equals(_cachedJob)) {
                 _cachedJob = newFilterJob;
             }

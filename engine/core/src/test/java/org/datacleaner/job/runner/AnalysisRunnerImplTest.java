@@ -36,8 +36,8 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
@@ -57,22 +57,22 @@ public class AnalysisRunnerImplTest extends TestCase {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("name");
 
-            final TransformerJobBuilder<TestTransformer1> transformer1 = jobBuilder
+            final TransformerComponentBuilder<TestTransformer1> transformer1 = jobBuilder
                     .addTransformer(TestTransformer1.class);
             transformer1.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns1 = transformer1.getOutputColumns();
 
-            final TransformerJobBuilder<TestTransformer2> transformer2 = jobBuilder
+            final TransformerComponentBuilder<TestTransformer2> transformer2 = jobBuilder
                     .addTransformer(TestTransformer2.class);
             transformer2.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns2 = transformer2.getOutputColumns();
 
-            final TransformerJobBuilder<TestTransformer3> transformer3 = jobBuilder
+            final TransformerComponentBuilder<TestTransformer3> transformer3 = jobBuilder
                     .addTransformer(TestTransformer3.class);
             transformer3.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             final List<MutableInputColumn<?>> outputColumns3 = transformer3.getOutputColumns();
 
-            final AnalyzerJobBuilder<TestAnalyzer> analyzer = jobBuilder.addAnalyzer(TestAnalyzer.class);
+            final AnalyzerComponentBuilder<TestAnalyzer> analyzer = jobBuilder.addAnalyzer(TestAnalyzer.class);
             analyzer.addInputColumns(outputColumns1);
             analyzer.addInputColumns(outputColumns2);
             analyzer.addInputColumns(outputColumns3);

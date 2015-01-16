@@ -17,17 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job;
+package org.datacleaner.descriptors;
 
-import java.io.Serializable;
-
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.api.Analyzer;
 
 /**
- * Represents the configuration (values of all
- * {@link ConfiguredPropertyDescriptor}s) of a component.
+ * {@link ComponentDescriptor} interface for {@link Analyzer}s.
+ * 
+ * @param <B> the type of {@link Analyzer}
  */
-public interface BeanConfiguration extends Serializable {
+public interface AnalyzerComponentDescriptor<B extends Analyzer<?>> extends HasAnalyzerResultComponentDescriptor<B>,
+        ComponentDescriptor<B> {
 
-    public Object getProperty(ConfiguredPropertyDescriptor propertyDescriptor);
 }

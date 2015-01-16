@@ -19,23 +19,13 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.Set;
+import org.datacleaner.api.Transformer;
 
-import junit.framework.TestCase;
-
-import org.datacleaner.api.OutputRowCollector;
-import org.datacleaner.job.tasks.MockMultiRowTransformer;
-
-public class AnnotationBasedTransformerBeanDescriptorTest extends TestCase {
-
-    public void testGetProvidedPropertiesOfType() throws Exception {
-        TransformerBeanDescriptor<MockMultiRowTransformer> descriptor = Descriptors
-                .ofTransformer(MockMultiRowTransformer.class);
-
-        Set<ProvidedPropertyDescriptor> properties = descriptor.getProvidedPropertiesByType(OutputRowCollector.class);
-        assertEquals(1, properties.size());
-        ProvidedPropertyDescriptor property = properties.iterator().next();
-        assertEquals(OutputRowCollector.class, property.getType());
-        assertEquals("outputRowCollector", property.getName());
-    }
+/**
+ * {@link ComponentDescriptor} interface for {@link Transformer}s.
+ * 
+ * @param <B>
+ *            the type of {@link Transformer}
+ */
+public interface TransformerComponentDescriptor<B extends Transformer> extends ComponentDescriptor<B> {
 }

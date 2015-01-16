@@ -19,29 +19,26 @@
  */
 package org.datacleaner.descriptors;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.inject.Named;
 
-import org.datacleaner.api.Alias;
+import org.datacleaner.api.Component;
 import org.datacleaner.util.ReflectionUtils;
 
 /**
- * Abstract implementation of the {@link BeanDescriptor} interface. Convenient
- * for implementing it's subclasses.
+ * Abstract implementation of the {@link ComponentDescriptor} interface.
+ * Convenient for implementing it's subclasses.
  * 
  * @param <B>
+ *            the type of {@link Component}
  */
-abstract class AbstractBeanDescriptor<B> extends SimpleComponentDescriptor<B> implements BeanDescriptor<B> {
+abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<B> implements ComponentDescriptor<B> {
 
     private static final long serialVersionUID = 1L;
 
     private final boolean _requireInputColumns;
     private final String _displayName;
 
-    public AbstractBeanDescriptor(Class<B> componentClass, boolean requireInputColumns) {
+    public AbstractComponentDescriptor(Class<B> componentClass, boolean requireInputColumns) {
         super(componentClass);
         _requireInputColumns = requireInputColumns;
         _displayName = determineDisplayName();
@@ -49,7 +46,7 @@ abstract class AbstractBeanDescriptor<B> extends SimpleComponentDescriptor<B> im
 
     private String determineDisplayName() {
         final Class<B> componentClass = getComponentClass();
-        final Named named = ReflectionUtils.getAnnotation(componentClass, Named.class);
+        final Named named = getAnnotation(Named.class);
         String displayName;
         if (named == null) {
             displayName = getDisplayNameIfNotNamed(componentClass);
@@ -67,7 +64,7 @@ abstract class AbstractBeanDescriptor<B> extends SimpleComponentDescriptor<B> im
         return displayName;
     }
 
-    protected abstract String getDisplayNameIfNotNamed(Class<?> beanClass);
+    protected abstract String getDisplayNameIfNotNamed(Class<?> componentClass);
 
     public final String getDisplayName() {
         if (_displayName == null) {
@@ -99,33 +96,5 @@ abstract class AbstractBeanDescriptor<B> extends SimpleComponentDescriptor<B> im
                         + " does not define a @Configured InputColumn or InputColumn-array");
             }
         }
-    }
-
-    @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput() {
-        return getConfiguredPropertiesForInput(true);
-    }
-
-    @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional) {
-        Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<ConfiguredPropertyDescriptor>(_configuredProperties);
-        for (Iterator<ConfiguredPropertyDescriptor> it = descriptors.iterator(); it.hasNext();) {
-            ConfiguredPropertyDescriptor propertyDescriptor = it.next();
-            if (!propertyDescriptor.isInputColumn()) {
-                it.remove();
-            } else if (!includeOptional && !propertyDescriptor.isRequired()) {
-                it.remove();
-            }
-        }
-        return descriptors;
-    }
-
-    @Override
-    public String[] getAliases() {
-        Alias alias = getAnnotation(Alias.class);
-        if (alias == null) {
-            return new String[0];
-        }
-        return alias.value();
     }
 }

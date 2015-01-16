@@ -28,12 +28,12 @@ package org.datacleaner.job.builder;
  */
 public interface FilterChangeListener {
 
-	public void onAdd(FilterJobBuilder<?, ?> filterJobBuilder);
+	public void onAdd(FilterComponentBuilder<?, ?> filterJobBuilder);
 	
-	public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder);
+	public void onConfigurationChanged(FilterComponentBuilder<?, ?> filterJobBuilder);
 	
-	public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder);
+	public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder);
 
-	public void onRemove(FilterJobBuilder<?, ?> filterJobBuilder);
+	public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder);
 
 }

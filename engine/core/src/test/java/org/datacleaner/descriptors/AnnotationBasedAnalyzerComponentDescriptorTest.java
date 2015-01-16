@@ -35,7 +35,7 @@ import org.datacleaner.components.mock.AnalyzerMock;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.result.NumberResult;
 
-public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
+public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
@@ -44,7 +44,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
     }
 
     public void testInheritedAnalyzer() throws Exception {
-        AnalyzerBeanDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
+        AnalyzerComponentDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
         assertEquals("One more mock", descriptor.getDisplayName());
     }
 
@@ -68,7 +68,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
     }
     
     public void testIsDistributed() throws Exception {
-        AnalyzerBeanDescriptor<?> desc;
+        AnalyzerComponentDescriptor<?> desc;
         
         desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertFalse(desc.isDistributable());
@@ -81,7 +81,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
     }
 
     public void testGetConfiguredPropertiesOfType() throws Exception {
-        AnalyzerBeanDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerComponentDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
         Set<ConfiguredPropertyDescriptor> properties = desc.getConfiguredPropertiesByType(Number.class, false);
         assertEquals(1, properties.size());
@@ -103,7 +103,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
     }
 
     public void testRowProcessingType() throws Exception {
-        AnalyzerBeanDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerComponentDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
         Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
         Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
@@ -124,7 +124,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
     }
 
     public void testGetResultMetrics() throws Exception {
-        AnalyzerBeanDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerComponentDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertEquals(NumberResult.class, descriptor.getResultClass());
 
         Set<MetricDescriptor> resultMetrics = descriptor.getResultMetrics();
@@ -150,7 +150,7 @@ public class AnnotationBasedAnalyzerBeanDescriptorTest extends TestCase {
             fail("Exception expected");
         } catch (DescriptorException e) {
             assertEquals(
-                    "Component (class org.datacleaner.descriptors.AnnotationBasedAnalyzerBeanDescriptorTest$InvalidAnalyzer) is not a non-abstract class",
+                    "Component (class org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptorTest$InvalidAnalyzer) is not a non-abstract class",
                     e.getMessage());
         }
     }

@@ -26,19 +26,23 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
@@ -47,20 +51,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A descriptor for simple components. Simple components covers reference data
- * types (Dictionary, SynonymCatalog, StringPattern) as well as custom
- * configuration components.
+ * A {@link ComponentDescriptor} for simple components. Simple components covers
+ * reference data types (Dictionary, SynonymCatalog, StringPattern) as well as
+ * custom configuration components.
  * 
- * Simple components support the @Configured, @Validate, @Initialize and @Close
- * annotations as well as the Closeable interface.
+ * Simple components support the {@link Configured}, {@link Validate},
+ * {@link Initialize} and {@link Close} annotations as well as the
+ * {@link Closeable} interface.
  * 
  * @see Initialize
  * @see Validate
  * @see Close
  * @see Configured
  * @see Closeable
- * 
- * 
  */
 class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements ComponentDescriptor<B> {
 
@@ -97,12 +100,16 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
     @Override
     public String getDisplayName() {
-        return getComponentClass().getSimpleName();
+        final Named named = getAnnotation(Named.class);
+        if (named == null) {
+            return getComponentClass().getSimpleName();
+        }
+        return named.value();
     }
 
     @Override
-    public String getDescription() {
-        Description description = getAnnotation(Description.class);
+    public final String getDescription() {
+        final Description description = getAnnotation(Description.class);
         if (description == null) {
             return null;
         }
@@ -110,18 +117,18 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+    public final <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
         return ReflectionUtils.getAnnotation(getComponentClass(), annotationClass);
     }
 
     @Override
-    public Set<Annotation> getAnnotations() {
+    public final Set<Annotation> getAnnotations() {
         Annotation[] annotations = getComponentClass().getAnnotations();
         return new HashSet<Annotation>(Arrays.asList(annotations));
     }
 
     @Override
-    public Set<ComponentCategory> getComponentCategories() {
+    public final Set<ComponentCategory> getComponentCategories() {
         Categorized categorized = getAnnotation(Categorized.class);
         if (categorized == null) {
             return Collections.emptySet();
@@ -224,30 +231,30 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         }
     }
 
-    public Set<InitializeMethodDescriptor> getInitializeMethods() {
+    public final Set<InitializeMethodDescriptor> getInitializeMethods() {
         return Collections.unmodifiableSet(_initializeMethods);
     }
 
-    public Set<ConfiguredPropertyDescriptor> getConfiguredProperties() {
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredProperties() {
         return Collections.unmodifiableSet(_configuredProperties);
     }
 
-    public Set<CloseMethodDescriptor> getCloseMethods() {
+    public final Set<CloseMethodDescriptor> getCloseMethods() {
         return Collections.unmodifiableSet(_closeMethods);
     }
 
     @Override
-    public Set<ValidateMethodDescriptor> getValidateMethods() {
+    public final Set<ValidateMethodDescriptor> getValidateMethods() {
         return Collections.unmodifiableSet(_validateMethods);
     }
 
     @Override
-    public Set<ProvidedPropertyDescriptor> getProvidedProperties() {
+    public final Set<ProvidedPropertyDescriptor> getProvidedProperties() {
         return Collections.unmodifiableSet(_providedProperties);
     }
 
     @Override
-    public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class<?> cls) {
+    public final Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class<?> cls) {
         Set<ProvidedPropertyDescriptor> result = new HashSet<ProvidedPropertyDescriptor>();
         for (ProvidedPropertyDescriptor descriptor : _providedProperties) {
             if (ReflectionUtils.is(descriptor.getType(), cls)) {
@@ -258,7 +265,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public ConfiguredPropertyDescriptor getConfiguredProperty(String configuredName) {
+    public final ConfiguredPropertyDescriptor getConfiguredProperty(String configuredName) {
         for (ConfiguredPropertyDescriptor configuredDescriptor : _configuredProperties) {
             if (configuredName.equals(configuredDescriptor.getName())) {
                 return configuredDescriptor;
@@ -275,7 +282,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByAnnotation(
             Class<? extends Annotation> annotationClass) {
         Set<ConfiguredPropertyDescriptor> set = new TreeSet<ConfiguredPropertyDescriptor>();
         for (ConfiguredPropertyDescriptor configuredDescriptor : _configuredProperties) {
@@ -288,7 +295,7 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
     }
 
     @Override
-    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(Class<?> type, boolean includeArrays) {
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesByType(Class<?> type, boolean includeArrays) {
         Set<ConfiguredPropertyDescriptor> set = new TreeSet<ConfiguredPropertyDescriptor>();
         for (ConfiguredPropertyDescriptor configuredDescriptor : _configuredProperties) {
             final boolean include;
@@ -321,5 +328,42 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         String thisBeanClassName = this.getComponentClass().toString();
         String thatBeanClassName = otherBeanClass.toString();
         return thisBeanClassName.compareTo(thatBeanClassName);
+    }
+
+    @Override
+    public boolean isDistributable() {
+        final Distributed distributed = getAnnotation(Distributed.class);
+        if (distributed == null) {
+            return false;
+        }
+        return distributed.value();
+    }
+
+    @Override
+    public final String[] getAliases() {
+        Alias alias = getAnnotation(Alias.class);
+        if (alias == null) {
+            return new String[0];
+        }
+        return alias.value();
+    }
+
+    @Override
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput() {
+        return getConfiguredPropertiesForInput(true);
+    }
+
+    @Override
+    public final Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional) {
+        Set<ConfiguredPropertyDescriptor> descriptors = new TreeSet<ConfiguredPropertyDescriptor>(_configuredProperties);
+        for (Iterator<ConfiguredPropertyDescriptor> it = descriptors.iterator(); it.hasNext();) {
+            ConfiguredPropertyDescriptor propertyDescriptor = it.next();
+            if (!propertyDescriptor.isInputColumn()) {
+                it.remove();
+            } else if (!includeOptional && !propertyDescriptor.isRequired()) {
+                it.remove();
+            }
+        }
+        return descriptors;
     }
 }

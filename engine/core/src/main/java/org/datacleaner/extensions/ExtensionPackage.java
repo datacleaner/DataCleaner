@@ -150,9 +150,9 @@ public final class ExtensionPackage implements Serializable, HasName {
 
             final ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
-            final int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
-            final int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
-            final int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
+            final int analyzersBefore = classpathScanner.getAnalyzerComponentDescriptors().size();
+            final int transformersBefore = classpathScanner.getTransformerComponentDescriptors().size();
+            final int filtersBefore = classpathScanner.getFilterComponentDescriptors().size();
             final int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
 
             if (_classLoader == null) {
@@ -163,9 +163,9 @@ public final class ExtensionPackage implements Serializable, HasName {
                 classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, getJarFiles());
             }
 
-            _loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
-            _loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;
-            _loadedFilters = classpathScanner.getFilterBeanDescriptors().size() - filtersBefore;
+            _loadedAnalyzers = classpathScanner.getAnalyzerComponentDescriptors().size() - analyzersBefore;
+            _loadedTransformers = classpathScanner.getTransformerComponentDescriptors().size() - transformersBefore;
+            _loadedFilters = classpathScanner.getFilterComponentDescriptors().size() - filtersBefore;
             _loadedRenderers = classpathScanner.getRendererBeanDescriptors().size() - renderersBefore;
 
             _loaded = true;

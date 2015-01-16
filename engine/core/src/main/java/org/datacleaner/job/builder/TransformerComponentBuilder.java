@@ -30,13 +30,13 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.TransformerComponentDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.IdGenerator;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.ImmutableTransformerJob;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
@@ -45,13 +45,13 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.StringUtils;
 
 /**
- * 
+ * A {@link ComponentBuilder} for {@link Transformer}s
  * 
  * @param <T>
- *            the transformer type being configured
+ *            the type of {@link Transformer} being built
  */
-public final class TransformerJobBuilder<T extends Transformer> extends
-        AbstractBeanWithInputColumnsBuilder<TransformerBeanDescriptor<T>, T, TransformerJobBuilder<T>> implements
+public final class TransformerComponentBuilder<T extends Transformer> extends
+        AbstractComponentBuilder<TransformerComponentDescriptor<T>, T, TransformerComponentBuilder<T>> implements
         InputColumnSourceJob, InputColumnSinkJob, HasComponentRequirement {
 
     private final String _id;
@@ -60,9 +60,9 @@ public final class TransformerJobBuilder<T extends Transformer> extends
     private final IdGenerator _idGenerator;
     private final List<TransformerChangeListener> _localChangeListeners;
 
-    public TransformerJobBuilder(AnalysisJobBuilder analysisJobBuilder, TransformerBeanDescriptor<T> descriptor,
+    public TransformerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, TransformerComponentDescriptor<T> descriptor,
             IdGenerator idGenerator) {
-        super(analysisJobBuilder, descriptor, TransformerJobBuilder.class);
+        super(analysisJobBuilder, descriptor, TransformerComponentBuilder.class);
         _id = "trans-" + idGenerator.nextId();
         _idGenerator = idGenerator;
         _localChangeListeners = new ArrayList<TransformerChangeListener>(0);
@@ -82,13 +82,13 @@ public final class TransformerJobBuilder<T extends Transformer> extends
         }
 
         final Transformer component = getComponentInstance();
-        final TransformerBeanDescriptor<T> descriptor = getDescriptor();
+        final TransformerComponentDescriptor<T> descriptor = getDescriptor();
 
         final InjectionManager injectionManager = getAnalysisJobBuilder().getConfiguration().getInjectionManager(null);
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);
 
         // mimic the configuration of a real transformer bean instance
-        final BeanConfiguration beanConfiguration = new ImmutableBeanConfiguration(getConfiguredProperties());
+        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());
         lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
 
@@ -201,7 +201,7 @@ public final class TransformerJobBuilder<T extends Transformer> extends
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
-        return new ImmutableTransformerJob(getName(), getDescriptor(), new ImmutableBeanConfiguration(
+        return new ImmutableTransformerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
                 getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties());
     }
 

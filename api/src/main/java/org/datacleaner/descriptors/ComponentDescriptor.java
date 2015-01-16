@@ -23,16 +23,21 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
+import org.datacleaner.api.Alias;
 import org.datacleaner.api.Close;
+import org.datacleaner.api.Component;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Configured;
+import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
 
 /**
- * Defines an interface for descriptors of components that support
- * initialization, closing and configuration properties.
+ * Defines an interface for descriptors of {@link Component}s that support
+ * initialization, closing and configuration properties. See {@link Component}
+ * for a general description.
  */
 public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?>>, Serializable {
 
@@ -63,6 +68,34 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      * @return a set of all properties
      */
     public Set<ConfiguredPropertyDescriptor> getConfiguredProperties();
+
+    /**
+     * Determines if the bean is a distributable component or not.
+     * 
+     * @return true if the component can be distributed.
+     * 
+     * @see Distributed
+     */
+    public boolean isDistributable();
+
+    /**
+     * Gets the configured properties that have {@link InputColumn} type.
+     * 
+     * @return a set containing all configured property descriptors of
+     *         {@link InputColumn}s in the bean.
+     */
+    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput();
+
+    /**
+     * Gets the configured properties that have {@link InputColumn} type.
+     * 
+     * @param onlyRequired
+     *            a boolean indicating if optional properties should be
+     *            returned. If false, only required properties will be included.
+     * @return a set containing all configured property descriptors of
+     *         {@link InputColumn}s in the bean.
+     */
+    public Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesForInput(boolean includeOptional);
 
     /**
      * Gets an annotation of a specific type
@@ -171,4 +204,13 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      * @return a set of provided properties.
      */
     public Set<ProvidedPropertyDescriptor> getProvidedPropertiesByType(Class<?> cls);
+
+    /**
+     * Gets all known aliases of this component.
+     * 
+     * @see Alias
+     * 
+     * @return an array of aliases as strings
+     */
+    public String[] getAliases();
 }

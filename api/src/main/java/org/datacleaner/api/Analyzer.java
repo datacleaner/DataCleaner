@@ -22,25 +22,28 @@ package org.datacleaner.api;
 import javax.inject.Named;
 
 /**
- * Ananalyzer is a component that recieves rows of data and produces some sort
- * of result from it.
+ * Ananalyzer is a {@link Component} that recieves rows of data and produces an
+ * {@link AnalyzerResult} from it.
  * 
- * The run(InputRow, int) method will be invoked on the analyzer for each row in
- * a configured datastore. To retrieve the values from the row InputColumn
- * instances must be used as qualifiers. These InputColumns needs to be injected
- * (either a single instance or an array) using the @Configured annotation. If
- * no @Configured InputColumns are found in the class, the analyzer will not be
- * able to execute.
+ * See {@link Component} for general information about all components. Like all
+ * components, {@link Analyzer} require a {@link Named} annotation in order to
+ * be discovered.
+ * 
+ * The {@link #run(InputRow, int)} method will be invoked on the
+ * {@link Analyzer} for each row in a data stream. The framework may choose to
+ * optimize the number of operations in case multiple exactly identical rows
+ * occur. In such case the {@link #run(InputRow, int)} may only be invoked once
+ * but with a greater-than-1 second argument.
  * 
  * Use of the {@link Named} annotation is required for the {@link Analyzer} to
  * by automatically discovered.
  * 
- * @see Named
+ * See {@link Component} for more details.
  * 
  * @param <R>
- *            the result type of this analyzer.
+ *            the {@link AnalyzerResult} type of this analyzer.
  */
-public interface Analyzer<R extends AnalyzerResult> extends HasAnalyzerResult<R> {
+public interface Analyzer<R extends AnalyzerResult> extends Component, HasAnalyzerResult<R> {
 
     /**
      * Executes the analyzer for a single row.

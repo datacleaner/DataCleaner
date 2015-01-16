@@ -28,7 +28,7 @@ import org.datacleaner.components.maxrows.MaxRowsFilter;
 
 public class AnnotationBasedFilterDescriptorTest extends TestCase {
 
-	private FilterBeanDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
+	private FilterComponentDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
 
 	public void testGetCategoryEnum() throws Exception {
 		Class<MaxRowsFilter.Category> categoryEnum = desc.getOutcomeCategoryEnum();

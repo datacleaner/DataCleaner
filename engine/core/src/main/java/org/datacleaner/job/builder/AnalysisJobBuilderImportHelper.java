@@ -81,7 +81,7 @@ final class AnalysisJobBuilderImportHelper {
                 final ComponentRequirement originalRequirement = componentJob.getComponentRequirement();
                 final ComponentRequirement componentRequirement = findImportedRequirement(originalRequirement,
                         componentBuilders);
-                final AbstractBeanWithInputColumnsBuilder<?, ?, ?> builder = (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) entry
+                final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry
                         .getValue();
                 builder.setComponentRequirement(componentRequirement);
             }
@@ -95,7 +95,7 @@ final class AnalysisJobBuilderImportHelper {
                 final Set<ConfiguredPropertyDescriptor> inputColumnProperties = configurableBeanJob.getDescriptor()
                         .getConfiguredPropertiesForInput(true);
 
-                final AbstractBeanWithInputColumnsBuilder<?, ?, ?> builder = (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) entry
+                final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry
                         .getValue();
 
                 for (ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
@@ -206,7 +206,7 @@ final class AnalysisJobBuilderImportHelper {
         }
         final Enum<?> category = originalFilterOutcome.getCategory();
 
-        final FilterJobBuilder<?, ?> filterJobBuilder = (FilterJobBuilder<?, ?>) builder;
+        final FilterComponentBuilder<?, ?> filterJobBuilder = (FilterComponentBuilder<?, ?>) builder;
         final FilterOutcome newOutcome = filterJobBuilder.getFilterOutcome(category);
         return newOutcome;
     }

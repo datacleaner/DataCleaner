@@ -25,12 +25,12 @@ import org.datacleaner.api.Distributed;
 import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedAnalyzerBeanDescriptor<A extends Analyzer<?>> extends
-        AbstractHasAnalyzerResultBeanDescriptor<A> implements AnalyzerBeanDescriptor<A> {
+final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> extends
+        AbstractHasAnalyzerResultComponentDescriptor<A> implements AnalyzerComponentDescriptor<A> {
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedAnalyzerBeanDescriptor(Class<A> analyzerClass) throws DescriptorException {
+    protected AnnotationBasedAnalyzerComponentDescriptor(Class<A> analyzerClass) throws DescriptorException {
         super(analyzerClass, true);
 
         if (!ReflectionUtils.is(analyzerClass, Analyzer.class)) {

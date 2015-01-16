@@ -44,79 +44,79 @@ import org.datacleaner.job.AnalysisJob;
 public interface DescriptorProvider {
 
     /**
-     * Gets all the {@link AnalyzerBeanDescriptor}s currently registered.
+     * Gets all the {@link AnalyzerComponentDescriptor}s currently registered.
      * 
      * @return
      */
-    public Collection<AnalyzerBeanDescriptor<?>> getAnalyzerBeanDescriptors();
+    public Collection<AnalyzerComponentDescriptor<?>> getAnalyzerComponentDescriptors();
 
     /**
-     * Gets a {@link AnalyzerBeanDescriptor} by its {@link Analyzer} class.
+     * Gets a {@link AnalyzerComponentDescriptor} by its {@link Analyzer} class.
      * 
      * @param analyzerClass
      * @return
      */
-    public <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> getAnalyzerBeanDescriptorForClass(Class<A> analyzerClass);
+    public <A extends Analyzer<?>> AnalyzerComponentDescriptor<A> getAnalyzerComponentDescriptorForClass(Class<A> analyzerClass);
 
     /**
-     * Gets a {@link AnalyzerBeanDescriptor} by its display name (or secondly by
+     * Gets a {@link AnalyzerComponentDescriptor} by its display name (or secondly by
      * searching using {@link Alias}es).
      * 
      * @param name
      * @return
      */
-    public AnalyzerBeanDescriptor<?> getAnalyzerBeanDescriptorByDisplayName(String name);
+    public AnalyzerComponentDescriptor<?> getAnalyzerComponentDescriptorByDisplayName(String name);
 
     /**
-     * Gets all {@link TransformerBeanDescriptor}s currently registered.
+     * Gets all {@link TransformerComponentDescriptor}s currently registered.
      * 
      * @return
      */
-    public Collection<TransformerBeanDescriptor<?>> getTransformerBeanDescriptors();
+    public Collection<TransformerComponentDescriptor<?>> getTransformerComponentDescriptors();
 
     /**
-     * Gets a {@link TransformerBeanDescriptor} by its {@link Transformer}
+     * Gets a {@link TransformerComponentDescriptor} by its {@link Transformer}
      * class.
      * 
      * @param transformerClass
      * @return
      */
-    public <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
+    public <T extends Transformer> TransformerComponentDescriptor<T> getTransformerComponentDescriptorForClass(
             Class<T> transformerClass);
 
     /**
-     * Gets a {@link TransformerBeanDescriptor} by its display name (or secondly
+     * Gets a {@link TransformerComponentDescriptor} by its display name (or secondly
      * by searching using {@link Alias}es).
      * 
      * @param name
      * @return
      */
-    public TransformerBeanDescriptor<?> getTransformerBeanDescriptorByDisplayName(String name);
+    public TransformerComponentDescriptor<?> getTransformerComponentDescriptorByDisplayName(String name);
 
     /**
-     * Gets all {@link FilterBeanDescriptor}s currently registered.
+     * Gets all {@link FilterComponentDescriptor}s currently registered.
      * 
      * @return
      */
-    public Collection<FilterBeanDescriptor<?, ?>> getFilterBeanDescriptors();
+    public Collection<FilterComponentDescriptor<?, ?>> getFilterComponentDescriptors();
 
     /**
-     * Gets a {@link FilterBeanDescriptor} by its {@link Filter} class.
+     * Gets a {@link FilterComponentDescriptor} by its {@link Filter} class.
      * 
      * @param filterClass
      * @return
      */
-    public <F extends Filter<C>, C extends Enum<C>> FilterBeanDescriptor<F, C> getFilterBeanDescriptorForClass(
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentDescriptor<F, C> getFilterComponentDescriptorForClass(
             Class<F> filterClass);
 
     /**
-     * Gets a {@link FilterBeanDescriptor} by its display name (or secondly by
+     * Gets a {@link FilterComponentDescriptor} by its display name (or secondly by
      * searching using {@link Alias}es).
      * 
      * @param name
      * @return
      */
-    public FilterBeanDescriptor<?, ?> getFilterBeanDescriptorByDisplayName(String name);
+    public FilterComponentDescriptor<?, ?> getFilterComponentDescriptorByDisplayName(String name);
 
     /**
      * Gets all {@link RendererBeanDescriptor}s currently registered.

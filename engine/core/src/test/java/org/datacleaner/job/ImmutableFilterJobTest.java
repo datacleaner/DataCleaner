@@ -28,13 +28,13 @@ import junit.framework.TestCase;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterComponentDescriptor;
 
 public class ImmutableFilterJobTest extends TestCase {
 
 	public void testGetOutcomes() throws Exception {
-		FilterBeanDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
-		BeanConfiguration configuration = new ImmutableBeanConfiguration(new HashMap<ConfiguredPropertyDescriptor, Object>());
+		FilterComponentDescriptor<?, ?> descriptor = Descriptors.ofFilterUnbound(MaxRowsFilter.class);
+		ComponentConfiguration configuration = new ImmutableComponentConfiguration(new HashMap<ConfiguredPropertyDescriptor, Object>());
 
 		ImmutableFilterJob job = new ImmutableFilterJob("foo", descriptor, configuration, null, null);
 		assertEquals("foo", job.getName());

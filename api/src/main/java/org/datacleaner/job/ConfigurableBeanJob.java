@@ -20,7 +20,7 @@
 package org.datacleaner.job;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 
 /**
  * Represents a subinterface of {@link ComponentJob} for all component types
@@ -30,7 +30,7 @@ import org.datacleaner.descriptors.BeanDescriptor;
  * 
  * @param <E>
  */
-public interface ConfigurableBeanJob<E extends BeanDescriptor<?>> extends ComponentJob, HasBeanConfiguration,
+public interface ConfigurableBeanJob<E extends ComponentDescriptor<?>> extends ComponentJob, HasBeanConfiguration,
         InputColumnSinkJob, HasComponentRequirement {
 
     /**

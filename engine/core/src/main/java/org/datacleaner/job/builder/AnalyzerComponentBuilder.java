@@ -32,14 +32,14 @@ import java.util.Set;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.ImmutableAnalyzerJob;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.schema.Table;
@@ -47,13 +47,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A builder of {@link AnalyzerJob} objects.
+ * A {@link ComponentBuilder} for {@link Analyzer}s.
  * 
  * @param <A>
- *            the type of {@link Analyzer} that is being built.
+ *            the type of {@link Analyzer} being built.
  */
-public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
-        AbstractBeanWithInputColumnsBuilder<AnalyzerBeanDescriptor<A>, A, AnalyzerJobBuilder<A>> {
+public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
+        AbstractComponentBuilder<AnalyzerComponentDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
@@ -67,8 +67,8 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final List<AnalyzerChangeListener> _localChangeListeners;
 
-    public AnalyzerJobBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeanDescriptor<A> descriptor) {
-        super(analysisJobBuilder, descriptor, AnalyzerJobBuilder.class);
+    public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentDescriptor<A> descriptor) {
+        super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
         Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
         if (inputProperties.size() == 1) {
@@ -142,7 +142,7 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
 
         if (!_multipleJobsSupported) {
             ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableBeanConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -183,7 +183,7 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
             // there's only a single table involved - leave the input columns
             // untouched
             ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableBeanConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -212,7 +212,7 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerJobBuilder<A> addInputColumn(InputColumn<?> inputColumn,
+    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         assert propertyDescriptor.isInputColumn();
         if (inputColumn == null) {
@@ -255,7 +255,7 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
                 configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
         ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(getComponentRequirement());
-        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableBeanConfiguration(
+        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
                 jobProperties), componentRequirement, getMetadataProperties());
         return job;
     }
@@ -267,7 +267,8 @@ public final class AnalyzerJobBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerJobBuilder<A> setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty, Object value) {
+    public AnalyzerComponentBuilder<A> setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty,
+            Object value) {
         if (isMultipleJobsDeterminedBy(configuredProperty)) {
 
             // the dummy value is used just to pass something to the underlying

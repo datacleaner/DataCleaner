@@ -21,9 +21,9 @@ package org.datacleaner.job;
 
 /**
  * Abstract interface for {@link ComponentJob}s that have a
- * {@link BeanConfiguration}.
+ * {@link ComponentConfiguration}.
  */
 public interface HasBeanConfiguration extends ComponentJob {
 
-    public BeanConfiguration getConfiguration();
+    public ComponentConfiguration getConfiguration();
 }

@@ -51,7 +51,7 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterJob;
@@ -500,7 +500,7 @@ public final class RowProcessingPublisher {
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
         final ComponentJob componentJob = consumer.getComponentJob();
         final Object component = consumer.getComponent();
-        final BeanConfiguration configuration = ((ConfigurableBeanJob<?>) componentJob).getConfiguration();
+        final ComponentConfiguration configuration = ((ConfigurableBeanJob<?>) componentJob).getConfiguration();
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
 
         // make a component-context specific injection manager

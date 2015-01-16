@@ -33,7 +33,7 @@ import org.datacleaner.test.MockFilter;
 
 public class ConfiguredPropertyDescriptorImplTest extends TestCase {
 
-	private FilterBeanDescriptor<MockFilter, MockFilter.Category> _descriptor;
+	private FilterComponentDescriptor<MockFilter, MockFilter.Category> _descriptor;
 
 	@Configured
 	String str1;

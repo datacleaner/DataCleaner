@@ -24,12 +24,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.CollectionUtils2;
-import org.apache.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +86,8 @@ public class AnalyzerJobHelper {
      * @param analyzerInputName
      * @return
      */
-    public AnalyzerJob getAnalyzerJob(final String descriptorName, final String analyzerName, final String analyzerInputName) {
+    public AnalyzerJob getAnalyzerJob(final String descriptorName, final String analyzerName,
+            final String analyzerInputName) {
         List<AnalyzerJob> candidates = new ArrayList<AnalyzerJob>(_jobs);
 
         // filter analyzers of the corresponding type
@@ -147,29 +147,25 @@ public class AnalyzerJobHelper {
      */
     public static InputColumn<?> getIdentifyingInputColumn(final ComponentJob o) {
         final ComponentDescriptor<?> descriptor = o.getDescriptor();
-        if (descriptor instanceof BeanDescriptor) {
-            final BeanDescriptor<?> beanDescriptor = (BeanDescriptor<?>) descriptor;
-            final Set<ConfiguredPropertyDescriptor> inputProperties = beanDescriptor.getConfiguredPropertiesForInput(false);
-            if (inputProperties.size() != 1) {
+        final Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);
+        if (inputProperties.size() != 1) {
+            return null;
+        }
+
+        final ConfigurableBeanJob<?> configurableBeanJob = (ConfigurableBeanJob<?>) o;
+
+        final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
+        final Object input = configurableBeanJob.getConfiguration().getProperty(inputProperty);
+
+        if (input instanceof InputColumn) {
+            final InputColumn<?> inputColumn = (InputColumn<?>) input;
+            return inputColumn;
+        } else if (input instanceof InputColumn[]) {
+            final InputColumn<?>[] inputColumns = (InputColumn[]) input;
+            if (inputColumns.length != 1) {
                 return null;
             }
-            
-            final ConfigurableBeanJob<?> configurableBeanJob = (ConfigurableBeanJob<?>) o;
-            
-            final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
-            final Object input = configurableBeanJob.getConfiguration().getProperty(inputProperty);
-
-            if (input instanceof InputColumn) {
-                final InputColumn<?> inputColumn = (InputColumn<?>) input;
-                return inputColumn;
-            } else if (input instanceof InputColumn[]) {
-                final InputColumn<?>[] inputColumns = (InputColumn[]) input;
-                if (inputColumns.length != 1) {
-                    return null;
-                }
-                return inputColumns[0];
-            }
-            return null;
+            return inputColumns[0];
         }
         return null;
     }

@@ -81,9 +81,9 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
     private static final Logger logger = LoggerFactory.getLogger(ClasspathScanDescriptorProvider.class);
 
-    private final Map<String, AnalyzerBeanDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerBeanDescriptor<?>>();
-    private final Map<String, FilterBeanDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterBeanDescriptor<?, ?>>();
-    private final Map<String, TransformerBeanDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerBeanDescriptor<?>>();
+    private final Map<String, AnalyzerComponentDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerComponentDescriptor<?>>();
+    private final Map<String, FilterComponentDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterComponentDescriptor<?, ?>>();
+    private final Map<String, TransformerComponentDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerComponentDescriptor<?>>();
     private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
     private final TaskRunner _taskRunner;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
@@ -605,7 +605,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addAnalyzerClass(Class<? extends Analyzer<?>> clazz) {
-        AnalyzerBeanDescriptor<?> descriptor = _analyzerBeanDescriptors.get(clazz.getName());
+        AnalyzerComponentDescriptor<?> descriptor = _analyzerBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
                 descriptor = Descriptors.ofAnalyzer(clazz);
@@ -618,7 +618,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addTransformerClass(Class<? extends Transformer> clazz) {
-        TransformerBeanDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
+        TransformerComponentDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
                 .getName());
         if (descriptor == null) {
             try {
@@ -632,7 +632,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addFilterClass(Class<? extends Filter<?>> clazz) {
-        FilterBeanDescriptor<? extends Filter<?>, ?> descriptor = _filterBeanDescriptors.get(clazz.getName());
+        FilterComponentDescriptor<? extends Filter<?>, ?> descriptor = _filterBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
                 descriptor = Descriptors.ofFilterUnbound(clazz);
@@ -686,19 +686,19 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     @Override
-    public Collection<FilterBeanDescriptor<?, ?>> getFilterBeanDescriptors() {
+    public Collection<FilterComponentDescriptor<?, ?>> getFilterComponentDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_filterBeanDescriptors.values());
     }
 
     @Override
-    public Collection<AnalyzerBeanDescriptor<?>> getAnalyzerBeanDescriptors() {
+    public Collection<AnalyzerComponentDescriptor<?>> getAnalyzerComponentDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_analyzerBeanDescriptors.values());
     }
 
     @Override
-    public Collection<TransformerBeanDescriptor<?>> getTransformerBeanDescriptors() {
+    public Collection<TransformerComponentDescriptor<?>> getTransformerComponentDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_transformerBeanDescriptors.values());
     }

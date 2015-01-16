@@ -28,7 +28,7 @@ import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 
 /**
@@ -119,7 +119,7 @@ public final class LifeCycleHelper {
      * @param beanConfiguration
      */
     public void assignConfiguredProperties(ComponentDescriptor<?> descriptor, Object component,
-            BeanConfiguration beanConfiguration) {
+            ComponentConfiguration beanConfiguration) {
         AssignConfiguredCallback callback = new AssignConfiguredCallback(beanConfiguration,
                 _referenceDataActivationManager);
         callback.onEvent(component, descriptor);
@@ -140,7 +140,7 @@ public final class LifeCycleHelper {
      * Validates a component using any {@link Validate} methods. This is
      * typically done after
      * {@link #assignProvidedProperties(ComponentDescriptor, Object)} and
-     * {@link #assignConfiguredProperties(ComponentDescriptor, Object, BeanConfiguration)}
+     * {@link #assignConfiguredProperties(ComponentDescriptor, Object, ComponentConfiguration)}
      * 
      * Usually validation is light-weight, idempotent and quick, as compared to
      * {@link #initialize(ComponentDescriptor, Object, boolean)}.
@@ -156,7 +156,7 @@ public final class LifeCycleHelper {
     /**
      * Initializes a component before use. This is typically done after
      * {@link #assignProvidedProperties(ComponentDescriptor, Object)} and
-     * {@link #assignConfiguredProperties(ComponentDescriptor, Object, BeanConfiguration)}
+     * {@link #assignConfiguredProperties(ComponentDescriptor, Object, ComponentConfiguration)}
      * .
      * 
      * This initialization also includes a validation, see

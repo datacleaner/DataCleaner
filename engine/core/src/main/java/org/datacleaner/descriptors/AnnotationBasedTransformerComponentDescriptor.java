@@ -23,12 +23,12 @@ import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.util.ReflectionUtils;
 
-final class AnnotationBasedTransformerBeanDescriptor<T extends Transformer> extends AbstractBeanDescriptor<T>
-        implements TransformerBeanDescriptor<T> {
+final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer> extends AbstractComponentDescriptor<T>
+        implements TransformerComponentDescriptor<T> {
 
     private static final long serialVersionUID = 1L;
 
-    protected AnnotationBasedTransformerBeanDescriptor(Class<T> transformerClass) throws DescriptorException {
+    protected AnnotationBasedTransformerComponentDescriptor(Class<T> transformerClass) throws DescriptorException {
         super(transformerClass, false);
 
         if (!ReflectionUtils.is(transformerClass, Transformer.class)) {

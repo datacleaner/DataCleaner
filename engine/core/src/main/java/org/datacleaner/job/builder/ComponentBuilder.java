@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -53,7 +54,7 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      *         not possible to build one given the current builder
      *         configuration.
      */
-    public Object getComponentInstance();
+    public Component getComponentInstance();
 
     /**
      * Determines if the underlying component is fully configured or not,

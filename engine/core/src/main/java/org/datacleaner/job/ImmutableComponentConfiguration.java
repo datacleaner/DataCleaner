@@ -32,16 +32,16 @@ import org.datacleaner.descriptors.PropertyDescriptor;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Default (immutable) implementation of {@link BeanConfiguration}.
+ * Default (immutable) implementation of {@link ComponentConfiguration}.
  */
-public final class ImmutableBeanConfiguration implements BeanConfiguration {
+public final class ImmutableComponentConfiguration implements ComponentConfiguration {
 
     private static final long serialVersionUID = 1L;
 
     private final Map<PropertyDescriptor, Object> _properties;
     private final transient Map<PropertyDescriptor, Object> _transientProperties;
 
-    public ImmutableBeanConfiguration(Map<? extends PropertyDescriptor, Object> properties) {
+    public ImmutableComponentConfiguration(Map<? extends PropertyDescriptor, Object> properties) {
         if (properties == null) {
             _properties = ImmutableMap.of();
             _transientProperties = null;
@@ -104,7 +104,7 @@ public final class ImmutableBeanConfiguration implements BeanConfiguration {
             return false;
         }
 
-        final ImmutableBeanConfiguration other = (ImmutableBeanConfiguration) obj;
+        final ImmutableComponentConfiguration other = (ImmutableComponentConfiguration) obj;
 
         // since map comparison does not use deep equals for arrays, we need to
         // do this ourselves!

@@ -30,10 +30,10 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
 
     private static final long serialVersionUID = 1L;
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+    private final AbstractComponentBuilder<?, ?, ?> _beanJobBuilder;
     private final ConfiguredPropertyDescriptor _configuredProperty;
 
-    public UnconfiguredConfiguredPropertyException(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public UnconfiguredConfiguredPropertyException(AbstractComponentBuilder<?, ?, ?> beanJobBuilder,
             ConfiguredPropertyDescriptor configuredProperty) {
         _beanJobBuilder = beanJobBuilder;
         _configuredProperty = configuredProperty;
@@ -43,7 +43,7 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
         return _configuredProperty;
     }
 
-    public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
+    public AbstractComponentBuilder<?, ?, ?> getBeanJobBuilder() {
         return _beanJobBuilder;
     }
 

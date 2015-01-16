@@ -31,13 +31,13 @@ import org.datacleaner.data.MutableInputColumn;
  */
 public interface TransformerChangeListener {
 
-	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder);
+	public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder);
 
-	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder);
+	public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder);
 
-	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder);
+	public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder);
 
-	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder);
+	public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder);
 
 	/**
 	 * This method will be invoked each time a change in a transformer's output
@@ -50,5 +50,5 @@ public interface TransformerChangeListener {
 	 * @param transformerJobBuilder
 	 * @param outputColumns
 	 */
-	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns);
+	public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns);
 }

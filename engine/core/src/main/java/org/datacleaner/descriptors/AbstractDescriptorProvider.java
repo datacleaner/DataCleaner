@@ -52,41 +52,41 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      * @param autoLoadDescriptorClasses
      *            whether or not to automatically load descriptors when they are
      *            requested by class names. This typically happens in
-     *            {@link #getAnalyzerBeanDescriptorForClass(Class)},
-     *            {@link #getTransformerBeanDescriptorForClass(Class)} or
-     *            {@link #getFilterBeanDescriptorForClass(Class)}
+     *            {@link #getAnalyzerComponentDescriptorForClass(Class)},
+     *            {@link #getTransformerComponentDescriptorForClass(Class)} or
+     *            {@link #getFilterComponentDescriptorForClass(Class)}
      */
     public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
         _autoDiscover = autoLoadDescriptorClasses;
     }
     
     @Override
-    public final AnalyzerBeanDescriptor<?> getAnalyzerBeanDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getAnalyzerBeanDescriptors());
+    public final AnalyzerComponentDescriptor<?> getAnalyzerComponentDescriptorByDisplayName(String name) {
+        return getBeanDescriptorByDisplayName(name, getAnalyzerComponentDescriptors());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> getAnalyzerBeanDescriptorForClass(
+    public final <A extends Analyzer<?>> AnalyzerComponentDescriptor<A> getAnalyzerComponentDescriptorForClass(
             Class<A> analyzerBeanClass) {
-        for (AnalyzerBeanDescriptor<?> descriptor : getAnalyzerBeanDescriptors()) {
+        for (AnalyzerComponentDescriptor<?> descriptor : getAnalyzerComponentDescriptors()) {
             if (descriptor.getComponentClass() == analyzerBeanClass) {
-                return (AnalyzerBeanDescriptor<A>) descriptor;
+                return (AnalyzerComponentDescriptor<A>) descriptor;
             }
         }
         return notFoundAnalyzer(analyzerBeanClass);
     }
 
     @Override
-    public final FilterBeanDescriptor<?, ?> getFilterBeanDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getFilterBeanDescriptors());
+    public final FilterComponentDescriptor<?, ?> getFilterComponentDescriptorByDisplayName(String name) {
+        return getBeanDescriptorByDisplayName(name, getFilterComponentDescriptors());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <F extends Filter<C>, C extends Enum<C>> FilterBeanDescriptor<F, C> getFilterBeanDescriptorForClass(
+    public final <F extends Filter<C>, C extends Enum<C>> FilterComponentDescriptor<F, C> getFilterComponentDescriptorForClass(
             Class<F> filterClass) {
-        return (FilterBeanDescriptor<F, C>) getFilterBeanDescriptorForClassUnbounded(filterClass);
+        return (FilterComponentDescriptor<F, C>) getFilterBeanDescriptorForClassUnbounded(filterClass);
     }
 
     /**
@@ -101,8 +101,8 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      * @param clazz
      * @return
      */
-    protected final FilterBeanDescriptor<?, ?> getFilterBeanDescriptorForClassUnbounded(Class<?> filterClass) {
-        for (FilterBeanDescriptor<?, ?> descriptor : getFilterBeanDescriptors()) {
+    protected final FilterComponentDescriptor<?, ?> getFilterBeanDescriptorForClassUnbounded(Class<?> filterClass) {
+        for (FilterComponentDescriptor<?, ?> descriptor : getFilterComponentDescriptors()) {
             if (filterClass == descriptor.getComponentClass()) {
                 return descriptor;
             }
@@ -124,17 +124,17 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public final TransformerBeanDescriptor<?> getTransformerBeanDescriptorByDisplayName(String name) {
-        return getBeanDescriptorByDisplayName(name, getTransformerBeanDescriptors());
+    public final TransformerComponentDescriptor<?> getTransformerComponentDescriptorByDisplayName(String name) {
+        return getBeanDescriptorByDisplayName(name, getTransformerComponentDescriptors());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(
+    public final <T extends Transformer> TransformerComponentDescriptor<T> getTransformerComponentDescriptorForClass(
             Class<T> transformerClass) {
-        for (TransformerBeanDescriptor<?> descriptor : getTransformerBeanDescriptors()) {
+        for (TransformerComponentDescriptor<?> descriptor : getTransformerComponentDescriptors()) {
             if (descriptor.getComponentClass() == transformerClass) {
-                return (TransformerBeanDescriptor<T>) descriptor;
+                return (TransformerComponentDescriptor<T>) descriptor;
             }
         }
         return notFoundTransformer(transformerClass);
@@ -154,7 +154,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return result;
     }
 
-    private <E extends BeanDescriptor<?>> E getBeanDescriptorByDisplayName(String name, Collection<E> descriptors) {
+    private <E extends ComponentDescriptor<?>> E getBeanDescriptorByDisplayName(String name, Collection<E> descriptors) {
         if (name == null) {
             return null;
         }
@@ -182,14 +182,14 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return null;
     }
 
-    private <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> notFoundAnalyzer(Class<A> analyzerClass) {
+    private <A extends Analyzer<?>> AnalyzerComponentDescriptor<A> notFoundAnalyzer(Class<A> analyzerClass) {
         if (!_autoDiscover) {
             return null;
         }
         return Descriptors.ofAnalyzer(analyzerClass);
     }
 
-    private FilterBeanDescriptor<?, ?> notFoundFilter(Class<?> filterClass) {
+    private FilterComponentDescriptor<?, ?> notFoundFilter(Class<?> filterClass) {
         if (!_autoDiscover) {
             return null;
         }
@@ -203,7 +203,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
         return Descriptors.ofRenderer(rendererClass);
     }
 
-    private <T extends Transformer> TransformerBeanDescriptor<T> notFoundTransformer(Class<T> transformerClass) {
+    private <T extends Transformer> TransformerComponentDescriptor<T> notFoundTransformer(Class<T> transformerClass) {
         if (!_autoDiscover) {
             return null;
         }

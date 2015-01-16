@@ -38,59 +38,59 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         File pluginFile1 = new File("src/test/resources/extensions/DataCleaner-basic-transformers.jar");
 
         ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
-        assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
-        Collection<TransformerBeanDescriptor<?>> transformerBeanDescriptors = provider.getTransformerBeanDescriptors();
-        assertEquals(0, transformerBeanDescriptors.size());
+        assertEquals(0, provider.getAnalyzerComponentDescriptors().size());
+        Collection<TransformerComponentDescriptor<?>> transformerComponentDescriptors = provider.getTransformerComponentDescriptors();
+        assertEquals(0, transformerComponentDescriptors.size());
         File[] files = new File[] { pluginFile1 };
         provider = provider.scanPackage("org.datacleaner", true, ClassLoaderUtils.createClassLoader(files), false, files);
-        assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
+        assertEquals(0, provider.getAnalyzerComponentDescriptors().size());
         
-        transformerBeanDescriptors = provider.getTransformerBeanDescriptors();
-        assertEquals(23, transformerBeanDescriptors.size());
+        transformerComponentDescriptors = provider.getTransformerComponentDescriptors();
+        assertEquals(23, transformerComponentDescriptors.size());
 
-        transformerBeanDescriptors = new TreeSet<>(transformerBeanDescriptors);
+        transformerComponentDescriptors = new TreeSet<>(transformerComponentDescriptors);
         
-        assertEquals("org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer", transformerBeanDescriptors
+        assertEquals("org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer", transformerComponentDescriptors
                 .iterator().next().getComponentClass().getName());
     }
 
     public void testScanNonExistingPackage() throws Exception {
         ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
-        Collection<AnalyzerBeanDescriptor<?>> analyzerDescriptors = provider.scanPackage(
-                "org.datacleaner.nonexistingbeans", true).getAnalyzerBeanDescriptors();
+        Collection<AnalyzerComponentDescriptor<?>> analyzerDescriptors = provider.scanPackage(
+                "org.datacleaner.nonexistingbeans", true).getAnalyzerComponentDescriptors();
         assertEquals("[]", Arrays.toString(analyzerDescriptors.toArray()));
 
-        assertEquals("[]", provider.getTransformerBeanDescriptors().toString());
+        assertEquals("[]", provider.getTransformerComponentDescriptors().toString());
         assertEquals("[]", provider.getRendererBeanDescriptors().toString());
     }
 
     public void testScanPackageRecursive() throws Exception {
         ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
-        Collection<AnalyzerBeanDescriptor<?>> analyzerDescriptors = descriptorProvider.scanPackage(
-                "org.datacleaner.components.mock", true).getAnalyzerBeanDescriptors();
+        Collection<AnalyzerComponentDescriptor<?>> analyzerDescriptors = descriptorProvider.scanPackage(
+                "org.datacleaner.components.mock", true).getAnalyzerComponentDescriptors();
         Object[] array = analyzerDescriptors.toArray();
-        assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[org.datacleaner.components.mock.AnalyzerMock]]",
+        assertEquals("[AnnotationBasedAnalyzerComponentDescriptor[org.datacleaner.components.mock.AnalyzerMock]]",
                 Arrays.toString(array));
 
-        Collection<TransformerBeanDescriptor<?>> transformerBeanDescriptors = descriptorProvider
-                .getTransformerBeanDescriptors();
-        assertEquals("[AnnotationBasedTransformerBeanDescriptor[org.datacleaner.components.mock.TransformerMock]]",
-                Arrays.toString(transformerBeanDescriptors.toArray()));
+        Collection<TransformerComponentDescriptor<?>> transformerComponentDescriptors = descriptorProvider
+                .getTransformerComponentDescriptors();
+        assertEquals("[AnnotationBasedTransformerComponentDescriptor[org.datacleaner.components.mock.TransformerMock]]",
+                Arrays.toString(transformerComponentDescriptors.toArray()));
 
         analyzerDescriptors = new ClasspathScanDescriptorProvider(taskRunner).scanPackage(
-                "org.datacleaner.job.builder", true).getAnalyzerBeanDescriptors();
+                "org.datacleaner.job.builder", true).getAnalyzerComponentDescriptors();
         assertEquals(0, analyzerDescriptors.size());
     }
 
     public void testScanRenderers() throws Exception {
         ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
-        Collection<RendererBeanDescriptor<?>> rendererBeanDescriptors = descriptorProvider.scanPackage(
+        Collection<RendererBeanDescriptor<?>> rendererComponentDescriptors = descriptorProvider.scanPackage(
                 "org.datacleaner.result.renderer", true).getRendererBeanDescriptors();
         assertEquals(
                 "[AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.CrosstabTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.MetricBasedResultTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.ToStringTextRenderer]]",
-                new TreeSet<RendererBeanDescriptor<?>>(rendererBeanDescriptors).toString());
+                new TreeSet<RendererBeanDescriptor<?>>(rendererComponentDescriptors).toString());
     }
 
     public void testScanJarFilesOnClasspath() throws Exception {
@@ -105,15 +105,15 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
 
         ClasspathScanDescriptorProvider provider = new ClasspathScanDescriptorProvider(taskRunner);
 
-        assertEquals(0, provider.getAnalyzerBeanDescriptors().size());
-        assertEquals(0, provider.getTransformerBeanDescriptors().size());
+        assertEquals(0, provider.getAnalyzerComponentDescriptors().size());
+        assertEquals(0, provider.getTransformerComponentDescriptors().size());
 
         provider = provider.scanPackage("org.datacleaner", true, classLoader, true);
-        assertEquals(23, provider.getTransformerBeanDescriptors().size());
+        assertEquals(23, provider.getTransformerComponentDescriptors().size());
 
         boolean foundXmlDecoderTransformer = false;
-        for (TransformerBeanDescriptor<?> transformerBeanDescriptor : provider.getTransformerBeanDescriptors()) {
-            if (transformerBeanDescriptor.getComponentClass().getName()
+        for (TransformerComponentDescriptor<?> transformerComponentDescriptor : provider.getTransformerComponentDescriptors()) {
+            if (transformerComponentDescriptor.getComponentClass().getName()
                     .equals("org.datacleaner.beans.codec.XmlDecoderTransformer")) {
                 foundXmlDecoderTransformer = true;
                 break;

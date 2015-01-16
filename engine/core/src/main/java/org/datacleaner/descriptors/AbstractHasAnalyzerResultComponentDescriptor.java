@@ -27,31 +27,31 @@ import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.util.ReflectionUtils;
 
 /**
- * Abstract implementation of the {@link HasAnalyzerResultBeanDescriptor}
+ * Abstract implementation of the {@link HasAnalyzerResultComponentDescriptor}
  * interface. Convenient for implementing it's subclasses.
  * 
  * 
  * 
  * @param <B>
  */
-abstract class AbstractHasAnalyzerResultBeanDescriptor<B extends HasAnalyzerResult<?>> extends
-        AbstractBeanDescriptor<B> implements HasAnalyzerResultBeanDescriptor<B> {
+abstract class AbstractHasAnalyzerResultComponentDescriptor<B extends HasAnalyzerResult<?>> extends
+        AbstractComponentDescriptor<B> implements HasAnalyzerResultComponentDescriptor<B> {
 
     private static final long serialVersionUID = 1L;
 
     private final ResultDescriptor _resultDescriptor;
 
-    public AbstractHasAnalyzerResultBeanDescriptor(Class<B> beanClass, boolean requireInputColumns) {
+    public AbstractHasAnalyzerResultComponentDescriptor(Class<B> beanClass, boolean requireInputColumns) {
         super(beanClass, requireInputColumns);
-        
 
-        Class<?> typeParameter = ReflectionUtils.getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
+        final Class<?> typeParameter = ReflectionUtils
+                .getTypeParameter(getComponentClass(), HasAnalyzerResult.class, 0);
 
         @SuppressWarnings("unchecked")
         Class<? extends AnalyzerResult> resultClass = (Class<? extends AnalyzerResult>) typeParameter;
         _resultDescriptor = Descriptors.ofResult(resultClass);
     }
-    
+
     @Override
     public MetricDescriptor getResultMetric(String name) {
         return _resultDescriptor.getResultMetric(name);
@@ -61,12 +61,12 @@ abstract class AbstractHasAnalyzerResultBeanDescriptor<B extends HasAnalyzerResu
     public Set<MetricDescriptor> getResultMetrics() {
         return _resultDescriptor.getResultMetrics();
     }
-    
+
     @Override
     public Class<? extends AnalyzerResultReducer<?>> getResultReducerClass() {
         return _resultDescriptor.getResultReducerClass();
     }
-    
+
     @Override
     public Class<? extends AnalyzerResult> getResultClass() {
         return _resultDescriptor.getResultClass();

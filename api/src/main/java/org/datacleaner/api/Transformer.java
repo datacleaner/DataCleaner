@@ -22,39 +22,30 @@ package org.datacleaner.api;
 import javax.inject.Named;
 
 /**
- * Interface for components that transform data before analysis. Transformers
- * work pretty much the same way as row processing analyzers, except that their
- * output is not a finished result, but rather a new, enhanced, row with more
- * values than the incoming row.
+ * Interface for {@link Component}s that transform data before analysis.
  * 
- * The transform(InputRow) method will be invoked on the transformer for each
- * row in a configured datastore. To retrieve the values from the row
- * InputColumn instances must be used as qualifiers. These InputColumns needs to
- * be injected (either a single instance or an array) using the @Configured
- * annotation. If no @Configured InputColumns are found in the class, the
- * transformer will not be able to execute.
+ * See {@link Component} for general information about all components. Like all
+ * components, {@link Analyzer} require a {@link Named} annotation in order to
+ * be discovered.
  * 
- * Use of the {@link Named} annotation is required for transformers in order to
- * be automatically discovered.
+ * A {@link Transformer} will process incoming rows and produce new fields which
+ * are appended onto the existing rows. The {@link #transform(InputRow)} method
+ * will be invoked on the {@link Transformer} for each row in a data stream.
  * 
  * While the above description covers most common usage of the transformer
- * interface, there are however a few ways to build even more advanced
- * transformations:
- * <ul>
- * <li>Transformers can inject an {@link OutputRowCollector} in order to output
- * multiple records.</li>
- * <li>Transformers can specify that their output type is Object and specify
- * more specific types in the {@link #getOutputColumns()} method.</li> </li>
+ * interface there are a few ways to build even more advanced transformations.
  * 
- * @see Named
- * @see Configured
+ * Transformers can inject an {@link OutputRowCollector} in order to output
+ * multiple records. The transform method should in such a case return null.
+ * This also allows a {@link Transformer} to completely <i>swallow</i> a record,
+ * not producing any output row for it, mean that it will not travel further in
+ * the data stream. In many cases that's not a good thing (you might rather want
+ * to build a {@link Filter} then) but it is possible.
+ * 
  * @see OutputRowCollector
  * @see OutputColumns
- * 
- * @param <E>
- *            the type of the new/transformed values
  */
-public interface Transformer {
+public interface Transformer extends Component {
 
     /**
      * Gets the output columns (given the current configuration) of this

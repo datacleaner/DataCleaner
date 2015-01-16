@@ -21,6 +21,7 @@ package org.datacleaner.panels;
 
 import javax.swing.JComponent;
 
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 
 /**
@@ -28,30 +29,30 @@ import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
  * used to present the configuration screen (eg. the builder objects) of a
  * component.
  */
-public interface ComponentJobBuilderPresenter {
+public interface ComponentBuilderPresenter {
 
-	/**
-	 * Gets the job builder object that is being presented.
-	 * 
-	 * @return
-	 */
-	public Object getJobBuilder();
+    /**
+     * Gets the {@link ComponentBuilder} that is being presented
+     * 
+     * @return
+     */
+    public ComponentBuilder getComponentBuilder();
 
-	/**
-	 * Creates the {@link JComponent} that is the visual representation of the
-	 * job builder.
-	 * 
-	 * @return a {@link JComponent} that can be used to present the
-	 *         configuration of the job builder.
-	 */
-	public JComponent createJComponent();
+    /**
+     * Creates the {@link JComponent} that is the visual representation of the
+     * job builder.
+     * 
+     * @return a {@link JComponent} that can be used to present the
+     *         configuration of the job builder.
+     */
+    public JComponent createJComponent();
 
-	/**
-	 * Invoked before execution, the presenter should make sure all configured
-	 * properties are set on the job builder.
-	 * 
-	 * @throws UnconfiguredConfiguredPropertyException
-	 *             in case one or more properties have not been configured
-	 */
-	public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
+    /**
+     * Invoked before execution, the presenter should make sure all configured
+     * properties are set on the job builder.
+     * 
+     * @throws UnconfiguredConfiguredPropertyException
+     *             in case one or more properties have not been configured
+     */
+    public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
 }

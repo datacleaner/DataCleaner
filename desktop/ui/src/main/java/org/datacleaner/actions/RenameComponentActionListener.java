@@ -24,7 +24,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.AbstractComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.LabelUtils;
 
 /**
@@ -33,19 +34,21 @@ import org.datacleaner.util.LabelUtils;
  */
 public abstract class RenameComponentActionListener implements ActionListener {
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
+    private final ComponentBuilder _componentBuilder;
 
-    public RenameComponentActionListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder) {
-        _jobBuilder = jobBuilder;
+    public RenameComponentActionListener(ComponentBuilder componentBuilder) {
+        _componentBuilder = componentBuilder;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final String originalValue = LabelUtils.getLabel(_jobBuilder);
+        final String originalValue = LabelUtils.getLabel(_componentBuilder);
         final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
         if (!originalValue.equals(newValue)) {
-            _jobBuilder.setName(newValue);
-            onNameChanged();
+            if (_componentBuilder instanceof AbstractComponentBuilder) {
+                ((AbstractComponentBuilder<?,?,?>)_componentBuilder).setName(newValue);
+                onNameChanged();
+            }
         }
     }
 

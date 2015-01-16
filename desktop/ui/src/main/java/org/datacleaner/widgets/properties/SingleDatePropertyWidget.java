@@ -27,7 +27,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.TodayDate;
 import org.datacleaner.util.convert.YesterdayDate;
@@ -45,8 +45,8 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
     @Inject
     public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
         _datePicker = new JXDatePicker();
         _datePicker.setFormats("yyyy-MM-dd");

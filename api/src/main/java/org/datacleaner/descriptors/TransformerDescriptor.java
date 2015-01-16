@@ -27,5 +27,5 @@ import org.datacleaner.api.Transformer;
  * @param <B>
  *            the type of {@link Transformer}
  */
-public interface TransformerComponentDescriptor<B extends Transformer> extends ComponentDescriptor<B> {
+public interface TransformerDescriptor<B extends Transformer> extends ComponentDescriptor<B> {
 }

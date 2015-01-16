@@ -32,7 +32,7 @@ import org.datacleaner.api.QueryOptimizedFilter;
  * @param <B>
  *            the type of {@link Filter}
  */
-public interface FilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends ComponentDescriptor<F> {
+public interface FilterDescriptor<F extends Filter<C>, C extends Enum<C>> extends ComponentDescriptor<F> {
 
     public Class<C> getOutcomeCategoryEnum();
 

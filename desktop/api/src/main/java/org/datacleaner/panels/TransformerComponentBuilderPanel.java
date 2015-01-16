@@ -28,27 +28,27 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.job.builder.TransformerChangeListener;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialization of {@link AbstractJobBuilderPanel} for {@link Transformer}s.
+ * Specialization of {@link AbstractComponentBuilderPanel} for {@link Transformer}s.
  * 
  * This panel will show the transformers configuration properties as well as
  * output columns, a "write data" button, a preview button and a context
  * visualization.
  */
-public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter,
+public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPanel implements TransformerComponentBuilderPresenter,
         TransformerChangeListener {
 
     private static final long serialVersionUID = 1L;
@@ -56,28 +56,28 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
     private static final ImageManager imageManager = ImageManager.get();
     private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
-    private final TransformerJobBuilder<?> _transformerJobBuilder;
+    private final TransformerComponentBuilder<?> _componentBuilder;
     private final ColumnListTable _outputColumnsTable;
     private final JButton _previewButton;
     private final JButton _writeDataButton;
     private final WindowContext _windowContext;
 
-    public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+    public TransformerComponentBuilderPanel(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
         this(WATERMARK_IMAGE, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
-    protected TransformerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+    protected TransformerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
                 propertyWidgetFactory);
-        _transformerJobBuilder = transformerJobBuilder;
+        _componentBuilder = transformerJobBuilder;
         _windowContext = windowContext;
 
         final List<MutableInputColumn<?>> outputColumns;
-        if (_transformerJobBuilder.isConfigured()) {
-            outputColumns = _transformerJobBuilder.getOutputColumns();
+        if (_componentBuilder.isConfigured()) {
+            outputColumns = _componentBuilder.getOutputColumns();
         } else {
             outputColumns = new ArrayList<MutableInputColumn<?>>(0);
         }
@@ -86,12 +86,12 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
         _writeDataButton = new JButton("Write data",
                 imageManager.getImageIcon("images/component-types/type_output_writer.png"));
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(
-                _transformerJobBuilder));
+                _componentBuilder));
 
         _previewButton = new JButton("Preview data", imageManager.getImageIcon(IconUtils.ACTION_PREVIEW));
         int previewRows = getPreviewRows();
         _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-                _transformerJobBuilder, previewRows));
+                _componentBuilder, previewRows));
 
         final DCPanel bottomButtonPanel = new DCPanel();
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
@@ -103,13 +103,13 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
     @Override
     public void addNotify() {
         super.addNotify();
-        _transformerJobBuilder.addChangeListener(this);
+        _componentBuilder.addChangeListener(this);
     }
 
     @Override
     public void removeNotify() {
         super.removeNotify();
-        _transformerJobBuilder.removeChangeListener(this);
+        _componentBuilder.removeChangeListener(this);
     }
 
     protected int getPreviewRows() {
@@ -133,29 +133,29 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
     }
 
     @Override
-    public TransformerJobBuilder<?> getJobBuilder() {
-        return _transformerJobBuilder;
+    public void onAdd(TransformerComponentBuilder<?> tjb) {
     }
 
     @Override
-    public void onAdd(TransformerJobBuilder<?> tjb) {
-    }
-
-    @Override
-    public void onConfigurationChanged(TransformerJobBuilder<?> tjb) {
+    public void onConfigurationChanged(TransformerComponentBuilder<?> tjb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> tjb, List<MutableInputColumn<?>> outputColumns) {
+    public void onOutputChanged(TransformerComponentBuilder<?> tjb, List<MutableInputColumn<?>> outputColumns) {
         _outputColumnsTable.setColumns(outputColumns);
     }
 
     @Override
-    public void onRemove(TransformerJobBuilder<?> tjb) {
+    public void onRemove(TransformerComponentBuilder<?> tjb) {
     }
     
     @Override
-    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+    }
+    
+    @Override
+    public TransformerComponentBuilder<?> getComponentBuilder() {
+        return _componentBuilder;
     }
 }

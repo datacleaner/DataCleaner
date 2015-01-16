@@ -24,6 +24,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
@@ -41,21 +43,19 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.test.TestHelper;
 import org.datacleaner.util.SourceColumnFinder;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Column;
 
 public class RowProcessingQueryOptimizerTest extends TestCase {
 
@@ -64,8 +64,8 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     private Datastore datastore;
     private AnalyzerBeansConfiguration conf;
     private AnalysisJobBuilder ajb;
-    private FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsBuilder;
-    private AnalyzerJobBuilder<StringAnalyzer> stringAnalyzerBuilder;
+    private FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsBuilder;
+    private AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzerBuilder;
     private DatastoreConnection con;
     private Column lastnameColumn;
     private InputColumn<?> lastNameInputColumn;
@@ -124,7 +124,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
 
         assertTrue(optimizer.isOptimizable());
 
-        FilterJobBuilder<?, ?> fjb = ajb.addFilter(NullCheckFilter.class).addInputColumn(lastNameInputColumn);
+        FilterComponentBuilder<?, ?> fjb = ajb.addFilter(NullCheckFilter.class).addInputColumn(lastNameInputColumn);
         maxRowsBuilder.setRequirement(fjb, NullCheckCategory.NOT_NULL);
         consumers.add(0, createConsumer(fjb));
 
@@ -133,7 +133,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testOptimizedChainedTransformer() throws Exception {
-        TransformerJobBuilder<EmailStandardizerTransformer> emailStdBuilder = ajb
+        TransformerComponentBuilder<EmailStandardizerTransformer> emailStdBuilder = ajb
                 .addTransformer(EmailStandardizerTransformer.class);
         Column emailColumn = con.getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL");
         ajb.addSourceColumn(emailColumn);
@@ -175,7 +175,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testDontOptimizeWhenComponentsHaveNoRequirements() throws Exception {
-        AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
         consumers.add(createConsumer(patternFinderBuilder));
 
@@ -184,7 +184,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testMultipleOptimizations() throws Exception {
-        FilterJobBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> notNullBuilder = ajb
+        FilterComponentBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> notNullBuilder = ajb
                 .addFilter(NullCheckFilter.class);
         Column emailColumn = con.getSchemaNavigator().convertToColumn("EMPLOYEES.EMAIL");
         ajb.addSourceColumn(emailColumn);
@@ -211,7 +211,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testMultipleOutcomesUsed() throws Exception {
-        AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
         patternFinderBuilder.setRequirement(maxRowsBuilder, MaxRowsFilter.Category.INVALID);
         consumers.add(createConsumer(patternFinderBuilder));
@@ -220,9 +220,9 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         assertFalse(optimizer.isOptimizable());
     }
 
-    private FilterConsumer createConsumer(FilterJobBuilder<?, ?> filterJobBuilder) {
+    private FilterConsumer createConsumer(FilterComponentBuilder<?, ?> filterJobBuilder) {
         FilterJob filterJob = filterJobBuilder.toFilterJob();
-        FilterBeanDescriptor<?, ?> descriptor = filterJob.getDescriptor();
+        FilterDescriptor<?, ?> descriptor = filterJob.getDescriptor();
         Filter<?> filter = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, filter, filterJob.getConfiguration());
@@ -231,9 +231,9 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         return consumer;
     }
 
-    private TransformerConsumer createConsumer(TransformerJobBuilder<?> transformerJobBuilder) {
+    private TransformerConsumer createConsumer(TransformerComponentBuilder<?> transformerJobBuilder) {
         TransformerJob transformerJob = transformerJobBuilder.toTransformerJob();
-        TransformerBeanDescriptor<?> descriptor = transformerJob.getDescriptor();
+        TransformerDescriptor<?> descriptor = transformerJob.getDescriptor();
         Transformer transformer = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, transformer, transformerJob.getConfiguration());
@@ -243,9 +243,9 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         return consumer;
     }
 
-    private AnalyzerConsumer createConsumer(AnalyzerJobBuilder<?> analyzerBuilder) {
+    private AnalyzerConsumer createConsumer(AnalyzerComponentBuilder<?> analyzerBuilder) {
         AnalyzerJob analyzerJob = analyzerBuilder.toAnalyzerJob();
-        AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
+        AnalyzerDescriptor<?> descriptor = analyzerJob.getDescriptor();
         Analyzer<?> analyzer = descriptor.newInstance();
 
         lifeCycleHelper.assignConfiguredProperties(descriptor, analyzer, analyzerJob.getConfiguration());

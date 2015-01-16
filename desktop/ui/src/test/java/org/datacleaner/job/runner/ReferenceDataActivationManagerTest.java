@@ -36,7 +36,7 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.test.TestHelper;
 
@@ -77,7 +77,7 @@ public class ReferenceDataActivationManagerTest extends TestCase {
                 .addInputColumn(emailColumn).getOutputColumnByName("Username");
         assertNotNull(usernameColumn);
 
-        TransformerJobBuilder<DictionaryMatcherTransformer> tjb = ajb
+        TransformerComponentBuilder<DictionaryMatcherTransformer> tjb = ajb
                 .addTransformer(DictionaryMatcherTransformer.class);
         DictionaryMatcherTransformer transformer = tjb.getComponentInstance();
         transformer.setDictionaries(new Dictionary[] { dict1, dict2, dict3 });

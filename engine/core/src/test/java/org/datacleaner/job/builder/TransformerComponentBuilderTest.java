@@ -39,7 +39,7 @@ import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.TransformerComponentDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.IdGenerator;
 import org.datacleaner.job.PrefixedIdGenerator;
 import org.datacleaner.util.InputColumnComparator;
@@ -48,7 +48,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 
-public class TransformerJobBuilderTest extends TestCase {
+public class TransformerComponentBuilderTest extends TestCase {
 
     private AnalyzerBeansConfiguration configuration;
     private AnalysisJobBuilder ajb;
@@ -225,7 +225,7 @@ public class TransformerJobBuilderTest extends TestCase {
     public void testConfigureByConfigurableBean() throws Exception {
         IdGenerator IdGenerator = new PrefixedIdGenerator("");
 
-        TransformerComponentDescriptor<ConvertToNumberTransformer> descriptor = Descriptors
+        TransformerDescriptor<ConvertToNumberTransformer> descriptor = Descriptors
                 .ofTransformer(ConvertToNumberTransformer.class);
         TransformerComponentBuilder<ConvertToNumberTransformer> builder = new TransformerComponentBuilder<ConvertToNumberTransformer>(
                 new AnalysisJobBuilder(null), descriptor, IdGenerator);
@@ -245,7 +245,7 @@ public class TransformerJobBuilderTest extends TestCase {
     public void testReplaceAutomaticOutputColumnNames() throws Exception {
         IdGenerator IdGenerator = new PrefixedIdGenerator("");
 
-        TransformerComponentDescriptor<TransformerMock> descriptor = Descriptors.ofTransformer(TransformerMock.class);
+        TransformerDescriptor<TransformerMock> descriptor = Descriptors.ofTransformer(TransformerMock.class);
 
         TransformerComponentBuilder<TransformerMock> builder = new TransformerComponentBuilder<TransformerMock>(
                 new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl()), descriptor, IdGenerator);

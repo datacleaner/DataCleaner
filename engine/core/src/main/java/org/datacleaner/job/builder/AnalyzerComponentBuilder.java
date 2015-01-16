@@ -32,7 +32,7 @@ import java.util.Set;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.AnalyzerComponentDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.AnalyzerJob;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *            the type of {@link Analyzer} being built.
  */
 public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
-        AbstractComponentBuilder<AnalyzerComponentDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
+        AbstractComponentBuilder<AnalyzerDescriptor<A>, A, AnalyzerComponentBuilder<A>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
@@ -67,7 +67,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final List<AnalyzerChangeListener> _localChangeListeners;
 
-    public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentDescriptor<A> descriptor) {
+    public AnalyzerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, AnalyzerDescriptor<A> descriptor) {
         super(analysisJobBuilder, descriptor, AnalyzerComponentBuilder.class);
 
         Set<ConfiguredPropertyDescriptor> inputProperties = descriptor.getConfiguredPropertiesForInput(false);

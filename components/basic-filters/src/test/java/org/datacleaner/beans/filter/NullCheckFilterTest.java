@@ -31,20 +31,20 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.test.TestHelper;
 
 public class NullCheckFilterTest extends TestCase {
 
 	public void testAliases() throws Exception {
-		FilterBeanDescriptor<?, ?> desc1 = Descriptors.ofFilterUnbound(NullCheckFilter.class);
+		FilterDescriptor<?, ?> desc1 = Descriptors.ofFilterUnbound(NullCheckFilter.class);
 
 		SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
 		descriptorProvider.addFilterBeanDescriptor(desc1);
 
-		FilterBeanDescriptor<?, ?> desc2 = descriptorProvider.getFilterBeanDescriptorByDisplayName("Not null");
-		FilterBeanDescriptor<?, ?> desc3 = descriptorProvider.getFilterBeanDescriptorByDisplayName("Null check");
+		FilterDescriptor<?, ?> desc2 = descriptorProvider.getFilterDescriptorByDisplayName("Not null");
+		FilterDescriptor<?, ?> desc3 = descriptorProvider.getFilterDescriptorByDisplayName("Null check");
 
 		assertSame(desc1, desc2);
 		assertSame(desc1, desc3);
@@ -111,7 +111,7 @@ public class NullCheckFilterTest extends TestCase {
     }
 
 	public void testDescriptor() throws Exception {
-		FilterBeanDescriptor<NullCheckFilter, NullCheckFilter.NullCheckCategory> desc = Descriptors
+		FilterDescriptor<NullCheckFilter, NullCheckFilter.NullCheckCategory> desc = Descriptors
 				.ofFilter(NullCheckFilter.class);
 		Class<NullCheckFilter.NullCheckCategory> categoryEnum = desc.getOutcomeCategoryEnum();
 		assertEquals(NullCheckFilter.NullCheckCategory.class, categoryEnum);

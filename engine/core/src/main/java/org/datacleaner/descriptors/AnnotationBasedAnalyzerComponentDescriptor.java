@@ -26,7 +26,7 @@ import org.datacleaner.api.NoAnalyzerResultReducer;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> extends
-        AbstractHasAnalyzerResultComponentDescriptor<A> implements AnalyzerComponentDescriptor<A> {
+        AbstractHasAnalyzerResultComponentDescriptor<A> implements AnalyzerDescriptor<A> {
 
     private static final long serialVersionUID = 1L;
 

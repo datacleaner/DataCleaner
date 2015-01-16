@@ -21,13 +21,12 @@ package org.datacleaner.beans.dategap;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 
-public class AnalyzerJobBuilderTest extends TestCase {
+public class AnalyzerComponentBuilderTest extends TestCase {
 
 	private AnalysisJobBuilder ajb;
 
@@ -38,7 +37,7 @@ public class AnalyzerJobBuilderTest extends TestCase {
 	}
 
 	public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {
-		AnalyzerJobBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
+		AnalyzerComponentBuilder<DateGapAnalyzer> analyzer = ajb.addAnalyzer(DateGapAnalyzer.class);
 		try {
 			analyzer.addInputColumn(new MockInputColumn<String>("foo", String.class));
 			fail("Exception expected");

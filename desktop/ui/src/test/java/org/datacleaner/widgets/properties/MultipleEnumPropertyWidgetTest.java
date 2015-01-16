@@ -29,7 +29,7 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.widgets.DCCheckBox;
 
 public class MultipleEnumPropertyWidgetTest extends TestCase {
@@ -38,7 +38,7 @@ public class MultipleEnumPropertyWidgetTest extends TestCase {
 
 		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 		try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
-		    AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
+		    AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 		    ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 		            "Enum array property");
 		    

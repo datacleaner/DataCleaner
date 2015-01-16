@@ -33,9 +33,9 @@ import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,18 +70,18 @@ class JobGraphNodeBuilder {
             addNodes(graph, sourceColumnFinder, table, -1);
         }
 
-        final List<TransformerJobBuilder<?>> tjbs = _analysisJobBuilder.getTransformerJobBuilders();
-        for (TransformerJobBuilder<?> tjb : tjbs) {
+        final List<TransformerComponentBuilder<?>> tjbs = _analysisJobBuilder.getTransformerComponentBuilders();
+        for (TransformerComponentBuilder<?> tjb : tjbs) {
             addNodes(graph, sourceColumnFinder, tjb, -1);
         }
 
-        final List<AnalyzerJobBuilder<?>> ajbs = _analysisJobBuilder.getAnalyzerJobBuilders();
-        for (AnalyzerJobBuilder<?> ajb : ajbs) {
+        final List<AnalyzerComponentBuilder<?>> ajbs = _analysisJobBuilder.getAnalyzerComponentBuilders();
+        for (AnalyzerComponentBuilder<?> ajb : ajbs) {
             addNodes(graph, sourceColumnFinder, ajb, -1);
         }
 
-        final List<FilterJobBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterJobBuilders();
-        for (FilterJobBuilder<?, ?> fjb : fjbs) {
+        final List<FilterComponentBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterComponentBuilders();
+        for (FilterComponentBuilder<?, ?> fjb : fjbs) {
             addNodes(graph, sourceColumnFinder, fjb, -1);
         }
 

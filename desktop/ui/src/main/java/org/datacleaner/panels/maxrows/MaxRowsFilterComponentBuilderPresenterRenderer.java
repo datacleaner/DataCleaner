@@ -28,21 +28,19 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.FilterJobBuilderPresenter;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.FilterComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link FilterJobBuilderPresenter} for
+ * Specialized {@link Renderer} for a {@link FilterComponentBuilderPresenter} for
  * {@link MaxRowsFilter} when toggled using the
  * {@link MaxRowsFilterShortcutPanel}.
- * 
- * @author Kasper Sørensen
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class MaxRowsFilterJobBuilderPresenterRenderer implements
-        Renderer<FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>, FilterJobBuilderPresenter> {
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
+public class MaxRowsFilterComponentBuilderPresenterRenderer implements
+        Renderer<FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category>, FilterComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -54,7 +52,7 @@ public class MaxRowsFilterJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
+    public RendererPrecedence getPrecedence(FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
         if (MaxRowsFilterShortcutPanel.isFilter(fjb)) {
             return RendererPrecedence.HIGHEST;
         }
@@ -62,7 +60,7 @@ public class MaxRowsFilterJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public FilterJobBuilderPresenter render(FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
+    public FilterComponentBuilderPresenter render(FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb).getInstance(PropertyWidgetFactory.class);
 
         return new MaxRowsFilterShortcutJobBuilderPanel(fjb, windowContext, propertyWidgetFactory);

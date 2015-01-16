@@ -31,13 +31,13 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.panels.AnalyzerJobBuilderPanel;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -80,7 +80,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(_table.getColumns());
 
-        final AnalyzerJobBuilder<CreateExcelSpreadsheetAnalyzer> excelOutputAnalyzerBuilder = ajb
+        final AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> excelOutputAnalyzerBuilder = ajb
                 .addAnalyzer(CreateExcelSpreadsheetAnalyzer.class);
         excelOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
         File directory = _userPreferences.getConfiguredFileDirectory();
@@ -90,7 +90,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
         final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
                 excelOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);
 
-        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(excelOutputAnalyzerBuilder,
+        final AnalyzerComponentBuilderPanel presenter = new AnalyzerComponentBuilderPanel(excelOutputAnalyzerBuilder,
                 propertyWidgetFactory);
 
         final AbstractDialog dialog = new AbstractDialog(_windowContext) {
@@ -108,7 +108,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 
             @Override
             protected JComponent getDialogContent() {
-                final AnalyzerBeanDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor = excelOutputAnalyzerBuilder
+                final AnalyzerDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor = excelOutputAnalyzerBuilder
                         .getDescriptor();
                 final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
                 tabbedPane.addTab(descriptor.getDisplayName(),

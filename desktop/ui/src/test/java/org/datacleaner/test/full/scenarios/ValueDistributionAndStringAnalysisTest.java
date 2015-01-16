@@ -37,7 +37,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -79,7 +79,7 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
         analysisJobBuilder.addSourceColumns(columns);
 
         for (InputColumn<?> inputColumn : analysisJobBuilder.getSourceColumns()) {
-            AnalyzerJobBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
+            AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
                     .addAnalyzer(ValueDistributionAnalyzer.class);
             valueDistribuitionJobBuilder.addInputColumn(inputColumn);
             valueDistribuitionJobBuilder.setConfiguredProperty("Record unique values", false);
@@ -87,7 +87,7 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
             valueDistribuitionJobBuilder.setConfiguredProperty("Bottom n most frequent values", null);
         }
 
-        AnalyzerJobBuilder<StringAnalyzer> stringAnalyzerJob = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
+        AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzerJob = analysisJobBuilder.addAnalyzer(StringAnalyzer.class);
         stringAnalyzerJob.addInputColumns(analysisJobBuilder.getAvailableInputColumns(String.class));
 
         AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();

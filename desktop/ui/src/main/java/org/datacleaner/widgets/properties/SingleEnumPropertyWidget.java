@@ -22,7 +22,7 @@ package org.datacleaner.widgets.properties;
 import javax.inject.Inject;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.EnumComboBoxListRenderer;
@@ -34,8 +34,8 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 
 	@Inject
 	public SingleEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+		super(componentBuilder, propertyDescriptor);
 
 		Enum<?>[] enumConstants = (Enum<?>[]) propertyDescriptor.getType().getEnumConstants();
 

@@ -33,8 +33,8 @@ import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.InputColumn;
@@ -54,7 +54,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ajb.addSourceColumn(barColumn);
             ajb.addSourceColumn(new MutableColumn("baz", ColumnType.INTEGER));
 
-            AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
             ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
                     .iterator().next();
 
@@ -90,7 +90,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
             ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
 
-            AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
             ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
                     .iterator().next();
 
@@ -135,7 +135,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
             ajb.addSourceColumn(new MutableColumn("baz", ColumnType.NVARCHAR));
 
-            AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
             ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
                     .iterator().next();
 
@@ -157,13 +157,13 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
             ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
 
-            final TransformerJobBuilder<ConcatenatorTransformer> transformer = ajb
+            final TransformerComponentBuilder<ConcatenatorTransformer> transformer = ajb
                     .addTransformer(ConcatenatorTransformer.class);
             transformer.addInputColumns(ajb.getSourceColumns());
             final MutableInputColumn<?> transformedColumn = transformer.getOutputColumns().get(0);
             transformedColumn.setName("baz");
 
-            final AnalyzerJobBuilder<StringAnalyzer> analyzer = ajb.addAnalyzer(StringAnalyzer.class);
+            final AnalyzerComponentBuilder<StringAnalyzer> analyzer = ajb.addAnalyzer(StringAnalyzer.class);
             final ConfiguredPropertyDescriptor property = analyzer.getDescriptor().getConfiguredProperty("Columns");
 
             // add columns in this sequence: foo, baz, bar
@@ -193,7 +193,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
             ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
             ajb.addSourceColumn(new MutableColumn("baz", ColumnType.LONGVARCHAR));
 
-            AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
             ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput()
                     .iterator().next();
 

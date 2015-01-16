@@ -38,7 +38,7 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.MutableRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -56,9 +56,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
     public class MappedColumnNamesPropertyWidget extends MinimalPropertyWidget<String[]> {
 
-        public MappedColumnNamesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+        public MappedColumnNamesPropertyWidget(ComponentBuilder componentBuilder,
                 ConfiguredPropertyDescriptor propertyDescriptor) {
-            super(beanJobBuilder, propertyDescriptor);
+            super(componentBuilder, propertyDescriptor);
         }
 
         @Override
@@ -105,17 +105,17 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
      *            the property representing the mapped columns in the datastore
      *            (String[])
      */
-    public MultipleMappedColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public MultipleMappedColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {
-        super(beanJobBuilder, inputColumnsProperty);
+        super(componentBuilder, inputColumnsProperty);
         _mappedColumnComboBoxes = new WeakHashMap<InputColumn<?>, SourceColumnComboBox>();
         _mappedColumnsProperty = mappedColumnsProperty;
 
         _tableRef = new MutableRef<Table>();
-        _mappedColumnNamesPropertyWidget = new MappedColumnNamesPropertyWidget(beanJobBuilder, mappedColumnsProperty);
+        _mappedColumnNamesPropertyWidget = new MappedColumnNamesPropertyWidget(componentBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
-        final String[] currentMappedColumnsValue = (String[]) beanJobBuilder
+        final String[] currentMappedColumnsValue = (String[]) componentBuilder
                 .getConfiguredProperty(mappedColumnsProperty);
         if (currentValue != null && currentMappedColumnsValue != null) {
             // first create combo's, then set value (so combo is ready before it

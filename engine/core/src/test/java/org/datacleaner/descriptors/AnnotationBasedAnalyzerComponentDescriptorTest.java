@@ -44,7 +44,7 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testInheritedAnalyzer() throws Exception {
-        AnalyzerComponentDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
+        AnalyzerDescriptor<OneMoreMockAnalyzer> descriptor = Descriptors.ofAnalyzer(OneMoreMockAnalyzer.class);
         assertEquals("One more mock", descriptor.getDisplayName());
     }
 
@@ -68,7 +68,7 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
     
     public void testIsDistributed() throws Exception {
-        AnalyzerComponentDescriptor<?> desc;
+        AnalyzerDescriptor<?> desc;
         
         desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertFalse(desc.isDistributable());
@@ -81,7 +81,7 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testGetConfiguredPropertiesOfType() throws Exception {
-        AnalyzerComponentDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerDescriptor<AnalyzerMock> desc = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
         Set<ConfiguredPropertyDescriptor> properties = desc.getConfiguredPropertiesByType(Number.class, false);
         assertEquals(1, properties.size());
@@ -103,7 +103,7 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testRowProcessingType() throws Exception {
-        AnalyzerComponentDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerDescriptor<AnalyzerMock> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
 
         Set<ConfiguredPropertyDescriptor> configuredProperties = descriptor.getConfiguredProperties();
         Iterator<ConfiguredPropertyDescriptor> it = configuredProperties.iterator();
@@ -124,7 +124,7 @@ public class AnnotationBasedAnalyzerComponentDescriptorTest extends TestCase {
     }
 
     public void testGetResultMetrics() throws Exception {
-        AnalyzerComponentDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
+        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(AnalyzerMock.class);
         assertEquals(NumberResult.class, descriptor.getResultClass());
 
         Set<MetricDescriptor> resultMetrics = descriptor.getResultMetrics();

@@ -21,19 +21,19 @@ package org.datacleaner;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 
-public class AnalyzerJobBuilderTest extends TestCase {
+public class AnalyzerComponentBuilderTest extends TestCase {
 
 	private AnalysisJobBuilder ajb;
 
@@ -44,29 +44,29 @@ public class AnalyzerJobBuilderTest extends TestCase {
 	}
 
 	public void testBuildMultipleJobsForSingleInputAnalyzer() throws Exception {
-		AnalyzerJobBuilder<PatternFinderAnalyzer> jobBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+	    AnalyzerComponentBuilder<PatternFinderAnalyzer> analyzerBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
 
-		assertFalse(jobBuilder.isConfigured());
+		assertFalse(analyzerBuilder.isConfigured());
 
 		Table table = new MutableTable("table");
-		jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("foo", ColumnType.VARCHAR, table, 0, true)));
-		jobBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("bar", ColumnType.VARCHAR, table, 1, true)));
+		analyzerBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("foo", ColumnType.VARCHAR, table, 0, true)));
+		analyzerBuilder.addInputColumn(new MetaModelInputColumn(new MutableColumn("bar", ColumnType.VARCHAR, table, 1, true)));
 
 		// change a property
-		ConfiguredPropertyDescriptor property = jobBuilder.getDescriptor().getConfiguredProperty(
+		ConfiguredPropertyDescriptor property = analyzerBuilder.getDescriptor().getConfiguredProperty(
 				"Discriminate negative numbers");
-		jobBuilder.setConfiguredProperty(property, false);
+		analyzerBuilder.setConfiguredProperty(property, false);
 
 		try {
 			// cannot create a single job, since there will be two
-			jobBuilder.toAnalyzerJob();
+			analyzerBuilder.toAnalyzerJob();
 			fail("Exception expected");
 		} catch (IllegalStateException e) {
 			assertEquals("This builder generates 2 jobs, but a single job was requested", e.getMessage());
 		}
 
-		assertTrue(jobBuilder.isConfigured());
-		AnalyzerJob[] analyzerJobs = jobBuilder.toAnalyzerJobs();
+		assertTrue(analyzerBuilder.isConfigured());
+		AnalyzerJob[] analyzerJobs = analyzerBuilder.toAnalyzerJobs();
 		assertEquals(2, analyzerJobs.length);
 
 		assertEquals(1, analyzerJobs[0].getInput().length);

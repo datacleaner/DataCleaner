@@ -152,10 +152,8 @@ public class AnalyzerJobHelper {
             return null;
         }
 
-        final ConfigurableBeanJob<?> configurableBeanJob = (ConfigurableBeanJob<?>) o;
-
         final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
-        final Object input = configurableBeanJob.getConfiguration().getProperty(inputProperty);
+        final Object input = o.getConfiguration().getProperty(inputProperty);
 
         if (input instanceof InputColumn) {
             final InputColumn<?> inputColumn = (InputColumn<?>) input;

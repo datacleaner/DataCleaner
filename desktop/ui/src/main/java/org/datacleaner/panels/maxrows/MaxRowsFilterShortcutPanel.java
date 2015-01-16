@@ -29,7 +29,7 @@ import javax.swing.event.DocumentEvent;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
@@ -63,7 +63,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
     private final DCCheckBox<Object> _checkBox;
     private final DCLabel _suffixLabel;
     private final DCLabel _prefixLabel;
-    private FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> _maxRowsFilterJobBuilder;
+    private FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> _maxRowsFilterComponentBuilder;
 
     /**
      * Checks if the given filter is in fact the filter specified by this
@@ -72,7 +72,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
      * @param filterJobBuilder
      * @return
      */
-    public static boolean isFilter(FilterJobBuilder<?, ?> filterJobBuilder) {
+    public static boolean isFilter(FilterComponentBuilder<?, ?> filterJobBuilder) {
         return FILTER_NAME.equals(filterJobBuilder.getName())
                 && filterJobBuilder.getDescriptor().getComponentClass() == MaxRowsFilter.class;
     }
@@ -81,7 +81,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
         this(analysisJobBuilder, null);
     }
 
-    public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder, FilterJobBuilder<?, ?> filterJobBuilder) {
+    public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder, FilterComponentBuilder<?, ?> filterJobBuilder) {
         super();
         _analysisJobBuilder = analysisJobBuilder;
         _checkBox = new DCCheckBox<Object>("", false);
@@ -114,22 +114,22 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 
         if (filterJobBuilder != null) {
             @SuppressWarnings("unchecked")
-            FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilterJobBuilder = (FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>) filterJobBuilder;
-            _maxRowsFilterJobBuilder = maxRowFilterJobBuilder;
+            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilterComponentBuilder = (FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category>) filterJobBuilder;
+            _maxRowsFilterComponentBuilder = maxRowFilterComponentBuilder;
             _checkBox.setSelected(true);
         }
 
         _checkBox.addListener(new Listener<Object>() {
             @Override
             public void onItemSelected(Object item, boolean selected) {
-                FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsFilterJobBuilder = getJobBuilder();
+                FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsFilterComponentBuilder = getJobBuilder();
 
                 if (selected) {
-                    _analysisJobBuilder.addFilter(maxRowsFilterJobBuilder);
-                    _analysisJobBuilder.setDefaultRequirement(maxRowsFilterJobBuilder, MaxRowsFilter.Category.VALID);
+                    _analysisJobBuilder.addFilter(maxRowsFilterComponentBuilder);
+                    _analysisJobBuilder.setDefaultRequirement(maxRowsFilterComponentBuilder, MaxRowsFilter.Category.VALID);
                 } else {
-                    _analysisJobBuilder.removeFilter(maxRowsFilterJobBuilder);
-                    _maxRowsFilterJobBuilder = null;
+                    _analysisJobBuilder.removeFilter(maxRowsFilterComponentBuilder);
+                    _maxRowsFilterComponentBuilder = null;
                 }
                 updateLabels();
             }
@@ -138,7 +138,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb = getJobBuilder();
+                final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb = getJobBuilder();
                 if (fjb != null) {
                     String text = _textField.getText();
                     if (!StringUtils.isNullOrEmpty(text)) {
@@ -167,16 +167,16 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
     }
 
-    public FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> getJobBuilder() {
-        if (_maxRowsFilterJobBuilder == null) {
+    public FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> getJobBuilder() {
+        if (_maxRowsFilterComponentBuilder == null) {
             // Lazy initializing getter (to postpone the call to
             // DCConfiguration.
-            _maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>(_analysisJobBuilder,
+            _maxRowsFilterComponentBuilder = new FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category>(_analysisJobBuilder,
                     _analysisJobBuilder.getConfiguration().getDescriptorProvider()
-                            .getFilterBeanDescriptorForClass(MaxRowsFilter.class));
-            _maxRowsFilterJobBuilder.setName(FILTER_NAME);
+                            .getFilterDescriptorForClass(MaxRowsFilter.class));
+            _maxRowsFilterComponentBuilder.setName(FILTER_NAME);
         }
-        return _maxRowsFilterJobBuilder;
+        return _maxRowsFilterComponentBuilder;
     }
 
     @Override

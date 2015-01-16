@@ -35,7 +35,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
@@ -73,7 +73,7 @@ public class DateRangeFilterTest extends TestCase {
         AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
         ajb.setDatastore(ds);
         ajb.addSourceColumns("orders.orderdate");
-        FilterJobBuilder<DateRangeFilter, RangeFilterCategory> fjb = ajb.addFilter(DateRangeFilter.class);
+        FilterComponentBuilder<DateRangeFilter, RangeFilterCategory> fjb = ajb.addFilter(DateRangeFilter.class);
         InputColumn<?> column = ajb.getSourceColumnByName("orderdate");
         fjb.addInputColumn(column);
         fjb.setConfiguredProperty("Lowest value", DateUtils.get(2003, Month.MARCH, 10));

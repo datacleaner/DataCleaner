@@ -29,14 +29,14 @@ import javax.swing.JPopupMenu;
 
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.extension.output.AbstractOutputWriterAnalyzer;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.widgets.DescriptorMenu;
@@ -48,10 +48,10 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final FilterJobBuilder<?, ?> _filterJobBuilder;
+    private final FilterComponentBuilder<?, ?> _filterJobBuilder;
     private final String _categoryName;
 
-    public DisplayOptionsForFilterOutcomeActionListener(FilterJobBuilder<?, ?> filterJobBuilder, String categoryName) {
+    public DisplayOptionsForFilterOutcomeActionListener(FilterComponentBuilder<?, ?> filterJobBuilder, String categoryName) {
         super(filterJobBuilder.getAnalysisJobBuilder());
         _filterJobBuilder = filterJobBuilder;
         _categoryName = categoryName;
@@ -104,13 +104,13 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
     }
 
     @Override
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> analyzerJobBuilder) {
         Analyzer<?> analyzer = analyzerJobBuilder.getComponentInstance();
-        if (analyzer instanceof AbstractOutputWriterAnalyzer) {
+        if (analyzer instanceof PrecedingComponentConsumer) {
             LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
                     .getInjectionManager(null), null, true);
             helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
-            ((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
+            ((PrecedingComponentConsumer) analyzer).configureForFilterOutcome(analysisJobBuilder,
                     _filterJobBuilder.getDescriptor(), _categoryName);
         }
         analyzerJobBuilder.setRequirement(_filterJobBuilder, _categoryName);

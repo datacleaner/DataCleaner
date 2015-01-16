@@ -45,24 +45,23 @@ import javax.swing.event.DocumentEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
-import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.SourceColumnChangeListener;
-import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.datacleaner.actions.ReorderColumnsActionListener;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.SourceColumnChangeListener;
+import org.datacleaner.job.builder.TransformerChangeListener;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
@@ -119,9 +118,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     private volatile boolean _firstUpdate;
 
     @Inject
-    public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public MultipleInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(beanJobBuilder, propertyDescriptor);
+        super(componentBuilder, propertyDescriptor);
         setBorder(new EtchedBorder(EtchedBorder.LOWERED));
         _checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
         _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
@@ -288,10 +287,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 // set all to true if this is the only required inputcolumn
                 // property
                 ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
-                if (componentDescriptor instanceof BeanDescriptor<?>) {
-                    if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput(false).size() == 1) {
-                        return isAllInputColumnsSelectedIfNoValueExist();
-                    }
+                if (componentDescriptor.getConfiguredPropertiesForInput(false).size() == 1) {
+                    return isAllInputColumnsSelectedIfNoValueExist();
                 }
                 return false;
             }
@@ -355,11 +352,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
@@ -370,7 +367,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
         if (transformerJobBuilder == getComponentBuilder()) {
             return;
@@ -385,7 +382,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
         if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
@@ -394,7 +391,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     @Override
-    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override

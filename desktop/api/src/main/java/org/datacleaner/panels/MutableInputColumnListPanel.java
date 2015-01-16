@@ -30,7 +30,7 @@ import javax.swing.JButton;
 
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.OutputColumnVisibilityButton;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -63,7 +63,8 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
                 if (!_inputColumn.getName().equals(_textField.getText())) {
                     _inputColumn.setName(_textField.getText());
 
-                    TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(_inputColumn);
+                    final TransformerComponentBuilder<?> tjb = _analysisJobBuilder
+                            .getOriginatingTransformer(_inputColumn);
                     if (tjb != null) {
                         tjb.onOutputChanged();
                     }

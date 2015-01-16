@@ -17,13 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job;
+package org.datacleaner.panels;
+
+import org.datacleaner.job.builder.FilterComponentBuilder;
 
 /**
- * Abstract interface for {@link ComponentJob}s that have a
- * {@link ComponentConfiguration}.
+ * Interface for presenter widgets that present {@link FilterComponentBuilder}
+ * objects.
  */
-public interface HasBeanConfiguration extends ComponentJob {
+public interface FilterComponentBuilderPresenter extends ComponentBuilderPresenter {
 
-    public ComponentConfiguration getConfiguration();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FilterComponentBuilder<?, ?> getComponentBuilder();
+
 }

@@ -17,25 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job;
+package org.datacleaner.panels;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.api.RenderingFormat;
+import org.datacleaner.job.builder.ComponentBuilder;
 
 /**
- * Represents a subinterface of {@link ComponentJob} for all component types
- * that are "configurable beans", meaning that they can be chained together by
- * using {@link InputColumn}s and {@link Outcome}s as requirements/dependencies
- * for their positioning in the processing flow.
- * 
- * @param <E>
+ * Renderer format for component job builder presenters. Renderers of
+ * {@link ComponentBuilder}s should use this rendering format.
  */
-public interface ConfigurableBeanJob<E extends ComponentDescriptor<?>> extends ComponentJob, HasBeanConfiguration,
-        InputColumnSinkJob, HasComponentRequirement {
+public class ComponentBuilderPresenterRenderingFormat implements RenderingFormat<ComponentBuilderPresenter> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public E getDescriptor();
+    public Class<ComponentBuilderPresenter> getOutputClass() {
+        return ComponentBuilderPresenter.class;
+    }
+
 }

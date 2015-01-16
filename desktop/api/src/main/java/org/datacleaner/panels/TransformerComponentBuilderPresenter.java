@@ -19,20 +19,18 @@
  */
 package org.datacleaner.panels;
 
-import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 /**
- * Renderer format for component job builder presenters. Renderers of
- * {@link AbstractBeanJobBuilder}s should use this rendering format.
- * 
- * @author Kasper Sørensen
+ * Interface for presenter widgets that present {@link TransformerComponentBuilder}
+ * objects.
  */
-public class ComponentJobBuilderRenderingFormat implements RenderingFormat<ComponentJobBuilderPresenter> {
+public interface TransformerComponentBuilderPresenter extends ComponentBuilderPresenter {
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public Class<ComponentJobBuilderPresenter> getOutputClass() {
-		return ComponentJobBuilderPresenter.class;
-	}
+	public TransformerComponentBuilder<?> getComponentBuilder();
 
 }

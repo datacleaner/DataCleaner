@@ -29,7 +29,7 @@ import org.datacleaner.job.tasks.MockMultiRowTransformer;
 public class AnnotationBasedTransformerComponentDescriptorTest extends TestCase {
 
     public void testGetProvidedPropertiesOfType() throws Exception {
-        TransformerComponentDescriptor<MockMultiRowTransformer> descriptor = Descriptors
+        TransformerDescriptor<MockMultiRowTransformer> descriptor = Descriptors
                 .ofTransformer(MockMultiRowTransformer.class);
 
         Set<ProvidedPropertyDescriptor> properties = descriptor.getProvidedPropertiesByType(OutputRowCollector.class);

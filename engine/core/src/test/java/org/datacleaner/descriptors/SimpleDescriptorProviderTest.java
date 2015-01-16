@@ -36,29 +36,29 @@ public class SimpleDescriptorProviderTest extends TestCase {
     public void testSetBeanClassNames() throws Exception {
         SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
 
-        assertNull(descriptorProvider.getAnalyzerComponentDescriptorForClass(AnalyzerMock.class));
-        assertNull(descriptorProvider.getAnalyzerComponentDescriptorForClass(OneMoreMockAnalyzer.class));
-        assertNull(descriptorProvider.getTransformerComponentDescriptorForClass(ConvertToBooleanTransformer.class));
+        assertNull(descriptorProvider.getAnalyzerDescriptorForClass(AnalyzerMock.class));
+        assertNull(descriptorProvider.getAnalyzerDescriptorForClass(OneMoreMockAnalyzer.class));
+        assertNull(descriptorProvider.getTransformerDescriptorForClass(ConvertToBooleanTransformer.class));
 
         descriptorProvider.setAnalyzerClassNames(Arrays.asList(AnalyzerMock.class.getName(),
                 OneMoreMockAnalyzer.class.getName()));
 
-        assertEquals(2, descriptorProvider.getAnalyzerComponentDescriptors().size());
+        assertEquals(2, descriptorProvider.getAnalyzerDescriptors().size());
 
         descriptorProvider.setTransformerClassNames(Arrays.asList(ConvertToBooleanTransformer.class.getName(),
                 ConvertToDateTransformer.class.getName()));
 
-        assertEquals(2, descriptorProvider.getTransformerComponentDescriptors().size());
+        assertEquals(2, descriptorProvider.getTransformerDescriptors().size());
 
         descriptorProvider.setTransformerClassNames(Arrays.asList(ConvertToBooleanTransformer.class.getName()));
 
-        assertEquals(2, descriptorProvider.getTransformerComponentDescriptors().size());
+        assertEquals(2, descriptorProvider.getTransformerDescriptors().size());
 
         assertEquals("AnnotationBasedAnalyzerComponentDescriptor[" + AnalyzerMock.class.getName() + "]", descriptorProvider
-                .getAnalyzerComponentDescriptorForClass(AnalyzerMock.class).toString());
+                .getAnalyzerDescriptorForClass(AnalyzerMock.class).toString());
 
         assertEquals("AnnotationBasedTransformerComponentDescriptor[" + ConvertToBooleanTransformer.class.getName() + "]",
-                descriptorProvider.getTransformerComponentDescriptorForClass(ConvertToBooleanTransformer.class).toString());
+                descriptorProvider.getTransformerDescriptorForClass(ConvertToBooleanTransformer.class).toString());
     }
 
     public void testSetClassNamesNoDiscover() throws Exception {
@@ -70,24 +70,24 @@ public class SimpleDescriptorProviderTest extends TestCase {
         classNames.add(AnalyzerMock.class.getName());
         descriptorProvider.setAnalyzerClassNames(classNames);
 
-        final AnalyzerComponentDescriptor<?> descriptor = descriptorProvider
-                .getAnalyzerComponentDescriptorByDisplayName("Row-processing mock");
+        final AnalyzerDescriptor<?> descriptor = descriptorProvider
+                .getAnalyzerDescriptorByDisplayName("Row-processing mock");
         assertNotNull(descriptor);
         assertEquals(AnalyzerMock.class, descriptor.getComponentClass());
 
         // check that the same analyzer was not duplicated, even thought the
         // classname appeared twice.
-        assertEquals(1, descriptorProvider.getAnalyzerComponentDescriptors().size());
+        assertEquals(1, descriptorProvider.getAnalyzerDescriptors().size());
     }
 
     public void testGetBeanByAlias() throws Exception {
         SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider(false);
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TransformerMock.class));
 
-        TransformerComponentDescriptor<?> descriptor1 = descriptorProvider
-                .getTransformerComponentDescriptorByDisplayName("Transformer mock");
-        TransformerComponentDescriptor<?> descriptor2 = descriptorProvider
-                .getTransformerComponentDescriptorByDisplayName("Mock transformer");
+        TransformerDescriptor<?> descriptor1 = descriptorProvider
+                .getTransformerDescriptorByDisplayName("Transformer mock");
+        TransformerDescriptor<?> descriptor2 = descriptorProvider
+                .getTransformerDescriptorByDisplayName("Mock transformer");
 
         assertSame(descriptor1, descriptor2);
     }

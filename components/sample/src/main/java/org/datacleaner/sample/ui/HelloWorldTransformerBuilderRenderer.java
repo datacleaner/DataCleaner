@@ -27,9 +27,9 @@ import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.sample.HelloWorldTransformer;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
@@ -40,9 +40,9 @@ import org.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Renderers like this are optional, but allows for absolute control over the
  * User Interface which may be useful for certain types of extensions.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class HelloWorldTransformerBuilderRenderer implements
-        Renderer<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -54,7 +54,7 @@ public class HelloWorldTransformerBuilderRenderer implements
     AnalyzerBeansConfiguration configuration;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<?> renderable) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<?> renderable) {
         if (renderable.getDescriptor().getComponentClass() == HelloWorldTransformer.class) {
             return RendererPrecedence.HIGHEST;
         }
@@ -62,7 +62,7 @@ public class HelloWorldTransformerBuilderRenderer implements
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<?> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<?> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
         return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory, configuration);

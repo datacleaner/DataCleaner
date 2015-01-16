@@ -30,7 +30,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
-import org.datacleaner.descriptors.TransformerComponentDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
@@ -51,7 +51,7 @@ import org.datacleaner.util.StringUtils;
  *            the type of {@link Transformer} being built
  */
 public final class TransformerComponentBuilder<T extends Transformer> extends
-        AbstractComponentBuilder<TransformerComponentDescriptor<T>, T, TransformerComponentBuilder<T>> implements
+        AbstractComponentBuilder<TransformerDescriptor<T>, T, TransformerComponentBuilder<T>> implements
         InputColumnSourceJob, InputColumnSinkJob, HasComponentRequirement {
 
     private final String _id;
@@ -60,7 +60,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     private final IdGenerator _idGenerator;
     private final List<TransformerChangeListener> _localChangeListeners;
 
-    public TransformerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, TransformerComponentDescriptor<T> descriptor,
+    public TransformerComponentBuilder(AnalysisJobBuilder analysisJobBuilder, TransformerDescriptor<T> descriptor,
             IdGenerator idGenerator) {
         super(analysisJobBuilder, descriptor, TransformerComponentBuilder.class);
         _id = "trans-" + idGenerator.nextId();
@@ -82,7 +82,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         }
 
         final Transformer component = getComponentInstance();
-        final TransformerComponentDescriptor<T> descriptor = getDescriptor();
+        final TransformerDescriptor<T> descriptor = getDescriptor();
 
         final InjectionManager injectionManager = getAnalysisJobBuilder().getConfiguration().getInjectionManager(null);
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);

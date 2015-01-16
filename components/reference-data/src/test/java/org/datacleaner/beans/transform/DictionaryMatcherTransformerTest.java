@@ -36,8 +36,8 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.reference.Dictionary;
@@ -70,7 +70,7 @@ public class DictionaryMatcherTransformerTest extends TestCase {
 		AnalysisJobBuilder job = new AnalysisJobBuilder(conf);
 		job.setDatastore(datastore);
 		job.addSourceColumns("product", "version");
-		TransformerJobBuilder<DictionaryMatcherTransformer> tjb1 = job.addTransformer(DictionaryMatcherTransformer.class);
+		TransformerComponentBuilder<DictionaryMatcherTransformer> tjb1 = job.addTransformer(DictionaryMatcherTransformer.class);
 		tjb1.setConfiguredProperty(
 				"Dictionaries",
 				new Dictionary[] { ref.getDictionary("eobjects.org products"), ref.getDictionary("apache products"),
@@ -82,11 +82,11 @@ public class DictionaryMatcherTransformerTest extends TestCase {
 		outputColumns.get(1).setName("apache match");
 		outputColumns.get(2).setName("logging match");
 
-		TransformerJobBuilder<ConvertToNumberTransformer> tjb2 = job.addTransformer(ConvertToNumberTransformer.class);
+		TransformerComponentBuilder<ConvertToNumberTransformer> tjb2 = job.addTransformer(ConvertToNumberTransformer.class);
 		tjb2.addInputColumn(outputColumns.get(2));
 		tjb2.getOutputColumns().get(0).setName("logging match -> number");
 
-		AnalyzerJobBuilder<ValueDistributionAnalyzer> ajb = job
+		AnalyzerComponentBuilder<ValueDistributionAnalyzer> ajb = job
 				.addAnalyzer(ValueDistributionAnalyzer.class);
 		ajb.addInputColumns(tjb1.getOutputColumns());
 		ajb.addInputColumns(tjb2.getOutputColumns());

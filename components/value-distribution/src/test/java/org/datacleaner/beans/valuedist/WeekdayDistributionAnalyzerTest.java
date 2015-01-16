@@ -23,20 +23,20 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 
-import junit.framework.TestCase;
-
 public class WeekdayDistributionAnalyzerTest extends TestCase {
     
     public void testDescriptorIsDistributable() throws Exception {
-        AnalyzerBeanDescriptor<WeekdayDistributionAnalyzer> desc = Descriptors.ofAnalyzer(WeekdayDistributionAnalyzer.class);
+        AnalyzerDescriptor<WeekdayDistributionAnalyzer> desc = Descriptors.ofAnalyzer(WeekdayDistributionAnalyzer.class);
         
         assertTrue(desc.isDistributable());
     }

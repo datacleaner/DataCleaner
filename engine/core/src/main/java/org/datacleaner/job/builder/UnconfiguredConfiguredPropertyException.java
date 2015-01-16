@@ -30,12 +30,12 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
 
     private static final long serialVersionUID = 1L;
 
-    private final AbstractComponentBuilder<?, ?, ?> _beanJobBuilder;
+    private final ComponentBuilder _componentBuilder;
     private final ConfiguredPropertyDescriptor _configuredProperty;
 
-    public UnconfiguredConfiguredPropertyException(AbstractComponentBuilder<?, ?, ?> beanJobBuilder,
+    public UnconfiguredConfiguredPropertyException(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor configuredProperty) {
-        _beanJobBuilder = beanJobBuilder;
+        _componentBuilder = componentBuilder;
         _configuredProperty = configuredProperty;
     }
 
@@ -43,13 +43,13 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
         return _configuredProperty;
     }
 
-    public AbstractComponentBuilder<?, ?, ?> getBeanJobBuilder() {
-        return _beanJobBuilder;
+    public ComponentBuilder getComponentBuilder() {
+        return _componentBuilder;
     }
 
     @Override
     public String getMessage() {
-        return "Property '" + getConfiguredProperty().getName() + "' is not properly configured (" + _beanJobBuilder
+        return "Property '" + getConfiguredProperty().getName() + "' is not properly configured (" + _componentBuilder
                 + ")";
     }
 }

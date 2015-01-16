@@ -24,12 +24,12 @@ import junit.framework.TestCase;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.FilterComponentDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 
 public class MaxRowsFilterTest extends TestCase {
 
 	public void testDescriptor() throws Exception {
-		FilterComponentDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
+		FilterDescriptor<MaxRowsFilter, MaxRowsFilter.Category> desc = Descriptors.ofFilter(MaxRowsFilter.class);
 
 		assertEquals("Max rows", desc.getDisplayName());
 	}

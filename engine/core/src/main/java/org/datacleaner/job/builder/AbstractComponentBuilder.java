@@ -37,7 +37,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Renderable;
-import org.datacleaner.descriptors.AnalyzerComponentDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <D>
  *            the component descriptor type (for instance
- *            {@link AnalyzerComponentDescriptor})
+ *            {@link AnalyzerDescriptor})
  * @param <E>
  *            the actual component type (for instance {@link Analyzer})
  * @param <B>
@@ -149,6 +149,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         _metadataProperties.remove(key);
     }
 
+    @Override
     public final AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
     }
@@ -173,7 +174,8 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     @Override
     public void setConfiguredProperties(Map<ConfiguredPropertyDescriptor, Object> configuredPropeties) {
-        final ImmutableComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(configuredPropeties);
+        final ImmutableComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(
+                configuredPropeties);
         setConfiguredProperties(beanConfiguration);
     }
 

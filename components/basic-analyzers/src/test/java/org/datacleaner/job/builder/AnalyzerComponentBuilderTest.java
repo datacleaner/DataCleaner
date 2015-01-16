@@ -21,17 +21,17 @@ package org.datacleaner.job.builder;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.AnalyzerJob;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Table;
 
-public class AnalyzerJobBuilderTest extends TestCase {
+public class AnalyzerComponentBuilderTest extends TestCase {
 
     private AnalysisJobBuilder ajb;
 
@@ -42,7 +42,7 @@ public class AnalyzerJobBuilderTest extends TestCase {
     }
 
     public void testNoOriginatingTableBecauseOfMockColumns() throws Exception {
-        AnalyzerJobBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
         jobBuilder.addInputColumn(new MockInputColumn<String>("foo", String.class));
         jobBuilder.addInputColumn(new MockInputColumn<String>("bar", String.class));
 
@@ -57,7 +57,7 @@ public class AnalyzerJobBuilderTest extends TestCase {
     }
 
     public void testBuildMultipleJobsForEachTable() throws Exception {
-        AnalyzerJobBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
+        AnalyzerComponentBuilder<StringAnalyzer> jobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
 
         Table table1 = new MutableTable("table1");
         jobBuilder.addInputColumn(new MetaModelInputColumn(

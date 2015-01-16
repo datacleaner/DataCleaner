@@ -30,11 +30,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.datacleaner.job.builder.FilterChangeListener;
-import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.actions.DisplayOptionsForFilterOutcomeActionListener;
 import org.datacleaner.api.Filter;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.builder.FilterChangeListener;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -42,9 +42,9 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialization of {@link AbstractJobBuilderPanel} for {@link Filter}s.
+ * Specialization of {@link AbstractComponentBuilderPanel} for {@link Filter}s.
  */
-public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements FilterJobBuilderPresenter,
+public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel implements FilterComponentBuilderPresenter,
         FilterChangeListener {
 
     private static final long serialVersionUID = 1L;
@@ -52,16 +52,16 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
     private static final ImageManager imageManager = ImageManager.get();
     private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
-    private final FilterJobBuilder<?, ?> _filterJobBuilder;
+    private final FilterComponentBuilder<?, ?> _filterJobBuilder;
     private final DCPanel _outcomePanel;
 
-    public FilterJobBuilderPanel(FilterJobBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
+    public FilterComponentBuilderPanel(FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory) {
         this(WATERMARK_IMAGE, 95, 95, filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 
-    protected FilterJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, FilterJobBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
+    protected FilterComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, filterJobBuilder,
                 propertyWidgetFactory);
@@ -92,7 +92,7 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
                         + "You can also click the categories directly to eg.<br>"
                         + "write categorized records or to map them<br>"
                         + "as requirements for existing or new components."));
-                JOptionPane.showMessageDialog(FilterJobBuilderPanel.this, messagePanel,
+                JOptionPane.showMessageDialog(FilterComponentBuilderPanel.this, messagePanel,
                         "Help: Filter categories / outcomes", JOptionPane.PLAIN_MESSAGE);
             }
         });
@@ -119,24 +119,24 @@ public class FilterJobBuilderPanel extends AbstractJobBuilderPanel implements Fi
     }
 
     @Override
-    public FilterJobBuilder<?, ?> getJobBuilder() {
+    public FilterComponentBuilder<?, ?> getComponentBuilder() {
         return _filterJobBuilder;
     }
 
     @Override
-    public void onAdd(FilterJobBuilder<?, ?> fjb) {
+    public void onAdd(FilterComponentBuilder<?, ?> fjb) {
     }
 
     @Override
-    public void onConfigurationChanged(FilterJobBuilder<?, ?> fjb) {
+    public void onConfigurationChanged(FilterComponentBuilder<?, ?> fjb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onRemove(FilterJobBuilder<?, ?> fjb) {
+    public void onRemove(FilterComponentBuilder<?, ?> fjb) {
     }
     
     @Override
-    public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+    public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
     }
 }

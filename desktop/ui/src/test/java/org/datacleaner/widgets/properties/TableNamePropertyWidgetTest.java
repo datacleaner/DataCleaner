@@ -36,15 +36,15 @@ import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 public class TableNamePropertyWidgetTest extends TestCase {
 
     public void testTwoWidgetsForSameProperty() throws Exception {
-        final TransformerBeanDescriptor<TableLookupTransformer> descriptor = Descriptors
+        final TransformerDescriptor<TableLookupTransformer> descriptor = Descriptors
                 .ofTransformer(TableLookupTransformer.class);
 
         final ConfiguredPropertyDescriptor datastoreProperty = descriptor.getConfiguredProperty("Datastore");
@@ -54,7 +54,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
         final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
 
-        final TransformerJobBuilder<TableLookupTransformer> tjb = analysisJobBuilder
+        final TransformerComponentBuilder<TableLookupTransformer> tjb = analysisJobBuilder
                 .addTransformer(TableLookupTransformer.class);
 
         final List<TableDataProvider<?>> tables = new ArrayList<>();
@@ -109,29 +109,29 @@ public class TableNamePropertyWidgetTest extends TestCase {
         analysisJobBuilder.close();
     }
 
-    private PropertyWidgetCollection createPropertyWidgetCollection(TransformerJobBuilder<TableLookupTransformer> tjb) {
+    private PropertyWidgetCollection createPropertyWidgetCollection(TransformerComponentBuilder<TableLookupTransformer> tjb) {
         final PropertyWidgetCollection collection = new PropertyWidgetCollection(tjb);
         tjb.addChangeListener(new TransformerChangeListener() {
             @Override
-            public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+            public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
             }
 
             @Override
-            public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+            public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
             }
 
             @Override
-            public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+            public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
                     List<MutableInputColumn<?>> outputColumns) {
             }
 
             @Override
-            public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+            public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
                 collection.onConfigurationChanged();
             }
 
             @Override
-            public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+            public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
             }
         });
         return collection;

@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans.referentialintegrity;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
@@ -26,12 +28,10 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestHelper;
-
-import junit.framework.TestCase;
 
 public class ReferentialIntegrityAnalyzerTest extends TestCase {
 
@@ -45,7 +45,7 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
         jobBuilder.setDatastore(datastore);
         jobBuilder.addSourceColumns("customers.SALESREPEMPLOYEENUMBER");
 
-        AnalyzerJobBuilder<ReferentialIntegrityAnalyzer> analyzer = jobBuilder
+        AnalyzerComponentBuilder<ReferentialIntegrityAnalyzer> analyzer = jobBuilder
                 .addAnalyzer(ReferentialIntegrityAnalyzer.class);
         ReferentialIntegrityAnalyzer referentialIntegrity = analyzer.getComponentInstance();
         InputColumn<?> salesRepEmployeeNumber = jobBuilder.getSourceColumnByName("SALESREPEMPLOYEENUMBER");

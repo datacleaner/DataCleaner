@@ -37,8 +37,8 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -73,7 +73,7 @@ public class TokenizerAndValueDistributionTest extends TestCase {
 
         analysisJobBuilder.addSourceColumns(jobTitleColumn);
 
-        TransformerJobBuilder<TokenizerTransformer> transformerJobBuilder = analysisJobBuilder
+        TransformerComponentBuilder<TokenizerTransformer> transformerJobBuilder = analysisJobBuilder
                 .addTransformer(TokenizerTransformer.class);
         transformerJobBuilder.addInputColumn(analysisJobBuilder.getSourceColumns().get(0));
         transformerJobBuilder.setConfiguredProperty("Number of tokens", 4);
@@ -86,7 +86,7 @@ public class TokenizerAndValueDistributionTest extends TestCase {
         transformerOutput.get(3).setName("fourth words");
 
         for (InputColumn<?> inputColumn : transformerOutput) {
-            AnalyzerJobBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
+            AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
                     .addAnalyzer(ValueDistributionAnalyzer.class);
             valueDistribuitionJobBuilder.addInputColumn(inputColumn);
             valueDistribuitionJobBuilder.setConfiguredProperty("Record unique values", true);

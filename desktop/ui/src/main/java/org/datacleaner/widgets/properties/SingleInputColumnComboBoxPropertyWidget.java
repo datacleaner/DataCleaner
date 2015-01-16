@@ -30,12 +30,11 @@ import javax.swing.DefaultComboBoxModel;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -57,8 +56,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 
     @Inject
     public SingleInputColumnComboBoxPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<InputColumn<?>>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
         _comboBox.addListener(new Listener<InputColumn<?>>() {
@@ -150,18 +149,18 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
         updateComponents();
         updateUI();
     }
 
     @Override
-    public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
         List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
         for (MutableInputColumn<?> column : outputColumns) {
             handleRemovedColumn(column);
@@ -187,7 +186,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
         if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
@@ -196,7 +195,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     @Override
-    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override

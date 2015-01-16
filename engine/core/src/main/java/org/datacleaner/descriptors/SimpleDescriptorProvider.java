@@ -61,10 +61,10 @@ import org.datacleaner.api.Transformer;
  */
 public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
 
-    private List<AnalyzerComponentDescriptor<?>> _analyzerBeanDescriptors = new ArrayList<AnalyzerComponentDescriptor<?>>();
-    private List<TransformerComponentDescriptor<?>> _transformerBeanDescriptors = new ArrayList<TransformerComponentDescriptor<?>>();
+    private List<AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new ArrayList<AnalyzerDescriptor<?>>();
+    private List<TransformerDescriptor<?>> _transformerBeanDescriptors = new ArrayList<TransformerDescriptor<?>>();
     private List<RendererBeanDescriptor<?>> _rendererBeanDescriptors = new ArrayList<RendererBeanDescriptor<?>>();
-    private List<FilterComponentDescriptor<?, ?>> _filterBeanDescriptors = new ArrayList<FilterComponentDescriptor<?, ?>>();
+    private List<FilterDescriptor<?, ?>> _filterBeanDescriptors = new ArrayList<FilterDescriptor<?, ?>>();
 
     public SimpleDescriptorProvider() {
         this(true);
@@ -74,11 +74,11 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
         super(autoDiscover);
     }
 
-    public void addAnalyzerBeanDescriptor(AnalyzerComponentDescriptor<?> analyzerBeanDescriptor) {
+    public void addAnalyzerBeanDescriptor(AnalyzerDescriptor<?> analyzerBeanDescriptor) {
         _analyzerBeanDescriptors.add(analyzerBeanDescriptor);
     }
 
-    public void addTransformerBeanDescriptor(TransformerComponentDescriptor<?> transformerBeanDescriptor) {
+    public void addTransformerBeanDescriptor(TransformerDescriptor<?> transformerBeanDescriptor) {
         _transformerBeanDescriptors.add(transformerBeanDescriptor);
     }
 
@@ -86,25 +86,25 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
         _rendererBeanDescriptors.add(rendererBeanDescriptor);
     }
 
-    public void addFilterBeanDescriptor(FilterComponentDescriptor<?, ?> descriptor) {
+    public void addFilterBeanDescriptor(FilterDescriptor<?, ?> descriptor) {
         _filterBeanDescriptors.add(descriptor);
     }
 
     @Override
-    public List<AnalyzerComponentDescriptor<?>> getAnalyzerComponentDescriptors() {
+    public List<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
         return _analyzerBeanDescriptors;
     }
 
-    public void setAnalyzerBeanDescriptors(List<AnalyzerComponentDescriptor<?>> descriptors) {
+    public void setAnalyzerBeanDescriptors(List<AnalyzerDescriptor<?>> descriptors) {
         _analyzerBeanDescriptors = descriptors;
     }
 
     @Override
-    public List<TransformerComponentDescriptor<?>> getTransformerComponentDescriptors() {
+    public List<TransformerDescriptor<?>> getTransformerDescriptors() {
         return _transformerBeanDescriptors;
     }
 
-    public void setTransformerBeanDescriptors(List<TransformerComponentDescriptor<?>> transformerBeanDescriptors) {
+    public void setTransformerBeanDescriptors(List<TransformerDescriptor<?>> transformerBeanDescriptors) {
         _transformerBeanDescriptors = transformerBeanDescriptors;
     }
 
@@ -118,11 +118,11 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
     }
 
     @Override
-    public Collection<FilterComponentDescriptor<?, ?>> getFilterComponentDescriptors() {
+    public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
         return _filterBeanDescriptors;
     }
 
-    public void setFilterBeanDescriptors(List<FilterComponentDescriptor<?, ?>> filterBeanDescriptors) {
+    public void setFilterBeanDescriptors(List<FilterDescriptor<?, ?>> filterBeanDescriptors) {
         _filterBeanDescriptors = filterBeanDescriptors;
     }
 
@@ -130,7 +130,7 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
         for (String className : classNames) {
             @SuppressWarnings("unchecked")
             Class<? extends Analyzer<?>> c = (Class<? extends Analyzer<?>>) Class.forName(className);
-            AnalyzerComponentDescriptor<?> descriptor = getAnalyzerComponentDescriptorForClass(c);
+            AnalyzerDescriptor<?> descriptor = getAnalyzerDescriptorForClass(c);
             if (descriptor == null || !_analyzerBeanDescriptors.contains(descriptor)) {
                 addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(c));
             }
@@ -141,7 +141,7 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
         for (String className : classNames) {
             @SuppressWarnings("unchecked")
             Class<? extends Transformer> c = (Class<? extends Transformer>) Class.forName(className);
-            TransformerComponentDescriptor<?> descriptor = getTransformerComponentDescriptorForClass(c);
+            TransformerDescriptor<?> descriptor = getTransformerDescriptorForClass(c);
             if (descriptor == null || !_transformerBeanDescriptors.contains(descriptor)) {
                 addTransformerBeanDescriptor(Descriptors.ofTransformer(c));
             }
@@ -164,7 +164,7 @@ public class SimpleDescriptorProvider extends AbstractDescriptorProvider {
             @SuppressWarnings("unchecked")
             Class<? extends Filter<?>> c = (Class<? extends Filter<?>>) Class.forName(className);
 
-            FilterComponentDescriptor<?, ?> descriptor = getFilterBeanDescriptorForClassUnbounded(c);
+            FilterDescriptor<?, ?> descriptor = getFilterBeanDescriptorForClassUnbounded(c);
 
             if (descriptor == null || !_filterBeanDescriptors.contains(descriptor)) {
                 addFilterBeanDescriptor(Descriptors.ofFilterUnbound(c));

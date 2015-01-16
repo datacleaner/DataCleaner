@@ -26,28 +26,28 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.datastructures.BuildMapTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.MultipleMappedStringsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Spectialized {@link TransformerJobBuilderPresenter} for the
+ * Spectialized {@link TransformerComponentBuilderPresenter} for the
  * {@link BuildMapTransformer}.
  */
-final class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
+final class BuildMapJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
 	public BuildMapJobBuilderPresenter(
-			TransformerJobBuilder<BuildMapTransformer> tjb,
+			TransformerComponentBuilder<BuildMapTransformer> tjb,
 			WindowContext windowContext,
 			PropertyWidgetFactory propertyWidgetFactory,
 			AnalyzerBeansConfiguration configuration) {
@@ -55,7 +55,7 @@ final class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-		final TransformerBeanDescriptor<BuildMapTransformer> descriptor = tjb
+		final TransformerDescriptor<BuildMapTransformer> descriptor = tjb
 				.getDescriptor();
 		final ConfiguredPropertyDescriptor valuesProperty = descriptor
 				.getConfiguredProperty("Values");
@@ -76,11 +76,11 @@ final class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	@Override
 	protected PropertyWidget<?> createPropertyWidget(
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
 			return _overriddenPropertyWidgets.get(propertyDescriptor);
 		}
-		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		return super.createPropertyWidget(componentBuilder, propertyDescriptor);
 	}
 }

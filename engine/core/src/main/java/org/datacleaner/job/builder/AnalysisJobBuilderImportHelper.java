@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
@@ -37,13 +38,11 @@ import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.util.SourceColumnFinder;
-import org.apache.metamodel.schema.Column;
 
 /**
  * Helper class to perform the somewhat intricate
@@ -76,35 +75,28 @@ final class AnalysisJobBuilderImportHelper {
 
         // re-build filter requirements
         for (Entry<ComponentJob, Object> entry : componentBuilders.entrySet()) {
-            ComponentJob componentJob = entry.getKey();
-            if (componentJob instanceof ConfigurableBeanJob<?>) {
-                final ComponentRequirement originalRequirement = componentJob.getComponentRequirement();
-                final ComponentRequirement componentRequirement = findImportedRequirement(originalRequirement,
-                        componentBuilders);
-                final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry
-                        .getValue();
-                builder.setComponentRequirement(componentRequirement);
-            }
+            final ComponentJob componentJob = entry.getKey();
+            final ComponentRequirement originalRequirement = componentJob.getComponentRequirement();
+            final ComponentRequirement componentRequirement = findImportedRequirement(originalRequirement,
+                    componentBuilders);
+            final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry.getValue();
+            builder.setComponentRequirement(componentRequirement);
         }
 
         // re-build input column dependencies
         for (Entry<ComponentJob, Object> entry : componentBuilders.entrySet()) {
             final ComponentJob componentJob = entry.getKey();
-            if (componentJob instanceof ConfigurableBeanJob) {
-                final ConfigurableBeanJob<?> configurableBeanJob = (ConfigurableBeanJob<?>) componentJob;
-                final Set<ConfiguredPropertyDescriptor> inputColumnProperties = configurableBeanJob.getDescriptor()
-                        .getConfiguredPropertiesForInput(true);
+            final Set<ConfiguredPropertyDescriptor> inputColumnProperties = componentJob.getDescriptor()
+                    .getConfiguredPropertiesForInput(true);
 
-                final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry
-                        .getValue();
+            final AbstractComponentBuilder<?, ?, ?> builder = (AbstractComponentBuilder<?, ?, ?>) entry.getValue();
 
-                for (ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
-                    final Object originalInputColumnValue = configurableBeanJob.getConfiguration().getProperty(
-                            inputColumnProperty);
-                    final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue,
-                            componentBuilders, sourceColumnFinder);
-                    builder.setConfiguredProperty(inputColumnProperty, newInputColumnValue);
-                }
+            for (ConfiguredPropertyDescriptor inputColumnProperty : inputColumnProperties) {
+                final Object originalInputColumnValue = componentJob.getConfiguration()
+                        .getProperty(inputColumnProperty);
+                final Object newInputColumnValue = findImportedInputColumns(originalInputColumnValue,
+                        componentBuilders, sourceColumnFinder);
+                builder.setConfiguredProperty(inputColumnProperty, newInputColumnValue);
             }
         }
     }

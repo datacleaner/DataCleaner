@@ -31,8 +31,6 @@ import org.datacleaner.util.IconUtils;
 /**
  * A menu folder used to group together similar descriptors, eg "coalesce"
  * transformers or "conversion" transformers.
- * 
- * @author Kasper Sørensen
  */
 public class DescriptorMenu extends JMenu implements Comparable<DescriptorMenu> {
 

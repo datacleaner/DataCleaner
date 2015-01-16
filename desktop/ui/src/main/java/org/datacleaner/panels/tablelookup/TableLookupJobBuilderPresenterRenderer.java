@@ -28,18 +28,18 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link TransformerJobBuilderPresenter} for
+ * Specialized {@link Renderer} for a {@link TransformerComponentBuilderPresenter} for
  * {@link TableLookupTransformer}.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class TableLookupJobBuilderPresenterRenderer implements
-        Renderer<TransformerJobBuilder<TableLookupTransformer>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerComponentBuilder<TableLookupTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,7 +51,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<TableLookupTransformer> tjb) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<TableLookupTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == TableLookupTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,7 +59,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<TableLookupTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<TableLookupTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

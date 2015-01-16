@@ -28,18 +28,18 @@ import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.FilterJobBuilderPresenter;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.FilterComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link FilterJobBuilderPresenter} for
+ * Specialized {@link Renderer} for a {@link FilterComponentBuilderPresenter} for
  * {@link EqualsFilter}.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class EqualsFilterJobBuilderPresenterRenderer implements
-        Renderer<FilterJobBuilder<EqualsFilter, ValidationCategory>, FilterJobBuilderPresenter> {
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
+public class EqualsFilterComponentBuilderPresenterRenderer implements
+        Renderer<FilterComponentBuilder<EqualsFilter, ValidationCategory>, FilterComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -48,7 +48,7 @@ public class EqualsFilterJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(FilterJobBuilder<EqualsFilter, ValidationCategory> fjb) {
+    public RendererPrecedence getPrecedence(FilterComponentBuilder<EqualsFilter, ValidationCategory> fjb) {
         if (fjb.getDescriptor().getComponentClass() == EqualsFilter.class) {
             return RendererPrecedence.HIGH;
         }
@@ -56,11 +56,11 @@ public class EqualsFilterJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public FilterJobBuilderPresenter render(FilterJobBuilder<EqualsFilter, ValidationCategory> fjb) {
+    public FilterComponentBuilderPresenter render(FilterComponentBuilder<EqualsFilter, ValidationCategory> fjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new EqualsFilterJobBuilderPresenter(fjb, windowContext, propertyWidgetFactory);
+        return new EqualsFilterComponentBuilderPresenter(fjb, windowContext, propertyWidgetFactory);
     }
 
 }

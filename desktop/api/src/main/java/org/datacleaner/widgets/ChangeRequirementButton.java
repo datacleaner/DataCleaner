@@ -35,12 +35,12 @@ import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.LazyFilterOutcome;
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,11 +57,11 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH,
             IconUtils.ICON_SIZE_MEDIUM);
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
+    private final ComponentBuilder _componentBuilder;
 
-    public ChangeRequirementButton(AbstractBeanJobBuilder<?, ?, ?> jobBuilder) {
+    public ChangeRequirementButton(ComponentBuilder componentBuilder) {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, filterIcon);
-        _jobBuilder = jobBuilder;
+        _componentBuilder = componentBuilder;
         addActionListener(this);
         updateText();
     }
@@ -70,7 +70,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         final JPopupMenu popup = new JPopupMenu();
 
-        final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(_jobBuilder) {
+        final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(_componentBuilder) {
             @Override
             protected void onRequirementChanged() {
                 updateText();
@@ -90,28 +90,28 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final ComponentRequirement requirement = _jobBuilder.getComponentRequirement();
+                final ComponentRequirement requirement = _componentBuilder.getComponentRequirement();
                 if (requirement == null) {
                     setText(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT);
                 } else if (AnyComponentRequirement.get().equals(requirement)) {
                     setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
                 } else {
                     if (requirement instanceof FilterOutcome) {
-                        FilterOutcome filterOutcome = (FilterOutcome) requirement;
-                        Enum<?> category = filterOutcome.getCategory();
+                        final FilterOutcome filterOutcome = (FilterOutcome) requirement;
+                        final Enum<?> category = filterOutcome.getCategory();
                         if (filterOutcome instanceof LazyFilterOutcome) {
                             // if possible, use the builder in stead of the job
-                            // (getting
-                            // the job may cause an exception if the builder is
-                            // not
-                            // correctly configured yet)
-                            FilterJobBuilder<?, ?> fjb = ((LazyFilterOutcome) filterOutcome).getFilterJobBuilder();
+                            // (getting the job may cause an exception if the
+                            // builder is
+                            // not correctly configured yet)
+                            final FilterComponentBuilder<?, ?> fjb = ((LazyFilterOutcome) filterOutcome)
+                                    .getFilterJobBuilder();
 
-                            String filterLabel = LabelUtils.getLabel(fjb);
+                            final String filterLabel = LabelUtils.getLabel(fjb);
 
                             setText(filterLabel + ": " + category);
                         } else {
-                            FilterJob filterJob = filterOutcome.getFilterJob();
+                            final FilterJob filterJob = filterOutcome.getFilterJob();
                             setText(LabelUtils.getLabel(filterJob) + ": " + category);
                         }
                     } else {
@@ -160,6 +160,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     @Override
     public String toString() {
-        return "ChangeRequirementButton[jobBuilder=" + LabelUtils.getLabel(_jobBuilder) + "]";
+        return "ChangeRequirementButton[jobBuilder=" + LabelUtils.getLabel(_componentBuilder) + "]";
     }
 }

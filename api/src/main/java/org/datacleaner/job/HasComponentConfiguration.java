@@ -17,16 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
-
-import org.datacleaner.api.Analyzer;
+package org.datacleaner.job;
 
 /**
- * {@link ComponentDescriptor} interface for {@link Analyzer}s.
- * 
- * @param <B> the type of {@link Analyzer}
+ * Abstract interface for objects that have a {@link ComponentConfiguration}.
  */
-public interface AnalyzerComponentDescriptor<B extends Analyzer<?>> extends HasAnalyzerResultComponentDescriptor<B>,
-        ComponentDescriptor<B> {
+public interface HasComponentConfiguration {
 
+    public ComponentConfiguration getConfiguration();
 }

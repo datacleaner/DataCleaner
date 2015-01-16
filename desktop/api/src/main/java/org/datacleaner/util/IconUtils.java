@@ -50,10 +50,9 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
-import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -255,23 +254,19 @@ public final class IconUtils {
             return "images/component-types/plugin.png";
         }
 
-        final String displayName;
 
-        if (descriptor instanceof BeanDescriptor) {
-            BeanDescriptor<?> beanDescriptor = (BeanDescriptor<?>) descriptor;
-            Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
-            displayName = beanDescriptor.getDisplayName().toLowerCase();
-            if (categories.contains(new WriteDataCategory())) {
-                return "images/component-types/type_output_writer.png";
-            }
-        } else {
-            displayName = "";
+   final     ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
+   final     Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+        if (categories.contains(new WriteDataCategory())) {
+            return "images/component-types/type_output_writer.png";
         }
 
+        final String displayName = beanDescriptor.getDisplayName().toLowerCase();
+
         String imagePath;
-        if (descriptor instanceof TransformerBeanDescriptor<?>) {
+        if (descriptor instanceof TransformerDescriptor<?>) {
             imagePath = TRANSFORMER_IMAGEPATH;
-        } else if (descriptor instanceof FilterBeanDescriptor<?, ?>) {
+        } else if (descriptor instanceof FilterDescriptor<?, ?>) {
             imagePath = FILTER_IMAGEPATH;
         } else {
             imagePath = ANALYZER_IMAGEPATH;

@@ -38,7 +38,7 @@ import javax.swing.tree.TreePath;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
@@ -114,7 +114,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
                         _treePanel.removeAll();
 
                         Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore)
-                                .with(AnalyzerJobBuilder.class, null).createInjector();
+                                .with(AnalyzerComponentBuilder.class, null).createInjector();
 
                         final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
                         schemaTree.addMouseListener(new MouseAdapter() {

@@ -33,7 +33,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
@@ -47,8 +47,8 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 
 	@Inject
 	public MultipleCharPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+		super(componentBuilder, propertyDescriptor);
 
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));

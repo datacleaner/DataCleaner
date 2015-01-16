@@ -30,7 +30,7 @@ import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractComponentDescriptor<F> implements FilterComponentDescriptor<F, C> {
+        AbstractComponentDescriptor<F> implements FilterDescriptor<F, C> {
 
     private static final long serialVersionUID = 1L;
 

@@ -33,7 +33,7 @@ import javax.swing.JPopupMenu;
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.components.categories.WriteDataCategory;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.DeprecatedComponentPredicate;
 import org.datacleaner.util.DisplayNameComparator;
@@ -50,15 +50,15 @@ public abstract class DescriptorMenuBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptorMenuBuilder.class);
 
-    private final List<? extends BeanDescriptor<?>> _descriptors;
+    private final List<? extends ComponentDescriptor<?>> _descriptors;
     private final boolean _buildSubmenus;
 
-    public DescriptorMenuBuilder(Collection<? extends BeanDescriptor<?>> descriptors) {
+    public DescriptorMenuBuilder(Collection<? extends ComponentDescriptor<?>> descriptors) {
         this(descriptors, true);
     }
 
-    public DescriptorMenuBuilder(Collection<? extends BeanDescriptor<?>> descriptors, boolean buildSubmenus) {
-        final Collection<? extends BeanDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
+    public DescriptorMenuBuilder(Collection<? extends ComponentDescriptor<?>> descriptors, boolean buildSubmenus) {
+        final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
                 new DeprecatedComponentPredicate());
         _descriptors = CollectionUtils2.sorted(filteredDescriptors, new DisplayNameComparator());
         _buildSubmenus = buildSubmenus;
@@ -74,7 +74,7 @@ public abstract class DescriptorMenuBuilder {
 
     private void initialize(final JComponent outerMenu) {
         if (!_buildSubmenus) {
-            for (BeanDescriptor<?> descriptor : _descriptors) {
+            for (ComponentDescriptor<?> descriptor : _descriptors) {
                 final JMenuItem menuItem = createMenuItem(descriptor);
                 outerMenu.add(menuItem);
             }
@@ -85,7 +85,7 @@ public abstract class DescriptorMenuBuilder {
 
         // build sub menus
         {
-            for (BeanDescriptor<?> descriptor : _descriptors) {
+            for (ComponentDescriptor<?> descriptor : _descriptors) {
                 final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
                 for (ComponentCategory componentCategory : componentCategories) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
@@ -119,7 +119,7 @@ public abstract class DescriptorMenuBuilder {
 
         // place items that are not in any submenus
         {
-            for (final BeanDescriptor<?> descriptor : _descriptors) {
+            for (final ComponentDescriptor<?> descriptor : _descriptors) {
                 boolean placedInSubmenu = false;
                 final Class<?> componentClass = descriptor.getComponentClass();
                 JMenuItem menuItem = createMenuItem(descriptor);
@@ -150,6 +150,6 @@ public abstract class DescriptorMenuBuilder {
         }
     }
 
-    protected abstract JMenuItem createMenuItem(BeanDescriptor<?> descriptor);
+    protected abstract JMenuItem createMenuItem(ComponentDescriptor<?> descriptor);
 
 }

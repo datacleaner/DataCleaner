@@ -75,10 +75,10 @@ public class AnalysisJobBuilderImportHelperTest extends TestCase {
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf, originalJob)) {
 
-            AnalyzerComponentBuilder<?> analyzer = jobBuilder.getAnalyzerJobBuilders().get(0);
+            AnalyzerComponentBuilder<?> analyzer = jobBuilder.getAnalyzerComponentBuilders().get(0);
             assertEquals("foo", analyzer.getInputColumns().get(0).getName());
 
-            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerJobBuilders();
+            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
             assertEquals(2, transformers.size());
 
             TransformerComponentBuilder<?> transformer1 = transformers.get(0);
@@ -124,7 +124,7 @@ public class AnalysisJobBuilderImportHelperTest extends TestCase {
         }
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf, originalJob)) {
-            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerJobBuilders();
+            List<TransformerComponentBuilder<?>> transformers = jobBuilder.getTransformerComponentBuilders();
             assertEquals(1, transformers.size());
 
             List<MutableInputColumn<?>> outputColumns = transformers.get(0).getOutputColumns();

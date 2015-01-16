@@ -21,16 +21,16 @@ package org.datacleaner.widgets.properties;
 
 import javax.swing.DefaultComboBoxModel;
 
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
-import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.widgets.DCComboBox;
+import org.datacleaner.widgets.DCComboBox.Listener;
+import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 
 /**
  * Alternative String property widget, specifically built for components that
@@ -41,9 +41,9 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
     private final DCComboBox<Table> _comboBox;
     private final MutableRef<Schema> _schemaRef;
 
-    public SingleTableNamePropertyWidget(final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public SingleTableNamePropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(beanJobBuilder, propertyDescriptor);
+        super(componentBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<Table>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);

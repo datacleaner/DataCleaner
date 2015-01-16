@@ -19,18 +19,18 @@
  */
 package org.datacleaner.panels;
 
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 
 /**
- * Interface for presenter widgets that present {@link FilterJobBuilder}
+ * Interface for presenter widgets that present {@link AnalyzerComponentBuilder}
  * objects.
  */
-public interface FilterJobBuilderPresenter extends ComponentJobBuilderPresenter {
+public interface AnalyzerComponentBuilderPresenter extends ComponentBuilderPresenter {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public FilterJobBuilder<?, ?> getJobBuilder();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AnalyzerComponentBuilder<?> getComponentBuilder();
 
 }

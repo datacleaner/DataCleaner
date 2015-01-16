@@ -17,20 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.panels;
+package org.datacleaner.descriptors;
 
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.api.Analyzer;
 
 /**
- * Interface for presenter widgets that present
- * {@link AnalyzerJobBuilder} objects.
+ * {@link ComponentDescriptor} interface for {@link Analyzer}s.
+ * 
+ * @param <B> the type of {@link Analyzer}
  */
-public interface AnalyzerJobBuilderPresenter extends ComponentJobBuilderPresenter {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AnalyzerJobBuilder<?> getJobBuilder();
+public interface AnalyzerDescriptor<B extends Analyzer<?>> extends HasAnalyzerResultComponentDescriptor<B>,
+        ComponentDescriptor<B> {
 
 }

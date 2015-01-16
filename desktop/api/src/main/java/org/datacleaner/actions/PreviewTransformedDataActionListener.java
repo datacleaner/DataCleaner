@@ -33,13 +33,13 @@ import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.windows.DataSetWindow;
@@ -56,25 +56,25 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
     public static final int DEFAULT_PREVIEW_ROWS = 200;
 
-    private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
-    private final TransformerJobBuilder<?> _transformerJobBuilder;
+    private final TransformerComponentBuilderPresenter _transformerJobBuilderPresenter;
+    private final TransformerComponentBuilder<?> _transformerJobBuilder;
     private final WindowContext _windowContext;
     private final int _previewRows;
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerJobBuilder<?> transformerJobBuilder) {
+            TransformerComponentBuilder<?> transformerJobBuilder) {
         this(windowContext, null, transformerJobBuilder);
     }
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerJobBuilderPresenter transformerJobBuilderPresenter,
-            TransformerJobBuilder<?> transformerJobBuilder) {
+            TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
+            TransformerComponentBuilder<?> transformerJobBuilder) {
         this(windowContext, transformerJobBuilderPresenter, transformerJobBuilder, DEFAULT_PREVIEW_ROWS);
     }
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
-            TransformerJobBuilderPresenter transformerJobBuilderPresenter,
-            TransformerJobBuilder<?> transformerJobBuilder, int previewRows) {
+            TransformerComponentBuilderPresenter transformerJobBuilderPresenter,
+            TransformerComponentBuilder<?> transformerJobBuilder, int previewRows) {
         _windowContext = windowContext;
         _transformerJobBuilderPresenter = transformerJobBuilderPresenter;
         _transformerJobBuilder = transformerJobBuilder;
@@ -95,13 +95,13 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
         final AnalysisJobBuilder ajb = copy(_transformerJobBuilder.getAnalysisJobBuilder());
 
-        TransformerJobBuilder<?> tjb = findTransformerJobBuilder(ajb, _transformerJobBuilder);
+        TransformerComponentBuilder<?> tjb = findTransformerComponentBuilder(ajb, _transformerJobBuilder);
 
         // remove all analyzers, except the dummy
         ajb.removeAllAnalyzers();
 
         // add the result collector (a dummy analyzer)
-        final AnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
+        final AnalyzerComponentBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
                 .addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
                 .addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
 
@@ -110,7 +110,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         }
 
         // add a max rows filter
-        final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
         maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
@@ -160,11 +160,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         return tableModel;
     }
 
-    private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
-            TransformerJobBuilder<?> transformerJobBuilder) {
+    private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb,
+            TransformerComponentBuilder<?> transformerJobBuilder) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
-        final int transformerIndex = analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
-        return ajb.getTransformerJobBuilders().get(transformerIndex);
+        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(_transformerJobBuilder);
+        return ajb.getTransformerComponentBuilders().get(transformerIndex);
     }
 
     private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {

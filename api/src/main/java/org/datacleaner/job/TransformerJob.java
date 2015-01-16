@@ -20,12 +20,15 @@
 package org.datacleaner.job;
 
 import org.datacleaner.api.Transformer;
-import org.datacleaner.descriptors.TransformerComponentDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
  * {@link ComponentJob} subinterface for {@link Transformer}s.
  * 
  * @see Transformer
  */
-public interface TransformerJob extends ConfigurableBeanJob<TransformerComponentDescriptor<?>>, InputColumnSourceJob {
+public interface TransformerJob extends ComponentJob, InputColumnSourceJob {
+    
+    @Override
+    public TransformerDescriptor<?> getDescriptor();
 }

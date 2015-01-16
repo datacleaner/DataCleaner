@@ -30,8 +30,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 
 /**
@@ -40,15 +40,15 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction implements
         ActionListener {
 
-    private final TransformerJobBuilder<?> _transformerJobBuilder;
+    private final TransformerComponentBuilder<?> _transformerJobBuilder;
 
-    public DisplayOutputWritersForTransformedDataActionListener(TransformerJobBuilder<?> transformerJobBuilder) {
+    public DisplayOutputWritersForTransformedDataActionListener(TransformerComponentBuilder<?> transformerJobBuilder) {
         super(transformerJobBuilder.getAnalysisJobBuilder());
         _transformerJobBuilder = transformerJobBuilder;
     }
 
     @Override
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> analyzerJobBuilder) {
         Analyzer<?> analyzer = analyzerJobBuilder.getComponentInstance();
         if (analyzer instanceof PrecedingComponentConsumer) {
             LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()

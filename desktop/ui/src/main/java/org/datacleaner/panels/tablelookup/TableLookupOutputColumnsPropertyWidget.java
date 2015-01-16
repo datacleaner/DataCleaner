@@ -30,7 +30,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -57,9 +57,9 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 	private final MutableRef<Table> _tableRef;
 	private final DCPanel _comboBoxPanel;
 
-	public TableLookupOutputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public TableLookupOutputColumnsPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(beanJobBuilder, propertyDescriptor);
+		super(componentBuilder, propertyDescriptor);
 		_comboBoxes = new ArrayList<SourceColumnComboBox>();
 
 		_tableRef = new MutableRef<Table>();

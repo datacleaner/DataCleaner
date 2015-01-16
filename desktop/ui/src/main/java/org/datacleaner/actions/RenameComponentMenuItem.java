@@ -21,7 +21,7 @@ package org.datacleaner.actions;
 
 import javax.swing.JMenuItem;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
@@ -29,7 +29,7 @@ public class RenameComponentMenuItem extends JMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    public RenameComponentMenuItem(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+    public RenameComponentMenuItem(ComponentBuilder componentBuilder) {
         super("Rename component", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL));
         addActionListener(new RenameComponentActionListener(componentBuilder) {
             @Override

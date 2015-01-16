@@ -59,17 +59,16 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AbstractBeanWithInputColumnsBuilder;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
 import org.datacleaner.job.jaxb.ColumnType;
@@ -488,8 +487,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
             final List<Object> transformersAndFilters = transformation.getTransformerOrFilter();
 
-            final Map<TransformerType, TransformerJobBuilder<?>> transformerJobBuilders = new HashMap<TransformerType, TransformerJobBuilder<?>>();
-            final Map<FilterType, FilterJobBuilder<?, ?>> filterJobBuilders = new HashMap<FilterType, FilterJobBuilder<?, ?>>();
+            final Map<TransformerType, TransformerComponentBuilder<?>> transformerJobBuilders = new HashMap<>();
+            final Map<FilterType, FilterComponentBuilder<?, ?>> filterJobBuilders = new HashMap<>();
 
             // iterate to initialize transformers
             for (Object o : transformersAndFilters) {
@@ -499,12 +498,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (StringUtils.isNullOrEmpty(ref)) {
                         throw new IllegalStateException("Transformer descriptor ref cannot be null");
                     }
-                    TransformerBeanDescriptor<?> transformerBeanDescriptor = _configuration.getDescriptorProvider()
-                            .getTransformerBeanDescriptorByDisplayName(ref);
+                    final TransformerDescriptor<?> transformerBeanDescriptor = _configuration
+                            .getDescriptorProvider().getTransformerDescriptorByDisplayName(ref);
                     if (transformerBeanDescriptor == null) {
                         throw new NoSuchComponentException(Transformer.class, ref);
                     }
-                    TransformerJobBuilder<?> transformerJobBuilder = analysisJobBuilder
+                    final TransformerComponentBuilder<?> transformerJobBuilder = analysisJobBuilder
                             .addTransformer(transformerBeanDescriptor);
 
                     transformerJobBuilder.setName(transformer.getName());
@@ -541,7 +540,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
                     if (configurable) {
                         progress = true;
-                        TransformerJobBuilder<?> transformerJobBuilder = transformerJobBuilders
+                        TransformerComponentBuilder<?> transformerJobBuilder = transformerJobBuilders
                                 .get(unconfiguredTransformerKey);
 
                         applyInputColumns(input, inputColumns, transformerJobBuilder);
@@ -628,12 +627,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (StringUtils.isNullOrEmpty(ref)) {
                         throw new IllegalStateException("Filter descriptor ref cannot be null");
                     }
-                    FilterBeanDescriptor<?, ?> filterBeanDescriptor = _configuration.getDescriptorProvider()
-                            .getFilterBeanDescriptorByDisplayName(ref);
+                    FilterDescriptor<?, ?> filterBeanDescriptor = _configuration.getDescriptorProvider()
+                            .getFilterDescriptorByDisplayName(ref);
                     if (filterBeanDescriptor == null) {
                         throw new NoSuchComponentException(Filter.class, ref);
                     }
-                    FilterJobBuilder<?, ?> filterJobBuilder = analysisJobBuilder.addFilter(filterBeanDescriptor);
+                    FilterComponentBuilder<?, ?> filterJobBuilder = analysisJobBuilder.addFilter(filterBeanDescriptor);
 
                     filterJobBuilder.setName(filter.getName());
 
@@ -670,14 +669,14 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 if (o instanceof TransformerType) {
                     ref = ((TransformerType) o).getRequires();
                     if (ref != null) {
-                        final TransformerJobBuilder<?> builder = transformerJobBuilders.get(o);
+                        final TransformerComponentBuilder<?> builder = transformerJobBuilders.get(o);
                         final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
                         builder.setComponentRequirement(requirement);
                     }
                 } else if (o instanceof FilterType) {
                     ref = ((FilterType) o).getRequires();
                     if (ref != null) {
-                        final FilterJobBuilder<?, ?> builder = filterJobBuilders.get(o);
+                        final FilterComponentBuilder<?, ?> builder = filterJobBuilders.get(o);
                         final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
                         builder.setComponentRequirement(requirement);
                     }
@@ -696,15 +695,16 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 throw new IllegalStateException("Analyzer descriptor ref cannot be null");
             }
 
-            AnalyzerBeanDescriptor<?> descriptor = _configuration.getDescriptorProvider()
-                    .getAnalyzerBeanDescriptorByDisplayName(ref);
+            AnalyzerDescriptor<?> descriptor = _configuration.getDescriptorProvider()
+                    .getAnalyzerDescriptorByDisplayName(ref);
 
             if (descriptor == null) {
                 throw new NoSuchComponentException(Analyzer.class, ref);
             }
 
             Class<? extends Analyzer<?>> beanClass = descriptor.getComponentClass();
-            AnalyzerJobBuilder<? extends Analyzer<?>> analyzerJobBuilder = analysisJobBuilder.addAnalyzer(beanClass);
+            AnalyzerComponentBuilder<? extends Analyzer<?>> analyzerJobBuilder = analysisJobBuilder
+                    .addAnalyzer(beanClass);
             analyzerJobBuilder.setName(analyzerType.getName());
 
             List<InputType> input = analyzerType.getInput();
@@ -765,7 +765,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private void applyInputColumns(List<InputType> input, Map<String, InputColumn<?>> inputColumns,
-            AbstractBeanWithInputColumnsBuilder<?, ?, ?> componentJobBuilder) {
+            ComponentBuilder componentBuilder) {
         // build a map of inputs first so that we can set the
         // input in one go
         final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = MultimapBuilder.hashKeys()
@@ -781,11 +781,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 inputColumn = inputColumns.get(ref);
             }
             if (StringUtils.isNullOrEmpty(name)) {
-                ConfiguredPropertyDescriptor propertyDescriptor = componentJobBuilder
+                ConfiguredPropertyDescriptor propertyDescriptor = componentBuilder
                         .getDefaultConfiguredPropertyForInput();
                 inputMap.put(propertyDescriptor, inputColumn);
             } else {
-                ConfiguredPropertyDescriptor propertyDescriptor = componentJobBuilder.getDescriptor()
+                ConfiguredPropertyDescriptor propertyDescriptor = componentBuilder.getDescriptor()
                         .getConfiguredProperty(name);
                 inputMap.put(propertyDescriptor, inputColumn);
             }
@@ -794,7 +794,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final Set<ConfiguredPropertyDescriptor> keys = inputMap.keySet();
         for (ConfiguredPropertyDescriptor propertyDescriptor : keys) {
             List<InputColumn<?>> inputColumnsForProperty = inputMap.get(propertyDescriptor);
-            componentJobBuilder.addInputColumns(inputColumnsForProperty, propertyDescriptor);
+            componentBuilder.addInputColumns(inputColumnsForProperty, propertyDescriptor);
         }
     }
 
@@ -826,12 +826,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
         inputColumns.put(id, inputColumn);
     }
 
-    private void applyProperties(AbstractBeanJobBuilder<? extends BeanDescriptor<?>, ?, ?> builder,
-            ConfiguredPropertiesType configuredPropertiesType, MetadataProperties metadataPropertiesType,
-            StringConverter stringConverter, Map<String, String> variables) {
+    private void applyProperties(final ComponentBuilder builder,
+            final ConfiguredPropertiesType configuredPropertiesType, final MetadataProperties metadataPropertiesType,
+            final StringConverter stringConverter, final Map<String, String> variables) {
         if (configuredPropertiesType != null) {
-            List<Property> properties = configuredPropertiesType.getProperty();
-            BeanDescriptor<?> descriptor = builder.getDescriptor();
+            final List<Property> properties = configuredPropertiesType.getProperty();
+            final ComponentDescriptor<?> descriptor = builder.getDescriptor();
             for (Property property : properties) {
                 final String name = property.getName();
                 final ConfiguredPropertyDescriptor configuredProperty = descriptor.getConfiguredProperty(name);

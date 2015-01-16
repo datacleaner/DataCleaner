@@ -24,7 +24,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer> extends AbstractComponentDescriptor<T>
-        implements TransformerComponentDescriptor<T> {
+        implements TransformerDescriptor<T> {
 
     private static final long serialVersionUID = 1L;
 

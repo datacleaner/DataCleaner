@@ -22,19 +22,15 @@ package org.datacleaner.panels;
 import java.awt.Image;
 
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
-import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialization of {@link AbstractJobBuilderPanel} for {@link Analyzer}s.
+ * Specialization of {@link AbstractComponentBuilderPanel} for {@link Analyzer}s.
  */
-public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements AnalyzerJobBuilderPresenter,
+public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel implements AnalyzerComponentBuilderPresenter,
         AnalyzerChangeListener {
 
     private static final long serialVersionUID = 1L;
@@ -42,31 +38,18 @@ public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements 
     private static final ImageManager imageManager = ImageManager.get();
     private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/analyzer-tab-background.png");
 
-    private final AnalyzerJobBuilder<?> _analyzerJobBuilder;
+    private final AnalyzerComponentBuilder<?> _analyzerJobBuilder;
 
-    public AnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
+    public AnalyzerComponentBuilderPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
         this(WATERMARK_IMAGE, 95, 95, analyzerJobBuilder, propertyWidgetFactory);
     }
 
-    public AnalyzerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, AnalyzerJobBuilder<?> analyzerJobBuilder,
+    public AnalyzerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+            int watermarkVerticalPosition, AnalyzerComponentBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, analyzerJobBuilder,
                 propertyWidgetFactory);
         _analyzerJobBuilder = analyzerJobBuilder;
-    }
-
-    @Override
-    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor) {
-        if (_analyzerJobBuilder.isMultipleJobsSupported()) {
-            if (_analyzerJobBuilder.isMultipleJobsDeterminedBy(propertyDescriptor)) {
-                MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(
-                        beanJobBuilder, propertyDescriptor);
-                return propertyWidget;
-            }
-        }
-        return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
     }
 
     @Override
@@ -82,24 +65,24 @@ public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements 
     }
 
     @Override
-    public AnalyzerJobBuilder<?> getJobBuilder() {
+    public AnalyzerComponentBuilder<?> getComponentBuilder() {
         return _analyzerJobBuilder;
     }
 
     @Override
-    public void onAdd(AnalyzerJobBuilder<?> ajb) {
+    public void onAdd(AnalyzerComponentBuilder<?> ajb) {
     }
 
     @Override
-    public void onConfigurationChanged(AnalyzerJobBuilder<?> ajb) {
+    public void onConfigurationChanged(AnalyzerComponentBuilder<?> ajb) {
         onConfigurationChanged();
     }
 
     @Override
-    public void onRemove(AnalyzerJobBuilder<?> ajb) {
+    public void onRemove(AnalyzerComponentBuilder<?> ajb) {
     }
 
     @Override
-    public void onRequirementChanged(AnalyzerJobBuilder<?> ajb) {
+    public void onRequirementChanged(AnalyzerComponentBuilder<?> ajb) {
     }
 }

@@ -29,7 +29,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.beans.datastructures.SelectFromMapTransformer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
@@ -56,8 +56,8 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 
     @SuppressWarnings("rawtypes")
     public KeysAndTypesPropertyWidget(ConfiguredPropertyDescriptor keysProperty,
-            ConfiguredPropertyDescriptor typesProperty, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(keysProperty, beanJobBuilder);
+            ConfiguredPropertyDescriptor typesProperty, ComponentBuilder componentBuilder) {
+        super(keysProperty, componentBuilder);
         _comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
         _typesProperty = typesProperty;
         _typesPropertyWidget = new MinimalPropertyWidget<Class[]>(getComponentBuilder(), _typesProperty) {
@@ -118,7 +118,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
         };
 
         final String[] currentKeysValue = getCurrentValue();
-        final Class[] currentTypesValue = (Class[]) beanJobBuilder.getConfiguredProperty(typesProperty);
+        final Class[] currentTypesValue = (Class[]) componentBuilder.getConfiguredProperty(typesProperty);
         if (currentTypesValue != null) {
             // first create textfields, then set keys value
 

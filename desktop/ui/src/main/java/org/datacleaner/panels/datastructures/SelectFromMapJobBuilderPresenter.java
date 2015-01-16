@@ -25,33 +25,33 @@ import java.util.Map;
 import org.datacleaner.beans.datastructures.SelectFromMapTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Spectialized {@link TransformerJobBuilderPresenter} for the
+ * Spectialized {@link TransformerComponentBuilderPresenter} for the
  * {@link SelectFromMapTransformer}.
  */
-final class SelectFromMapJobBuilderPresenter extends TransformerJobBuilderPanel {
+final class SelectFromMapJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 	
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-	public SelectFromMapJobBuilderPresenter(TransformerJobBuilder<SelectFromMapTransformer> tjb,
+	public SelectFromMapJobBuilderPresenter(TransformerComponentBuilder<SelectFromMapTransformer> tjb,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
 			AnalyzerBeansConfiguration configuration) {
 		super(tjb, windowContext, propertyWidgetFactory, configuration);
 		
 		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 		
-		final TransformerBeanDescriptor<SelectFromMapTransformer> descriptor = tjb.getDescriptor();
+		final TransformerDescriptor<SelectFromMapTransformer> descriptor = tjb.getDescriptor();
 		final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
 		final ConfiguredPropertyDescriptor typesProperty = descriptor.getConfiguredProperty("Types");
 		
@@ -61,11 +61,11 @@ final class SelectFromMapJobBuilderPresenter extends TransformerJobBuilderPanel 
 	}
 
 	@Override
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
 			return _overriddenPropertyWidgets.get(propertyDescriptor);
 		}
-		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		return super.createPropertyWidget(componentBuilder, propertyDescriptor);
 	}
 }

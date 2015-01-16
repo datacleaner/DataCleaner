@@ -33,7 +33,7 @@ import javax.swing.JCheckBox;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCCheckBox.Listener;
@@ -84,9 +84,9 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	private final DCPanel _buttonPanel;
 	private final DCCheckBox<E> _notAvailableCheckBox;
 
-	public AbstractMultipleCheckboxesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public AbstractMultipleCheckboxesPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor, Class<E> itemClass) {
-		super(beanJobBuilder, propertyDescriptor);
+		super(componentBuilder, propertyDescriptor);
 		_itemClass = itemClass;
 		_checkBoxes = new LinkedHashMap<String, DCCheckBox<E>>();
 		setLayout(new VerticalLayout(2));

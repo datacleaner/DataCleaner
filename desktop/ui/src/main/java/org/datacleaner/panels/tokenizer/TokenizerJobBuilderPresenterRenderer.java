@@ -28,20 +28,20 @@ import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link TransformerJobBuilderPresenter} for
+ * Specialized {@link Renderer} for a {@link TransformerComponentBuilderPresenter} for
  * {@link TokenizerTransformer}.
  * 
  * @author Kasper Sørensen
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class TokenizerJobBuilderPresenterRenderer implements
-        Renderer<TransformerJobBuilder<TokenizerTransformer>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerComponentBuilder<TokenizerTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -53,7 +53,7 @@ public class TokenizerJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<TokenizerTransformer> tjb) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<TokenizerTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == TokenizerTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -61,7 +61,7 @@ public class TokenizerJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<TokenizerTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<TokenizerTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

@@ -27,7 +27,7 @@ import javax.inject.Provider;
 import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -43,10 +43,10 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
-	public MultipleStringPatternPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleStringPatternPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
 			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(beanJobBuilder, propertyDescriptor, StringPattern.class);
+		super(componentBuilder, propertyDescriptor, StringPattern.class);
 		_referenceDataCatalog = referenceDataCatalog;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 	}

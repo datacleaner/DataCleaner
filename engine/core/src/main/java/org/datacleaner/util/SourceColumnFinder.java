@@ -82,9 +82,9 @@ public class SourceColumnFinder {
 
     public void addSources(AnalysisJobBuilder job) {
         addSources(new SourceColumns(job.getSourceColumns()));
-        addSources(job.getFilterJobBuilders());
-        addSources(job.getTransformerJobBuilders());
-        addSources(job.getAnalyzerJobBuilders());
+        addSources(job.getFilterComponentBuilders());
+        addSources(job.getTransformerComponentBuilders());
+        addSources(job.getAnalyzerComponentBuilders());
     }
 
     public void addSources(AnalysisJob job) {

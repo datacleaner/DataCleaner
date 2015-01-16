@@ -32,7 +32,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.Task;
@@ -67,7 +67,7 @@ public class RowProcessingMetricsImplTest extends TestCase {
     public void testGetExpectedRowCountMaxRows() throws Exception {
         AnalysisJobBuilder ajb = createAnalysisJobBuilder();
 
-        FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter = ajb.addFilter(MaxRowsFilter.class);
+        FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filter = ajb.addFilter(MaxRowsFilter.class);
         filter.getComponentInstance().setMaxRows(10);
         ajb.setDefaultRequirement(filter.getFilterOutcome(MaxRowsFilter.Category.VALID));
 
@@ -79,7 +79,7 @@ public class RowProcessingMetricsImplTest extends TestCase {
     public void testGetExpectedRowCountEquals() throws Exception {
         AnalysisJobBuilder ajb = createAnalysisJobBuilder();
 
-        FilterJobBuilder<EqualsFilter, ValidationCategory> filter = ajb.addFilter(EqualsFilter.class);
+        FilterComponentBuilder<EqualsFilter, ValidationCategory> filter = ajb.addFilter(EqualsFilter.class);
         filter.addInputColumns(ajb.getSourceColumns());
         filter.getComponentInstance().setValues(new String[] { "1002", "1165" });
 
@@ -94,19 +94,19 @@ public class RowProcessingMetricsImplTest extends TestCase {
         AnalysisJobBuilder ajb = createAnalysisJobBuilder();
 
         // there's 21 records that are not 1056 or 1165
-        FilterJobBuilder<EqualsFilter, ValidationCategory> filter1 = ajb.addFilter(EqualsFilter.class);
+        FilterComponentBuilder<EqualsFilter, ValidationCategory> filter1 = ajb.addFilter(EqualsFilter.class);
         filter1.addInputColumns(ajb.getSourceColumns());
         filter1.getComponentInstance().setValues(new String[] { "1056", "1165" });
 
         // there's 1 record which has a reportsto value of null.
-        FilterJobBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> filter2 = ajb
+        FilterComponentBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> filter2 = ajb
                 .addFilter(NullCheckFilter.class);
         ajb.addSourceColumns("PUBLIC.EMPLOYEES.REPORTSTO");
         filter2.addInputColumn(ajb.getSourceColumnByName("reportsto"));
         filter2.getComponentInstance().setConsiderEmptyStringAsNull(true);
         filter2.setRequirement(filter1.getFilterOutcome(ValidationCategory.INVALID));
 
-        ajb.getAnalyzerJobBuilders().get(0)
+        ajb.getAnalyzerComponentBuilders().get(0)
                 .setRequirement(filter2.getFilterOutcome(NullCheckFilter.NullCheckCategory.NOT_NULL));
 
         job = ajb.toAnalysisJob();

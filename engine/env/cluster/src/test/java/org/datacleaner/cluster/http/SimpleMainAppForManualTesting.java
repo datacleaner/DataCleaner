@@ -37,7 +37,7 @@ import org.datacleaner.cluster.DistributedAnalysisRunner;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 
 public class SimpleMainAppForManualTesting {
@@ -71,7 +71,7 @@ public class SimpleMainAppForManualTesting {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CUSTOMERNAME", "CUSTOMERS.CONTACTFIRSTNAME",
                 "CUSTOMERS.CONTACTLASTNAME");
 
-        AnalyzerJobBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(jobBuilder.getSourceColumns());
         completeness.setConfiguredProperty("Conditions", new CompletenessAnalyzer.Condition[] {
                 CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL, CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,

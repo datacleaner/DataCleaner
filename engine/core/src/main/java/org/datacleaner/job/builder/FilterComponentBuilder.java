@@ -26,7 +26,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.datacleaner.api.Filter;
-import org.datacleaner.descriptors.FilterComponentDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterJob;
@@ -44,7 +44,7 @@ import org.datacleaner.job.ImmutableFilterJob;
  *            the {@link Filter}s category enum
  */
 public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>> extends
-        AbstractComponentBuilder<FilterComponentDescriptor<F, C>, F, FilterComponentBuilder<F, C>> implements HasFilterOutcomes {
+        AbstractComponentBuilder<FilterDescriptor<F, C>, F, FilterComponentBuilder<F, C>> implements HasFilterOutcomes {
 
     // We keep a cached version of the resulting filter job because of
     // references coming from other objects, particular LazyFilterOutcome.
@@ -53,7 +53,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     private final List<FilterChangeListener> _localChangeListeners;
 
-    public FilterComponentBuilder(AnalysisJobBuilder analysisJobBuilder, FilterComponentDescriptor<F, C> descriptor) {
+    public FilterComponentBuilder(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<F, C> descriptor) {
         super(analysisJobBuilder, descriptor, FilterComponentBuilder.class);
         _outcomes = new EnumMap<C, FilterOutcome>(descriptor.getOutcomeCategoryEnum());
         EnumSet<C> categories = descriptor.getOutcomeCategories();

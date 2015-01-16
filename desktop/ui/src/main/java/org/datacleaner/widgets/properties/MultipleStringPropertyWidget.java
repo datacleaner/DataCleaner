@@ -35,7 +35,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
@@ -55,8 +55,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 
     @Inject
     public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
         _textFieldDecorations = new IdentityHashMap<JComponent, JXTextField>();
 

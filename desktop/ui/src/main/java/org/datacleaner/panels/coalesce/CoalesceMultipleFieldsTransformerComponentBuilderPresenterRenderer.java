@@ -28,18 +28,18 @@ import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link TransformerJobBuilder} for
+ * Specialized {@link Renderer} for a {@link TransformerComponentBuilder} for
  * {@link CoalesceMultipleFieldsTransformer}.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class CoalesceMultipleFieldsTransformerJobBuilderPresenterRenderer implements
-        Renderer<TransformerJobBuilder<CoalesceMultipleFieldsTransformer>, TransformerJobBuilderPresenter> {
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
+public class CoalesceMultipleFieldsTransformerComponentBuilderPresenterRenderer implements
+        Renderer<TransformerComponentBuilder<CoalesceMultipleFieldsTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -51,7 +51,7 @@ public class CoalesceMultipleFieldsTransformerJobBuilderPresenterRenderer implem
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<CoalesceMultipleFieldsTransformer> tjb) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == CoalesceMultipleFieldsTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -59,11 +59,11 @@ public class CoalesceMultipleFieldsTransformerJobBuilderPresenterRenderer implem
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<CoalesceMultipleFieldsTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new CoalesceMultipleFieldsTransformerJobBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
+        return new CoalesceMultipleFieldsTransformerComponentBuilderPresenter(tjb, propertyWidgetFactory, windowContext,
                 configuration);
     }
 

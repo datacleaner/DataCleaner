@@ -20,7 +20,6 @@
 package org.datacleaner.guice;
 
 import org.datacleaner.api.Component;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.properties.PropertyWidgetFactoryImpl;
@@ -49,10 +48,5 @@ final class ComponentBuilderModule extends AbstractModule {
     @Provides
     public ComponentBuilder getComponentBuilder() {
         return _componentBuilder;
-    }
-
-    @Provides
-    public AbstractBeanJobBuilder<?, ?, ?> getAbstractBeanJobBuilder() {
-        return (AbstractBeanJobBuilder<?, ?, ?>) _componentBuilder;
     }
 }

@@ -34,7 +34,7 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
@@ -55,7 +55,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 
 		final MutableInputColumn<?> mapColumn;
 		{
-			TransformerJobBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
+			TransformerComponentBuilder<BuildMapTransformer> buildMap = ajb.addTransformer(BuildMapTransformer.class);
 			buildMap.addInputColumns(ajb.getSourceColumns());
 			BuildMapTransformer bean = buildMap.getComponentInstance();
 			bean.setKeys(new String[] { "empno", "email_address" });
@@ -71,7 +71,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 
 		final MutableInputColumn<?> listColumn;
 		{
-			TransformerJobBuilder<BuildListTransformer> buildList = ajb.addTransformer(BuildListTransformer.class);
+			TransformerComponentBuilder<BuildListTransformer> buildList = ajb.addTransformer(BuildListTransformer.class);
 			buildList.addInputColumn(ajb.getSourceColumnByName("firstname"));
 			buildList.addInputColumn(ajb.getSourceColumnByName("lastname"));
 			BuildListTransformer bean = buildList.getComponentInstance();
@@ -89,7 +89,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 
 		final MutableInputColumn<?> elementColumn;
 		{
-			TransformerJobBuilder<ReadFromListTransformer> extractFromList = ajb
+			TransformerComponentBuilder<ReadFromListTransformer> extractFromList = ajb
 					.addTransformer(ReadFromListTransformer.class);
 			extractFromList.addInputColumn(listColumn);
 			ReadFromListTransformer bean = extractFromList.getComponentInstance();
@@ -104,7 +104,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 		final MutableInputColumn<?> valueColumn1;
 		final MutableInputColumn<?> valueColumn2;
 		{
-			TransformerJobBuilder<SelectFromMapTransformer> extractFromMap = ajb
+			TransformerComponentBuilder<SelectFromMapTransformer> extractFromMap = ajb
 					.addTransformer(SelectFromMapTransformer.class);
 			extractFromMap.addInputColumn(mapColumn);
 			SelectFromMapTransformer bean = extractFromMap.getComponentInstance();

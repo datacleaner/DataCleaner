@@ -35,7 +35,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.FilterComponentDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
@@ -113,7 +113,7 @@ public class RowProcessingQueryOptimizer {
     }
 
     private boolean isOptimizable(FilterConsumer filterConsumer) {
-        final FilterComponentDescriptor<?, ?> descriptor = filterConsumer.getComponentJob().getDescriptor();
+        final FilterDescriptor<?, ?> descriptor = filterConsumer.getComponentJob().getDescriptor();
         if (!descriptor.isQueryOptimizable()) {
             logger.debug("FilterBeanDescriptor not optimizable: {}", descriptor);
             return false;

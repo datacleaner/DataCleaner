@@ -59,7 +59,7 @@ public class CompoundClassloaderTest {
         loaders.add(c2);
         final CompoundClassLoader loader = new CompoundClassLoader(loaders);
 
-        Class<?> cResult1 = loader.loadClass("foo.bar.transformer.BazTransformer");
+        Class<?> cResult1 = loader.loadClass("foo.bar.transformer.BarTransformer");
         Assert.assertNotNull(cResult1);
 
         Class<?> cResult2 = loader.loadClass("foo.bar.Baz");

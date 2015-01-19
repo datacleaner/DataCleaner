@@ -50,7 +50,9 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.descriptors.MetricDescriptor;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.slf4j.Logger;
@@ -170,6 +172,13 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("org.datacleaner.data.InputRow", InputRow.class);
         addRenamedClass("org.datacleaner.data.InputColumn", InputColumn.class);
         addRenamedClass("org.datacleaner.result.Metric", Metric.class);
+        addRenamedClass("org.datacleaner.job.BeanConfiguration", ComponentConfiguration.class);
+        addRenamedClass("org.datacleaner.job.ImmutableBeanConfiguration", ImmutableComponentConfiguration.class);
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedAnalyzerBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedTransformerBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedTransformerComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedFilterBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedFilterComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AbstractHasAnalyzerResultBeanDescriptor", "org.datacleaner.descriptors.AbstractHasAnalyzerResultComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AbstractBeanDescriptor", "org.datacleaner.descriptors.AbstractComponentDescriptor");
 
         addRenamedClass("org.eobjects.analyzer.result.AnalyzerResult", AnalyzerResult.class);
         addRenamedClass("org.eobjects.analyzer.result.AnalyzerResultReducer", AnalyzerResultReducer.class);

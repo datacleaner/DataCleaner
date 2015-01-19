@@ -132,7 +132,7 @@ public class TransformerComponentBuilderTest extends TestCase {
             fail("Exception occurred");
         } catch (UnconfiguredConfiguredPropertyException e) {
             assertEquals(
-                    "Property 'Some integer' is not properly configured (TransformerJobBuilder[transformer=Transformer mock,inputColumns=[MetaModelInputColumn[fooStr]]])",
+                    "Property 'Some integer' is not properly configured (TransformerComponentBuilder[transformer=Transformer mock,inputColumns=[MetaModelInputColumn[fooStr]]])",
                     e.getMessage());
         }
 

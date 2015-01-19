@@ -140,9 +140,9 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             final Collection<ComponentBuilder> componentBuilders = ajb.getComponentBuilders();
             assertEquals(
-                    "[FilterJobBuilder[filter=Mock filter,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]], "
-                            + "TransformerJobBuilder[transformer=Mock transformer,inputColumns=[MetaModelInputColumn[table.foo]]], "
-                            + "TransformerJobBuilder[transformer=Mock transformer,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]]]",
+                    "[FilterComponentBuilder[filter=Mock filter,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]], "
+                            + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[MetaModelInputColumn[table.foo]]], "
+                            + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]]]",
                     componentBuilders.toString());
         }
     }

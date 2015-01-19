@@ -207,7 +207,7 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
 
     @Override
     public String toString() {
-        return "TransformerJobBuilder[transformer=" + getDescriptor().getDisplayName() + ",inputColumns="
+        return "TransformerComponentBuilder[transformer=" + getDescriptor().getDisplayName() + ",inputColumns="
                 + getInputColumns() + "]";
     }
 

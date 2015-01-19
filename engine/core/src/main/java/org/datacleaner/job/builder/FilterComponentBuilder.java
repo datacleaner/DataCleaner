@@ -113,7 +113,7 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     @Override
     public String toString() {
-        return "FilterJobBuilder[filter=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
+        return "FilterComponentBuilder[filter=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
                 + "]";
     }
 

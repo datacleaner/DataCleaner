@@ -51,7 +51,7 @@ public class AnalyzerComponentBuilderTest extends TestCase {
             fail("Exception expected");
         } catch (IllegalStateException e) {
             assertEquals(
-                    "Could not determine source for analyzer 'AnalyzerJobBuilder[analyzer=String analyzer,inputColumns=[MockInputColumn[name=foo], MockInputColumn[name=bar]]]'",
+                    "Could not determine source for analyzer 'AnalyzerComponentBuilder[analyzer=String analyzer,inputColumns=[MockInputColumn[name=foo], MockInputColumn[name=bar]]]'",
                     e.getMessage());
         }
     }

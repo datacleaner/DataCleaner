@@ -262,7 +262,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     @Override
     public String toString() {
-        return "AnalyzerJobBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
+        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
                 + "]";
     }
 

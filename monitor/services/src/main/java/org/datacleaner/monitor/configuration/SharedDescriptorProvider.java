@@ -26,12 +26,12 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -68,34 +68,33 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public AnalyzerBeanDescriptor<?> getAnalyzerBeanDescriptorByDisplayName(String arg0) {
-        return getDelegate().getAnalyzerBeanDescriptorByDisplayName(arg0);
+    public AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String arg0) {
+        return getDelegate().getAnalyzerDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> getAnalyzerBeanDescriptorForClass(Class<A> arg0) {
-        return getDelegate().getAnalyzerBeanDescriptorForClass(arg0);
+    public <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> arg0) {
+        return getDelegate().getAnalyzerDescriptorForClass(arg0);
     }
 
     @Override
-    public Collection<AnalyzerBeanDescriptor<?>> getAnalyzerBeanDescriptors() {
-        return getDelegate().getAnalyzerBeanDescriptors();
+    public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
+        return getDelegate().getAnalyzerDescriptors();
     }
 
     @Override
-    public FilterBeanDescriptor<?, ?> getFilterBeanDescriptorByDisplayName(String arg0) {
-        return getDelegate().getFilterBeanDescriptorByDisplayName(arg0);
+    public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String arg0) {
+        return getDelegate().getFilterDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <F extends Filter<C>, C extends Enum<C>> FilterBeanDescriptor<F, C> getFilterBeanDescriptorForClass(
-            Class<F> arg0) {
-        return getDelegate().getFilterBeanDescriptorForClass(arg0);
+    public <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> getFilterDescriptorForClass(Class<F> arg0) {
+        return getDelegate().getFilterDescriptorForClass(arg0);
     }
 
     @Override
-    public Collection<FilterBeanDescriptor<?, ?>> getFilterBeanDescriptors() {
-        return getDelegate().getFilterBeanDescriptors();
+    public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
+        return getDelegate().getFilterDescriptors();
     }
 
     @Override
@@ -115,18 +114,18 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public TransformerBeanDescriptor<?> getTransformerBeanDescriptorByDisplayName(String arg0) {
-        return getDelegate().getTransformerBeanDescriptorByDisplayName(arg0);
+    public TransformerDescriptor<?> getTransformerDescriptorByDisplayName(String arg0) {
+        return getDelegate().getTransformerDescriptorByDisplayName(arg0);
     }
 
     @Override
-    public <T extends Transformer> TransformerBeanDescriptor<T> getTransformerBeanDescriptorForClass(Class<T> arg0) {
-        return getDelegate().getTransformerBeanDescriptorForClass(arg0);
+    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(Class<T> arg0) {
+        return getDelegate().getTransformerDescriptorForClass(arg0);
     }
 
     @Override
-    public Collection<TransformerBeanDescriptor<?>> getTransformerBeanDescriptors() {
-        return getDelegate().getTransformerBeanDescriptors();
+    public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
+        return getDelegate().getTransformerDescriptors();
     }
 
 }

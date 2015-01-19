@@ -8,7 +8,7 @@ import org.datacleaner.api.InputColumn
 import org.datacleaner.api.InputRow
 import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.ImmutableAnalyzerJob
-import org.datacleaner.job.ImmutableBeanConfiguration
+import org.datacleaner.job.ImmutableComponentConfiguration
 import org.datacleaner.result.html.DefaultHtmlRenderingContext
 import org.datacleaner.api.Metric
 import org.datacleaner.api.AnalyzerResult
@@ -43,7 +43,7 @@ class DefaultAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     val resultMetrics = descriptor.getResultMetrics();
     Assert.assertEquals("[MetricDescriptorImpl[name=Elite], MetricDescriptorImpl[name=Foo]]", resultMetrics.toString());
     
-    val job = new ImmutableAnalyzerJob(null, descriptor, new ImmutableBeanConfiguration(null),
+    val job = new ImmutableAnalyzerJob(null, descriptor, new ImmutableComponentConfiguration(null),
       null, null)
 
     val renderer = new DefaultAnalyzerResultHtmlRenderer();

@@ -64,8 +64,8 @@ abstract class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldG
       inputColumn
     }
 
-    completenessAnalyzer.getConfigurableBean().setValueColumns(inputColumns);
-    completenessAnalyzer.getConfigurableBean().fillAllConditions(CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL);
+    completenessAnalyzer.getComponentInstance().setValueColumns(inputColumns);
+    completenessAnalyzer.getComponentInstance().fillAllConditions(CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL);
 
     // validate just to fail fast
     completenessAnalyzer.isConfigured(true)

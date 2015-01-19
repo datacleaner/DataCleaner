@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.NullCheckFilter.NullCheckCategory;
@@ -32,17 +34,15 @@ import org.datacleaner.beans.writers.UpdateTableAnalyzer;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Page that allows the user to specify how source data updates is handled by
@@ -53,12 +53,12 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
     private final Datastore _targetDatastore;
     private final Table _targetTable;
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final AnalyzerJobBuilder<InsertIntoTableAnalyzer> _insert;
+    private final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> _insert;
     private final List<ColumnMapping> _columnMappings;
     private final DataCleanerJobWizardSession _session;
 
     public SelectUpdateStrategyWizardPage(DataCleanerJobWizardSession session, AnalysisJobBuilder jobBuilder,
-            Datastore targetDatastore, Table targetTable, AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert,
+            Datastore targetDatastore, Table targetTable, AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert,
             List<ColumnMapping> columnMappings) {
         _session = session;
         _analysisJobBuilder = jobBuilder;
@@ -138,19 +138,19 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
     }
 
     private void setUpdateStrategyPrimaryKeyLookup(ColumnMapping primaryKeyColumnMapping) {
-        final TransformerJobBuilder<TableLookupTransformer> tableLookup = buildLookup(primaryKeyColumnMapping);
-        final AnalyzerJobBuilder<UpdateTableAnalyzer> update = buildUpdate(primaryKeyColumnMapping, _columnMappings);
+        final TransformerComponentBuilder<TableLookupTransformer> tableLookup = buildLookup(primaryKeyColumnMapping);
+        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update = buildUpdate(primaryKeyColumnMapping, _columnMappings);
 
         // bind UPDATE and INSERT to outcome of a null check on the looked
         // up fields
-        final FilterJobBuilder<NullCheckFilter, NullCheckCategory> nullCheck = _analysisJobBuilder
+        final FilterComponentBuilder<NullCheckFilter, NullCheckCategory> nullCheck = _analysisJobBuilder
                 .addFilter(NullCheckFilter.class);
         nullCheck.addInputColumns(tableLookup.getOutputColumns());
         update.setRequirement(nullCheck, NullCheckCategory.NOT_NULL);
         _insert.setRequirement(nullCheck, NullCheckCategory.NULL);
     }
 
-    private AnalyzerJobBuilder<UpdateTableAnalyzer> buildUpdate(final ColumnMapping primaryKeyColumnMapping,
+    private AnalyzerComponentBuilder<UpdateTableAnalyzer> buildUpdate(final ColumnMapping primaryKeyColumnMapping,
             final List<ColumnMapping> mappings) {
 
         // set the ID conditions of the UPDATE ... WHERE clause
@@ -185,7 +185,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
             }
         }
 
-        final AnalyzerJobBuilder<UpdateTableAnalyzer> update = _analysisJobBuilder
+        final AnalyzerComponentBuilder<UpdateTableAnalyzer> update = _analysisJobBuilder
                 .addAnalyzer(UpdateTableAnalyzer.class);
         update.setConfiguredProperty("Datastore", _targetDatastore);
         update.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
@@ -200,7 +200,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         return update;
     }
 
-    private TransformerJobBuilder<TableLookupTransformer> buildLookup(final ColumnMapping primaryKeyColumnMapping) {
+    private TransformerComponentBuilder<TableLookupTransformer> buildLookup(final ColumnMapping primaryKeyColumnMapping) {
         final InputColumn<?>[] conditionValues = new InputColumn[1];
         final String[] conditionColumns = new String[1];
         conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()
@@ -211,7 +211,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         final String[] outputColumns = new String[1];
         outputColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-        final TransformerJobBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
+        final TransformerComponentBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
                 .addTransformer(TableLookupTransformer.class);
         tableLookup.setConfiguredProperty("Datastore", _targetDatastore);
         tableLookup.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());

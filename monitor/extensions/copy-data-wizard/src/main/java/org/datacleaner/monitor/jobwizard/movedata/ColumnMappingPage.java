@@ -24,17 +24,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Page responsible for mapping of source and target columns.
@@ -96,22 +96,22 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             throw new IllegalStateException("No columns mapped!");
         }
 
-        AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
+        AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = createAnalyzer(mappings);
 
         return new SelectUpdateStrategyWizardPage(_session, _analysisJobBuilder, _targetDatastore, _targetTable,
                 insert, mappings);
     }
 
-    private AnalyzerJobBuilder<InsertIntoTableAnalyzer> createAnalyzer(final List<ColumnMapping> mappings) {
+    private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> createAnalyzer(final List<ColumnMapping> mappings) {
         for (final ColumnMapping mapping : mappings) {
             _analysisJobBuilder.addSourceColumn(mapping.getSourceColumn());
         }
 
-        final AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert = buildInsert(mappings);
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = buildInsert(mappings);
         return insert;
     }
 
-    private AnalyzerJobBuilder<InsertIntoTableAnalyzer> buildInsert(final List<ColumnMapping> mappings) {
+    private AnalyzerComponentBuilder<InsertIntoTableAnalyzer> buildInsert(final List<ColumnMapping> mappings) {
         final InputColumn<?>[] values = new InputColumn[mappings.size()];
         final String[] columnNames = new String[mappings.size()];
 
@@ -121,7 +121,7 @@ class ColumnMappingPage extends AbstractFreemarkerWizardPage {
             columnNames[i] = mapping.getTargetColumn().getName();
         }
 
-        final AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert = _analysisJobBuilder
+        final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = _analysisJobBuilder
                 .addAnalyzer(InsertIntoTableAnalyzer.class);
         insert.setConfiguredProperty("Datastore", _targetDatastore);
         insert.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());

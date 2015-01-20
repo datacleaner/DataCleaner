@@ -136,7 +136,6 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
-        InputColumn<?>[] inputColumns = columns ;
         List<String> headers = new ArrayList<String>() ;
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();
@@ -158,12 +157,12 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     newColumns[i] = columns[i] ;
                 }
                 newColumns[columns.length]  = columnToBeSortedOn ;
-                inputColumns = newColumns ;
+                columns = newColumns ;
             }
         }
        
         
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, inputColumns);
+        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }
 
     @Override

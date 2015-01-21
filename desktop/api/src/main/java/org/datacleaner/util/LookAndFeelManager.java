@@ -104,11 +104,10 @@ public final class LookAndFeelManager {
         EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
-        
-        UIManager.put("Menu.border", borderDarkest3);
+
+        UIManager.put("Menu.border", new EmptyBorder(1, 1, 1, 1));
         UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-
         UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
 
@@ -137,6 +136,12 @@ public final class LookAndFeelManager {
         UIManager.put("MenuBar.border", emptyBorder);
         UIManager.put("MenuBar.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+
+        // separator styling
+        UIManager.put("Separator.background", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("Separator.foreground", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("Separator.highlight", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("Separator.shadow", WidgetUtils.BG_COLOR_DARKEST);
 
         // white background for input components
         UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -174,10 +179,10 @@ public final class LookAndFeelManager {
 
         // scrollbar color
         UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.BG_COLOR_MEDIUM);
-        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
+        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
-        
+
         // TODO
         UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);

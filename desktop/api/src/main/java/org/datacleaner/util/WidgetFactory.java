@@ -88,7 +88,7 @@ public final class WidgetFactory {
     public static JMenuItem createMenuItem(String text, String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
-            icon = ImageManager.get().getImageIcon(iconPath);
+            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
         }
         return createMenuItem(text, icon);
     }

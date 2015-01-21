@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.properties;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 
 /**
@@ -32,12 +31,6 @@ public interface PropertyWidgetFactory {
     public PropertyWidgetCollection getPropertyWidgetCollection();
 
     public ComponentBuilder getComponentBuilder();
-
-    /**
-     * @deprecated use {@link #getComponentBuilder()} instead
-     */
-    @Deprecated
-    public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder();
 
     public PropertyWidget<?> create(String propertyName);
 

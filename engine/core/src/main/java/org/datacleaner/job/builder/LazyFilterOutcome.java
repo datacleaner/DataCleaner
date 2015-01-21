@@ -20,20 +20,20 @@
 package org.datacleaner.job.builder;
 
 import org.datacleaner.job.AbstractFilterOutcome;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.HasFilterOutcomes;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.ImmutableFilterJob;
 
 public final class LazyFilterOutcome extends AbstractFilterOutcome {
 
     private static final long serialVersionUID = 1L;
 
-    private final FilterJobBuilder<?, ?> _filterJobBuilder;
+    private final FilterComponentBuilder<?, ?> _filterJobBuilder;
     private final Enum<?> _category;
 
-    protected LazyFilterOutcome(FilterJobBuilder<?, ?> filterJobBuilder, Enum<?> category) {
+    protected LazyFilterOutcome(FilterComponentBuilder<?, ?> filterJobBuilder, Enum<?> category) {
         _filterJobBuilder = filterJobBuilder;
         _category = category;
     }
@@ -50,7 +50,7 @@ public final class LazyFilterOutcome extends AbstractFilterOutcome {
         } else {
             // Create an incomplete job. This representation is typically used
             // for comparison, not execution.
-            final BeanConfiguration beanConfiguration = new ImmutableBeanConfiguration(
+            final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(
                     _filterJobBuilder.getConfiguredProperties());
             return new ImmutableFilterJob(_filterJobBuilder.getName(), _filterJobBuilder.getDescriptor(),
                     beanConfiguration, _filterJobBuilder.getComponentRequirement(),
@@ -63,7 +63,7 @@ public final class LazyFilterOutcome extends AbstractFilterOutcome {
         return _category;
     }
 
-    public FilterJobBuilder<?, ?> getFilterJobBuilder() {
+    public FilterComponentBuilder<?, ?> getFilterJobBuilder() {
         return _filterJobBuilder;
     }
 }

@@ -29,18 +29,18 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Specialized {@link Renderer} for a {@link AnalysisJobBuilder} for
  * {@link InsertIntoTableAnalyzer}.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class InsertIntoTableJobBuilderPresenterRenderer implements
-        Renderer<AnalyzerJobBuilder<InsertIntoTableAnalyzer>, AnalyzerJobBuilderPresenter> {
+        Renderer<AnalyzerComponentBuilder<InsertIntoTableAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -52,7 +52,7 @@ public class InsertIntoTableJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
+    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
         if (ajb.getDescriptor().getComponentClass() == InsertIntoTableAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -60,7 +60,7 @@ public class InsertIntoTableJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<InsertIntoTableAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
 

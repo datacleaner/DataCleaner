@@ -35,8 +35,8 @@ import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.MockTransformerMessage;
@@ -61,11 +61,11 @@ public class ComponentContextImplTest extends TestCase {
             jobBuilder.setDatastore(datastore);
             jobBuilder.addSourceColumns("id","name");
             
-            TransformerJobBuilder<MockTransformer> mockTransformer = jobBuilder.addTransformer(MockTransformer.class);
+            TransformerComponentBuilder<MockTransformer> mockTransformer = jobBuilder.addTransformer(MockTransformer.class);
             mockTransformer.addInputColumn(jobBuilder.getSourceColumnByName("name"));
             mockTransformer.setName("FOO");
             
-            AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+            AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(mockTransformer.getOutputColumns());
             
             job = jobBuilder.toAnalysisJob();

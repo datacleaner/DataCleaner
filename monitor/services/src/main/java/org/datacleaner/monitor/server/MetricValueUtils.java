@@ -29,11 +29,14 @@ import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
+import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor;
+import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
 import org.datacleaner.job.AnalysisJob;
@@ -41,17 +44,14 @@ import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.AnalyzerJobHelper;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.InputColumnSinkJob;
-import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.util.CollectionUtils2;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.job.MetricJobContext;
 import org.datacleaner.monitor.job.MetricJobEngine;
 import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
-import org.apache.metamodel.util.Predicate;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.util.CollectionUtils2;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -257,8 +257,8 @@ public class MetricValueUtils {
 
         final ComponentDescriptor<?> componentDescriptor = componentJobToUse.getDescriptor();
 
-        if (componentDescriptor instanceof HasAnalyzerResultBeanDescriptor) {
-            HasAnalyzerResultBeanDescriptor<?> hasAnalyzerResultBeanDescriptor = (HasAnalyzerResultBeanDescriptor<?>) componentDescriptor;
+        if (componentDescriptor instanceof HasAnalyzerResultComponentDescriptor) {
+            HasAnalyzerResultComponentDescriptor<?> hasAnalyzerResultBeanDescriptor = (HasAnalyzerResultComponentDescriptor<?>) componentDescriptor;
             final MetricDescriptor metric = hasAnalyzerResultBeanDescriptor.getResultMetric(metricIdentifier
                     .getMetricDescriptorName());
 

@@ -44,9 +44,9 @@ import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -94,25 +94,25 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testMergeFilterRequirementsWhenAnalyzerConsumesInputColumnsWithMultipleRequirements() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterJobBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
                 .addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerJobBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
         MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerJobBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
         MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
         // add outputcolumn 1+2 - they have opposite requirements
         analyzer.addInputColumns(sourceColumn, outputColumn1, outputColumn2);
 
@@ -153,25 +153,25 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testDontMergeFilterRequirementWhenAnalyzerConsumesInputColumnsWithSingleRequirement() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterJobBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
                 .addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerJobBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
         MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerJobBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
         MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);
@@ -206,25 +206,25 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testConsumeRecordsWhenAnyOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterJobBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
                 .addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerJobBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
         MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerJobBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
         MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);
@@ -268,25 +268,25 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testConsumeRecordsWhenCompoundOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterJobBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
                 .addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
 
-        TransformerJobBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer1 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer1.setRequirement(req1);
         MutableInputColumn<?> outputColumn1 = transformer1.getOutputColumns().get(0);
         outputColumn1.setName("outputColumn1");
 
-        TransformerJobBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
+        TransformerComponentBuilder<MockTransformer> transformer2 = jobBuilder.addTransformer(MockTransformer.class)
                 .addInputColumn(sourceColumn);
         transformer2.setRequirement(req2);
         MutableInputColumn<?> outputColumn2 = transformer2.getOutputColumns().get(0);
         outputColumn2.setName("outputColumn2");
 
-        AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+        AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
 
         // add only outputcolumn 1 - it has a single requirement
         analyzer.addInputColumns(sourceColumn, outputColumn1);

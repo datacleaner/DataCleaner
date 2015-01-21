@@ -30,7 +30,7 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.SimpleDictionary;
@@ -43,7 +43,7 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 
 	private AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 	private AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
-	private AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
+	private AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 			"Dictionary array property");
 	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration.getInjectionManager(null), null, true);

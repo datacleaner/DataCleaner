@@ -32,7 +32,7 @@ import javax.swing.ListCellRenderer;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DefaultEnumMatcher;
 import org.datacleaner.util.EnumMatcher;
@@ -51,9 +51,9 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 
     public class MappedEnumsPropertyWidget extends MinimalPropertyWidget<E[]> {
 
-        public MappedEnumsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+        public MappedEnumsPropertyWidget(ComponentBuilder componentBuilder,
                 ConfiguredPropertyDescriptor propertyDescriptor) {
-            super(beanJobBuilder, propertyDescriptor);
+            super(componentBuilder, propertyDescriptor);
         }
 
         @Override
@@ -89,17 +89,17 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
     /**
      * Constructs the property widget
      * 
-     * @param beanJobBuilder
-     *            the transformer job builder for the table lookup
+     * @param componentBuilder
+     *            the component builder containing the properties
      * @param inputColumnsProperty
      *            the property represeting the columns to use for settig up
      *            conditional lookup (InputColumn[])
      * @param mappedEnumsProperty
      *            the property representing the mapped enums
      */
-    public MultipleMappedEnumsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public MultipleMappedEnumsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedEnumsProperty) {
-        super(beanJobBuilder, inputColumnsProperty);
+        super(componentBuilder, inputColumnsProperty);
         _mappedEnumComboBoxes = new WeakHashMap<>();
         _mappedEnumsProperty = mappedEnumsProperty;
         _enumMatcherRef = new LazyRef<EnumMatcher<E>>() {
@@ -108,12 +108,12 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
                 return createEnumMatcher();
             }
         };
-        _mappedEnumsPropertyWidget = new MappedEnumsPropertyWidget(beanJobBuilder, mappedEnumsProperty);
+        _mappedEnumsPropertyWidget = new MappedEnumsPropertyWidget(componentBuilder, mappedEnumsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
 
         @SuppressWarnings("unchecked")
-        final E[] currentMappedEnums = (E[]) beanJobBuilder.getConfiguredProperty(mappedEnumsProperty);
+        final E[] currentMappedEnums = (E[]) componentBuilder.getConfiguredProperty(mappedEnumsProperty);
         if (currentValue != null && currentMappedEnums != null) {
             final int minLength = Math.min(currentValue.length, currentMappedEnums.length);
             for (int i = 0; i < minLength; i++) {

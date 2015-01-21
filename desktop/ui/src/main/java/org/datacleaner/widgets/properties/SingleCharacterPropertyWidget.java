@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.widgets.CharTextField;
 
@@ -39,8 +39,8 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 	
 	@Inject
 	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+		super(componentBuilder, propertyDescriptor);
 		_textField = new CharTextField();
 		Character currentValue = getCurrentValue();
 		setValue(currentValue);

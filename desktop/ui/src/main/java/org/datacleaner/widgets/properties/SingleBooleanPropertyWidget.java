@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.swing.JCheckBox;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -38,8 +38,8 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 
 	@Inject
 	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+		super(componentBuilder, propertyDescriptor);
 
 		Boolean currentValue = getCurrentValue();
 		

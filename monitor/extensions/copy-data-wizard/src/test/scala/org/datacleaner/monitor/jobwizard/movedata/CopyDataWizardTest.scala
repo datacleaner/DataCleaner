@@ -414,13 +414,13 @@ class CopyDataWizardTest extends AssertionsForJUnit {
     val columnNames = job.getSourceColumns().map(_.getName());
     assertEquals("CUSTOMERNUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME", columnNames.mkString(","));
 
-    val analyzerNames = job.getAnalyzerJobBuilders().map(_.getDescriptor().getDisplayName())
+    val analyzerNames = job.getAnalyzerComponentBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Insert into table,Update table", analyzerNames.mkString(","));
 
-    val transformerNames = job.getTransformerJobBuilders().map(_.getDescriptor().getDisplayName())
+    val transformerNames = job.getTransformerComponentBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Table lookup", transformerNames.mkString(","));
 
-    val filterNames = job.getFilterJobBuilders().map(_.getDescriptor().getDisplayName())
+    val filterNames = job.getFilterComponentBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Null check", filterNames.mkString(","));
 
     val configured = job.isConfigured(true)

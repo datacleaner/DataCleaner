@@ -28,10 +28,10 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
@@ -53,9 +53,9 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     private volatile DatastoreConnection _connection;
 
     @Inject
-    public SingleDatastorePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public SingleDatastorePropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog) {
-        super(beanJobBuilder, propertyDescriptor);
+        super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
         _datastoreClass = propertyDescriptor.getBaseType();
 
@@ -85,7 +85,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
             }
         });
 
-        Datastore currentValue = (Datastore) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+        Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
         add(_comboBox);

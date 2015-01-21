@@ -32,8 +32,8 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -59,12 +59,12 @@ public class BatchTransformerTest extends TestCase {
             jobBuilder.setDatastore("foo");
             jobBuilder.addSourceColumns("name");
 
-            TransformerJobBuilder<MockBatchTransformer> transformerBuilder = jobBuilder
+            TransformerComponentBuilder<MockBatchTransformer> transformerBuilder = jobBuilder
                     .addTransformer(MockBatchTransformer.class);
             sourceColumn = jobBuilder.getSourceColumns().get(0);
             transformerBuilder.addInputColumns(sourceColumn);
 
-            AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+            AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(sourceColumn);
             sortedColumn = transformerBuilder.getOutputColumns().get(0);
             analyzer.addInputColumns(sortedColumn);

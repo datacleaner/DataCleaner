@@ -35,8 +35,8 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -63,11 +63,11 @@ public class ConsumeRowTaskTest extends TestCase {
             builder.setDatastore(new CsvDatastore("foo", "src/test/resources/multi_row_transformer_test.csv"));
             builder.addSourceColumns("number_col");
 
-            TransformerJobBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
+            TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
                     ConvertToNumberTransformer.class).addInputColumn(builder.getSourceColumnByName("number_col"));
             MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
 
-            TransformerJobBuilder<MockMultiRowTransformer> multiRowTransformer = builder.addTransformer(
+            TransformerComponentBuilder<MockMultiRowTransformer> multiRowTransformer = builder.addTransformer(
                     MockMultiRowTransformer.class).addInputColumn(numberColumn);
 
             List<MutableInputColumn<?>> mockTransformerColumns = multiRowTransformer.getOutputColumns();
@@ -128,11 +128,11 @@ public class ConsumeRowTaskTest extends TestCase {
         try (AnalysisJobBuilder builder = new AnalysisJobBuilder(configuration)) {
             builder.setDatastore(new CsvDatastore("Names", "src/test/resources/example-name-lengths.csv"));
             builder.addSourceColumns("name");
-            FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> filterJobBuilder = builder
+            FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> filterJobBuilder = builder
                     .addFilter(MaxRowsFilter.class);
             filterJobBuilder.setConfiguredProperty("Max rows", 10);
 
-            TransformerJobBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
+            TransformerComponentBuilder<ConvertToNumberTransformer> convertTransformer = builder.addTransformer(
                     ConvertToNumberTransformer.class).addInputColumn(builder.getSourceColumnByName("name"));
             MutableInputColumn<?> numberColumn = convertTransformer.getOutputColumns().get(0);
 

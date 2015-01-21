@@ -30,7 +30,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.test.TestHelper;
 
@@ -126,7 +126,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNAME");
 
         // The String Analyzer is (currently) not distributable
-        final AnalyzerJobBuilder<MockAnalyzerWithoutReducer> analyzer = jobBuilder.addAnalyzer(MockAnalyzerWithoutReducer.class);
+        final AnalyzerComponentBuilder<MockAnalyzerWithoutReducer> analyzer = jobBuilder.addAnalyzer(MockAnalyzerWithoutReducer.class);
         analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
         AnalysisJob job = jobBuilder.toAnalysisJob();
@@ -155,7 +155,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNAME");
 
         // The String Analyzer is (currently) not distributable
-        final AnalyzerJobBuilder<MockAnalyzerWithBadReducer> analyzer = jobBuilder
+        final AnalyzerComponentBuilder<MockAnalyzerWithBadReducer> analyzer = jobBuilder
                 .addAnalyzer(MockAnalyzerWithBadReducer.class);
         analyzer.addInputColumns(jobBuilder.getSourceColumns());
 

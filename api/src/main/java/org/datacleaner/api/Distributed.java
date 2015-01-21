@@ -48,9 +48,9 @@ import java.lang.annotation.Target;
  * a {@link AnalyzerResultReducer} value for the {@link #reducer()} field.</li>
  * </ul>
  * 
- * @see FilterBean
- * @see TransformerBean
- * @see AnalyzerBean
+ * @see Filter
+ * @see Transformer
+ * @see Analyzer
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

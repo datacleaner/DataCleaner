@@ -24,10 +24,10 @@ import java.util.List;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
@@ -79,8 +79,8 @@ final class MockWizardSession extends DataCleanerJobWizardSession {
     @Override
     public AnalysisJobBuilder createJob() {
         final List<MetaModelInputColumn> sourceCols = _analysisJobBuilder.getSourceColumns();
-        final AnalyzerBeanDescriptor<MockAnalyzer> descriptor = Descriptors.ofAnalyzer(MockAnalyzer.class);
-        final AnalyzerJobBuilder<MockAnalyzer> analyzer = _analysisJobBuilder.addAnalyzer(descriptor);
+        final AnalyzerDescriptor<MockAnalyzer> descriptor = Descriptors.ofAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = _analysisJobBuilder.addAnalyzer(descriptor);
         analyzer.addInputColumns(sourceCols);
         return _analysisJobBuilder;
     }

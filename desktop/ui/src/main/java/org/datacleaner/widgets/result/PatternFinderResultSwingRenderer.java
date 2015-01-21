@@ -41,7 +41,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.result.Crosstab;
@@ -173,7 +173,7 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.setName("Ungrouped pattern finders");
 
-		final AnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
+		final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
 				PatternFinderAnalyzer.class).setName("Grouped PF");
 		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));

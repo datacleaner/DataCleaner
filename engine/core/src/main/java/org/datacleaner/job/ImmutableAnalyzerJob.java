@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.apache.metamodel.util.BaseObject;
@@ -38,12 +38,12 @@ public final class ImmutableAnalyzerJob extends BaseObject implements AnalyzerJo
     private static final long serialVersionUID = 1L;
 
     private final String _name;
-    private final AnalyzerBeanDescriptor<?> _descriptor;
-    private final BeanConfiguration _beanConfiguration;
+    private final AnalyzerDescriptor<?> _descriptor;
+    private final ComponentConfiguration _beanConfiguration;
     private final ComponentRequirement _componentRequirement;
     private final Map<String, String> _metadataProperties;
 
-    public ImmutableAnalyzerJob(String name, AnalyzerBeanDescriptor<?> descriptor, BeanConfiguration beanConfiguration,
+    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor, ComponentConfiguration beanConfiguration,
             ComponentRequirement requirement, Map<String, String> metadataProperties) {
         _name = name;
         _descriptor = descriptor;
@@ -73,12 +73,12 @@ public final class ImmutableAnalyzerJob extends BaseObject implements AnalyzerJo
     }
 
     @Override
-    public AnalyzerBeanDescriptor<?> getDescriptor() {
+    public AnalyzerDescriptor<?> getDescriptor() {
         return _descriptor;
     }
 
     @Override
-    public BeanConfiguration getConfiguration() {
+    public ComponentConfiguration getConfiguration() {
         return _beanConfiguration;
     }
 

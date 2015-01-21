@@ -27,7 +27,7 @@ import javax.inject.Provider;
 import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -49,9 +49,9 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 
 	@Inject
 	public SingleSynonymCatalogPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, MutableReferenceDataCatalog referenceDataCatalog,
+			ComponentBuilder componentBuilder, MutableReferenceDataCatalog referenceDataCatalog,
 			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(beanJobBuilder, propertyDescriptor);
+		super(componentBuilder, propertyDescriptor);
 		_referenceDataCatalog = referenceDataCatalog;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 

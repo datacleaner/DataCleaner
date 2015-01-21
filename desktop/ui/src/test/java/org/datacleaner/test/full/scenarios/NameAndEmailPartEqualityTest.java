@@ -38,9 +38,9 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -73,36 +73,36 @@ public class NameAndEmailPartEqualityTest extends TestCase {
 
         analysisJobBuilder.addSourceColumns(nameColumn, emailColumn);
 
-        TransformerJobBuilder<NameStandardizerTransformer> nameTransformerJobBuilder = analysisJobBuilder
+        TransformerComponentBuilder<NameStandardizerTransformer> nameTransformerComponentBuilder = analysisJobBuilder
                 .addTransformer(NameStandardizerTransformer.class);
-        nameTransformerJobBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("name"));
-        nameTransformerJobBuilder.setConfiguredProperty("Name patterns", NameStandardizerTransformer.DEFAULT_PATTERNS);
+        nameTransformerComponentBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("name"));
+        nameTransformerComponentBuilder.setConfiguredProperty("Name patterns", NameStandardizerTransformer.DEFAULT_PATTERNS);
 
-        assertTrue(nameTransformerJobBuilder.isConfigured());
+        assertTrue(nameTransformerComponentBuilder.isConfigured());
 
-        final List<MutableInputColumn<?>> nameColumns = nameTransformerJobBuilder.getOutputColumns();
+        final List<MutableInputColumn<?>> nameColumns = nameTransformerComponentBuilder.getOutputColumns();
         assertEquals(4, nameColumns.size());
         assertEquals("Firstname", nameColumns.get(0).getName());
         assertEquals("Lastname", nameColumns.get(1).getName());
         assertEquals("Middlename", nameColumns.get(2).getName());
         assertEquals("Titulation", nameColumns.get(3).getName());
 
-        TransformerJobBuilder<EmailStandardizerTransformer> emailTransformerJobBuilder = analysisJobBuilder
+        TransformerComponentBuilder<EmailStandardizerTransformer> emailTransformerComponentBuilder = analysisJobBuilder
                 .addTransformer(EmailStandardizerTransformer.class);
-        emailTransformerJobBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
+        emailTransformerComponentBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("email"));
 
-        assertTrue(emailTransformerJobBuilder.isConfigured());
+        assertTrue(emailTransformerComponentBuilder.isConfigured());
 
         @SuppressWarnings("unchecked")
-        final MutableInputColumn<String> usernameColumn = (MutableInputColumn<String>) emailTransformerJobBuilder
+        final MutableInputColumn<String> usernameColumn = (MutableInputColumn<String>) emailTransformerComponentBuilder
                 .getOutputColumnByName("Username");
         assertNotNull(usernameColumn);
 
         assertTrue(analysisJobBuilder.addAnalyzer(StringAnalyzer.class).addInputColumns(nameColumns)
-                .addInputColumns(emailTransformerJobBuilder.getOutputColumns()).isConfigured());
+                .addInputColumns(emailTransformerComponentBuilder.getOutputColumns()).isConfigured());
 
         for (InputColumn<?> inputColumn : nameColumns) {
-            AnalyzerJobBuilder<ValueDistributionAnalyzer> analyzerJobBuilder = analysisJobBuilder
+            AnalyzerComponentBuilder<ValueDistributionAnalyzer> analyzerJobBuilder = analysisJobBuilder
                     .addAnalyzer(ValueDistributionAnalyzer.class);
             analyzerJobBuilder.addInputColumn(inputColumn);
             analyzerJobBuilder.setConfiguredProperty("Record unique values", false);
@@ -111,9 +111,9 @@ public class NameAndEmailPartEqualityTest extends TestCase {
             assertTrue(analyzerJobBuilder.isConfigured());
         }
 
-        FilterJobBuilder<JavaScriptFilter, JavaScriptFilter.Category> fjb = analysisJobBuilder
+        FilterComponentBuilder<JavaScriptFilter, JavaScriptFilter.Category> fjb = analysisJobBuilder
                 .addFilter(JavaScriptFilter.class);
-        fjb.addInputColumn(nameTransformerJobBuilder.getOutputColumnByName("Firstname"));
+        fjb.addInputColumn(nameTransformerComponentBuilder.getOutputColumnByName("Firstname"));
         fjb.addInputColumn(usernameColumn);
         fjb.setConfiguredProperty("Source code", "values[0] == values[1];");
 

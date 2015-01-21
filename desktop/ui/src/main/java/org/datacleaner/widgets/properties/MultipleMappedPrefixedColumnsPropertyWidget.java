@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
@@ -38,10 +38,10 @@ public class MultipleMappedPrefixedColumnsPropertyWidget extends MultipleMappedC
 
 	private final String _prefix;
 
-	public MultipleMappedPrefixedColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleMappedPrefixedColumnsPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty,
 			String prefix) {
-		super(beanJobBuilder, inputColumnsProperty, mappedColumnsProperty);
+		super(componentBuilder, inputColumnsProperty, mappedColumnsProperty);
 		_prefix = prefix;
 	}
 

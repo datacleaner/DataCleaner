@@ -37,13 +37,13 @@ import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 
     private AnalyzerBeansConfiguration configuration;
-    private TransformerJobBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
+    private TransformerComponentBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
     private AnalysisJobBuilder analysisJobBuilder;
 
     @Override
@@ -95,7 +95,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
     }
 
     public void testChainedTransformers() throws Exception {
-        TransformerJobBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
+        TransformerComponentBuilder<ConcatenatorTransformer> lengthTransformerBuilder = analysisJobBuilder
                 .addTransformer(ConcatenatorTransformer.class);
         lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         lengthTransformerBuilder.addInputColumn(new ConstantInputColumn("foo"));
@@ -128,14 +128,14 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         }
 
         // add a filter
-        FilterJobBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
+        FilterComponentBuilder<StringLengthRangeFilter, RangeFilterCategory> rangeFilter = analysisJobBuilder
                 .addFilter(StringLengthRangeFilter.class);
         rangeFilter.addInputColumn(lengthTransformerBuilder.getOutputColumnByName("Concat of Username,\"foo\""));
         rangeFilter.setConfiguredProperty("Minimum length", 5);
         rangeFilter.setConfiguredProperty("Maximum length", 20);
 
         // add a multi-row transformer
-        TransformerJobBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
+        TransformerComponentBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder
                 .addTransformer(TokenizerTransformer.class);
         tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
         tokenizer.setRequirement(rangeFilter.getFilterOutcome(RangeFilterCategory.VALID));

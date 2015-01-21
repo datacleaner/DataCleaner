@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.swing.JList;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCListCellRenderer;
@@ -41,8 +41,8 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 
 	@Inject
 	public SingleClassPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+		super(componentBuilder, propertyDescriptor);
 
 		_comboBox = createClassComboBox(propertyDescriptor.isRequired());
 		Class<?> currentValue = getCurrentValue();

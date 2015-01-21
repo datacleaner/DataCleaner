@@ -32,17 +32,17 @@ import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.SimpleComponentRequirement;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AbstractBeanWithInputColumnsBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.util.LabelUtils;
+import org.datacleaner.job.builder.AbstractComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +64,9 @@ public class ChangeRequirementMenuBuilder {
     private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
             IconUtils.ICON_SIZE_SMALL);
 
-    private final AbstractBeanJobBuilder<?, ?, ?> _componentBuilder;
+    private final ComponentBuilder _componentBuilder;
 
-    public ChangeRequirementMenuBuilder(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+    public ChangeRequirementMenuBuilder(ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
     }
 
@@ -107,9 +107,9 @@ public class ChangeRequirementMenuBuilder {
 
         // if this JobBuilder is a FilterJobBuilder, remove it from the list of
         // available filters
-        final List<FilterJobBuilder<?, ?>> fjbs = getFilterJobBuilders();
+        final List<FilterComponentBuilder<?, ?>> fjbs = getFilterJobBuilders();
 
-        for (final FilterJobBuilder<?, ?> fjb : fjbs) {
+        for (final FilterComponentBuilder<?, ?> fjb : fjbs) {
             final JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
 
             if (!fjb.isConfigured()) {
@@ -121,7 +121,7 @@ public class ChangeRequirementMenuBuilder {
                 filterMenuItem.setToolTipText("Requirement not possible");
             } else {
 
-                final FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
+                final FilterDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
                 final Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
                 for (final String category : categoryNames) {
                     final JMenuItem categoryMenuItem = new JMenuItem(category);
@@ -158,21 +158,21 @@ public class ChangeRequirementMenuBuilder {
         return popup;
     }
 
-    private List<FilterJobBuilder<?, ?>> getFilterJobBuilders() {
-        final List<FilterJobBuilder<?, ?>> fjbs;
-        if (_componentBuilder instanceof FilterJobBuilder<?, ?>) {
-            fjbs = new LinkedList<FilterJobBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
-                    .getFilterJobBuilders());
+    private List<FilterComponentBuilder<?, ?>> getFilterJobBuilders() {
+        final List<FilterComponentBuilder<?, ?>> fjbs;
+        if (_componentBuilder instanceof FilterComponentBuilder<?, ?>) {
+            fjbs = new LinkedList<FilterComponentBuilder<?, ?>>(_componentBuilder.getAnalysisJobBuilder()
+                    .getFilterComponentBuilders());
             fjbs.remove(_componentBuilder);
         } else {
-            fjbs = _componentBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
+            fjbs = _componentBuilder.getAnalysisJobBuilder().getFilterComponentBuilders();
         }
         return fjbs;
     }
 
-    private boolean validateRequirementSource(FilterJobBuilder<?, ?> fjb) {
-        if (_componentBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
-            AbstractBeanWithInputColumnsBuilder<?, ?, ?> abstractBeanWithInputColumnsBuilder = (AbstractBeanWithInputColumnsBuilder<?, ?, ?>) _componentBuilder;
+    private boolean validateRequirementSource(FilterComponentBuilder<?, ?> fjb) {
+        if (_componentBuilder instanceof AbstractComponentBuilder) {
+            AbstractComponentBuilder<?, ?, ?> abstractBeanWithInputColumnsBuilder = (AbstractComponentBuilder<?, ?, ?>) _componentBuilder;
             return abstractBeanWithInputColumnsBuilder.validateRequirementSource(fjb);
         }
         return true;

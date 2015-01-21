@@ -30,7 +30,7 @@ import java.util.Set;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 import org.apache.metamodel.util.BaseObject;
 
@@ -41,14 +41,14 @@ public final class ImmutableTransformerJob extends BaseObject implements Transfo
     private static final long serialVersionUID = 1L;
 
     private final String _name;
-    private final TransformerBeanDescriptor<?> _descriptor;
-    private final BeanConfiguration _beanConfiguration;
+    private final TransformerDescriptor<?> _descriptor;
+    private final ComponentConfiguration _beanConfiguration;
     private final List<MutableInputColumn<?>> _output;
     private final ComponentRequirement _componentRequirement;
     private final Map<String, String> _metadataProperties;
 
-    public ImmutableTransformerJob(String name, TransformerBeanDescriptor<?> descriptor,
-            BeanConfiguration beanConfiguration, Collection<MutableInputColumn<?>> output,
+    public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
+            ComponentConfiguration beanConfiguration, Collection<MutableInputColumn<?>> output,
             ComponentRequirement requirement, Map<String, String> metadataProperties) {
         _name = name;
         _descriptor = descriptor;
@@ -74,12 +74,12 @@ public final class ImmutableTransformerJob extends BaseObject implements Transfo
     }
 
     @Override
-    public TransformerBeanDescriptor<?> getDescriptor() {
+    public TransformerDescriptor<?> getDescriptor() {
         return _descriptor;
     }
 
     @Override
-    public BeanConfiguration getConfiguration() {
+    public ComponentConfiguration getConfiguration() {
         return _beanConfiguration;
     }
 

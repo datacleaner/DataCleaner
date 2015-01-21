@@ -26,9 +26,9 @@ import java.awt.event.KeyListener;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +53,14 @@ public class JobGraphKeyListener extends KeyAdapter {
             logger.debug("Registered typed DEL. Vertex: {}", vertex);
             if (vertex != null) {
                 final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
-                if (vertex instanceof TransformerJobBuilder) {
-                    final TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) vertex;
+                if (vertex instanceof TransformerComponentBuilder) {
+                    final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
                     analysisJobBuilder.removeTransformer(tjb);
-                } else if (vertex instanceof AnalyzerJobBuilder) {
-                    final AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) vertex;
+                } else if (vertex instanceof AnalyzerComponentBuilder) {
+                    final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) vertex;
                     analysisJobBuilder.removeAnalyzer(ajb);
-                } else if (vertex instanceof FilterJobBuilder) {
-                    final FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) vertex;
+                } else if (vertex instanceof FilterComponentBuilder) {
+                    final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) vertex;
                     analysisJobBuilder.removeFilter(fjb);
                 } else if (vertex instanceof Table) {
                     final Table table = (Table) vertex;

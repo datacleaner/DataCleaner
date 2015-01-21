@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.Renderable;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
@@ -35,7 +37,8 @@ import org.datacleaner.metadata.HasMetadataProperties;
 /**
  * Represents a builder object for components in a {@link AnalysisJob}.
  */
-public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, HasComponentRequirement, HasName {
+public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, HasComponentRequirement, HasName,
+        Renderable {
 
     /**
      * Determines if the underlying component is fully configured or not. This
@@ -53,7 +56,7 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      *         not possible to build one given the current builder
      *         configuration.
      */
-    public Object getComponentInstance();
+    public Component getComponentInstance();
 
     /**
      * Determines if the underlying component is fully configured or not,
@@ -187,4 +190,12 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
             ConfiguredPropertyDescriptor propertyDescriptor);
 
     public void clearInputColumns();
+
+    /**
+     * Gets the {@link AnalysisJobBuilder} that this {@link ComponentBuilder} is
+     * contained in - if any
+     * 
+     * @return a builder or null if none exist.
+     */
+    public AnalysisJobBuilder getAnalysisJobBuilder();
 }

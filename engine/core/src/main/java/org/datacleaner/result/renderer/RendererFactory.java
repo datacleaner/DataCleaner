@@ -46,9 +46,6 @@ public final class RendererFactory {
     /**
      * Represents a selection of a renderer. Will be used to store everything
      * related to a renderer while finding the most suited renderer.
-     * 
-     * 
-     * 
      */
     private static class RendererSelection {
         private final Renderer<?, ?> renderer;

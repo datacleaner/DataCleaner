@@ -31,8 +31,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
@@ -55,13 +55,13 @@ public class AnalyzeButtonActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Collection<? extends BeanDescriptor<?>> descriptors = getDescriptors();
+        final Collection<? extends ComponentDescriptor<?>> descriptors = getDescriptors();
 
         final JPopupMenu popup = new JPopupMenu();
 
         final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
             @Override
-            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+            protected JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
                 return AnalyzeButtonActionListener.this.createMenuItem(descriptor, null);
             }
         };
@@ -71,13 +71,13 @@ public class AnalyzeButtonActionListener implements ActionListener {
         popup.show(source, 0, source.getHeight());
     }
 
-    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor, final Point2D p) {
+    public JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor, final Point2D p) {
         final JMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final Map<String, String> metadataProperties = JobGraphMetadata.createMetadataProperties(p);
-                final AnalyzerBeanDescriptor<?> analyzerDescriptor = (AnalyzerBeanDescriptor<?>) descriptor;
+                final AnalyzerDescriptor<?> analyzerDescriptor = (AnalyzerDescriptor<?>) descriptor;
                 _analysisJobBuilder.addAnalyzer(analyzerDescriptor, null, null, metadataProperties);
                 _usageLogger.logComponentUsage(descriptor);
             }
@@ -86,9 +86,9 @@ public class AnalyzeButtonActionListener implements ActionListener {
         return menuItem;
     }
 
-    public Collection<? extends BeanDescriptor<?>> getDescriptors() {
-        final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
-                .getAnalyzerBeanDescriptors();
+    public Collection<? extends ComponentDescriptor<?>> getDescriptors() {
+        final Collection<AnalyzerDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+                .getAnalyzerDescriptors();
         return descriptors;
     }
 }

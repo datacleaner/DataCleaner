@@ -44,12 +44,12 @@ public class ExtensionClassLoaderTest {
         // Load the first instance
         final ClassLoader parent1 = ClassLoaderUtils.createClassLoader(jarFiles, null);
         final ClassLoader c1 = new ExtensionClassLoader(parent1, globalParent, "Extension1");
-        final Class<?> bazTransformer1 = c1.loadClass("foo.bar.transformer.BazTransformer");
+        final Class<?> bazTransformer1 = c1.loadClass("foo.bar.transformer.BarTransformer");
         Assert.assertNotNull(bazTransformer1);
         // Load the second instance...
         final ClassLoader parent2 = ClassLoaderUtils.createClassLoader(jarFiles, null);
         final ClassLoader c2 = new ExtensionClassLoader(parent2, globalParent, "Extension2");
-        final Class<?> bazTransformer2 = c2.loadClass("foo.bar.transformer.BazTransformer");
+        final Class<?> bazTransformer2 = c2.loadClass("foo.bar.transformer.BarTransformer");
         Assert.assertNotNull(bazTransformer2);
         // Check each instance is loaded by their own loader
         final ClassLoader loader1 = bazTransformer1.getClassLoader();
@@ -73,7 +73,7 @@ public class ExtensionClassLoaderTest {
         // Load the first instance
         final ClassLoader parent1 = ClassLoaderUtils.createClassLoader(jarFiles, null);
         final ClassLoader c1 = new ExtensionClassLoader(parent1, globalParent, "Extension1");
-        final Class<?> bazTransformer1 = c1.loadClass("foo.bar.transformer.BazTransformer");
+        final Class<?> bazTransformer1 = c1.loadClass("foo.bar.transformer.BarTransformer");
         Assert.assertNotNull(bazTransformer1);
         final ClassLoader classLoader = org.datacleaner.api.Transformer.class.getClassLoader();
         Assert.assertFalse(classLoader.toString().startsWith("Extension Classloader for: Extension1"));

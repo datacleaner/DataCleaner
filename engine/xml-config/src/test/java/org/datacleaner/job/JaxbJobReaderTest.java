@@ -29,6 +29,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.ToStringComparator;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzerResult;
@@ -50,15 +51,14 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.util.ToStringComparator;
 
 public class JaxbJobReaderTest extends TestCase {
 
@@ -122,8 +122,8 @@ public class JaxbJobReaderTest extends TestCase {
     public void testSimpleFilter() throws Exception {
         JaxbJobReader reader = new JaxbJobReader(conf);
         AnalysisJobBuilder jobBuilder = reader.create(new File("src/test/resources/example-job-simple-filter.xml"));
-        assertEquals(1, jobBuilder.getFilterJobBuilders().size());
-        assertEquals(3, jobBuilder.getAnalyzerJobBuilders().size());
+        assertEquals(1, jobBuilder.getFilterComponentBuilders().size());
+        assertEquals(3, jobBuilder.getAnalyzerComponentBuilders().size());
 
         AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
@@ -158,14 +158,14 @@ public class JaxbJobReaderTest extends TestCase {
         AnalysisJobBuilder jobBuilder = factory.create(new File("src/test/resources/example-job-named-inputs.xml"));
         assertEquals(true, jobBuilder.isConfigured());
 
-        assertEquals(2, jobBuilder.getTransformerJobBuilders().size());
+        assertEquals(2, jobBuilder.getTransformerComponentBuilders().size());
 
-        List<AnalyzerJobBuilder<?>> analyzerJobBuilders = jobBuilder.getAnalyzerJobBuilders();
+        List<AnalyzerComponentBuilder<?>> analyzerJobBuilders = jobBuilder.getAnalyzerComponentBuilders();
         assertEquals(1, analyzerJobBuilders.size());
 
-        AnalyzerJobBuilder<?> analyzerJobBuilder = analyzerJobBuilders.get(0);
+        AnalyzerComponentBuilder<?> analyzerJobBuilder = analyzerJobBuilders.get(0);
         AnalyzerJob analyzerJob = analyzerJobBuilder.toAnalyzerJob();
-        BeanConfiguration configuration = analyzerJob.getConfiguration();
+        ComponentConfiguration configuration = analyzerJob.getConfiguration();
 
         InputColumn<?> col1 = (InputColumn<?>) configuration.getProperty(analyzerJob.getDescriptor()
                 .getConfiguredProperty("From column"));
@@ -243,15 +243,15 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME]", sourceColumns.get(1).toString());
         assertEquals("MetaModelInputColumn[PUBLIC.EMPLOYEES.EMAIL]", sourceColumns.get(2).toString());
 
-        assertEquals(1, builder.getTransformerJobBuilders().size());
+        assertEquals(1, builder.getTransformerComponentBuilders().size());
         assertEquals(
                 "[TransformedInputColumn[id=trans-0001-0002,name=username], TransformedInputColumn[id=trans-0001-0003,name=domain]]",
-                builder.getTransformerJobBuilders().get(0).getOutputColumns().toString());
+                builder.getTransformerComponentBuilders().get(0).getOutputColumns().toString());
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=username], "
                 + "TransformedInputColumn[id=trans-0001-0003,name=domain], "
                 + "MetaModelInputColumn[PUBLIC.EMPLOYEES.FIRSTNAME], "
                 + "MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME]]",
-                Arrays.toString(builder.getAnalyzerJobBuilders().get(0).toAnalyzerJob().getInput()));
+                Arrays.toString(builder.getAnalyzerComponentBuilders().get(0).toAnalyzerJob().getInput()));
 
         List<AnalyzerResult> results = new AnalysisRunnerImpl(conf).run(builder.toAnalysisJob()).getResults();
         assertEquals(1, results.size());
@@ -328,7 +328,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertTrue(file.exists());
         AnalysisJobBuilder ajb = reader.create(file);
 
-        List<TransformerJobBuilder<?>> tjbs = ajb.getTransformerJobBuilders();
+        List<TransformerComponentBuilder<?>> tjbs = ajb.getTransformerComponentBuilders();
 
         DateMaskMatcherTransformer dateMaskMatcherTransformer = (DateMaskMatcherTransformer) tjbs.get(0)
                 .getComponentInstance();

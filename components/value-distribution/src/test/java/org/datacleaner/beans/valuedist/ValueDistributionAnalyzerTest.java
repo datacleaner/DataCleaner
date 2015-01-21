@@ -27,7 +27,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.MetricParameters;
@@ -38,7 +38,7 @@ import org.datacleaner.result.ValueCountingAnalyzerResult;
 public class ValueDistributionAnalyzerTest extends TestCase {
 
     public void testDescriptor() throws Exception {
-        AnalyzerBeanDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
+        AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
         assertEquals(0, desc.getInitializeMethods().size());
         assertEquals(6, desc.getConfiguredProperties().size());
         assertEquals(2, desc.getProvidedProperties().size());
@@ -106,7 +106,7 @@ public class ValueDistributionAnalyzerTest extends TestCase {
 
         final ValueCountingAnalyzerResult result = vd.getResult();
 
-        final AnalyzerBeanDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
+        final AnalyzerDescriptor<?> desc = Descriptors.ofAnalyzer(ValueDistributionAnalyzer.class);
         
         final MetricDescriptor metric = desc.getResultMetric("Value count");
         Collection<String> suggestions = metric.getMetricParameterSuggestions(result);

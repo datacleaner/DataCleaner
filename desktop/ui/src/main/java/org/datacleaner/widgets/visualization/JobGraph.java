@@ -44,26 +44,25 @@ import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -268,7 +267,7 @@ public final class JobGraph {
                     subTitle = "Right-click the source table and select 'Link to ...'.\n"
                             + "This directs the flow of data to the component.";
                     imagePath = "images/window/canvas-bg-connect.png";
-                } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
+                } else if (_analysisJobBuilder.getAnalyzerComponentBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Your job is almost ready.";
                     subTitle = "Jobs need to either 'Analyze' or 'Write' something.\n"
@@ -357,8 +356,8 @@ public final class JobGraph {
                 if (obj instanceof InputColumn) {
                     return ((InputColumn<?>) obj).getName();
                 }
-                if (obj instanceof AbstractBeanJobBuilder) {
-                    return LabelUtils.getLabel((AbstractBeanJobBuilder<?, ?, ?>) obj);
+                if (obj instanceof ComponentBuilder) {
+                    return LabelUtils.getLabel((ComponentBuilder) obj);
                 }
                 if (obj instanceof FilterOutcome) {
                     return ((FilterOutcome) obj).getCategory().name();

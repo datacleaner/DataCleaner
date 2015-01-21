@@ -27,18 +27,18 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
-public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel implements TransformerJobBuilderPresenter {
+public class HelloWorldTransformerPresenter extends TransformerComponentBuilderPanel implements TransformerComponentBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
-	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+	public HelloWorldTransformerPresenter(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
 			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
 		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 	}

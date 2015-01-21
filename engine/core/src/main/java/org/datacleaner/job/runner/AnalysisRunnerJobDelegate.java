@@ -24,13 +24,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.ConfigurableBeanJob;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.ForkTaskListener;
@@ -42,7 +43,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.tasks.CloseReferenceDataTaskListener;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.SourceColumnFinder;
-import org.apache.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,12 +180,12 @@ final class AnalysisRunnerJobDelegate {
      * Prevents that any row processing components have input from different
      * tables.
      * 
-     * @param beanJobs
+     * @param componentJobs
      */
-    private void validateSingleTableInput(Collection<? extends ConfigurableBeanJob<?>> beanJobs) {
-        for (ConfigurableBeanJob<?> beanJob : beanJobs) {
+    private void validateSingleTableInput(Collection<? extends ComponentJob> componentJobs) {
+        for (ComponentJob componentJob : componentJobs) {
             Table originatingTable = null;
-            InputColumn<?>[] input = beanJob.getInput();
+            InputColumn<?>[] input = componentJob.getInput();
 
             for (InputColumn<?> inputColumn : input) {
                 Table table = _sourceColumnFinder.findOriginatingTable(inputColumn);
@@ -194,7 +194,7 @@ final class AnalysisRunnerJobDelegate {
                         originatingTable = table;
                     } else {
                         if (!originatingTable.equals(table)) {
-                            throw new IllegalArgumentException("Input columns in " + beanJob
+                            throw new IllegalArgumentException("Input columns in " + componentJob
                                     + " originate from different tables");
                         }
                     }

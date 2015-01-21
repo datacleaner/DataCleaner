@@ -36,8 +36,8 @@ import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -79,15 +79,15 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
             ajb.addSourceColumns(jobTitleColumn, emailColumn);
 
             InputColumn<?> emailInputColumn = ajb.getSourceColumnByName("EMAIL");
-            TransformerJobBuilder<EmailStandardizerTransformer> emailStd1 = ajb.addTransformer(
+            TransformerComponentBuilder<EmailStandardizerTransformer> emailStd1 = ajb.addTransformer(
                     EmailStandardizerTransformer.class).addInputColumn(emailInputColumn);
 
-            AnalyzerJobBuilder<PatternFinderAnalyzer> pf = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            AnalyzerComponentBuilder<PatternFinderAnalyzer> pf = ajb.addAnalyzer(PatternFinderAnalyzer.class);
             InputColumn<?> jobtitleInputColumn = ajb.getSourceColumnByName("JOBTITLE");
             pf.addInputColumn(jobtitleInputColumn);
             pf.getComponentInstance().setDiscriminateTextCase(false);
 
-            AnalyzerJobBuilder<StringAnalyzer> sa = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> sa = ajb.addAnalyzer(StringAnalyzer.class);
             sa.addInputColumns(emailInputColumn, emailStd1.getOutputColumnByName("Username"),
                     emailStd1.getOutputColumnByName("Domain"));
 

@@ -33,10 +33,10 @@ import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
@@ -59,12 +59,12 @@ public class TransformButtonActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        final List<BeanDescriptor<?>> descriptors = getDescriptors();
+        final List<ComponentDescriptor<?>> descriptors = getDescriptors();
 
         final JPopupMenu popup = new JPopupMenu();
         final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
             @Override
-            protected JMenuItem createMenuItem(final BeanDescriptor<?> descriptor) {
+            protected JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
                 return TransformButtonActionListener.this.createMenuItem(descriptor, null);
             }
         };
@@ -73,18 +73,18 @@ public class TransformButtonActionListener implements ActionListener {
         showPopup(e, popup);
     }
 
-    public JMenuItem createMenuItem(final BeanDescriptor<?> descriptor, final Point2D p) {
+    public JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor, final Point2D p) {
         final DescriptorMenuItem menuItem = new DescriptorMenuItem(descriptor);
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(p);
 
-                if (descriptor instanceof TransformerBeanDescriptor) {
-                    final TransformerBeanDescriptor<?> transformerDescriptor = (TransformerBeanDescriptor<?>) descriptor;
+                if (descriptor instanceof TransformerDescriptor) {
+                    final TransformerDescriptor<?> transformerDescriptor = (TransformerDescriptor<?>) descriptor;
                     _analysisJobBuilder.addTransformer(transformerDescriptor, null, null, metadata);
-                } else if (descriptor instanceof FilterBeanDescriptor) {
-                    final FilterBeanDescriptor<?, ?> filterDescriptor = (FilterBeanDescriptor<?, ?>) descriptor;
+                } else if (descriptor instanceof FilterDescriptor) {
+                    final FilterDescriptor<?, ?> filterDescriptor = (FilterDescriptor<?, ?>) descriptor;
                     _analysisJobBuilder.addFilter(filterDescriptor, null, null, metadata);
                 }
                 _usageLogger.logComponentUsage(descriptor);
@@ -93,13 +93,13 @@ public class TransformButtonActionListener implements ActionListener {
         return menuItem;
     }
 
-    public List<BeanDescriptor<?>> getDescriptors() {
+    public List<ComponentDescriptor<?>> getDescriptors() {
         final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
-        final Collection<FilterBeanDescriptor<?, ?>> filterBeanDescriptors = descriptorProvider
-                .getFilterBeanDescriptors();
-        final Collection<TransformerBeanDescriptor<?>> transformerBeanDescritpors = descriptorProvider
-                .getTransformerBeanDescriptors();
-        final List<BeanDescriptor<?>> descriptors = CollectionUtils.<BeanDescriptor<?>> concat(false,
+        final Collection<FilterDescriptor<?, ?>> filterBeanDescriptors = descriptorProvider
+                .getFilterDescriptors();
+        final Collection<TransformerDescriptor<?>> transformerBeanDescritpors = descriptorProvider
+                .getTransformerDescriptors();
+        final List<ComponentDescriptor<?>> descriptors = CollectionUtils.<ComponentDescriptor<?>> concat(false,
                 filterBeanDescriptors, transformerBeanDescritpors);
         return descriptors;
     }

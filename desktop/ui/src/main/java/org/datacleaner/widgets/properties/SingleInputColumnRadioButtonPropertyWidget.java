@@ -32,11 +32,11 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
@@ -54,8 +54,6 @@ import org.jdesktop.swingx.VerticalLayout;
 /**
  * {@link PropertyWidget} for single {@link InputColumn}s. Displays the
  * selection as a series of radiobuttons. Used for required input columns.
- * 
- * @author Kasper Sørensen
  */
 public class SingleInputColumnRadioButtonPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
@@ -64,7 +62,6 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Class<?> _dataType;
     private final ConfiguredPropertyDescriptor _propertyDescriptor;
-    private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
     private final DCPanel _buttonPanel;
     private volatile JRadioButton[] _radioButtons;
     private volatile List<InputColumn<?>> _inputColumns;
@@ -72,15 +69,14 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
     @Inject
     public SingleInputColumnRadioButtonPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(componentBuilder, propertyDescriptor);
         _radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
         _radioGroup.setOpaque(false);
 
         _analysisJobBuilder = analysisJobBuilder;
         _analysisJobBuilder.getSourceColumnListeners().add(this);
         _analysisJobBuilder.getTransformerChangeListeners().add(this);
-        _beanJobBuilder = beanJobBuilder;
         _propertyDescriptor = propertyDescriptor;
         _dataType = propertyDescriptor.getTypeArgument(0);
 
@@ -228,10 +224,11 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
     private void handleRemovedColumn(InputColumn<?> column) {
         if (isColumnApplicable(column)) {
-            InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+            final ComponentBuilder componentBuilder = getComponentBuilder();
+            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder.getConfiguredProperty(_propertyDescriptor);
             if (currentValue != null) {
                 if (currentValue.equals(column)) {
-                    _beanJobBuilder.setConfiguredProperty(_propertyDescriptor, null);
+                    componentBuilder.setConfiguredProperty(_propertyDescriptor, null);
                 }
             }
             updateComponents();
@@ -244,18 +241,18 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     }
 
     @Override
-    public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
         updateComponents();
         updateUI();
     }
 
     @Override
-    public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
         List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
         for (MutableInputColumn<?> column : outputColumns) {
             handleRemovedColumn(column);
@@ -287,7 +284,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     }
 
     @Override
-    public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
         if (transformerJobBuilder == getComponentBuilder()) {
             return;
         }
@@ -296,7 +293,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     }
 
     @Override
-    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
     }
 
     @Override

@@ -227,7 +227,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (Entry<TransformerJob, TransformerType> entry : transformerMappings.entrySet()) {
             TransformerJob job = entry.getKey();
             TransformerType elementType = entry.getValue();
-            BeanConfiguration configuration = job.getConfiguration();
+            ComponentConfiguration configuration = job.getConfiguration();
 
             Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
                     .getConfiguredPropertiesForInput();
@@ -244,7 +244,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (Entry<FilterJob, FilterType> entry : filterMappings.entrySet()) {
             FilterJob job = entry.getKey();
             FilterType elementType = entry.getValue();
-            BeanConfiguration configuration = job.getConfiguration();
+            ComponentConfiguration configuration = job.getConfiguration();
 
             Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
                     .getConfiguredPropertiesForInput();
@@ -261,7 +261,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (Entry<AnalyzerJob, AnalyzerType> entry : analyzerMappings.entrySet()) {
             AnalyzerJob job = entry.getKey();
             AnalyzerType elementType = entry.getValue();
-            BeanConfiguration configuration = job.getConfiguration();
+            ComponentConfiguration configuration = job.getConfiguration();
 
             Set<ConfiguredPropertyDescriptor> configuredProperties = job.getDescriptor()
                     .getConfiguredPropertiesForInput();
@@ -290,7 +290,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return result;
     }
 
-    private List<InputType> createInputConfiguration(final BeanConfiguration configuration,
+    private List<InputType> createInputConfiguration(final ComponentConfiguration configuration,
             Set<ConfiguredPropertyDescriptor> configuredProperties, final Map<InputColumn<?>, String> columnMappings,
             final StringConverter stringConverter) {
 
@@ -334,7 +334,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return result;
     }
 
-    private ConfiguredPropertiesType createPropertyConfiguration(final BeanConfiguration configuration,
+    private ConfiguredPropertiesType createPropertyConfiguration(final ComponentConfiguration configuration,
             Set<ConfiguredPropertyDescriptor> configuredProperties, StringConverter stringConverter) {
 
         // sort the properties in order to make the result deterministic

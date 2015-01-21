@@ -34,7 +34,7 @@ import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.util.ReflectionUtils;
 
 /**
@@ -158,7 +158,7 @@ public class QuickAnalysisStrategy implements Serializable {
             List<InputColumn<?>> columns) {
         final int columnsPerAnalyzer = getColumnsPerAnalyzer();
 
-        AnalyzerJobBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
+        AnalyzerComponentBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
         int columnCount = 0;
         for (InputColumn<?> inputColumn : columns) {
             if (columnCount == columnsPerAnalyzer) {

@@ -32,8 +32,8 @@ import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.datastore.DatastoreCreationDelegate;
@@ -75,14 +75,14 @@ public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer imp
     DatastoreCatalog datastoreCatalog;
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor,
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor,
             String categoryName) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         tableName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
     }
 
     @Override
-    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
+    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         tableName = "output-" + dsName + "-" + descriptor.getDisplayName();
     }

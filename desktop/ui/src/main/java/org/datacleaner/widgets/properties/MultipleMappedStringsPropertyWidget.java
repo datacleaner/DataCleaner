@@ -29,10 +29,10 @@ import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.DCCheckBox;
 import org.jdesktop.swingx.JXTextField;
@@ -47,9 +47,9 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 
     public class MappedStringsPropertyWidget extends MinimalPropertyWidget<String[]> {
 
-        public MappedStringsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+        public MappedStringsPropertyWidget(ComponentBuilder componentBuilder,
                 ConfiguredPropertyDescriptor propertyDescriptor) {
-            super(beanJobBuilder, propertyDescriptor);
+            super(componentBuilder, propertyDescriptor);
         }
 
         @Override
@@ -84,24 +84,24 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
     /**
      * Constructs the property widget
      * 
-     * @param beanJobBuilder
-     *            the transformer job builder for the table lookup
+     * @param componentBuilder
+     *            the component builder for the table lookup
      * @param inputColumnsProperty
      *            the property represeting the columns to use for settig up
      *            conditional lookup (InputColumn[])
      * @param mappedStringsProperty
      *            the property representing the mapped strings (String[])
      */
-    public MultipleMappedStringsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public MultipleMappedStringsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedStringsProperty) {
-        super(beanJobBuilder, inputColumnsProperty);
+        super(componentBuilder, inputColumnsProperty);
         _mappedTextFields = new WeakHashMap<InputColumn<?>, JXTextField>();
         _mappedStringsProperty = mappedStringsProperty;
 
-        _mappedStringsPropertyWidget = new MappedStringsPropertyWidget(beanJobBuilder, mappedStringsProperty);
+        _mappedStringsPropertyWidget = new MappedStringsPropertyWidget(componentBuilder, mappedStringsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
-        final String[] currentMappedStringsValue = (String[]) beanJobBuilder
+        final String[] currentMappedStringsValue = (String[]) componentBuilder
                 .getConfiguredProperty(mappedStringsProperty);
         if (currentValue != null && currentMappedStringsValue != null) {
             // first create combo's, then set value (so combo is ready before it

@@ -62,7 +62,7 @@ public class InputColumnsFromDifferentTablesTest extends TestCase {
 			fail("exception expected");
 		} catch (IllegalStateException e) {
 			assertEquals(
-					"Multiple originating tables (CUSTOMERS, EMPLOYEES) found for source: TransformerJobBuilder[transformer=Concatenator,inputColumns=[MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME], MetaModelInputColumn[PUBLIC.CUSTOMERS.CONTACTLASTNAME]]]",
+					"Multiple originating tables (CUSTOMERS, EMPLOYEES) found for source: TransformerComponentBuilder[transformer=Concatenator,inputColumns=[MetaModelInputColumn[PUBLIC.EMPLOYEES.LASTNAME], MetaModelInputColumn[PUBLIC.CUSTOMERS.CONTACTLASTNAME]]]",
 					e.getMessage());
 		}
 

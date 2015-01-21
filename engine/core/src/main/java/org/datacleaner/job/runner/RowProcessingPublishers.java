@@ -37,8 +37,8 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.TransformerJob;
@@ -94,7 +94,7 @@ public final class RowProcessingPublishers {
         }
     }
 
-    public Column[] getPhysicalColumns(ConfigurableBeanJob<?> componentJob) {
+    public Column[] getPhysicalColumns(ComponentJob componentJob) {
         final Set<Column> physicalColumns = new HashSet<Column>();
 
         final InputColumn<?>[] inputColumns = componentJob.getInput();
@@ -112,11 +112,11 @@ public final class RowProcessingPublishers {
         return physicalColumnsArray;
     }
 
-    public Table[] getTables(ConfigurableBeanJob<?> componentJob) {
+    public Table[] getTables(ComponentJob componentJob) {
         return getTables(componentJob, null);
     }
 
-    public Table[] getTables(ConfigurableBeanJob<?> componentJob, Column[] physicalColumns) {
+    public Table[] getTables(ComponentJob componentJob, Column[] physicalColumns) {
         if (physicalColumns == null) {
             physicalColumns = getPhysicalColumns(componentJob);
         }
@@ -145,7 +145,7 @@ public final class RowProcessingPublishers {
         return tables;
     }
 
-    private void registerRowProcessingPublishers(ConfigurableBeanJob<?> componentJob) {
+    private void registerRowProcessingPublishers(ComponentJob componentJob) {
         final Column[] physicalColumns = getPhysicalColumns(componentJob);
         final Table[] tables = getTables(componentJob, physicalColumns);
 

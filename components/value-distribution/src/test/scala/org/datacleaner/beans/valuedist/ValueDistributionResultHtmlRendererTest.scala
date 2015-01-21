@@ -20,8 +20,8 @@ import org.apache.metamodel.util.FileHelper
 import java.io.File
 import org.datacleaner.descriptors.SimpleDescriptorProvider
 import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.job.BeanConfiguration
-import org.datacleaner.job.ImmutableBeanConfiguration
+import org.datacleaner.job.ComponentConfiguration
+import org.datacleaner.job.ImmutableComponentConfiguration
 import org.datacleaner.result.renderer.AnnotatedRowsHtmlRenderer
 import org.datacleaner.result.renderer.ListResultHtmlRenderer
 
@@ -50,9 +50,9 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ValueDistributionResultHtmlRenderer]))
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ListResultHtmlRenderer]))
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[AnnotatedRowsHtmlRenderer]))
-    val descriptor = conf.getDescriptorProvider().getAnalyzerBeanDescriptorForClass(classOf[ValueDistributionAnalyzer]);
+    val descriptor = conf.getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
     val map = new java.util.HashMap[ComponentJob, AnalyzerResult]()
-    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableBeanConfiguration(null), null, null);
+    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null);
     map.put(componentJob, analyzerResult);
     val result = new SimpleAnalysisResult(map)
     

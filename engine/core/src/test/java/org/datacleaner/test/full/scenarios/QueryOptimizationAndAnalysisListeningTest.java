@@ -31,8 +31,8 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -71,12 +71,12 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
             jobBuilder.setDatastore("orderdb");
             jobBuilder.addSourceColumns("customers.contactfirstname", "customers.contactlastname");
 
-            final FilterJobBuilder<MaxRowsFilter, Category> filter = jobBuilder.addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, Category> filter = jobBuilder.addFilter(MaxRowsFilter.class);
             filter.getComponentInstance().setFirstRow(42);
             filter.getComponentInstance().setMaxRows(10);
             jobBuilder.setDefaultRequirement(filter, MaxRowsFilter.Category.VALID);
 
-            final AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
             job = jobBuilder.toAnalysisJob();

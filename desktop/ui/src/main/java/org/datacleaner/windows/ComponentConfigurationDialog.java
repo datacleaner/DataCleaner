@@ -29,16 +29,15 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 
-import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.actions.RenameComponentActionListener;
-import org.datacleaner.panels.ComponentJobBuilderPresenter;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenter;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ChangeRequirementButton;
@@ -53,12 +52,12 @@ public class ComponentConfigurationDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final ComponentJobBuilderPresenter _presenter;
-    private final AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> _componentBuilder;
+    private final ComponentBuilderPresenter _presenter;
+    private final ComponentBuilder _componentBuilder;
 
     public ComponentConfigurationDialog(
-            AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> componentBuilder,
-            AnalysisJobBuilder analysisJobBuilder, ComponentJobBuilderPresenter presenter) {
+            ComponentBuilder componentBuilder,
+            AnalysisJobBuilder analysisJobBuilder, ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(null, getBannerImage(componentBuilder));
@@ -67,7 +66,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         _presenter = presenter;
     }
 
-    private static Image getBannerImage(AbstractBeanJobBuilder<? extends ComponentDescriptor<?>, ?, ?> componentBuilder) {
+    private static Image getBannerImage(ComponentBuilder componentBuilder) {
         final ImageIcon descriptorIcon = IconUtils.getDescriptorIcon(componentBuilder.getDescriptor(),
                 IconUtils.ICON_SIZE_LARGE);
         return descriptorIcon.getImage();

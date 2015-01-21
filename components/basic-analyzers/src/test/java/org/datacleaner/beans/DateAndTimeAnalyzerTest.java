@@ -32,7 +32,7 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -52,7 +52,7 @@ public class DateAndTimeAnalyzerTest extends TestCase {
 
             ajb.addSourceColumns("ORDERFACT.ORDERDATE", "ORDERFACT.REQUIREDDATE", "ORDERFACT.SHIPPEDDATE");
 
-            AnalyzerJobBuilder<DateAndTimeAnalyzer> analyzer = ajb.addAnalyzer(DateAndTimeAnalyzer.class);
+            AnalyzerComponentBuilder<DateAndTimeAnalyzer> analyzer = ajb.addAnalyzer(DateAndTimeAnalyzer.class);
             analyzer.addInputColumns(ajb.getSourceColumns());
 
             AnalysisJob job = ajb.toAnalysisJob();

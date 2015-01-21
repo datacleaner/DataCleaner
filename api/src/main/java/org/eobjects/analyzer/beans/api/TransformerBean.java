@@ -27,10 +27,12 @@ import java.lang.annotation.Target;
 
 import javax.inject.Named;
 
+import org.datacleaner.api.Transformer;
+
 /**
  * Legacy {@link TransformerBean} annotation.
  * 
- * @deprecated use {@link Named} instead
+ * @deprecated use {@link Named} instead. See {@link Transformer} for general instructions on building a transformer.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -27,7 +27,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.test.MockAnalyzer;
 
 public class AnalyzerJobHelperTest extends TestCase {
@@ -43,7 +43,7 @@ public class AnalyzerJobHelperTest extends TestCase {
     }
 
     public void testGetAnalyzerJob() throws Exception {
-        final AnalyzerJobBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
         analyzer.addInputColumns(ajb.getSourceColumns());
 
         final AnalysisJob job1 = ajb.toAnalysisJob();
@@ -75,7 +75,7 @@ public class AnalyzerJobHelperTest extends TestCase {
     }
 
     public void testGetIdentifyingInputColumn() throws Exception {
-        AnalyzerJobBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
+        AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
         analyzer.addInputColumns(ajb.getSourceColumns());
 
         AnalysisJob job = ajb.toAnalysisJob();

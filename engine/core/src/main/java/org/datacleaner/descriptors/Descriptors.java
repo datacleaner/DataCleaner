@@ -54,30 +54,30 @@ public class Descriptors {
     }
 
     /**
-     * Creates an {@link AnalyzerBeanDescriptor} for an analyzer class.
+     * Creates an {@link AnalyzerDescriptor} for an analyzer class.
      * 
      * @param <A>
      * @param analyzerClass
      * @return
      */
-    public static <A extends Analyzer<?>> AnalyzerBeanDescriptor<A> ofAnalyzer(Class<A> analyzerClass) {
-        return new AnnotationBasedAnalyzerBeanDescriptor<A>(analyzerClass);
+    public static <A extends Analyzer<?>> AnalyzerDescriptor<A> ofAnalyzer(Class<A> analyzerClass) {
+        return new AnnotationBasedAnalyzerComponentDescriptor<A>(analyzerClass);
     }
 
     /**
-     * Creates a {@link FilterBeanDescriptor} for a filter class.
+     * Creates a {@link FilterDescriptor} for a filter class.
      * 
      * @param <F>
      * @param <C>
      * @param filterClass
      * @return
      */
-    public static <F extends Filter<C>, C extends Enum<C>> FilterBeanDescriptor<F, C> ofFilter(Class<F> filterClass) {
-        return new AnnotationBasedFilterBeanDescriptor<F, C>(filterClass);
+    public static <F extends Filter<C>, C extends Enum<C>> FilterDescriptor<F, C> ofFilter(Class<F> filterClass) {
+        return new AnnotationBasedFilterComponentDescriptor<F, C>(filterClass);
     }
 
     /**
-     * Creates a {@link FilterBeanDescriptor} for a filter class.
+     * Creates a {@link FilterDescriptor} for a filter class.
      * 
      * Alternative factory method used when sufficient type-information about
      * the {@link Filter} class is not available.
@@ -91,19 +91,19 @@ public class Descriptors {
      * @return
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static FilterBeanDescriptor<?, ?> ofFilterUnbound(Class<?> clazz) {
-        return new AnnotationBasedFilterBeanDescriptor(clazz);
+    public static FilterDescriptor<?, ?> ofFilterUnbound(Class<?> clazz) {
+        return new AnnotationBasedFilterComponentDescriptor(clazz);
     }
 
     /**
-     * Creates a {@link TransformerBeanDescriptor} for a transformer class.
+     * Creates a {@link TransformerDescriptor} for a transformer class.
      * 
      * @param <T>
      * @param transformerClass
      * @return
      */
-    public static <T extends Transformer> TransformerBeanDescriptor<T> ofTransformer(Class<T> transformerClass) {
-        return new AnnotationBasedTransformerBeanDescriptor<T>(transformerClass);
+    public static <T extends Transformer> TransformerDescriptor<T> ofTransformer(Class<T> transformerClass) {
+        return new AnnotationBasedTransformerComponentDescriptor<T>(transformerClass);
     }
 
     /**

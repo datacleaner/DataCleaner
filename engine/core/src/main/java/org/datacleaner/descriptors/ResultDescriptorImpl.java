@@ -33,7 +33,7 @@ import org.datacleaner.util.ReflectionUtils;
 
 /**
  * Default {@link ResultDescriptor} implementation which can be used stand-alone
- * or as a delegate for e.g. an {@link AnalyzerBeanDescriptor} implementation.
+ * or as a delegate for e.g. an {@link AnalyzerDescriptor} implementation.
  */
 final class ResultDescriptorImpl implements ResultDescriptor {
 

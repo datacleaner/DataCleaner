@@ -24,31 +24,31 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.datacleaner.beans.filter.EqualsFilter;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.job.builder.FilterJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
-import org.datacleaner.panels.FilterJobBuilderPanel;
-import org.datacleaner.panels.FilterJobBuilderPresenter;
+import org.datacleaner.panels.FilterComponentBuilderPanel;
+import org.datacleaner.panels.FilterComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link FilterJobBuilderPresenter} for the {@link EqualsFilter}.
+ * Specialized {@link FilterComponentBuilderPresenter} for the {@link EqualsFilter}.
  */
-class EqualsFilterJobBuilderPresenter extends FilterJobBuilderPanel {
+class EqualsFilterComponentBuilderPresenter extends FilterComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public EqualsFilterJobBuilderPresenter(FilterJobBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
+    public EqualsFilterComponentBuilderPresenter(FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 
     @Override
     protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-        final FilterBeanDescriptor<?, ?> descriptor = getJobBuilder().getDescriptor();
+        final FilterDescriptor<?, ?> descriptor = getComponentBuilder().getDescriptor();
         final List<ConfiguredPropertyDescriptor> configuredProperties = new ArrayList<ConfiguredPropertyDescriptor>(
                 new TreeSet<ConfiguredPropertyDescriptor>(descriptor.getConfiguredProperties()));
 

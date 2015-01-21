@@ -36,7 +36,6 @@ import junit.framework.TestCase;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
-import org.easymock.EasyMock;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
@@ -55,12 +54,13 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.JobMetadataType;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
+import org.easymock.EasyMock;
 
 public class JaxbJobWriterTest extends TestCase {
 
@@ -105,7 +105,7 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals(4, table.getColumnCount());
             jobBuilder.addSourceColumns(table.getColumns());
 
-            final AnalyzerJobBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer = jobBuilder.addAnalyzer(MockAnalyzer.class);
             analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
             builtJob = jobBuilder.toAnalysisJob();
@@ -290,26 +290,26 @@ public class JaxbJobWriterTest extends TestCase {
             InputColumn<?> lnCol = ajb.getSourceColumnByName("LASTNAME");
             InputColumn<?> emailCol = ajb.getSourceColumnByName("EMAIL");
 
-            AnalyzerJobBuilder<StringAnalyzer> strAnalyzer = ajb.addAnalyzer(StringAnalyzer.class);
+            AnalyzerComponentBuilder<StringAnalyzer> strAnalyzer = ajb.addAnalyzer(StringAnalyzer.class);
             strAnalyzer.addInputColumns(fnCol, lnCol);
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file1.xml");
 
-            TransformerJobBuilder<EmailStandardizerTransformer> tjb = ajb
+            TransformerComponentBuilder<EmailStandardizerTransformer> tjb = ajb
                     .addTransformer(EmailStandardizerTransformer.class);
             tjb.addInputColumn(emailCol);
             strAnalyzer.addInputColumns(tjb.getOutputColumns());
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file2.xml");
 
-            FilterJobBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> fjb1 = ajb
+            FilterComponentBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> fjb1 = ajb
                     .addFilter(NullCheckFilter.class);
             fjb1.addInputColumn(fnCol);
             strAnalyzer.setRequirement(fjb1, "NOT_NULL");
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file3.xml");
 
-            AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder1 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder1 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
             makeCrossPlatformCompatible(patternFinder1);
             MutableInputColumn<?> usernameColumn = tjb.getOutputColumnByName("Username");
             patternFinder1.addInputColumn(fnCol).addInputColumn(usernameColumn).getComponentInstance()
@@ -317,10 +317,10 @@ public class JaxbJobWriterTest extends TestCase {
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file4.xml");
 
-            FilterJobBuilder<SingleWordFilter, ValidationCategory> fjb2 = ajb.addFilter(SingleWordFilter.class);
+            FilterComponentBuilder<SingleWordFilter, ValidationCategory> fjb2 = ajb.addFilter(SingleWordFilter.class);
             fjb2.addInputColumn(usernameColumn);
 
-            AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder2 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder2 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
             patternFinder2.addInputColumn(tjb.getOutputColumns().get(1));
             patternFinder2.setRequirement(fjb2, ValidationCategory.INVALID);
             makeCrossPlatformCompatible(patternFinder2);
@@ -345,7 +345,7 @@ public class JaxbJobWriterTest extends TestCase {
      * 
      * @param pfb
      */
-    private void makeCrossPlatformCompatible(AnalyzerJobBuilder<PatternFinderAnalyzer> pfb) {
+    private void makeCrossPlatformCompatible(AnalyzerComponentBuilder<PatternFinderAnalyzer> pfb) {
         PatternFinderAnalyzer pf = pfb.getComponentInstance();
         pf.setDecimalSeparator('.');
         pf.setMinusSign('-');

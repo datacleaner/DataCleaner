@@ -30,7 +30,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -49,7 +49,7 @@ public class CustomColumnTypeTest extends TestCase {
             builder.setDatastore(new CsvDatastore("Names", "src/test/resources/month-strings.csv"));
             builder.addSourceColumns("month");
 
-            TransformerJobBuilder<MockConvertToMonthObjectTransformer> convertTransformer = builder.addTransformer(
+            TransformerComponentBuilder<MockConvertToMonthObjectTransformer> convertTransformer = builder.addTransformer(
                     MockConvertToMonthObjectTransformer.class).addInputColumn(builder.getSourceColumnByName("month"));
             monthObjectColumn = convertTransformer.getOutputColumns().get(0);
 

@@ -22,6 +22,11 @@ package org.datacleaner.cluster;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.UpdateCallback;
+import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.Schema;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -55,20 +60,15 @@ import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.JobStatus;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Schema;
 import org.junit.Assert;
 
 public class ClusterTestHelper {
@@ -136,11 +136,11 @@ public class ClusterTestHelper {
         jobBuilder.setDatastore("orderdb");
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER");
 
-        final TransformerJobBuilder<MockTransformerThatWillFail> transformer = jobBuilder
+        final TransformerComponentBuilder<MockTransformerThatWillFail> transformer = jobBuilder
                 .addTransformer(MockTransformerThatWillFail.class);
         transformer.addInputColumns(jobBuilder.getSourceColumns());
 
-        final AnalyzerJobBuilder<CompletenessAnalyzer> analyzer = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         analyzer.addInputColumns(transformer.getOutputColumns());
         analyzer.setConfiguredProperty("Conditions",
                 new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL });
@@ -187,10 +187,10 @@ public class ClusterTestHelper {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER");
         jobBuilder.addSourceColumns("CUSTOMERS.COUNTRY");
 
-        final AnalyzerJobBuilder<StringAnalyzer> stringAnalyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
         stringAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(String.class));
 
-        final AnalyzerJobBuilder<NumberAnalyzer> numberAnalyzer = jobBuilder.addAnalyzer(NumberAnalyzer.class);
+        final AnalyzerComponentBuilder<NumberAnalyzer> numberAnalyzer = jobBuilder.addAnalyzer(NumberAnalyzer.class);
         numberAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(Number.class));
 
         final AnalysisJob job = jobBuilder.toAnalysisJob();
@@ -267,7 +267,7 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME", "CUSTOMERS.COUNTRY", "CUSTOMERS.ADDRESSLINE2");
 
         List<MetaModelInputColumn> cols = jobBuilder.getSourceColumns();
-        AnalyzerJobBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(cols);
         Condition[] conditions = new CompletenessAnalyzer.Condition[cols.size()];
         for (int i = 0; i < conditions.length; i++) {
@@ -275,7 +275,7 @@ public class ClusterTestHelper {
         }
         completeness.setConfiguredProperty("Conditions", conditions);
 
-        AnalyzerJobBuilder<ValueMatchAnalyzer> valueMatch = jobBuilder.addAnalyzer(ValueMatchAnalyzer.class);
+        AnalyzerComponentBuilder<ValueMatchAnalyzer> valueMatch = jobBuilder.addAnalyzer(ValueMatchAnalyzer.class);
         valueMatch.addInputColumn(jobBuilder.getSourceColumnByName("COUNTRY"));
         valueMatch.setConfiguredProperty("Expected values", new String[] { "United States", "USA", "Denmark",
                 "Danmark", "Netherlands" });
@@ -353,11 +353,11 @@ public class ClusterTestHelper {
         final InputColumn<?> col1 = jobBuilder.getSourceColumnByName("CONTACTFIRSTNAME");
         final InputColumn<?> col2 = jobBuilder.getSourceColumnByName("CONTACTLASTNAME");
 
-        final FilterJobBuilder<MaxRowsFilter, Category> filter = jobBuilder.addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, Category> filter = jobBuilder.addFilter(MaxRowsFilter.class);
         filter.getComponentInstance().setFirstRow(5);
         filter.getComponentInstance().setMaxRows(20);
 
-        final AnalyzerJobBuilder<StringAnalyzer> analyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
+        final AnalyzerComponentBuilder<StringAnalyzer> analyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
         analyzer.addInputColumn(col1);
         analyzer.addInputColumn(col2);
         analyzer.setRequirement(filter, MaxRowsFilter.Category.VALID);
@@ -397,7 +397,7 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME");
 
         // concatenate firstname + lastname
-        final TransformerJobBuilder<ConcatenatorTransformer> concatenator = jobBuilder
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = jobBuilder
                 .addTransformer(ConcatenatorTransformer.class);
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTFIRSTNAME"));
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTLASTNAME"));
@@ -414,7 +414,7 @@ public class ClusterTestHelper {
             final String schemaName = schema.getName();
             final String tableName = schema.getTable(0).getName();
 
-            final AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
                     .addAnalyzer(InsertIntoTableAnalyzer.class);
             insert.setConfiguredProperty("Datastore", csvDatastore);
             insert.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
@@ -485,12 +485,12 @@ public class ClusterTestHelper {
                 jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CONTACTFIRSTNAME",
                         "CUSTOMERS.CONTACTLASTNAME");
 
-                final FilterJobBuilder<EqualsFilter, ValidationCategory> equalsFilter = jobBuilder
+                final FilterComponentBuilder<EqualsFilter, ValidationCategory> equalsFilter = jobBuilder
                         .addFilter(EqualsFilter.class);
                 equalsFilter.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
                 equalsFilter.getComponentInstance().setValues(new String[] { "-1000000" });
 
-                final AnalyzerJobBuilder<StringAnalyzer> stringAnalyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
+                final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
                 stringAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(String.class));
                 stringAnalyzer.setRequirement(equalsFilter, ValidationCategory.VALID);
 
@@ -539,7 +539,7 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME");
 
         // concatenate firstname + lastname
-        final TransformerJobBuilder<ConcatenatorTransformer> concatenator = jobBuilder
+        final TransformerComponentBuilder<ConcatenatorTransformer> concatenator = jobBuilder
                 .addTransformer(ConcatenatorTransformer.class);
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTFIRSTNAME"));
         concatenator.addInputColumn(jobBuilder.getSourceColumnByName("CONTACTLASTNAME"));
@@ -556,7 +556,7 @@ public class ClusterTestHelper {
             final String schemaName = schema.getName();
             final String tableName = schema.getTable(0).getName();
 
-            final AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
+            final AnalyzerComponentBuilder<InsertIntoTableAnalyzer> insert = jobBuilder
                     .addAnalyzer(InsertIntoTableAnalyzer.class);
             insert.setConfiguredProperty("Datastore", csvDatastore);
             insert.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));

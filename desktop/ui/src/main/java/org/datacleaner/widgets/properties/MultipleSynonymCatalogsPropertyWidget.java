@@ -27,7 +27,7 @@ import javax.inject.Provider;
 import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableReferenceDataCatalog;
@@ -43,10 +43,10 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheck
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
-	public MultipleSynonymCatalogsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleSynonymCatalogsPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
 			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(beanJobBuilder, propertyDescriptor, SynonymCatalog.class);
+		super(componentBuilder, propertyDescriptor, SynonymCatalog.class);
 		_referenceDataCatalog = referenceDataCatalog;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 	}

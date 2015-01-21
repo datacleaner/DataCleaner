@@ -30,7 +30,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
@@ -85,8 +85,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
     private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
         MaxRowsFilterShortcutPanel maxRowsFilterShortcutPanel = null;
-        List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
-        for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
+        List<FilterComponentBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterComponentBuilders();
+        for (FilterComponentBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
             if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
                 maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder, filterJobBuilder);
                 break;

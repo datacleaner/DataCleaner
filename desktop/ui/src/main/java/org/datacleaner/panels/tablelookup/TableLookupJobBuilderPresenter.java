@@ -31,13 +31,13 @@ import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
@@ -48,12 +48,12 @@ import org.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 
 /**
- * Specialized {@link TransformerJobBuilderPresenter} for the
+ * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TableLookupTransformer}.
  * 
  * @author Kasper Sørensen
  */
-class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
+class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,13 +68,13 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
     private final ConfiguredPropertyDescriptor _cacheLookupsProperty;
     private final ConfiguredPropertyDescriptor _joinSemanticProperty;
 
-    public TableLookupJobBuilderPresenter(TransformerJobBuilder<TableLookupTransformer> transformerJobBuilder,
+    public TableLookupJobBuilderPresenter(TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
             AnalyzerBeansConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-        final TransformerBeanDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
+        final TransformerDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
         assert descriptor.getComponentClass() == TableLookupTransformer.class;
 
         _datastoreProperty = descriptor.getConfiguredProperty("Datastore");
@@ -158,11 +158,11 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
             return _overriddenPropertyWidgets.get(propertyDescriptor);
         }
-        return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+        return super.createPropertyWidget(componentBuilder, propertyDescriptor);
     }
 }

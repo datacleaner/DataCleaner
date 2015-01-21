@@ -22,6 +22,7 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Queue;
@@ -38,7 +39,6 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.LazyRef;
-import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
@@ -51,9 +51,8 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
@@ -372,14 +371,7 @@ public final class RowProcessingPublisher {
     }
 
     public List<RowProcessingConsumer> getConfigurableConsumers() {
-        final List<RowProcessingConsumer> configurableConsumers = CollectionUtils.filter(_consumers,
-                new Predicate<RowProcessingConsumer>() {
-                    @Override
-                    public Boolean eval(RowProcessingConsumer input) {
-                        return input.getComponentJob() instanceof ConfigurableBeanJob<?>;
-                    }
-                });
-        return configurableConsumers;
+        return Collections.unmodifiableList(_consumers);
     }
 
     /**
@@ -500,7 +492,7 @@ public final class RowProcessingPublisher {
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
         final ComponentJob componentJob = consumer.getComponentJob();
         final Object component = consumer.getComponent();
-        final BeanConfiguration configuration = ((ConfigurableBeanJob<?>) componentJob).getConfiguration();
+        final ComponentConfiguration configuration = componentJob.getConfiguration();
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
 
         // make a component-context specific injection manager

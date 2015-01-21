@@ -31,14 +31,14 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.panels.AnalyzerJobBuilderPanel;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -52,8 +52,6 @@ import com.google.inject.Injector;
 
 /**
  * Provides an action for the user to save a table as a CSV file
- * 
- * @author Kasper Sørensen
  */
 public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
@@ -82,7 +80,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(_table.getColumns());
 
-        final AnalyzerJobBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
+        final AnalyzerComponentBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
                 .addAnalyzer(CreateCsvFileAnalyzer.class);
         csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
         File directory = _userPreferences.getConfiguredFileDirectory();
@@ -91,7 +89,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
         final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
                 csvOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);
 
-        final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(csvOutputAnalyzerBuilder,
+        final AnalyzerComponentBuilderPanel presenter = new AnalyzerComponentBuilderPanel(csvOutputAnalyzerBuilder,
                 propertyWidgetFactory);
 
         final AbstractDialog dialog = new AbstractDialog(_windowContext) {
@@ -109,7 +107,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
             @Override
             protected JComponent getDialogContent() {
-                final AnalyzerBeanDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder
+                final AnalyzerDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder
                         .getDescriptor();
                 final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
                 tabbedPane.addTab(descriptor.getDisplayName(),

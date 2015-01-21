@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.metamodel.util.Resource;
+import org.apache.metamodel.util.ResourceException;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.cluster.ClusterManager;
@@ -38,7 +40,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor;
+import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
@@ -49,7 +51,6 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.job.runner.CompositeAnalysisListener;
-import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.monitor.cluster.ClusterManagerFactory;
 import org.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.datacleaner.monitor.configuration.ResultContext;
@@ -66,9 +67,8 @@ import org.datacleaner.monitor.server.MetricValueUtils;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -310,8 +310,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
         MetricDescriptor metricDescriptor = null;
-        HasAnalyzerResultBeanDescriptor<?> componentDescriptor = _descriptorProvider
-                .getAnalyzerBeanDescriptorByDisplayName(analyzerDescriptorName);
+        HasAnalyzerResultComponentDescriptor<?> componentDescriptor = _descriptorProvider
+                .getAnalyzerDescriptorByDisplayName(analyzerDescriptorName);
 
         if (componentDescriptor == null) {
             // in some cases we have results of components that are not
@@ -333,7 +333,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
                 analysisResult);
 
         if (componentDescriptor == null) {
-            componentDescriptor = (HasAnalyzerResultBeanDescriptor<?>) componentJob.getDescriptor();
+            componentDescriptor = (HasAnalyzerResultComponentDescriptor<?>) componentJob.getDescriptor();
             metricDescriptor = componentDescriptor.getResultMetric(metricDescriptorName);
 
             if (!metricDescriptor.isParameterizedByString()) {

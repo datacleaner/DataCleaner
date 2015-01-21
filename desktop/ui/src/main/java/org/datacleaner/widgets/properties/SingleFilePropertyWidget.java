@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
@@ -49,8 +49,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
     @Inject
     public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, UserPreferences userPreferences) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder, UserPreferences userPreferences) {
+        super(componentBuilder, propertyDescriptor);
         _userPreferences = userPreferences;
 
         boolean openFileDialog = true;

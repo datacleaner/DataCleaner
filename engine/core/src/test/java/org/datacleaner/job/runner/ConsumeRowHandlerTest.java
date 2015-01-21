@@ -31,8 +31,8 @@ import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.ConsumeRowHandler.Configuration;
 import org.datacleaner.job.tasks.MockMultiRowTransformer;
 import org.datacleaner.test.MockAnalyzer;
@@ -77,13 +77,13 @@ public class ConsumeRowHandlerTest extends TestCase {
     }
 
     public void testSingleRecordOutputScenario() throws Exception {
-        final TransformerJobBuilder<MockTransformer> tr1 = ajb.addTransformer(MockTransformer.class);
+        final TransformerComponentBuilder<MockTransformer> tr1 = ajb.addTransformer(MockTransformer.class);
         tr1.addInputColumn(ajb.getSourceColumnByName("name"));
 
-        final TransformerJobBuilder<MockTransformer> tr2 = ajb.addTransformer(MockTransformer.class);
+        final TransformerComponentBuilder<MockTransformer> tr2 = ajb.addTransformer(MockTransformer.class);
         tr2.addInputColumn(tr1.getOutputColumns().get(0));
 
-        final AnalyzerJobBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
         analyzer.addInputColumns(sourceColumns);
 
         final AnalysisJob job = ajb.toAnalysisJob(true);
@@ -114,13 +114,13 @@ public class ConsumeRowHandlerTest extends TestCase {
     }
 
     public void testMultiRecordOutputScenario() throws Exception {
-        final TransformerJobBuilder<MockMultiRowTransformer> tr1 = ajb.addTransformer(MockMultiRowTransformer.class);
+        final TransformerComponentBuilder<MockMultiRowTransformer> tr1 = ajb.addTransformer(MockMultiRowTransformer.class);
         tr1.setConfiguredProperty("Count to what?", ajb.getSourceColumnByName("age"));
 
-        final TransformerJobBuilder<MockTransformer> tr2 = ajb.addTransformer(MockTransformer.class);
+        final TransformerComponentBuilder<MockTransformer> tr2 = ajb.addTransformer(MockTransformer.class);
         tr2.addInputColumn(tr1.getOutputColumns().get(0));
 
-        final AnalyzerJobBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
+        final AnalyzerComponentBuilder<MockAnalyzer> analyzer = ajb.addAnalyzer(MockAnalyzer.class);
         analyzer.addInputColumns(sourceColumns);
 
         final AnalysisJob job = ajb.toAnalysisJob(true);

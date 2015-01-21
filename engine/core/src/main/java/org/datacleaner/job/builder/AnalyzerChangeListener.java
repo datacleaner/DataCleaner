@@ -27,12 +27,12 @@ package org.datacleaner.job.builder;
  */
 public interface AnalyzerChangeListener {
 
-	public void onAdd(AnalyzerJobBuilder<?> analyzerJobBuilder);
+	public void onAdd(AnalyzerComponentBuilder<?> analyzerJobBuilder);
 	
-	public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder);
+	public void onConfigurationChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder);
 	
-	public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder);
+	public void onRequirementChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder);
 
-	public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder);
+	public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder);
 	
 }

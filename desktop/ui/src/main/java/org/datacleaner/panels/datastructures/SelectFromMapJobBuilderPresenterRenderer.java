@@ -28,20 +28,20 @@ import org.datacleaner.beans.datastructures.SelectFromMapTransformer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.TransformerJobBuilder;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link TransformerJobBuilder} for the
+ * Specialized {@link Renderer} for a {@link TransformerComponentBuilder} for the
  * {@link SelectFromMapTransformer}.
  * 
  * @author Kasper Sørensen
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class SelectFromMapJobBuilderPresenterRenderer implements
-        Renderer<TransformerJobBuilder<SelectFromMapTransformer>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerComponentBuilder<SelectFromMapTransformer>, TransformerComponentBuilderPresenter> {
 
     @Inject
     WindowContext windowContext;
@@ -53,7 +53,7 @@ public class SelectFromMapJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<SelectFromMapTransformer> tjb) {
+    public RendererPrecedence getPrecedence(TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
         if (tjb.getDescriptor().getComponentClass() == SelectFromMapTransformer.class) {
             return RendererPrecedence.HIGH;
         }
@@ -61,7 +61,7 @@ public class SelectFromMapJobBuilderPresenterRenderer implements
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<SelectFromMapTransformer> tjb) {
+    public TransformerComponentBuilderPresenter render(TransformerComponentBuilder<SelectFromMapTransformer> tjb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 

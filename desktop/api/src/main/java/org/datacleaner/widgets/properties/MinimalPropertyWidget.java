@@ -22,11 +22,10 @@ package org.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,17 +58,6 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
         return _propertyDescriptor;
     }
 
-    /**
-     * 
-     * @return
-     * 
-     * @deprecated use {@link #getComponentBuilder()} instead.
-     */
-    @Deprecated
-    public final AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
-        return (AbstractBeanJobBuilder<?, ?, ?>) _componentBuilder;
-    }
-
     public final ComponentBuilder getComponentBuilder() {
         return _componentBuilder;
     }
@@ -94,7 +82,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
     }
 
     protected final AnalysisJobBuilder getAnalysisJobBuilder() {
-        return getBeanJobBuilder().getAnalysisJobBuilder();
+        return getComponentBuilder().getAnalysisJobBuilder();
     }
 
     @Override
@@ -144,7 +132,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
      */
     @SuppressWarnings("unchecked")
     protected E getCurrentValue() {
-        return (E) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
+        return (E) getComponentBuilder().getConfiguredProperty(getPropertyDescriptor());
     }
 
     protected abstract void setValue(E value);

@@ -28,16 +28,16 @@ import java.util.Map;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.AnalyzerJob;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.ImmutableAnalyzerJob;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.util.PreviewTransformedDataAnalyzer;
 
@@ -79,7 +79,7 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
     public List<AnalyzerJob> getAnalyzerJobs() {
         // create a single analyzer for picking up records
 
-        final AnalyzerBeanDescriptor<?> descriptor = Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class);
+        final AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class);
         final Map<ConfiguredPropertyDescriptor, Object> properties = new HashMap<ConfiguredPropertyDescriptor, Object>();
 
         final List<InputColumn<?>> columns = new ArrayList<InputColumn<?>>();
@@ -93,7 +93,7 @@ public class PlaceholderAnalysisJob implements AnalysisJob {
 
         properties.put(descriptor.getConfiguredPropertiesForInput().iterator().next(),
                 columns.toArray(new InputColumn[columns.size()]));
-        final BeanConfiguration beanConfiguration = new ImmutableBeanConfiguration(properties);
+        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(properties);
 
         final AnalyzerJob analyzerJob = new ImmutableAnalyzerJob("Record gatherer", descriptor, beanConfiguration, null, null);
         return Arrays.asList(analyzerJob);

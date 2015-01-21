@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -39,7 +39,7 @@ public class ComponentBuilderTabTextActionListener extends AbstractJobBuilderPop
     private volatile int _tabIndex;
 
     public ComponentBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
-            AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
+            ComponentBuilder jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
         super(jobBuilder, analysisJobBuilder);
         _tabIndex = tabIndex;
         _tabbedPane = tabbedPane;
@@ -54,7 +54,7 @@ public class ComponentBuilderTabTextActionListener extends AbstractJobBuilderPop
 
     @Override
     protected void onNameChanged() {
-        _tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getJobBuilder()));
+        _tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getComponentBuilder()));
     }
 
     @Override

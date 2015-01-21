@@ -81,6 +81,7 @@ public final class IconUtils {
     public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
+    public static final String ACTION_CLOSE = "images/actions/close.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
     public static final String ACTION_RENAME = "images/actions/rename.png";
@@ -138,6 +139,8 @@ public final class IconUtils {
     public static final String FILE_DESKTOP_FOLDER = "images/filetypes/desktop-folder.png";
     public static final String FILE_HOME_FOLDER = "images/filetypes/home-folder.png";
     public static final String FILE_HIDDEN_FOLDER = "images/filetypes/hidden-folder.png";
+    
+    public static final String COMPONENT_TYPE_WRITE_DATA = "images/component-types/type_output_writer.png";
 
     private static final ImageManager _imageManager = ImageManager.get();
 
@@ -256,9 +259,8 @@ public final class IconUtils {
             return "images/component-types/plugin.png";
         }
 
-
-   final     ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
-   final     Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+        final ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
+        final Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
         if (categories.contains(new WriteDataCategory())) {
             return "images/component-types/type_output_writer.png";
         }

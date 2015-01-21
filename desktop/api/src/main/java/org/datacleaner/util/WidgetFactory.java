@@ -92,8 +92,12 @@ public final class WidgetFactory {
         }
         return createMenuItem(text, icon);
     }
-
+    
     public static JButton createButton(String text, Icon icon) {
+        return createButton(text, icon, true);
+    }
+
+    public static JButton createButton(String text, Icon icon, boolean dark) {
         final JButton b = new JButton();
         if (text != null) {
             b.setText(text);
@@ -101,17 +105,23 @@ public final class WidgetFactory {
         if (icon != null) {
             b.setIcon(icon);
         }
-        b.setUI(new MetalButtonUI());
-        b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-        b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        if (dark) {
+            b.setUI(new MetalButtonUI());
+            b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+            b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+            final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
+            b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        }
         b.setFocusPainted(false);
         return b;
     }
-
+    
     public static JButton createButton(String text, String imagePath) {
-        return createButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM));
+        return createButton(text, imagePath, true);
+    }
+
+    public static JButton createButton(String text, String imagePath, boolean dark) {
+        return createButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM), dark);
     }
 
     public static JXStatusBar createStatusBar(JComponent comp) {
@@ -144,9 +154,17 @@ public final class WidgetFactory {
     public static JButton createSmallButton(String imagePath) {
         Image image = ImageManager.get().getImage(imagePath, IconUtils.ICON_SIZE_SMALL);
         ImageIcon imageIcon = new ImageIcon(image);
-        JButton button = new JButton(imageIcon);
-        button.setMargin(new Insets(0, 0, 0, 0));
-        return button;
+        JButton b = new JButton(imageIcon);
+        b.setMargin(new Insets(0, 0, 0, 0));
+        
+        b.setUI(new MetalButtonUI());
+        b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+        
+        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        b.setFocusPainted(false);
+        
+        return b;
     }
 
     public static DCTaskPaneContainer createTaskPaneContainer() {

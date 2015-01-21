@@ -112,6 +112,7 @@ import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DCPopupBubble;
+import org.datacleaner.widgets.DarkButtonUI;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.widgets.tabs.TabCloseEvent;
@@ -375,6 +376,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
             popupBubble.attachTo(button);
         }
+        button.setUI(DarkButtonUI.get());
         return button;
     }
 

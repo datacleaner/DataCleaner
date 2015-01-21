@@ -182,8 +182,6 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
         UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
-
-        // TODO
         UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
@@ -194,7 +192,7 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.trackHighlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
-
+        
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 

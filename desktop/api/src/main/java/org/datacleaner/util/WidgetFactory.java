@@ -40,9 +40,9 @@ import javax.swing.JViewport;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.widgets.DCTaskPaneContainer;
+import org.datacleaner.widgets.DarkButtonUI;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXStatusBar;
@@ -101,12 +101,10 @@ public final class WidgetFactory {
         if (icon != null) {
             b.setIcon(icon);
         }
-        b.setUI(new MetalButtonUI());
-        b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-        b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        b.setUI(DarkButtonUI.get());
+        
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
         b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
-        b.setFocusPainted(false);
         return b;
     }
 

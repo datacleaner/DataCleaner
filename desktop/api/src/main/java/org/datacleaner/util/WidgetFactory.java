@@ -22,7 +22,6 @@ package org.datacleaner.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Insets;
 import java.lang.reflect.Field;
 
@@ -92,12 +91,13 @@ public final class WidgetFactory {
         }
         return createMenuItem(text, icon);
     }
-    
-    public static JButton createButton(String text, Icon icon) {
-        return createButton(text, icon, true);
+
+    private static Icon getButtonIcon(String imagePath) {
+        final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM);
+        return icon;
     }
 
-    public static JButton createButton(String text, Icon icon, boolean dark) {
+    private static JButton createBasicButton(String text, Icon icon) {
         final JButton b = new JButton();
         if (text != null) {
             b.setText(text);
@@ -105,23 +105,76 @@ public final class WidgetFactory {
         if (icon != null) {
             b.setIcon(icon);
         }
-        if (dark) {
-            b.setUI(new MetalButtonUI());
-            b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-            b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-            final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
-            b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
-        }
         b.setFocusPainted(false);
         return b;
     }
-    
-    public static JButton createButton(String text, String imagePath) {
-        return createButton(text, imagePath, true);
+
+    public static JButton createPrimaryButton(String text, String imagePath) {
+        return createPrimaryButton(text, getButtonIcon(imagePath));
     }
 
-    public static JButton createButton(String text, String imagePath, boolean dark) {
-        return createButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM), dark);
+    public static JButton createPrimaryButton(String text, Icon icon) {
+        final JButton b = createBasicButton(text, icon);
+        WidgetUtils.setPrimaryButtonStyle(b);
+        return b;
+    }
+    
+    public static JButton createDefaultButton(String text) {
+        return createDefaultButton(text, (Icon) null);
+    }
+
+    public static JButton createDefaultButton(String text, String imagePath) {
+        return createDefaultButton(text, getButtonIcon(imagePath));
+    }
+
+    public static JButton createDefaultButton(String text, Icon icon) {
+        final JButton b = createBasicButton(text, icon);
+        WidgetUtils.setDefaultButtonStyle(b);
+        return b;
+    }
+
+    public static JButton createDarkButton(String text, String imagePath) {
+        return createDarkButton(text, getButtonIcon(imagePath));
+    }
+
+    public static JButton createDarkButton(String text, Icon icon) {
+        final JButton b = createBasicButton(text, icon);
+        b.setUI(new MetalButtonUI());
+        b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+        b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
+        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        return b;
+    }
+
+    /**
+     * 
+     * @param text
+     * @param imagePath
+     * @return
+     * 
+     * @deprecated use {@link #createDarkButton(String, String)},
+     *             {@link #createPrimaryButton(String, String)} or
+     *             {@link #createSmallButton(String)} instead.
+     */
+    @Deprecated
+    public static JButton createButton(String text, String imagePath) {
+        return createDarkButton(text, imagePath);
+    }
+
+    /**
+     * 
+     * @param text
+     * @param icon
+     * @return
+     * 
+     * @deprecated use {@link #createDarkButton(String, Icon)},
+     *             {@link #createPrimaryButton(String, Icon)} or
+     *             {@link #createSmallButton(Icon)} instead.
+     */
+    @Deprecated
+    public static JButton createButton(String text, Icon icon) {
+        return createDarkButton(text, icon);
     }
 
     public static JXStatusBar createStatusBar(JComponent comp) {
@@ -152,18 +205,21 @@ public final class WidgetFactory {
     }
 
     public static JButton createSmallButton(String imagePath) {
-        Image image = ImageManager.get().getImage(imagePath, IconUtils.ICON_SIZE_SMALL);
-        ImageIcon imageIcon = new ImageIcon(image);
-        JButton b = new JButton(imageIcon);
+        Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+        return createSmallButton(icon);
+    }
+
+    public static JButton createSmallButton(Icon icon) {
+        JButton b = new JButton(icon);
         b.setMargin(new Insets(0, 0, 0, 0));
-        
+
         b.setUI(new MetalButtonUI());
         b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
-        
+
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
         b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
         b.setFocusPainted(false);
-        
+
         return b;
     }
 

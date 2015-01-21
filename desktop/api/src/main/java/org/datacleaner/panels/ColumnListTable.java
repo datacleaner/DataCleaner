@@ -21,6 +21,7 @@ package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Closeable;
@@ -93,7 +94,7 @@ public final class ColumnListTable extends DCPanel {
         _analysisJobBuilder = analysisJobBuilder;
         _addShadowBorder = addShadowBorder;
         _windowContext = windowContext;
-        
+
         setLayout(new BorderLayout());
 
         if (table != null) {
@@ -162,21 +163,18 @@ public final class ColumnListTable extends DCPanel {
             final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
             model.setValueAt(dataTypeString, i, 1);
 
-            JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-            removeButton.setToolTipText("Remove column from source");
-            removeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
-                }
-            });
-
-            DCPanel buttonPanel = new DCPanel();
-            buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-            // buttonPanel.add(transformButton);
-            // buttonPanel.add(filterButton);
+            final DCPanel buttonPanel = new DCPanel();
+            buttonPanel.setLayout(new GridBagLayout());
             if (column.isPhysicalColumn()) {
-                buttonPanel.add(removeButton);
+                final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+                removeButton.setToolTipText("Remove column from source");
+                removeButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
+                    }
+                });
+                WidgetUtils.addToGridBag(removeButton, buttonPanel, 0, 0);
             }
 
             model.setValueAt(buttonPanel, i, 2);
@@ -184,11 +182,13 @@ public final class ColumnListTable extends DCPanel {
         }
         _columnTable.setModel(model);
 
-        TableColumnExt columnExt = _columnTable.getColumnExt(2);
+        final TableColumnExt columnExt = _columnTable.getColumnExt(2);
         columnExt.setMinWidth(26);
         columnExt.setMaxWidth(80);
         columnExt.setPreferredWidth(30);
-        
+
+        _columnTable.setRowHeight(30);
+
         JPanel tablePanel = _columnTable.toPanel();
         if (_addShadowBorder) {
             tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
@@ -205,7 +205,7 @@ public final class ColumnListTable extends DCPanel {
 
             return panel;
         }
-        
+
         final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MEDIUM);
         return new JLabel(column.getName(), icon, JLabel.LEFT);
     }

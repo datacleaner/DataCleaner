@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
@@ -39,6 +40,7 @@ import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
@@ -87,17 +89,16 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         }
         _outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
 
-        _writeDataButton = new JButton("Write data", imageManager.getImageIcon(IconUtils.COMPONENT_TYPE_WRITE_DATA,
-                IconUtils.ICON_SIZE_SMALL));
+        _writeDataButton = WidgetFactory.createDefaultButton("Write data", IconUtils.COMPONENT_TYPE_WRITE_DATA);
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_componentBuilder));
 
-        _previewButton = new JButton("Preview data", imageManager.getImageIcon(IconUtils.ACTION_PREVIEW,
-                IconUtils.ICON_SIZE_SMALL));
+        _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
         int previewRows = getPreviewRows();
         _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
                 _componentBuilder, previewRows));
 
         final DCPanel bottomButtonPanel = new DCPanel();
+        bottomButtonPanel.setBorder(new EmptyBorder(4, 0, 0, 0));
         bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
         bottomButtonPanel.add(_writeDataButton);
         bottomButtonPanel.add(_previewButton);

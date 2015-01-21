@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,6 +50,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.metal.MetalButtonUI;
 import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
@@ -112,7 +114,6 @@ public final class WidgetUtils {
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
 
-    
     // blue base color of DC styling (#3b76bc)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
@@ -134,7 +135,7 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
 
     // slightly darker than BRIGHT
-    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(230, 230, 230);
+    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
 
     // #a0a0a0
     public static final Color BG_COLOR_MEDIUM = new ColorUIResource(130, 140, 150);
@@ -169,13 +170,17 @@ public final class WidgetUtils {
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
     public static Border BORDER_TOP_PADDING = new EmptyBorder(10, 0, 0, 0);
 
-    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
+    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
-    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
+    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
-    public static final Border BORDER_BUTTON = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
+
+    public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
+            new LineBorder(BG_COLOR_LESS_BRIGHT, 1, true), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
+                    BORDER_WIDE_WIDTH - 1, 9));
+    public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
     /**
      * A highlighter for coloring odd/even rows in a table
@@ -558,5 +563,21 @@ public final class WidgetUtils {
             font = findCompatibleFont(text, font);
             label.setFont(font);
         }
+    }
+
+    public static void setPrimaryButtonStyle(JButton b) {
+        b.setUI(new MetalButtonUI());
+        b.setFocusPainted(false);
+        b.setBackground(BG_COLOR_BLUE_MEDIUM);
+        b.setForeground(BG_COLOR_BRIGHTEST);
+        b.setBorder(BORDER_BUTTON_PRIMARY);
+    }
+
+    public static void setDefaultButtonStyle(JButton b) {
+        b.setUI(new MetalButtonUI());
+        b.setFocusPainted(false);
+        b.setBackground(BG_COLOR_BRIGHT);
+        b.setForeground(BG_COLOR_DARK);
+        b.setBorder(BORDER_BUTTON_DEFAULT);
     }
 }

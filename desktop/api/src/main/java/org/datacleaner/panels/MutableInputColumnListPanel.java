@@ -19,6 +19,8 @@
  */
 package org.datacleaner.panels;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -32,8 +34,8 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.OutputColumnVisibilityButton;
-import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 
 /**
@@ -52,7 +54,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
         _analysisJobBuilder = analysisJobBuilder;
         _inputColumn = inputColumn;
 
-        setLayout(new HorizontalLayout(4));
+        setLayout(new GridBagLayout());
 
         _textField = WidgetFactory.createTextField("Column name");
         _textField.setText(inputColumn.getName());
@@ -76,7 +78,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
 
         _visibilityButton = new OutputColumnVisibilityButton(inputColumn);
 
-        JButton resetButton = WidgetFactory.createSmallButton("images/actions/reset.png");
+       final JButton resetButton = WidgetFactory.createSmallButton("images/actions/reset.png");
         resetButton.setToolTipText("Reset output column name");
         resetButton.addActionListener(new ActionListener() {
 
@@ -86,9 +88,9 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
             }
         });
 
-        add(_visibilityButton);
-        add(_textField);
-        add(resetButton);
+        WidgetUtils.addToGridBag(_visibilityButton, this, 0, 0, GridBagConstraints.WEST, 0.0, 0.0);
+        WidgetUtils.addToGridBag(_textField, this, 1, 0, GridBagConstraints.WEST, 1.0, 1.0);
+        WidgetUtils.addToGridBag(resetButton, this, 2, 0, GridBagConstraints.WEST, 0.0, 0.0);
     }
 
     @Override

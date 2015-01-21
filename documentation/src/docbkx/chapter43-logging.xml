@@ -92,28 +92,12 @@
 			&#160;&#160;&lt;level value="info" /&gt;
 			&#160;&lt;/logger&gt;
 
-			&#160;&lt;logger&#160;name="org.eobjects.analyzer"&gt;
-			&#160;&#160;&lt;level&#160;value="info" /&gt;
-			&#160;&lt;/logger&gt;
-
-			&#160;&lt;logger&#160;name="org.eobjects.analyzer.job.runner"&gt;
-			&#160;&#160;&lt;level&#160;value="info" /&gt;
-			&#160;&lt;/logger&gt;
-
-			&#160;&lt;logger&#160;name="org.eobjects.analyzer.storage"&gt;
-			&#160;&#160;&lt;level&#160;value="info" /&gt;
-			&#160;&#160;&lt;/logger&gt;
-
-			&#160;&lt;logger&#160;name="org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider"&gt;
-			&#160;&#160;&lt;level&#160;value="info" /&gt;
-			&#160;&lt;/logger&gt;
-
-			&#160;&lt;logger&#160;name="org.eobjects.datacleaner"&gt;
+			&#160;&lt;logger&#160;name="org.datacleaner"&gt;
 			&#160;&#160;&lt;level&#160;value="info" /&gt;
 			&#160;&lt;/logger&gt;
 
 			&#160;&lt;root&gt;
-			&#160;&#160;&lt;priority&#160;value="info" /&gt;
+			&#160;&#160;&lt;priority&#160;value="warn" /&gt;
 			&#160;&#160;&lt;appender-ref&#160;ref="consoleAppender" /&gt;
 			&#160;&#160;&lt;appender-ref&#160;ref="fileAppender" /&gt;
 			&#160;&lt;/root&gt;

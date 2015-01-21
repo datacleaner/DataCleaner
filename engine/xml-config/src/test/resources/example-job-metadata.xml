@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<job-metadata>
+		<author>Kasper Sørensen</author>
+		<created-date>2010-12-20</created-date>
+		<updated-date>2010-12-21</updated-date>
+		<job-name>Job metadata</job-name>
+		<job-description>An example job with complete metadata</job-description>
+		<job-version>1.1</job-version>
+		
+		<metadata-properties>
+			<property name="propertyName">propertyValue</property>
+		</metadata-properties>
+		
+	</job-metadata>
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<!-- This does not exist, but it doesn't matter because only the metadata 
+				of this file should be read -->
+			<column id="col_fn" path="PUBLIC.PERSONS.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.PERSONS.LASTNAME" />
+		</columns>
+	</source>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+		</analyzer>
+	</analysis>
+
+</job>

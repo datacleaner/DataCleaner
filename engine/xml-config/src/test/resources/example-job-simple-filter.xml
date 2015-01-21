@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_supervisor" path="PUBLIC.EMPLOYEES.REPORTSTO" />
+		</columns>
+	</source>
+
+	<transformation>
+		<filter>
+			<descriptor ref="Not null" />
+			<input ref="col_supervisor" />
+			<outcome id="is_employee" category="VALID" />
+			<outcome id="is_manager" category="INVALID" />
+		</filter>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="is_employee">
+			<descriptor ref="Value distribution" />
+			<input ref="col_fn" />
+		</analyzer>
+
+		<analyzer requires="is_manager">
+			<descriptor ref="Value distribution" />
+			<input ref="col_fn" />
+		</analyzer>
+
+		<analyzer>
+			<descriptor ref="String analyzer" />
+			<input ref="col_fn" />
+		</analyzer>
+	</analysis>
+
+</job>

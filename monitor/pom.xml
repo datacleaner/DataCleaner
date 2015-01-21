@@ -9,18 +9,11 @@
 	<packaging>pom</packaging>
 	<name>DataCleaner monitor modules</name>
 
-	<properties>
-		<gwt.version>2.6.0</gwt.version>
-		<spring.core.version>3.2.8.RELEASE</spring.core.version>
-		<spring.security.version>3.2.1.RELEASE</spring.security.version>
-		<quartz.version>2.1.6</quartz.version>
-		<freemarker.version>2.3.19</freemarker.version>
-	</properties>
-
 	<modules>
 		<module>api</module>
 		<module>services</module>
 		<module>widgets</module>
+		<module>extensions</module>
 		<module>ui</module>
 	</modules>
 
@@ -67,23 +60,9 @@
 	<dependencies>
 		<!-- Test dependencies -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
-			<version>${analyzerbeans.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.jackson</groupId>
-					<artifactId>jackson-core-asl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.jackson</groupId>
-					<artifactId>jackson-mapper-asl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-testware</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

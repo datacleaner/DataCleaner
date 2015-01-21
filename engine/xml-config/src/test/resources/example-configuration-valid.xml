@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Default integrationtest configuration</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="my database">
+			<url>jdbc:hsqldb:file:src/test/resources/orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+
+		<jdbc-datastore name="mydb_jndi">
+			<datasource-jndi-url>java:comp/env/jdbc/mydb</datasource-jndi-url>
+		</jdbc-datastore>
+
+		<csv-datastore name="persons_csv">
+			<filename>csv/persons.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<header-line-number>0</header-line-number>
+		</csv-datastore>
+
+		<composite-datastore name="composite_datastore">
+			<datastore-name>persons_csv</datastore-name>
+			<datastore-name>my database</datastore-name>
+		</composite-datastore>
+	</datastore-catalog>
+
+	<singlethreaded-taskrunner />
+
+	<storage-provider>
+		<berkeley-db>
+			<clean-directory-on-startup>true</clean-directory-on-startup>
+		</berkeley-db>
+	</storage-provider>
+
+</configuration>

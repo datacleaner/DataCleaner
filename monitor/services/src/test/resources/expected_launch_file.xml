@@ -18,7 +18,7 @@
 		<jar href="launch-resources/bar.jar"/>
 		<jar href="launch-resources/baz.jar"/>
 	</resources>
-	<application-desc main-class="org.eobjects.datacleaner.Main">
+	<application-desc main-class="org.datacleaner.Main">
 		<argument>-conf</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=my+job</argument>
 		<argument>-job</argument>

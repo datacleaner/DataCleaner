@@ -17,7 +17,7 @@
 	<!-- GWT no cache filter -->
     <filter>
   		<filter-name>gwtCacheControlFilter</filter-name>
-  		<filter-class>org.eobjects.datacleaner.monitor.server.GwtCacheControlFilter</filter-class>
+  		<filter-class>org.datacleaner.monitor.server.GwtCacheControlFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
@@ -28,7 +28,7 @@
 	<!-- Ensure access to only one's own tenant in service URL -->
 	<filter>
 		<filter-name>tenantCheckFilter</filter-name>
-		<filter-class>org.eobjects.datacleaner.monitor.server.security.TenantCheckFilter</filter-class>
+		<filter-class>org.datacleaner.monitor.server.security.TenantCheckFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
@@ -101,7 +101,7 @@
 	<!-- Image servlet (for plugins) -->
 	<servlet>
 		<servlet-name>ImageServlet</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.media.ImageServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.media.ImageServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ImageServlet</servlet-name>
@@ -111,7 +111,7 @@
 	<!-- File upload servlet (for plugins) -->
 	<servlet>
 		<servlet-name>FileUploadServlet</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.media.FileUploadServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.media.FileUploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FileUploadServlet</servlet-name>
@@ -121,7 +121,7 @@
 	<!-- GWT RPC servlets -->
 	<servlet>
 		<servlet-name>DashboardService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.DashboardServiceServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.DashboardServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -131,7 +131,7 @@
 
 	<servlet>
 		<servlet-name>SchedulingService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.SchedulingServiceServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.SchedulingServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -141,7 +141,7 @@
 	
 	<servlet>
 		<servlet-name>WizardService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.WizardServiceServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.WizardServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -151,7 +151,7 @@
 	
 	<servlet>
 		<servlet-name>DescriptorService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.DescriptorServiceServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.DescriptorServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -161,7 +161,7 @@
 	
 	<servlet>
 		<servlet-name>DatastoreService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.DatastoreServiceServlet</servlet-class>
+		<servlet-class>org.datacleaner.monitor.server.DatastoreServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

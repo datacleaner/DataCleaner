@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_supervisor" path="PUBLIC.EMPLOYEES.REPORTSTO" />
+		</columns>
+	</source>
+
+	<transformation>
+		<filter>
+			<descriptor ref="Not null" />
+			<input ref="col_supervisor" />
+			<outcome id="is_employee" category="VALID" />
+			<outcome id="is_manager" category="INVALID" />
+		</filter>
+
+		<transformer requires="is_employee">
+			<descriptor ref="Concatenator" />
+			<properties>
+				<property name="Separator" value=" " />
+			</properties>
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+			<output id="col_fullname" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="is_employee OR is_manager">
+			<descriptor ref="String analyzer" />
+			<input ref="col_fullname" />
+		</analyzer>
+	</analysis>
+
+</job>

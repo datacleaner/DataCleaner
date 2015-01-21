@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
+<jnlp spec="1.0+" codebase="$BASE_URL">
+	<information>
+		<title>DataCleaner monitor client</title>
+		<vendor>Neopost - Customer Information Management</vendor>
+		<homepage href="http://datacleaner.org" />
+		<icon href="launch-resources/images/app-icon.png" />
+		<icon kind="splash" href="launch-resources/images/splash.png" />
+	</information>
+	<security>
+		<all-permissions />
+	</security>
+	<resources>
+		<j2se version="1.6+" initial-heap-size="128m" max-heap-size="1024m" />
+
+		<jar href="$JAR_HREF"/>
+	</resources>
+	<application-desc main-class="org.datacleaner.Main">
+		<argument>-conf</argument>
+		<argument>$CONF_URL</argument>
+		<argument>-job</argument>
+		<argument>$JOB_URL</argument>
+		<argument>-ds</argument>
+		<argument>$DATASTORE_NAME</argument>
+		<argument>-Ddatacleaner.ui.visible=true</argument>
+		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
+		<argument>-Ddatacleaner.sandbox=true</argument>
+		<argument>-Ddatacleaner.monitor.hostname=$MONITOR_HOSTNAME</argument>
+		<argument>-Ddatacleaner.monitor.port=$MONITOR_PORT</argument>
+		<argument>-Ddatacleaner.monitor.context=$MONITOR_CONTEXT</argument>
+		<argument>-Ddatacleaner.monitor.tenant=$MONITOR_TENANT</argument>
+		<argument>-Ddatacleaner.monitor.https=$MONITOR_HTTPS</argument>
+		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
+		<argument>-Ddatacleaner.monitor.security.mode=$MONITOR_SECURITY_MODE</argument>
+		<argument>-Ddatacleaner.monitor.security.casserverurl=$MONITOR_SECURITY_CASSERVERURL</argument>
+	</application-desc>
+</jnlp>

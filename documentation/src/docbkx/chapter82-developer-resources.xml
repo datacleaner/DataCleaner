@@ -34,17 +34,12 @@
 			</listitem>
 			<listitem>
 				<para>
-					<link xl:href="http://eobjects.org/datacleaner/apidocs/current/">Javadoc: DataCleaner-core</link>
+					<link xl:href="http://eobjects.org/datacleaner/apidocs/current/">Javadoc: DataCleaner</link>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<link xl:href="http://analyzerbeans.eobjects.org/apidocs/">Javadoc: AnalyzerBeans</link>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<link xl:href="http://metamodel.eobjects.org/apidocs/">Javadoc: MetaModel</link>
+					<link xl:href="http://metamodel.apache.org/apidocs/current">Javadoc: MetaModel</link>
 				</para>
 			</listitem>
 		</orderedlist>

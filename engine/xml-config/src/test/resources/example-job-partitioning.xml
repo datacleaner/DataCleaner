@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_ln" path="PUBLIC.EMPLOYEES.LASTNAME" />
+			<column id="col_email" path="PUBLIC.EMPLOYEES.EMAIL" />
+			<column id="col_customername" path="PUBLIC.CUSTOMERS.CUSTOMERNAME" />
+		</columns>
+	</source>
+
+	<transformation>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<!-- Value distribution only consumes a single column. This declaration 
+				should generate 4 jobs -->
+			<descriptor ref="Value distribution" />
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+			<input ref="col_email" />
+			<input ref="col_customername" />
+		</analyzer>
+		<analyzer>
+			<!-- String analyzer consumes multiple columns but only from a single 
+				table. This declaration should generate 2 jobs -->
+			<descriptor ref="String analyzer" />
+			<input ref="col_fn" />
+			<input ref="col_ln" />
+			<input ref="col_email" />
+			<input ref="col_customername" />
+		</analyzer>
+	</analysis>
+
+</job>

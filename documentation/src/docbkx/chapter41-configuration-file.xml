@@ -423,7 +423,7 @@
 			</para>
 			<programlisting>
 				&#160;&#160;&lt;row-annotation-storage&gt;
-				&#160;&#160;&#160;&lt;custom-storage-provider&#160;class-name="org.eobjects.analyzer.storage.MongoDbStorageProvider"/&gt;
+				&#160;&#160;&#160;&lt;custom-storage-provider&#160;class-name="org.datacleaner.storage.MongoDbStorageProvider"/&gt;
 				&#160;&#160;&lt;/row-annotation-storage&gt; </programlisting>
 			<para>The MongoDB storage provider solution has shown very good
 				performance metrics, but does add more complexity to the

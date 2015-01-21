@@ -8,7 +8,7 @@
 	<!-- Example cluster manager factory. Assumes that two nodes are running 
 		on port 8080 and 9090. -->
 	<bean id="clusterManagerFactory"
-		class="org.eobjects.datacleaner.monitor.cluster.HttpClusterManagerFactory">
+		class="org.datacleaner.monitor.cluster.HttpClusterManagerFactory">
 		<property name="username" value="admin" />
 		<property name="password" value="admin" />
 		<property name="slaveServerUrls">
@@ -21,7 +21,7 @@
 
 	<!-- Does nothing before intercepting slave jobs -->
 	<bean id="clusterSlaveJobInterceptor"
-		class="org.eobjects.datacleaner.monitor.cluster.NoopSlaveJobInterceptor">
+		class="org.datacleaner.monitor.cluster.NoopSlaveJobInterceptor">
 	</bean>
 
 </beans>

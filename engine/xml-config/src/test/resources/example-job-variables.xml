@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="date-datastore" />
+		<columns>
+			<column id="col_1" path="datestring" />
+		</columns>
+		<variables>
+			<variable id="var_datemask" value="[yyyy-MM-dd]" />
+		</variables>
+	</source>
+
+	<transformation>
+		<transformer>
+			<descriptor ref="Date mask matcher" />
+			<properties>
+				<property name="Date masks" ref="var_datemask" />
+			</properties>
+			<input ref="col_1" />
+			<output id="col_match" name="Matches date mask?" />
+		</transformer>
+
+		<transformer>
+			<descriptor ref="Convert to date" />
+			<properties>
+				<property name="Date masks" ref="var_datemask" />
+				<property name="Null replacement" value="2000-01-01" />
+			</properties>
+			<input ref="col_1" />
+			<output id="col_2" name="Typed date column" />
+		</transformer>
+	</transformation>
+
+	<analysis>
+		<analyzer>
+			<descriptor ref="Boolean analyzer" />
+			<input ref="col_match" />
+		</analyzer>
+		<analyzer>
+			<descriptor ref="Date/time analyzer" />
+			<input ref="col_2" />
+		</analyzer>
+	</analysis>
+
+</job>

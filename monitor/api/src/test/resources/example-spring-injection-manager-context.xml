@@ -6,10 +6,10 @@
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
 	<bean id="injectionManagerFactory" name="injectionManagerFactory"
-		class="org.eobjects.datacleaner.spring.SpringInjectionManagerFactory" />
+		class="org.datacleaner.spring.SpringInjectionManagerFactory" />
 		
 		
-	<bean class="org.eobjects.datacleaner.spring.HelloBean">
+	<bean class="org.datacleaner.spring.HelloBean">
 		<property name="message" value="Hello DC world" />
 	</bean>
 

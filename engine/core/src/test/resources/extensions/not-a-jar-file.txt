@@ -1,0 +1,1 @@
+Dummy file to be ignored by all tests scanning folder for extensions

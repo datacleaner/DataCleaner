@@ -53,6 +53,7 @@ import org.datacleaner.Version;
 import org.datacleaner.actions.AnalyzeButtonActionListener;
 import org.datacleaner.actions.ComponentBuilderTabTextActionListener;
 import org.datacleaner.actions.HideTabTextActionListener;
+import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
@@ -162,6 +163,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final JButton _executeButton;
     private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
     private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
+    private final Provider<NewAnalysisJobActionListener> _newAnalysisJobActionListenerProvider;
+    private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
     private final Provider<AnalyzeButtonActionListener> _addAnalyzerActionListenerProvider;
     private final Provider<TransformButtonActionListener> _addTransformerActionListenerProvider;
     private final DCGlassPane _glassPane;
@@ -187,6 +190,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<RunAnalysisActionListener> runAnalysisActionProvider, MetadataPanel metadataPanel,
             AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder, UserPreferences userPreferences,
             @Nullable @JobFile FileObject jobFilename, DCWindowMenuBar windowMenuBar,
+            Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
             Provider<AnalyzeButtonActionListener> addAnalyzerActionListenerProvider,
             Provider<TransformButtonActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger,
@@ -197,6 +201,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _configuration = configuration;
         _windowMenuBar = windowMenuBar;
         _runAnalysisActionProvider = runAnalysisActionProvider;
+        _newAnalysisJobActionListenerProvider = newAnalysisJobActionListenerProvider;
+        _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
         _addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
         _addTransformerActionListenerProvider = addTransformerActionListenerProvider;
@@ -681,16 +687,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
+        final JButton newJobButton = createToolbarButton("New", IconUtils.ACTION_NEW, null);
+        newJobButton.addActionListener(_newAnalysisJobActionListenerProvider.get());
+
+        final JButton openJobButton = createToolbarButton("Open", IconUtils.MENU_OPEN, null);
+        openJobButton.addActionListener(_openAnalysisJobActionListenerProvider.get());
+
         final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(createToolbarButton("New", IconUtils.ACTION_NEW, null));
-        toolBar.add(createToolbarButton("Open", IconUtils.MENU_OPEN, null));
+        toolBar.add(newJobButton);
+        toolBar.add(openJobButton);
         toolBar.add(_saveButton);
         toolBar.add(_saveAsButton);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_transformButton);
-        toolBar.add(createToolbarButton("Clean", null, null));
+//        toolBar.add(createToolbarButton("Improve", null, null));
         toolBar.add(_analyzeButton);
-        toolBar.add(createToolbarButton("Write", null, null));
+//        toolBar.add(createToolbarButton("Write", null, null));
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
 

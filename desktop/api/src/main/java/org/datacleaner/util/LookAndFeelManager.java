@@ -29,6 +29,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import org.datacleaner.widgets.DCScrollBarUI;
 import org.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +104,7 @@ public final class LookAndFeelManager {
         EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
+        
         UIManager.put("Menu.border", borderDarkest3);
         UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -171,9 +173,22 @@ public final class LookAndFeelManager {
         UIManager.put("TaskPane.background", WidgetUtils.BG_COLOR_BRIGHT);
 
         // scrollbar color
-        UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        
+        // TODO
+        UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.foreground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.track", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackHighlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);

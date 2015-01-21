@@ -105,7 +105,7 @@ public final class LookAndFeelManager {
         LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
 
-        UIManager.put("Menu.border", new EmptyBorder(1, 1, 1, 1));
+        UIManager.put("Menu.border", borderDarkest3);
         UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);

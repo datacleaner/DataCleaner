@@ -144,11 +144,11 @@
 			</listitem>
 			<listitem>
 				<para>
-					<emphasis>TransformerJobBuilder</emphasis>
+					<emphasis>TransformerComponentBuilder</emphasis>
 					,
-					<emphasis>FilterJobBuilder</emphasis>
+					<emphasis>FilterComponentBuilder</emphasis>
 					, and
-					<emphasis>AnalyzerJobBuilder</emphasis>
+					<emphasis>AnalyzerComponentBuilder</emphasis>
 					:
 					, represents mutable components of the job that is being built.
 					These can each have configuration properties, filter requirements,
@@ -159,7 +159,7 @@
 
 		<tip>
 			<para>Be aware of the unfortunate similarity between the
-				'AnalyzerJobBuilder' class name and the 'AnalysisJobBuilder' class
+				'AnalyzerComponentBuilder' class name and the 'AnalysisJobBuilder' class
 				name. To rid the confusion, remember that the 'analysis' represents
 				the full scope of the job, whereas an 'analyzer' is just a single
 				active part ('component') of the job.
@@ -205,18 +205,18 @@
 			InputColumn&lt;?&gt;&#160;companyColumn&#160;=&#160;builder.getSourceColumnByName("Company_name");
 
 			//&#160;add&#160;a&#160;filter&#160;to&#160;check&#160;for&#160;null&#160;'company'
-			FilterJobBuilder&lt;NullCheckFilter&gt;&#160;nullCheckBuilder&#160;=&#160;builder.addFilter(NullCheckFilter.class);
+			FilterComponentBuilder&lt;NullCheckFilter&gt;&#160;nullCheckBuilder&#160;=&#160;builder.addFilter(NullCheckFilter.class);
 			nullCheckBuilder.addInputColumn(companyColumn);
 
 			//&#160;add&#160;a&#160;InsertIntoTable&#160;analyzer&#160;to&#160;write&#160;the&#160;records&#160;without&#160;a&#160;company&#160;to&#160;the&#160;csv&#160;file
-			AnalyzerJobBuilder&lt;InsertIntoTableAnalyzer&gt;&#160;insertBuilder&#160;=&#160;builder.addAnalyzer(InsertIntoTableAnalyzer.class);
+			AnalyzerComponentBuilder&lt;InsertIntoTableAnalyzer&gt;&#160;insertBuilder&#160;=&#160;builder.addAnalyzer(InsertIntoTableAnalyzer.class);
 			insertBuilder.addInputColumns(nameColumn,&#160;ageColumn);
 			insertBuilder.setConfiguredProperty("Datastore",&#160;myCsvFile);
 			insertBuilder.setConfiguredProperty("Columns",&#160;new&#160;String[]&#160;{"fullname","age_years"});
 			insertBuilder.setRequirement(nullCheckBuilder.getOutcome(NullCheckFilter.Category.NULL));
 
 			//&#160;add&#160;a&#160;lookup&#160;for&#160;the&#160;company&#160;working&#160;address
-			&#160;&#160;&#160;&#160;TransformerJobBuilder&lt;TableLookupTransformer&gt;&#160;lookupBuilder&#160;=
+			&#160;&#160;&#160;&#160;TransformerComponentBuilder&lt;TableLookupTransformer&gt;&#160;lookupBuilder&#160;=
 			builder.addTransformer(TableLookupTransformer.class);
 			lookupBuilder.addInputColumn(companyColumn);
 			lookupBuilder.setConfiguredProperty("Datastore",&#160;myDatabase);

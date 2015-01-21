@@ -25,7 +25,16 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
+import org.apache.metamodel.UpdateCallback;
+import org.apache.metamodel.UpdateScript;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.create.TableCreationBuilder;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
@@ -39,25 +48,16 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.create.TableCreationBuilder;
-import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
+import org.easymock.EasyMock;
 
 public class InsertIntoTableAnalyzerTest extends TestCase {
 
@@ -85,7 +85,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
     }
 
     public void testMetricDescriptors() throws Exception {
-        AnalyzerBeanDescriptor<?> descriptor = Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class);
+        AnalyzerDescriptor<?> descriptor = Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class);
         Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
         assertEquals(
                 "[MetricDescriptorImpl[name=Errornous rows], MetricDescriptorImpl[name=Inserts], MetricDescriptorImpl[name=Updates]]",
@@ -321,7 +321,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
                 ajb.addSourceColumns(columns);
 
-                AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder = ajb
+                AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder = ajb
                         .addAnalyzer(InsertIntoTableAnalyzer.class);
                 analyzerJobBuilder.addInputColumns(ajb.getSourceColumns());
                 analyzerJobBuilder.setConfiguredProperty("Datastore", datastoreOut);

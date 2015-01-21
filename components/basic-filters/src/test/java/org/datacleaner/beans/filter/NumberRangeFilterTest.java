@@ -21,17 +21,17 @@ package org.datacleaner.beans.filter;
 
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
-
-import junit.framework.TestCase;
 
 public class NumberRangeFilterTest extends TestCase {
 
     public void testDescriptorInheritance() throws Exception {
-        FilterBeanDescriptor<NumberRangeFilter, RangeFilterCategory> filter = Descriptors
+        FilterDescriptor<NumberRangeFilter, RangeFilterCategory> filter = Descriptors
                 .ofFilter(NumberRangeFilter.class);
         
         assertTrue(filter.isDistributable());

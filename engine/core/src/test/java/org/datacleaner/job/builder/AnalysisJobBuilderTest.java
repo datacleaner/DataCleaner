@@ -47,7 +47,7 @@ public class AnalysisJobBuilderTest extends TestCase {
             ajb.setDatastore(datastore);
             ajb.addSourceColumn(new MetaModelInputColumn(column));
 
-            final TransformerJobBuilder<MockTransformer> transformer1 = ajb.addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer1 = ajb.addTransformer(MockTransformer.class);
             transformer1.addInputColumn(ajb.getSourceColumnByName("foo"));
             transformer1.getOutputColumns().get(0).setName("out1");
 
@@ -55,7 +55,7 @@ public class AnalysisJobBuilderTest extends TestCase {
                     .toString());
             assertEquals("[MetaModelInputColumn[table.foo]]", ajb.getAvailableInputColumns(transformer1).toString());
 
-            final TransformerJobBuilder<MockTransformer> transformer2 = ajb.addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer2 = ajb.addTransformer(MockTransformer.class);
             transformer2.addInputColumn(transformer1.getOutputColumns().get(0));
             transformer2.getOutputColumns().get(0).setName("out2");
 
@@ -63,7 +63,7 @@ public class AnalysisJobBuilderTest extends TestCase {
             assertEquals("[MetaModelInputColumn[table.foo], TransformedInputColumn[id=trans-0001-0002,name=out1]]", ajb
                     .getAvailableInputColumns(transformer2).toString());
 
-            final TransformerJobBuilder<MockTransformer> transformer3 = ajb.addTransformer(MockTransformer.class);
+            final TransformerComponentBuilder<MockTransformer> transformer3 = ajb.addTransformer(MockTransformer.class);
             assertEquals("[MetaModelInputColumn[table.foo]]", ajb.getAvailableInputColumns(transformer1).toString());
             assertEquals("[MetaModelInputColumn[table.foo], TransformedInputColumn[id=trans-0001-0002,name=out1]]", ajb
                     .getAvailableInputColumns(transformer2).toString());
@@ -114,12 +114,12 @@ public class AnalysisJobBuilderTest extends TestCase {
             ajb.addSourceColumn(new MetaModelInputColumn(column));
 
             // add a transformer
-            TransformerJobBuilder<MockTransformer> tjb1 = ajb.addTransformer(MockTransformer.class);
+            TransformerComponentBuilder<MockTransformer> tjb1 = ajb.addTransformer(MockTransformer.class);
             tjb1.addInputColumn(ajb.getSourceColumns().get(0));
             assertTrue(tjb1.isConfigured(true));
 
             // add filter
-            FilterJobBuilder<MockFilter, Category> filter = ajb.addFilter(MockFilter.class);
+            FilterComponentBuilder<MockFilter, Category> filter = ajb.addFilter(MockFilter.class);
             filter.addInputColumn(tjb1.getOutputColumns().get(0));
             filter.getComponentInstance().setSomeEnum(Category.VALID);
             filter.getComponentInstance().setSomeFile(new File("."));
@@ -129,7 +129,7 @@ public class AnalysisJobBuilderTest extends TestCase {
             ajb.setDefaultRequirement(filter, Category.VALID);
 
             // add another transformer
-            TransformerJobBuilder<MockTransformer> tjb2 = ajb.addTransformer(MockTransformer.class);
+            TransformerComponentBuilder<MockTransformer> tjb2 = ajb.addTransformer(MockTransformer.class);
             tjb2.addInputColumn(tjb1.getOutputColumns().get(0));
             assertTrue(tjb2.isConfigured(true));
 
@@ -140,9 +140,9 @@ public class AnalysisJobBuilderTest extends TestCase {
 
             final Collection<ComponentBuilder> componentBuilders = ajb.getComponentBuilders();
             assertEquals(
-                    "[FilterJobBuilder[filter=Mock filter,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]], "
-                            + "TransformerJobBuilder[transformer=Mock transformer,inputColumns=[MetaModelInputColumn[table.foo]]], "
-                            + "TransformerJobBuilder[transformer=Mock transformer,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]]]",
+                    "[FilterComponentBuilder[filter=Mock filter,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]], "
+                            + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[MetaModelInputColumn[table.foo]]], "
+                            + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]]]",
                     componentBuilders.toString());
         }
     }

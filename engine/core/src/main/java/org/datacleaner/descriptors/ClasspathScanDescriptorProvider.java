@@ -81,14 +81,15 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
     private static final Logger logger = LoggerFactory.getLogger(ClasspathScanDescriptorProvider.class);
 
-    private final Map<String, AnalyzerBeanDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerBeanDescriptor<?>>();
-    private final Map<String, FilterBeanDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterBeanDescriptor<?, ?>>();
-    private final Map<String, TransformerBeanDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerBeanDescriptor<?>>();
+    private final Map<String, AnalyzerDescriptor<?>> _analyzerBeanDescriptors = new HashMap<String, AnalyzerDescriptor<?>>();
+    private final Map<String, FilterDescriptor<?, ?>> _filterBeanDescriptors = new HashMap<String, FilterDescriptor<?, ?>>();
+    private final Map<String, TransformerDescriptor<?>> _transformerBeanDescriptors = new HashMap<String, TransformerDescriptor<?>>();
     private final Map<String, RendererBeanDescriptor<?>> _rendererBeanDescriptors = new HashMap<String, RendererBeanDescriptor<?>>();
     private final TaskRunner _taskRunner;
     private final Predicate<Class<? extends RenderingFormat<?>>> _renderingFormatPredicate;
     private final AtomicInteger _tasksPending;
 
+   
     /**
      * Default constructor. Will perform classpath scanning in the calling
      * thread(s).
@@ -123,12 +124,22 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
         this(taskRunner, createRenderingFormatPredicate(excludedRenderingFormats));
     }
 
-    private static Predicate<Class<? extends RenderingFormat<?>>> createRenderingFormatPredicate(
-            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
-        if (excludedRenderingFormats == null || excludedRenderingFormats.isEmpty()) {
-            return new TruePredicate<Class<? extends RenderingFormat<?>>>();
-        }
-        return new ExclusionPredicate<Class<? extends RenderingFormat<?>>>(excludedRenderingFormats);
+    /**
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
+     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
+     * scan, potentially in a parallel fashion.
+     * 
+     * @param taskRunner
+     * @param excludedRenderingFormats
+     *            rendering formats to exclude from loading into the descriptor
+     *            provider
+     * @param autoLoadDescriptorClasses
+     *            whether or not to automatically load descriptors when they are
+     *            requested by class names.
+     */
+    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
+            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats, boolean autoLoadDescriptorClasses) {
+        this(taskRunner, createRenderingFormatPredicate(excludedRenderingFormats), autoLoadDescriptorClasses);
     }
 
     /**
@@ -143,9 +154,36 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
      */
     public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
             Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate) {
+        this(taskRunner, renderingFormatPredicate, false);
+    }
+
+    /**
+     * Constructs a {@link ClasspathScanDescriptorProvider} using a specified
+     * {@link TaskRunner}. The taskrunner will be used to perform the classpath
+     * scan, potentially in a parallel fashion.
+     * 
+     * @param taskRunner
+     * @param renderingFormatPredicate
+     *            predicate function to apply when evaluating if a particular
+     *            rendering format is of interest or not
+     * @param autoLoadDescriptorClasses
+     *            whether or not to automatically load descriptors when they are
+     *            requested by class names.
+     */
+    public ClasspathScanDescriptorProvider(TaskRunner taskRunner,
+            Predicate<Class<? extends RenderingFormat<?>>> renderingFormatPredicate, boolean autoLoadDescriptorClasses) {
+        super(autoLoadDescriptorClasses);
         _taskRunner = taskRunner;
         _tasksPending = new AtomicInteger(0);
         _renderingFormatPredicate = renderingFormatPredicate;
+    }
+
+    private static Predicate<Class<? extends RenderingFormat<?>>> createRenderingFormatPredicate(
+            Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats) {
+        if (excludedRenderingFormats == null || excludedRenderingFormats.isEmpty()) {
+            return new TruePredicate<Class<? extends RenderingFormat<?>>>();
+        }
+        return new ExclusionPredicate<Class<? extends RenderingFormat<?>>>(excludedRenderingFormats);
     }
 
     /**
@@ -567,7 +605,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addAnalyzerClass(Class<? extends Analyzer<?>> clazz) {
-        AnalyzerBeanDescriptor<?> descriptor = _analyzerBeanDescriptors.get(clazz.getName());
+        AnalyzerDescriptor<?> descriptor = _analyzerBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
                 descriptor = Descriptors.ofAnalyzer(clazz);
@@ -580,7 +618,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addTransformerClass(Class<? extends Transformer> clazz) {
-        TransformerBeanDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
+        TransformerDescriptor<? extends Transformer> descriptor = _transformerBeanDescriptors.get(clazz
                 .getName());
         if (descriptor == null) {
             try {
@@ -594,7 +632,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     public ClasspathScanDescriptorProvider addFilterClass(Class<? extends Filter<?>> clazz) {
-        FilterBeanDescriptor<? extends Filter<?>, ?> descriptor = _filterBeanDescriptors.get(clazz.getName());
+        FilterDescriptor<? extends Filter<?>, ?> descriptor = _filterBeanDescriptors.get(clazz.getName());
         if (descriptor == null) {
             try {
                 descriptor = Descriptors.ofFilterUnbound(clazz);
@@ -648,19 +686,19 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
     }
 
     @Override
-    public Collection<FilterBeanDescriptor<?, ?>> getFilterBeanDescriptors() {
+    public Collection<FilterDescriptor<?, ?>> getFilterDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_filterBeanDescriptors.values());
     }
 
     @Override
-    public Collection<AnalyzerBeanDescriptor<?>> getAnalyzerBeanDescriptors() {
+    public Collection<AnalyzerDescriptor<?>> getAnalyzerDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_analyzerBeanDescriptors.values());
     }
 
     @Override
-    public Collection<TransformerBeanDescriptor<?>> getTransformerBeanDescriptors() {
+    public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
         awaitTasks();
         return Collections.unmodifiableCollection(_transformerBeanDescriptors.values());
     }

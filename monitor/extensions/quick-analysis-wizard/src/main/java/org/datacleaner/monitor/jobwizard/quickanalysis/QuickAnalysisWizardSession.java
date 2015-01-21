@@ -21,19 +21,19 @@ package org.datacleaner.monitor.jobwizard.quickanalysis;
 
 import java.util.List;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 /**
  * Session implementation for the Quick Analysis wizard.
@@ -99,7 +99,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                                     _analysisJobBuilder.addSourceColumn(selectedColumn);
                                     final InputColumn<?> sourceColumn = _analysisJobBuilder
                                             .getSourceColumnByName(selectedColumn.getName());
-                                    final AnalyzerJobBuilder<ValueDistributionAnalyzer> valueDistribution = _analysisJobBuilder
+                                    final AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribution = _analysisJobBuilder
                                             .addAnalyzer(ValueDistributionAnalyzer.class);
                                     valueDistribution.setName("Value distribution of " + selectedColumn.getName());
                                     valueDistribution.addInputColumn(sourceColumn);
@@ -115,7 +115,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                                             _analysisJobBuilder.addSourceColumn(selectedColumn);
                                             final InputColumn<?> sourceColumn = _analysisJobBuilder
                                                     .getSourceColumnByName(selectedColumn.getName());
-                                            final AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
+                                            final AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
                                                     .addAnalyzer(PatternFinderAnalyzer.class);
                                             patternFinder.setName("Patterns of " + selectedColumn.getName());
                                             patternFinder.addInputColumn(sourceColumn);

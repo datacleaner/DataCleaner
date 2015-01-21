@@ -40,12 +40,11 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 public class RowProcessingConsumerSorterTest extends TestCase {
 
@@ -71,18 +70,18 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
 
         // 1: add a filter
-        FilterJobBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
+        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
         fjb1.addInputColumn(inputColumn);
         fjb1.setName("fjb1");
 
         // 2: trim (depends on filter)
-        TransformerJobBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
+        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
         tjb1.addInputColumn(inputColumn);
         tjb1.setRequirement(fjb1, MockFilter.Category.VALID);
         tjb1.setName("tjb1");
 
         // 3: merge either the null or the trimmed value
-        TransformerJobBuilder<CoalesceMultipleFieldsTransformer> coalesce = ajb.addTransformer(CoalesceMultipleFieldsTransformer.class);
+        TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> coalesce = ajb.addTransformer(CoalesceMultipleFieldsTransformer.class);
         CoalesceUnit unit1 = new CoalesceUnit(tjb1.getOutputColumns().get(0));
         CoalesceUnit unit2 = new CoalesceUnit(inputColumn);
         coalesce.getComponentInstance().configureUsingCoalesceUnits(unit1, unit2);
@@ -90,7 +89,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         MutableInputColumn<?> mergedColumn1 = coalesce.getOutputColumns().get(0);
 
         // 4: add another filter (depends on merged output)
-        FilterJobBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
+        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
         fjb2.addInputColumn(mergedColumn1);
         fjb2.setName("fjb2");
 
@@ -126,23 +125,23 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
 
         // 1: add a filter
-        FilterJobBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
+        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb1 = ajb.addFilter(MockFilter.class);
         fjb1.addInputColumn(inputColumn);
         fjb1.setName("fjb1");
 
         // 2: trim (depends on filter)
-        TransformerJobBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
+        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class);
         tjb1.addInputColumn(inputColumn);
         tjb1.setRequirement(fjb1, MockFilter.Category.VALID);
         tjb1.setName("tjb1");
 
         // 3: trim again, just to examplify (depends on first trim output)
-        TransformerJobBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class);
+        TransformerComponentBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class);
         tjb2.addInputColumn(tjb1.getOutputColumns().get(0));
         tjb2.setName("tjb2");
 
         // 4: add a single word filter (depends on second trim)
-        FilterJobBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
+        FilterComponentBuilder<MockFilter, MockFilter.Category> fjb2 = ajb.addFilter(MockFilter.class);
         fjb2.addInputColumn(tjb2.getOutputColumns().get(0));
         fjb2.setName("fjb2");
 
@@ -176,11 +175,11 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
         ajb.addSourceColumn(physicalColumn);
 
-        TransformerJobBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class).addInputColumn(
+        TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class).addInputColumn(
                 ajb.getSourceColumns().get(0));
-        TransformerJobBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class).addInputColumn(
+        TransformerComponentBuilder<TransformerMock> tjb2 = ajb.addTransformer(TransformerMock.class).addInputColumn(
                 tjb1.getOutputColumns().get(0));
-        TransformerJobBuilder<ConvertToStringTransformer> tjb3 = ajb.addTransformer(ConvertToStringTransformer.class)
+        TransformerComponentBuilder<ConvertToStringTransformer> tjb3 = ajb.addTransformer(ConvertToStringTransformer.class)
                 .addInputColumn(tjb2.getOutputColumns().get(0));
 
         ajb.addAnalyzer(StringAnalyzer.class).addInputColumn(ajb.getSourceColumns().get(0));
@@ -201,7 +200,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>(analysisJob.getAnalyzerJobs());
 
         // create a list that represents the expected dependent sequence
-        Queue<ConfigurableBeanJob<?>> jobDependencies = new LinkedList<ConfigurableBeanJob<?>>();
+        Queue<ComponentJob> jobDependencies = new LinkedList<ComponentJob>();
         jobDependencies.add(transformerJobs.get(0));
         jobDependencies.add(transformerJobs.get(1));
         jobDependencies.add(transformerJobs.get(2));
@@ -210,7 +209,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
         int jobDependenciesFound = 0;
         boolean analyzerJob1found = false;
 
-        ConfigurableBeanJob<?> nextJobDependency = jobDependencies.poll();
+        ComponentJob nextJobDependency = jobDependencies.poll();
         for (RowProcessingConsumer rowProcessingConsumer : consumers) {
             ComponentJob job = rowProcessingConsumer.getComponentJob();
             if (job == nextJobDependency) {

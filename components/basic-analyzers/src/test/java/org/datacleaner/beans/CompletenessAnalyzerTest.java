@@ -24,26 +24,26 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CompletenessAnalyzer.Condition;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
 
 public class CompletenessAnalyzerTest extends TestCase {
 
     public void testIsDistributable() throws Exception {
-        AnalyzerBeanDescriptor<CompletenessAnalyzer> descriptor = Descriptors.ofAnalyzer(CompletenessAnalyzer.class);
+        AnalyzerDescriptor<CompletenessAnalyzer> descriptor = Descriptors.ofAnalyzer(CompletenessAnalyzer.class);
         assertTrue(descriptor.isDistributable());
     }
     
@@ -79,7 +79,7 @@ public class CompletenessAnalyzerTest extends TestCase {
             ajb.setDatastore(new PojoDatastore("ds", tableDataProviders));
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
             
-            AnalyzerJobBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
+            AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
             analyzer.getComponentInstance().setValueColumns(ajb.getSourceColumns().toArray(new InputColumn[0]));
             analyzer.getComponentInstance().fillAllConditions(Condition.NOT_BLANK_OR_NULL);
             

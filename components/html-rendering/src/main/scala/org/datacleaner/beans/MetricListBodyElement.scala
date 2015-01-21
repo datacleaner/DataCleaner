@@ -2,14 +2,13 @@ package org.datacleaner.beans
 import org.datacleaner.result.html.BodyElement
 import org.datacleaner.result.html.HtmlRenderingContext
 import org.datacleaner.api.AnalyzerResult
-import org.datacleaner.descriptors.HasAnalyzerResultBeanDescriptor
+import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor
 import org.datacleaner.job.ComponentJob
 import scala.collection.JavaConversions._
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor
 import org.datacleaner.api.InputColumn
-import org.datacleaner.job.ConfigurableBeanJob
+import org.datacleaner.job.ComponentJob
 import org.datacleaner.descriptors.MetricParameters
-import org.datacleaner.job.ConfigurableBeanJob
 
 /**
  * Body element which simply produces a list of metrics as per the descriptor of the component job being rendered.
@@ -21,28 +20,21 @@ class MetricListBodyElement(result: AnalyzerResult) extends BodyElement {
     if (componentJob == null) {
       return "";
     }
-
-    componentJob match {
-      // we expect the componentjob to be a ConfigurableBeanJob
-      case job: ConfigurableBeanJob[_] => return renderConfigurableBeanJob(job);
-
-      // or else we cannot handle it
-      case _ => return "";
-    }
+    return renderComponentJob(componentJob);
   }
 
-  def renderConfigurableBeanJob(job: ConfigurableBeanJob[_]): String = {
+  def renderComponentJob(job: ComponentJob): String = {
     val descriptor = job.getDescriptor();
     descriptor match {
-      // if descriptor is an HasAnalyzerResultBeanDescriptor
-      case desc: HasAnalyzerResultBeanDescriptor[_] => return renderMetrics(job, desc);
+      // if descriptor is an HasAnalyzerResultComponentDescriptor
+      case desc: HasAnalyzerResultComponentDescriptor[_] => return renderMetrics(job, desc);
 
       // or else we cannot handle it
       case _ => return "";
     }
   }
 
-  def renderMetrics(job: ConfigurableBeanJob[_], descriptor: HasAnalyzerResultBeanDescriptor[_]): String = {
+  def renderMetrics(job: ComponentJob, descriptor: HasAnalyzerResultComponentDescriptor[_]): String = {
     val primaryInputProperties = descriptor.getConfiguredPropertiesForInput(false)
     val columns = primaryInputProperties.flatMap(property => getInputColumns(job, property));
     val resultMetrics = descriptor.getResultMetrics()
@@ -70,7 +62,7 @@ class MetricListBodyElement(result: AnalyzerResult) extends BodyElement {
     return html.toString;
   }
 
-  def getInputColumns(componentJob: ConfigurableBeanJob[_], property: ConfiguredPropertyDescriptor): Seq[InputColumn[_]] = {
+  def getInputColumns(componentJob: ComponentJob, property: ConfiguredPropertyDescriptor): Seq[InputColumn[_]] = {
     val value = componentJob.getConfiguration().getProperty(property);
     value match {
       case value: InputColumn[_] => Seq(value);

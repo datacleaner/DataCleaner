@@ -6,7 +6,6 @@ import org.datacleaner.api.RendererPrecedence
 import org.datacleaner.api.RendererBean
 import org.datacleaner.result.renderer.HtmlRenderingFormat
 import javax.inject.Inject
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor
 import scala.collection.JavaConversions._
 import org.datacleaner.job.AnalyzerJob
 import org.datacleaner.api.InputColumn

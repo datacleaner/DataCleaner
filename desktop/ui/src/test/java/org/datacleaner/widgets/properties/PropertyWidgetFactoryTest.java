@@ -31,13 +31,13 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.data.MockInputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.reference.SimpleStringPattern;
@@ -86,14 +86,14 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
         AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 
-        AnalyzerBeanDescriptor<ManyPropertiesAnalyzer> descriptor = Descriptors
+        AnalyzerDescriptor<ManyPropertiesAnalyzer> descriptor = Descriptors
                 .ofAnalyzer(ManyPropertiesAnalyzer.class);
 
         assertEquals(28, descriptor.getConfiguredProperties().size());
 
-        AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ajb.addAnalyzer(descriptor);
+        AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerBuilder = ajb.addAnalyzer(descriptor);
 
-        PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(beanJobBuilder)
+        PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(analyzerBuilder)
                 .getInstance(PropertyWidgetFactory.class);
         assertNotNull(propertyWidgetFactory);
 

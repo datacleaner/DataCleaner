@@ -20,7 +20,7 @@
 package org.datacleaner.job.tasks;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,10 @@ public final class InitializeTask implements Task {
 	private final LifeCycleHelper _lifeCycleHelper;
 	private final ComponentDescriptor<?> _componentDescriptor;
 	private final Object _component;
-	private final BeanConfiguration _beanConfiguration;
+	private final ComponentConfiguration _beanConfiguration;
 
 	public InitializeTask(LifeCycleHelper lifeCycleHelper, ComponentDescriptor<?> componentDescriptor, Object component,
-			BeanConfiguration beanConfiguration) {
+			ComponentConfiguration beanConfiguration) {
 		_lifeCycleHelper = lifeCycleHelper;
 		_componentDescriptor = componentDescriptor;
 		_component = component;

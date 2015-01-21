@@ -31,7 +31,7 @@ import java.util.Set;
 import org.apache.metamodel.util.BaseObject;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.util.CollectionUtils2;
 
 import com.google.common.collect.ImmutableMap;
@@ -41,12 +41,12 @@ public final class ImmutableFilterJob extends BaseObject implements FilterJob {
     private static final long serialVersionUID = 1L;
 
     private final String _name;
-    private final FilterBeanDescriptor<?, ?> _descriptor;
-    private final BeanConfiguration _beanConfiguration;
+    private final FilterDescriptor<?, ?> _descriptor;
+    private final ComponentConfiguration _beanConfiguration;
     private final ComponentRequirement _componentRequirement;
     private final Map<String, String> _metadataProperties;
 
-    public ImmutableFilterJob(String name, FilterBeanDescriptor<?, ?> descriptor, BeanConfiguration beanConfiguration,
+    public ImmutableFilterJob(String name, FilterDescriptor<?, ?> descriptor, ComponentConfiguration beanConfiguration,
             ComponentRequirement requirement, Map<String, String> metadataProperties) {
         _name = name;
         _descriptor = descriptor;
@@ -76,12 +76,12 @@ public final class ImmutableFilterJob extends BaseObject implements FilterJob {
     }
 
     @Override
-    public FilterBeanDescriptor<?, ?> getDescriptor() {
+    public FilterDescriptor<?, ?> getDescriptor() {
         return _descriptor;
     }
 
     @Override
-    public BeanConfiguration getConfiguration() {
+    public ComponentConfiguration getConfiguration() {
         return _beanConfiguration;
     }
 

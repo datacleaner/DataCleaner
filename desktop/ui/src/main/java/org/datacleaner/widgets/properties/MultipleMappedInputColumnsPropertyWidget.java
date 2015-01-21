@@ -36,8 +36,8 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCComboBox;
@@ -55,9 +55,9 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
 
     public class MappedInputColumnsPropertyWidget extends MinimalPropertyWidget<InputColumn<?>[]> {
 
-        public MappedInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+        public MappedInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
                 ConfiguredPropertyDescriptor propertyDescriptor) {
-            super(beanJobBuilder, propertyDescriptor);
+            super(componentBuilder, propertyDescriptor);
         }
 
         @Override
@@ -101,16 +101,16 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
      *            the property representing the mapped columns in the datastore
      *            (String[])
      */
-    public MultipleMappedInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    public MultipleMappedInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {
-        super(beanJobBuilder, inputColumnsProperty);
+        super(componentBuilder, inputColumnsProperty);
         _mappedInputColumnComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<InputColumn<?>>>();
         _mappedInputColumnsProperty = mappedColumnsProperty;
 
-        _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(beanJobBuilder, mappedColumnsProperty);
+        _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(componentBuilder, mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
-        final InputColumn<?>[] currentMappedColumnsValue = (InputColumn<?>[]) beanJobBuilder
+        final InputColumn<?>[] currentMappedColumnsValue = (InputColumn<?>[]) componentBuilder
                 .getConfiguredProperty(mappedColumnsProperty);
 
         if (currentValue != null && currentMappedColumnsValue != null) {
@@ -150,7 +150,7 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     }
 
     @Override
-    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
             List<MutableInputColumn<?>> outputColumns) {
         super.onOutputChanged(transformerJobBuilder, outputColumns);
 

@@ -44,18 +44,17 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.IdGenerator;
@@ -90,26 +89,26 @@ public final class AnalysisJobBuilder implements Closeable {
     private DatastoreConnection _datastoreConnection;
 
     private final List<MetaModelInputColumn> _sourceColumns;
-    private final List<FilterJobBuilder<?, ?>> _filterJobBuilders;
-    private final List<TransformerJobBuilder<?>> _transformerJobBuilders;
-    private final List<AnalyzerJobBuilder<?>> _analyzerJobBuilders;
+    private final List<FilterComponentBuilder<?, ?>> _filterComponentBuilders;
+    private final List<TransformerComponentBuilder<?>> _transformerComponentBuilders;
+    private final List<AnalyzerComponentBuilder<?>> _analyzerComponentBuilders;
 
     private MutableAnalysisJobMetadata _analysisJobMetadata;
 
     // listeners, typically for UI that uses the builders
-    private final List<SourceColumnChangeListener> _sourceColumnListeners = new ArrayList<SourceColumnChangeListener>();
-    private final List<AnalyzerChangeListener> _analyzerChangeListeners = new ArrayList<AnalyzerChangeListener>();
-    private final List<TransformerChangeListener> _transformerChangeListeners = new ArrayList<TransformerChangeListener>();
-    private final List<FilterChangeListener> _filterChangeListeners = new ArrayList<FilterChangeListener>();
+    private final List<SourceColumnChangeListener> _sourceColumnListeners = new ArrayList<>();
+    private final List<AnalyzerChangeListener> _analyzerChangeListeners = new ArrayList<>();
+    private final List<TransformerChangeListener> _transformerChangeListeners = new ArrayList<>();
+    private final List<FilterChangeListener> _filterChangeListeners = new ArrayList<>();
     private ComponentRequirement _defaultRequirement;
 
     public AnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
         _configuration = configuration;
         _transformedColumnIdGenerator = new PrefixedIdGenerator("");
-        _sourceColumns = new ArrayList<MetaModelInputColumn>();
-        _filterJobBuilders = new ArrayList<FilterJobBuilder<?, ?>>();
-        _transformerJobBuilders = new ArrayList<TransformerJobBuilder<?>>();
-        _analyzerJobBuilders = new ArrayList<AnalyzerJobBuilder<?>>();
+        _sourceColumns = new ArrayList<>();
+        _filterComponentBuilders = new ArrayList<>();
+        _transformerComponentBuilders = new ArrayList<>();
+        _analyzerComponentBuilders = new ArrayList<>();
     }
 
     /**
@@ -118,8 +117,8 @@ public final class AnalysisJobBuilder implements Closeable {
     private AnalysisJobBuilder(AnalyzerBeansConfiguration configuration, Datastore datastore,
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
-            List<TransformerJobBuilder<?>> transformerJobBuilders, List<FilterJobBuilder<?, ?>> filterJobBuilders,
-            List<AnalyzerJobBuilder<?>> analyzerJobBuilders) {
+            List<TransformerComponentBuilder<?>> transformerJobBuilders, List<FilterComponentBuilder<?, ?>> filterJobBuilders,
+            List<AnalyzerComponentBuilder<?>> analyzerJobBuilders) {
         _configuration = configuration;
         _datastore = datastore;
         _analysisJobMetadata = metadata;
@@ -127,9 +126,9 @@ public final class AnalysisJobBuilder implements Closeable {
         _sourceColumns = sourceColumns;
         _defaultRequirement = defaultRequirement;
         _transformedColumnIdGenerator = idGenerator;
-        _filterJobBuilders = filterJobBuilders;
-        _transformerJobBuilders = transformerJobBuilders;
-        _analyzerJobBuilders = analyzerJobBuilders;
+        _filterComponentBuilders = filterJobBuilders;
+        _transformerComponentBuilders = transformerJobBuilders;
+        _analyzerComponentBuilders = analyzerJobBuilders;
     }
 
     public AnalysisJobBuilder(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
@@ -326,37 +325,37 @@ public final class AnalysisJobBuilder implements Closeable {
         return result;
     }
 
-    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(Class<T> transformerClass) {
-        TransformerBeanDescriptor<T> descriptor = _configuration.getDescriptorProvider()
-                .getTransformerBeanDescriptorForClass(transformerClass);
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(Class<T> transformerClass) {
+        TransformerDescriptor<T> descriptor = _configuration.getDescriptorProvider()
+                .getTransformerDescriptorForClass(transformerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + transformerClass);
         }
         return addTransformer(descriptor);
     }
 
-    public List<TransformerJobBuilder<?>> getTransformerJobBuilders() {
-        return Collections.unmodifiableList(_transformerJobBuilders);
+    public List<TransformerComponentBuilder<?>> getTransformerComponentBuilders() {
+        return Collections.unmodifiableList(_transformerComponentBuilders);
     }
 
-    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor) {
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(TransformerDescriptor<T> descriptor) {
         return addTransformer(descriptor, null, null, null);
     }
 
-    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerBeanDescriptor<T> descriptor,
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(TransformerDescriptor<T> descriptor,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties, ComponentRequirement requirement,
             Map<String, String> metadataProperties) {
-        final TransformerJobBuilder<T> transformer = new TransformerJobBuilder<T>(this, descriptor,
+        final TransformerComponentBuilder<T> transformer = new TransformerComponentBuilder<T>(this, descriptor,
                 _transformedColumnIdGenerator);
         initializeComponentBuilder(transformer, configuredProperties, requirement, metadataProperties);
         return addTransformer(transformer);
     }
 
-    public <T extends Transformer> TransformerJobBuilder<T> addTransformer(TransformerJobBuilder<T> tjb) {
+    public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(TransformerComponentBuilder<T> tjb) {
         if (tjb.getComponentRequirement() == null) {
             tjb.setComponentRequirement(_defaultRequirement);
         }
-        _transformerJobBuilders.add(tjb);
+        _transformerComponentBuilders.add(tjb);
 
         // make a copy since some of the listeners may add additional listeners
         // which will otherwise cause ConcurrentModificationExceptions
@@ -368,8 +367,8 @@ public final class AnalysisJobBuilder implements Closeable {
         return tjb;
     }
 
-    public AnalysisJobBuilder removeTransformer(TransformerJobBuilder<?> tjb) {
-        boolean removed = _transformerJobBuilders.remove(tjb);
+    public AnalysisJobBuilder removeTransformer(TransformerComponentBuilder<?> tjb) {
+        boolean removed = _transformerComponentBuilders.remove(tjb);
         if (removed) {
             tjb.onRemoved();
         }
@@ -382,33 +381,29 @@ public final class AnalysisJobBuilder implements Closeable {
      * the context of the {@link FilterJob} and may not be matched in the
      * {@link AnalysisJobBuilder}.
      * 
-     * @param filterJob
+     * @param componentJob
      * 
      * @return the builder object for the specific component
      */
     protected Object addComponent(ComponentJob componentJob) {
-        final AbstractBeanJobBuilder<?, ?, ?> builder;
+        final AbstractComponentBuilder<?, ?, ?> builder;
         if (componentJob instanceof FilterJob) {
-            builder = addFilter((FilterBeanDescriptor<?, ?>) componentJob.getDescriptor());
+            builder = addFilter((FilterDescriptor<?, ?>) componentJob.getDescriptor());
         } else if (componentJob instanceof TransformerJob) {
-            builder = addTransformer((TransformerBeanDescriptor<?>) componentJob.getDescriptor());
+            builder = addTransformer((TransformerDescriptor<?>) componentJob.getDescriptor());
         } else if (componentJob instanceof AnalyzerJob) {
-            builder = addAnalyzer((AnalyzerBeanDescriptor<?>) componentJob.getDescriptor());
+            builder = addAnalyzer((AnalyzerDescriptor<?>) componentJob.getDescriptor());
         } else {
             throw new UnsupportedOperationException("Unknown component job type: " + componentJob);
         }
 
         builder.setName(componentJob.getName());
-
-        if (componentJob instanceof ConfigurableBeanJob<?>) {
-            ConfigurableBeanJob<?> configurableBeanJob = (ConfigurableBeanJob<?>) componentJob;
-            builder.setConfiguredProperties(configurableBeanJob.getConfiguration());
-        }
+        builder.setConfiguredProperties(componentJob.getConfiguration());
 
         if (componentJob instanceof InputColumnSourceJob) {
             InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();
 
-            TransformerJobBuilder<?> transformerJobBuilder = (TransformerJobBuilder<?>) builder;
+            TransformerComponentBuilder<?> transformerJobBuilder = (TransformerComponentBuilder<?>) builder;
             List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
 
             assert output.length == outputColumns.size();
@@ -422,8 +417,8 @@ public final class AnalysisJobBuilder implements Closeable {
         return builder;
     }
 
-    public <F extends Filter<C>, C extends Enum<C>> FilterJobBuilder<F, C> addFilter(Class<F> filterClass) {
-        FilterBeanDescriptor<F, C> descriptor = _configuration.getDescriptorProvider().getFilterBeanDescriptorForClass(
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(Class<F> filterClass) {
+        FilterDescriptor<F, C> descriptor = _configuration.getDescriptorProvider().getFilterDescriptorForClass(
                 filterClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + filterClass);
@@ -431,15 +426,15 @@ public final class AnalysisJobBuilder implements Closeable {
         return addFilter(descriptor);
     }
 
-    public <F extends Filter<C>, C extends Enum<C>> FilterJobBuilder<F, C> addFilter(
-            FilterBeanDescriptor<F, C> descriptor) {
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(
+            FilterDescriptor<F, C> descriptor) {
         return addFilter(descriptor, null, null, null);
     }
 
-    public <F extends Filter<C>, C extends Enum<C>> FilterJobBuilder<F, C> addFilter(
-            FilterBeanDescriptor<F, C> descriptor, Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(
+            FilterDescriptor<F, C> descriptor, Map<ConfiguredPropertyDescriptor, Object> configuredProperties,
             ComponentRequirement requirement, Map<String, String> metadataProperties) {
-        final FilterJobBuilder<F, C> filter = new FilterJobBuilder<F, C>(this, descriptor);
+        final FilterComponentBuilder<F, C> filter = new FilterComponentBuilder<F, C>(this, descriptor);
         initializeComponentBuilder(filter, configuredProperties, requirement, metadataProperties);
         return addFilter(filter);
     }
@@ -458,8 +453,8 @@ public final class AnalysisJobBuilder implements Closeable {
         }
     }
 
-    public <F extends Filter<C>, C extends Enum<C>> FilterJobBuilder<F, C> addFilter(FilterJobBuilder<F, C> fjb) {
-        _filterJobBuilders.add(fjb);
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(FilterComponentBuilder<F, C> fjb) {
+        _filterComponentBuilders.add(fjb);
 
         if (fjb.getComponentRequirement() == null) {
             fjb.setComponentRequirement(_defaultRequirement);
@@ -472,8 +467,8 @@ public final class AnalysisJobBuilder implements Closeable {
         return fjb;
     }
 
-    public AnalysisJobBuilder removeFilter(FilterJobBuilder<?, ?> filterJobBuilder) {
-        boolean removed = _filterJobBuilders.remove(filterJobBuilder);
+    public AnalysisJobBuilder removeFilter(FilterComponentBuilder<?, ?> filterJobBuilder) {
+        boolean removed = _filterComponentBuilders.remove(filterJobBuilder);
 
         if (removed) {
             final ComponentRequirement previousRequirement = filterJobBuilder.getComponentRequirement();
@@ -485,21 +480,21 @@ public final class AnalysisJobBuilder implements Closeable {
                     setDefaultRequirement((ComponentRequirement) null);
                 }
 
-                for (final AnalyzerJobBuilder<?> ajb : _analyzerJobBuilders) {
+                for (final AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
                     final ComponentRequirement requirement = ajb.getComponentRequirement();
                     if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
                         ajb.setComponentRequirement(previousRequirement);
                     }
                 }
 
-                for (final TransformerJobBuilder<?> tjb : _transformerJobBuilders) {
+                for (final TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
                     final ComponentRequirement requirement = tjb.getComponentRequirement();
                     if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
                         tjb.setComponentRequirement(previousRequirement);
                     }
                 }
 
-                for (final FilterJobBuilder<?, ?> fjb : _filterJobBuilders) {
+                for (final FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
                     final ComponentRequirement requirement = fjb.getComponentRequirement();
                     if (requirement != null && requirement.getProcessingDependencies().contains(outcome)) {
                         fjb.setComponentRequirement(previousRequirement);
@@ -512,28 +507,28 @@ public final class AnalysisJobBuilder implements Closeable {
         return this;
     }
 
-    public List<AnalyzerJobBuilder<?>> getAnalyzerJobBuilders() {
-        return Collections.unmodifiableList(_analyzerJobBuilders);
+    public List<AnalyzerComponentBuilder<?>> getAnalyzerComponentBuilders() {
+        return Collections.unmodifiableList(_analyzerComponentBuilders);
     }
 
-    public List<FilterJobBuilder<?, ?>> getFilterJobBuilders() {
-        return Collections.unmodifiableList(_filterJobBuilders);
+    public List<FilterComponentBuilder<?, ?>> getFilterComponentBuilders() {
+        return Collections.unmodifiableList(_filterComponentBuilders);
     }
 
-    public <A extends Analyzer<?>> AnalyzerJobBuilder<A> addAnalyzer(AnalyzerBeanDescriptor<A> descriptor) {
+    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(AnalyzerDescriptor<A> descriptor) {
         return addAnalyzer(descriptor, null, null, null);
     }
 
-    public <A extends Analyzer<?>> AnalyzerJobBuilder<A> addAnalyzer(AnalyzerBeanDescriptor<A> descriptor,
+    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(AnalyzerDescriptor<A> descriptor,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties, ComponentRequirement requirement,
             Map<String, String> metadataProperties) {
-        final AnalyzerJobBuilder<A> analyzerJobBuilder = new AnalyzerJobBuilder<A>(this, descriptor);
+        final AnalyzerComponentBuilder<A> analyzerJobBuilder = new AnalyzerComponentBuilder<A>(this, descriptor);
         initializeComponentBuilder(analyzerJobBuilder, configuredProperties, requirement, metadataProperties);
         return addAnalyzer(analyzerJobBuilder);
     }
 
-    public <A extends Analyzer<?>> AnalyzerJobBuilder<A> addAnalyzer(AnalyzerJobBuilder<A> analyzerJobBuilder) {
-        _analyzerJobBuilders.add(analyzerJobBuilder);
+    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(AnalyzerComponentBuilder<A> analyzerJobBuilder) {
+        _analyzerComponentBuilders.add(analyzerJobBuilder);
 
         if (analyzerJobBuilder.getComponentRequirement() == null) {
             analyzerJobBuilder.setComponentRequirement(_defaultRequirement);
@@ -548,18 +543,18 @@ public final class AnalysisJobBuilder implements Closeable {
         return analyzerJobBuilder;
     }
 
-    public <A extends Analyzer<?>> AnalyzerJobBuilder<A> addAnalyzer(Class<A> analyzerClass) {
+    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(Class<A> analyzerClass) {
         final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
-        final AnalyzerBeanDescriptor<A> descriptor = descriptorProvider
-                .getAnalyzerBeanDescriptorForClass(analyzerClass);
+        final AnalyzerDescriptor<A> descriptor = descriptorProvider
+                .getAnalyzerDescriptorForClass(analyzerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + analyzerClass);
         }
         return addAnalyzer(descriptor);
     }
 
-    public AnalysisJobBuilder removeAnalyzer(AnalyzerJobBuilder<?> ajb) {
-        boolean removed = _analyzerJobBuilders.remove(ajb);
+    public AnalysisJobBuilder removeAnalyzer(AnalyzerComponentBuilder<?> ajb) {
+        boolean removed = _analyzerComponentBuilders.remove(ajb);
         if (removed) {
             ajb.onRemoved();
         }
@@ -608,26 +603,26 @@ public final class AnalysisJobBuilder implements Closeable {
             return false;
         }
 
-        if (_analyzerJobBuilders.isEmpty()) {
+        if (_analyzerComponentBuilders.isEmpty()) {
             if (throwException) {
                 throw new IllegalStateException("No Analyzers in job");
             }
             return false;
         }
 
-        for (FilterJobBuilder<?, ?> fjb : _filterJobBuilders) {
+        for (FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
             if (!fjb.isConfigured(throwException)) {
                 return false;
             }
         }
 
-        for (TransformerJobBuilder<?> tjb : _transformerJobBuilders) {
+        for (TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
             if (!tjb.isConfigured(throwException)) {
                 return false;
             }
         }
 
-        for (AnalyzerJobBuilder<?> ajb : _analyzerJobBuilders) {
+        for (AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
             if (!ajb.isConfigured(throwException)) {
                 return false;
             }
@@ -663,7 +658,7 @@ public final class AnalysisJobBuilder implements Closeable {
         final AnalysisJobImmutabilizer immutabilizer = new AnalysisJobImmutabilizer();
 
         final Collection<FilterJob> filterJobs = new LinkedList<FilterJob>();
-        for (final FilterJobBuilder<?, ?> fjb : _filterJobBuilders) {
+        for (final FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
             try {
                 final FilterJob filterJob = fjb.toFilterJob(validate, immutabilizer);
                 filterJobs.add(filterJob);
@@ -674,7 +669,7 @@ public final class AnalysisJobBuilder implements Closeable {
         }
 
         final Collection<TransformerJob> transformerJobs = new LinkedList<TransformerJob>();
-        for (final TransformerJobBuilder<?> tjb : _transformerJobBuilders) {
+        for (final TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
             try {
                 final TransformerJob transformerJob = tjb.toTransformerJob(validate, immutabilizer);
                 transformerJobs.add(transformerJob);
@@ -685,7 +680,7 @@ public final class AnalysisJobBuilder implements Closeable {
         }
 
         final Collection<AnalyzerJob> analyzerJobs = new LinkedList<AnalyzerJob>();
-        for (final AnalyzerJobBuilder<?> ajb : _analyzerJobBuilders) {
+        for (final AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
             try {
                 final AnalyzerJob[] analyzerJob = ajb.toAnalyzerJobs(validate, immutabilizer);
                 for (AnalyzerJob job : analyzerJob) {
@@ -778,12 +773,12 @@ public final class AnalysisJobBuilder implements Closeable {
         return null;
     }
 
-    public TransformerJobBuilder<?> getOriginatingTransformer(InputColumn<?> outputColumn) {
+    public TransformerComponentBuilder<?> getOriginatingTransformer(InputColumn<?> outputColumn) {
         SourceColumnFinder finder = new SourceColumnFinder();
         finder.addSources(this);
         InputColumnSourceJob source = finder.findInputColumnSource(outputColumn);
-        if (source instanceof TransformerJobBuilder) {
-            return (TransformerJobBuilder<?>) source;
+        if (source instanceof TransformerComponentBuilder) {
+            return (TransformerComponentBuilder<?>) source;
         }
         return null;
     }
@@ -794,22 +789,22 @@ public final class AnalysisJobBuilder implements Closeable {
         return finder.findOriginatingTable(inputColumn);
     }
 
-    public Table getOriginatingTable(AbstractBeanWithInputColumnsBuilder<?, ?, ?> beanJobBuilder) {
-        List<InputColumn<?>> inputColumns = beanJobBuilder.getInputColumns();
-        if (inputColumns.isEmpty()) {
+    public Table getOriginatingTable(ComponentBuilder componentBuilder) {
+        InputColumn<?>[] inputColumns = componentBuilder.getInput();
+        if (inputColumns.length == 0) {
             return null;
         } else {
-            return getOriginatingTable(inputColumns.get(0));
+            return getOriginatingTable(inputColumns[0]);
         }
     }
 
-    public List<AbstractBeanWithInputColumnsBuilder<?, ?, ?>> getAvailableUnfilteredBeans(
-            FilterJobBuilder<?, ?> filterJobBuilder) {
-        List<AbstractBeanWithInputColumnsBuilder<?, ?, ?>> result = new ArrayList<AbstractBeanWithInputColumnsBuilder<?, ?, ?>>();
+    public List<ComponentBuilder> getAvailableUnfilteredBeans(
+            FilterComponentBuilder<?, ?> filterJobBuilder) {
+        final List<ComponentBuilder> result = new ArrayList<>();
         if (filterJobBuilder.isConfigured()) {
             final Table requiredTable = getOriginatingTable(filterJobBuilder);
 
-            for (FilterJobBuilder<?, ?> fjb : _filterJobBuilders) {
+            for (FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
                 if (fjb != filterJobBuilder) {
                     if (fjb.getComponentRequirement() == null) {
                         Table foundTable = getOriginatingTable(fjb);
@@ -820,7 +815,7 @@ public final class AnalysisJobBuilder implements Closeable {
                 }
             }
 
-            for (TransformerJobBuilder<?> tjb : _transformerJobBuilders) {
+            for (TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
                 if (tjb.getComponentRequirement() == null) {
                     Table foundTable = getOriginatingTable(tjb);
                     if (requiredTable == null || requiredTable.equals(foundTable)) {
@@ -829,9 +824,9 @@ public final class AnalysisJobBuilder implements Closeable {
                 }
             }
 
-            for (AnalyzerJobBuilder<?> ajb : _analyzerJobBuilders) {
-                if (ajb instanceof AnalyzerJobBuilder<?>) {
-                    AnalyzerJobBuilder<?> rpajb = (AnalyzerJobBuilder<?>) ajb;
+            for (AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
+                if (ajb instanceof AnalyzerComponentBuilder<?>) {
+                    AnalyzerComponentBuilder<?> rpajb = (AnalyzerComponentBuilder<?>) ajb;
                     if (rpajb.getComponentRequirement() == null) {
                         Table foundTable = getOriginatingTable(rpajb);
                         if (requiredTable == null || requiredTable.equals(foundTable)) {
@@ -851,7 +846,7 @@ public final class AnalysisJobBuilder implements Closeable {
      * @param filterJobBuilder
      * @param category
      */
-    public void setDefaultRequirement(FilterJobBuilder<?, ?> filterJobBuilder, Enum<?> category) {
+    public void setDefaultRequirement(FilterComponentBuilder<?, ?> filterJobBuilder, Enum<?> category) {
         setDefaultRequirement(filterJobBuilder.getFilterOutcome(category));
     }
 
@@ -869,7 +864,7 @@ public final class AnalysisJobBuilder implements Closeable {
         _defaultRequirement = defaultRequirement;
         if (defaultRequirement != null) {
 
-            final FilterJobBuilder<?, ?> sourceFilterJobBuilder;
+            final FilterComponentBuilder<?, ?> sourceFilterJobBuilder;
             if (defaultRequirement instanceof SimpleComponentRequirement) {
                 final FilterOutcome outcome = ((SimpleComponentRequirement) defaultRequirement).getOutcome();
                 if (outcome instanceof LazyFilterOutcome) {
@@ -888,9 +883,9 @@ public final class AnalysisJobBuilder implements Closeable {
             sourceColumnFinder.addSources(this);
             final Set<Object> excludedSet = sourceColumnFinder.findAllSourceJobs(defaultRequirement);
 
-            for (AnalyzerJobBuilder<?> ajb : _analyzerJobBuilders) {
-                if (ajb instanceof AnalyzerJobBuilder) {
-                    final AnalyzerJobBuilder<?> analyzerJobBuilder = (AnalyzerJobBuilder<?>) ajb;
+            for (AnalyzerComponentBuilder<?> ajb : _analyzerComponentBuilders) {
+                if (ajb instanceof AnalyzerComponentBuilder) {
+                    final AnalyzerComponentBuilder<?> analyzerJobBuilder = (AnalyzerComponentBuilder<?>) ajb;
                     final ComponentRequirement requirement = analyzerJobBuilder.getComponentRequirement();
                     if (requirement == null) {
                         analyzerJobBuilder.setComponentRequirement(defaultRequirement);
@@ -898,13 +893,13 @@ public final class AnalysisJobBuilder implements Closeable {
                 }
             }
 
-            for (TransformerJobBuilder<?> tjb : _transformerJobBuilders) {
+            for (TransformerComponentBuilder<?> tjb : _transformerComponentBuilders) {
                 if (tjb.getComponentRequirement() == null && !excludedSet.contains(tjb)) {
                     tjb.setComponentRequirement(defaultRequirement);
                 }
             }
 
-            for (FilterJobBuilder<?, ?> fjb : _filterJobBuilders) {
+            for (FilterComponentBuilder<?, ?> fjb : _filterComponentBuilders) {
                 if (fjb != sourceFilterJobBuilder && fjb.getComponentRequirement() == null
                         && !excludedSet.contains(fjb)) {
                     if (fjb.validateRequirementCandidate(defaultRequirement)) {
@@ -974,28 +969,28 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void removeAllAnalyzers() {
-        final List<AnalyzerJobBuilder<?>> analyzers = new ArrayList<AnalyzerJobBuilder<?>>(_analyzerJobBuilders);
-        for (AnalyzerJobBuilder<?> ajb : analyzers) {
+        final List<AnalyzerComponentBuilder<?>> analyzers = new ArrayList<AnalyzerComponentBuilder<?>>(_analyzerComponentBuilders);
+        for (AnalyzerComponentBuilder<?> ajb : analyzers) {
             removeAnalyzer(ajb);
         }
-        assert _analyzerJobBuilders.isEmpty();
+        assert _analyzerComponentBuilders.isEmpty();
     }
 
     public void removeAllTransformers() {
-        final List<TransformerJobBuilder<?>> transformers = new ArrayList<TransformerJobBuilder<?>>(
-                _transformerJobBuilders);
-        for (TransformerJobBuilder<?> transformerJobBuilder : transformers) {
+        final List<TransformerComponentBuilder<?>> transformers = new ArrayList<TransformerComponentBuilder<?>>(
+                _transformerComponentBuilders);
+        for (TransformerComponentBuilder<?> transformerJobBuilder : transformers) {
             removeTransformer(transformerJobBuilder);
         }
-        assert _transformerJobBuilders.isEmpty();
+        assert _transformerComponentBuilders.isEmpty();
     }
 
     public void removeAllFilters() {
-        final List<FilterJobBuilder<?, ?>> filters = new ArrayList<FilterJobBuilder<?, ?>>(_filterJobBuilders);
-        for (FilterJobBuilder<?, ?> filterJobBuilder : filters) {
+        final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<FilterComponentBuilder<?, ?>>(_filterComponentBuilders);
+        for (FilterComponentBuilder<?, ?> filterJobBuilder : filters) {
             removeFilter(filterJobBuilder);
         }
-        assert _filterJobBuilders.isEmpty();
+        assert _filterComponentBuilders.isEmpty();
     }
 
     /**
@@ -1019,7 +1014,7 @@ public final class AnalysisJobBuilder implements Closeable {
         final MutableAnalysisJobMetadata metadataClone = new MutableAnalysisJobMetadata(getAnalysisJobMetadata());
         final AnalysisJobBuilder clone = new AnalysisJobBuilder(_configuration, _datastore, _datastoreConnection,
                 metadataClone, _sourceColumns, _defaultRequirement, _transformedColumnIdGenerator,
-                _transformerJobBuilders, _filterJobBuilders, _analyzerJobBuilders);
+                _transformerComponentBuilders, _filterComponentBuilders, _analyzerComponentBuilders);
         return clone;
     }
 
@@ -1030,7 +1025,7 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return
      */
     public int getComponentCount() {
-        return _filterJobBuilders.size() + _transformerJobBuilders.size() + _analyzerJobBuilders.size();
+        return _filterComponentBuilders.size() + _transformerComponentBuilders.size() + _analyzerComponentBuilders.size();
     }
 
     /**
@@ -1041,9 +1036,9 @@ public final class AnalysisJobBuilder implements Closeable {
      */
     public Collection<ComponentBuilder> getComponentBuilders() {
         Collection<ComponentBuilder> result = new ArrayList<>();
-        result.addAll(_filterJobBuilders);
-        result.addAll(_transformerJobBuilders);
-        result.addAll(_analyzerJobBuilders);
+        result.addAll(_filterComponentBuilders);
+        result.addAll(_transformerComponentBuilders);
+        result.addAll(_analyzerComponentBuilders);
         return result;
     }
 

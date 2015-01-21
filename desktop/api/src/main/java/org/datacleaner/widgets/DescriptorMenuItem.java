@@ -32,10 +32,10 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.descriptors.BeanDescriptor;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tooltip.DCToolTip;
 
@@ -46,9 +46,9 @@ public class DescriptorMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	private final BeanDescriptor<?> _descriptor;
+	private final ComponentDescriptor<?> _descriptor;
 
-	public DescriptorMenuItem(BeanDescriptor<?> descriptor) {
+	public DescriptorMenuItem(ComponentDescriptor<?> descriptor) {
 		super(descriptor.getDisplayName());
 		_descriptor = descriptor;
 		ToolTipManager.sharedInstance().registerComponent(this);

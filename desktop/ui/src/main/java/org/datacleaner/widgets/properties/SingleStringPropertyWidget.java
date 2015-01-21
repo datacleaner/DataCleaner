@@ -31,7 +31,7 @@ import javax.swing.text.JTextComponent;
 
 import org.datacleaner.api.StringProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.WidgetFactory;
 import org.apache.metamodel.util.CollectionUtils;
@@ -52,8 +52,8 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
     @Inject
     public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
         _stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
         _textComponent = getTextComponent(propertyDescriptor);

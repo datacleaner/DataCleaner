@@ -26,11 +26,10 @@ import java.util.Date;
 
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.ConfigurableBeanJob;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,12 +100,8 @@ public final class LabelUtils {
         final String jobName = job.getName();
         final StringBuilder label = new StringBuilder();
         if (Strings.isNullOrEmpty(jobName)) {
-            if (job instanceof ConfigurableBeanJob) {
-                BeanDescriptor<?> descriptor = ((ConfigurableBeanJob<?>) job).getDescriptor();
-                label.append(descriptor.getDisplayName());
-            } else {
-                label.append(job.toString());
-            }
+            ComponentDescriptor<?> descriptor = job.getDescriptor();
+            label.append(descriptor.getDisplayName());
         } else {
             label.append(jobName);
         }

@@ -21,19 +21,19 @@ package org.datacleaner.panels.completeness;
 
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.panels.AnalyzerJobBuilderPanel;
-import org.datacleaner.panels.AnalyzerJobBuilderPresenter;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
+import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.MultipleMappedEnumsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link AnalyzerJobBuilderPresenter} for the
+ * Specialized {@link AnalyzerComponentBuilderPresenter} for the
  * {@link CompletenessAnalyzer}.
  */
-final class CompletenessAnalyzerJobBuilderPresenter extends AnalyzerJobBuilderPanel {
+final class CompletenessAnalyzerComponentBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,7 +41,7 @@ final class CompletenessAnalyzerJobBuilderPresenter extends AnalyzerJobBuilderPa
     private final ConfiguredPropertyDescriptor _conditionEnumProperty;
     private final MultipleMappedEnumsPropertyWidget<Enum<?>> _inputColumnMappingPropertyWidget;
 
-    public CompletenessAnalyzerJobBuilderPresenter(AnalyzerJobBuilder<?> analyzerJobBuilder,
+    public CompletenessAnalyzerComponentBuilderPresenter(AnalyzerComponentBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
 
@@ -53,14 +53,14 @@ final class CompletenessAnalyzerJobBuilderPresenter extends AnalyzerJobBuilderPa
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputColumnProperty) {
             return _inputColumnMappingPropertyWidget;
         } else if (propertyDescriptor == _conditionEnumProperty) {
             return _inputColumnMappingPropertyWidget.getMappedEnumsPropertyWidget();
         } else {
-            return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+            return super.createPropertyWidget(componentBuilder, propertyDescriptor);
         }
     }
 }

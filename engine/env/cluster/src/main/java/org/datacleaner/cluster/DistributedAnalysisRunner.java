@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.SharedExecutorService;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
@@ -31,12 +34,11 @@ import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
@@ -51,9 +53,6 @@ import org.datacleaner.job.tasks.Task;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.StringUtils;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +248,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
         try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(_configuration, job)) {
 
-            final FilterJobBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder.addFilter(MaxRowsFilter.class);
+            final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilder
+                    .addFilter(MaxRowsFilter.class);
             maxRowsFilter.getComponentInstance().setFirstRow(firstRow);
             maxRowsFilter.getComponentInstance().setMaxRows(maxRows);
 
@@ -362,14 +362,9 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
             throws UnsupportedOperationException {
         for (ComponentJob job : jobs) {
             final ComponentDescriptor<?> descriptor = job.getDescriptor();
-            if (descriptor instanceof BeanDescriptor) {
-                final BeanDescriptor<?> beanDescriptor = (BeanDescriptor<?>) descriptor;
-                final boolean distributable = beanDescriptor.isDistributable();
-                if (!distributable) {
-                    throw new UnsupportedOperationException("Component is not distributable: " + job);
-                }
-            } else {
-                throw new UnsupportedOperationException("Unsupported component type: " + descriptor);
+            final boolean distributable = descriptor.isDistributable();
+            if (!distributable) {
+                throw new UnsupportedOperationException("Component is not distributable: " + job);
             }
         }
     }

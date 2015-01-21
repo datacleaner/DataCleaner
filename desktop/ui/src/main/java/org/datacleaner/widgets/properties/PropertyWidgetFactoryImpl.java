@@ -39,7 +39,7 @@ import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.StringPattern;
@@ -93,7 +93,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             // mapped strings
             if (mappedProperty.getBaseType() == String.class) {
                 final MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(
-                        getBeanJobBuilder(), mappedToProperty, mappedProperty);
+                        getComponentBuilder(), mappedToProperty, mappedProperty);
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
                 mapping.putMapping(mappedProperty, propertyWidget);
                 mapping.putMapping(mappedToProperty, propertyWidget.getMappedStringsPropertyWidget());
@@ -103,7 +103,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             // mapped enums
             if (mappedProperty.getBaseType().isEnum()) {
                 final MultipleMappedEnumsPropertyWidget<Enum<?>> propertyWidget = new MultipleMappedEnumsPropertyWidget<Enum<?>>(
-                        getBeanJobBuilder(), mappedToProperty, mappedProperty);
+                        getComponentBuilder(), mappedToProperty, mappedProperty);
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
                 mapping.putMapping(mappedProperty, propertyWidget);
                 mapping.putMapping(mappedToProperty, propertyWidget.getMappedEnumsPropertyWidget());
@@ -122,14 +122,14 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             // mapped schema name
             if (mappedProperty.getAnnotation(SchemaProperty.class) != null
                     && (mappedToProperty.getBaseType() == Datastore.class || mappedToProperty.getBaseType() == UpdateableDatastore.class)) {
-                final SchemaNamePropertyWidget schemaPropertyWidget = new SchemaNamePropertyWidget(getBeanJobBuilder(),
-                        mappedProperty);
+                final SchemaNamePropertyWidget schemaPropertyWidget = new SchemaNamePropertyWidget(
+                        getComponentBuilder(), mappedProperty);
                 final SingleDatastorePropertyWidget datastorePropertyWidget;
                 if (mappedToPropertyWidget == null) {
-                    final DatastoreCatalog datastoreCatalog = getBeanJobBuilder().getAnalysisJobBuilder()
+                    final DatastoreCatalog datastoreCatalog = getComponentBuilder().getAnalysisJobBuilder()
                             .getConfiguration().getDatastoreCatalog();
-                    datastorePropertyWidget = new SingleDatastorePropertyWidget(getBeanJobBuilder(), mappedToProperty,
-                            datastoreCatalog);
+                    datastorePropertyWidget = new SingleDatastorePropertyWidget(getComponentBuilder(),
+                            mappedToProperty, datastoreCatalog);
                 } else {
                     datastorePropertyWidget = (SingleDatastorePropertyWidget) mappedToPropertyWidget;
                 }
@@ -152,10 +152,10 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                     && mappedToProperty.getAnnotation(SchemaProperty.class) != null) {
 
                 final SingleTableNamePropertyWidget tablePropertyWidget = new SingleTableNamePropertyWidget(
-                        getBeanJobBuilder(), mappedProperty);
+                        getComponentBuilder(), mappedProperty);
                 final SchemaNamePropertyWidget schemaPropertyWidget;
                 if (mappedToPropertyWidget == null) {
-                    schemaPropertyWidget = new SchemaNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
+                    schemaPropertyWidget = new SchemaNamePropertyWidget(getComponentBuilder(), mappedToProperty);
                 } else {
                     schemaPropertyWidget = (SchemaNamePropertyWidget) mappedToPropertyWidget;
                 }
@@ -179,7 +179,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
 
                 final SingleTableNamePropertyWidget tablePropertyWidget;
                 if (mappedToPropertyWidget == null) {
-                    tablePropertyWidget = new SingleTableNamePropertyWidget(getBeanJobBuilder(), mappedToProperty);
+                    tablePropertyWidget = new SingleTableNamePropertyWidget(getComponentBuilder(), mappedToProperty);
                 } else {
                     tablePropertyWidget = (SingleTableNamePropertyWidget) mappedToPropertyWidget;
                 }
@@ -194,7 +194,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                     // mapped column name
 
                     final SingleColumnNamePropertyWidget columnPropertyWidget = new SingleColumnNamePropertyWidget(
-                            mappedProperty, getBeanJobBuilder());
+                            mappedProperty, getComponentBuilder());
                     tablePropertyWidget.addComboListener(new DCComboBox.Listener<Table>() {
                         @Override
                         public void onItemSelected(Table item) {
@@ -213,11 +213,6 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         return null;
     }
 
-    @Override
-    public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
-        return (AbstractBeanJobBuilder<?, ?, ?>) _componentBuilder;
-    }
-    
     @Override
     public ComponentBuilder getComponentBuilder() {
         return _componentBuilder;
@@ -246,93 +241,100 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
      */
     @Override
     public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
-        final PropertyWidget<?> result;
-
         // first check if there is a mapping created for this property
         // descriptor
         PropertyWidget<?> propertyWidget = _propertyWidgetCollection.getMappedPropertyWidget(propertyDescriptor);
         if (propertyWidget != null) {
-            result = propertyWidget;
-        } else {
-            // check for fitting property widgets by type
-            final Class<?> type = propertyDescriptor.getBaseType();
-
-            final Class<? extends PropertyWidget<?>> widgetClass;
-            if (propertyDescriptor.isArray()) {
-                if (propertyDescriptor.isInputColumn()) {
-                    widgetClass = MultipleInputColumnsPropertyWidget.class;
-                } else if (ReflectionUtils.isString(type)) {
-                    widgetClass = MultipleStringPropertyWidget.class;
-                } else if (type == Dictionary.class) {
-                    widgetClass = MultipleDictionariesPropertyWidget.class;
-                } else if (type == SynonymCatalog.class) {
-                    widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
-                } else if (type == StringPattern.class) {
-                    widgetClass = MultipleStringPatternPropertyWidget.class;
-                } else if (type.isEnum()) {
-                    widgetClass = MultipleEnumPropertyWidget.class;
-                } else if (type == Class.class) {
-                    widgetClass = MultipleClassesPropertyWidget.class;
-                } else if (type == char.class) {
-                    widgetClass = MultipleCharPropertyWidget.class;
-                } else if (ReflectionUtils.isNumber(type)) {
-                    widgetClass = MultipleNumberPropertyWidget.class;
-                } else {
-                    // not yet implemented
-                    widgetClass = DummyPropertyWidget.class;
-                }
-            } else {
-
-                if (propertyDescriptor.isInputColumn()) {
-                    if (_componentBuilder.getDescriptor().getConfiguredPropertiesByType(InputColumn.class, true).size() == 1) {
-                        // if there is only a single input column property, it
-                        // will
-                        // be displayed using radiobuttons.
-                        widgetClass = SingleInputColumnRadioButtonPropertyWidget.class;
-                    } else {
-                        // if there are multiple input column properties, they
-                        // will
-                        // be displayed using combo boxes.
-                        widgetClass = SingleInputColumnComboBoxPropertyWidget.class;
-                    }
-                } else if (ReflectionUtils.isCharacter(type)) {
-                    widgetClass = SingleCharacterPropertyWidget.class;
-                } else if (ReflectionUtils.isString(type)) {
-                    widgetClass = SingleStringPropertyWidget.class;
-                } else if (ReflectionUtils.isBoolean(type)) {
-                    widgetClass = SingleBooleanPropertyWidget.class;
-                } else if (ReflectionUtils.isNumber(type)) {
-                    widgetClass = SingleNumberPropertyWidget.class;
-                } else if (ReflectionUtils.isDate(type)) {
-                    widgetClass = SingleDatePropertyWidget.class;
-                } else if (type == Dictionary.class) {
-                    widgetClass = SingleDictionaryPropertyWidget.class;
-                } else if (type == SynonymCatalog.class) {
-                    widgetClass = SingleSynonymCatalogPropertyWidget.class;
-                } else if (type == StringPattern.class) {
-                    widgetClass = SingleStringPatternPropertyWidget.class;
-                } else if (type.isEnum()) {
-                    widgetClass = SingleEnumPropertyWidget.class;
-                } else if (ReflectionUtils.is(type, Resource.class)) {
-                    widgetClass = SingleResourcePropertyWidget.class;
-                } else if (type == File.class) {
-                    widgetClass = SingleFilePropertyWidget.class;
-                } else if (type == Pattern.class) {
-                    widgetClass = SinglePatternPropertyWidget.class;
-                } else if (ReflectionUtils.is(type, Datastore.class)) {
-                    widgetClass = SingleDatastorePropertyWidget.class;
-                } else if (type == Class.class) {
-                    widgetClass = SingleClassPropertyWidget.class;
-                } else {
-                    // not yet implemented
-                    widgetClass = DummyPropertyWidget.class;
-                }
-            }
-
-            final Injector injector = getInjectorForPropertyWidgets(propertyDescriptor);
-            result = injector.getInstance(widgetClass);
+            return propertyWidget;
         }
 
+        if (getComponentBuilder() instanceof AnalyzerComponentBuilder) {
+            AnalyzerComponentBuilder<?> analyzer = (AnalyzerComponentBuilder<?>) getComponentBuilder();
+            if (analyzer.isMultipleJobsSupported()) {
+                if (analyzer.isMultipleJobsDeterminedBy(propertyDescriptor)) {
+                    final MultipleInputColumnsPropertyWidget result = new MultipleInputColumnsPropertyWidget(analyzer, propertyDescriptor);
+                    return result;
+                }
+            }
+        }
+
+        // check for fitting property widgets by type
+        final Class<?> type = propertyDescriptor.getBaseType();
+
+        final Class<? extends PropertyWidget<?>> widgetClass;
+        if (propertyDescriptor.isArray()) {
+            if (propertyDescriptor.isInputColumn()) {
+                widgetClass = MultipleInputColumnsPropertyWidget.class;
+            } else if (ReflectionUtils.isString(type)) {
+                widgetClass = MultipleStringPropertyWidget.class;
+            } else if (type == Dictionary.class) {
+                widgetClass = MultipleDictionariesPropertyWidget.class;
+            } else if (type == SynonymCatalog.class) {
+                widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
+            } else if (type == StringPattern.class) {
+                widgetClass = MultipleStringPatternPropertyWidget.class;
+            } else if (type.isEnum()) {
+                widgetClass = MultipleEnumPropertyWidget.class;
+            } else if (type == Class.class) {
+                widgetClass = MultipleClassesPropertyWidget.class;
+            } else if (type == char.class) {
+                widgetClass = MultipleCharPropertyWidget.class;
+            } else if (ReflectionUtils.isNumber(type)) {
+                widgetClass = MultipleNumberPropertyWidget.class;
+            } else {
+                // not yet implemented
+                widgetClass = DummyPropertyWidget.class;
+            }
+        } else {
+
+            if (propertyDescriptor.isInputColumn()) {
+                if (_componentBuilder.getDescriptor().getConfiguredPropertiesByType(InputColumn.class, true).size() == 1) {
+                    // if there is only a single input column property, it
+                    // will
+                    // be displayed using radiobuttons.
+                    widgetClass = SingleInputColumnRadioButtonPropertyWidget.class;
+                } else {
+                    // if there are multiple input column properties, they
+                    // will
+                    // be displayed using combo boxes.
+                    widgetClass = SingleInputColumnComboBoxPropertyWidget.class;
+                }
+            } else if (ReflectionUtils.isCharacter(type)) {
+                widgetClass = SingleCharacterPropertyWidget.class;
+            } else if (ReflectionUtils.isString(type)) {
+                widgetClass = SingleStringPropertyWidget.class;
+            } else if (ReflectionUtils.isBoolean(type)) {
+                widgetClass = SingleBooleanPropertyWidget.class;
+            } else if (ReflectionUtils.isNumber(type)) {
+                widgetClass = SingleNumberPropertyWidget.class;
+            } else if (ReflectionUtils.isDate(type)) {
+                widgetClass = SingleDatePropertyWidget.class;
+            } else if (type == Dictionary.class) {
+                widgetClass = SingleDictionaryPropertyWidget.class;
+            } else if (type == SynonymCatalog.class) {
+                widgetClass = SingleSynonymCatalogPropertyWidget.class;
+            } else if (type == StringPattern.class) {
+                widgetClass = SingleStringPatternPropertyWidget.class;
+            } else if (type.isEnum()) {
+                widgetClass = SingleEnumPropertyWidget.class;
+            } else if (ReflectionUtils.is(type, Resource.class)) {
+                widgetClass = SingleResourcePropertyWidget.class;
+            } else if (type == File.class) {
+                widgetClass = SingleFilePropertyWidget.class;
+            } else if (type == Pattern.class) {
+                widgetClass = SinglePatternPropertyWidget.class;
+            } else if (ReflectionUtils.is(type, Datastore.class)) {
+                widgetClass = SingleDatastorePropertyWidget.class;
+            } else if (type == Class.class) {
+                widgetClass = SingleClassPropertyWidget.class;
+            } else {
+                // not yet implemented
+                widgetClass = DummyPropertyWidget.class;
+            }
+        }
+
+        final Injector injector = getInjectorForPropertyWidgets(propertyDescriptor);
+        final PropertyWidget<?> result = injector.getInstance(widgetClass);
         return result;
     }
 }

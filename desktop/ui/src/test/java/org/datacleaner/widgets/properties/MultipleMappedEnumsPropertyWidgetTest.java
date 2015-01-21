@@ -36,7 +36,7 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
@@ -52,17 +52,17 @@ public class MultipleMappedEnumsPropertyWidgetTest extends TestCase {
 
         final Injector injector2 = OpenAnalysisJobActionListener.open(file, configuration, injector1);
 
-        final List<AnalyzerJobBuilder<?>> analyzers;
+        final List<AnalyzerComponentBuilder<?>> analyzers;
         if (GraphicsEnvironment.isHeadless()) {
-            analyzers = injector2.getInstance(AnalysisJobBuilder.class).getAnalyzerJobBuilders();
+            analyzers = injector2.getInstance(AnalysisJobBuilder.class).getAnalyzerComponentBuilders();
         } else {
             final AnalysisJobBuilderWindow window = injector2.getInstance(AnalysisJobBuilderWindow.class);
-            analyzers = window.getAnalysisJobBuilder().getAnalyzerJobBuilders();
+            analyzers = window.getAnalysisJobBuilder().getAnalyzerComponentBuilders();
         }
 
         assertEquals(2, analyzers.size());
 
-        final AnalyzerJobBuilder<?> completenessAnalyzer = analyzers.get(0);
+        final AnalyzerComponentBuilder<?> completenessAnalyzer = analyzers.get(0);
         assertEquals("Completeness analyzer", completenessAnalyzer.getDescriptor().getDisplayName());
 
         final Set<ConfiguredPropertyDescriptor> enumProperties = completenessAnalyzer.getDescriptor()

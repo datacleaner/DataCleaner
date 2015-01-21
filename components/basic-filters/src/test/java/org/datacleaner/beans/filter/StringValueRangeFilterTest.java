@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
 
 public class StringValueRangeFilterTest extends TestCase {
 
@@ -48,7 +48,7 @@ public class StringValueRangeFilterTest extends TestCase {
 	}
 
 	public void testOrderingOfProperties() throws Exception {
-		FilterBeanDescriptor<StringValueRangeFilter, RangeFilterCategory> d = Descriptors
+		FilterDescriptor<StringValueRangeFilter, RangeFilterCategory> d = Descriptors
 				.ofFilter(StringValueRangeFilter.class);
 		Set<ConfiguredPropertyDescriptor> configuredProperties = d.getConfiguredProperties();
 

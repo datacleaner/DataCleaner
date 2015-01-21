@@ -25,8 +25,8 @@ import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -39,16 +39,16 @@ import org.datacleaner.widgets.ChangeRequirementMenu;
 public abstract class AbstractJobBuilderPopupListener {
 
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
+    private final ComponentBuilder _componentBuilder;
 
-    public AbstractJobBuilderPopupListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder,
+    public AbstractJobBuilderPopupListener(ComponentBuilder jobBuilder,
             AnalysisJobBuilder analysisJobBuilder) {
-        _jobBuilder = jobBuilder;
+        _componentBuilder = jobBuilder;
         _analysisJobBuilder = analysisJobBuilder;
     }
 
-    public AbstractBeanJobBuilder<?, ?, ?> getJobBuilder() {
-        return _jobBuilder;
+    public ComponentBuilder getComponentBuilder() {
+        return _componentBuilder;
     }
 
     public AnalysisJobBuilder getAnalysisJobBuilder() {
@@ -58,14 +58,14 @@ public abstract class AbstractJobBuilderPopupListener {
     public void showPopup(Component parentComponent, int x, int y) {
         final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
         final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
-        renameMenuItem.addActionListener(new RenameComponentActionListener(_jobBuilder) {
+        renameMenuItem.addActionListener(new RenameComponentActionListener(_componentBuilder) {
             @Override
             protected void onNameChanged() {
                 AbstractJobBuilderPopupListener.this.onNameChanged();
             }
         });
 
-        final JMenuItem removeMenuItem = new RemoveComponentMenuItem(_analysisJobBuilder, _jobBuilder) {
+        final JMenuItem removeMenuItem = new RemoveComponentMenuItem(_analysisJobBuilder, _componentBuilder) {
 
             private static final long serialVersionUID = 1L;
 
@@ -78,7 +78,7 @@ public abstract class AbstractJobBuilderPopupListener {
         JPopupMenu popup = new JPopupMenu();
         popup.add(renameMenuItem);
         popup.add(removeMenuItem);
-        popup.add(new ChangeRequirementMenu(_jobBuilder));
+        popup.add(new ChangeRequirementMenu(_componentBuilder));
         popup.show(parentComponent, x, y);
     }
 

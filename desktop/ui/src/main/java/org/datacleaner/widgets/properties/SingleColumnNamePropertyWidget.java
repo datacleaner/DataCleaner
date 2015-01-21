@@ -21,14 +21,14 @@ package org.datacleaner.widgets.properties;
 
 import javax.inject.Inject;
 
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.widgets.DCComboBox.Listener;
-import org.datacleaner.widgets.SourceColumnComboBox;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.widgets.DCComboBox.Listener;
+import org.datacleaner.widgets.SourceColumnComboBox;
 
 /**
  * Property widget for a {@link String} that represents a {@link Column} name.
@@ -40,8 +40,8 @@ public final class SingleColumnNamePropertyWidget extends AbstractPropertyWidget
 
     @Inject
     public SingleColumnNamePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
         _tableRef = new MutableRef<Table>();
 

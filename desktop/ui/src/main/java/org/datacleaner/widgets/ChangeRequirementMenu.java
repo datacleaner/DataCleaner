@@ -24,14 +24,14 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
 public class ChangeRequirementMenu extends JMenu {
     private static final long serialVersionUID = 1L;
 
-    public ChangeRequirementMenu(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+    public ChangeRequirementMenu(ComponentBuilder componentBuilder) {
         super("Set requirement");
         setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 

@@ -34,69 +34,70 @@ import javax.swing.JPopupMenu;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.components.categories.WriteDataCategory;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.DisplayNameComparator;
 import org.datacleaner.widgets.DescriptorMenuItem;
 
 public class DisplayOutputWritersAction {
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
+    private final AnalysisJobBuilder _analysisJobBuilder;
 
-	public DisplayOutputWritersAction(AnalysisJobBuilder analysisJobBuilder) {
-		_analysisJobBuilder = analysisJobBuilder;
-	}
+    public DisplayOutputWritersAction(AnalysisJobBuilder analysisJobBuilder) {
+        _analysisJobBuilder = analysisJobBuilder;
+    }
 
-	public final void showPopup(JComponent component) {
-		JPopupMenu popup = new JPopupMenu();
+    public final void showPopup(JComponent component) {
+        JPopupMenu popup = new JPopupMenu();
 
-		List<JMenuItem> menuItems = createMenuItems();
-		for (JMenuItem menuItem : menuItems) {
-			popup.add(menuItem);
-		}
+        List<JMenuItem> menuItems = createMenuItems();
+        for (JMenuItem menuItem : menuItems) {
+            popup.add(menuItem);
+        }
 
-		popup.show(component, 0, component.getHeight());
-	}
+        popup.show(component, 0, component.getHeight());
+    }
 
-	public List<JMenuItem> createMenuItems() {
-		List<JMenuItem> result = new ArrayList<JMenuItem>();
-		for (final AnalyzerBeanDescriptor<?> descriptor : getDescriptors()) {
-			JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
-			outputWriterMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Class<? extends Analyzer<?>> beanClass = descriptor.getComponentClass();
+    public List<JMenuItem> createMenuItems() {
+        List<JMenuItem> result = new ArrayList<JMenuItem>();
+        for (final AnalyzerDescriptor<?> descriptor : getDescriptors()) {
+            JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
+            outputWriterMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Class<? extends Analyzer<?>> beanClass = descriptor.getComponentClass();
 
-					AnalyzerJobBuilder<?> ajb = _analysisJobBuilder.addAnalyzer(beanClass);
+                    AnalyzerComponentBuilder<?> ajb = _analysisJobBuilder.addAnalyzer(beanClass);
 
-					configure(_analysisJobBuilder, ajb);
+                    configure(_analysisJobBuilder, ajb);
 
-					ajb.onConfigurationChanged();
-				}
-			});
-			result.add(outputWriterMenuItem);
-		}
-		return result;
-	}
+                    ajb.onConfigurationChanged();
+                }
+            });
+            result.add(outputWriterMenuItem);
+        }
+        return result;
+    }
 
-	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
-	}
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+    }
 
-	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
-		Collection<AnalyzerBeanDescriptor<?>> descriptors = _analysisJobBuilder.getConfiguration().getDescriptorProvider()
-				.getAnalyzerBeanDescriptors();
-		List<AnalyzerBeanDescriptor<?>> result = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
+    protected List<AnalyzerDescriptor<?>> getDescriptors() {
+        final Collection<AnalyzerDescriptor<?>> descriptors = _analysisJobBuilder.getConfiguration()
+                .getDescriptorProvider().getAnalyzerDescriptors();
+        final List<AnalyzerDescriptor<?>> result = CollectionUtils2.sorted(descriptors,
+                new DisplayNameComparator());
 
-		for (Iterator<AnalyzerBeanDescriptor<?>> it = result.iterator(); it.hasNext();) {
-			AnalyzerBeanDescriptor<?> descriptor = it.next();
-			Set<ComponentCategory> categories = descriptor.getComponentCategories();
-			if (!categories.contains(new WriteDataCategory())) {
-				it.remove();
-			}
-		}
+        for (Iterator<AnalyzerDescriptor<?>> it = result.iterator(); it.hasNext();) {
+            final AnalyzerDescriptor<?> descriptor = it.next();
+            final Set<ComponentCategory> categories = descriptor.getComponentCategories();
+            if (!categories.contains(new WriteDataCategory())) {
+                it.remove();
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

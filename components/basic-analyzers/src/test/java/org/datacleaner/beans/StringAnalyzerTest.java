@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.result.AnnotatedRowsResult;
@@ -192,7 +192,7 @@ public class StringAnalyzerTest extends TestCase {
     }
 
     public void testMetricDescriptor() throws Exception {
-        AnalyzerBeanDescriptor<org.datacleaner.beans.StringAnalyzer> descriptor = Descriptors
+        AnalyzerDescriptor<org.datacleaner.beans.StringAnalyzer> descriptor = Descriptors
                 .ofAnalyzer(StringAnalyzer.class);
         MetricDescriptor metric = descriptor.getResultMetric(StringAnalyzer.MEASURE_ENTIRELY_LOWERCASE_COUNT);
         assertEquals("MetricDescriptorImpl[name=Entirely lowercase count]", metric.toString());

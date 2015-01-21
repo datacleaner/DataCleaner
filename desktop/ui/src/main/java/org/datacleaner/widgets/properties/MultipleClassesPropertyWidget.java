@@ -34,7 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -54,8 +54,8 @@ public class MultipleClassesPropertyWidget extends AbstractPropertyWidget<Class<
 
     @Inject
     public MultipleClassesPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-        super(beanJobBuilder, propertyDescriptor);
+            ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 
         _comboBoxDecorations = new IdentityHashMap<JComponent, DCComboBox<Class<?>>>();
 

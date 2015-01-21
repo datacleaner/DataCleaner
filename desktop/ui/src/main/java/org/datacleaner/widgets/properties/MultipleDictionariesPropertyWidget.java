@@ -27,7 +27,7 @@ import javax.inject.Provider;
 import javax.swing.JButton;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DictionaryChangeListener;
@@ -43,10 +43,10 @@ public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckbox
 	private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
-	public MultipleDictionariesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleDictionariesPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
 			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
-		super(beanJobBuilder, propertyDescriptor, Dictionary.class);
+		super(componentBuilder, propertyDescriptor, Dictionary.class);
 		_referenceDataCatalog = referenceDataCatalog;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 	}

@@ -23,11 +23,11 @@ import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer.TokenTarget;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -37,12 +37,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Specialized {@link TransformerJobBuilderPresenter} for the
+ * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link TokenizerTransformer}.
  * 
  * @author Kasper Sørensen
  */
-class TokenizerJobBuilderPresenter extends TransformerJobBuilderPanel {
+class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,15 +51,15 @@ class TokenizerJobBuilderPresenter extends TransformerJobBuilderPanel {
 	private SingleNumberPropertyWidget _numTokensPropertyWidget;
 	private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
 
-	public TokenizerJobBuilderPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+	public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
 			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
 		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 	}
 
 	@Override
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		PropertyWidget<?> propertyWidget = super.createPropertyWidget(componentBuilder, propertyDescriptor);
 		String propertyName = propertyDescriptor.getName();
 		if ("Token target".equals(propertyName)) {
 			_tokenTargetPropertyWidget = (SingleEnumPropertyWidget) propertyWidget;

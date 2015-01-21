@@ -35,22 +35,6 @@ import java.util.Set;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.VFS;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
-import org.datacleaner.descriptors.BeanDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
-import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.runner.AnalysisResultFuture;
-import org.datacleaner.job.runner.AnalysisRunner;
-import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.result.AnalysisResultWriter;
-import org.datacleaner.util.VFSUtils;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
@@ -58,6 +42,22 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunner;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.result.AnalysisResultWriter;
+import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -359,8 +359,8 @@ public final class CliRunner implements Closeable {
     }
 
     protected void printAnalyzers(AnalyzerBeansConfiguration configuration) {
-        Collection<AnalyzerBeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                .getAnalyzerBeanDescriptors();
+        Collection<AnalyzerDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                .getAnalyzerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No analyzers configured!");
         } else {
@@ -371,8 +371,8 @@ public final class CliRunner implements Closeable {
     }
 
     private void printTransformers(AnalyzerBeansConfiguration configuration) {
-        Collection<TransformerBeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                .getTransformerBeanDescriptors();
+        Collection<TransformerDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                .getTransformerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No transformers configured!");
         } else {
@@ -383,8 +383,8 @@ public final class CliRunner implements Closeable {
     }
 
     private void printFilters(AnalyzerBeansConfiguration configuration) {
-        Collection<FilterBeanDescriptor<?, ?>> descriptors = configuration.getDescriptorProvider()
-                .getFilterBeanDescriptors();
+        Collection<FilterDescriptor<?, ?>> descriptors = configuration.getDescriptorProvider()
+                .getFilterDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No filters configured!");
         } else {
@@ -394,12 +394,12 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    protected void printBeanDescriptors(Collection<? extends BeanDescriptor<?>> descriptors) {
+    protected void printBeanDescriptors(Collection<? extends ComponentDescriptor<?>> descriptors) {
         logger.debug("Printing {} descriptors", descriptors.size());
-        for (BeanDescriptor<?> descriptor : descriptors) {
+        for (ComponentDescriptor<?> descriptor : descriptors) {
             write("name: " + descriptor.getDisplayName());
 
-            Set<ConfiguredPropertyDescriptor> propertiesForInput = descriptor.getConfiguredPropertiesForInput();
+            final Set<ConfiguredPropertyDescriptor> propertiesForInput = descriptor.getConfiguredPropertiesForInput();
             if (propertiesForInput.size() == 1) {
                 ConfiguredPropertyDescriptor propertyForInput = propertiesForInput.iterator().next();
                 if (propertyForInput != null) {
@@ -424,7 +424,7 @@ public final class CliRunner implements Closeable {
                 }
             }
 
-            Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
+            final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
             for (ConfiguredPropertyDescriptor property : properties) {
                 if (!property.isInputColumn()) {
                     write(" - Property: name=" + property.getName() + ", type="
@@ -432,8 +432,8 @@ public final class CliRunner implements Closeable {
                 }
             }
 
-            if (descriptor instanceof FilterBeanDescriptor<?, ?>) {
-                Set<String> categoryNames = ((FilterBeanDescriptor<?, ?>) descriptor).getOutcomeCategoryNames();
+            if (descriptor instanceof FilterDescriptor<?, ?>) {
+                Set<String> categoryNames = ((FilterDescriptor<?, ?>) descriptor).getOutcomeCategoryNames();
                 for (String categoryName : categoryNames) {
                     write(" - Outcome: " + categoryName);
                 }

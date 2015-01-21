@@ -24,11 +24,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
@@ -40,10 +40,10 @@ public class RemoveComponentMenuItem extends JMenuItem implements ActionListener
     private static final long serialVersionUID = 1L;
 
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final AbstractBeanJobBuilder<?, ?, ?> _componentBuilder;
+    private final ComponentBuilder _componentBuilder;
 
     public RemoveComponentMenuItem(AnalysisJobBuilder analysisJobBuilder,
-            AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+            ComponentBuilder componentBuilder) {
         super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE, IconUtils.ICON_SIZE_SMALL));
         _analysisJobBuilder = analysisJobBuilder;
         _componentBuilder = componentBuilder;
@@ -52,12 +52,12 @@ public class RemoveComponentMenuItem extends JMenuItem implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (_componentBuilder instanceof AnalyzerJobBuilder) {
-            _analysisJobBuilder.removeAnalyzer((AnalyzerJobBuilder<?>) _componentBuilder);
-        } else if (_componentBuilder instanceof TransformerJobBuilder) {
-            _analysisJobBuilder.removeTransformer((TransformerJobBuilder<?>) _componentBuilder);
-        } else if (_componentBuilder instanceof FilterJobBuilder) {
-            _analysisJobBuilder.removeFilter((FilterJobBuilder<?, ?>) _componentBuilder);
+        if (_componentBuilder instanceof AnalyzerComponentBuilder) {
+            _analysisJobBuilder.removeAnalyzer((AnalyzerComponentBuilder<?>) _componentBuilder);
+        } else if (_componentBuilder instanceof TransformerComponentBuilder) {
+            _analysisJobBuilder.removeTransformer((TransformerComponentBuilder<?>) _componentBuilder);
+        } else if (_componentBuilder instanceof FilterComponentBuilder) {
+            _analysisJobBuilder.removeFilter((FilterComponentBuilder<?, ?>) _componentBuilder);
         } else {
             throw new IllegalStateException("Unexpected component type: " + _componentBuilder);
         }

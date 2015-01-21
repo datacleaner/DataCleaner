@@ -22,8 +22,8 @@ package org.datacleaner.desktop.api;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 /**
@@ -45,7 +45,7 @@ public interface PrecedingComponentConsumer extends Component {
      *            component
      */
     public abstract void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder,
-            TransformerBeanDescriptor<?> descriptor);
+            TransformerDescriptor<?> descriptor);
 
     /**
      * Subclasses should implement this method with any configuration logic when
@@ -62,5 +62,5 @@ public interface PrecedingComponentConsumer extends Component {
      *            component
      */
     public abstract void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder,
-            FilterBeanDescriptor<?, ?> descriptor, String categoryName);
+            FilterDescriptor<?, ?> descriptor, String categoryName);
 }

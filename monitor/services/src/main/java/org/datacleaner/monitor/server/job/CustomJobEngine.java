@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -79,7 +79,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
 
         final Serializable result;
         try {
-            final BeanConfiguration beanConfiguration = jobContext.getBeanConfiguration(customJob);
+            final ComponentConfiguration beanConfiguration = jobContext.getComponentConfiguration(customJob);
 
             final InjectionManager injectionManager = context.getConfiguration().getInjectionManager(null);
             final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);

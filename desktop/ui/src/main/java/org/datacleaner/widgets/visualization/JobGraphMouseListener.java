@@ -42,21 +42,20 @@ import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.datacleaner.actions.RenameComponentMenuItem;
 import org.datacleaner.actions.TransformButtonActionListener;
-import org.datacleaner.api.Renderable;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.BeanDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
-import org.datacleaner.panels.ComponentJobBuilderPresenter;
-import org.datacleaner.panels.ComponentJobBuilderRenderingFormat;
+import org.datacleaner.panels.ComponentBuilderPresenter;
+import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.IconUtils;
@@ -107,16 +106,17 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param componentBuilder
      * @param me
      */
-    public void onComponentDoubleClicked(AbstractBeanJobBuilder<?, ?, ?> componentBuilder, MouseEvent me) {
+    public void onComponentDoubleClicked(ComponentBuilder componentBuilder, MouseEvent me) {
         showConfigurationDialog(componentBuilder);
     }
 
-    private void showConfigurationDialog(AbstractBeanJobBuilder<?, ?, ?> componentBuilder) {
+    private void showConfigurationDialog(ComponentBuilder componentBuilder) {
         @SuppressWarnings("unchecked")
-        final Renderer<Renderable, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<Renderable, ? extends ComponentJobBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(componentBuilder, ComponentJobBuilderRenderingFormat.class);
+        final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer = (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
+                .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
+
         if (renderer != null) {
-            final ComponentJobBuilderPresenter presenter = renderer.render(componentBuilder);
+            final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
                     _graphContext.getAnalysisJobBuilder(), presenter);
@@ -165,7 +165,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param componentBuilder
      * @param me
      */
-    public void onComponentRightClicked(final AbstractBeanJobBuilder<?, ?, ?> componentBuilder, final MouseEvent me) {
+    public void onComponentRightClicked(final ComponentBuilder componentBuilder, final MouseEvent me) {
         final JPopupMenu popup = new JPopupMenu();
 
         final JMenuItem configureComponentMenuItem = new JMenuItem("Configure ...", ImageManager.get().getImageIcon(
@@ -184,8 +184,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         popup.add(new RenameComponentMenuItem(componentBuilder));
 
-        if (componentBuilder instanceof TransformerJobBuilder) {
-            final TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) componentBuilder;
+        if (componentBuilder instanceof TransformerComponentBuilder) {
+            final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                     IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
             previewMenuItem.addActionListener(new PreviewTransformedDataActionListener(_windowContext, tjb));
@@ -231,11 +231,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         {
             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
                     configuration, analysisJobBuilder, _usageLogger);
-            final Collection<? extends BeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                    .getTransformerBeanDescriptors();
+            final Collection<? extends ComponentDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                    .getTransformerDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
-                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
                     final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
                     return menuItem;
                 }
@@ -248,11 +248,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         {
             final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
                     configuration, analysisJobBuilder, _usageLogger);
-            final Collection<? extends BeanDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                    .getFilterBeanDescriptors();
+            final Collection<? extends ComponentDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+                    .getFilterDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors, false) {
                 @Override
-                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
                     final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
                     return menuItem;
                 }
@@ -265,10 +265,10 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         {
             final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(configuration,
                     analysisJobBuilder, _usageLogger);
-            final Collection<? extends BeanDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
+            final Collection<? extends ComponentDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
             final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
                 @Override
-                protected JMenuItem createMenuItem(BeanDescriptor<?> descriptor) {
+                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
                     final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor, point);
                     return menuItem;
                 }
@@ -327,8 +327,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         logger.debug("graphClicked({}, {})", v, me);
         _clickCaught = false;
         final int button = me.getButton();
-        if (v instanceof AbstractBeanJobBuilder) {
-            final AbstractBeanJobBuilder<?, ?, ?> componentBuilder = (AbstractBeanJobBuilder<?, ?, ?>) v;
+        if (v instanceof ComponentBuilder) {
+            final ComponentBuilder componentBuilder = (ComponentBuilder) v;
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
                 _clickCaught = true;
                 onComponentRightClicked(componentBuilder, me);

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 
@@ -31,7 +31,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 
 	public void testDescriptor() throws Exception {
 		// simply test that the analyzer is valid
-		AnalyzerBeanDescriptor<PatternFinderAnalyzer> descriptor = Descriptors.ofAnalyzer(PatternFinderAnalyzer.class);
+	    AnalyzerDescriptor<PatternFinderAnalyzer> descriptor = Descriptors.ofAnalyzer(PatternFinderAnalyzer.class);
 		assertEquals("Pattern finder", descriptor.getDisplayName());
 	}
 

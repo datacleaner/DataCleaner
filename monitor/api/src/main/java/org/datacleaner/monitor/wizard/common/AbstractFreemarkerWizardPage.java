@@ -19,9 +19,7 @@
  */
 package org.datacleaner.monitor.wizard.common;
 
-import java.io.FileNotFoundException;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.Map;
 
 import org.datacleaner.monitor.wizard.WizardPageController;

@@ -30,14 +30,14 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.AnalyzerBeanDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.AnalyzerJobBuilderPanel;
+import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
@@ -49,12 +49,12 @@ import org.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 
 /**
- * Specialized {@link TransformerJobBuilderPresenter} for the
+ * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link UpdateTableAnalyzer}.
  * 
  * @author Kasper Sørensen
  */
-class UpdateTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
+class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,13 +73,13 @@ class UpdateTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	private final ConfiguredPropertyDescriptor _conditionColumnNamesProperty;
 	private final MultipleMappedColumnsPropertyWidget[] _inputColumnPropertyWidgets;
 
-	public UpdateTableJobBuilderPresenter(AnalyzerJobBuilder<UpdateTableAnalyzer> analyzerJobBuilder,
+	public UpdateTableJobBuilderPresenter(AnalyzerComponentBuilder<UpdateTableAnalyzer> analyzerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
 			AnalyzerBeansConfiguration configuration) {
 		super(analyzerJobBuilder, propertyWidgetFactory);
 		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-		final AnalyzerBeanDescriptor<UpdateTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
+		final AnalyzerDescriptor<UpdateTableAnalyzer> descriptor = analyzerJobBuilder.getDescriptor();
 		assert descriptor.getComponentClass() == UpdateTableAnalyzer.class;
 
 		_datastoreProperty = descriptor.getConfiguredProperty("Datastore");
@@ -200,11 +200,11 @@ class UpdateTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	}
 
 	@Override
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
 			return _overriddenPropertyWidgets.get(propertyDescriptor);
 		}
-		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		return super.createPropertyWidget(componentBuilder, propertyDescriptor);
 	}
 }

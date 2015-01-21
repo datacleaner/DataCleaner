@@ -36,11 +36,10 @@ import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.job.BeanConfiguration;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentConfigurationException;
-import org.datacleaner.job.ImmutableBeanConfiguration;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.NoSuchComponentException;
-import org.datacleaner.util.convert.StringConverter;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.jaxb.CustomJavaComponentJob;
 import org.datacleaner.monitor.jaxb.PropertiesType;
@@ -49,6 +48,7 @@ import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.XmlJobContext;
 import org.datacleaner.monitor.server.jaxb.JaxbCustomJavaComponentJobAdaptor;
 import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +101,7 @@ public class CustomJobContext implements XmlJobContext {
     public Map<String, String> getVariables() {
         final Map<String, String> variables = new LinkedHashMap<String, String>();
         final ComponentDescriptor<?> descriptor = getDescriptor();
-        final BeanConfiguration beanConfiguration = getBeanConfiguration(null);
+        final ComponentConfiguration beanConfiguration = getComponentConfiguration(null);
         final Set<ConfiguredPropertyDescriptor> properties = descriptor.getConfiguredProperties();
         final StringConverter stringConverter = new StringConverter(_injectionManager);
         for (ConfiguredPropertyDescriptor configuredProperty : properties) {
@@ -167,7 +167,7 @@ public class CustomJobContext implements XmlJobContext {
         });
     }
 
-    public BeanConfiguration getBeanConfiguration(CustomJob customJavaJob) {
+    public ComponentConfiguration getComponentConfiguration(CustomJob customJavaJob) {
         final ComponentDescriptor<?> descriptor = getDescriptor();
         final Map<ConfiguredPropertyDescriptor, Object> propertyMap = new HashMap<ConfiguredPropertyDescriptor, Object>();
         final PropertiesType propertiesType = getCustomJavaComponentJob().getProperties();
@@ -192,7 +192,7 @@ public class CustomJobContext implements XmlJobContext {
             }
         }
         
-        return new ImmutableBeanConfiguration(propertyMap);
+        return new ImmutableComponentConfiguration(propertyMap);
     }
 
     private void setProperty(ComponentDescriptor<?> descriptor, Map<ConfiguredPropertyDescriptor, Object> propertyMap,

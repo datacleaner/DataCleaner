@@ -55,8 +55,8 @@ import org.datacleaner.beans.writers.WriteDataResultImpl;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.FilterBeanDescriptor;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
@@ -111,7 +111,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     }
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
@@ -119,7 +119,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     }
 
     @Override
-    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
+    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
@@ -136,7 +136,6 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
-        InputColumn<?>[] inputColumns = columns ;
         List<String> headers = new ArrayList<String>() ;
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();
@@ -158,12 +157,12 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     newColumns[i] = columns[i] ;
                 }
                 newColumns[columns.length]  = columnToBeSortedOn ;
-                inputColumns = newColumns ;
+                columns = newColumns ;
             }
         }
        
         
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, inputColumns);
+        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }
 
     @Override

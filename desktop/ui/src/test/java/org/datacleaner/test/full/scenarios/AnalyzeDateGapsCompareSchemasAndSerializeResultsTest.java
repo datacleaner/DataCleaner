@@ -40,9 +40,9 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnalysisResult;
@@ -77,16 +77,16 @@ public class AnalyzeDateGapsCompareSchemasAndSerializeResultsTest extends TestCa
 					"PUBLIC.ORDERS.CUSTOMERNUMBER");
 			assertEquals(3, analysisJobBuilder.getSourceColumns().size());
 
-			FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRows = analysisJobBuilder.addFilter(MaxRowsFilter.class);
+			FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRows = analysisJobBuilder.addFilter(MaxRowsFilter.class);
 			maxRows.getComponentInstance().setMaxRows(5);
 			analysisJobBuilder.setDefaultRequirement(maxRows.getFilterOutcome(MaxRowsFilter.Category.VALID));
 
-			TransformerJobBuilder<ConvertToStringTransformer> convertToNumber = analysisJobBuilder
+			TransformerComponentBuilder<ConvertToStringTransformer> convertToNumber = analysisJobBuilder
 					.addTransformer(ConvertToStringTransformer.class);
 			convertToNumber.addInputColumn(analysisJobBuilder.getSourceColumnByName("customernumber"));
 			InputColumn<String> customer_no = (InputColumn<String>) convertToNumber.getOutputColumns().get(0);
 
-			AnalyzerJobBuilder<DateGapAnalyzer> dateGap = analysisJobBuilder.addAnalyzer(DateGapAnalyzer.class);
+			AnalyzerComponentBuilder<DateGapAnalyzer> dateGap = analysisJobBuilder.addAnalyzer(DateGapAnalyzer.class);
 			dateGap.setName("date gap job");
 			dateGap.getComponentInstance().setSingleDateOverlaps(true);
 			dateGap.getComponentInstance().setFromColumn(

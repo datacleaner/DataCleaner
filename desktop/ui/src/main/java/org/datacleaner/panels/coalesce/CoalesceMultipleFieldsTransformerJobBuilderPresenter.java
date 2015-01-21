@@ -22,19 +22,19 @@ package org.datacleaner.panels.coalesce;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.TransformerJobBuilderPanel;
-import org.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.datacleaner.panels.TransformerComponentBuilderPanel;
+import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link TransformerJobBuilderPresenter} for the
+ * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link CoalesceMultipleFieldsTransformer}.
  */
-final class CoalesceMultipleFieldsTransformerJobBuilderPresenter extends TransformerJobBuilderPanel {
+final class CoalesceMultipleFieldsTransformerComponentBuilderPresenter extends TransformerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,8 +42,8 @@ final class CoalesceMultipleFieldsTransformerJobBuilderPresenter extends Transfo
     private final ConfiguredPropertyDescriptor _inputProperty;
     private final ConfiguredPropertyDescriptor _unitsProperty;
 
-    public CoalesceMultipleFieldsTransformerJobBuilderPresenter(
-            TransformerJobBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
+    public CoalesceMultipleFieldsTransformerComponentBuilderPresenter(
+            TransformerComponentBuilder<CoalesceMultipleFieldsTransformer> transformerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory, WindowContext windowContext,
             AnalyzerBeansConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
@@ -55,13 +55,13 @@ final class CoalesceMultipleFieldsTransformerJobBuilderPresenter extends Transfo
     }
 
     @Override
-    protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+    protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == _inputProperty) {
             return _propertyWidget;
         } else if (propertyDescriptor == _unitsProperty) {
             return _propertyWidget.getUnitPropertyWidget();
         }
-        return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+        return super.createPropertyWidget(componentBuilder, propertyDescriptor);
     }
 }

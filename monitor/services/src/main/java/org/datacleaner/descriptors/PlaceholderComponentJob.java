@@ -29,6 +29,8 @@ import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.result.AnalysisResult;
@@ -41,7 +43,7 @@ import org.datacleaner.util.StringUtils;
  * of a {@link AnalysisResult}
  */
 public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements ComponentJob, ComponentDescriptor<C>,
-        HasAnalyzerResultBeanDescriptor<C> {
+        HasAnalyzerResultComponentDescriptor<C> {
 
     private static final long serialVersionUID = 1L;
 
@@ -203,5 +205,15 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     @Override
     public Map<String, String> getMetadataProperties() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public InputColumn<?>[] getInput() {
+        return new InputColumn[0];
+    }
+
+    @Override
+    public ComponentConfiguration getConfiguration() {
+        return null;
     }
 }

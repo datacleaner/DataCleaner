@@ -52,7 +52,6 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -268,7 +267,7 @@ public final class JobGraph {
                     subTitle = "Right-click the source table and select 'Link to ...'.\n"
                             + "This directs the flow of data to the component.";
                     imagePath = "images/window/canvas-bg-connect.png";
-                } else if (_analysisJobBuilder.getAnalyzerJobBuilders().size() == 0
+                } else if (_analysisJobBuilder.getAnalyzerComponentBuilders().size() == 0
                         && _analysisJobBuilder.getComponentCount() <= 3) {
                     title = "Your job is almost ready.";
                     subTitle = "Jobs need to either 'Analyze' or 'Write' something.\n"
@@ -357,8 +356,8 @@ public final class JobGraph {
                 if (obj instanceof InputColumn) {
                     return ((InputColumn<?>) obj).getName();
                 }
-                if (obj instanceof AbstractBeanJobBuilder) {
-                    return LabelUtils.getLabel((AbstractBeanJobBuilder<?, ?, ?>) obj);
+                if (obj instanceof ComponentBuilder) {
+                    return LabelUtils.getLabel((ComponentBuilder) obj);
                 }
                 if (obj instanceof FilterOutcome) {
                     return ((FilterOutcome) obj).getCategory().name();

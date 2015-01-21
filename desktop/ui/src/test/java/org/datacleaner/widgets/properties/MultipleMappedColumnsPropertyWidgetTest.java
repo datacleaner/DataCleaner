@@ -25,20 +25,20 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.descriptors.TransformerBeanDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerChangeListener;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.SourceColumnComboBox;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
 
 import cern.colt.Arrays;
 
@@ -49,7 +49,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
     private AnalysisJobBuilder ajb;
     private MultipleMappedColumnsPropertyWidget propertyWidget;
     private MultipleMappedColumnsPropertyWidget.MappedColumnNamesPropertyWidget mappedColumnNamesPropertyWidget;
-    private TransformerJobBuilder<MockMultipleMappedColumnsTransformer> tjb;
+    private TransformerComponentBuilder<MockMultipleMappedColumnsTransformer> tjb;
     private InputColumn<?> source1;
     private InputColumn<?> source2;
     private InputColumn<?> source3;
@@ -60,7 +60,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        final TransformerBeanDescriptor<MockMultipleMappedColumnsTransformer> descriptor = Descriptors
+        final TransformerDescriptor<MockMultipleMappedColumnsTransformer> descriptor = Descriptors
                 .ofTransformer(MockMultipleMappedColumnsTransformer.class);
 
         inputColumnsProperty = descriptor.getConfiguredProperty("Input columns");
@@ -91,24 +91,24 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 
         tjb.addChangeListener(new TransformerChangeListener() {
             @Override
-            public void onRequirementChanged(TransformerJobBuilder<?> arg0) {
+            public void onRequirementChanged(TransformerComponentBuilder<?> arg0) {
             }
 
             @Override
-            public void onRemove(TransformerJobBuilder<?> arg0) {
+            public void onRemove(TransformerComponentBuilder<?> arg0) {
             }
 
             @Override
-            public void onOutputChanged(TransformerJobBuilder<?> arg0, List<MutableInputColumn<?>> arg1) {
+            public void onOutputChanged(TransformerComponentBuilder<?> arg0, List<MutableInputColumn<?>> arg1) {
             }
 
             @Override
-            public void onConfigurationChanged(TransformerJobBuilder<?> tjb) {
+            public void onConfigurationChanged(TransformerComponentBuilder<?> tjb) {
                 propertyWidgetCollection.onConfigurationChanged();
             }
 
             @Override
-            public void onAdd(TransformerJobBuilder<?> arg0) {
+            public void onAdd(TransformerComponentBuilder<?> arg0) {
             }
         });
 

@@ -22,16 +22,16 @@ package org.datacleaner.widgets.properties;
 import javax.inject.Inject;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.apache.metamodel.util.HasName;
 
 public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Enum<?>> {
 
 	@Inject
 	@SuppressWarnings("unchecked")
-	public MultipleEnumPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleEnumPropertyWidget(ComponentBuilder componentBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(beanJobBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
+		super(componentBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
 	}
 
 	@Override

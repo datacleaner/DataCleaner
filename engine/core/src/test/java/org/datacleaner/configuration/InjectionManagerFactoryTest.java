@@ -35,7 +35,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.NumberResult;
@@ -94,7 +94,7 @@ public class InjectionManagerFactoryTest extends TestCase {
             ajb.setDatastore("orderdb");
             ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");
 
-            final AnalyzerJobBuilder<FancyAnalyzer> analyzerBuilder = ajb.addAnalyzer(FancyAnalyzer.class);
+            final AnalyzerComponentBuilder<FancyAnalyzer> analyzerBuilder = ajb.addAnalyzer(FancyAnalyzer.class);
             analyzerBuilder.addInputColumns(ajb.getSourceColumns());
 
             final AnalysisResultFuture result = new AnalysisRunnerImpl(conf).run(ajb.toAnalysisJob());

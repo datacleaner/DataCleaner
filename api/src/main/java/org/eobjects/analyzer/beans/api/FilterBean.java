@@ -27,10 +27,12 @@ import java.lang.annotation.Target;
 
 import javax.inject.Named;
 
+import org.datacleaner.api.Filter;
+
 /**
  * Legacy {@link FilterBean} annotation.
  * 
- * @deprecated use {@link Named} instead
+ * @deprecated use {@link Named} instead. See {@link Filter} for general instructions on building a filter.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

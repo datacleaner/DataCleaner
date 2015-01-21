@@ -28,18 +28,18 @@ import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
-import org.datacleaner.job.builder.TransformerJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Renders/creates the default panels that present component job builders.
  */
-@RendererBean(ComponentJobBuilderRenderingFormat.class)
+@RendererBean(ComponentBuilderPresenterRenderingFormat.class)
 public class ComponentJobBuilderPresenterRenderer implements
-        Renderer<AbstractBeanJobBuilder<?, ?, ?>, ComponentJobBuilderPresenter> {
+        Renderer<ComponentBuilder, ComponentBuilderPresenter> {
 
     @Inject
     @Provided
@@ -54,24 +54,24 @@ public class ComponentJobBuilderPresenterRenderer implements
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+    public RendererPrecedence getPrecedence(ComponentBuilder renderable) {
         return RendererPrecedence.LOW;
     }
 
     @Override
-    public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+    public ComponentBuilderPresenter render(ComponentBuilder renderable) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(renderable)
                 .getInstance(PropertyWidgetFactory.class);
 
-        if (renderable instanceof FilterJobBuilder) {
-            FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;
-            return new FilterJobBuilderPanel(fjb, windowContext, propertyWidgetFactory);
-        } else if (renderable instanceof TransformerJobBuilder) {
-            TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-            return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
-        } else if (renderable instanceof AnalyzerJobBuilder) {
-            AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
-            return new AnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
+        if (renderable instanceof FilterComponentBuilder) {
+            FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) renderable;
+            return new FilterComponentBuilderPanel(fjb, windowContext, propertyWidgetFactory);
+        } else if (renderable instanceof TransformerComponentBuilder) {
+            TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) renderable;
+            return new TransformerComponentBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
+        } else if (renderable instanceof AnalyzerComponentBuilder) {
+            AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) renderable;
+            return new AnalyzerComponentBuilderPanel(ajb, propertyWidgetFactory);
         }
         throw new UnsupportedOperationException();
     }

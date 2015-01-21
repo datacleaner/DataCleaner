@@ -42,7 +42,7 @@ import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.IconUtils;
@@ -144,7 +144,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
                 final AnalysisJobBuilder copyAnalysisJobBuilder = new AnalysisJobBuilder(
                         _analysisJobBuilder.getConfiguration(), copyAnalysisJob);
 
-                final AnalyzerJobBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
+                final AnalyzerComponentBuilder<? extends Analyzer<?>> analyzer = copyAnalysisJobBuilder
                         .addAnalyzer(analyzerClass);
                 analyzer.addInputColumns(copyAnalysisJobBuilder.getAvailableInputColumns(Object.class));
 

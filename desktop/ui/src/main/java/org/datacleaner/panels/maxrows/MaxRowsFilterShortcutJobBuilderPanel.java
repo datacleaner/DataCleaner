@@ -23,26 +23,26 @@ import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
-import org.datacleaner.job.builder.FilterJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.panels.FilterJobBuilderPanel;
+import org.datacleaner.panels.FilterComponentBuilderPanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link FilterJobBuilderPanel} for the {@link MaxRowsFilter} when
+ * Specialized {@link FilterComponentBuilderPanel} for the {@link MaxRowsFilter} when
  * toggled through the {@link MaxRowsFilterShortcutPanel}.
  */
-public class MaxRowsFilterShortcutJobBuilderPanel extends FilterJobBuilderPanel {
+public class MaxRowsFilterShortcutJobBuilderPanel extends FilterComponentBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	public MaxRowsFilterShortcutJobBuilderPanel(
-			FilterJobBuilder<?, ?> filterJobBuilder,
+			FilterComponentBuilder<?, ?> filterJobBuilder,
 			WindowContext windowContext,
 			PropertyWidgetFactory propertyWidgetFactory) {
 		super(filterJobBuilder, windowContext, propertyWidgetFactory);
@@ -50,12 +50,12 @@ public class MaxRowsFilterShortcutJobBuilderPanel extends FilterJobBuilderPanel 
 
 	@Override
 	protected PropertyWidget<?> createPropertyWidget(
-			final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			final ComponentBuilder componentBuilder,
 			final ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (MaxRowsFilterShortcutPanel.MAX_ROWS_PROPERTY_NAME.equals(propertyDescriptor.getName())) {
 			// insert a simplified property widget, in order to delegate to
 			// shortcut panel.
-			return new MinimalPropertyWidget<Integer>(beanJobBuilder,
+			return new MinimalPropertyWidget<Integer>(componentBuilder,
 					propertyDescriptor) {
 
 				@Override
@@ -76,6 +76,6 @@ public class MaxRowsFilterShortcutJobBuilderPanel extends FilterJobBuilderPanel 
 				}
 			};
 		}
-		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		return super.createPropertyWidget(componentBuilder, propertyDescriptor);
 	}
 }

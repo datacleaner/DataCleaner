@@ -28,7 +28,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AbstractBeanJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
@@ -43,8 +43,8 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
 
 	@Inject
 	public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+			ComponentBuilder componentBuilder) {
+        super(componentBuilder, propertyDescriptor);
 		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
 		Pattern currentValue = getCurrentValue();

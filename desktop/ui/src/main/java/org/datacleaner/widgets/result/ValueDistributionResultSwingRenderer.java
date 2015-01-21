@@ -40,7 +40,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.CompositeValueFrequency;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
@@ -199,11 +199,11 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
         ajb.setDatastore(ds);
         ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
 
-        AnalyzerJobBuilder<ValueDistributionAnalyzer> singleValueDist = ajb
+        AnalyzerComponentBuilder<ValueDistributionAnalyzer> singleValueDist = ajb
                 .addAnalyzer(ValueDistributionAnalyzer.class);
         singleValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
 
-        AnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
+        AnalyzerComponentBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
                 .addAnalyzer(ValueDistributionAnalyzer.class);
         groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
         groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));

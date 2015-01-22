@@ -36,7 +36,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -59,11 +58,11 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
-import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.widgets.tabs.Tab;
 import org.jdesktop.swingx.JXTextField;
@@ -91,7 +90,7 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane = new CloseableTabbedPane(true);
 
         _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS), getGeneralTab());
-        _tabbedPane.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"),
+        _tabbedPane.addTab("Database drivers", imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH),
                 databaseDriversPanel);
         _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
         _tabbedPane
@@ -402,7 +401,7 @@ public class OptionsDialog extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -411,14 +410,7 @@ public class OptionsDialog extends AbstractWindow {
             }
         });
 
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new NeopostToolbarButton());
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(closeButton);
-
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        toolBarPanel.setLayout(new BorderLayout());
-        toolBarPanel.add(toolBar, BorderLayout.CENTER);
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, closeButton);
 
         final DCBannerPanel banner = new DCBannerPanel("Options");
         _tabbedPane.bindTabTitleToBanner(banner);
@@ -427,7 +419,7 @@ public class OptionsDialog extends AbstractWindow {
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
-        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.setPreferredSize(500, 500);
         return panel;
     }

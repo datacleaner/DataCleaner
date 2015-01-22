@@ -28,6 +28,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -63,9 +64,14 @@ public class DCPanel extends JPanel {
 
     public static DCPanel flow(Alignment alignment, int hgap, int vgap, Component... components) {
         DCPanel panel = new DCPanel();
-        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), hgap, vgap));
-        for (Component component : components) {
-            panel.add(component);
+        // Instead of hgap we use horizontal struts. This is to avoid initial
+        // and last gaps.
+        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), 0, vgap));
+        for (int i = 0; i < components.length; i++) {
+            if (i != 0) {
+                panel.add(Box.createHorizontalStrut(hgap));
+            }
+            panel.add(components[i]);
         }
         return panel;
     }

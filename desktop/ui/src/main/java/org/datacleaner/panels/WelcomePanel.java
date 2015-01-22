@@ -154,12 +154,10 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         _userPreferences = userPreferences;
 
         _browseJobsButton = WidgetFactory.createDefaultButton("Browse jobs", IconUtils.FILE_FOLDER);
-        _browseJobsButton.setMargin(new Insets(1, 1, 1, 4));
         _browseJobsButton.addActionListener(openAnalysisJobActionListener);
 
         // initialize "analyze" button
         _analyzeButton = WidgetFactory.createPrimaryButton("Build job", IconUtils.MODEL_JOB);
-        _analyzeButton.setMargin(new Insets(1, 1, 1, 1));
         _analyzeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -238,7 +236,6 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         add(_jobsListPanel);
 
         _moreRecentJobsButton = WidgetFactory.createDefaultButton("More / recent jobs", IconUtils.FILE_HOME_FOLDER);
-        _moreRecentJobsButton.setMargin(new Insets(1, 1, 1, 4));
         if (recentJobFiles.size() <= MAX_JOB_PANELS) {
             _moreRecentJobsButton.setEnabled(false);
         } else {

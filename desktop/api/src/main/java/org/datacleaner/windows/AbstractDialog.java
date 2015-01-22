@@ -43,8 +43,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     private final WindowContext _windowContext;
     private final Image _bannerImage;
 
-    private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
-    private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+    private volatile Color _topBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
+    private volatile Color _bottomBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
     private DCBannerPanel _banner;
 
     public AbstractDialog(WindowContext windowContext) {

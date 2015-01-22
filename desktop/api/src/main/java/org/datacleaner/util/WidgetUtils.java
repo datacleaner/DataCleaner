@@ -50,11 +50,12 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.metal.MetalButtonUI;
 import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.widgets.DefaultButtonUI;
+import org.datacleaner.widgets.PrimaryButtonUI;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
@@ -196,7 +197,7 @@ public final class WidgetUtils {
 
     // grid bag contraint defaults
     public static final int DEFAULT_PADDING = 2;
-    public static final int DEFAULT_ANCHOR = GridBagConstraints.NORTHWEST;
+    public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
 
     private WidgetUtils() {
         // prevent instantiation
@@ -572,18 +573,10 @@ public final class WidgetUtils {
     }
 
     public static void setPrimaryButtonStyle(JButton b) {
-        b.setUI(new MetalButtonUI());
-        b.setFocusPainted(false);
-        b.setBackground(BG_COLOR_BLUE_MEDIUM);
-        b.setForeground(BG_COLOR_BRIGHTEST);
-        b.setBorder(BORDER_BUTTON_PRIMARY);
+        b.setUI(PrimaryButtonUI.get());
     }
 
     public static void setDefaultButtonStyle(JButton b) {
-        b.setUI(new MetalButtonUI());
-        b.setFocusPainted(false);
-        b.setBackground(BG_COLOR_BRIGHT);
-        b.setForeground(BG_COLOR_DARK);
-        b.setBorder(BORDER_BUTTON_DEFAULT);
+        b.setUI(DefaultButtonUI.get());
     }
 }

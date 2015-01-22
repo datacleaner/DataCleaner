@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -48,6 +47,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
@@ -99,7 +99,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 			}
 		});
 
-		_addDriverButton = WidgetFactory.createButton("Add database driver", "images/filetypes/archive.png");
+		_addDriverButton = WidgetFactory.createDefaultButton("Add database driver", IconUtils.FILE_ARCHIVE);
 		_addDriverButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -248,10 +248,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		filesOuterPanel.add(_filesPanel, BorderLayout.CENTER);
 		filesOuterPanel.add(filesButtonPanel, BorderLayout.EAST);
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttonPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		buttonPanel.add(_addDriverButton);
+		final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, _addDriverButton);
 
 		final DCPanel mainPanel = new DCPanel();
 		mainPanel.setLayout(new VerticalLayout(4));

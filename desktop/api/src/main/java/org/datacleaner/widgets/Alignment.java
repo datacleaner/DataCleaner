@@ -34,11 +34,11 @@ public enum Alignment {
 
     public int getFlowLayoutAlignment() {
         if (this == LEFT) {
-            return FlowLayout.LEFT;
+            return FlowLayout.LEADING;
         } else if (this == CENTER) {
             return FlowLayout.CENTER;
         }
-        return FlowLayout.RIGHT;
+        return FlowLayout.TRAILING;
     }
 
     public int getLabelAlignment() {

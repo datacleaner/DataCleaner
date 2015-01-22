@@ -103,10 +103,12 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Initialize
     public void initTempFile() throws Exception {
-        if(columnToBeSortedOn != null) {
-            _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
-        } else {
-            _targetFile = file ;
+        if (_targetFile == null) {
+            if(columnToBeSortedOn != null) {
+                _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+            } else {
+                _targetFile = file ;
+            }
         }
     }
 
@@ -161,6 +163,13 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             }
         }
        
+        if (_targetFile == null) {
+            try {
+                initTempFile();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }

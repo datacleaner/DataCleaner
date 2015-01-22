@@ -31,7 +31,9 @@ import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -64,6 +66,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.ComponentConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +93,7 @@ public final class JobGraph {
     private static final ImageManager imageManager = ImageManager.get();
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
 
+    private final Map<ComponentBuilder, ComponentConfigurationDialog> _configurationDialogs;
     private final Set<Object> _highlighedVertexes;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
@@ -107,6 +111,7 @@ public final class JobGraph {
         _analysisJobBuilder = analysisJobBuilder;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
+        _configurationDialogs = new IdentityHashMap<>();
 
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
@@ -326,7 +331,7 @@ public final class JobGraph {
         }
 
         final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter,
-                _presenterRendererFactory, _windowContext, _usageLogger);
+                _presenterRendererFactory, _windowContext, _usageLogger, _configurationDialogs);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);

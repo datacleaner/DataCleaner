@@ -63,7 +63,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     @Inject
     protected MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
         super(ImageManager.get().getImage("images/window/metadata-tab-background.png"), 95, 95,
-                WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 

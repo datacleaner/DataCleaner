@@ -43,14 +43,14 @@ public final class HelpIcon extends JLabel {
 	private final Icon _tooltipIcon;
 
 	public HelpIcon(String helpMessage, Icon tooltipIcon) {
-		super(imageManager.getImageIcon("images/widgets/help.png", IconUtils.ICON_SIZE_SMALL));
+		super(imageManager.getImageIcon(IconUtils.ACTION_HELP, IconUtils.ICON_SIZE_SMALL));
 		_tooltipIcon = tooltipIcon;
 		_helpMessage = helpMessage;
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 
 	public HelpIcon(String helpMessage) {
-		this(helpMessage, imageManager.getImageIcon("images/widgets/help.png"));
+		this(helpMessage, imageManager.getImageIcon(IconUtils.ACTION_HELP));
 	}
 
 	@Override

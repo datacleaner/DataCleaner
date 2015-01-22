@@ -21,7 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -31,7 +30,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
-import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -39,18 +37,19 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
-import javax.swing.JToolBar;
 
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCCheckBox;
@@ -59,7 +58,6 @@ import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCListCellRenderer;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
@@ -69,12 +67,11 @@ import org.datacleaner.widgets.database.OracleDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
 import org.datacleaner.widgets.database.SQLServerDatabaseConnectionPresenter;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.apache.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JdbcDatastoreDialog extends AbstractDialog {
+public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> {
 
     private static final long serialVersionUID = 1L;
 
@@ -91,9 +88,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
     private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final JdbcDatastore _originalDatastore;
     private final DatabaseDriverCatalog _databaseDriverCatalog;
-    private final MutableDatastoreCatalog _catalog;
     private final JXTextField _datastoreNameTextField;
     private final JXTextField _driverClassNameTextField;
     private final DCCheckBox<Object> _multipleConnectionsCheckBox;
@@ -103,12 +98,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
     private final DatabaseConnectionPresenter[] _connectionPresenters;
 
     @Inject
-    protected JdbcDatastoreDialog(@Nullable JdbcDatastore datastore, MutableDatastoreCatalog catalog,
+    protected JdbcDatastoreDialog(@Nullable JdbcDatastore originalDatastore, MutableDatastoreCatalog catalog,
             WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider,
-            DatabaseDriverCatalog databaseDriverCatalog) {
-        super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
-        _originalDatastore = datastore;
-        _catalog = catalog;
+            DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
+        super(originalDatastore, catalog, windowContext, userPreferences);
         _optionsDialogProvider = optionsDialogProvider;
         _databaseDriverCatalog = databaseDriverCatalog;
 
@@ -203,24 +196,24 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             }
         });
 
-        if (_originalDatastore == null) {
+        if (originalDatastore == null) {
             // remove connection url templates
             setSelectedDatabase((DatabaseDriverDescriptor) null);
         } else {
-            _multipleConnectionsCheckBox.setSelected(_originalDatastore.isMultipleConnections());
+            _multipleConnectionsCheckBox.setSelected(originalDatastore.isMultipleConnections());
 
             // the database driver has to be set as the first thing, because the
             // combobox's action listener will set other field's values as well.
             DatabaseDriverDescriptor databaseDriver = DatabaseDriverCatalog
-                    .getDatabaseDriverByDriverClassName(_originalDatastore.getDriverClass());
+                    .getDatabaseDriverByDriverClassName(originalDatastore.getDriverClass());
             _databaseDriverComboBox.setSelectedItem(databaseDriver);
 
-            _datastoreNameTextField.setText(_originalDatastore.getName());
+            _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
 
-            _connectionPresenters[0].initialize(_originalDatastore);
+            _connectionPresenters[0].initialize(originalDatastore);
 
-            _driverClassNameTextField.setText(_originalDatastore.getDriverClass());
+            _driverClassNameTextField.setText(originalDatastore.getDriverClass());
         }
     }
 
@@ -245,8 +238,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             boolean accepted = true;
 
             // init if original datastore is available
-            if (_originalDatastore != null) {
-                accepted = customPresenter.initialize(_originalDatastore);
+            if (getOriginalDatastore() != null) {
+                accepted = customPresenter.initialize(getOriginalDatastore());
             }
 
             if (accepted) {
@@ -308,11 +301,6 @@ public class JdbcDatastoreDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 500;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
         {
@@ -332,7 +320,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             WidgetUtils.addToGridBag(_multipleConnectionsCheckBox, formPanel, 1, row);
         }
 
-        final JButton testButton = WidgetFactory.createButton(getTestButtonText(), "images/actions/refresh.png");
+        final JButton testButton = WidgetFactory.createDefaultButton(getTestButtonText(), IconUtils.ACTION_REFRESH);
         testButton.addActionListener(new ActionListener() {
 
             @Override
@@ -365,44 +353,22 @@ public class JdbcDatastoreDialog extends AbstractDialog {
             }
         });
 
-        final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final JdbcDatastore datastore = createDatastore();
-
-                if (_originalDatastore != null) {
-                    _catalog.removeDatastore(_originalDatastore);
-                }
-                _catalog.addDatastore(datastore);
-                JdbcDatastoreDialog.this.dispose();
-            }
-        });
-
         _multipleConnectionsCheckBox.addListener(new DCCheckBox.Listener<Object>() {
             @Override
             public void onItemSelected(Object item, boolean selected) {
                 testButton.setText(getTestButtonText());
             }
         });
+        
+        final DCPanel buttonPanel = getButtonPanel();
+        buttonPanel.add(testButton);
 
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new NeopostToolbarButton());
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(testButton);
-        toolBar.add(Box.createHorizontalStrut(4));
-        toolBar.add(saveButton);
-
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
-        toolBarPanel.setLayout(new BorderLayout());
-        toolBarPanel.add(toolBar, BorderLayout.CENTER);
-
-        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        final DCPanel formContainerPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         formContainerPanel.setLayout(new BorderLayout());
         formContainerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
         formContainerPanel.add(formPanel, BorderLayout.NORTH);
         formContainerPanel.add(_tabbedPane, BorderLayout.CENTER);
-        formContainerPanel.add(toolBarPanel, BorderLayout.SOUTH);
+        formContainerPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -413,7 +379,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
                 + "If you see an additional panel, this provides an alternative means of connecting "
                 + "without having to know the URL format for your specific database type."), BorderLayout.NORTH);
         outerPanel.add(formContainerPanel, BorderLayout.CENTER);
-        
+
         outerPanel.setPreferredSize(getDialogWidth(), 500);
 
         return outerPanel;
@@ -426,7 +392,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
         return "Test connection";
     }
 
-    private JdbcDatastore createDatastore() {
+    @Override
+    protected JdbcDatastore createDatastore() {
         final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
             throw new IllegalStateException("No datastore name");
@@ -456,7 +423,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
     }
 
     @Override
-    public Image getWindowIcon() {
-        return imageManager.getImage("images/model/datastore.png");
+    protected String getDatastoreIconPath() {
+        return IconUtils.GENERIC_DATASTORE_IMAGEPATH;
     }
 }

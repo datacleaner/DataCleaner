@@ -101,7 +101,7 @@ public class ErrorDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(detailedMessagePane, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, button), BorderLayout.SOUTH);

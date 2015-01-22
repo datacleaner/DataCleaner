@@ -36,15 +36,15 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.datacleaner.job.tasks.Task;
-import org.datacleaner.util.VFSUtils;
+import org.apache.metamodel.util.Action;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.tasks.Task;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.InvalidHttpResponseException;
 import org.datacleaner.util.http.WebServiceHttpClient;
 import org.datacleaner.windows.FileTransferProgressWindow;
-import org.apache.metamodel.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -28,6 +28,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -63,9 +64,14 @@ public class DCPanel extends JPanel {
 
     public static DCPanel flow(Alignment alignment, int hgap, int vgap, Component... components) {
         DCPanel panel = new DCPanel();
-        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), hgap, vgap));
-        for (Component component : components) {
-            panel.add(component);
+        // Instead of hgap we use horizontal struts. This is to avoid initial
+        // and last gaps.
+        panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), 0, vgap));
+        for (int i = 0; i < components.length; i++) {
+            if (i != 0) {
+                panel.add(Box.createHorizontalStrut(hgap));
+            }
+            panel.add(components[i]);
         }
         return panel;
     }
@@ -74,6 +80,19 @@ public class DCPanel extends JPanel {
         this(null, 0, 0);
     }
 
+    public DCPanel(Color bgColor) {
+        this(null, 0, 0, bgColor, bgColor);
+    }
+
+    /**
+     * 
+     * @param topColor
+     * @param bottomColor
+     * 
+     * @deprecated since version 4 we no longer encourage gradient background.
+     *             Use {@link #DCPanel(Color)} instead.
+     */
+    @Deprecated
     public DCPanel(Color topColor, Color bottomColor) {
         this(null, 0, 0, topColor, bottomColor);
     }
@@ -89,6 +108,22 @@ public class DCPanel extends JPanel {
         this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, null, null);
     }
 
+    public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color bgColor) {
+        this(watermark, horizontalAlignmentInPercent, verticalAlignmentInPercent, bgColor, bgColor);
+    }
+
+    /**
+     * 
+     * @param watermark
+     * @param horizontalAlignmentInPercent
+     * @param verticalAlignmentInPercent
+     * @param topColor
+     * @param bottomColor
+     * 
+     * @deprecated since version 4 we no longer encourage gradient background.
+     *             Use {@link #DCPanel(Image, int, int, Color)} instead.
+     */
+    @Deprecated
     public DCPanel(Image watermark, int horizontalAlignmentInPercent, int verticalAlignmentInPercent, Color topColor,
             Color bottomColor) {
         super();

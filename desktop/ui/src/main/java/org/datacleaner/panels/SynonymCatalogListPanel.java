@@ -33,10 +33,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.SynonymCatalogChangeListener;
 import org.datacleaner.util.IconUtils;
@@ -67,7 +67,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	@Inject
 	protected SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
 			InjectorBuilder injectorBuilder) {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_injectorBuilder = injectorBuilder;
@@ -155,7 +155,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			synonymCatalogLabel.setIcon(icon);
 			synonymCatalogLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
-			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
 			editButton.setToolTipText("Edit synonym catalog");
 
 			if (synonymCatalog instanceof TextFileSynonymCatalog) {

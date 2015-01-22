@@ -31,13 +31,13 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.metamodel.util.Action;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.PublishResultToMonitorActionListener;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCProgressBar;
-import org.apache.metamodel.util.Action;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +49,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @see DownloadFilesActionListener
  * @see PublishResultToMonitorActionListener
- * 
- * @author Kasper Sørensen
  */
 public class FileTransferProgressWindow extends AbstractDialog {
 
@@ -67,8 +65,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
 
     public FileTransferProgressWindow(WindowContext windowContext, Action<Void> cancelCallback, String[] filenames) {
         super(windowContext);
-        setTopBackgroundColor(WidgetUtils.BG_COLOR_DARK);
-        setBottomBackgroundColor(WidgetUtils.BG_COLOR_LESS_DARK);
+        setBackgroundColor(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
 
         _filenames = filenames;
 

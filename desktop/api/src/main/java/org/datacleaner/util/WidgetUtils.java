@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -52,9 +53,9 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.windows.AbstractWindow;
+import org.datacleaner.widgets.DefaultButtonUI;
+import org.datacleaner.widgets.PrimaryButtonUI;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
@@ -113,17 +114,17 @@ public final class WidgetUtils {
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
+    public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
-    // the three blue variants in the DataCleaner logo (#5594dd, #235da0,
-    // #023a7c)
-    public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
-    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
-    public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);
+    // blue base color of DC styling (#3b76bc)
+    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
+    public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
+    public static final Color BG_COLOR_BLUE_DARK = slightlyDarker(BG_COLOR_BLUE_MEDIUM);
 
-    // the three orange/yellow/brown variants in the DataCleaner logo
-    public static final Color BG_COLOR_ORANGE_BRIGHT = new ColorUIResource(255, 168, 0);
-    public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 102, 5);
-    public static final Color BG_COLOR_ORANGE_DARK = new ColorUIResource(168, 99, 15);
+    // orange base color of DC styling (#ffa800)
+    public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 168, 0);
+    public static final Color BG_COLOR_ORANGE_BRIGHT = slightlyBrighter(BG_COLOR_ORANGE_MEDIUM);
+    public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
@@ -136,16 +137,20 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
 
     // slightly darker than BRIGHT
-    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(230, 230, 230);
+    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
 
     // #a0a0a0
     public static final Color BG_COLOR_MEDIUM = new ColorUIResource(130, 140, 150);
 
-    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(85, 95, 100);
+    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(55, 55, 55);
 
-    public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
+    public static final Color BG_COLOR_DARK = new ColorUIResource(33, 33, 33);
 
-    public static final Color BG_COLOR_DARKEST = new ColorUIResource(37, 40, 45);
+    public static final Color BG_COLOR_DARKEST = ColorUIResource.BLACK;
+
+    public static final Color COLOR_DEFAULT_BACKGROUND = BG_COLOR_BRIGHTEST;
+    public static final Color COLOR_WELL_BACKGROUND = BG_COLOR_BRIGHT;
+    public static final Color COLOR_ALTERNATIVE_BACKGROUND = BG_COLOR_DARK;
 
     // additional colors, only intended for special widget coloring such as
     // charts etc.
@@ -159,14 +164,25 @@ public final class WidgetUtils {
     public static final int BORDER_WIDE_WIDTH = 4;
 
     public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
+
     public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_BRIGHTEST = new LineBorder(BG_COLOR_BRIGHTEST, BORDER_WIDE_WIDTH);
+
     public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
     public static Border BORDER_TOP_PADDING = new EmptyBorder(10, 0, 0, 0);
 
-    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
-    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
+    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
+
+    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
+    public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
+
+    public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
+            new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
+                    BORDER_WIDE_WIDTH - 1, 9));
+    public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
     /**
      * A highlighter for coloring odd/even rows in a table
@@ -181,7 +197,7 @@ public final class WidgetUtils {
 
     // grid bag contraint defaults
     public static final int DEFAULT_PADDING = 2;
-    public static final int DEFAULT_ANCHOR = GridBagConstraints.NORTHWEST;
+    public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
 
     private WidgetUtils() {
         // prevent instantiation
@@ -260,6 +276,11 @@ public final class WidgetUtils {
      */
     public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
             int anchor, int padding, double weightx, double weighty) {
+        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+    }
+    
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+            int anchor, int padding, double weightx, double weighty, int fill) {
         LayoutManager layout = panel.getLayout();
         if (!(layout instanceof GridBagLayout)) {
             layout = new GridBagLayout();
@@ -274,7 +295,7 @@ public final class WidgetUtils {
         constraints.weightx = weightx;
         constraints.weighty = weighty;
         constraints.anchor = anchor;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = fill;
         constraints.insets = new Insets(padding, padding, padding, padding);
         gridBagLayout.addLayoutComponent(comp, constraints);
         panel.add(comp);
@@ -335,11 +356,6 @@ public final class WidgetUtils {
     }
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage) {
-        if (SystemProperties.getBoolean(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, false)) {
-            logger.warn("Window hiding is enabled. NOT showing error message: {} - {}", shortMessage, detailedMessage);
-            return;
-        }
-
         final String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
         final String finalShortMessage = shortMessage == null ? "" : shortMessage;
         final ErrorDialog dialog = new ErrorDialog(finalShortMessage, finalDetailedMessage);
@@ -350,11 +366,6 @@ public final class WidgetUtils {
 
     public static void showErrorMessage(final String shortMessage, final String detailedMessage,
             final Throwable exception) {
-        if (SystemProperties.getBoolean(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, false)) {
-            logger.warn("Window hiding is enabled. NOT showing error message: {} - {}", shortMessage, detailedMessage);
-            return;
-        }
-
         final Throwable presentedException = ErrorUtils.unwrapForPresentation(exception);
         if (exception == null) {
             showErrorMessage(shortMessage, detailedMessage);
@@ -559,5 +570,13 @@ public final class WidgetUtils {
             font = findCompatibleFont(text, font);
             label.setFont(font);
         }
+    }
+
+    public static void setPrimaryButtonStyle(JButton b) {
+        b.setUI(PrimaryButtonUI.get());
+    }
+
+    public static void setDefaultButtonStyle(JButton b) {
+        b.setUI(DefaultButtonUI.get());
     }
 }

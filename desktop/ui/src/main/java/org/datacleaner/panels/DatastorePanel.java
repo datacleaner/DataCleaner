@@ -56,6 +56,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -84,8 +85,6 @@ import com.google.inject.Injector;
 /**
  * A panel that presents a datastore and shows edit/remove buttons. This panel
  * is placed as a child inside the {@link WelcomePanel}.
- * 
- * @author Kasper Sørensen
  */
 public class DatastorePanel extends DCPanel {
 
@@ -98,15 +97,18 @@ public class DatastorePanel extends DCPanel {
     private final WelcomePanel _datastoreListPanel;
     private final JCheckBox _checkBox;
     private final WindowContext _windowContext;
+    private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-            WelcomePanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+            WelcomePanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
+            InjectorBuilder injectorBuilder) {
+        super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;
         _windowContext = windowContext;
+        _userPreferences = userPreferences;
         _injectorBuilder = injectorBuilder;
 
         setOpaque(false);
@@ -188,7 +190,7 @@ public class DatastorePanel extends DCPanel {
     }
 
     private JButton createEditButton(final Datastore datastore) {
-        final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+        final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit datastore");
 
         if (datastore instanceof JdbcDatastore) {
@@ -341,7 +343,7 @@ public class DatastorePanel extends DCPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
-                            _datastoreCatalog, _windowContext);
+                            _datastoreCatalog, _windowContext, _userPreferences);
                     dialog.open();
                 }
             });

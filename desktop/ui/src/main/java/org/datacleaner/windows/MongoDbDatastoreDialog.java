@@ -19,179 +19,158 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class MongoDbDatastoreDialog extends AbstractDialog implements SchemaFactory {
+public class MongoDbDatastoreDialog extends AbstractDatastoreDialog<MongoDbDatastore> implements SchemaFactory {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.get();
+    private final JXTextField _hostnameTextField;
+    private final JXTextField _portTextField;
+    private final JXTextField _databaseNameTextField;
+    private final JXTextField _usernameTextField;
+    private final JPasswordField _passwordField;
+    private final JXTextField _datastoreNameTextField;
+    private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
-	private final MutableDatastoreCatalog _catalog;
-	private final MongoDbDatastore _originalDatastore;
+    @Inject
+    public MongoDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
+            @Nullable MongoDbDatastore originalDatastore, UserPreferences userPreferences) {
+        super(originalDatastore, catalog, windowContext, userPreferences);
 
-	private final JXTextField _hostnameTextField;
-	private final JXTextField _portTextField;
-	private final JXTextField _databaseNameTextField;
-	private final JXTextField _usernameTextField;
-	private final JPasswordField _passwordField;
-	private final JXTextField _datastoreNameTextField;
-	private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
+        _datastoreNameTextField = WidgetFactory.createTextField();
+        _hostnameTextField = WidgetFactory.createTextField();
+        _portTextField = WidgetFactory.createTextField();
+        _portTextField.setDocument(new NumberDocument(false));
+        _databaseNameTextField = WidgetFactory.createTextField();
+        _usernameTextField = WidgetFactory.createTextField();
+        _passwordField = WidgetFactory.createPasswordField();
 
-	@Inject
-	public MongoDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-			@Nullable MongoDbDatastore datastore) {
-		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
-		_catalog = catalog;
-		_originalDatastore = datastore;
+        if (originalDatastore == null) {
+            _hostnameTextField.setText("localhost");
+            _portTextField.setText("27017");
+            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
+        } else {
+            _datastoreNameTextField.setText(originalDatastore.getName());
+            _datastoreNameTextField.setEnabled(false);
+            _hostnameTextField.setText(originalDatastore.getHostname());
+            _portTextField.setText(originalDatastore.getPort() + "");
+            _databaseNameTextField.setText(originalDatastore.getDatabaseName());
+            _usernameTextField.setText(originalDatastore.getUsername());
+            _passwordField.setText(new String(originalDatastore.getPassword()));
+            final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
+            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
+        }
+    }
 
-		_datastoreNameTextField = WidgetFactory.createTextField();
-		_hostnameTextField = WidgetFactory.createTextField();
-		_portTextField = WidgetFactory.createTextField();
-		_portTextField.setDocument(new NumberDocument(false));
-		_databaseNameTextField = WidgetFactory.createTextField();
-		_usernameTextField = WidgetFactory.createTextField();
-		_passwordField = WidgetFactory.createPasswordField();
+    @Override
+    public String getWindowTitle() {
+        return "MongoDB database";
+    }
 
-		if (_originalDatastore == null) {
-			_hostnameTextField.setText("localhost");
-			_portTextField.setText("27017");
-			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
-		} else {
-			_datastoreNameTextField.setText(_originalDatastore.getName());
-			_datastoreNameTextField.setEnabled(false);
-			_hostnameTextField.setText(_originalDatastore.getHostname());
-			_portTextField.setText(_originalDatastore.getPort() + "");
-			_databaseNameTextField.setText(_originalDatastore.getDatabaseName());
-			_usernameTextField.setText(_originalDatastore.getUsername());
-			_passwordField.setText(new String(_originalDatastore.getPassword()));
-			final SimpleTableDef[] tableDefs = _originalDatastore.getTableDefs();
-			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
-		}
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "MongoDB database";
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "MongoDB database";
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "MongoDB database";
-	}
+    @Override
+    protected int getDialogWidth() {
+        return 400;
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected JComponent getDialogContent() {
+        final DCPanel formPanel = new DCPanel();
+        formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-	@Override
-	protected int getDialogWidth() {
-		return 400;
-	}
+        int row = 0;
+        WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
+        row++;
 
-	@Override
-	protected JComponent getDialogContent() {
-		final DCPanel formPanel = new DCPanel();
-		formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
-		
-		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Database name:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_databaseNameTextField, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Database name:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_databaseNameTextField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Username:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_usernameTextField, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Password:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_passwordField, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, formPanel, 1, row);
-		row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
+        row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
-		row++;
+        final DCPanel buttonPanel = getButtonPanel();
 
-		final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
-		saveButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				MongoDbDatastore datastore = createDatastore();
+        final DCPanel centerPanel = new DCPanel();
+        centerPanel.setLayout(new VerticalLayout(4));
+        centerPanel.add(formPanel);
+        centerPanel.add(buttonPanel);
 
-				if (_originalDatastore != null) {
-					_catalog.removeDatastore(_originalDatastore);
-				}
-				_catalog.addDatastore(datastore);
-				MongoDbDatastoreDialog.this.dispose();
-			}
-		});
+        return centerPanel;
+    }
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		buttonPanel.add(saveButton);
+    @Override
+    protected MongoDbDatastore createDatastore() {
+        final String name = _datastoreNameTextField.getText();
+        final String hostname = _hostnameTextField.getText();
+        final Integer port = Integer.parseInt(_portTextField.getText());
+        final String databaseName = _databaseNameTextField.getText();
+        final String username = _usernameTextField.getText();
+        final char[] password = _passwordField.getPassword();
+        final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
+        return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
+    }
 
-		final DCPanel centerPanel = new DCPanel();
-		centerPanel.setLayout(new VerticalLayout(4));
-		centerPanel.add(formPanel);
-		centerPanel.add(buttonPanel);
+    @Override
+    public Schema createSchema() {
+        final MongoDbDatastore datastore = createDatastore();
+        try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
+            final Schema schema = con.getDataContext().getDefaultSchema();
+            return schema;
+        }
+    }
 
-		return centerPanel;
-	}
-
-	protected MongoDbDatastore createDatastore() {
-		final String name = _datastoreNameTextField.getText();
-		final String hostname = _hostnameTextField.getText();
-		final Integer port = Integer.parseInt(_portTextField.getText());
-		final String databaseName = _databaseNameTextField.getText();
-		final String username = _usernameTextField.getText();
-		final char[] password = _passwordField.getPassword();
-		final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
-		return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
-	}
-
-	@Override
-	public Schema createSchema() {
-		final MongoDbDatastore datastore = createDatastore();
-		try (final UpdateableDatastoreConnection con = datastore.openConnection()) {
-			final Schema schema = con.getDataContext().getDefaultSchema();
-			return schema;
-		}
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.MONGODB_IMAGEPATH;
+    }
 }

@@ -48,6 +48,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -69,8 +70,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Delegate for {@link ValueDistributionResultSwingRenderer}, which renders a
  * single Value Distribution group result.
- * 
- * @author Kasper Sørensen
  */
 final class ValueDistributionResultSwingRendererGroupDelegate {
 
@@ -82,7 +81,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
     private final Map<String, Color> _valueColorMap;
     private final DefaultCategoryDataset _dataset = new DefaultCategoryDataset();
-    private final JButton _backButton = WidgetFactory.createButton("Back", "images/actions/back.png");
+    private final JButton _backButton = WidgetFactory.createDefaultButton("Back", IconUtils.ACTION_BACK);
     private final int _preferredSlices;
     private final String _groupOrColumnName;
     private final DCTable _table;

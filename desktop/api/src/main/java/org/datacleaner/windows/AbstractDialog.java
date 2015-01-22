@@ -41,10 +41,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     private volatile boolean initialized = false;
     private final WindowContext _windowContext;
-    private final Image _bannerImage;
+    
+    private Image _bannerImage;
 
-    private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
-    private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+    private volatile Color _topBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
+    private volatile Color _bottomBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
     private DCBannerPanel _banner;
 
     public AbstractDialog(WindowContext windowContext) {
@@ -63,6 +64,15 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         _windowContext = windowContext;
         _bannerImage = bannerImage;
     }
+    
+    public void setBannerImage(Image bannerImage) {
+        _bannerImage = bannerImage;
+        _banner = null;
+    }
+    
+    public Image getBannerImage() {
+        return _bannerImage;
+    }
 
     protected DCBannerPanel getBanner() {
         if (_banner == null && _bannerImage != null) {
@@ -71,12 +81,9 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         return _banner;
     }
 
-    protected void setTopBackgroundColor(Color topBackgroundColor) {
-        _topBackgroundColor = topBackgroundColor;
-    }
-
-    protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
-        _bottomBackgroundColor = bottomBackgroundColor;
+    protected void setBackgroundColor(Color backgroundColor) {
+        _topBackgroundColor = backgroundColor;
+        _bottomBackgroundColor = backgroundColor;
     }
 
     @Override
@@ -144,6 +151,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     protected final JComponent getWindowContent() {
+        @SuppressWarnings("deprecation")
         DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
         panel.setLayout(new BorderLayout());
 

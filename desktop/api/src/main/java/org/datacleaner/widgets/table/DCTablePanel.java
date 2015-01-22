@@ -40,12 +40,18 @@ final class DCTablePanel extends DCPanel {
 	private final JScrollPane _scrollPane;
 	private final DCTable _table;
 
-	public DCTablePanel(DCTable table) {
+	public DCTablePanel(DCTable table, boolean scrolleable) {
 		_table = table;
-		_scrollPane = WidgetUtils.scrolleable(table);
 		setLayout(new BorderLayout());
 		add(table.getTableHeader(), BorderLayout.NORTH);
-		add(_scrollPane, BorderLayout.CENTER);
+		
+		if (scrolleable) {
+		    _scrollPane = WidgetUtils.scrolleable(table);
+		    add(_scrollPane, BorderLayout.CENTER);
+		} else {
+		    _scrollPane = null;
+		    add(table, BorderLayout.CENTER);
+		}
 	}
 
 	@Override
@@ -55,6 +61,9 @@ final class DCTablePanel extends DCPanel {
 
 	@Override
 	public Dimension getPreferredSize() {
+	    if (_scrollPane == null) {
+	        return super.getPreferredSize();
+	    }
 		Dimension tableSize = _table.getPreferredSize();
 		Dimension headerSize = _table.getTableHeader().getPreferredSize();
 

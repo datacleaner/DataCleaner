@@ -32,7 +32,6 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
@@ -44,6 +43,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
@@ -55,8 +55,6 @@ import cern.colt.Arrays;
 
 /**
  * Panel for configuring extension packages.
- * 
- * @author Kasper Sørensen
  */
 public class ExtensionPackagesPanel extends DCPanel {
 
@@ -73,7 +71,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
     @Inject
     protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
 
@@ -85,8 +83,8 @@ public class ExtensionPackagesPanel extends DCPanel {
     private void updateComponents() {
         removeAll();
 
-        final JButton addExtensionButton = new JButton("Add extension package",
-                imageManager.getImageIcon(IconUtils.ACTION_ADD));
+        final JButton addExtensionButton = WidgetFactory.createDefaultButton("Add extension package",
+                IconUtils.ACTION_ADD);
         addExtensionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -126,10 +124,6 @@ public class ExtensionPackagesPanel extends DCPanel {
             }
         });
 
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(addExtensionButton);
-
         final DCPanel listPanel = new DCPanel();
         listPanel.setLayout(new VerticalLayout(4));
         listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
@@ -149,7 +143,7 @@ public class ExtensionPackagesPanel extends DCPanel {
         final JScrollPane scrollArea = WidgetUtils.scrolleable(listPanel);
         scrollArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        add(toolBar, BorderLayout.NORTH);
+        add(DCPanel.flow(Alignment.RIGHT, addExtensionButton), BorderLayout.NORTH);
         add(scrollArea, BorderLayout.CENTER);
 
         updateUI();

@@ -88,9 +88,9 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     private volatile boolean showPreview = true;
 
     @Inject
-    public CsvDatastoreDialog(@Nullable CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+    public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
-        super(datastore, mutableDatastoreCatalog, windowContext, userPreferences);
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _separatorCharField = new JComboBox<String>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
                 SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
@@ -116,17 +116,17 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
         _multilineValuesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _multilineValuesCheckBox.setToolTipText("Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
 
-        _addDatastoreButton.setEnabled(false);
+        setSaveButtonEnabled(false);
         showPreview = true;
 
-        if (_originalDatastore != null) {
-            _failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
-            _multilineValuesCheckBox.setSelected(_originalDatastore.isMultilineValues());
-            _encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
+        if (originalDatastore != null) {
+            _failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
+            _multilineValuesCheckBox.setSelected(originalDatastore.isMultilineValues());
+            _encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
 
-            _headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber());
+            _headerLineComboBox.setSelectedItem(originalDatastore.getHeaderLineNumber());
 
-            Character separatorChar = _originalDatastore.getSeparatorChar();
+            Character separatorChar = originalDatastore.getSeparatorChar();
             String separator = null;
             if (separatorChar != null) {
                 if (separatorChar.charValue() == ',') {
@@ -143,7 +143,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
             }
             _separatorCharField.setSelectedItem(separator);
 
-            Character quoteChar = _originalDatastore.getQuoteChar();
+            Character quoteChar = originalDatastore.getQuoteChar();
             final String quote;
             if (quoteChar == null) {
                 quote = QUOTE_NONE;
@@ -160,7 +160,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
             }
             _quoteCharField.setSelectedItem(quote);
 
-            Character escapeChar = _originalDatastore.getEscapeChar();
+            Character escapeChar = originalDatastore.getEscapeChar();
             final String escape;
             if (escapeChar == null) {
                 escape = ESCAPE_NONE;
@@ -385,11 +385,6 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
         } else {
             return escapeItem.toString().charAt(0);
         }
-    }
-
-    @Override
-    protected boolean isWindowResizable() {
-        return true;
     }
 
     @Override

@@ -43,9 +43,20 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.actions.ExportResultToHtmlActionListener;
+import org.datacleaner.actions.PublishResultToMonitorActionListener;
+import org.datacleaner.actions.SaveAnalysisResultActionListener;
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.ComponentMessage;
+import org.datacleaner.api.ExecutionLogMessage;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.guice.JobFile;
+import org.datacleaner.guice.Nullable;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
@@ -58,30 +69,19 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
 import org.datacleaner.job.runner.AnalyzerMetrics;
 import org.datacleaner.job.runner.RowProcessingMetrics;
-import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.SourceColumnFinder;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.actions.ExportResultToHtmlActionListener;
-import org.datacleaner.actions.PublishResultToMonitorActionListener;
-import org.datacleaner.actions.SaveAnalysisResultActionListener;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.ComponentMessage;
-import org.datacleaner.api.ExecutionLogMessage;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.guice.JobFile;
-import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.result.ProgressInformationPanel;
 import org.datacleaner.panels.result.ResultListPanel;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.AnalysisRunnerSwingWorker;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.SourceColumnFinder;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
@@ -315,7 +315,7 @@ public final class ResultWindow extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
 
         String bannerTitle = "Analysis results";

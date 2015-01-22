@@ -29,12 +29,12 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.renderer.RendererFactory;
+import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -47,84 +47,85 @@ import org.jdesktop.swingx.JXTaskPane;
  */
 public final class DetailsResultWindow extends AbstractWindow {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final static ImageManager imageManager = ImageManager.get();
-	private final RendererFactory _rendererFactory;
-	private final List<AnalyzerResult> _results;
-	private final String _title;
-	private final DCTaskPaneContainer _taskPaneContainer;
+    private final static ImageManager imageManager = ImageManager.get();
+    private final RendererFactory _rendererFactory;
+    private final List<AnalyzerResult> _results;
+    private final String _title;
+    private final DCTaskPaneContainer _taskPaneContainer;
 
-	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext, RendererFactory rendererFactory) {
-		super(windowContext);
-		_title = title;
-		_results = results;
-		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-		_taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
-		_rendererFactory = rendererFactory;
-	}
+    public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext,
+            RendererFactory rendererFactory) {
+        super(windowContext);
+        _title = title;
+        _results = results;
+        _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+        _taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+        _rendererFactory = rendererFactory;
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	@Override
-	protected boolean isCentered() {
-		return true;
-	}
+    @Override
+    protected boolean isCentered() {
+        return true;
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return _title;
-	}
+    @Override
+    public String getWindowTitle() {
+        return _title;
+    }
 
-	@Override
-	public Image getWindowIcon() {
-		return imageManager.getImage("images/model/result.png");
-	}
+    @Override
+    public Image getWindowIcon() {
+        return imageManager.getImage("images/model/result.png");
+    }
 
-	@Override
-	protected JComponent getWindowContent() {
-		if (!_results.isEmpty()) {
-			for (AnalyzerResult analyzerResult : _results) {
-				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(analyzerResult,
-						SwingRenderingFormat.class);
-				JComponent component;
-				if (renderer == null) {
-					component = new JTextArea(analyzerResult.toString());
-				} else {
-					component = renderer.render(analyzerResult);
-				}
+    @Override
+    protected JComponent getWindowContent() {
+        if (!_results.isEmpty()) {
+            for (AnalyzerResult analyzerResult : _results) {
+                Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
+                        analyzerResult, SwingRenderingFormat.class);
+                JComponent component;
+                if (renderer == null) {
+                    component = new JTextArea(analyzerResult.toString());
+                } else {
+                    component = renderer.render(analyzerResult);
+                }
 
-				addRenderedResult(component);
-			}
-		}
+                addRenderedResult(component);
+            }
+        }
 
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
-		panel.setLayout(new BorderLayout());
-		panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
+        DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        panel.setLayout(new BorderLayout());
+        panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
-		Dimension preferredSize = panel.getPreferredSize();
-		int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
-		int width = preferredSize.width < 500 ? 500 : preferredSize.width;
-		panel.setPreferredSize(width, height);
+        Dimension preferredSize = panel.getPreferredSize();
+        int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
+        int width = preferredSize.width < 500 ? 500 : preferredSize.width;
+        panel.setPreferredSize(width, height);
 
-		return panel;
-	}
+        return panel;
+    }
 
-	public void addRenderedResult(JComponent component) {
-		ImageIcon icon = imageManager.getImageIcon("images/actions/drill-to-detail.png");
-		JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
+    public void addRenderedResult(JComponent component) {
+        ImageIcon icon = imageManager.getImageIcon("images/actions/drill-to-detail.png");
+        JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
-		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		taskPanePanel.setLayout(new BorderLayout());
-		taskPanePanel.add(component);
+        final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
+        taskPanePanel.setLayout(new BorderLayout());
+        taskPanePanel.add(component);
 
-		taskPane.add(taskPanePanel);
+        taskPane.add(taskPanePanel);
 
-		_taskPaneContainer.add(taskPane);
-	}
+        _taskPaneContainer.add(taskPane);
+    }
 
 }

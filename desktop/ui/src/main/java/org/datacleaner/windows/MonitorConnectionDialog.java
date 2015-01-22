@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
@@ -37,7 +36,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
@@ -45,13 +43,16 @@ import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.MonitorHttpClient;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCCheckBox.Listener;
 import org.datacleaner.widgets.DCLabel;
@@ -281,7 +282,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
         formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-        final JButton testButton = WidgetFactory.createButton("Test connection", "images/actions/refresh.png");
+        final JButton testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -320,7 +321,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
             }
         });
 
-        final JButton saveButton = WidgetFactory.createButton("Save connection", "images/actions/save.png");
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -331,11 +332,8 @@ public class MonitorConnectionDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel();
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, testButton);
         buttonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        buttonPanel.add(testButton);
-        buttonPanel.add(saveButton);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
         descriptionLabel

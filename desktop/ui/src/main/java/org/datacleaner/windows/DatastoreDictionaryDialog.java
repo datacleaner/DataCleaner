@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,25 +35,27 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.reference.DatastoreDictionary;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.DatastoreDictionary;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.datacleaner.widgets.tree.SchemaTree;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Injector;
@@ -77,7 +78,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
     protected DatastoreDictionaryDialog(@Nullable DatastoreDictionary dictionary,
             MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog,
             WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(windowContext, ImageManager.get().getImage("images/window/banner-dictionaries.png"));
+        super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_DATASTORE_IMAGEPATH));
         _originalDictionary = dictionary;
         _referenceDataCatalog = referenceDataCatalog;
         _datastoreCatalog = datastoreCatalog;
@@ -102,7 +103,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         _splitPane.setBorder(null);
         _splitPane.setDividerLocation(320);
 
-        _treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
         _datastoreComboBox.addActionListener(new ActionListener() {
             @Override
@@ -181,8 +182,8 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Lookup column:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_columnTextField, formPanel, 1, row);
 
-        final JButton createDictionaryButton = WidgetFactory.createButton("Save dictionary",
-                "images/model/dictionary.png");
+        final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
+                IconUtils.ACTION_SAVE);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,9 +215,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 4));
-        buttonPanel.add(createDictionaryButton);
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, createDictionaryButton);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");

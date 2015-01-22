@@ -41,8 +41,6 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 /**
  * A welcome dialog for DataCleaner. Specifically used in embedded situations as
  * a "landing page" for new users to the application.
- * 
- * @author Kasper Sørensen
  */
 public class WelcomeDialog extends JDialog {
 
@@ -55,7 +53,7 @@ public class WelcomeDialog extends JDialog {
         banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
         final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner, true, 5);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(shadowedBanner, BorderLayout.CENTER);
 

@@ -33,7 +33,6 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -66,8 +65,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the panel in the Options dialog where the user can get an overview
  * and configure database drivers.
- * 
- * @author Kasper Sørensen
  */
 public class DatabaseDriversPanel extends DCPanel {
 
@@ -84,7 +81,7 @@ public class DatabaseDriversPanel extends DCPanel {
     @Inject
     protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
-        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;
         _userPreferences = userPreferences;
         _databaseDriverCatalog = databaseDriverCatalog;
@@ -108,11 +105,8 @@ public class DatabaseDriversPanel extends DCPanel {
 
     private void updateComponents() {
         this.removeAll();
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(WidgetFactory.createToolBarSeparator());
 
-        final JButton addDriverButton = new JButton("Add database driver",
-                imageManager.getImageIcon(IconUtils.ACTION_ADD));
+        final JButton addDriverButton = WidgetFactory.createDefaultButton("Add database driver", IconUtils.ACTION_ADD);
         addDriverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,10 +146,9 @@ public class DatabaseDriversPanel extends DCPanel {
                 popup.show(addDriverButton, 0, addDriverButton.getHeight());
             }
         });
-        toolBar.add(addDriverButton);
 
         final DCTable table = getDatabaseDriverTable();
-        this.add(toolBar, BorderLayout.NORTH);
+        this.add(DCPanel.flow(Alignment.RIGHT, addDriverButton), BorderLayout.NORTH);
         this.add(table.toPanel(), BorderLayout.CENTER);
     }
 
@@ -254,7 +247,7 @@ public class DatabaseDriversPanel extends DCPanel {
                 updateDriverList();
             }
         };
-        
+
         final WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_httpClient);
         return new DownloadFilesActionListener(dd.getDownloadUrls(), downloadListener, _windowContext, httpClient,
                 _userPreferences);

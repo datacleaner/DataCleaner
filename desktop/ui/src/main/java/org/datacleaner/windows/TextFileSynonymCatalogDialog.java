@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,17 +31,19 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
@@ -66,7 +67,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	@Inject
 	protected TextFileSynonymCatalogDialog(@Nullable TextFileSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog catalog, WindowContext windowContext, UserPreferences userPreferences) {
-		super(windowContext, ImageManager.get().getImage("images/window/banner-synonym-catalog.png"));
+		super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH));
 		_userPreferences = userPreferences;
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
@@ -137,7 +138,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_encodingComboBox, formPanel, 1, row);
 
 		row++;
-		final JButton saveButton = WidgetFactory.createButton("Save synonym catalog", "images/model/synonym.png");
+		final JButton saveButton = WidgetFactory.createPrimaryButton("Save synonym catalog", IconUtils.ACTION_SAVE);
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -172,9 +173,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 			}
 		});
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 4));
-		buttonPanel.add(saveButton);
+		final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton);
 
 		final DescriptionLabel descriptionLabel = new DescriptionLabel("A text file synonym catalog is a synonym catalog based on a text file containing comma separated values where the first column represents the master term.");
 

@@ -231,7 +231,7 @@ public final class JobGraph {
             @Override
             public void paint(Graphics g) {
                 final GradientPaint paint = new GradientPaint(0, 0, WidgetUtils.BG_COLOR_BRIGHTEST, 0,
-                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHT);
+                        visualizationViewer.getHeight(), WidgetUtils.BG_COLOR_BRIGHTEST);
                 if (g instanceof Graphics2D) {
                     Graphics2D g2d = (Graphics2D) g;
                     g2d.setPaint(paint);
@@ -465,7 +465,5 @@ public final class JobGraph {
         GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
         return scrollPane;
     }
-
-    
 
 }

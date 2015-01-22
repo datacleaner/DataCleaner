@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets.database;
 
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,7 +34,6 @@ import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -48,8 +46,6 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnectionPresenter {
 
-	private static final ImageManager imageManager = ImageManager.get();
-
 	private final JXTextField _connectionStringTextField;
 	private final JButton _connectionStringTemplateButton;
 
@@ -61,11 +57,7 @@ public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnecti
 
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
-		_connectionStringTemplateButton = new JButton(imageManager.getImageIcon("images/widgets/help.png",
-				IconUtils.ICON_SIZE_SMALL));
-		_connectionStringTemplateButton.setMargin(new Insets(0, 0, 0, 0));
-		_connectionStringTemplateButton.setOpaque(false);
-		_connectionStringTemplateButton.setBorder(null);
+		_connectionStringTemplateButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
 		_connectionStringTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -99,8 +91,8 @@ public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnecti
 	protected int layoutGridBagAboveCredentials(DCPanel panel) {
 		int row = 0;
 		WidgetUtils.addToGridBag(DCLabel.dark("Connection string:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row);
-		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 1.0d, 0.0d);
+		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row, 1.0, 0.0);
+		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 0.0d, 0.0d);
 
 		return row;
 	}

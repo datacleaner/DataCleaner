@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
@@ -48,10 +49,10 @@ public class SchemaTreePanel extends DCPanel {
 
 	@Inject
 	protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
-		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
-				WidgetUtils.BG_COLOR_BRIGHT);
+		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_injectorBuilder = injectorBuilder;
 		setLayout(new BorderLayout());
+		setBorder(new EmptyBorder(4, 4, 4, 4));
 		setDatastore(null, false);
 	}
 

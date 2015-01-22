@@ -44,20 +44,6 @@ import javax.swing.JToolBar;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.Version;
-import org.datacleaner.bootstrap.DCWindowContext;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.ResourceManager;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.DCListCellRenderer;
-import org.datacleaner.widgets.NeopostToolbarButton;
-import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.DataContextFactory;
 import org.apache.metamodel.data.DataSet;
@@ -66,14 +52,26 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.Version;
+import org.datacleaner.bootstrap.DCWindowContext;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.ResourceManager;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DCListCellRenderer;
+import org.datacleaner.widgets.NeopostToolbarButton;
+import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
  * The "About" dialog of the DataCleaner application.
- * 
- * @author Kasper Sørensen
  */
 public class AboutDialog extends AbstractDialog {
 
@@ -224,7 +222,7 @@ public class AboutDialog extends AbstractDialog {
         headerPanel.add(Box.createVerticalStrut(20));
         headerPanel.add(licenseHeader);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setBorder(new EmptyBorder(4, 4, 4, 4));
         panel.setLayout(new BorderLayout());
         panel.add(headerPanel, BorderLayout.NORTH);
@@ -268,8 +266,8 @@ public class AboutDialog extends AbstractDialog {
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
-        contentPanel.add(DCLabel
-                .dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Neopost - Customer Information Management"));
+        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)
+                + " Neopost - Customer Information Management"));
         contentPanel.add(Box.createVerticalStrut(20));
         contentPanel.add(DCPanel.around(neopostButton));
 
@@ -292,7 +290,7 @@ public class AboutDialog extends AbstractDialog {
         contentPanel.add(buttonPanel);
 
         final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,
-                WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         mainPanel.setLayout(new VerticalLayout());
         mainPanel.add(contentPanel);

@@ -37,17 +37,17 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.user.DemoConfiguration;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
@@ -78,7 +78,7 @@ public class OpenAnalysisJobPanel extends DCPanel {
 
     public OpenAnalysisJobPanel(final FileObject file, final AnalyzerBeansConfiguration configuration,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener) {
-        super(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _file = file;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 

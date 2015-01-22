@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,21 +37,23 @@ import javax.swing.tree.TreePath;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.reference.DatastoreSynonymCatalog;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
@@ -82,7 +83,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
     protected DatastoreSynonymCatalogDialog(@Nullable DatastoreSynonymCatalog synonymCatalog,
             MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
             WindowContext windowContext, InjectorBuilder injectorBuilder) {
-        super(windowContext, ImageManager.get().getImage("images/window/banner-synonym-catalog.png"));
+        super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH));
         _originalsynonymCatalog = synonymCatalog;
         _datastoreCatalog = datastoreCatalog;
         _mutableReferenceCatalog = mutableReferenceCatalog;
@@ -94,7 +95,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         _masterTermColumnComboBox = new SourceColumnComboBox();
         _synonymColumnsPanel = new MultiSourceColumnComboBoxPanel();
         _datastoreComboBox.setEditable(false);
-        _treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _treePanel.setLayout(new BorderLayout());
 
         _datastoreComboBox.addActionListener(new ActionListener() {
@@ -202,7 +203,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Synonym columns:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_synonymColumnsPanel.createPanel(), formPanel, 1, row);
         row++;
-        final JButton saveButton = WidgetFactory.createButton("Save Synonym Catalog", "images/model/synonym.png");
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save Synonym Catalog", IconUtils.ACTION_SAVE);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -235,9 +236,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 4));
-        buttonPanel.add(saveButton);
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "A datastore synonym catalog is based on a datastore and columns within it. The layout of the datastore is flexible: There should be a master term column and either a single or multiple synonym columns.");
@@ -247,7 +246,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         mainPanel.add(descriptionLabel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         mainPanel.setPreferredSize(getDialogWidth(), 230);
 
         return mainPanel;

@@ -40,9 +40,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.JXTable;
@@ -56,8 +56,12 @@ import org.slf4j.LoggerFactory;
 public class DCTable extends JXTable implements MouseListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
+    
 
     private static final long serialVersionUID = -5376226138423224572L;
+    
+    public static final int EDITABLE_TABLE_ROW_HEIGHT = 30;
+
     private final transient DCTableCellRenderer _tableCellRenderer;
     protected final transient List<JMenuItem> _rightClickMenuItems;
     protected transient DCPanel _panel;
@@ -66,7 +70,6 @@ public class DCTable extends JXTable implements MouseListener {
         super(new Object[0][columnNames.length], columnNames);
         addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
         getTableHeader().setReorderingAllowed(true);
-        getTableHeader().setFont(WidgetUtils.FONT_HEADER2);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setOpaque(false);
         setRowSelectionAllowed(true);
@@ -114,12 +117,25 @@ public class DCTable extends JXTable implements MouseListener {
     /**
      * Convenience method to create a panel with this table, including it's
      * header, correctly layed out.
+     * 
+     * @param scrolleable
+     *            whether or not the table panel should feature scrolleable
+     *            table contents.
+     * @return
      */
-    public DCPanel toPanel() {
+    public DCPanel toPanel(boolean scrolleable) {
         if (_panel == null) {
-            _panel = new DCTablePanel(this);
+            _panel = new DCTablePanel(this, scrolleable);
         }
         return _panel;
+    }
+
+    /**
+     * Convenience method to create a panel with this table, including it's
+     * header, correctly layed out.
+     */
+    public DCPanel toPanel() {
+        return toPanel(true);
     }
 
     @Override

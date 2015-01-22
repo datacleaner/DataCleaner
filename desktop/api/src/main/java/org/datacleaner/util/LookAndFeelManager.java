@@ -21,14 +21,18 @@ package org.datacleaner.util;
 
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.LookAndFeel;
 import javax.swing.PopupFactory;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 
+import org.datacleaner.widgets.DCScrollBarUI;
 import org.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,10 +107,10 @@ public final class LookAndFeelManager {
         EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
+
         UIManager.put("Menu.border", borderDarkest3);
         UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-
         UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
 
@@ -136,21 +140,54 @@ public final class LookAndFeelManager {
         UIManager.put("MenuBar.background", WidgetUtils.BG_COLOR_DARKEST);
         UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
 
+        // separator styling
+        UIManager.put("Separator.background", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("Separator.foreground", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("Separator.highlight", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("Separator.shadow", WidgetUtils.BG_COLOR_DARKEST);
+
         // white background for input components
         UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("PasswordField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("FormattedTextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("EditorPane.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("Spinner.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 
+        // Buttons
+        // UIManager.put("Button.background", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.darkShadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.shadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.highlight", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.light", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.select", WidgetUtils.BG_COLOR_BLUE_DARK);
+        // UIManager.put("Button.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+        // UIManager.put("Button.is3DEnabled", Boolean.FALSE);
+        // UIManager.put("Button.borderPaintsFocus", Boolean.FALSE);
+        // UIManager.put("Button.border", WidgetUtils.BORDER_BUTTON);
+
+        // Input fields
+        UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
+        UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+
+        UIManager.put("TextArea.border", WidgetUtils.BORDER_INPUT);
+        UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+
+        UIManager.put("PasswordField.border", WidgetUtils.BORDER_INPUT);
+        UIManager.put("PasswordField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+
+        UIManager.put("FormattedTextField.border", WidgetUtils.BORDER_INPUT);
+        UIManager.put("FormattedTextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+
+        UIManager.put("ComboBox.border", WidgetUtils.BORDER_INPUT);
+        UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
+        UIManager.put("ComboBox.editorBorder", BorderFactory.createEmptyBorder());
+
         // table header styling
-        UIManager.put("TableHeader.background", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("TableHeader.focusCellBackground", WidgetUtils.BG_COLOR_LESS_DARK);
-        UIManager.put("TableHeader.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TableHeader.cellBorder", new LineBorder(WidgetUtils.BG_COLOR_LESS_DARK));
+        UIManager.put("TableHeader.background", WidgetUtils.COLOR_WELL_BACKGROUND);
+        UIManager.put("TableHeader.focusCellBackground", WidgetUtils.COLOR_WELL_BACKGROUND);
+        UIManager.put("TableHeader.foreground", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("TableHeader.font", WidgetUtils.FONT_TABLE_HEADER);
+        UIManager.put("TableHeader.cellBorder", new CompoundBorder(new MatteBorder(0, 0, 0, 1,
+                WidgetUtils.BG_COLOR_LESS_BRIGHT), WidgetUtils.BORDER_EMPTY));
 
         // titled borders
         UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);
@@ -158,8 +195,8 @@ public final class LookAndFeelManager {
 
         // tool tip colors
         UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("ToolTip.border", WidgetUtils.BORDER_THIN);
+        UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHT);
+        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE);
 
         // task pane colors
         UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -171,9 +208,20 @@ public final class LookAndFeelManager {
         UIManager.put("TaskPane.background", WidgetUtils.BG_COLOR_BRIGHT);
 
         // scrollbar color
-        UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.BG_COLOR_DARK);
-        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
+        UIManager.put("ScrollBar.thumbShadow", WidgetUtils.slightlyDarker(WidgetUtils.BG_COLOR_LESS_BRIGHT));
+        UIManager.put("ScrollBar.thumbDarkShadow", WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        UIManager.put("ScrollBar.highlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.shadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.darkShadow", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.foreground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.track", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackHighlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
@@ -191,5 +239,9 @@ public final class LookAndFeelManager {
         UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
+
+        // tool tip tweaks
+        ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);
+        ToolTipManager.sharedInstance().setInitialDelay(100);
     }
 }

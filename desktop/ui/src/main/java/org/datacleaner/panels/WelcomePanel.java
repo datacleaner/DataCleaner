@@ -45,8 +45,10 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -63,8 +65,6 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.InjectorBuilder;
@@ -74,6 +74,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -83,6 +84,7 @@ import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
@@ -432,6 +434,9 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                 IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
+        
+        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
 
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();

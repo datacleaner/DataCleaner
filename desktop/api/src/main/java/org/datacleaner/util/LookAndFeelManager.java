@@ -152,16 +152,16 @@ public final class LookAndFeelManager {
         UIManager.put("Spinner.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 
         // Buttons
-//        UIManager.put("Button.background", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-//        UIManager.put("Button.darkShadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-//        UIManager.put("Button.shadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-//        UIManager.put("Button.highlight", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-//        UIManager.put("Button.light", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-//        UIManager.put("Button.select", WidgetUtils.BG_COLOR_BLUE_DARK);
-//        UIManager.put("Button.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-//        UIManager.put("Button.is3DEnabled", Boolean.FALSE);
-//        UIManager.put("Button.borderPaintsFocus", Boolean.FALSE);
-//        UIManager.put("Button.border", WidgetUtils.BORDER_BUTTON);
+        // UIManager.put("Button.background", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.darkShadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.shadow", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.highlight", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.light", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+        // UIManager.put("Button.select", WidgetUtils.BG_COLOR_BLUE_DARK);
+        // UIManager.put("Button.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+        // UIManager.put("Button.is3DEnabled", Boolean.FALSE);
+        // UIManager.put("Button.borderPaintsFocus", Boolean.FALSE);
+        // UIManager.put("Button.border", WidgetUtils.BORDER_BUTTON);
 
         // Input fields
         UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
@@ -175,7 +175,7 @@ public final class LookAndFeelManager {
 
         UIManager.put("FormattedTextField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("FormattedTextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        
+
         UIManager.put("ComboBox.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
@@ -222,7 +222,7 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.trackHighlight", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
-        
+
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 
@@ -239,5 +239,9 @@ public final class LookAndFeelManager {
         UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
+
+        // tool tip tweaks
+        ToolTipManager.sharedInstance().setDismissDelay(10 * 1000);
+        ToolTipManager.sharedInstance().setInitialDelay(100);
     }
 }

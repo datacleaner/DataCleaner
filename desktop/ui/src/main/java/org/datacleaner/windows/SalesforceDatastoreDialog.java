@@ -20,22 +20,19 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -48,14 +45,10 @@ import com.google.inject.Inject;
 /**
  * Datastore dialog for Salesforce.com datastores
  */
-public class SalesforceDatastoreDialog extends AbstractDialog {
+public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<SalesforceDatastore> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.get();
-
-    private final MutableDatastoreCatalog _datastoreCatalog;
-    private final SalesforceDatastore _originalDatastore;
     private final JXTextField _datastoreNameTextField;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
@@ -63,10 +56,9 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
 
     @Inject
     public SalesforceDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
-            @Nullable SalesforceDatastore originalDatastore) {
-        super(windowContext, imageManager.getImage("images/window/banner-salesforce.png"));
-        _datastoreCatalog = datastoreCatalog;
-        _originalDatastore = originalDatastore;
+            @Nullable SalesforceDatastore originalDatastore, UserPreferences userPreferences) {
+        super(originalDatastore, datastoreCatalog, windowContext, userPreferences,
+                "images/window/banner-salesforce.png");
 
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
         _usernameTextField = WidgetFactory.createTextField("Username");
@@ -110,23 +102,7 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
                 "Your security token is set on Salesforce.com by going to: <b><i>Your Name</i> | Setup | My Personal Information | Reset Security Token</b>.<br/>This security token is needed in order to use the Salesforce.com web services.");
         WidgetUtils.addToGridBag(securityTokenHelpIcon, formPanel, 3, row);
 
-        final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SalesforceDatastore datastore = createDatastore();
-
-                if (_originalDatastore != null) {
-                    _datastoreCatalog.removeDatastore(_originalDatastore);
-                }
-                _datastoreCatalog.addDatastore(datastore);
-                SalesforceDatastoreDialog.this.dispose();
-            }
-        });
-
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        buttonPanel.add(saveButton);
+        final DCPanel buttonPanel = getButtonPanel();
 
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -140,7 +116,8 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
         return outerPanel;
     }
 
-    private SalesforceDatastore createDatastore() {
+    @Override
+    protected SalesforceDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
@@ -161,8 +138,8 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 400;
+    protected String getDatastoreIconPath() {
+        return IconUtils.SALESFORCE_IMAGEPATH;
     }
 
 }

@@ -85,16 +85,6 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
-    protected int getDialogWidth() {
-        return 400;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
         formPanel.setBorder(WidgetUtils.BORDER_EMPTY);

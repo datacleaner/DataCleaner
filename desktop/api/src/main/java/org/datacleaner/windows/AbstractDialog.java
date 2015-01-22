@@ -41,7 +41,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     private volatile boolean initialized = false;
     private final WindowContext _windowContext;
-    private final Image _bannerImage;
+    
+    private Image _bannerImage;
 
     private volatile Color _topBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
     private volatile Color _bottomBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
@@ -62,6 +63,15 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         setResizable(isWindowResizable());
         _windowContext = windowContext;
         _bannerImage = bannerImage;
+    }
+    
+    public void setBannerImage(Image bannerImage) {
+        _bannerImage = bannerImage;
+        _banner = null;
+    }
+    
+    public Image getBannerImage() {
+        return _bannerImage;
     }
 
     protected DCBannerPanel getBanner() {

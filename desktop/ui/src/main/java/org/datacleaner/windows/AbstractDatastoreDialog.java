@@ -38,6 +38,8 @@ import org.datacleaner.util.WidgetUtils;
 
 public abstract class AbstractDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
+    private static final String DEFAULT_BANNER_IMAGE = "images/window/banner-datastores.png";
+
     private static final long serialVersionUID = 1L;
 
     protected static final ImageManager imageManager = ImageManager.get();
@@ -47,15 +49,20 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
-
+    
     public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
-        super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
+        this(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences, DEFAULT_BANNER_IMAGE);
+    }
+
+    public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+            WindowContext windowContext, UserPreferences userPreferences, String bannerImagePath) {
+        super(windowContext, imageManager.getImage(bannerImagePath));
         _originalDatastore = originalDatastore;
         _mutableDatastoreCatalog = mutableDatastoreCatalog;
         _userPreferences = userPreferences;
 
-        _saveButton = WidgetFactory.createPrimaryButton("Save datastore", getDatastoreIconPath());
+        _saveButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.ACTION_SAVE);
         _saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,6 +84,11 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
                 AbstractDatastoreDialog.this.close();
             }
         });
+        
+        if (!DEFAULT_BANNER_IMAGE.equals(getDatastoreIconPath())) {
+            final Image image = imageManager.getImage(getDatastoreIconPath());
+            setBannerImage(image);
+        }
     }
 
     /**

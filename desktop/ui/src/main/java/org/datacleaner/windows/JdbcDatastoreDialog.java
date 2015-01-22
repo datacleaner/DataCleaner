@@ -301,11 +301,6 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 500;
-    }
-
-    @Override
     protected JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
         {

@@ -54,6 +54,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -92,15 +93,18 @@ public class DatastorePanel extends DCPanel {
     private final WelcomePanel _datastoreListPanel;
     private final JCheckBox _checkBox;
     private final WindowContext _windowContext;
+    private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-            WelcomePanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
+            WelcomePanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
+            InjectorBuilder injectorBuilder) {
         super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;
         _windowContext = windowContext;
+        _userPreferences = userPreferences;
         _injectorBuilder = injectorBuilder;
 
         setOpaque(false);
@@ -317,7 +321,7 @@ public class DatastorePanel extends DCPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
-                            _datastoreCatalog, _windowContext);
+                            _datastoreCatalog, _windowContext, _userPreferences);
                     dialog.open();
                 }
             });

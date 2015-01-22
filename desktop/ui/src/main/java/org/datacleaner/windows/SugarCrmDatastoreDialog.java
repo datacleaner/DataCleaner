@@ -20,22 +20,19 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -48,14 +45,10 @@ import com.google.inject.Inject;
 /**
  * Datastore dialog for SugarCRM datastores
  */
-public class SugarCrmDatastoreDialog extends AbstractDialog {
+public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDatastore> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.get();
-
-    private final MutableDatastoreCatalog _datastoreCatalog;
-    private final SugarCrmDatastore _originalDatastore;
     private final JXTextField _datastoreNameTextField;
     private final JXTextField _baseUrlTextField;
     private final JXTextField _usernameTextField;
@@ -63,10 +56,8 @@ public class SugarCrmDatastoreDialog extends AbstractDialog {
 
     @Inject
     public SugarCrmDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
-            @Nullable SugarCrmDatastore originalDatastore) {
-        super(windowContext, imageManager.getImage("images/window/banner-sugarcrm.png"));
-        _datastoreCatalog = datastoreCatalog;
-        _originalDatastore = originalDatastore;
+            @Nullable SugarCrmDatastore originalDatastore, UserPreferences userPreferences) {
+        super(originalDatastore, datastoreCatalog, windowContext, userPreferences, "images/window/banner-sugarcrm.png");
 
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
         _baseUrlTextField = WidgetFactory.createTextField("Base URL");
@@ -97,7 +88,7 @@ public class SugarCrmDatastoreDialog extends AbstractDialog {
 
         row++;
         WidgetUtils.addToGridBag(new JSeparator(SwingConstants.HORIZONTAL), formPanel, 1, row, 3, 1);
-        
+
         row++;
         WidgetUtils.addToGridBag(DCLabel.bright("SugarCRM base URL:"), formPanel, 1, row);
         WidgetUtils.addToGridBag(_baseUrlTextField, formPanel, 2, row);
@@ -113,23 +104,7 @@ public class SugarCrmDatastoreDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("SugarCRM password:"), formPanel, 1, row);
         WidgetUtils.addToGridBag(_passwordTextField, formPanel, 2, row);
 
-        final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SugarCrmDatastore datastore = createDatastore();
-
-                if (_originalDatastore != null) {
-                    _datastoreCatalog.removeDatastore(_originalDatastore);
-                }
-                _datastoreCatalog.addDatastore(datastore);
-                SugarCrmDatastoreDialog.this.dispose();
-            }
-        });
-
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        buttonPanel.add(saveButton);
+        final DCPanel buttonPanel = getButtonPanel();
 
         final DCPanel outerPanel = new DCPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -143,7 +118,8 @@ public class SugarCrmDatastoreDialog extends AbstractDialog {
         return outerPanel;
     }
 
-    private SugarCrmDatastore createDatastore() {
+    @Override
+    protected SugarCrmDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
@@ -164,8 +140,8 @@ public class SugarCrmDatastoreDialog extends AbstractDialog {
     }
 
     @Override
-    protected int getDialogWidth() {
-        return 400;
+    protected String getDatastoreIconPath() {
+        return IconUtils.SUGAR_CRM_IMAGEPATH;
     }
 
 }

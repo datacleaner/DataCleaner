@@ -45,6 +45,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -63,8 +64,6 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.InjectorBuilder;
@@ -74,6 +73,7 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -344,7 +344,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
             DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-                    _analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
+                    _analysisJobBuilderWindow.getWindowContext(), _userPreferences, _injectorBuilder);
             _datastorePanels.add(datastorePanel);
             _datastoreListPanel.add(datastorePanel);
 
@@ -428,7 +428,8 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         createDefaultDatabaseButtons(panel, databaseNames);
 
-        final JButton moreDatastoreTypesButton = WidgetFactory.createDefaultButton("More databases", IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+        final JButton moreDatastoreTypesButton = WidgetFactory.createDefaultButton("More databases",
+                IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 4));
         moreDatastoreTypesButton.addActionListener(new ActionListener() {
             @Override
@@ -464,8 +465,9 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
                 compositeMenuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getWindowContext())
-                                .setVisible(true);
+                        final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog,
+                                _analysisJobBuilderWindow.getWindowContext(), _userPreferences);
+                        dialog.open();
                     }
                 });
 

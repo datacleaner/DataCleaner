@@ -20,15 +20,11 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -39,46 +35,44 @@ import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class CompositeDatastoreDialog extends AbstractDialog {
+public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeDatastore> {
 
     private static final long serialVersionUID = 1L;
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
-    private final List<JCheckBox> _checkBoxes;
+    private final List<DCCheckBox<Datastore>> _checkBoxes;
     private final JXTextField _datastoreNameField;
     private final JLabel _statusLabel;
     private final DCPanel _outerPanel = new DCPanel();
-    private final JButton _addDatastoreButton;
-    private final CompositeDatastore _originalDatastore;
 
     @Override
     protected String getBannerTitle() {
         return "Composite datastore";
     }
 
-    public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-        this(null, mutableDatastoreCatalog, windowContext);
+    public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
+            UserPreferences userPreferences) {
+        this(null, mutableDatastoreCatalog, windowContext, userPreferences);
     }
 
     public CompositeDatastoreDialog(CompositeDatastore originalDatastore,
-            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-        super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
-        _mutableDatastoreCatalog = mutableDatastoreCatalog;
-        _originalDatastore = originalDatastore;
+            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
+            UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
         _statusLabel = DCLabel.bright("");
         _datastoreNameField = WidgetFactory.createTextField("Datastore name");
         _datastoreNameField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -88,21 +82,21 @@ public class CompositeDatastoreDialog extends AbstractDialog {
             }
         });
 
-        _addDatastoreButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.COMPOSITE_IMAGEPATH);
-        _addDatastoreButton.setEnabled(false);
+        setSaveButtonEnabled(false);
 
-        String[] datastoreNames = _mutableDatastoreCatalog.getDatastoreNames();
-        _checkBoxes = new ArrayList<JCheckBox>();
+        final String[] datastoreNames = mutableDatastoreCatalog.getDatastoreNames();
+        _checkBoxes = new ArrayList<>();
         for (int i = 0; i < datastoreNames.length; i++) {
-            String datastoreName = datastoreNames[i];
-            if (_originalDatastore == null || !_originalDatastore.getName().equals(datastoreName)) {
-                JCheckBox checkBox = new JCheckBox(datastoreName);
+            final String datastoreName = datastoreNames[i];
+            if (originalDatastore == null || !originalDatastore.getName().equals(datastoreName)) {
+                final DCCheckBox<Datastore> checkBox = new DCCheckBox<>(datastoreName, false);
+                checkBox.setValue(mutableDatastoreCatalog.getDatastore(datastoreName));
                 checkBox.setName(datastoreName);
                 checkBox.setOpaque(false);
                 checkBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-                checkBox.addActionListener(new ActionListener() {
+                checkBox.addListener(new DCCheckBox.Listener<Datastore>() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void onItemSelected(Datastore item, boolean selected) {
                         updateStatusLabel();
                     }
                 });
@@ -110,11 +104,11 @@ public class CompositeDatastoreDialog extends AbstractDialog {
             }
         }
 
-        if (_originalDatastore != null) {
-            _datastoreNameField.setText(_originalDatastore.getName());
+        if (originalDatastore != null) {
+            _datastoreNameField.setText(originalDatastore.getName());
             _datastoreNameField.setEnabled(false);
 
-            List<? extends Datastore> containedDatastores = _originalDatastore.getDatastores();
+            List<? extends Datastore> containedDatastores = originalDatastore.getDatastores();
             Set<String> containedDatastoreNames = new HashSet<String>();
             for (Datastore datastore : containedDatastores) {
                 containedDatastoreNames.add(datastore.getName());
@@ -142,16 +136,16 @@ public class CompositeDatastoreDialog extends AbstractDialog {
         if (selected < 2) {
             _statusLabel.setText("Please select at least 2 contained datastores");
             _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
-            _addDatastoreButton.setEnabled(false);
+            setSaveButtonEnabled(false);
         } else {
             if (nameFilledOut) {
                 _statusLabel.setText("Composite datastore ready");
                 _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
-                _addDatastoreButton.setEnabled(true);
+                setSaveButtonEnabled(true);
             } else {
                 _statusLabel.setText("Please fill out a datastore name");
                 _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
-                _addDatastoreButton.setEnabled(false);
+                setSaveButtonEnabled(false);
             }
         }
     }
@@ -178,34 +172,7 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 
         WidgetUtils.addToGridBag(checkBoxPanel, formPanel, 0, 1, 2, 1);
 
-        _addDatastoreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final List<Datastore> datastores = new ArrayList<Datastore>();
-
-                for (JCheckBox checkBox : _checkBoxes) {
-                    if (checkBox.isSelected()) {
-                        String datastoreName = checkBox.getText();
-                        Datastore datastore = _mutableDatastoreCatalog.getDatastore(datastoreName);
-                        if (datastore == null) {
-                            throw new IllegalStateException("No such datastore: " + datastoreName);
-                        }
-                        datastores.add(datastore);
-                    }
-                }
-
-                final Datastore datastore = new CompositeDatastore(_datastoreNameField.getText(), datastores);
-
-                if (_originalDatastore != null) {
-                    _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
-                }
-
-                _mutableDatastoreCatalog.addDatastore(datastore);
-                dispose();
-            }
-        });
-
-        DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _addDatastoreButton);
+        DCPanel buttonPanel = getButtonPanel();
 
         DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new VerticalLayout(4));
@@ -227,7 +194,26 @@ public class CompositeDatastoreDialog extends AbstractDialog {
     }
 
     @Override
-    public Image getWindowIcon() {
-        return imageManager.getImage(IconUtils.COMPOSITE_IMAGEPATH);
+    protected CompositeDatastore createDatastore() {
+        final List<Datastore> datastores = new ArrayList<Datastore>();
+
+        for (DCCheckBox<Datastore> checkBox : _checkBoxes) {
+            if (checkBox.isSelected()) {
+                String datastoreName = checkBox.getText();
+                Datastore datastore = checkBox.getValue();
+                if (datastore == null) {
+                    throw new IllegalStateException("No such datastore: " + datastoreName);
+                }
+                datastores.add(datastore);
+            }
+        }
+
+        final CompositeDatastore datastore = new CompositeDatastore(_datastoreNameField.getText(), datastores);
+        return datastore;
+    }
+
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.COMPOSITE_IMAGEPATH;
     }
 }

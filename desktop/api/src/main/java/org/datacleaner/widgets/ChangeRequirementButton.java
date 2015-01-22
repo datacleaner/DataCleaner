@@ -41,6 +41,7 @@ import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
+import org.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
         _componentBuilder = componentBuilder;
         addActionListener(this);
         updateText();
+        WidgetUtils.setDefaultButtonStyle(this);
     }
 
     @Override

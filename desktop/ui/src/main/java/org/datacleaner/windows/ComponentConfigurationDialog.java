@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JToolBar;
 
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -36,12 +35,11 @@ import org.datacleaner.panels.ComponentBuilderPresenter;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.ChangeRequirementButton;
-import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.visualization.JobGraph;
 
 /**
@@ -55,9 +53,8 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     private final ComponentBuilderPresenter _presenter;
     private final ComponentBuilder _componentBuilder;
 
-    public ComponentConfigurationDialog(
-            ComponentBuilder componentBuilder,
-            AnalysisJobBuilder analysisJobBuilder, ComponentBuilderPresenter presenter) {
+    public ComponentConfigurationDialog(ComponentBuilder componentBuilder, AnalysisJobBuilder analysisJobBuilder,
+            ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(null, getBannerImage(componentBuilder));
@@ -100,8 +97,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         final DCBannerPanel banner = new DCBannerPanel(bannerImage, getBannerTitle());
         banner.setTitle2(getBannerTitle2(true));
 
-        final JButton renameButton = new JButton("Rename", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME,
-                IconUtils.ICON_SIZE_MEDIUM));
+        final JButton renameButton = WidgetFactory.createDefaultButton("Rename", IconUtils.ACTION_RENAME);
         renameButton.addActionListener(new RenameComponentActionListener(_componentBuilder) {
             @Override
             protected void onNameChanged() {
@@ -109,7 +105,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
                 banner.updateUI();
             }
         });
-        
+
         banner.add(new ChangeRequirementButton(_componentBuilder));
         banner.add(renameButton);
 
@@ -125,7 +121,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
     protected JComponent getDialogContent() {
         final JComponent configurationComponent = _presenter.createJComponent();
 
-        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,19 +129,10 @@ public class ComponentConfigurationDialog extends AbstractDialog {
             }
         });
 
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new NeopostToolbarButton());
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(closeButton);
-
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST);
-        toolBarPanel.setLayout(new BorderLayout());
-        toolBarPanel.add(toolBar, BorderLayout.CENTER);
-
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
-        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
 
         return panel;
     }

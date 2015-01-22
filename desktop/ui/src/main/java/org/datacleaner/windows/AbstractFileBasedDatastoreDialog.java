@@ -131,7 +131,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         _filenameField = new FilenameTextField(_userPreferences.getOpenDatastoreDirectory(), true);
 
-        _addDatastoreButton = WidgetFactory.createButton("Save datastore", getDatastoreIconPath());
+        _addDatastoreButton = WidgetFactory.createPrimaryButton("Save datastore", getDatastoreIconPath());
         _addDatastoreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

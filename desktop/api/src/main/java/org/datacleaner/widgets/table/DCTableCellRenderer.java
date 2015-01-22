@@ -93,7 +93,7 @@ public class DCTableCellRenderer implements TableCellRenderer {
 					}
 				});
 			}
-
+			
 			result = component;
 		} else {
 			result = _delegate.getTableCellRendererComponent(_table, value, isSelected, hasFocus, row, column);

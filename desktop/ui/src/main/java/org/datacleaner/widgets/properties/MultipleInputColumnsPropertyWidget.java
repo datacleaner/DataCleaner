@@ -38,7 +38,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 
@@ -121,7 +120,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public MultipleInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+        setBorder(WidgetUtils.BORDER_LIST_ITEM);
         _checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
         _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
         _firstUpdate = true;
@@ -161,12 +160,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         _buttonPanel.setLayout(new HorizontalLayout(2));
         _buttonPanel.setBorder(_indentBorder);
 
-        JButton selectAllButton = new JButton("Select all");
+        JButton selectAllButton = WidgetFactory.createDefaultButton("Select all");
         selectAllButton.setFont(WidgetUtils.FONT_SMALL);
         selectAllButton.addActionListener(selectAllActionListener);
         _buttonPanel.add(selectAllButton);
 
-        JButton selectNoneButton = new JButton("Select none");
+        JButton selectNoneButton = WidgetFactory.createDefaultButton("Select none");
         selectNoneButton.setFont(WidgetUtils.FONT_SMALL);
         selectNoneButton.addActionListener(selectNoneActionListener);
         _buttonPanel.add(selectNoneButton);

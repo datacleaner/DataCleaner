@@ -823,6 +823,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
+                windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
                 final List<DCWindow> windows = getWindowContext().getWindows();
                 for (final DCWindow window : windows) {
                     final Image windowIcon = window.getWindowIcon();

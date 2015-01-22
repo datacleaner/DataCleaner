@@ -33,7 +33,9 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
@@ -51,15 +53,15 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AccessDatastoreDialog;
+import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
@@ -275,6 +277,15 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(HBaseDatastore.class, datastore).createInjector();
                     HBaseDatastoreDialog dialog = injector.getInstance(HBaseDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof CassandraDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(CassandraDatastore.class, datastore).createInjector();
+                    CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
                     dialog.open();
                 }
             });

@@ -25,6 +25,8 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -46,6 +48,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -242,18 +246,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
-        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null, true);
-        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null, true);
+        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
 
         _transformButton = createToolbarButton(
                 "Transform",
                 null,
-                "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>",
-                true);
+                "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>");
         _analyzeButton = createToolbarButton("Analyze", null,
-                "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>",
-                true);
-        _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null, true);
+                "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
+        _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
                 openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
@@ -340,7 +342,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return true;
     }
 
-    private JButton createToolbarButton(String text, String iconPath, String popupDescription, boolean iconBefore) {
+    private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
         final ImageIcon icon;
         if (iconPath == null) {
             icon = null;
@@ -348,10 +350,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             icon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
         }
         final JButton button = new JButton(text, icon);
-        if (!iconBefore) {
-            button.setHorizontalTextPosition(JButton.LEFT);
-        }
-
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -360,10 +358,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setForeground(WidgetUtils.BG_COLOR_BRIGHT);
+                button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
             }
         });
-        button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
         if (icon == null) {
             button.setBorder(new EmptyBorder(10, 8, 10, 8));
@@ -372,11 +369,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setFocusPainted(false);
+        button.setUI(DarkButtonUI.get());
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
             popupBubble.attachTo(button);
         }
-        button.setUI(DarkButtonUI.get());
         return button;
     }
 
@@ -701,13 +698,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JButton newJobButton = createToolbarButton("New", IconUtils.ACTION_NEW, null, true);
+        final JButton newJobButton = createToolbarButton("New", IconUtils.ACTION_NEW, null);
         newJobButton.addActionListener(_newAnalysisJobActionListenerProvider.get());
 
-        final JButton openJobButton = createToolbarButton("Open", IconUtils.ACTION_OPEN, null, true);
+        final JButton openJobButton = createToolbarButton("Open", IconUtils.ACTION_OPEN, null);
         openJobButton.addActionListener(_openAnalysisJobActionListenerProvider.get());
 
-        final JButton moreButton = createMoreMenuButton();
+        final JToggleButton moreButton = createMoreMenuButton();
 
         final JButton logoButton = new JButton(imageManager.getImageIcon("images/menu/dc-logo-30.png"));
         logoButton.setToolTipText("About DataCleaner");
@@ -764,7 +761,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return panel;
     }
 
-    private JButton createMoreMenuButton() {
+    private JToggleButton createMoreMenuButton() {
         final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", IconUtils.MENU_OPTIONS);
         optionsMenuItem.addActionListener(new ActionListener() {
             @Override
@@ -818,40 +815,71 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JButton button = createToolbarButton("More", "images/menu/more.png", null, false);
-        button.addActionListener(new ActionListener() {
+        final JToggleButton button = new JToggleButton("More", imageManager.getImageIcon("images/menu/more.png"));
+        button.setBorder(new EmptyBorder(10, 4, 10, 4));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        button.setFocusPainted(false);
+        button.setUI(DarkButtonUI.get());
+        button.setHorizontalTextPosition(SwingConstants.LEFT);
+
+        final JPopupMenu popup = new JPopupMenu() {
+            private static final long serialVersionUID = 1L;
+
             @Override
-            public void actionPerformed(ActionEvent e) {
-                final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
-                windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
-                final List<DCWindow> windows = getWindowContext().getWindows();
-                for (final DCWindow window : windows) {
-                    final Image windowIcon = window.getWindowIcon();
-                    final String title = window.getWindowTitle();
-                    final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                            IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-                    final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
-                    switchToWindowItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            window.toFront();
-                        }
-                    });
-                    windowsMenuItem.add(switchToWindowItem);
+            public void removeNotify() {
+                super.removeNotify();
+                final Timer timer = new Timer(300, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                button.setSelected(false);
+                            }
+                        });
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
+            }
+        };
+
+        button.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent itemEvent) {
+                int state = itemEvent.getStateChange();
+                if (state == ItemEvent.SELECTED) {
+                    final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
+                    windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png",
+                            IconUtils.ICON_SIZE_SMALL));
+                    final List<DCWindow> windows = getWindowContext().getWindows();
+                    for (final DCWindow window : windows) {
+                        final Image windowIcon = window.getWindowIcon();
+                        final String title = window.getWindowTitle();
+                        final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
+                                IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+                        final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
+                        switchToWindowItem.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                window.toFront();
+                            }
+                        });
+                        windowsMenuItem.add(switchToWindowItem);
+                    }
+
+                    popup.removeAll();
+                    popup.add(dictionariesMenuItem);
+                    popup.add(synonymCatalogsMenuItem);
+                    popup.add(stringPatternsMenuItem);
+                    popup.add(new JSeparator());
+                    popup.add(windowsMenuItem);
+                    popup.add(new JSeparator());
+                    popup.add(monitorMenuItem);
+                    popup.add(optionsMenuItem);
+                    popup.show(button, 0, button.getHeight());
+                } else {
+                    popup.setVisible(false);
                 }
-
-                final JPopupMenu popup = new JPopupMenu();
-
-                popup.add(dictionariesMenuItem);
-                popup.add(synonymCatalogsMenuItem);
-                popup.add(stringPatternsMenuItem);
-                popup.add(new JSeparator());
-                popup.add(windowsMenuItem);
-                popup.add(new JSeparator());
-                popup.add(monitorMenuItem);
-                popup.add(optionsMenuItem);
-
-                popup.show(button, 0, button.getHeight());
             }
         });
 

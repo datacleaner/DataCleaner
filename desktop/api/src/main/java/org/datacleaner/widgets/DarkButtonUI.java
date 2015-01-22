@@ -33,6 +33,9 @@ import com.jgoodies.looks.plastic.PlasticButtonUI;
  */
 public class DarkButtonUI extends PlasticButtonUI {
 
+    public static final Color COLOR_BG_SELECT = WidgetUtils.BG_COLOR_LESS_DARK;
+    public static final Color COLOR_BG_DEFAULT = WidgetUtils.BG_COLOR_DARKEST;
+
     private static final DarkButtonUI INSTANCE = new DarkButtonUI();
 
     public static DarkButtonUI get() {
@@ -50,14 +53,13 @@ public class DarkButtonUI extends PlasticButtonUI {
     @Override
     public void installDefaults(AbstractButton b) {
         super.installDefaults(b);
-        b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+        b.setBackground(COLOR_BG_DEFAULT);
         b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setFocusPainted(false);
     }
-
+    
     @Override
     protected Color getSelectColor() {
-        return WidgetUtils.BG_COLOR_LESS_DARK;
+        return COLOR_BG_SELECT;
     }
-
 }

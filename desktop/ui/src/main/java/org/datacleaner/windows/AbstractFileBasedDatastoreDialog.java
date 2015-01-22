@@ -21,6 +21,8 @@ package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,27 +48,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.FileDatastore;
-import org.datacleaner.connection.ResourceDatastore;
-import org.datacleaner.util.ImmutableEntry;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
-import org.datacleaner.user.MutableDatastoreCatalog;
-import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
-import org.datacleaner.widgets.LoadingIcon;
-import org.datacleaner.widgets.table.DCTable;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.DataSetTableModel;
@@ -76,9 +57,29 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.FileDatastore;
+import org.datacleaner.connection.ResourceDatastore;
+import org.datacleaner.panels.DCPanel;
+import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.ImmutableEntry;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DescriptionLabel;
+import org.datacleaner.widgets.FileSelectionListener;
+import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.LoadingIcon;
+import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +112,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     protected final MutableDatastoreCatalog _mutableDatastoreCatalog;
     protected final D _originalDatastore;
     protected final JButton _addDatastoreButton;
+    private final JButton _cancelButton;
     private final JLabel _statusLabel;
     private final JXTextField _datastoreNameField;
     private final FilenameTextField _filenameField;
@@ -143,6 +145,14 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
                 _mutableDatastoreCatalog.addDatastore(datastore);
                 dispose();
+            }
+        });
+        
+        _cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
+        _cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AbstractFileBasedDatastoreDialog.this.close();
             }
         });
 
@@ -204,8 +214,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
         if (isPreviewTableEnabled()) {
             _previewTable = new DCTable(new DefaultTableModel(7, 10));
-            _previewTablePanel = _previewTable.toPanel();
-            _previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+            _previewTablePanel = _previewTable.toPanel(false);
             _loadingIcon = new LoadingIcon();
             _loadingIcon.setVisible(false);
             _loadingIcon.setPreferredSize(_previewTablePanel.getPreferredSize());
@@ -296,7 +305,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     @Override
     protected int getDialogWidth() {
         if (isPreviewTableEnabled()) {
-            return 550;
+            return 650;
         }
         return 400;
     }
@@ -344,16 +353,19 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         }
 
         final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
         buttonPanel.add(_addDatastoreButton);
+        buttonPanel.add(_cancelButton);
 
         final DCPanel centerPanel = new DCPanel();
-        centerPanel.setLayout(new VerticalLayout(4));
-        centerPanel.add(formPanel);
+        centerPanel.setLayout(new GridBagLayout());
+        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
+
         if (isPreviewTableEnabled()) {
-            centerPanel.add(_previewTablePanel);
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1, 1.0, GridBagConstraints.BOTH);
         }
-        centerPanel.add(buttonPanel);
+        WidgetUtils.addToGridBag(buttonPanel, centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
+        
         centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
 
         JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);

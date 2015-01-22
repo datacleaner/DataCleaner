@@ -43,6 +43,7 @@ import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.DarkButtonUI;
+import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXStatusBar;
@@ -94,6 +95,9 @@ public final class WidgetFactory {
     }
 
     private static Icon getButtonIcon(String imagePath) {
+        if (Strings.isNullOrEmpty(imagePath)) {
+            return null;
+        }
         final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM);
         return icon;
     }

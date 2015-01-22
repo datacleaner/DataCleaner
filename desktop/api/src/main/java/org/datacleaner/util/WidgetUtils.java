@@ -113,6 +113,7 @@ public final class WidgetUtils {
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
+    public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
     // blue base color of DC styling (#3b76bc)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
@@ -178,7 +179,7 @@ public final class WidgetUtils {
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
-            new LineBorder(BG_COLOR_LESS_BRIGHT, 1, true), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
+            new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
                     BORDER_WIDE_WIDTH - 1, 9));
     public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
@@ -274,6 +275,11 @@ public final class WidgetUtils {
      */
     public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
             int anchor, int padding, double weightx, double weighty) {
+        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+    }
+    
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+            int anchor, int padding, double weightx, double weighty, int fill) {
         LayoutManager layout = panel.getLayout();
         if (!(layout instanceof GridBagLayout)) {
             layout = new GridBagLayout();
@@ -288,7 +294,7 @@ public final class WidgetUtils {
         constraints.weightx = weightx;
         constraints.weighty = weighty;
         constraints.anchor = anchor;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.fill = fill;
         constraints.insets = new Insets(padding, padding, padding, padding);
         gridBagLayout.addLayoutComponent(comp, constraints);
         panel.add(comp);

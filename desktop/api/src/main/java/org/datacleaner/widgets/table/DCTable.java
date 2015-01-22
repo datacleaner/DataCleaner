@@ -66,7 +66,6 @@ public class DCTable extends JXTable implements MouseListener {
         super(new Object[0][columnNames.length], columnNames);
         addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
         getTableHeader().setReorderingAllowed(true);
-        getTableHeader().setFont(WidgetUtils.FONT_HEADER2);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setOpaque(false);
         setRowSelectionAllowed(true);
@@ -114,12 +113,25 @@ public class DCTable extends JXTable implements MouseListener {
     /**
      * Convenience method to create a panel with this table, including it's
      * header, correctly layed out.
+     * 
+     * @param scrolleable
+     *            whether or not the table panel should feature scrolleable
+     *            table contents.
+     * @return
      */
-    public DCPanel toPanel() {
+    public DCPanel toPanel(boolean scrolleable) {
         if (_panel == null) {
-            _panel = new DCTablePanel(this);
+            _panel = new DCTablePanel(this, scrolleable);
         }
         return _panel;
+    }
+
+    /**
+     * Convenience method to create a panel with this table, including it's
+     * header, correctly layed out.
+     */
+    public DCPanel toPanel() {
+        return toPanel(true);
     }
 
     @Override

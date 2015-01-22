@@ -33,6 +33,7 @@ import javax.swing.KeyStroke;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -56,7 +57,7 @@ public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnecti
 
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
-		_connectionStringTemplateButton = WidgetFactory.createSmallButton("images/widgets/help.png");
+		_connectionStringTemplateButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
 		_connectionStringTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

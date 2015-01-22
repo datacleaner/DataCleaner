@@ -168,7 +168,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
             dictLabel.setIcon(icon);
             dictLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
-            final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+            final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
             editButton.setToolTipText("Edit dictionary");
 
             if (dictionary instanceof DatastoreDictionary) {

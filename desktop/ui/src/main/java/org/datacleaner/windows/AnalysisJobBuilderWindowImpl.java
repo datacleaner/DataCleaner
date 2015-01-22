@@ -704,7 +704,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JButton newJobButton = createToolbarButton("New", IconUtils.ACTION_NEW, null, true);
         newJobButton.addActionListener(_newAnalysisJobActionListenerProvider.get());
 
-        final JButton openJobButton = createToolbarButton("Open", IconUtils.MENU_OPEN, null, true);
+        final JButton openJobButton = createToolbarButton("Open", IconUtils.ACTION_OPEN, null, true);
         openJobButton.addActionListener(_openAnalysisJobActionListenerProvider.get());
 
         final JButton moreButton = createMoreMenuButton();

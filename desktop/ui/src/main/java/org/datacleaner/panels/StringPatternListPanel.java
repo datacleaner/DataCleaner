@@ -161,7 +161,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			stringPatternLabel.setIcon(icon);
 			stringPatternLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
-			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
 			editButton.setToolTipText("Edit string pattern");
 
 			if (stringPattern instanceof RegexStringPattern) {

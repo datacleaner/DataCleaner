@@ -108,7 +108,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton);
 
         if (_schemaFactory != null) {
-            final JButton autoDetectButton = WidgetFactory.createSmallButton("images/actions/refresh.png");
+            final JButton autoDetectButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REFRESH);
             autoDetectButton.setText("Auto-detect tables");
             autoDetectButton.addActionListener(new ActionListener() {
                 @Override

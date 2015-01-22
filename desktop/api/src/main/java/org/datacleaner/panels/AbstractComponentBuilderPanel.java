@@ -75,7 +75,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     protected AbstractComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
             int watermarkVerticalPosition, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition,
+                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _componentBuilder = componentBuilder;
@@ -178,7 +179,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
         result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
         result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
         result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
-                "images/actions/edit.png", optionalProperties, false));
+                IconUtils.ACTION_EDIT, optionalProperties, false));
 
         return result;
     }
@@ -197,7 +198,8 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
 
                 @Override
                 protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
-                    final PropertyWidget<?> propertyWidget = createPropertyWidget(getComponentBuilder(), propertyDescriptor);
+                    final PropertyWidget<?> propertyWidget = createPropertyWidget(getComponentBuilder(),
+                            propertyDescriptor);
                     getPropertyWidgetCollection().registerWidget(propertyDescriptor, propertyWidget);
                     return propertyWidget;
                 }

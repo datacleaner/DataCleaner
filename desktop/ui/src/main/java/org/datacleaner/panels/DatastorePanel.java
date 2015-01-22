@@ -186,7 +186,7 @@ public class DatastorePanel extends DCPanel {
     }
 
     private JButton createEditButton(final Datastore datastore) {
-        final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+        final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit datastore");
 
         if (datastore instanceof JdbcDatastore) {

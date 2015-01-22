@@ -320,7 +320,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             WidgetUtils.addToGridBag(_multipleConnectionsCheckBox, formPanel, 1, row);
         }
 
-        final JButton testButton = WidgetFactory.createDefaultButton(getTestButtonText(), "images/actions/refresh.png");
+        final JButton testButton = WidgetFactory.createDefaultButton(getTestButtonText(), IconUtils.ACTION_REFRESH);
         testButton.addActionListener(new ActionListener() {
 
             @Override

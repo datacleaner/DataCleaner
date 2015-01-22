@@ -155,7 +155,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			synonymCatalogLabel.setIcon(icon);
 			synonymCatalogLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
-			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
 			editButton.setToolTipText("Edit synonym catalog");
 
 			if (synonymCatalog instanceof TextFileSynonymCatalog) {

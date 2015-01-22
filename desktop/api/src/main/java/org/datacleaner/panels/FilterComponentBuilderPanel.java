@@ -79,7 +79,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
             _outcomePanel.add(outcomeButton);
         }
 
-        final JButton helpButton = WidgetFactory.createSmallButton("images/widgets/help.png");
+        final JButton helpButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

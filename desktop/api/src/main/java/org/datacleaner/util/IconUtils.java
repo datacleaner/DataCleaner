@@ -74,20 +74,23 @@ public final class IconUtils {
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
     public static final String MODEL_RESULT = "images/model/result.png";
 
-    public static final String MENU_OPEN = "images/actions/open.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
     public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
+    public static final String ACTION_EDIT =   "images/actions/edit.png";
+    public static final String ACTION_OPEN = "images/actions/open.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
     public static final String ACTION_CLOSE = "images/actions/close.png";
     public static final String ACTION_CANCEL =  "images/actions/cancel.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
     public static final String ACTION_RENAME = "images/actions/rename.png";
+    public static final String ACTION_REFRESH = "images/actions/refresh.png";
     public static final String ACTION_PREVIEW = "images/actions/preview_data.png";
     public static final String ACTION_BROWSE = "images/actions/browse.png";
+    public static final String ACTION_HELP = "images/actions/help.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 

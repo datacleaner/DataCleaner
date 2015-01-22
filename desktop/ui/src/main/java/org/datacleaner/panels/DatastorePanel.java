@@ -41,6 +41,7 @@ import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
@@ -66,6 +67,7 @@ import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
@@ -286,6 +288,15 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(CassandraDatastore.class, datastore).createInjector();
                     CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(ElasticSearchDatastore.class, datastore).createInjector();
+                    ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
                     dialog.open();
                 }
             });

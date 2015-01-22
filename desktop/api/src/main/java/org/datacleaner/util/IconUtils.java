@@ -125,6 +125,7 @@ public final class IconUtils {
     public static final String JSON_IMAGEPATH = "images/datastore-types/json.png";
     public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
+    public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
 
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";

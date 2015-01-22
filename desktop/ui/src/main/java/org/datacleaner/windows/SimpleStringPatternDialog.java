@@ -45,6 +45,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextField;
@@ -74,12 +75,12 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
             IconUtils.ICON_SIZE_SMALL);
 
     public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
-        super(windowContext, ImageManager.get().getImage("images/window/banner-string-patterns.png"));
+        super(windowContext, ImageManager.get().getImage(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH));
         _catalog = catalog;
         _expressionNameField = WidgetFactory.createTextField("String pattern name");
         _expressionField = WidgetFactory.createTextField("Expression");
-        _resetButton = WidgetFactory.createButton("Reset");
-        _saveButton = WidgetFactory.createButton("Save Pattern", "images/model/stringpattern_simple.png");
+        _resetButton = WidgetFactory.createSmallButton("Reset", IconUtils.ACTION_RESET);
+        _saveButton = WidgetFactory.createPrimaryButton("Save Pattern", IconUtils.ACTION_SAVE);
     }
 
     public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog,
@@ -117,11 +118,11 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
     protected JComponent getDialogContent() {
         final DCPanel formPanel = new DCPanel();
         int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("String pattern name"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_expressionNameField, formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("String pattern name:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_expressionNameField, formPanel, 1, row, 1.0, 0.0);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Expression"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("Expression:"), formPanel, 0, row);
 
         _expressionField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -136,7 +137,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
                 checkInputFields();
             }
         });
-        WidgetUtils.addToGridBag(_expressionField, formPanel, 1, row);
+        WidgetUtils.addToGridBag(_expressionField, formPanel, 1, row, 1.0, 0.0);
 
         _resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -173,9 +174,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        buttonPanel.add(_saveButton);
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, _saveButton);
         WidgetUtils.addToGridBag(buttonPanel, formPanel, 0, row, 2, 1);
 
         final DCPanel testitPanel = new DCPanel();
@@ -185,9 +184,9 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
 
         row++;
-        JLabel testInputLabel = DCLabel.bright("Test input");
+        JLabel testInputLabel = DCLabel.bright("You can test your expression here");
         testInputLabel.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png"));
-        testInputLabel.setFont(WidgetUtils.FONT_HEADER1);
+        testInputLabel.setFont(WidgetUtils.FONT_HEADER2);
         WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
         _inputFields = new ArrayList<JTextField>(NUM_TEST_FIELDS);

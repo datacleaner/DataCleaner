@@ -29,19 +29,20 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.SchemaFactory;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.TabCloseEvent;
-import org.datacleaner.widgets.tabs.TabCloseListener;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.SchemaFactory;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.tabs.CloseableTabbedPane;
+import org.datacleaner.widgets.tabs.TabCloseEvent;
+import org.datacleaner.widgets.tabs.TabCloseListener;
 
 /**
  * A panel for letting the user build multiple {@link SimpleTableDef}s
@@ -50,7 +51,7 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon("images/model/table.png");
+    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE);
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;
@@ -64,7 +65,6 @@ public class SimpleTableDefsPanel extends DCPanel {
     }
 
     public SimpleTableDefsPanel(SchemaFactory schemaFactory, SimpleTableDef[] tableDefs) {
-        super();
         _schemaFactory = schemaFactory;
         _tabbedPane = new CloseableTabbedPane();
         _tabbedPane.setVisible(false);
@@ -76,7 +76,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         }
 
         setLayout(new BorderLayout());
-        add(_tabbedPane, BorderLayout.CENTER);
+        add(WidgetUtils.decorateWithShadow(_tabbedPane, true, 4), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 
@@ -105,7 +105,7 @@ public class SimpleTableDefsPanel extends DCPanel {
             }
         });
 
-        final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton);
+        final DCPanel buttonPanel;
 
         if (_schemaFactory != null) {
             final JButton autoDetectButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REFRESH);
@@ -122,7 +122,9 @@ public class SimpleTableDefsPanel extends DCPanel {
                     }
                 }
             });
-            buttonPanel.add(autoDetectButton);
+            buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, autoDetectButton);
+        } else {
+            buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton);
         }
 
         return buttonPanel;

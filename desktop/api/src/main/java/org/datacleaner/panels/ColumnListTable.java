@@ -187,7 +187,7 @@ public final class ColumnListTable extends DCPanel {
         columnExt.setMaxWidth(80);
         columnExt.setPreferredWidth(30);
 
-        _columnTable.setRowHeight(30);
+        _columnTable.setRowHeight(DCTable.EDITABLE_TABLE_ROW_HEIGHT);
 
         JPanel tablePanel = _columnTable.toPanel();
         if (_addShadowBorder) {

@@ -40,9 +40,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.JXTable;
@@ -56,8 +56,12 @@ import org.slf4j.LoggerFactory;
 public class DCTable extends JXTable implements MouseListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
+    
 
     private static final long serialVersionUID = -5376226138423224572L;
+    
+    public static final int EDITABLE_TABLE_ROW_HEIGHT = 30;
+
     private final transient DCTableCellRenderer _tableCellRenderer;
     protected final transient List<JMenuItem> _rightClickMenuItems;
     protected transient DCPanel _panel;

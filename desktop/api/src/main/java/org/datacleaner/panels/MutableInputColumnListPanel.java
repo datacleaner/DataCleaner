@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.OutputColumnVisibilityButton;
@@ -78,7 +79,7 @@ public class MutableInputColumnListPanel extends DCPanel implements MutableInput
 
         _visibilityButton = new OutputColumnVisibilityButton(inputColumn);
 
-       final JButton resetButton = WidgetFactory.createSmallButton("images/actions/reset.png");
+        final JButton resetButton = WidgetFactory.createSmallButton(IconUtils.ACTION_RESET);
         resetButton.setToolTipText("Reset output column name");
         resetButton.addActionListener(new ActionListener() {
 

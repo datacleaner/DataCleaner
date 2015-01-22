@@ -221,12 +221,24 @@ public final class WidgetFactory {
     }
 
     public static JButton createSmallButton(String imagePath) {
+        return createSmallButton(null, imagePath);
+    }
+
+    public static JButton createSmallButton(String text, String imagePath) {
         Icon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
-        return createSmallButton(icon);
+        return createSmallButton(text, icon);
     }
 
     public static JButton createSmallButton(Icon icon) {
+        return createSmallButton(null, icon);
+    }
+
+    public static JButton createSmallButton(String text, Icon icon) {
         JButton b = new JButton(icon);
+        if (text != null) {
+            b.setText(text);
+            b.setFont(WidgetUtils.FONT_SMALL);
+        }
         b.setMargin(new Insets(0, 0, 0, 0));
 
         b.setUI(new MetalButtonUI());

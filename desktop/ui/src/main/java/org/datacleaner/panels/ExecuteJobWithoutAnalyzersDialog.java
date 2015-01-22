@@ -19,7 +19,6 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -28,7 +27,6 @@ import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.api.Analyzer;
@@ -49,6 +47,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.ResultWindow;
@@ -72,6 +71,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     public ExecuteJobWithoutAnalyzersDialog(InjectorBuilder injectorBuilder, WindowContext windowContext,
             AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-execute.png"));
+        setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _injectorBuilder = injectorBuilder;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
@@ -99,10 +99,10 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final DCLabel text1 = DCLabel.brightMultiLine("Your job does not contain any analysis components!");
+        final DCLabel text1 = DCLabel.darkMultiLine("Your job does not contain any analysis components!");
 
         final DCLabel text2 = DCLabel
-                .brightMultiLine("Would you like to run the current job and write the output data somewhere?");
+                .darkMultiLine("Would you like to run the current job and write the output data somewhere?");
 
         final JButton writeCsvButton = createButton("Write a CSV file", IconUtils.CSV_IMAGEPATH);
         writeCsvButton.addActionListener(createWriteDataActionListener(CreateCsvFileAnalyzer.class, ".csv"));
@@ -111,7 +111,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
         writeExcelButton
                 .addActionListener(createWriteDataActionListener(CreateExcelSpreadsheetAnalyzer.class, ".xlsx"));
 
-        final DCLabel text3 = DCLabel.brightMultiLine("... Or cancel and modify the job?");
+        final DCLabel text3 = DCLabel.darkMultiLine("... Or cancel and modify the job?");
 
         final JButton cancelButton = createButton("Cancel", IconUtils.ACTION_REMOVE);
         cancelButton.addActionListener(new ActionListener() {
@@ -170,10 +170,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     }
 
     private JButton createButton(String text, String imagePath) {
-        JButton button = WidgetFactory.createButton(text, imagePath);
-        button.addMouseListener(new ButtonHoverMouseListener());
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setHorizontalAlignment(SwingConstants.LEFT);
+        JButton button = WidgetFactory.createDefaultButton(text, imagePath);
         return button;
     }
 

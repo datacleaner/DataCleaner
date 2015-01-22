@@ -20,7 +20,6 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -30,15 +29,17 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
-import org.datacleaner.reference.SimpleDictionary;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.SimpleDictionary;
 import org.datacleaner.user.MutableReferenceDataCatalog;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextArea;
@@ -56,7 +57,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
     @Inject
     protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
             WindowContext windowContext) {
-        super(windowContext, ImageManager.get().getImage("images/window/banner-dictionaries.png"));
+        super(windowContext, ImageManager.get().getImage(IconUtils.DICTIONARY_SIMPLE_IMAGEPATH));
         _originalDictionary = dictionary;
         _catalog = catalog;
 
@@ -103,8 +104,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Values:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(WidgetUtils.scrolleable(_valuesTextArea), formPanel, 1, row);
 
-        final JButton createDictionaryButton = WidgetFactory.createButton("Save dictionary",
-                "images/model/dictionary.png");
+        final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
+                IconUtils.ACTION_SAVE);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,9 +132,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 4));
-        buttonPanel.add(createDictionaryButton);
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, createDictionaryButton);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel(
                 "A simple dictionary is a dictionary that you enter directly in DataCleaner. In the 'Values' field you can enter each value of the dictionary on a separate line.");
@@ -143,7 +142,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         mainPanel.add(descriptionLabel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         mainPanel.setPreferredSize(getDialogWidth(), 400);
 
         return mainPanel;

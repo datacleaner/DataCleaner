@@ -57,7 +57,7 @@ public class SugarCrmDatastoreDialog extends AbstractDatastoreDialog<SugarCrmDat
     @Inject
     public SugarCrmDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
             @Nullable SugarCrmDatastore originalDatastore, UserPreferences userPreferences) {
-        super(originalDatastore, datastoreCatalog, windowContext, userPreferences, "images/window/banner-sugarcrm.png");
+        super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
         _baseUrlTextField = WidgetFactory.createTextField("Base URL");

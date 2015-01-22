@@ -30,7 +30,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
@@ -39,11 +38,12 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DictionaryListPanel;
 import org.datacleaner.panels.StringPatternListPanel;
 import org.datacleaner.panels.SynonymCatalogListPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.NeopostToolbarButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 import com.google.inject.Injector;
@@ -136,22 +136,13 @@ public final class ReferenceDataDialog extends AbstractDialog {
 
         _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
 
-        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ReferenceDataDialog.this.dispose();
             }
         });
-
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new NeopostToolbarButton());
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(closeButton);
-
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        toolBarPanel.setLayout(new BorderLayout());
-        toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         panel.setLayout(new BorderLayout());
@@ -162,7 +153,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
                                 + "synonym catalogs (usually used for replacement) and in string patterns (used for pattern matching)."),
                 BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
-        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
         panel.setPreferredSize(getDialogWidth(), 500);
         return panel;
     }

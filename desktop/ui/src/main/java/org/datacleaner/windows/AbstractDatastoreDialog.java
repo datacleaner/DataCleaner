@@ -49,15 +49,10 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
-    
-    public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-            WindowContext windowContext, UserPreferences userPreferences) {
-        this(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences, DEFAULT_BANNER_IMAGE);
-    }
 
     public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-            WindowContext windowContext, UserPreferences userPreferences, String bannerImagePath) {
-        super(windowContext, imageManager.getImage(bannerImagePath));
+            WindowContext windowContext, UserPreferences userPreferences) {
+        super(windowContext, imageManager.getImage(DEFAULT_BANNER_IMAGE));
         _originalDatastore = originalDatastore;
         _mutableDatastoreCatalog = mutableDatastoreCatalog;
         _userPreferences = userPreferences;

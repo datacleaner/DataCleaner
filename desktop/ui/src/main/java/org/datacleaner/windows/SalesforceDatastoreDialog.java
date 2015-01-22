@@ -57,8 +57,7 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
     @Inject
     public SalesforceDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
             @Nullable SalesforceDatastore originalDatastore, UserPreferences userPreferences) {
-        super(originalDatastore, datastoreCatalog, windowContext, userPreferences,
-                "images/window/banner-salesforce.png");
+        super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
         _usernameTextField = WidgetFactory.createTextField("Username");

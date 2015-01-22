@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JToolBar;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -37,10 +36,11 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.panels.ColumnListTable;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.NeopostToolbarButton;
+import org.datacleaner.widgets.Alignment;
 
 /**
  * Dialog used for configuring a source table of a job.
@@ -96,7 +96,7 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
             _columnListTable.addColumn(metaModelInputColumn);
         }
 
-        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,19 +104,10 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
             }
         });
 
-        final JToolBar toolBar = WidgetFactory.createToolBar();
-        toolBar.add(new NeopostToolbarButton());
-        toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(closeButton);
-
-        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
-        toolBarPanel.setLayout(new BorderLayout());
-        toolBarPanel.add(toolBar, BorderLayout.CENTER);
-
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(_columnListTable, BorderLayout.CENTER);
-        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
         return panel;
     }
 

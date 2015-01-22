@@ -126,4 +126,8 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
         _columnListTable.removeColumn(column);
     }
 
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 }

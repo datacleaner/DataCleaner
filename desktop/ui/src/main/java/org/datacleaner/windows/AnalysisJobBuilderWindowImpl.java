@@ -29,6 +29,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -866,6 +867,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                         windowsMenuItem.add(switchToWindowItem);
                     }
 
+                    windowsMenuItem.add(new JSeparator());
+                    
+                    JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
+                    closeAllWindowsItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
+                            for(DCWindow window : windows){
+                                if(window instanceof AbstractDialog){
+                                    window.close();
+                                }
+                            }
+                        }
+                    });
+                    windowsMenuItem.add(closeAllWindowsItem);
+                    
                     popup.removeAll();
                     popup.add(dictionariesMenuItem);
                     popup.add(synonymCatalogsMenuItem);

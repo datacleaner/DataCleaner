@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.datacleaner.actions.RenameComponentActionListener;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
@@ -54,11 +55,11 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     private final ComponentBuilderPresenter _presenter;
     private final ComponentBuilder _componentBuilder;
 
-    public ComponentConfigurationDialog(ComponentBuilder componentBuilder, AnalysisJobBuilder analysisJobBuilder,
+    public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder, AnalysisJobBuilder analysisJobBuilder,
             ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
-        super(null, getBannerImage(componentBuilder));
+        super(windowContext, getBannerImage(componentBuilder));
 
         _componentBuilder = componentBuilder;
         _componentBuilder.addRemovalListener(this);

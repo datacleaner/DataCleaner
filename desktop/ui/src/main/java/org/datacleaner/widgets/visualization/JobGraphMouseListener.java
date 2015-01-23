@@ -132,7 +132,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (renderer != null) {
             final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
 
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
+            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext, componentBuilder,
                     _graphContext.getAnalysisJobBuilder(), presenter);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override

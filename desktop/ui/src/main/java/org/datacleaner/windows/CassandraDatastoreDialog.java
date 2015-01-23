@@ -47,7 +47,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
 
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
-    private final JXTextField _keySpaceTextField;
+    private final JXTextField _keyspaceTextField;
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
@@ -60,24 +60,24 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
-        _keySpaceTextField = WidgetFactory.createTextField();
+        _keyspaceTextField = WidgetFactory.createTextField();
 
         _datastoreNameTextField.addKeyListener(_keyListener);
         _hostnameTextField.addKeyListener(_keyListener);
         _portTextField.addKeyListener(_keyListener);
-        _keySpaceTextField.addKeyListener(_keyListener);
+        _keyspaceTextField.addKeyListener(_keyListener);
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
             _portTextField.setText("9042");
-            _keySpaceTextField.setText("");
+            _keyspaceTextField.setText("");
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
             _hostnameTextField.setText(originalDatastore.getHostname());
             _portTextField.setText(originalDatastore.getPort() + "");
-            _keySpaceTextField.setText(originalDatastore.getKeySpace());
+            _keyspaceTextField.setText(originalDatastore.getKeySpace());
             final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
@@ -87,7 +87,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     protected void onSettingsUpdate() {
         boolean valid = ((_datastoreNameTextField.getText().length() > 0) && (_hostnameTextField.getText().length() > 0)
                 && (_portTextField.getText().length() > 0) && (Integer.parseInt(_portTextField.getText()) > 0)
-                && (_keySpaceTextField.getText().length() > 0));
+                && (_keyspaceTextField.getText().length() > 0));
         setSaveButtonEnabled(valid);
     }
 
@@ -129,8 +129,8 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
         WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
         row++;
 
-        WidgetUtils.addToGridBag(DCLabel.bright("Key space:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_keySpaceTextField, formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("Keyspace:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_keyspaceTextField, formPanel, 1, row);
         row++;
 
         WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
@@ -151,7 +151,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
         final String name = _datastoreNameTextField.getText();
         final String hostname = _hostnameTextField.getText();
         final Integer port = Integer.parseInt(_portTextField.getText());
-        final String keySpace = _keySpaceTextField.getText();
+        final String keySpace = _keyspaceTextField.getText();
         return new CassandraDatastore(name, hostname, port, keySpace);
     }
 

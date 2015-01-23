@@ -25,8 +25,6 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -44,12 +42,10 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -118,6 +114,7 @@ import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.DarkButtonUI;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
+import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.widgets.tabs.TabCloseEvent;
 import org.datacleaner.widgets.tabs.TabCloseListener;
@@ -815,75 +812,41 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JToggleButton button = new JToggleButton("More", imageManager.getImageIcon("images/menu/more.png"));
-        button.setBorder(new EmptyBorder(10, 4, 10, 4));
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setFocusPainted(false);
-        button.setUI(DarkButtonUI.get());
-        button.setHorizontalTextPosition(SwingConstants.LEFT);
+        final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon("images/menu/more.png"));
+        popupButton.setBorder(new EmptyBorder(10, 4, 10, 4));
+        popupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        popupButton.setFocusPainted(false);
+        popupButton.setUI(DarkButtonUI.get());
+        popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
 
-        final JPopupMenu popup = new JPopupMenu() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void removeNotify() {
-                super.removeNotify();
-                final Timer timer = new Timer(300, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                button.setSelected(false);
-                            }
-                        });
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
-            }
-        };
-
-        button.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent itemEvent) {
-                int state = itemEvent.getStateChange();
-                if (state == ItemEvent.SELECTED) {
-                    final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
-                    windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png",
-                            IconUtils.ICON_SIZE_SMALL));
-                    final List<DCWindow> windows = getWindowContext().getWindows();
-                    for (final DCWindow window : windows) {
-                        final Image windowIcon = window.getWindowIcon();
-                        final String title = window.getWindowTitle();
-                        final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                                IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-                        final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
-                        switchToWindowItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                window.toFront();
-                            }
-                        });
-                        windowsMenuItem.add(switchToWindowItem);
-                    }
-
-                    popup.removeAll();
-                    popup.add(dictionariesMenuItem);
-                    popup.add(synonymCatalogsMenuItem);
-                    popup.add(stringPatternsMenuItem);
-                    popup.add(new JSeparator());
-                    popup.add(windowsMenuItem);
-                    popup.add(new JSeparator());
-                    popup.add(monitorMenuItem);
-                    popup.add(optionsMenuItem);
-                    popup.show(button, 0, button.getHeight());
-                } else {
-                    popup.setVisible(false);
+        final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
+        windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
+        final List<DCWindow> windows = getWindowContext().getWindows();
+        for (final DCWindow window : windows) {
+            final Image windowIcon = window.getWindowIcon();
+            final String title = window.getWindowTitle();
+            final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
+                    IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+            final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
+            switchToWindowItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    window.toFront();
                 }
-            }
-        });
+            });
+            windowsMenuItem.add(switchToWindowItem);
+        }
 
-        return button;
+        popupButton.getMenu().removeAll();
+        popupButton.getMenu().add(dictionariesMenuItem);
+        popupButton.getMenu().add(synonymCatalogsMenuItem);
+        popupButton.getMenu().add(stringPatternsMenuItem);
+        popupButton.getMenu().add(new JSeparator());
+        popupButton.getMenu().add(windowsMenuItem);
+        popupButton.getMenu().add(new JSeparator());
+        popupButton.getMenu().add(monitorMenuItem);
+        popupButton.getMenu().add(optionsMenuItem);
+        return popupButton;
     }
 
     private JToggleButton createViewToggleButton(final String text, final JComponent editingContentView,

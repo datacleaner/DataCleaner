@@ -47,13 +47,6 @@ public class MockAnalyzer implements Analyzer<AnalyzerResultFuture<AnalyzerResul
     @ColumnProperty(escalateToMultipleJobs = true)
     InputColumn<?> _column;
 
-    /**
-     * Main constructor
-     */
-    public MockAnalyzer() {
-        // TODO Auto-generated constructor stub
-    }
-
     @Override
     public void run(InputRow row, int distinctCount) {
         // Do nothing

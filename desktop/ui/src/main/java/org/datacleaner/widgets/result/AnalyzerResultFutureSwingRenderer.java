@@ -82,8 +82,6 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
                     logger.error("No renderer found for: " + result);
                 }
                 
-                
-                // TODO: Remove loading indicator, replace with rendered result
                 resultPanel.remove(busyLabel);
                 resultPanel.updateUI();
                 
@@ -91,7 +89,7 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
 
             @Override
             public void onError(RuntimeException error) {
-                // TODO Auto-generated method stub
+                logger.error("Error occured while retrieving AnalyzerResult from AnalyzerResultFuture" + error);
             }
             
         });

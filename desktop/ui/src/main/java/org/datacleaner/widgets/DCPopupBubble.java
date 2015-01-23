@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -33,80 +34,85 @@ import org.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
-	private static final ImageManager imageManager = ImageManager.get();
+    private static final ImageManager imageManager = ImageManager.get();
 
-	private final DCGlassPane _glassPane;
-	private final DCPanel _panel;
-	private int _xOnScreen;
-	private int _yOnScreen;
+    private final DCGlassPane _glassPane;
+    private final DCPanel _panel;
+    private int _xOnScreen;
+    private int _yOnScreen;
 
-	public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen) {
-		this(glassPane, text, xOnScreen, yOnScreen, null);
-	}
+    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen) {
+        this(glassPane, text, xOnScreen, yOnScreen, (Icon) null);
+    }
 
-	public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, String iconPath) {
-		_glassPane = glassPane;
-		_panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
-		_xOnScreen = xOnScreen;
-		_yOnScreen = yOnScreen;
-		final DCLabel label = DCLabel.bright(text);
-		if (iconPath != null) {
-			label.setIcon(imageManager.getImageIcon(iconPath));
-		}
-		label.setFont(WidgetUtils.FONT_SMALL);
-		label.setSize(240, 60);
-		label.setLocation(5, 20);
-		label.setVerticalAlignment(JLabel.CENTER);
+    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, String iconPath) {
+        this(glassPane, text, xOnScreen, yOnScreen, (iconPath == null ? null : imageManager.getImageIcon(iconPath)));
+    }
 
-		_panel.setLayout(null);
-		_panel.setSize(250, 81);
-		_panel.add(label);
-	}
+    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon) {
+        _glassPane = glassPane;
+        _panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
+        _xOnScreen = xOnScreen;
+        _yOnScreen = yOnScreen;
+        final DCLabel label = DCLabel.bright(text);
+        if (icon != null) {
+            label.setIcon(icon);
+        }
+        label.setFont(WidgetUtils.FONT_SMALL);
+        label.setSize(240, 60);
+        label.setLocation(5, 20);
+        label.setVerticalAlignment(JLabel.CENTER);
 
-	private void initLocation() {
-		Point locationOnScreen = _glassPane.getLocationOnScreen();
-		int x = _xOnScreen - locationOnScreen.x - 40;
-		if (x < 0) {
-			x = 0;
-		}
-		int y = _yOnScreen - locationOnScreen.y;
-		_panel.setLocation(x, y);
-	}
+        _panel.setLayout(null);
+        _panel.setSize(250, 81);
+        _panel.add(label);
+    }
 
-	public void showTooltip(int timeoutMillis) {
-		initLocation();
-		_glassPane.showTooltip(_panel, timeoutMillis);
-	}
+    private void initLocation() {
+        Point locationOnScreen = _glassPane.getLocationOnScreen();
+        int x = _xOnScreen - locationOnScreen.x - 40;
+        if (x < 0) {
+            x = 0;
+        }
+        int y = _yOnScreen - locationOnScreen.y;
+        _panel.setLocation(x, y);
+    }
 
-	public void show() {
-		initLocation();
-		_glassPane.add(_panel);
-	}
+    public void showTooltip(int timeoutMillis) {
+        initLocation();
+        _glassPane.showTooltip(_panel, timeoutMillis);
+    }
 
-	public void hide() {
-		_glassPane.remove(_panel);
-	}
+    public void show() {
+        initLocation();
+        _glassPane.add(_panel);
+    }
 
-	public void setLocationOnScreen(int x, int y) {
-		_xOnScreen = x;
-		_yOnScreen = y;
-	}
+    public void hide() {
+        _glassPane.remove(_panel);
+    }
 
-	public void attachTo(final JComponent component) {
-		component.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				if (component.isEnabled()) {
-					Point locationOnScreen = component.getLocationOnScreen();
-					DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15, locationOnScreen.y + component.getHeight());
-					DCPopupBubble.this.show();
-				}
-			}
+    public void setLocationOnScreen(int x, int y) {
+        _xOnScreen = x;
+        _yOnScreen = y;
+    }
 
-			@Override
-			public void mouseExited(MouseEvent e) {
-				DCPopupBubble.this.hide();
-			}
-		});
-	}
+    public void attachTo(final JComponent component) {
+        component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (component.isEnabled()) {
+                    Point locationOnScreen = component.getLocationOnScreen();
+                    DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15,
+                            locationOnScreen.y + component.getHeight());
+                    DCPopupBubble.this.show();
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                DCPopupBubble.this.hide();
+            }
+        });
+    }
 }

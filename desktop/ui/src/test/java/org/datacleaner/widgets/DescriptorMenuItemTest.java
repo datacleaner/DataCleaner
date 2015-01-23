@@ -28,12 +28,12 @@ import org.datacleaner.descriptors.Descriptors;
 
 public class DescriptorMenuItemTest extends TestCase {
 
-	public void testToolTipSize() throws Exception {
-		DescriptorMenuItem menuItem = new DescriptorMenuItem(
-				Descriptors.ofTransformer(EmailStandardizerTransformer.class));
+    public void testToolTipSize() throws Exception {
+        DescriptorMenuItem menuItem = new DescriptorMenuItem(null, null,
+                Descriptors.ofTransformer(EmailStandardizerTransformer.class));
 
-		JComponent toolTipPanel = menuItem.createToolTipPanel();
-		assertTrue(1000 > toolTipPanel.getPreferredSize().width);
-		assertTrue(1000 > toolTipPanel.getPreferredSize().height);
-	}
+        JComponent toolTipPanel = menuItem.createToolTipPanel();
+        assertTrue(1000 > toolTipPanel.getPreferredSize().width);
+        assertTrue(1000 > toolTipPanel.getPreferredSize().height);
+    }
 }

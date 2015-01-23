@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -44,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -115,6 +117,7 @@ import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.DarkButtonUI;
+import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -155,7 +158,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Map<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> _transformerPresenters = new LinkedHashMap<>();
     private final Map<FilterComponentBuilder<?, ?>, FilterComponentBuilderPresenter> _filterPresenters = new LinkedHashMap<>();
     private final Map<ComponentBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<>();
-    private final List<JButton> _superCategoryButtons = new ArrayList<>();
+    private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalyzerBeansConfiguration _configuration;
     private final RendererFactory _presenterRendererFactory;
@@ -184,6 +187,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
     private final JComponent _editingContentView;
+    private final UsageLogger _usageLogger;
     private volatile AbstractComponentBuilderPanel _latestPanel = null;
     private FileObject _jobFilename;
     private Datastore _datastore;
@@ -214,6 +218,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
+        _usageLogger = usageLogger;
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -746,10 +751,24 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         for (ComponentSuperCategory superCategory : superCategories) {
             final String name = superCategory.getName();
             final String description = "<html><b>" + name + "</b><br/>" + superCategory.getDescription() + "</html>";
-            final JButton button = createToolbarButton(name, null, description);
 
-            toolBar.add(button);
-            _superCategoryButtons.add(button);
+            final PopupButton popupButton = new PopupButton(name);
+            applyMenuPopupButttonStyling(popupButton);
+
+            DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
+                    IconUtils.getComponentSuperCategoryIcon(superCategory));
+            popupBubble.attachTo(popupButton);
+
+            final JPopupMenu menu = popupButton.getMenu();
+
+            final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
+                    superCategory, null);
+            menuBuilder.addItemsToPopupMenu(menu);
+
+            System.out.println(" - " + superCategory + ": " + Arrays.toString(menu.getComponents()));
+
+            toolBar.add(popupButton);
+            _superCategoryButtons.add(popupButton);
         }
     }
 
@@ -808,11 +827,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         });
 
         final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon("images/menu/more.png"));
-        popupButton.setBorder(new EmptyBorder(10, 4, 10, 4));
-        popupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        popupButton.setFocusPainted(false);
-        popupButton.setUI(DarkButtonUI.get());
-        popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
+        applyMenuPopupButttonStyling(popupButton);
 
         final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
         windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
@@ -842,6 +857,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.getMenu().add(monitorMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
         return popupButton;
+    }
+
+    private void applyMenuPopupButttonStyling(PopupButton popupButton) {
+        popupButton.setBorder(new EmptyBorder(10, 4, 10, 4));
+        popupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        popupButton.setFocusPainted(false);
+        popupButton.setUI(DarkButtonUI.get());
+        popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 
     private JToggleButton createViewToggleButton(final String text, final JComponent editingContentView,
@@ -920,7 +943,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
 
-        for (JButton superCategoryButton : _superCategoryButtons) {
+        for (PopupButton superCategoryButton : _superCategoryButtons) {
             superCategoryButton.setEnabled(everythingEnabled);
         }
     }

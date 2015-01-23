@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
@@ -185,19 +186,28 @@ public final class IconUtils {
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
-        Class<? extends ComponentCategory> categoryClass = category.getClass();
+    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
+        final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
+        return getCategoryIcon(superCategoryClass);
+    }
 
-        final String bundledIconPath = getImagePathForClass(categoryClass);
+    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
+        final Class<? extends ComponentCategory> categoryClass = category.getClass();
+        return getCategoryIcon(categoryClass);
+
+    }
+
+    private static ImageIcon getCategoryIcon(Class<?> cls) {
+        final String bundledIconPath = getImagePathForClass(cls);
 
         final int totalSize = ICON_SIZE_MEDIUM;
         final Image decoration;
@@ -205,7 +215,7 @@ public final class IconUtils {
         if (bundledIconPath == null) {
             decoration = null;
         } else {
-            final ClassLoader classLoader = categoryClass.getClassLoader();
+            final ClassLoader classLoader = cls.getClassLoader();
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 

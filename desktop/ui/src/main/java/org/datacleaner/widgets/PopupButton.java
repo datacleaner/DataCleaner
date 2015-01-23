@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
- package org.datacleaner.widgets;
+package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -42,23 +42,23 @@ import javax.swing.event.PopupMenuListener;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
 
-public class PopupButton extends JToggleButton {  
+public class PopupButton extends JToggleButton {
     private static final long serialVersionUID = 1L;
     private final JPopupMenu popupMenu = new JPopupMenu();
-    
-    public PopupButton(String text){
+
+    public PopupButton(String text) {
         this(text, null);
     }
-    
-    public PopupButton(String text, Icon icon){
+
+    public PopupButton(String text, Icon icon) {
         super(text, icon);
 
-        
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (isSelected())
+                if (isSelected()) {
                     popupMenu.show(PopupButton.this, 0, getHeight());
+                }
             }
         });
 
@@ -85,16 +85,16 @@ public class PopupButton extends JToggleButton {
                     }
                 }
             }
-        });        
+        });
     }
-    
-    public JPopupMenu getMenu(){
+
+    public JPopupMenu getMenu() {
         return popupMenu;
     }
-    
+
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
-        PopupButton popupButton = new PopupButton("More",  ImageManager.get().getImageIcon("images/menu/more.png"));
+        PopupButton popupButton = new PopupButton("More", ImageManager.get().getImageIcon("images/menu/more.png"));
         JPanel toolBarPanel = new JPanel();
         toolBarPanel.add(popupButton);
         JToolBar toolBar = new JToolBar();
@@ -106,7 +106,7 @@ public class PopupButton extends JToggleButton {
         popupPanel.add(new JTextArea("Some text", 15, 20), BorderLayout.CENTER);
         popupPanel.add(new JSlider(), BorderLayout.SOUTH);
         popupButton.getMenu().add(popupPanel);
-        
+
         final JFrame frame = new JFrame("test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(640, 480));

@@ -19,12 +19,7 @@
  */
 package org.datacleaner.windows;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.apache.metamodel.schema.Schema;
@@ -35,7 +30,8 @@ import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.WidgetFactory;
@@ -45,14 +41,9 @@ import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class ElasticSearchDatastoreDialog extends AbstractDialog implements SchemaFactory {
+public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements SchemaFactory {
 
     private static final long serialVersionUID = 1L;
-
-    private static final ImageManager imageManager = ImageManager.get();
-
-    private final MutableDatastoreCatalog _catalog;
-    private final ElasticSearchDatastore _originalDatastore;
 
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
@@ -63,10 +54,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDialog implements Sche
 
     @Inject
     public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable ElasticSearchDatastore datastore) {
-        super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
-        _catalog = catalog;
-        _originalDatastore = datastore;
+            @Nullable ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
+        super(originalDatastore, catalog, windowContext, userPreferences);
 
         _datastoreNameTextField = WidgetFactory.createTextField();
         _hostnameTextField = WidgetFactory.createTextField();
@@ -75,18 +64,18 @@ public class ElasticSearchDatastoreDialog extends AbstractDialog implements Sche
         _clusterNameTextField = WidgetFactory.createTextField();
         _indexNameTextField = WidgetFactory.createTextField();
 
-        if (_originalDatastore == null) {
+        if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
             _portTextField.setText("9300");
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
         } else {
-            _datastoreNameTextField.setText(_originalDatastore.getName());
+            _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
-            _hostnameTextField.setText(_originalDatastore.getHostname());
-            _portTextField.setText(_originalDatastore.getPort() + "");
-            _clusterNameTextField.setText(_originalDatastore.getClusterName());
-            _indexNameTextField.setText(_originalDatastore.getIndexName());
-            final SimpleTableDef[] tableDefs = _originalDatastore.getTableDefs();
+            _hostnameTextField.setText(originalDatastore.getHostname());
+            _portTextField.setText(originalDatastore.getPort() + "");
+            _clusterNameTextField.setText(originalDatastore.getClusterName());
+            _indexNameTextField.setText(originalDatastore.getIndexName());
+            final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
     }
@@ -141,23 +130,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDialog implements Sche
         WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
         row++;
 
-        final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ElasticSearchDatastore datastore = createDatastore();
-
-                if (_originalDatastore != null) {
-                    _catalog.removeDatastore(_originalDatastore);
-                }
-                _catalog.addDatastore(datastore);
-                ElasticSearchDatastoreDialog.this.dispose();
-            }
-        });
-
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        buttonPanel.add(saveButton);
+        final DCPanel buttonPanel = getButtonPanel();
 
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new VerticalLayout(4));
@@ -183,5 +156,10 @@ public class ElasticSearchDatastoreDialog extends AbstractDialog implements Sche
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
         }
+    }
+
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.ELASTICSEARCH_IMAGEPATH;
     }
 }

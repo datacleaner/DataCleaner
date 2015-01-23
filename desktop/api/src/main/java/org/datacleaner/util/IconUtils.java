@@ -203,7 +203,6 @@ public final class IconUtils {
     public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
         final Class<? extends ComponentCategory> categoryClass = category.getClass();
         return getCategoryIcon(categoryClass, true);
-
     }
 
     private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder) {

@@ -20,14 +20,17 @@
 package org.datacleaner.monitor.configuration;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
@@ -126,6 +129,22 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     @Override
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors() {
         return getDelegate().getTransformerDescriptors();
+    }
+    
+    @Override
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
+        return getComponentDescriptors();
+    }
+    
+    @Override
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
+            ComponentSuperCategory category) {
+        return getDelegate().getComponentDescriptorsOfSuperCategory(category);
+    }
+    
+    @Override
+    public Set<ComponentSuperCategory> getComponentSuperCategories() {
+        return getDelegate().getComponentSuperCategories();
     }
 
 }

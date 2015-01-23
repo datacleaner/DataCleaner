@@ -41,7 +41,8 @@ import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements SchemaFactory {
+public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
+        SchemaFactory {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,6 +58,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             @Nullable ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
+        setSaveButtonEnabled(false);
+        
         _datastoreNameTextField = WidgetFactory.createTextField();
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
@@ -78,6 +81,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
+        
+        _datastoreNameTextField.addKeyListener(_keyListener);
+        _hostnameTextField.addKeyListener(_keyListener);
+        _portTextField.addKeyListener(_keyListener);
+        _clusterNameTextField.addKeyListener(_keyListener);
+        _indexNameTextField.addKeyListener(_keyListener);
+
     }
 
     @Override
@@ -117,15 +127,15 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
         row++;
-        
+
         WidgetUtils.addToGridBag(DCLabel.bright("Cluster name:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_clusterNameTextField, formPanel, 1, row);
         row++;
-        
+
         WidgetUtils.addToGridBag(DCLabel.bright("Index name:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_indexNameTextField, formPanel, 1, row);
         row++;
-        
+
         WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
         row++;
@@ -161,5 +171,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     @Override
     protected String getDatastoreIconPath() {
         return IconUtils.ELASTICSEARCH_IMAGEPATH;
+    }
+
+    @Override
+    protected void onSettingsUpdate() {
+        boolean valid = ((_datastoreNameTextField.getText().length() > 0) && (_hostnameTextField.getText().length() > 0)
+                && (_portTextField.getText().length() > 0) && (Integer.parseInt(_portTextField.getText()) > 0)
+                && (_clusterNameTextField.getText().length() > 0) && (_indexNameTextField.getText().length() > 0));
+        setSaveButtonEnabled(valid);
     }
 }

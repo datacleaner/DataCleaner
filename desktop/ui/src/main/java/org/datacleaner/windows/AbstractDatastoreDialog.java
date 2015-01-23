@@ -23,6 +23,8 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 
@@ -35,6 +37,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.JXTextField;
 
 public abstract class AbstractDatastoreDialog<D extends Datastore> extends AbstractDialog {
 
@@ -49,6 +52,27 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
+    
+    protected final JXTextField _datastoreNameTextField;
+    
+    protected final DatastoreDialogKeyListener _keyListener = new DatastoreDialogKeyListener();
+
+    protected class DatastoreDialogKeyListener implements KeyListener {
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            onSettingsUpdate();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+        }
+
+    }
 
     public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
@@ -56,6 +80,8 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         _originalDatastore = originalDatastore;
         _mutableDatastoreCatalog = mutableDatastoreCatalog;
         _userPreferences = userPreferences;
+        
+        _datastoreNameTextField = WidgetFactory.createTextField();
 
         _saveButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.ACTION_SAVE);
         _saveButton.addActionListener(new ActionListener() {
@@ -109,6 +135,11 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     protected abstract D createDatastore();
 
     protected abstract String getDatastoreIconPath();
+    
+    protected void onSettingsUpdate() {
+        boolean valid = _datastoreNameTextField.getText().length() > 0;
+        setSaveButtonEnabled(valid);
+    }
 
     /**
      * Method for subclasses to invoke for setting the enabled state of the save

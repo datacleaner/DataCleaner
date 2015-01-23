@@ -48,7 +48,6 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
     private final JXTextField _keySpaceTextField;
-    private final JXTextField _datastoreNameTextField;
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
@@ -56,11 +55,17 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
             @Nullable CassandraDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
-        _datastoreNameTextField = WidgetFactory.createTextField();
+        setSaveButtonEnabled(false);
+
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
-        _keySpaceTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
+        _keySpaceTextField = WidgetFactory.createTextField();
+
+        _datastoreNameTextField.addKeyListener(_keyListener);
+        _hostnameTextField.addKeyListener(_keyListener);
+        _portTextField.addKeyListener(_keyListener);
+        _keySpaceTextField.addKeyListener(_keyListener);
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
@@ -76,6 +81,14 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
             final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
             _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
+    }
+
+    @Override
+    protected void onSettingsUpdate() {
+        boolean valid = ((_datastoreNameTextField.getText().length() > 0) && (_hostnameTextField.getText().length() > 0)
+                && (_portTextField.getText().length() > 0) && (Integer.parseInt(_portTextField.getText()) > 0)
+                && (_keySpaceTextField.getText().length() > 0));
+        setSaveButtonEnabled(valid);
     }
 
     @Override

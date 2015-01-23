@@ -424,14 +424,14 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
-                IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
-        
-        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
-                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
-        
         panel.add(createNewDatastoreButton("ElasticSearch database", "Connect to an ElasticSearch database",
                 IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
+                IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();

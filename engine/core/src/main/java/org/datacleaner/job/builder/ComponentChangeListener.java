@@ -19,28 +19,29 @@
  */
 package org.datacleaner.job.builder;
 
-import java.util.List;
+import org.datacleaner.job.ComponentRequirement;
 
-import org.datacleaner.data.MutableInputColumn;
+public interface ComponentChangeListener<C extends ComponentBuilder> extends ComponentRemovalListener<C> {
+    
+    /**
+     * Invoked when a component is added to the {@link AnalysisJobBuilder}.
+     * 
+     * @param builder
+     */
+    public void onAdd(C builder);
 
-/**
- * Listener interface for receiving notifications when transformers are being
- * added, removed or modified in a way which changes their output.
- * 
- * 
- */
-public interface TransformerChangeListener extends ComponentChangeListener<TransformerComponentBuilder<?>> {
+    /**
+     * Invoked when the configuration of a {@link ComponentBuilder} is changed.
+     * 
+     * @param builder
+     */
+    public void onConfigurationChanged(C builder);
 
-	/**
-	 * This method will be invoked each time a change in a transformer's output
-	 * columns is observed.
-	 * 
-	 * Note that this method will also be invoked with an empty list if a
-	 * transformer is being removed. This is to make it easier for listeners to
-	 * handle updates on output columns using a single listening-method.
-	 * 
-	 * @param transformerJobBuilder
-	 * @param outputColumns
-	 */
-	public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns);
+    /**
+     * Invoked when the {@link ComponentRequirement} of a
+     * {@link ComponentBuilder} is changed.
+     * 
+     * @param builder
+     */
+    public void onRequirementChanged(C builder);
 }

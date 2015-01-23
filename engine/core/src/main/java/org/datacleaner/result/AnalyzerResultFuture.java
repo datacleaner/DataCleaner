@@ -65,7 +65,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
     private static final long serialVersionUID = 1L;
 
     private transient final CountDownLatch _countDownLatch;
-    private transient List<Listener<R>> _listeners;
+    private transient List<Listener<? super R>> _listeners;
 
     private final String _name;
     private R _result;
@@ -108,7 +108,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
      * 
      * @param listener
      */
-    public synchronized void addListener(Listener<R> listener) {
+    public synchronized void addListener(Listener<? super R> listener) {
         // it might be we add a listener AFTER the result is actually produced,
         // in which case we simply inform the listener immediately.
         if (isReady()) {
@@ -143,7 +143,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
             return;
         }
         try {
-            for (final Listener<R> listener : _listeners) {
+            for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onSuccess(_result);
                 } catch (Exception e) {
@@ -162,7 +162,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
             return;
         }
         try {
-            for (final Listener<R> listener : _listeners) {
+            for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onError(_error);
                 } catch (Exception e) {

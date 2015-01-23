@@ -54,6 +54,7 @@ import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
 import org.datacleaner.panels.ComponentBuilderPresenter;
@@ -131,6 +132,12 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
                     _graphContext.getAnalysisJobBuilder(), presenter);
+            componentBuilder.addRemovalListener(new ComponentRemovalListener<ComponentBuilder>() {
+                @Override
+                public void onRemove(ComponentBuilder componentBuilder) {
+                    dialog.close();
+                }
+            });
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {

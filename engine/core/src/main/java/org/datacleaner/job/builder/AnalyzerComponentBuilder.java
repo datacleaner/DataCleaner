@@ -344,7 +344,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     /**
      * Notification method invoked when transformer is removed.
      */
-    protected void onRemoved() {
+    @Override
+    protected void onRemovedInternal() {
         List<AnalyzerChangeListener> listeners = getAllListeners();
         for (AnalyzerChangeListener listener : listeners) {
             listener.onRemove(this);

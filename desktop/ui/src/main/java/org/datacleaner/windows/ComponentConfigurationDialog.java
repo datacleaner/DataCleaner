@@ -60,6 +60,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         super(null, getBannerImage(componentBuilder));
 
         _componentBuilder = componentBuilder;
+        
         _presenter = presenter;
     }
 

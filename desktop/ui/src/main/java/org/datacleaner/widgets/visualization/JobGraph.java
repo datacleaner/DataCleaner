@@ -244,8 +244,8 @@ public final class JobGraph {
                     g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
                 }
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
-
-                final Dimension size = getPanel().getSize();
+                
+                final Dimension size = _panel.getSize();
                 if (size.height < 300) {
                     // don't show the background hints - it will be too
                     // disturbing

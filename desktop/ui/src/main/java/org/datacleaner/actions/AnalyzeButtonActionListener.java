@@ -39,6 +39,8 @@ import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.DescriptorMenuItem;
 import org.datacleaner.widgets.visualization.JobGraphMetadata;
 
+//TODO: Delete
+@Deprecated
 public class AnalyzeButtonActionListener implements ActionListener {
 
     private final AnalyzerBeansConfiguration _configuration;

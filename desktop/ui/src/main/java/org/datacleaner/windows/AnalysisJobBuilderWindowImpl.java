@@ -29,11 +29,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -58,7 +60,6 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.Version;
-import org.datacleaner.actions.AnalyzeButtonActionListener;
 import org.datacleaner.actions.ComponentBuilderTabTextActionListener;
 import org.datacleaner.actions.HideTabTextActionListener;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
@@ -66,7 +67,7 @@ import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
-import org.datacleaner.actions.TransformButtonActionListener;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
@@ -76,6 +77,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
@@ -152,10 +154,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final int SOURCE_TAB = 0;
     private static final int METADATA_TAB = 1;
 
-    private final Map<AnalyzerComponentBuilder<?>, AnalyzerComponentBuilderPresenter> _analyzerPresenters = new LinkedHashMap<AnalyzerComponentBuilder<?>, AnalyzerComponentBuilderPresenter>();
-    private final Map<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> _transformerPresenters = new LinkedHashMap<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter>();
-    private final Map<FilterComponentBuilder<?, ?>, FilterComponentBuilderPresenter> _filterPresenters = new LinkedHashMap<FilterComponentBuilder<?, ?>, FilterComponentBuilderPresenter>();
-    private final Map<ComponentBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentBuilderPresenter, JComponent>();
+    private final Map<AnalyzerComponentBuilder<?>, AnalyzerComponentBuilderPresenter> _analyzerPresenters = new LinkedHashMap<>();
+    private final Map<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> _transformerPresenters = new LinkedHashMap<>();
+    private final Map<FilterComponentBuilder<?, ?>, FilterComponentBuilderPresenter> _filterPresenters = new LinkedHashMap<>();
+    private final Map<ComponentBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<>();
+    private final List<JButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalyzerBeansConfiguration _configuration;
     private final RendererFactory _presenterRendererFactory;
@@ -166,15 +169,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final SchemaTreePanel _schemaTreePanel;
     private final JButton _saveButton;
     private final JButton _saveAsButton;
-    private final JButton _transformButton;
-    private final JButton _analyzeButton;
     private final JButton _executeButton;
     private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
     private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
     private final Provider<NewAnalysisJobActionListener> _newAnalysisJobActionListenerProvider;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
-    private final Provider<AnalyzeButtonActionListener> _addAnalyzerActionListenerProvider;
-    private final Provider<TransformButtonActionListener> _addTransformerActionListenerProvider;
     private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
     private final Provider<MonitorConnectionDialog> _monitorConnectionDialogProvider;
     private final Provider<OptionsDialog> _optionsDialogProvider;
@@ -203,8 +202,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
             Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
-            Provider<AnalyzeButtonActionListener> addAnalyzerActionListenerProvider,
-            Provider<TransformButtonActionListener> addTransformerActionListenerProvider,
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
@@ -216,8 +213,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _newAnalysisJobActionListenerProvider = newAnalysisJobActionListenerProvider;
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
-        _addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
-        _addTransformerActionListenerProvider = addTransformerActionListenerProvider;
         _referenceDataDialogProvider = referenceDataDialogProvider;
         _monitorConnectionDialogProvider = monitorConnectionDialogProvider;
         _optionsDialogProvider = optionsDialogProvider;
@@ -249,12 +244,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
         _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
 
-        _transformButton = createToolbarButton(
-                "Transform",
-                null,
-                "<html><b>Transformers and filters</b><br/>Preprocess or filter your data in order to extract, limit, combine or generate separate values.</html>");
-        _analyzeButton = createToolbarButton("Analyze", null,
-                "<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
         _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
@@ -637,7 +626,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public Image getWindowIcon() {
-        return imageManager.getImage("images/filetypes/analysis_job.png");
+        return imageManager.getImage(IconUtils.MODEL_JOB);
     }
 
     @Override
@@ -671,12 +660,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.addActionListener(saveAnalysisJobActionListener);
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
-
-        // Transform button
-        _transformButton.addActionListener(_addTransformerActionListenerProvider.get());
-
-        // Analyze button
-        _analyzeButton.addActionListener(_addAnalyzerActionListenerProvider.get());
 
         // Run analysis
         final RunAnalysisActionListener runAnalysisActionListener = _runAnalysisActionProvider.get();
@@ -726,8 +709,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBar.add(moreButton);
 
         toolBar.add(WidgetFactory.createToolBarSeparator());
-        toolBar.add(_transformButton);
-        toolBar.add(_analyzeButton);
+        addComponentDescriptorButtons(toolBar);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
 
@@ -759,6 +741,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         initializeExistingComponents();
 
         return panel;
+    }
+
+    private void addComponentDescriptorButtons(JToolBar toolBar) {
+        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
+        for (ComponentSuperCategory superCategory : superCategories) {
+            final String name = superCategory.getName();
+            final String description = "<html><b>" + name + "</b><br/>" + superCategory.getDescription() + "</html>";
+            final JButton button = createToolbarButton(name, null, description);
+
+            toolBar.add(button);
+            _superCategoryButtons.add(button);
+        }
     }
 
     private JToggleButton createMoreMenuButton() {
@@ -961,8 +956,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
-        _transformButton.setEnabled(everythingEnabled);
-        _analyzeButton.setEnabled(everythingEnabled);
+
+        for (JButton superCategoryButton : _superCategoryButtons) {
+            superCategoryButton.setEnabled(everythingEnabled);
+        }
     }
 
     @Override

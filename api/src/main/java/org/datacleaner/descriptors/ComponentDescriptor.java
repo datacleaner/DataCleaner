@@ -27,6 +27,7 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Initialize;
@@ -117,6 +118,12 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
      *         assigned to.
      */
     public Set<ComponentCategory> getComponentCategories();
+
+    /**
+     * @return the {@link ComponentSuperCategory} that this component pertains
+     *         to.
+     */
+    public ComponentSuperCategory getComponentSuperCategory();
 
     /**
      * @return a set of annotations for the component.

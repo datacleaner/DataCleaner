@@ -24,9 +24,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.datacleaner.api.Alias;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.QueryOptimizedFilter;
+import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C extends Enum<C>> extends
@@ -53,6 +55,11 @@ final class AnnotationBasedFilterComponentDescriptor<F extends Filter<C>, C exte
             return null;
         }
         return annotation.value();
+    }
+    
+    @Override
+    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
+        return TransformSuperCategory.class;
     }
 
     @SuppressWarnings("unchecked")

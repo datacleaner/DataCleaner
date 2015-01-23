@@ -21,8 +21,10 @@ package org.datacleaner.descriptors;
 
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.NoAnalyzerResultReducer;
+import org.datacleaner.components.categories.TransformSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> extends
@@ -49,6 +51,11 @@ final class AnnotationBasedAnalyzerComponentDescriptor<A extends Analyzer<?>> ex
             return null;
         }
         return annotation.value();
+    }
+
+    @Override
+    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
+        return TransformSuperCategory.class;
     }
 
     @Override

@@ -35,7 +35,7 @@ import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Validate;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -47,7 +47,7 @@ import org.datacleaner.output.excel.ExcelOutputWriterFactory;
 @Named("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")
 @Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
-@Categorized(WriteDataCategory.class)
+@Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 

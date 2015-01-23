@@ -19,8 +19,10 @@
  */
 package org.datacleaner.descriptors;
 
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.AnalyzeSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
 final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer> extends AbstractComponentDescriptor<T>
@@ -47,6 +49,11 @@ final class AnnotationBasedTransformerComponentDescriptor<T extends Transformer>
             return null;
         }
         return annotation.value();
+    }
+
+    @Override
+    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
+        return AnalyzeSuperCategory.class;
     }
 
     @Override

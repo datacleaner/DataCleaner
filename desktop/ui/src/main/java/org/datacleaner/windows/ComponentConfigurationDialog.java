@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.panels.ComponentBuilderPresenter;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
@@ -46,7 +47,7 @@ import org.datacleaner.widgets.visualization.JobGraph;
  * Dialog for configuring components that have been selected through the
  * {@link JobGraph}.
  */
-public class ComponentConfigurationDialog extends AbstractDialog {
+public class ComponentConfigurationDialog extends AbstractDialog implements ComponentRemovalListener<ComponentBuilder> {
 
     private static final long serialVersionUID = 1L;
 
@@ -60,7 +61,7 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         super(null, getBannerImage(componentBuilder));
 
         _componentBuilder = componentBuilder;
-        
+        _componentBuilder.addRemovalListener(this);
         _presenter = presenter;
     }
 
@@ -136,5 +137,10 @@ public class ComponentConfigurationDialog extends AbstractDialog {
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
 
         return panel;
+    }
+
+    @Override
+    public void onRemove(ComponentBuilder componentBuilder) {
+        close();
     }
 }

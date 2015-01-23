@@ -124,6 +124,10 @@ public class SourceTableConfigurationDialog extends AbstractDialog implements So
     @Override
     public void onRemove(InputColumn<?> column) {
         _columnListTable.removeColumn(column);
+        final boolean empty = _analysisJobBuilder.getSourceColumnsOfTable(_table).isEmpty();
+        if (empty) {
+            close();
+        }
     }
 
     @Override

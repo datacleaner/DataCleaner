@@ -54,7 +54,6 @@ import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
 import org.datacleaner.panels.ComponentBuilderPresenter;
@@ -84,7 +83,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
-    private final Map<ComponentBuilder, ComponentConfigurationDialog> _configurationDialogs;
+    private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
+    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
+
     private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
     private final RendererFactory _presenterRendererFactory;
@@ -97,13 +98,14 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
             RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger,
-            Map<ComponentBuilder, ComponentConfigurationDialog> configurationDialogs) {
+            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs, Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
-        _configurationDialogs = configurationDialogs;
+        _componentConfigurationDialogs = componentConfigurationDialogs;
+        _tableConfigurationDialogs = tableConfigurationDialogs;
     }
 
     /**
@@ -117,7 +119,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     private void showConfigurationDialog(final ComponentBuilder componentBuilder) {
-        final ComponentConfigurationDialog existingDialog = _configurationDialogs.get(componentBuilder);
+        final ComponentConfigurationDialog existingDialog = _componentConfigurationDialogs.get(componentBuilder);
         if (existingDialog != null) {
             existingDialog.toFront();
             return;
@@ -132,19 +134,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
                     _graphContext.getAnalysisJobBuilder(), presenter);
-            componentBuilder.addRemovalListener(new ComponentRemovalListener<ComponentBuilder>() {
-                @Override
-                public void onRemove(ComponentBuilder componentBuilder) {
-                    dialog.close();
-                }
-            });
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    _configurationDialogs.remove(componentBuilder);
+                    _componentConfigurationDialogs.remove(componentBuilder);
                 }
             });
-            _configurationDialogs.put(componentBuilder, dialog);
+            _componentConfigurationDialogs.put(componentBuilder, dialog);
             dialog.open();
         }
     }
@@ -155,9 +151,24 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param table
      * @param me
      */
-    public void onTableDoubleClicked(Table table, MouseEvent me) {
+    public void onTableDoubleClicked(final Table table, MouseEvent me) {
+        final SourceTableConfigurationDialog existingDialog = _tableConfigurationDialogs.get(table);
+        if (existingDialog != null) {
+            existingDialog.toFront();
+            return;
+        }
+        
         SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
                 _graphContext.getAnalysisJobBuilder(), table);
+        
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                _tableConfigurationDialogs.remove(table);
+            }
+        });
+        _tableConfigurationDialogs.put(table, dialog);
+        
         dialog.open();
     }
 

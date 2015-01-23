@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -764,8 +763,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
                     superCategory, null);
             menuBuilder.addItemsToPopupMenu(menu);
-
-            System.out.println(" - " + superCategory + ": " + Arrays.toString(menu.getComponents()));
 
             toolBar.add(popupButton);
             _superCategoryButtons.add(popupButton);

@@ -197,19 +197,24 @@ public final class IconUtils {
 
     public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
         final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
-        return getCategoryIcon(superCategoryClass);
+        return getCategoryIcon(superCategoryClass, false);
     }
 
     public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
         final Class<? extends ComponentCategory> categoryClass = category.getClass();
-        return getCategoryIcon(categoryClass);
+        return getCategoryIcon(categoryClass, true);
 
     }
 
-    private static ImageIcon getCategoryIcon(Class<?> cls) {
+    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder) {
         final String bundledIconPath = getImagePathForClass(cls);
 
         final int totalSize = ICON_SIZE_MEDIUM;
+
+        if (!decorateWithFolder && bundledIconPath != null) {
+            return _imageManager.getImageIcon(bundledIconPath, totalSize);
+        }
+
         final Image decoration;
         final int decorationSize = ICON_SIZE_SMALL;
         if (bundledIconPath == null) {
@@ -219,7 +224,7 @@ public final class IconUtils {
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 
-        final Image folderIcon = _imageManager.getImage("images/filetypes/folder.png", totalSize);
+        final Image folderIcon = _imageManager.getImage(FILE_FOLDER, totalSize);
 
         if (decoration == null) {
             return new ImageIcon(folderIcon);

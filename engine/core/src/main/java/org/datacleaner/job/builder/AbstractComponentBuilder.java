@@ -20,6 +20,7 @@
 package org.datacleaner.job.builder;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,6 +73,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractComponentBuilder.class);
 
+    private final List<ComponentRemovalListener<ComponentBuilder>> _removalListeners;
     private final D _descriptor;
     private final E _configurableBean;
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -97,6 +99,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         _configurableBean = ReflectionUtils.newInstance(_descriptor.getComponentClass());
         _metadataProperties = new LinkedHashMap<>();
+        _removalListeners = new ArrayList<>(1);
     }
 
     /**
@@ -669,5 +672,28 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     public InputColumn<?>[] getInput() {
         List<InputColumn<?>> inputColumns = getInputColumns();
         return inputColumns.toArray(new InputColumn[inputColumns.size()]);
+    }
+
+    /**
+     * Notification method invoked when this {@link ComponentBuilder} is
+     * removed.
+     */
+    protected final void onRemoved() {
+        onRemovedInternal();
+        for (ComponentRemovalListener<ComponentBuilder> removalListener : _removalListeners) {
+            removalListener.onRemove(this);
+        }
+    }
+
+    protected abstract void onRemovedInternal();
+
+    @Override
+    public void addRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener) {
+        _removalListeners.add(componentRemovalListener);
+    }
+
+    @Override
+    public boolean removeRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener) {
+        return _removalListeners.remove(componentRemovalListener);
     }
 }

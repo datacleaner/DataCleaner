@@ -198,4 +198,21 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @return a builder or null if none exist.
      */
     public AnalysisJobBuilder getAnalysisJobBuilder();
+
+    /**
+     * Adds a {@link ComponentRemovalListener} to this {@link ComponentBuilder}
+     * instance.
+     * 
+     * @param componentRemovalListener
+     */
+    public void addRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener);
+
+    /**
+     * Removes a {@link ComponentRemovalListener} from this
+     * {@link ComponentBuilder}.
+     * 
+     * @param componentRemovalListener
+     * @return true if the listener was found and removed.
+     */
+    public boolean removeRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener);
 }

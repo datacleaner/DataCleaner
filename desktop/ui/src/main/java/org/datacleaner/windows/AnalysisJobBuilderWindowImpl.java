@@ -135,7 +135,6 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        AnalyzerChangeListener, TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener,
         TabCloseListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
@@ -237,10 +236,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph = new JobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
         final DCPanel graphPanel = _graph.getPanel();
 
-        _analysisJobBuilder.getAnalyzerChangeListeners().add(this);
-        _analysisJobBuilder.getTransformerChangeListeners().add(this);
-        _analysisJobBuilder.getFilterChangeListeners().add(this);
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
+        _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
+        _analysisJobBuilder.getFilterChangeListeners().add(createFilterChangeListener());
+        _analysisJobBuilder.getSourceColumnListeners().add(createSourceColumnChangeListener());
 
         _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
         _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
@@ -829,20 +828,43 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
         windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
         final List<DCWindow> windows = getWindowContext().getWindows();
-        for (final DCWindow window : windows) {
-            final Image windowIcon = window.getWindowIcon();
-            final String title = window.getWindowTitle();
-            final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
-                    IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
-            final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
-            switchToWindowItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    window.toFront();
+        
+        getWindowContext().addWindowListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                windowsMenuItem.removeAll();
+                for (final DCWindow window : windows) {
+                    final Image windowIcon = window.getWindowIcon();
+                    final String title = window.getWindowTitle();
+                    final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(IconUtils.ICON_SIZE_SMALL,
+                            IconUtils.ICON_SIZE_SMALL, Image.SCALE_DEFAULT));
+                    final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
+                    switchToWindowItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            window.toFront();
+                        }
+                    });
+                    windowsMenuItem.add(switchToWindowItem);
                 }
-            });
-            windowsMenuItem.add(switchToWindowItem);
-        }
+
+                windowsMenuItem.add(new JSeparator());
+                
+                JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
+                closeAllWindowsItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
+                        for(DCWindow window : windows){
+                            if(window instanceof AbstractDialog){
+                                window.close();
+                            }
+                        }
+                    }
+                });
+                windowsMenuItem.add(closeAllWindowsItem);
+            }
+        });
 
         popupButton.getMenu().removeAll();
         popupButton.getMenu().add(dictionariesMenuItem);
@@ -853,6 +875,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.getMenu().add(new JSeparator());
         popupButton.getMenu().add(monitorMenuItem);
         popupButton.getMenu().add(optionsMenuItem);
+
         return popupButton;
     }
 
@@ -908,18 +931,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private void initializeExistingComponents() {
         List<FilterComponentBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterComponentBuilders();
         for (FilterComponentBuilder<?, ?> fjb : filterJobBuilders) {
-            onAdd(fjb);
+            initializeFilter(fjb);
         }
 
         List<TransformerComponentBuilder<?>> transformerJobBuilders = _analysisJobBuilder
                 .getTransformerComponentBuilders();
         for (TransformerComponentBuilder<?> tjb : transformerJobBuilders) {
-            onAdd(tjb);
+            initializeTransformer(tjb);
         }
 
         List<AnalyzerComponentBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerComponentBuilders();
         for (AnalyzerComponentBuilder<?> ajb : analyzerJobBuilders) {
-            onAdd((AnalyzerComponentBuilder<?>) ajb);
+            initializeAnalyzer((AnalyzerComponentBuilder<?>) ajb);
         }
 
         onSourceColumnsChanged();
@@ -996,8 +1019,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         logger.info("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
     }
 
-    @Override
-    public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+    private void initializeAnalyzer(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(analyzerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -1024,17 +1046,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph.refresh();
     }
 
-    @Override
-    public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        AnalyzerComponentBuilderPresenter presenter = _analyzerPresenters.remove(analyzerJobBuilder);
-        JComponent comp = _jobBuilderTabs.remove(presenter);
-        _tabbedPane.remove(comp);
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    @Override
-    public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
+    private void initializeTransformer(final TransformerComponentBuilder<?> transformerJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(transformerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -1060,23 +1072,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph.refresh();
     }
 
-    @Override
-    public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
-        TransformerComponentBuilderPresenter presenter = _transformerPresenters.remove(transformerJobBuilder);
-        JComponent comp = _jobBuilderTabs.remove(presenter);
-        _tabbedPane.remove(comp);
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    @Override
-    public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
-            List<MutableInputColumn<?>> outputColumns) {
-        _graph.refresh();
-    }
-
-    @Override
-    public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+    private void initializeFilter(final FilterComponentBuilder<?, ?> filterJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(filterJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -1090,7 +1086,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _jobBuilderTabs.put(presenter, comp);
         final int tabIndex = _tabbedPane.getTabCount() - 1;
         if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-            // the max rows shortcut must be disabled using checkbox on source
+            // the max rows shortcut must be disabled using checkbox on
+            // source
             // tab
             _tabbedPane.setUnclosableTab(tabIndex);
         } else {
@@ -1108,64 +1105,123 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graph.refresh();
     }
 
-    @Override
-    public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder) {
-        FilterComponentBuilderPresenter presenter = _filterPresenters.remove(filterJobBuilder);
-        JComponent comp = _jobBuilderTabs.remove(presenter);
-        _tabbedPane.remove(comp);
+    private AnalyzerChangeListener createAnalyzerChangeListener() {
+        return new AnalyzerChangeListener() {
 
-        if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-            _sourceColumnsPanel.getMaxRowsFilterShortcutPanel().resetToDefault();
-        }
-        updateStatusLabel();
-        _graph.refresh();
+            @Override
+            public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+                initializeAnalyzer(analyzerJobBuilder);
+            }
+
+            @Override
+            public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+                AnalyzerComponentBuilderPresenter presenter = _analyzerPresenters.remove(analyzerJobBuilder);
+                JComponent comp = _jobBuilderTabs.remove(presenter);
+                _tabbedPane.remove(comp);
+                updateStatusLabel();
+                _graph.refresh();
+            }
+
+            @Override
+            public void onConfigurationChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+                updateStatusLabel();
+                _graph.refresh();
+            }
+
+            @Override
+            public void onRequirementChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+                _graph.refresh();
+            }
+        };
     }
 
-    @Override
-    public void onConfigurationChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
-        updateStatusLabel();
-        _graph.refresh();
+    private TransformerChangeListener createTransformerChangeListener() {
+        return new TransformerChangeListener() {
+
+            @Override
+            public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
+                initializeTransformer(transformerJobBuilder);
+            }
+
+            @Override
+            public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
+                TransformerComponentBuilderPresenter presenter = _transformerPresenters.remove(transformerJobBuilder);
+                JComponent comp = _jobBuilderTabs.remove(presenter);
+                _tabbedPane.remove(comp);
+                updateStatusLabel();
+                _graph.refresh();
+            }
+
+            @Override
+            public void onOutputChanged(TransformerComponentBuilder<?> transformerJobBuilder,
+                    List<MutableInputColumn<?>> outputColumns) {
+                _graph.refresh();
+            }
+
+            @Override
+            public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+                _graph.refresh();
+            }
+
+            @Override
+            public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
+                updateStatusLabel();
+                _graph.refresh();
+            }
+        };
     }
 
-    @Override
-    public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
-        _graph.refresh();
+    private FilterChangeListener createFilterChangeListener() {
+        return new FilterChangeListener() {
+
+            @Override
+            public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+                initializeFilter(filterJobBuilder);
+            }
+
+            @Override
+            public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder) {
+                FilterComponentBuilderPresenter presenter = _filterPresenters.remove(filterJobBuilder);
+                JComponent comp = _jobBuilderTabs.remove(presenter);
+                _tabbedPane.remove(comp);
+
+                if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
+                    _sourceColumnsPanel.getMaxRowsFilterShortcutPanel().resetToDefault();
+                }
+                updateStatusLabel();
+                _graph.refresh();
+            }
+
+            @Override
+            public void onConfigurationChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
+                updateStatusLabel();
+                _graph.refresh();
+            }
+
+            @Override
+            public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
+                _graph.refresh();
+            }
+        };
     }
 
-    @Override
-    public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
-        updateStatusLabel();
-        _graph.refresh();
-    }
+    private SourceColumnChangeListener createSourceColumnChangeListener() {
+        return new SourceColumnChangeListener() {
 
-    @Override
-    public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder) {
-        _graph.refresh();
-    }
+            @Override
+            public void onAdd(InputColumn<?> sourceColumn) {
+                onSourceColumnsChanged();
+                updateStatusLabel();
+                _graph.refresh();
+            }
 
-    @Override
-    public void onConfigurationChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    @Override
-    public void onRequirementChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        _graph.refresh();
-    }
-
-    @Override
-    public void onAdd(InputColumn<?> sourceColumn) {
-        onSourceColumnsChanged();
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    @Override
-    public void onRemove(InputColumn<?> sourceColumn) {
-        onSourceColumnsChanged();
-        updateStatusLabel();
-        _graph.refresh();
+            @Override
+            public void onRemove(InputColumn<?> sourceColumn) {
+                onSourceColumnsChanged();
+                updateStatusLabel();
+                _graph.refresh();
+            }
+        };
     }
 
     @Override

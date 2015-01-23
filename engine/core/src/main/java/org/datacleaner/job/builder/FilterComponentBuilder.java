@@ -113,8 +113,8 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
 
     @Override
     public String toString() {
-        return "FilterComponentBuilder[filter=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
-                + "]";
+        return "FilterComponentBuilder[filter=" + getDescriptor().getDisplayName() + ",inputColumns="
+                + getInputColumns() + "]";
     }
 
     @Override
@@ -173,10 +173,8 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
         return outcome;
     }
 
-    /**
-     * Notification method invoked when transformer is removed.
-     */
-    protected void onRemoved() {
+    @Override
+    protected void onRemovedInternal() {
         List<FilterChangeListener> listeners = getAllListeners();
         for (FilterChangeListener listener : listeners) {
             listener.onRemove(this);

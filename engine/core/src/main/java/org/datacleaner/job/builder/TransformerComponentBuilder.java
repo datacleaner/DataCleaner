@@ -286,7 +286,8 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
     /**
      * Notification method invoked when transformer is removed.
      */
-    protected void onRemoved() {
+    @Override
+    protected void onRemovedInternal() {
         List<TransformerChangeListener> listeners = getAllListeners();
         for (TransformerChangeListener listener : listeners) {
             listener.onOutputChanged(this, new LinkedList<MutableInputColumn<?>>());

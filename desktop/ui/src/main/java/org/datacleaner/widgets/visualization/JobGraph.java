@@ -67,6 +67,7 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.ComponentConfigurationDialog;
+import org.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +94,8 @@ public final class JobGraph {
     private static final ImageManager imageManager = ImageManager.get();
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
 
-    private final Map<ComponentBuilder, ComponentConfigurationDialog> _configurationDialogs;
+    private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
+    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;    
     private final Set<Object> _highlighedVertexes;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
@@ -111,8 +113,9 @@ public final class JobGraph {
         _analysisJobBuilder = analysisJobBuilder;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
-        _configurationDialogs = new IdentityHashMap<>();
-
+        _componentConfigurationDialogs = new IdentityHashMap<>();
+        _tableConfigurationDialogs = new IdentityHashMap<>();
+        
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
         } else {
@@ -244,8 +247,8 @@ public final class JobGraph {
                     g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
                 }
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
-
-                final Dimension size = getPanel().getSize();
+                
+                final Dimension size = _panel.getSize();
                 if (size.height < 300) {
                     // don't show the background hints - it will be too
                     // disturbing
@@ -331,7 +334,7 @@ public final class JobGraph {
         }
 
         final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter,
-                _presenterRendererFactory, _windowContext, _usageLogger, _configurationDialogs);
+                _presenterRendererFactory, _windowContext, _usageLogger, _componentConfigurationDialogs, _tableConfigurationDialogs);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);

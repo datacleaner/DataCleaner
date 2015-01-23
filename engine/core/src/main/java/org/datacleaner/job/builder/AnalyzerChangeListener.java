@@ -22,17 +22,7 @@ package org.datacleaner.job.builder;
 /**
  * Listener interface for receiving notifications that analyzers are being added
  * or removed from a job that is being built.
- * 
- * 
  */
-public interface AnalyzerChangeListener {
-
-	public void onAdd(AnalyzerComponentBuilder<?> analyzerJobBuilder);
-	
-	public void onConfigurationChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder);
-	
-	public void onRequirementChanged(AnalyzerComponentBuilder<?> analyzerJobBuilder);
-
-	public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder);
+public interface AnalyzerChangeListener extends ComponentChangeListener<AnalyzerComponentBuilder<?>> {
 	
 }

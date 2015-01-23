@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
@@ -94,6 +95,8 @@ public final class IconUtils {
     public static final String ACTION_HELP = "images/actions/help.png";
     public static final String ACTION_BACK = "images/actions/back.png";
     public static final String ACTION_FORWARD = "images/actions/forward.png";
+    public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
+    public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 
@@ -185,31 +188,44 @@ public final class IconUtils {
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
-        Class<? extends ComponentCategory> categoryClass = category.getClass();
+    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
+        final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
+        return getCategoryIcon(superCategoryClass, false);
+    }
 
-        final String bundledIconPath = getImagePathForClass(categoryClass);
+    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
+        final Class<? extends ComponentCategory> categoryClass = category.getClass();
+        return getCategoryIcon(categoryClass, true);
+    }
+
+    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder) {
+        final String bundledIconPath = getImagePathForClass(cls);
 
         final int totalSize = ICON_SIZE_MEDIUM;
+
+        if (!decorateWithFolder && bundledIconPath != null) {
+            return _imageManager.getImageIcon(bundledIconPath, totalSize);
+        }
+
         final Image decoration;
         final int decorationSize = ICON_SIZE_SMALL;
         if (bundledIconPath == null) {
             decoration = null;
         } else {
-            final ClassLoader classLoader = categoryClass.getClassLoader();
+            final ClassLoader classLoader = cls.getClassLoader();
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 
-        final Image folderIcon = _imageManager.getImage("images/filetypes/folder.png", totalSize);
+        final Image folderIcon = _imageManager.getImage(FILE_FOLDER, totalSize);
 
         if (decoration == null) {
             return new ImageIcon(folderIcon);
@@ -263,7 +279,7 @@ public final class IconUtils {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
+        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
             // plugins get a special icon
             return "images/component-types/plugin.png";
         }

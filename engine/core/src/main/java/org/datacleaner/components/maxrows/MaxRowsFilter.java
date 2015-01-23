@@ -39,7 +39,7 @@ import org.datacleaner.components.categories.FilterCategory;
 
 @Named("Max rows")
 @Description("Sets a maximum number of rows to process.")
-@Categorized(FilterCategory.class)
+@Categorized(value = FilterCategory.class)
 @Distributed(false)
 public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Category>, HasLabelAdvice {
 
@@ -71,7 +71,7 @@ public class MaxRowsFilter implements QueryOptimizedFilter<MaxRowsFilter.Categor
         this.firstRow = firstRow;
         this.maxRows = maxRows;
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         return "Max " + getMaxRows() + " rows";

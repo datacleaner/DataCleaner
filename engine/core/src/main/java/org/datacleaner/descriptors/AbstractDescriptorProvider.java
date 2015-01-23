@@ -21,10 +21,14 @@ package org.datacleaner.descriptors;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
@@ -59,7 +63,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
     public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
         _autoDiscover = autoLoadDescriptorClasses;
     }
-    
+
     @Override
     public final AnalyzerDescriptor<?> getAnalyzerDescriptorByDisplayName(String name) {
         return getBeanDescriptorByDisplayName(name, getAnalyzerDescriptors());
@@ -67,8 +71,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(
-            Class<A> analyzerBeanClass) {
+    public final <A extends Analyzer<?>> AnalyzerDescriptor<A> getAnalyzerDescriptorForClass(Class<A> analyzerBeanClass) {
         for (AnalyzerDescriptor<?> descriptor : getAnalyzerDescriptors()) {
             if (descriptor.getComponentClass() == analyzerBeanClass) {
                 return (AnalyzerDescriptor<A>) descriptor;
@@ -161,7 +164,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
         // Ticket #951 : trim descriptor names
         name = name.trim();
-        
+
         if (name.length() == 0) {
             return null;
         }
@@ -208,5 +211,41 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
             return null;
         }
         return Descriptors.ofTransformer(transformerClass);
+    }
+
+    @Override
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors() {
+        List<ComponentDescriptor<?>> result = new ArrayList<>();
+        result.addAll(getTransformerDescriptors());
+        result.addAll(getFilterDescriptors());
+        result.addAll(getAnalyzerDescriptors());
+        return result;
+    }
+
+    @Override
+    public Set<ComponentSuperCategory> getComponentSuperCategories() {
+        final Set<ComponentSuperCategory> result = new TreeSet<>();
+        final Collection<? extends ComponentDescriptor<?>> descriptors = getComponentDescriptors();
+        for (ComponentDescriptor<?> componentDescriptor : descriptors) {
+            ComponentSuperCategory superCategory = componentDescriptor.getComponentSuperCategory();
+            result.add(superCategory);
+        }
+        return result;
+    }
+
+    @Override
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
+            ComponentSuperCategory category) {
+        if (category == null) {
+            return Collections.emptyList();
+        }
+        final List<ComponentDescriptor<?>> result = new ArrayList<>();
+        final Collection<? extends ComponentDescriptor<?>> descriptors = getComponentDescriptors();
+        for (ComponentDescriptor<?> componentDescriptor : descriptors) {
+            if (category.equals(componentDescriptor.getComponentSuperCategory())) {
+                result.add(componentDescriptor);
+            }
+        }
+        return result;
     }
 }

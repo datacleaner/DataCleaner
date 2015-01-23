@@ -22,6 +22,7 @@ package org.datacleaner.descriptors;
 import javax.inject.Named;
 
 import org.datacleaner.api.Component;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.util.ReflectionUtils;
 
 /**
@@ -73,6 +74,9 @@ abstract class AbstractComponentDescriptor<B> extends SimpleComponentDescriptor<
         }
         return _displayName;
     };
+    
+    @Override
+    protected abstract Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass();
 
     @Override
     protected void visitClass() {

@@ -40,6 +40,7 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
@@ -140,11 +141,40 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
 
         Set<ComponentCategory> result = new HashSet<ComponentCategory>();
         for (Class<? extends ComponentCategory> categoryClass : value) {
-            ComponentCategory category = ReflectionUtils.newInstance(categoryClass);
-            result.add(category);
+            if (categoryClass != ComponentCategory.class) {
+                ComponentCategory category = ReflectionUtils.newInstance(categoryClass);
+                result.add(category);
+            }
         }
 
         return result;
+    }
+
+    @Override
+    public ComponentSuperCategory getComponentSuperCategory() {
+        final Categorized categorized = getAnnotation(Categorized.class);
+
+        Class<? extends ComponentSuperCategory> superCategoryClass;
+        if (categorized == null) {
+            superCategoryClass = getDefaultComponentSuperCategoryClass();
+        } else {
+            superCategoryClass = categorized.superCategory();
+            if (superCategoryClass == ComponentSuperCategory.class) {
+                superCategoryClass = getDefaultComponentSuperCategoryClass();
+            }
+        }
+        final ComponentSuperCategory superCategory = ReflectionUtils.newInstance(superCategoryClass);
+        return superCategory;
+    }
+
+    /**
+     * Defines the {@link ComponentSuperCategory} to return, if no
+     * {@link ComponentSuperCategory} was defined
+     * 
+     * @return
+     */
+    protected Class<? extends ComponentSuperCategory> getDefaultComponentSuperCategoryClass() {
+        return ComponentSuperCategory.class;
     }
 
     @Override

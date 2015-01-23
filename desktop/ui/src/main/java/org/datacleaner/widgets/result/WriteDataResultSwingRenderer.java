@@ -216,7 +216,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             }
 
             final JButton analyzeButton = new JButton("Analyze this datastore",
-                    imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+                    imageManager.getImageIcon(IconUtils.MODEL_JOB));
             analyzeButton.setMargin(buttonMargin);
             analyzeButton.addActionListener(new ActionListener() {
                 @Override

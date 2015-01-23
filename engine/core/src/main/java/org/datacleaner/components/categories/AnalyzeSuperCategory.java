@@ -17,23 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.widgets;
+package org.datacleaner.components.categories;
 
-import javax.swing.JComponent;
+public class AnalyzeSuperCategory extends AbstractComponentSuperCategory {
 
-import junit.framework.TestCase;
+    private static final long serialVersionUID = 1L;
 
-import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
-import org.datacleaner.descriptors.Descriptors;
+    @Override
+    public String getDescription() {
+        return "Gain insights into your data through Data Quality analysis and profiling operations.";
+    }
 
-public class DescriptorMenuItemTest extends TestCase {
-
-    public void testToolTipSize() throws Exception {
-        DescriptorMenuItem menuItem = new DescriptorMenuItem(null, null,
-                Descriptors.ofTransformer(EmailStandardizerTransformer.class));
-
-        JComponent toolTipPanel = menuItem.createToolTipPanel();
-        assertTrue(1000 > toolTipPanel.getPreferredSize().width);
-        assertTrue(1000 > toolTipPanel.getPreferredSize().height);
+    @Override
+    public int getSortIndex() {
+        return 2000;
     }
 }

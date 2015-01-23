@@ -32,6 +32,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
+import org.datacleaner.widgets.DCComboBoxUI;
 import org.datacleaner.widgets.DCScrollBarUI;
 import org.datacleaner.widgets.tooltip.DCPopupFactory;
 import org.slf4j.Logger;
@@ -180,6 +181,7 @@ public final class LookAndFeelManager {
         UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
         UIManager.put("ComboBox.editorBorder", BorderFactory.createEmptyBorder());
+        UIManager.put("ComboBoxUI", DCComboBoxUI.class.getName());
 
         // table header styling
         UIManager.put("TableHeader.background", WidgetUtils.COLOR_WELL_BACKGROUND);

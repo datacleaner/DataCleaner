@@ -291,7 +291,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), panel, 2, row);
 
         row++;
-        WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/datastore.png")), panel, 0, row);
+        WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)), panel, 0, row);
         WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
 
         DCPanel datastoreButtonPanel = new DCPanel();
@@ -306,7 +306,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         for (final String tableName : tableNames) {
             row++;
             final JLabel tableLabel = DCLabel.bright("<html><b>" + tableName + "</b></html>");
-            tableLabel.setIcon(imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_SMALL));
+            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL));
             WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
             final JButton clearButton = new JButton("Clear");
@@ -327,7 +327,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             for (SourceColumnComboBox comboBox : comboBoxes) {
                 row++;
                 WidgetUtils.addToGridBag(
-                        new JLabel(imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL)),
+                        new JLabel(imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL)),
                         panel, 0, row);
                 WidgetUtils.addToGridBag(DCLabel.bright(comboBox.getName()), panel, 1, row, GridBagConstraints.WEST);
                 WidgetUtils.addToGridBag(comboBox, panel, 2, row, GridBagConstraints.WEST);
@@ -337,8 +337,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
         if (!_variableTextFields.isEmpty()) {
             final JLabel tableLabel = DCLabel.bright("<html><b>Job-level variables</b></html>");
-            tableLabel.setIcon(imageManager
-                    .getImageIcon("images/filetypes/analysis_job.png", IconUtils.ICON_SIZE_SMALL));
+            tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL));
             WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
             for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {

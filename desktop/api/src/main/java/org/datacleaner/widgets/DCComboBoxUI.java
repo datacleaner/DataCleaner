@@ -19,21 +19,34 @@
  */
 package org.datacleaner.widgets;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 
-import junit.framework.TestCase;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.WidgetFactory;
 
-import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
-import org.datacleaner.descriptors.Descriptors;
+/**
+ * Custom {@link ComboBoxUI} for DataCleaner
+ */
+public class DCComboBoxUI extends BasicComboBoxUI {
 
-public class DescriptorMenuItemTest extends TestCase {
+    /**
+     * Factory method used by Swing to instantiate the {@link DCComboBoxUI}
+     * 
+     * @param c
+     *            the component
+     * @return
+     */
+    public static ComponentUI createUI(JComponent c) {
+        return new DCComboBoxUI();
+    }
 
-    public void testToolTipSize() throws Exception {
-        DescriptorMenuItem menuItem = new DescriptorMenuItem(null, null,
-                Descriptors.ofTransformer(EmailStandardizerTransformer.class));
-
-        JComponent toolTipPanel = menuItem.createToolTipPanel();
-        assertTrue(1000 > toolTipPanel.getPreferredSize().width);
-        assertTrue(1000 > toolTipPanel.getPreferredSize().height);
+    @Override
+    protected JButton createArrowButton() {
+        final JButton arrowButton = WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
+        return arrowButton;
     }
 }

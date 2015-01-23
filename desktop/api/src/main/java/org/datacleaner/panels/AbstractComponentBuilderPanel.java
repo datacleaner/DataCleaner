@@ -110,7 +110,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     @Override
     public final JComponent createJComponent() {
         init();
-        JComponent decorate = decorate(this);
+        JComponent decorate = decorateMainPanel(this);
         return decorate;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      * @param panel
      * @return
      */
-    protected JComponent decorate(DCPanel panel) {
+    protected JComponent decorateMainPanel(DCPanel panel) {
         return panel;
     }
 

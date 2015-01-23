@@ -641,13 +641,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         // add source tab
-        _tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png", TAB_ICON_SIZE),
+        _tabbedPane.addTab("Source", imageManager.getImageIcon(IconUtils.MODEL_SOURCE, TAB_ICON_SIZE),
                 WidgetUtils.scrolleable(_sourceColumnsPanel));
         _tabbedPane.setRightClickActionListener(SOURCE_TAB, new HideTabTextActionListener(_tabbedPane, SOURCE_TAB));
         _tabbedPane.setUnclosableTab(SOURCE_TAB);
 
         // add metadata tab
-        _tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png", TAB_ICON_SIZE),
+        _tabbedPane.addTab("Metadata", imageManager.getImageIcon(IconUtils.MODEL_METADATA, TAB_ICON_SIZE),
                 _metadataPanel);
         _tabbedPane.setRightClickActionListener(METADATA_TAB, new HideTabTextActionListener(_tabbedPane, METADATA_TAB));
         _tabbedPane.setUnclosableTab(METADATA_TAB);

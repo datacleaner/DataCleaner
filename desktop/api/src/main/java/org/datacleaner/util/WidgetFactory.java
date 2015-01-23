@@ -259,7 +259,7 @@ public final class WidgetFactory {
     public static JXTaskPane createTaskPane(String title, Icon icon) {
         JXTaskPane taskPane = new JXTaskPane();
         Container cp = taskPane.getContentPane();
-        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_DARKEST));
+        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
         taskPane.setFocusable(false);
         taskPane.setTitle(title);
         if (icon != null) {

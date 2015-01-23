@@ -499,6 +499,10 @@ public final class WidgetUtils {
         logger.warn("Could not extract text from component: {}", comp);
         return "";
     }
+    
+    public static DCPanel decorateWithShadow(JComponent comp) {
+        return decorateWithShadow(comp, true, 4);
+    }
 
     /**
      * Decorates a JComponent with a nice shadow border. Since not all

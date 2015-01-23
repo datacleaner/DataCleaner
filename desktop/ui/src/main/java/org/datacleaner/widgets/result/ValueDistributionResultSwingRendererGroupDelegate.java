@@ -234,7 +234,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());
-        leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel, true, 4));
+        leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel));
 
         _backButton.setMargin(new Insets(0, 0, 0, 0));
         _backButton.addActionListener(new ActionListener() {

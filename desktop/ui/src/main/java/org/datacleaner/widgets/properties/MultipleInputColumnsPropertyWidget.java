@@ -38,7 +38,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -81,7 +80,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     // border for the button panel and search box to make them "indented"
     // similar to the check boxes.
-    private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0, 1, WidgetUtils.BG_COLOR_BRIGHT);
+    private static final EmptyBorder _indentBorder = new EmptyBorder(1, 17, 0, 1);
 
     private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
         @Override

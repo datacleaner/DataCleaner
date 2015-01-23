@@ -97,7 +97,7 @@ public final class LookAndFeelManager {
                     UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
                 } else if (str.endsWith(".background")) {
                     // set default background color
-                    UIManager.put(propertyKey, WidgetUtils.BG_COLOR_BRIGHT);
+                    UIManager.put(propertyKey, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
                 }
             }
         }
@@ -108,6 +108,11 @@ public final class LookAndFeelManager {
         EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
         LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
+
+        // OptionPane background and Panel background are linked because the
+        // JOptionPane features unstyleable and opaque Panels.
+        UIManager.put("OptionPane.background", WidgetUtils.COLOR_WELL_BACKGROUND);
+        UIManager.put("Panel.background", WidgetUtils.COLOR_WELL_BACKGROUND);
 
         UIManager.put("Menu.border", borderDarkest3);
         UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
@@ -193,7 +198,7 @@ public final class LookAndFeelManager {
 
         // titled borders
         UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);
-        UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+        UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
         // tool tip colors
         UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);
@@ -202,12 +207,12 @@ public final class LookAndFeelManager {
 
         // task pane colors
         UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TaskPane.font", WidgetUtils.FONT_NORMAL);
+        UIManager.put("TaskPane.font", WidgetUtils.FONT_TABLE_HEADER);
         UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("TaskPane.background", WidgetUtils.BG_COLOR_BRIGHT);
+        UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_LESS_DARK);
+        UIManager.put("TaskPane.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         // scrollbar color
         UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);

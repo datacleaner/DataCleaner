@@ -74,6 +74,8 @@ public final class IconUtils {
     public static final String MODEL_ROW = "images/model/row.png";
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
     public static final String MODEL_RESULT = "images/model/result.png";
+    public static final String MODEL_SOURCE = "images/model/source.png";
+    public static final String MODEL_METADATA = "images/model/metadata.png";
 
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";

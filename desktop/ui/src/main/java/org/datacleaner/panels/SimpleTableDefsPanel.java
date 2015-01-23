@@ -76,7 +76,7 @@ public class SimpleTableDefsPanel extends DCPanel {
         }
 
         setLayout(new BorderLayout());
-        add(WidgetUtils.decorateWithShadow(_tabbedPane, true, 4), BorderLayout.CENTER);
+        add(WidgetUtils.decorateWithShadow(_tabbedPane), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 

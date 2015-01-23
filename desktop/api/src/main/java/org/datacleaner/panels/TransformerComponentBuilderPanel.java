@@ -27,7 +27,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
@@ -96,14 +95,6 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         int previewRows = getPreviewRows();
         _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
                 _componentBuilder, previewRows));
-
-        final DCPanel bottomButtonPanel = new DCPanel();
-        bottomButtonPanel.setBorder(new EmptyBorder(4, 0, 0, 0));
-        bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-        bottomButtonPanel.add(_writeDataButton);
-        bottomButtonPanel.add(_previewButton);
-        _outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
-        _outputColumnsTable.setBorder(WidgetUtils.BORDER_EMPTY);
     }
 
     @Override
@@ -127,10 +118,22 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     }
 
     @Override
-    protected JComponent decorate(DCPanel panel) {
-        JComponent result = super.decorate(panel);
-        addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
-                _outputColumnsTable);
+    protected JComponent decorateMainPanel(DCPanel panel) {
+        JComponent result = super.decorateMainPanel(panel);
+
+        final DCPanel bottomButtonPanel = new DCPanel();
+        bottomButtonPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+        bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
+        bottomButtonPanel.add(_writeDataButton);
+        bottomButtonPanel.add(_previewButton);
+
+        final DCPanel outputColumnsPanel = new DCPanel();
+        outputColumnsPanel.setLayout(new BorderLayout());
+        outputColumnsPanel.add(WidgetUtils.decorateWithShadow(_outputColumnsTable), BorderLayout.CENTER);
+        outputColumnsPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
+
+        addTaskPane(imageManager.getImageIcon(IconUtils.MODEL_SOURCE, IconUtils.ICON_SIZE_SMALL), "Output columns",
+                outputColumnsPanel);
         return result;
     }
 

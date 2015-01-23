@@ -60,6 +60,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     private final TransformerComponentBuilder<?> _transformerJobBuilder;
     private final WindowContext _windowContext;
     private final int _previewRows;
+    private DataSetWindow _latestWindow;
 
     public PreviewTransformedDataActionListener(WindowContext windowContext,
             TransformerComponentBuilder<?> transformerJobBuilder) {
@@ -83,8 +84,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // prevent multiple preview windows from the same preview button
+        DataSetWindow existingWindow = _latestWindow;
+        if (existingWindow != null) {
+            existingWindow.close();
+            _latestWindow = null;
+        }
         DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
-        window.setVisible(true);
+        window.open();
+        _latestWindow = window;
     }
 
     @Override

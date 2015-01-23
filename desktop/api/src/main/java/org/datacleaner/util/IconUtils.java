@@ -95,6 +95,8 @@ public final class IconUtils {
     public static final String ACTION_HELP = "images/actions/help.png";
     public static final String ACTION_BACK = "images/actions/back.png";
     public static final String ACTION_FORWARD = "images/actions/forward.png";
+    public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
+    public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 
@@ -277,7 +279,7 @@ public final class IconUtils {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
+        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
             // plugins get a special icon
             return "images/component-types/plugin.png";
         }

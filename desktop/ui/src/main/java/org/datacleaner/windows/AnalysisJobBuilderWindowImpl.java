@@ -822,13 +822,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final PopupButton popupButton = new PopupButton("More", imageManager.getImageIcon("images/menu/more.png"));
+        final PopupButton popupButton = new PopupButton("More",
+                imageManager.getImageIcon(IconUtils.ACTION_SCROLLDOWN_BRIGHT));
         applyMenuPopupButttonStyling(popupButton);
 
         final JMenu windowsMenuItem = WidgetFactory.createMenu("Windows", 'w');
         windowsMenuItem.setIcon(imageManager.getImageIcon("images/menu/windows.png", IconUtils.ICON_SIZE_SMALL));
         final List<DCWindow> windows = getWindowContext().getWindows();
-        
+
         getWindowContext().addWindowListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -849,14 +850,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 }
 
                 windowsMenuItem.add(new JSeparator());
-                
+
                 JMenuItem closeAllWindowsItem = WidgetFactory.createMenuItem("Close all dialogs", (ImageIcon) null);
                 closeAllWindowsItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         List<DCWindow> windows = new ArrayList<>(getWindowContext().getWindows());
-                        for(DCWindow window : windows){
-                            if(window instanceof AbstractDialog){
+                        for (DCWindow window : windows) {
+                            if (window instanceof AbstractDialog) {
                                 window.close();
                             }
                         }

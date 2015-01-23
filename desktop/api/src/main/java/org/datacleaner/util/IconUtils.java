@@ -32,11 +32,13 @@ import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -435,6 +437,10 @@ public final class IconUtils {
             imagePath = XML_IMAGEPATH;
         } else if (datastore instanceof HBaseDatastore) {
             imagePath = HBASE_IMAGEPATH;
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            imagePath = ELASTICSEARCH_IMAGEPATH;
+        } else if (datastore instanceof CassandraDatastore) {
+            imagePath = CASSANDRA_IMAGEPATH;
         } else if (datastore instanceof JsonDatastore) {
             imagePath = JSON_IMAGEPATH;
         } else if (datastore instanceof CouchDbDatastore) {

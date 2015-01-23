@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +83,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
+    private final Map<ComponentBuilder, ComponentConfigurationDialog> _configurationDialogs;
     private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
     private final RendererFactory _presenterRendererFactory;
@@ -92,12 +95,14 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     private boolean _clickCaught = false;
 
     public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
-            RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger) {
+            RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger,
+            Map<ComponentBuilder, ComponentConfigurationDialog> configurationDialogs) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
+        _configurationDialogs = configurationDialogs;
     }
 
     /**
@@ -110,7 +115,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         showConfigurationDialog(componentBuilder);
     }
 
-    private void showConfigurationDialog(ComponentBuilder componentBuilder) {
+    private void showConfigurationDialog(final ComponentBuilder componentBuilder) {
+        final ComponentConfigurationDialog existingDialog = _configurationDialogs.get(componentBuilder);
+        if (existingDialog != null) {
+            existingDialog.toFront();
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer = (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -120,6 +131,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
                     _graphContext.getAnalysisJobBuilder(), presenter);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    _configurationDialogs.remove(componentBuilder);
+                }
+            });
+            _configurationDialogs.put(componentBuilder, dialog);
             dialog.open();
         }
     }

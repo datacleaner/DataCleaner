@@ -114,7 +114,10 @@ public final class DescriptorMenuBuilder {
     }
 
     private void initialize(final JComponent outerMenu) {
-        final Collection<? extends ComponentDescriptor<?>> componentDescriptors = _componentDescriptorsRef.get();
+        final Collection<? extends ComponentDescriptor<?>> unsortedComponentDescriptors = _componentDescriptorsRef
+                .get();
+        final List<? extends ComponentDescriptor<?>> componentDescriptors = CollectionUtils2
+                .sorted(unsortedComponentDescriptors);
 
         if (!_buildSubmenus) {
             for (ComponentDescriptor<?> descriptor : componentDescriptors) {

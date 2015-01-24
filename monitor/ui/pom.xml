@@ -149,7 +149,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor-copy-data-wizard-wizard</artifactId>
+			<artifactId>DataCleaner-monitor-copy-data-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -164,7 +164,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor-jdbc-datastore-wizard</artifactId>
+			<artifactId>DataCleaner-monitor-jdbc-datastore-wizards</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

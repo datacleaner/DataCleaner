@@ -57,8 +57,10 @@ public class ExecuteJobTest extends TestCase {
                         + scheduler.getJobGroupNames());
             }
 
-            JobDetail job1 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant1").build();
-            JobDetail job2 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job2", "tenant1").build();
+            JobDetail job1 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant1")
+                    .storeDurably().build();
+            JobDetail job2 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job2", "tenant1")
+                    .storeDurably().build();
 
             scheduler.addJob(job1, true);
             scheduler.addJob(job2, true);
@@ -66,7 +68,8 @@ public class ExecuteJobTest extends TestCase {
             assertEquals(1, scheduler.getJobGroupNames().size());
             assertEquals(2, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant1")).size());
 
-            JobDetail job3 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant2").build();
+            JobDetail job3 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant2")
+                    .storeDurably().build();
             scheduler.addJob(job3, true);
 
             assertEquals(2, scheduler.getJobGroupNames().size());
@@ -81,19 +84,23 @@ public class ExecuteJobTest extends TestCase {
             scheduler.triggerJob(new JobKey("job1", "tenant1"));
             Thread.sleep(40);
 
-            assertTrue(1 <= scheduler.getCurrentlyExecutingJobs().size());
+            int executingJobs;
+            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
+            assertTrue("Expected max 1 executing jobs but got " + executingJobs, executingJobs <= 1);
 
             scheduler.triggerJob(new JobKey("job2", "tenant1"));
             Thread.sleep(40);
 
-            assertTrue(2 <= scheduler.getCurrentlyExecutingJobs().size());
+            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
+            assertTrue("Expected max 2 executing jobs but got " + executingJobs, executingJobs <= 2);
 
             scheduler.triggerJob(new JobKey("job1", "tenant2"));
             scheduler.triggerJob(new JobKey("job1", "tenant2"));
             scheduler.triggerJob(new JobKey("job1", "tenant2"));
             Thread.sleep(40);
 
-            assertTrue(3 <= scheduler.getCurrentlyExecutingJobs().size());
+            executingJobs = scheduler.getCurrentlyExecutingJobs().size();
+            assertTrue("Expected max 3 executing jobs but got " + executingJobs, executingJobs <= 3);
 
         } finally {
             scheduler.shutdown();
@@ -154,8 +161,7 @@ public class ExecuteJobTest extends TestCase {
             ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
             String logOutput = log.getLogOutput();
             assertTrue(logOutput, logOutput.indexOf("- No such datastore: orderdb (NoSuchDatastoreException)") != -1);
-            assertTrue(
-                    logOutput,
+            assertTrue(logOutput,
                     logOutput.indexOf("org.datacleaner.job.NoSuchDatastoreException: No such datastore: orderdb") != -1);
         } finally {
             RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId

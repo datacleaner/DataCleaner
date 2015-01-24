@@ -41,6 +41,7 @@ import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.CollectionUtils2;
@@ -97,8 +98,9 @@ public final class DescriptorMenuBuilder {
         _componentDescriptorsRef = new Ref<Collection<? extends ComponentDescriptor<?>>>() {
             @Override
             public Collection<? extends ComponentDescriptor<?>> get() {
-                final Collection<? extends ComponentDescriptor<?>> componentDescriptors = analysisJobBuilder
-                        .getConfiguration().getDescriptorProvider()
+                final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration()
+                        .getDescriptorProvider();
+                final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                         .getComponentDescriptorsOfSuperCategory(superCategory);
                 return componentDescriptors;
             }

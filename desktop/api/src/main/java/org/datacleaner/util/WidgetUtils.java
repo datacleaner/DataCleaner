@@ -175,7 +175,8 @@ public final class WidgetUtils {
     public static final Border BORDER_THIN = new LineBorder(BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_THIN_DARK = new LineBorder(BG_COLOR_DARK);
 
-    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+    public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
+            new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
@@ -276,9 +277,10 @@ public final class WidgetUtils {
      */
     public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
             int anchor, int padding, double weightx, double weighty) {
-        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty, GridBagConstraints.HORIZONTAL);
+        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, weightx, weighty,
+                GridBagConstraints.HORIZONTAL);
     }
-    
+
     public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
             int anchor, int padding, double weightx, double weighty, int fill) {
         LayoutManager layout = panel.getLayout();
@@ -499,7 +501,7 @@ public final class WidgetUtils {
         logger.warn("Could not extract text from component: {}", comp);
         return "";
     }
-    
+
     public static DCPanel decorateWithShadow(JComponent comp) {
         return decorateWithShadow(comp, true, 4);
     }

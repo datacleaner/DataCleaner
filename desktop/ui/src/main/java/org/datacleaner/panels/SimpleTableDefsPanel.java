@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
@@ -40,6 +41,7 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.widgets.tabs.TabCloseEvent;
 import org.datacleaner.widgets.tabs.TabCloseListener;
@@ -55,6 +57,7 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;
+    private final DCLabel _instructionsLabel;
 
     public SimpleTableDefsPanel() {
         this(null);
@@ -65,9 +68,15 @@ public class SimpleTableDefsPanel extends DCPanel {
     }
 
     public SimpleTableDefsPanel(SchemaFactory schemaFactory, SimpleTableDef[] tableDefs) {
+        super();
         _schemaFactory = schemaFactory;
         _tabbedPane = new CloseableTabbedPane();
-        _tabbedPane.setVisible(false);
+        _instructionsLabel = DCLabel.bright("Click 'Add table' above to define the first table.");
+        _instructionsLabel.setFont(WidgetUtils.FONT_HEADER1);
+        _instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        _instructionsLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+        setTabbedPaneVisible(false);
 
         if (tableDefs != null) {
             for (SimpleTableDef tableDef : tableDefs) {
@@ -76,7 +85,13 @@ public class SimpleTableDefsPanel extends DCPanel {
         }
 
         setLayout(new BorderLayout());
-        add(WidgetUtils.decorateWithShadow(_tabbedPane), BorderLayout.CENTER);
+
+        final DCPanel tabbedPaneContainer = new DCPanel(CloseableTabbedPane.COLOR_BACKGROUND);
+        tabbedPaneContainer.setLayout(new BorderLayout());
+        tabbedPaneContainer.add(_tabbedPane, BorderLayout.CENTER);
+        tabbedPaneContainer.add(_instructionsLabel, BorderLayout.CENTER);
+
+        add(WidgetUtils.decorateWithShadow(tabbedPaneContainer), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 
@@ -84,10 +99,15 @@ public class SimpleTableDefsPanel extends DCPanel {
             @Override
             public void tabClosed(TabCloseEvent ev) {
                 if (_tabbedPane.getTabCount() == 0) {
-                    _tabbedPane.setVisible(false);
+                    setTabbedPaneVisible(false);
                 }
             }
         });
+    }
+
+    private void setTabbedPaneVisible(boolean b) {
+        _tabbedPane.setVisible(b);
+        _instructionsLabel.setVisible(!b);
     }
 
     private DCPanel createButtonPanel() {
@@ -149,7 +169,7 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     public void addTableDef(SimpleTableDef tableDef) {
         _tabbedPane.addTab(tableDef.getName(), TABLE_ICON, new SimpleTableDefPanel(tableDef));
-        _tabbedPane.setVisible(true);
+        setTabbedPaneVisible(true);
     }
 
     public SimpleTableDef[] getTableDefs() {

@@ -132,7 +132,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
         });
 
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_WELL_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);

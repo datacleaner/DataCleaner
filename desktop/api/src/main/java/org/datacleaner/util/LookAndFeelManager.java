@@ -186,6 +186,7 @@ public final class LookAndFeelManager {
         UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("ComboBox.arrowButtonBorder", BorderFactory.createEmptyBorder());
         UIManager.put("ComboBox.editorBorder", BorderFactory.createEmptyBorder());
+        UIManager.put("ComboBox.selectionBackground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("ComboBoxUI", DCComboBoxUI.class.getName());
 
         // table header styling
@@ -206,13 +207,13 @@ public final class LookAndFeelManager {
         UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE);
 
         // task pane colors
-        UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("TaskPaneContainer.background", WidgetUtils.COLOR_WELL_BACKGROUND);
+        UIManager.put("TaskPane.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("TaskPane.font", WidgetUtils.FONT_TABLE_HEADER);
         UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_LESS_DARK);
-        UIManager.put("TaskPane.background", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         // scrollbar color
         UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_LESS_BRIGHT);

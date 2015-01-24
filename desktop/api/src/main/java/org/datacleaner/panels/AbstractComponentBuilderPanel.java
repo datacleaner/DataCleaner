@@ -76,7 +76,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             int watermarkVerticalPosition, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition,
-                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+                WidgetUtils.COLOR_WELL_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _componentBuilder = componentBuilder;

@@ -44,7 +44,7 @@ public class HelloWorldTransformerPresenter extends TransformerComponentBuilderP
 	}
 
 	@Override
-	protected JComponent decorate(final DCPanel panel) {
+	protected JComponent decorateMainPanel(final DCPanel panel) {
 		JComponent result = super.decorate(panel);
 
 		JPanel outerPanel = new JPanel(new BorderLayout());

@@ -32,16 +32,17 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.datacleaner.reference.SimpleStringPattern;
-import org.datacleaner.result.CrosstabResult;
-import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.reference.SimpleStringPattern;
+import org.datacleaner.result.CrosstabResult;
+import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.util.ChartUtils;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.table.CrosstabPanel;
@@ -147,7 +148,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 				panel.add(Box.createHorizontalStrut(4));
 				panel.add(new JLabel(label));
 
-				final JButton button = WidgetFactory.createSmallButton("images/actions/save.png");
+				final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE);
 				button.setToolTipText("Save as string pattern");
 				button.addActionListener(new ActionListener() {
 					@Override

@@ -19,31 +19,47 @@
  */
 package org.datacleaner.widgets.result;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.actions.SaveDataSetActionListener;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.output.OutputRow;
+import org.datacleaner.output.OutputWriter;
+import org.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.datacleaner.output.datastore.DatastoreCreationDelegate;
+import org.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
+import org.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
+import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
+import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.table.ColumnHighlighter;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.VerticalLayout;
@@ -112,9 +128,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 applyDetailedView();
             }
 
-            final JButton saveToFileButton = WidgetFactory.createDefaultButton("Save dataset", IconUtils.ACTION_SAVE);
-            saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(),
-                    result.getRows(), _userPreferences, _datastoreCatalog));
+            final PopupButton saveToFileButton = createSaveToFileButton(inputColumns);
             buttonToolBar.add(saveToFileButton);
 
             add(buttonToolBar);
@@ -158,6 +172,64 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
             }
         }
 
+        public PopupButton createSaveToFileButton(final List<InputColumn<?>> inputColumns) {
+            final PopupButton saveToFileButton = WidgetFactory.createDefaultPopupButton("Save dataset",
+                    IconUtils.ACTION_SAVE);
+            final JPopupMenu menu = saveToFileButton.getMenu();
+
+            final JMenuItem saveAsDatastoreItem = WidgetFactory.createMenuItem("As datastore",
+                    IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+            saveAsDatastoreItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final String datastoreName = JOptionPane.showInputDialog("Datastore name");
+                    final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
+                            (MutableDatastoreCatalog) _datastoreCatalog);
+
+                    final OutputWriter writer = DatastoreOutputWriterFactory.getWriter(
+                            _userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, "DATASET",
+                            inputColumns.toArray(new InputColumn[0]));
+                    performWrite(writer);
+                }
+            });
+
+            final JMenuItem saveAsCsvItem = WidgetFactory.createMenuItem("As CSV file", IconUtils.CSV_IMAGEPATH);
+            saveAsCsvItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+                    fileChooser.addChoosableFileFilter(FileFilters.CSV);
+                    if (fileChooser.showSaveDialog(saveToFileButton) == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        if (selectedFile.getName().indexOf('.') == -1) {
+                            selectedFile = new File(selectedFile.getPath() + ".csv");
+                        }
+
+                        OutputWriter writer = CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(),
+                                inputColumns);
+                        performWrite(writer);
+
+                        File dir = selectedFile.getParentFile();
+                        _userPreferences.setAnalysisJobDirectory(dir);
+                    }
+                }
+            });
+
+            menu.add(saveAsCsvItem);
+            menu.add(saveAsDatastoreItem);
+
+            return saveToFileButton;
+        }
+
+        private void performWrite(OutputWriter writer) {
+            for (InputRow row : _result.getRows()) {
+                OutputRow outputRow = writer.createRow();
+                outputRow.setValues(row);
+                outputRow.write();
+            }
+            writer.close();
+        }
+
         public DCTable getTable() {
             return _table;
         }
@@ -180,4 +252,5 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
         AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, userPreferences, datastoreCatalog);
         return panel;
     }
+
 }

@@ -123,7 +123,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
             }
         };
 
-        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon("images/actions/execute.png"));
+        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE));
         runButton.addActionListener(new ActionListener() {
 
             @Override

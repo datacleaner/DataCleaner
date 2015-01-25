@@ -99,6 +99,7 @@ public final class IconUtils {
     public static final String ACTION_FORWARD = "images/actions/forward.png";
     public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
     public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
+    public static final String ACTION_STOP = "images/actions/stop.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 

@@ -124,7 +124,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
             }
         };
 
-        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon("images/actions/execute.png"));
+        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon(IconUtils.ACTION_EXECUTE));
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

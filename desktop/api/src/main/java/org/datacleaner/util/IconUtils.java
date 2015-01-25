@@ -103,6 +103,7 @@ public final class IconUtils {
     public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
     public static final String ACTION_STOP = "images/actions/stop.png";
     public static final String ACTION_LOG = "images/actions/log.png";
+    public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 
@@ -113,6 +114,10 @@ public final class IconUtils {
 
     public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
     public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";
+
+    public static final String CHART_BAR = "images/chart-types/bar.png";
+    public static final String CHART_LINE = "images/chart-types/line.png";
+    public static final String CHART_SCATTER = "images/chart-types/scatter.png";
 
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";

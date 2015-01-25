@@ -276,7 +276,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                 panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
                 JLabel label = new JLabel(count + "");
-                JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
+                JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -368,7 +368,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             };
 
             DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(count, Alignment.LEFT,
-                    action, AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
+                    action, IconUtils.ACTION_DRILL_TO_DETAIL);
 
             model.setValueAt(panel, i, 1);
         } else {

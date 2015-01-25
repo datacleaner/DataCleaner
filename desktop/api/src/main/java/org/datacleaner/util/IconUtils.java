@@ -70,6 +70,7 @@ public final class IconUtils {
     public static final String MODEL_TABLE = "images/model/table.png";
     public static final String MODEL_COLUMN = "images/model/column.png";
     public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
+    public static final String MODEL_COLUMN_EXPRESSION = "images/model/column_expression.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
@@ -112,8 +113,7 @@ public final class IconUtils {
     public static final String STATUS_ERROR = "images/status/error.png";
     public static final String STATUS_VALID = "images/status/valid.png";
 
-    public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
-    public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";
+    public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
 
     public static final String CHART_BAR = "images/chart-types/bar.png";
     public static final String CHART_LINE = "images/chart-types/line.png";

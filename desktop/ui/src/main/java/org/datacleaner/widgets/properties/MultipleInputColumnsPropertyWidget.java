@@ -172,7 +172,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         if (propertyDescriptor.isArray()) {
             if (_dataType == String.class || _dataType == Object.class) {
                 final JButton expressionColumnButton = WidgetFactory
-                        .createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
+                        .createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
                 expressionColumnButton.setToolTipText("Create expression/value based column");
                 expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener
                         .forMultipleColumns(this));
@@ -180,7 +180,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             }
 
             final JButton reorderColumnsButton = WidgetFactory
-                    .createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
+                    .createSmallButton(IconUtils.ACTION_REORDER_COLUMNS);
             reorderColumnsButton.setToolTipText("Reorder columns");
             reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
             _buttonPanel.add(reorderColumnsButton);

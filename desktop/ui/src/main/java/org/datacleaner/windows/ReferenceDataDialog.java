@@ -136,7 +136,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
 
         _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
 
-        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

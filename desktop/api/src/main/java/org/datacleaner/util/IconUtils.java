@@ -88,7 +88,8 @@ public final class IconUtils {
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
-    public static final String ACTION_CLOSE = "images/actions/close.png";
+    public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
+    public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
@@ -108,10 +109,11 @@ public final class IconUtils {
 
     public static final String WEBSITE = "images/actions/website.png";
 
+    // TODO: 'valid.png' needs a visual update
+    public static final String STATUS_VALID = "images/status/valid.png";
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";
-    public static final String STATUS_VALID = "images/status/valid.png";
 
     public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
 

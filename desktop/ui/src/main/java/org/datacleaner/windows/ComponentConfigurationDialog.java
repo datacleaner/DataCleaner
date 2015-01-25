@@ -124,7 +124,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     protected JComponent getDialogContent() {
         final JComponent configurationComponent = _presenter.createJComponent();
 
-        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

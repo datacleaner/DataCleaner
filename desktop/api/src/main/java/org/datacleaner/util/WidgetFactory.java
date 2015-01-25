@@ -263,6 +263,16 @@ public final class WidgetFactory {
         DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
         return taskPaneContainer;
     }
+    
+    public static JXTaskPane createTaskPane(String title, String imagePath) {
+        final ImageIcon icon;
+        if (Strings.isNullOrEmpty(imagePath)) {
+            icon = null;
+        } else {
+            icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+        }
+        return createTaskPane(title, icon);
+    }
 
     public static JXTaskPane createTaskPane(String title, Icon icon) {
         JXTaskPane taskPane = new JXTaskPane();

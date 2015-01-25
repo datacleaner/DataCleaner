@@ -240,10 +240,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(createFilterChangeListener());
         _analysisJobBuilder.getSourceColumnListeners().add(createSourceColumnChangeListener());
 
-        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE, null);
-        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE, null);
+        _saveButton = createToolbarButton("Save", IconUtils.MENU_SAVE, null);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.MENU_SAVE, null);
 
-        _executeButton = createToolbarButton("Execute", IconUtils.ACTION_EXECUTE, null);
+        _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
                 openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
@@ -679,10 +679,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        final JButton newJobButton = createToolbarButton("New", IconUtils.ACTION_NEW, null);
+        final JButton newJobButton = createToolbarButton("New", IconUtils.MENU_NEW, null);
         newJobButton.addActionListener(_newAnalysisJobActionListenerProvider.get());
 
-        final JButton openJobButton = createToolbarButton("Open", IconUtils.ACTION_OPEN, null);
+        final JButton openJobButton = createToolbarButton("Open", IconUtils.MENU_OPEN, null);
         openJobButton.addActionListener(_openAnalysisJobActionListenerProvider.get());
 
         final JToggleButton moreButton = createMoreMenuButton();

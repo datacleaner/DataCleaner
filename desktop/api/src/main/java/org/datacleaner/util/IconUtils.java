@@ -77,10 +77,13 @@ public final class IconUtils {
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
 
+    public static final String MENU_OPEN = "images/menu/open.png";
+    public static final String MENU_SAVE = "images/menu/save.png";
+    public static final String MENU_NEW = "images/menu/new.png";
+    public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
-    public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
     public static final String ACTION_OPEN = "images/actions/open.png";
@@ -100,6 +103,7 @@ public final class IconUtils {
     public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
     public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
     public static final String ACTION_STOP = "images/actions/stop.png";
+    public static final String ACTION_LOG = "images/actions/log.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 

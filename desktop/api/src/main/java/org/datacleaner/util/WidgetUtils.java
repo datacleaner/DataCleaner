@@ -36,12 +36,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -54,7 +55,10 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.widgets.DarkButtonUI;
+import org.datacleaner.widgets.DarkToggleButtonUI;
 import org.datacleaner.widgets.DefaultButtonUI;
+import org.datacleaner.widgets.DefaultToggleButtonUI;
 import org.datacleaner.widgets.PrimaryButtonUI;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
@@ -578,11 +582,23 @@ public final class WidgetUtils {
         }
     }
 
-    public static void setPrimaryButtonStyle(JButton b) {
+    public static void setPrimaryButtonStyle(AbstractButton b) {
         b.setUI(PrimaryButtonUI.get());
     }
+    
+    public static void setDarkButtonStyle(AbstractButton b) {
+        if (b instanceof JToggleButton) {
+            b.setUI(DarkToggleButtonUI.get());
+        } else {
+            b.setUI(DarkButtonUI.get());
+        }
+    }
 
-    public static void setDefaultButtonStyle(JButton b) {
-        b.setUI(DefaultButtonUI.get());
+    public static void setDefaultButtonStyle(AbstractButton b) {
+        if (b instanceof JToggleButton) {
+            b.setUI(DefaultToggleButtonUI.get());
+        } else {
+            b.setUI(DefaultButtonUI.get());
+        }
     }
 }

@@ -42,7 +42,14 @@ import javax.swing.event.PopupMenuListener;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
 
+/**
+ * A toggle button that when selected shows a popup menu.
+ * 
+ * To use this button, access the popup menu via {@link #getMenu()} and add
+ * items to it.
+ */
 public class PopupButton extends JToggleButton {
+
     private static final long serialVersionUID = 1L;
     private final JPopupMenu popupMenu = new JPopupMenu();
 

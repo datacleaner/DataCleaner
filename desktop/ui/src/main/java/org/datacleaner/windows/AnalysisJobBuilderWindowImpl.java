@@ -115,7 +115,6 @@ import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DCPopupBubble;
-import org.datacleaner.widgets.DarkButtonUI;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
@@ -357,8 +356,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             button.setBorder(new EmptyBorder(10, 4, 10, 4));
         }
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setFocusPainted(false);
-        button.setUI(DarkButtonUI.get());
+        WidgetUtils.setDarkButtonStyle(button);
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
             popupBubble.attachTo(button);
@@ -884,7 +882,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.setBorder(new EmptyBorder(10, 4, 10, 4));
         popupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         popupButton.setFocusPainted(false);
-        popupButton.setUI(DarkButtonUI.get());
+        WidgetUtils.setDarkButtonStyle(popupButton);
         popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 

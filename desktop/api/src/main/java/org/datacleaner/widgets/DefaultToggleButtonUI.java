@@ -22,38 +22,41 @@ package org.datacleaner.widgets;
 import java.awt.Color;
 
 import javax.swing.AbstractButton;
-import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.metal.MetalButtonUI;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
 
 /***
- * A {@link ButtonUI} for dark buttons in the DataCleaner user interface.
+ * A {@link ToggleButtonUI} for default buttons in the DataCleaner user interface.
  */
-public class DarkButtonUI extends MetalButtonUI {
+public class DefaultToggleButtonUI extends MetalToggleButtonUI {
 
-    public static final Color COLOR_BG_SELECT = WidgetUtils.BG_COLOR_LESS_DARK;
-    public static final Color COLOR_BG_DEFAULT = WidgetUtils.BG_COLOR_DARK;
+    private static final DefaultToggleButtonUI INSTANCE = new DefaultToggleButtonUI();
 
-    private static final DarkButtonUI INSTANCE = new DarkButtonUI();
-
-    public static DarkButtonUI get() {
+    public static DefaultToggleButtonUI get() {
         return INSTANCE;
     }
 
-    private DarkButtonUI() {
+    private DefaultToggleButtonUI() {
     }
 
     @Override
     public void installDefaults(AbstractButton b) {
         super.installDefaults(b);
-        b.setBackground(COLOR_BG_DEFAULT);
-        b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setFocusPainted(false);
+        b.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+        b.setForeground(WidgetUtils.BG_COLOR_DARK);
+        b.setBorder(WidgetUtils.BORDER_BUTTON_DEFAULT);
     }
-    
+
+    @Override
+    protected Color getDisabledTextColor() {
+        return WidgetUtils.BG_COLOR_MEDIUM;
+    }
+
     @Override
     protected Color getSelectColor() {
-        return COLOR_BG_SELECT;
+        return WidgetUtils.BG_COLOR_LESS_BRIGHT;
     }
+
 }

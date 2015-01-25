@@ -46,6 +46,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.PopupButton;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
@@ -83,46 +84,40 @@ public class ExtensionPackagesPanel extends DCPanel {
     private void updateComponents() {
         removeAll();
 
-        final JButton addExtensionButton = WidgetFactory.createDefaultButton("Add extension package",
+        final PopupButton addExtensionButton = WidgetFactory.createDefaultPopupButton("Add extension package",
                 IconUtils.ACTION_ADD);
-        addExtensionButton.addActionListener(new ActionListener() {
+        final JPopupMenu addExtensionMenu = addExtensionButton.getMenu();
+
+        final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap",
+                imageManager.getImageIcon("images/actions/website.png"));
+        extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
+
+        final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file",
+                imageManager.getImageIcon("images/filetypes/archive.png"));
+        manualInstallMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap", imageManager
-                        .getImageIcon("images/actions/website.png"));
-                extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
+                final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
+                fileChooser.setMultiSelectionEnabled(true);
+                fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
+                int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
+                if (result == DCFileChooser.APPROVE_OPTION) {
 
-                final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file", imageManager
-                        .getImageIcon("images/filetypes/archive.png"));
-                manualInstallMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        final DCFileChooser fileChooser = new DCFileChooser(_userPreferences
-                                .getConfiguredFileDirectory());
-                        fileChooser.setMultiSelectionEnabled(true);
-                        fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
-                        int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
-                        if (result == DCFileChooser.APPROVE_OPTION) {
+                    final File[] files = fileChooser.getSelectedFiles();
 
-                            final File[] files = fileChooser.getSelectedFiles();
+                    final ExtensionReader extensionReader = new ExtensionReader();
+                    final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
 
-                            final ExtensionReader extensionReader = new ExtensionReader();
-                            final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
+                    extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
+                    _userPreferences.addExtensionPackage(extensionPackage);
 
-                            extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
-                            _userPreferences.addExtensionPackage(extensionPackage);
-
-                            updateComponents();
-                        }
-                    }
-                });
-
-                final JPopupMenu popup = new JPopupMenu("Add extension");
-                popup.add(extensionSwapMenuItem);
-                popup.add(manualInstallMenuItem);
-                popup.show(addExtensionButton, 0, addExtensionButton.getHeight());
+                    updateComponents();
+                }
             }
         });
+
+        addExtensionMenu.add(extensionSwapMenuItem);
+        addExtensionMenu.add(manualInstallMenuItem);
 
         final DCPanel listPanel = new DCPanel();
         listPanel.setLayout(new VerticalLayout(4));

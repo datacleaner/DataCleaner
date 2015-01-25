@@ -27,19 +27,18 @@ import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.result.AnnotatedRowsResult;
-import org.datacleaner.result.renderer.AbstractRenderer;
-import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.actions.SaveDataSetActionListener;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.RendererBean;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.AnnotatedRowsResult;
+import org.datacleaner.result.renderer.AbstractRenderer;
+import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
@@ -113,8 +112,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 applyDetailedView();
             }
 
-            final JButton saveToFileButton = new JButton("Save dataset", ImageManager.get().getImageIcon(
-                    "images/actions/save.png", IconUtils.ICON_SIZE_MEDIUM));
+            final JButton saveToFileButton = WidgetFactory.createDefaultButton("Save dataset", IconUtils.ACTION_SAVE);
             saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(),
                     result.getRows(), _userPreferences, _datastoreCatalog));
             buttonToolBar.add(saveToFileButton);

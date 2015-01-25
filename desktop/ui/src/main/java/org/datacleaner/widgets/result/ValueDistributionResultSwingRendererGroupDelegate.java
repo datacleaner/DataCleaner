@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets.result;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -39,16 +38,16 @@ import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -245,9 +244,9 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         });
 
         final DCPanel rightPanel = new DCPanel();
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.add(_backButton, BorderLayout.NORTH);
-        rightPanel.add(_table.toPanel(), BorderLayout.CENTER);
+        rightPanel.setLayout(new VerticalLayout());
+        rightPanel.add(_backButton);
+        rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
 
         final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         split.setOpaque(false);

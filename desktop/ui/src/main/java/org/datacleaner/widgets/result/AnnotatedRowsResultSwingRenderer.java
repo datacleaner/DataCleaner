@@ -124,7 +124,8 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
                 noRecordsLabel.setBorder(new EmptyBorder(0, 4, 0, 0));
                 add(noRecordsLabel);
             } else {
-                add(_table.toPanel());
+                final DCPanel tablePanel = _table.toPanel();
+                add(WidgetUtils.decorateWithShadow(tablePanel));
             }
         }
 

@@ -60,6 +60,7 @@ import org.datacleaner.widgets.DarkToggleButtonUI;
 import org.datacleaner.widgets.DefaultButtonUI;
 import org.datacleaner.widgets.DefaultToggleButtonUI;
 import org.datacleaner.widgets.PrimaryButtonUI;
+import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
@@ -184,6 +185,7 @@ public final class WidgetUtils {
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
+    public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
                     BORDER_WIDE_WIDTH - 1, 9));
@@ -507,7 +509,15 @@ public final class WidgetUtils {
     }
 
     public static DCPanel decorateWithShadow(JComponent comp) {
-        return decorateWithShadow(comp, true, 4);
+        final boolean outline;
+        if (comp instanceof DCTablePanel) {
+            // table panels has it's own special outline
+            outline = false;
+        } else {
+            outline = true;
+        }
+        
+        return decorateWithShadow(comp, outline, 4);
     }
 
     /**

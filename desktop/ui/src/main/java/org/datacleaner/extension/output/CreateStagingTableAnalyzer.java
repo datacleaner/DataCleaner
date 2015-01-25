@@ -30,7 +30,7 @@ import org.datacleaner.api.Distributed;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
@@ -45,7 +45,7 @@ import org.datacleaner.user.UserPreferences;
 @Named("Create staging table")
 @Alias("Write to Datastore")
 @Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
-@Categorized(WriteDataCategory.class)
+@Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 

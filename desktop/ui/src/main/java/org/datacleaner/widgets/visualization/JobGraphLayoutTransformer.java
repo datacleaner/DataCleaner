@@ -188,6 +188,13 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         if (vertex instanceof Table) {
             JobGraphMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, point.x, point.y);
         }
+        
+        if (point.x < 0 || point.y < 0) {
+            // apply max(offset, value) to avoid location outside of canvas
+            final int xValue = Math.max(X_OFFSET, point.x);
+            final int yValue = Math.max(Y_OFFSET, point.y);
+            point = new Point(xValue, yValue);
+        }
 
         return point;
     }

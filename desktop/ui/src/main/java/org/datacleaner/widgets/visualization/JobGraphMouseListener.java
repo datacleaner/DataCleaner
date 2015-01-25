@@ -294,6 +294,10 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
             }
         }
+        
+        if (selectedObjects.length > 0) {
+            _graphContext.getJobGraph().refresh();
+        }
     }
 
     @Override

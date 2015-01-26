@@ -29,6 +29,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -36,9 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollBar;
 import javax.swing.TransferHandler;
 
 import org.apache.commons.collections15.Predicate;
@@ -95,13 +99,16 @@ public final class JobGraph {
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
 
     private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
-    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;    
+    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
     private final Set<Object> _highlighedVertexes;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final RendererFactory _presenterRendererFactory;
     private final DCPanel _panel;
     private final WindowContext _windowContext;
     private final UsageLogger _usageLogger;
+
+    private int _scrollHorizontal;
+    private int _scrollVertical;
 
     public JobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
         this(windowContext, analysisJobBuilder, null, usageLogger);
@@ -115,7 +122,7 @@ public final class JobGraph {
         _usageLogger = usageLogger;
         _componentConfigurationDialogs = new IdentityHashMap<>();
         _tableConfigurationDialogs = new IdentityHashMap<>();
-        
+
         if (presenterRendererFactory == null) {
             _presenterRendererFactory = new RendererFactory(analysisJobBuilder.getConfiguration());
         } else {
@@ -162,10 +169,9 @@ public final class JobGraph {
         final int vertexCount = graph.getVertexCount();
         logger.debug("Rendering graph with {} vertices", vertexCount);
 
-        // TODO: Make the size dynamic as per the graphs size
-        final Dimension preferredSize = new Dimension(2500, 2000);
-
         final JobGraphLayoutTransformer layoutTransformer = new JobGraphLayoutTransformer(_analysisJobBuilder, graph);
+        final Dimension preferredSize = layoutTransformer.getPreferredSize();
+
         final StaticLayout<Object, JobGraphLink> layout = new StaticLayout<Object, JobGraphLink>(graph,
                 layoutTransformer, preferredSize);
 
@@ -247,7 +253,7 @@ public final class JobGraph {
                     g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
                 }
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
-                
+
                 final Dimension size = _panel.getSize();
                 if (size.height < 300) {
                     // don't show the background hints - it will be too
@@ -334,7 +340,8 @@ public final class JobGraph {
         }
 
         final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter,
-                _presenterRendererFactory, _windowContext, _usageLogger, _componentConfigurationDialogs, _tableConfigurationDialogs);
+                _presenterRendererFactory, _windowContext, _usageLogger, _componentConfigurationDialogs,
+                _tableConfigurationDialogs);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);
@@ -470,8 +477,31 @@ public final class JobGraph {
             }
         });
 
-        GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
+        // we save the values of the scrollbars in order to allow refreshes to
+        // retain scroll position.
+        final GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
+        scrollPane.setCorner(new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND));
+        if (_scrollHorizontal > 0) {
+            setScrollbarValue(scrollPane.getHorizontalScrollBar(), _scrollHorizontal);
+        }
+        if (_scrollVertical > 0) {
+            setScrollbarValue(scrollPane.getVerticalScrollBar(), _scrollVertical);
+        }
+        final AdjustmentListener adjustmentListener = new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                _scrollHorizontal = scrollPane.getHorizontalScrollBar().getValue();
+                _scrollVertical = scrollPane.getVerticalScrollBar().getValue();
+            }
+        };
+        scrollPane.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
         return scrollPane;
+    }
+
+    private void setScrollbarValue(JScrollBar scrollBar, int value) {
+        final BoundedRangeModel scrollModel = scrollBar.getModel();
+        scrollBar.setValues(value, scrollModel.getExtent(), scrollModel.getMinimum(), scrollModel.getMaximum());
     }
 
 }

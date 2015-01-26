@@ -275,6 +275,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     @Override
     public void graphReleased(Object v, MouseEvent me) {
+        
         final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
 
         final Object[] selectedObjects = pickedVertexState.getSelectedObjects();

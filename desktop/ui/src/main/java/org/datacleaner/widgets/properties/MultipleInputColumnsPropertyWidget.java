@@ -119,7 +119,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public MultipleInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-//        setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        // setBorder(WidgetUtils.BORDER_LIST_ITEM);
         _checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
         _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
         _firstUpdate = true;
@@ -179,8 +179,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 _buttonPanel.add(expressionColumnButton);
             }
 
-            final JButton reorderColumnsButton = WidgetFactory
-                    .createSmallButton(IconUtils.ACTION_REORDER_COLUMNS);
+            final JButton reorderColumnsButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REORDER_COLUMNS);
             reorderColumnsButton.setToolTipText("Reorder columns");
             reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
             _buttonPanel.add(reorderColumnsButton);
@@ -517,6 +516,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             _checkBoxes.put(inputColumn, checkBox);
         }
         _checkBoxes.putAll(checkBoxesCopy);
+        setValue(sortedValue);
     }
 
     private JComponent getOrCreateCheckBoxDecoration(InputColumn<?> inputColumn, boolean selected) {

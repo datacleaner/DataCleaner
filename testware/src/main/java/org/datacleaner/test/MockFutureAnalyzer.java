@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans;
+package org.datacleaner.test;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,15 +32,16 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.result.AnalyzerResultFuture;
+import org.datacleaner.result.MockAnalyzerFutureResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("MockAnalyzer")
 @Description("For testing purposes. Sleeps for 5 seconds.")
 @Concurrent(true)
-public class MockAnalyzer implements Analyzer<AnalyzerResultFuture<AnalyzerResult>> {
+public class MockFutureAnalyzer implements Analyzer<AnalyzerResultFuture<AnalyzerResult>> {
 
-    private static final Logger logger = LoggerFactory.getLogger(MockAnalyzer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MockFutureAnalyzer.class);
     
     @Inject
     @Configured(value = "Column", order = 1)
@@ -64,7 +65,7 @@ public class MockAnalyzer implements Analyzer<AnalyzerResultFuture<AnalyzerResul
                 } catch (InterruptedException e) {
                     logger.warn("MockAnalyzerResultFuture sleep period interrupted!");
                 }
-                return new MockAnalyzerResult();
+                return new MockAnalyzerFutureResult();
             }
         });
     }

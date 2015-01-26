@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.beans;
+package org.datacleaner.result;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Metric;
 
-public class MockAnalyzerResult implements AnalyzerResult {
+public class MockAnalyzerFutureResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 

@@ -26,26 +26,13 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.beans.MockAnalyzer;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.guice.DCModuleImpl;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.AnalyzerResultFuture;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
-import org.datacleaner.util.LookAndFeelManager;
-import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
 public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResultFuture<? extends AnalyzerResult>, JComponent> {
@@ -97,26 +84,4 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
         return resultPanel;
     }
     
-    public static void main(String[] args) {
-        LookAndFeelManager.get().init();
-
-        Injector injector = Guice.createInjector(new DCModuleImpl());
-
-        // run a small job
-        final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-        Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-        DatastoreConnection con = ds.openConnection();
-        SchemaNavigator sn = con.getSchemaNavigator();
-        ajb.setDatastore(ds);
-        ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
-
-        AnalyzerComponentBuilder<MockAnalyzer> mockAnalyzerResultFutureAnalyzerBuilder = ajb
-                .addAnalyzer(MockAnalyzer.class);
-        mockAnalyzerResultFutureAnalyzerBuilder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
-
-        ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-        resultWindow.setVisible(true);
-        resultWindow.startAnalysis();
-    }
-
 }

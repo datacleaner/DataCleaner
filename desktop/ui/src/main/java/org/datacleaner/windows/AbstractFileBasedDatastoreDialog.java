@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -36,7 +35,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
@@ -60,7 +58,6 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
-import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -72,7 +69,6 @@ import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +96,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
      */
     private static final int PREVIEW_COLUMNS = 10;
 
-    private final JLabel _statusLabel;
-    private final JXTextField _datastoreNameField;
     private final FilenameTextField _filenameField;
-    private final DCPanel _outerPanel = new DCPanel();
     private final DCPanel _previewTablePanel;
     private final DCTable _previewTable;
     private final LoadingIcon _loadingIcon;
@@ -111,14 +104,12 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     protected AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-        _datastoreNameField = WidgetFactory.createTextField("Datastore name");
-        _statusLabel = DCLabel.bright("Please select file");
-
+        _statusLabel.setText("Please select file");
         _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
 
         if (originalDatastore != null) {
-            _datastoreNameField.setText(originalDatastore.getName());
-            _datastoreNameField.setEnabled(false);
+            _datastoreNameTextField.setText(originalDatastore.getName());
+            _datastoreNameTextField.setEnabled(false);
             if (originalDatastore instanceof FileDatastore) {
                 final FileDatastore fileDatastore = (FileDatastore) originalDatastore;
                 final String filename = fileDatastore.getFilename();
@@ -134,12 +125,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         }
 
         // add listeners after setting initial values.
-        _datastoreNameField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
         setFileFilters(_filenameField);
         _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
@@ -158,8 +143,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
                 }
                 getUserPreferences().setOpenDatastoreDirectory(dir);
 
-                if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
-                    _datastoreNameField.setText(file.getName());
+                if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
+                    _datastoreNameTextField.setText(file.getName());
                 }
 
                 validateAndUpdate();
@@ -198,27 +183,13 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
     protected abstract void setFileFilters(FilenameTextField filenameField);
 
+    @Override
     protected final void validateAndUpdate() {
         boolean valid = validateForm();
         setSaveButtonEnabled(valid);
         if (valid) {
             updatePreviewTable();
         }
-    }
-
-    protected void setStatusValid() {
-        _statusLabel.setText("Datastore ready");
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
-    }
-
-    protected void setStatusWarning(String text) {
-        _statusLabel.setText(text);
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
-    }
-
-    protected void setStatusError(String text) {
-        _statusLabel.setText(text);
-        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
     }
 
     protected boolean validateForm() {
@@ -246,7 +217,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             }
         }
 
-        final String datastoreName = _datastoreNameField.getText();
+        final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
             setStatusError("Please enter a datastore name");
             return false;
@@ -274,8 +245,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     protected List<Entry<String, JComponent>> getFormElements() {
-        ArrayList<Entry<String, JComponent>> res = new ArrayList<Entry<String, JComponent>>();
-        res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameField));
+        List<Entry<String, JComponent>> res = super.getFormElements();
         if (isDirectoryBased()) {
             res.add(new ImmutableEntry<String, JComponent>("Directory", _filenameField));
         } else {
@@ -285,64 +255,11 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
     }
 
     public String getDatastoreName() {
-        return _datastoreNameField.getText();
+        return _datastoreNameTextField.getText();
     }
 
     public String getFilename() {
         return _filenameField.getFilename();
-    }
-
-    @Override
-    protected final JComponent getDialogContent() {
-        DCPanel formPanel = new DCPanel();
-
-        List<Entry<String, JComponent>> formElements = getFormElements();
-        // temporary variable to make it easier to refactor the layout
-        int row = 0;
-        for (Entry<String, JComponent> entry : formElements) {
-            String key = entry.getKey();
-            if (StringUtils.isNullOrEmpty(key)) {
-                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
-            } else {
-                WidgetUtils.addToGridBag(DCLabel.bright(key + ":"), formPanel, 0, row);
-                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
-            }
-            row++;
-        }
-
-        if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_loadingIcon, formPanel, 0, row, 2, 1);
-            row++;
-        }
-
-        final DCPanel centerPanel = new DCPanel();
-        centerPanel.setLayout(new GridBagLayout());
-        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
-
-        if (isPreviewTableEnabled()) {
-            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
-                    1.0, GridBagConstraints.BOTH);
-        }
-        WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
-
-        centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
-
-        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-
-        _outerPanel.setLayout(new BorderLayout());
-        _outerPanel.add(centerPanel, BorderLayout.CENTER);
-        _outerPanel.add(statusBar, BorderLayout.SOUTH);
-
-        final String descriptionText = getDescriptionText();
-        if (descriptionText != null) {
-            DescriptionLabel descriptionLabel = new DescriptionLabel();
-            descriptionLabel.setText(descriptionText);
-            _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
-        }
-
-        validateAndUpdate();
-
-        return _outerPanel;
     }
 
     private void updatePreviewTable() {
@@ -417,9 +334,58 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             return dataSet;
         }
     }
+    
+    @Override
+    protected final JComponent getDialogContent() {
+        DCPanel formPanel = new DCPanel();
 
-    protected String getDescriptionText() {
-        return "Configure your datastore in this dialog.";
+        List<Entry<String, JComponent>> formElements = getFormElements();
+        // temporary variable to make it easier to refactor the layout
+        int row = 0;
+        for (Entry<String, JComponent> entry : formElements) {
+            String key = entry.getKey();
+            if (StringUtils.isNullOrEmpty(key)) {
+                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
+            } else {
+                WidgetUtils.addToGridBag(DCLabel.bright(key + ":"), formPanel, 0, row);
+                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
+            }
+            row++;
+        }
+
+        if (isPreviewTableEnabled()) {
+            WidgetUtils.addToGridBag(_loadingIcon, formPanel, 0, row, 2, 1);
+            row++;
+        }
+
+        final DCPanel centerPanel = new DCPanel();
+        centerPanel.setLayout(new GridBagLayout());
+        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
+
+        if (isPreviewTableEnabled()) {
+            WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
+                    1.0, GridBagConstraints.BOTH);
+        }
+        WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
+
+        centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
+
+        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+
+        _outerPanel.setLayout(new BorderLayout());
+        _outerPanel.add(centerPanel, BorderLayout.CENTER);
+        _outerPanel.add(statusBar, BorderLayout.SOUTH);
+
+        final String descriptionText = getDescriptionText();
+        if (descriptionText != null) {
+            DescriptionLabel descriptionLabel = new DescriptionLabel();
+            descriptionLabel.setText(descriptionText);
+            _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
+        }
+
+        validateAndUpdate();
+
+        return _outerPanel;
     }
 
     protected boolean isPreviewDataAvailable() {

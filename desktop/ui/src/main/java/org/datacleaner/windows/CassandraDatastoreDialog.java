@@ -19,27 +19,28 @@
  */
 package org.datacleaner.windows;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.swing.JComponent;
+import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
 public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraDatastore> implements SchemaFactory {
 
@@ -48,7 +49,6 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
     private final JXTextField _keyspaceTextField;
-    private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
     public CassandraDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -62,33 +62,77 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
         _portTextField.setDocument(new NumberDocument(false));
         _keyspaceTextField = WidgetFactory.createTextField();
 
-        _datastoreNameTextField.addKeyListener(_keyListener);
-        _hostnameTextField.addKeyListener(_keyListener);
-        _portTextField.addKeyListener(_keyListener);
-        _keyspaceTextField.addKeyListener(_keyListener);
+        _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _keyspaceTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
             _portTextField.setText("9042");
             _keyspaceTextField.setText("");
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
             _hostnameTextField.setText(originalDatastore.getHostname());
             _portTextField.setText(originalDatastore.getPort() + "");
             _keyspaceTextField.setText(originalDatastore.getKeySpace());
-            final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
         }
     }
-
+    
     @Override
-    protected void onSettingsUpdate() {
-        boolean valid = ((_datastoreNameTextField.getText().length() > 0) && (_hostnameTextField.getText().length() > 0)
-                && (_portTextField.getText().length() > 0) && (Integer.parseInt(_portTextField.getText()) > 0)
-                && (_keyspaceTextField.getText().length() > 0));
-        setSaveButtonEnabled(valid);
+    protected boolean validateForm() {
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
+        }
+        
+        final String hostname = _hostnameTextField.getText();
+        if (StringUtils.isNullOrEmpty(hostname)) {
+            setStatusError("Please enter hostname");
+            return false;
+        }
+        
+        final String port = _portTextField.getText();
+        if (StringUtils.isNullOrEmpty(port)) {
+            setStatusError("Please enter port number");
+            return false;
+        } else {
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt <= 0) {
+                    setStatusError("Please enter a valid (positive port number)");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                setStatusError("Please enter a valid port number");
+                return false;
+            }
+        }
+        
+        final String keyspace = _keyspaceTextField.getText();
+        if (StringUtils.isNullOrEmpty(keyspace)) {
+            setStatusError("Please enter key space");
+            return false;
+        }
+
+        setStatusValid();
+        return true;
     }
 
     @Override
@@ -111,42 +155,6 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
         return 400;
     }
 
-    @Override
-    protected JComponent getDialogContent() {
-        final DCPanel formPanel = new DCPanel();
-        formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
-
-        int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Keyspace:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_keyspaceTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
-        row++;
-
-        final DCPanel buttonPanel = getButtonPanel();
-
-        final DCPanel centerPanel = new DCPanel();
-        centerPanel.setLayout(new VerticalLayout(4));
-        centerPanel.add(formPanel);
-        centerPanel.add(buttonPanel);
-
-        return centerPanel;
-    }
-
     protected CassandraDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String hostname = _hostnameTextField.getText();
@@ -167,5 +175,14 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
     @Override
     protected String getDatastoreIconPath() {
         return IconUtils.CASSANDRA_IMAGEPATH;
+    }
+    
+    @Override
+    protected List<Entry<String, JComponent>> getFormElements() {
+        List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Keyspace name", _keyspaceTextField));
+        return result;
     }
 }

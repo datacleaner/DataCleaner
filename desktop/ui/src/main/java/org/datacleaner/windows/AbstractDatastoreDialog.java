@@ -19,24 +19,37 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.ImmutableEntry;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.DescriptionLabel;
+import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 
 public abstract class AbstractDatastoreDialog<D extends Datastore> extends AbstractDialog {
@@ -47,41 +60,25 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
     protected static final ImageManager imageManager = ImageManager.get();
 
+    protected final JLabel _statusLabel;
     private final MutableDatastoreCatalog _mutableDatastoreCatalog;
     private final D _originalDatastore;
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
+    protected final DCPanel _outerPanel = new DCPanel();
     
     protected final JXTextField _datastoreNameTextField;
     
-    protected final DatastoreDialogKeyListener _keyListener = new DatastoreDialogKeyListener();
-
-    protected class DatastoreDialogKeyListener implements KeyListener {
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            onSettingsUpdate();
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-        }
-
-    }
-
     public AbstractDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
             WindowContext windowContext, UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage(DEFAULT_BANNER_IMAGE));
+        _statusLabel = DCLabel.bright("Please specify datastore name");
         _originalDatastore = originalDatastore;
         _mutableDatastoreCatalog = mutableDatastoreCatalog;
         _userPreferences = userPreferences;
         
-        _datastoreNameTextField = WidgetFactory.createTextField();
+        _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
 
         _saveButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.ACTION_SAVE);
         _saveButton.addActionListener(new ActionListener() {
@@ -110,6 +107,45 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
             final Image image = imageManager.getImage(getDatastoreIconPath());
             setBannerImage(image);
         }
+        
+        // add listeners after setting initial values.
+        _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+    }
+    
+    protected void validateAndUpdate() {
+        boolean valid = validateForm();
+        setSaveButtonEnabled(valid);
+    }
+    
+    protected boolean validateForm() {
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
+        }
+
+        setStatusValid();
+        return true;
+    }
+    
+    protected void setStatusWarning(String text) {
+        _statusLabel.setText(text);
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
+    }
+    
+    protected void setStatusError(String text) {
+        _statusLabel.setText(text);
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
+    }
+    
+    protected void setStatusValid() {
+        _statusLabel.setText("Datastore ready");
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
     }
 
     /**
@@ -136,11 +172,6 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
     protected abstract String getDatastoreIconPath();
     
-    protected void onSettingsUpdate() {
-        boolean valid = _datastoreNameTextField.getText().length() > 0;
-        setSaveButtonEnabled(valid);
-    }
-
     /**
      * Method for subclasses to invoke for setting the enabled state of the save
      * button
@@ -168,5 +199,59 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     @Override
     protected boolean isWindowResizable() {
         return true;
+    }
+    
+    @Override
+    protected JComponent getDialogContent() {
+        DCPanel formPanel = new DCPanel();
+
+        List<Entry<String, JComponent>> formElements = getFormElements();
+        // temporary variable to make it easier to refactor the layout
+        int row = 0;
+        for (Entry<String, JComponent> entry : formElements) {
+            String key = entry.getKey();
+            if (StringUtils.isNullOrEmpty(key)) {
+                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
+            } else {
+                WidgetUtils.addToGridBag(DCLabel.bright(key + ":"), formPanel, 0, row);
+                WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
+            }
+            row++;
+        }
+
+        final DCPanel centerPanel = new DCPanel();
+        centerPanel.setLayout(new GridBagLayout());
+        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
+
+        WidgetUtils.addToGridBag(getButtonPanel(), centerPanel, 0, 2, 1, 1, GridBagConstraints.SOUTH, 4, 0, 0.1);
+
+        centerPanel.setBorder(WidgetUtils.BORDER_TOP_PADDING);
+
+        JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+
+        _outerPanel.setLayout(new BorderLayout());
+        _outerPanel.add(centerPanel, BorderLayout.CENTER);
+        _outerPanel.add(statusBar, BorderLayout.SOUTH);
+
+        final String descriptionText = getDescriptionText();
+        if (descriptionText != null) {
+            DescriptionLabel descriptionLabel = new DescriptionLabel();
+            descriptionLabel.setText(descriptionText);
+            _outerPanel.add(descriptionLabel, BorderLayout.NORTH);
+        }
+
+        validateAndUpdate();
+
+        return _outerPanel;
+    }
+    
+    protected List<Entry<String, JComponent>> getFormElements() {
+        ArrayList<Entry<String, JComponent>> res = new ArrayList<Entry<String, JComponent>>();
+        res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameTextField));
+        return res;
+    }
+    
+    protected String getDescriptionText() {
+        return "Configure your datastore in this dialog.";
     }
 }

@@ -19,27 +19,28 @@
  */
 package org.datacleaner.windows;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.swing.JComponent;
+import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
         SchemaFactory {
@@ -50,8 +51,6 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JXTextField _portTextField;
     private final JXTextField _clusterNameTextField;
     private final JXTextField _indexNameTextField;
-    private final JXTextField _datastoreNameTextField;
-    private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
     @Inject
     public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -60,17 +59,47 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
         setSaveButtonEnabled(false);
         
-        _datastoreNameTextField = WidgetFactory.createTextField();
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
         _clusterNameTextField = WidgetFactory.createTextField();
         _indexNameTextField = WidgetFactory.createTextField();
 
+        
+        _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _clusterNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _indexNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
             _portTextField.setText("9300");
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
@@ -78,16 +107,54 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             _portTextField.setText(originalDatastore.getPort() + "");
             _clusterNameTextField.setText(originalDatastore.getClusterName());
             _indexNameTextField.setText(originalDatastore.getIndexName());
-            final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
+        }
+    }
+    
+    @Override
+    protected boolean validateForm() {
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
         }
         
-        _datastoreNameTextField.addKeyListener(_keyListener);
-        _hostnameTextField.addKeyListener(_keyListener);
-        _portTextField.addKeyListener(_keyListener);
-        _clusterNameTextField.addKeyListener(_keyListener);
-        _indexNameTextField.addKeyListener(_keyListener);
+        final String hostname = _hostnameTextField.getText();
+        if (StringUtils.isNullOrEmpty(hostname)) {
+            setStatusError("Please enter hostname");
+            return false;
+        }
+        
+        final String port = _portTextField.getText();
+        if (StringUtils.isNullOrEmpty(port)) {
+            setStatusError("Please enter port number");
+            return false;
+        } else {
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt <= 0) {
+                    setStatusError("Please enter a valid (positive port number)");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                setStatusError("Please enter a valid port number");
+                return false;
+            }
+        }
+        
+        final String clusterName = _clusterNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(clusterName)) {
+            setStatusError("Please enter cluster name");
+            return false;
+        }
+        
+        final String indexName = _indexNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(indexName)) {
+            setStatusError("Please enter index name");
+            return false;
+        }
 
+        setStatusValid();
+        return true;
     }
 
     @Override
@@ -108,46 +175,6 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     @Override
     protected int getDialogWidth() {
         return 400;
-    }
-
-    @Override
-    protected JComponent getDialogContent() {
-        final DCPanel formPanel = new DCPanel();
-        formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
-
-        int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Cluster name:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_clusterNameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Index name:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_indexNameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
-        row++;
-
-        final DCPanel buttonPanel = getButtonPanel();
-
-        final DCPanel centerPanel = new DCPanel();
-        centerPanel.setLayout(new VerticalLayout(4));
-        centerPanel.add(formPanel);
-        centerPanel.add(buttonPanel);
-
-        return centerPanel;
     }
 
     protected ElasticSearchDatastore createDatastore() {
@@ -172,12 +199,15 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     protected String getDatastoreIconPath() {
         return IconUtils.ELASTICSEARCH_IMAGEPATH;
     }
-
+    
     @Override
-    protected void onSettingsUpdate() {
-        boolean valid = ((_datastoreNameTextField.getText().length() > 0) && (_hostnameTextField.getText().length() > 0)
-                && (_portTextField.getText().length() > 0) && (Integer.parseInt(_portTextField.getText()) > 0)
-                && (_clusterNameTextField.getText().length() > 0) && (_indexNameTextField.getText().length() > 0));
-        setSaveButtonEnabled(valid);
+    protected List<Entry<String, JComponent>> getFormElements() {
+        List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Cluster name", _clusterNameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Index name", _indexNameTextField));
+        return result;
     }
+
 }

@@ -27,6 +27,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.util.Collection;
@@ -470,6 +471,16 @@ public final class JobGraph {
             }
         });
 
+        renderContext.setVertexShapeTransformer(new Transformer<Object, Shape>() {
+
+            @Override
+            public Shape transform(Object input) {
+                int size = IconUtils.ICON_SIZE_LARGE;
+                int offset = - size / 2;
+                return new Rectangle(new Point(offset, offset), new Dimension(size, size));
+            }
+        });
+        
         GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
         return scrollPane;
     }

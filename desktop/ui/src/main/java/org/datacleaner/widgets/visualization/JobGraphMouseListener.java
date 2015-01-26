@@ -93,9 +93,12 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     // regular mouse listener aware of each other's actions.
     private boolean _clickCaught = false;
 
+    private Point _pressedPoint;
+
     public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
             RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger,
-            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs, Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
+            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs,
+            Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
@@ -129,8 +132,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (renderer != null) {
             final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
 
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext, componentBuilder,
-                    _graphContext.getAnalysisJobBuilder(), presenter);
+            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
+                    componentBuilder, _graphContext.getAnalysisJobBuilder(), presenter);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -154,10 +157,10 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             existingDialog.toFront();
             return;
         }
-        
+
         SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
                 _graphContext.getAnalysisJobBuilder(), table);
-        
+
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -165,7 +168,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             }
         });
         _tableConfigurationDialogs.put(table, dialog);
-        
+
         dialog.open();
     }
 
@@ -275,7 +278,11 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     @Override
     public void graphReleased(Object v, MouseEvent me) {
-        
+        if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
+            // avoid updating any coordinates when nothing has been moved
+            return;
+        }
+
         final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
 
         final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
@@ -295,7 +302,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
             }
         }
-        
+
         if (selectedObjects.length > 0) {
             _graphContext.getJobGraph().refresh();
         }
@@ -303,6 +310,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     @Override
     public void graphPressed(Object v, MouseEvent me) {
+        _pressedPoint = me.getPoint();
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXBusyLabel;
+import org.datacleaner.widgets.LoadingIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,31 +50,31 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
 
     @Override
     public JComponent render(AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
-        final JXBusyLabel busyLabel = new JXBusyLabel();
-        busyLabel.setBusy(true);
+        final LoadingIcon loadingIcon = new LoadingIcon();
         
         final DCPanel resultPanel = new DCPanel();
-        resultPanel.add(busyLabel);
+        resultPanel.add(loadingIcon);
         resultPanel.updateUI();
-        
         
         renderable.addListener(new AnalyzerResultFuture.Listener<AnalyzerResult>() {
 
             @Override
             public void onSuccess(AnalyzerResult result) {
-                Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result, SwingRenderingFormat.class);
-                if (renderer != null) {
-                    logger.debug("renderer.render({})", result);
-                    final JComponent component = renderer.render(result);
-                    resultPanel.add(component);
-                } else {
-                    final String message = "No renderer found for result type " + result.getClass().getName();
-                    logger.error(message);
-                    throw new IllegalStateException(message);
+                try {
+                    Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result, SwingRenderingFormat.class);
+                    if (renderer != null) {
+                        logger.debug("renderer.render({})", result);
+                        final JComponent component = renderer.render(result);
+                        resultPanel.add(component);
+                    } else {
+                        final String message = "No renderer found for result type " + result.getClass().getName();
+                        logger.error(message);
+                        throw new IllegalStateException(message);
+                    }
+                } finally {
+                    resultPanel.remove(loadingIcon);
+                    resultPanel.updateUI();
                 }
-                
-                resultPanel.remove(busyLabel);
-                resultPanel.updateUI();
             }
 
             @Override

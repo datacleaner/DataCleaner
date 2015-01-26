@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.result;
+package org.datacleaner.api;
 
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -29,10 +29,27 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
-import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.AnalyzerResultFuture.Listener;
 
 public class AnalyzerResultFutureTest extends TestCase {
+
+    private static class NumberResult implements AnalyzerResult {
+
+        private static final long serialVersionUID = 1L;
+        private final Number _number;
+
+        public NumberResult(int number) {
+            _number = number;
+        }
+
+        @Override
+        public String toString() {
+            if (_number == null) {
+                return "<null>";
+            }
+            return _number.toString();
+        }
+    }
 
     public void testAddListenerWhenResultIsReady() throws Exception {
         final NumberResult result1 = new NumberResult(42);
@@ -130,13 +147,13 @@ public class AnalyzerResultFutureTest extends TestCase {
         assertEquals("[43, 43, 43, 43, 43, 43, 43, 43, 43, 43]", resultQueue.toString());
         assertEquals(threads.length, resultQueue.size());
     }
-    
+
     public void testSerializationAndDeserialization() throws Exception {
         final NumberResult result1 = new NumberResult(42);
 
         final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFuture<>("foo",
                 new ImmutableRef<NumberResult>(result1));
-        
+
         future.addListener(new Listener<NumberResult>() {
             @Override
             public void onSuccess(NumberResult result) {
@@ -148,11 +165,11 @@ public class AnalyzerResultFutureTest extends TestCase {
                 // do nothing - this is just a non-serializable listener
             }
         });
-        
+
         final byte[] bytes = SerializationUtils.serialize(future);
-        
+
         final AnalyzerResultFuture<?> copy = (AnalyzerResultFuture<?>) SerializationUtils.deserialize(bytes);
-        
+
         assertEquals("foo", copy.getName());
         assertEquals("42", copy.get().toString());
     }

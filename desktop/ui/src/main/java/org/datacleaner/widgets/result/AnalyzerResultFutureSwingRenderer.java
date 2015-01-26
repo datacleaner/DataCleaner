@@ -23,11 +23,11 @@ import javax.inject.Inject;
 import javax.swing.JComponent;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.result.AnalyzerResultFuture;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.jdesktop.swingx.JXBusyLabel;

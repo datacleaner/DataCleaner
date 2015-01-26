@@ -29,7 +29,8 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
-import org.datacleaner.result.AnalyzerResultFuture.Listener;
+import org.datacleaner.api.AnalyzerResultFuture;
+import org.datacleaner.api.AnalyzerResultFuture.Listener;
 
 public class AnalyzerResultFutureTest extends TestCase {
 

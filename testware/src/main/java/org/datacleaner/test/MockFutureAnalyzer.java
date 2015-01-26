@@ -31,7 +31,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.result.AnalyzerResultFuture;
+import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.result.MockAnalyzerFutureResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

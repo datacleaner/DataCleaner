@@ -58,6 +58,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Configured
     String sheetName;
 
+    @Configured
+    boolean overwriteFile;
+
     @Override
     public String getSuggestedLabel() {
         if (file == null || sheetName == null) {
@@ -71,11 +74,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         if (sheetName.indexOf(".") != -1) {
             throw new IllegalStateException("Sheet name cannot contain dots (.)");
         }
+
+        if (file.exists() && !overwriteFile) {
+            throw new IllegalStateException("The file already exits and the columns selected do not match");
+        }
     }
 
     @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor,
-            String categoryName) {
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
         final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
         sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
     }
@@ -88,10 +94,22 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Override
     public OutputWriter createOutputWriter() {
+
+        if (file.exists() && overwriteFile) {
+            final String pathname = file.getPath();
+            final boolean delete = file.delete();
+            if (delete) {
+                file = new File(pathname);
+            } else {
+                throw new IllegalStateException("The previous file could not be deleted");
+            }
+        }
+
         String[] headers = new String[columns.length];
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
+
         return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
     }
 
@@ -109,4 +127,5 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;
     }
+
 }

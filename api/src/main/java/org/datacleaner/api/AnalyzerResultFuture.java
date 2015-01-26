@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.result;
+package org.datacleaner.api;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -28,8 +28,6 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.metamodel.util.HasName;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SharedExecutorService;
-import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.AnalyzerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +63,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
     private static final long serialVersionUID = 1L;
 
     private transient final CountDownLatch _countDownLatch;
-    private transient List<Listener<R>> _listeners;
+    private transient List<Listener<? super R>> _listeners;
 
     private final String _name;
     private R _result;
@@ -108,7 +106,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
      * 
      * @param listener
      */
-    public synchronized void addListener(Listener<R> listener) {
+    public synchronized void addListener(Listener<? super R> listener) {
         // it might be we add a listener AFTER the result is actually produced,
         // in which case we simply inform the listener immediately.
         if (isReady()) {
@@ -143,7 +141,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
             return;
         }
         try {
-            for (final Listener<R> listener : _listeners) {
+            for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onSuccess(_result);
                 } catch (Exception e) {
@@ -162,7 +160,7 @@ public class AnalyzerResultFuture<R extends AnalyzerResult> implements AnalyzerR
             return;
         }
         try {
-            for (final Listener<R> listener : _listeners) {
+            for (final Listener<? super R> listener : _listeners) {
                 try {
                     listener.onError(_error);
                 } catch (Exception e) {

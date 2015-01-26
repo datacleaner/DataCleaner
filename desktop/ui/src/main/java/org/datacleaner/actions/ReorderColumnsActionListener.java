@@ -38,6 +38,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -77,7 +78,7 @@ public class ReorderColumnsActionListener implements ActionListener {
 
         updateTableModel(table, list);
 
-        final Image image = ImageManager.get().getImage("images/actions/reorder-columns.png");
+        final Image image = ImageManager.get().getImage(IconUtils.ACTION_REORDER_COLUMNS);
 
         final DCPanel tablePanel = table.toPanel();
         tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));

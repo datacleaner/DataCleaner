@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
+import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
 
 import org.apache.metamodel.DataContext;
@@ -105,18 +106,18 @@ public class DataSetWindow extends AbstractWindow {
 
     @Override
     public Image getWindowIcon() {
-        return ImageManager.get().getImage("images/actions/preview_data.png");
+        return ImageManager.get().getImage(IconUtils.ACTION_PREVIEW);
     }
 
     @Override
     protected JComponent getWindowContent() {
         updateTable();
 
+        _table.setColumnControlVisible(false);
         final DCPanel tablePanel = _table.toPanel();
-
         final DCPanel pagingButtonPanel = createPagingButtonPanel();
 
-        DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
         _loadingIcon.setPreferredSize(300, 300);
         panel.add(_loadingIcon, BorderLayout.NORTH);
@@ -207,6 +208,7 @@ public class DataSetWindow extends AbstractWindow {
         });
 
         final DCPanel buttonPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 10));
         buttonPanel.add(_previousPageButton);
         buttonPanel.add(_nextPageButton);

@@ -23,25 +23,25 @@ import java.awt.Color;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.metal.MetalButtonUI;
+import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
 
 /***
  * A {@link ButtonUI} for dark buttons in the DataCleaner user interface.
  */
-public class DarkButtonUI extends MetalButtonUI {
+public class DarkToggleButtonUI extends MetalToggleButtonUI {
 
-    public static final Color COLOR_BG_SELECT = WidgetUtils.BG_COLOR_LESS_DARK;
-    public static final Color COLOR_BG_DEFAULT = WidgetUtils.BG_COLOR_DARK;
+    public static final Color COLOR_BG_SELECT = DarkButtonUI.COLOR_BG_SELECT;
+    public static final Color COLOR_BG_DEFAULT = DarkButtonUI.COLOR_BG_DEFAULT;
 
-    private static final DarkButtonUI INSTANCE = new DarkButtonUI();
+    private static final DarkToggleButtonUI INSTANCE = new DarkToggleButtonUI();
 
-    public static DarkButtonUI get() {
+    public static DarkToggleButtonUI get() {
         return INSTANCE;
     }
 
-    private DarkButtonUI() {
+    private DarkToggleButtonUI() {
     }
 
     @Override

@@ -27,6 +27,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.AdjustmentEvent;
@@ -476,7 +477,17 @@ public final class JobGraph {
                 return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
             }
         });
+        
+        renderContext.setVertexShapeTransformer(new Transformer<Object, Shape>() {
 
+            @Override
+            public Shape transform(Object input) {
+                int size = IconUtils.ICON_SIZE_LARGE;
+                int offset = - size / 2;
+                return new Rectangle(new Point(offset, offset), new Dimension(size, size));
+            }
+        });
+        
         // we save the values of the scrollbars in order to allow refreshes to
         // retain scroll position.
         final GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);

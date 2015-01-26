@@ -19,9 +19,9 @@
  */
 package org.datacleaner.panels;
 
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -80,6 +80,7 @@ import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
+import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -128,7 +129,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
     private final DCGlassPane _glassPane;
     private final JButton _analyzeButton;
     private final JButton _browseJobsButton;
-    private final JButton _moreRecentJobsButton;
+    private final PopupButton _moreRecentJobsButton;
     private final DCPanel _datastoreListPanel;
     private final DCPanel _jobsListPanel;
     private final JXTextField _searchDatastoreTextField;
@@ -235,22 +236,17 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         add(_jobsListPanel);
 
-        _moreRecentJobsButton = WidgetFactory.createDefaultButton("More / recent jobs", IconUtils.FILE_HOME_FOLDER);
+        _moreRecentJobsButton = WidgetFactory
+                .createDefaultPopupButton("More / recent jobs", IconUtils.FILE_HOME_FOLDER);
         if (recentJobFiles.size() <= MAX_JOB_PANELS) {
             _moreRecentJobsButton.setEnabled(false);
         } else {
-            _moreRecentJobsButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final JPopupMenu popup = new JPopupMenu();
-                    for (int i = 3; i < recentJobFiles.size(); i++) {
-                        final FileObject jobFile = recentJobFiles.get(i);
-                        final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
-                        popup.add(menuItem);
-                    }
-                    popup.show(_moreRecentJobsButton, 0, _moreRecentJobsButton.getHeight());
-                }
-            });
+            final JPopupMenu recentJobsMenu = _moreRecentJobsButton.getMenu();
+            for (int i = 3; i < recentJobFiles.size(); i++) {
+                final FileObject jobFile = recentJobFiles.get(i);
+                final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
+                recentJobsMenu.add(menuItem);
+            }
         }
 
         add(Box.createVerticalStrut(40));
@@ -428,73 +424,65 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         createDefaultDatabaseButtons(panel, databaseNames);
 
-        final JButton moreDatastoreTypesButton = WidgetFactory.createDefaultButton("More databases",
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(createMoreDatabasesButton(databaseNames));
+
+        return panel;
+    }
+
+    private Component createMoreDatabasesButton(Set<String> databaseNames) {
+        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
-        moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 4));
-        moreDatastoreTypesButton.addActionListener(new ActionListener() {
+
+        final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
+        // installed databases
+        final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
+                .getInstalledWorkingDatabaseDrivers();
+        for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
+            final String databaseName = databaseDriver.getDisplayName();
+            if (!databaseNames.contains(databaseName)) {
+                final String imagePath = databaseDriver.getIconImagePath();
+                final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+                final JMenuItem menuItem = WidgetFactory.createMenuItem(databaseName, icon);
+                menuItem.addActionListener(createJdbcActionListener(databaseName));
+                moreDatastoreTypesMenu.add(menuItem);
+            }
+        }
+
+        // custom/other jdbc connection
+        final ImageIcon icon = imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+                IconUtils.ICON_SIZE_SMALL);
+        final JMenuItem menuItem = WidgetFactory.createMenuItem("Other database", icon);
+        menuItem.addActionListener(createJdbcActionListener(null));
+        moreDatastoreTypesMenu.add(menuItem);
+
+        // composite datastore
+        final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
+                imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+        compositeMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final JPopupMenu popup = new JPopupMenu();
-
-                // installed databases
-                final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
-                        .getInstalledWorkingDatabaseDrivers();
-                for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
-                    final String databaseName = databaseDriver.getDisplayName();
-                    if (!databaseNames.contains(databaseName)) {
-                        final String imagePath = databaseDriver.getIconImagePath();
-                        final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
-                        final JMenuItem menuItem = WidgetFactory.createMenuItem(databaseName, icon);
-                        menuItem.addActionListener(createJdbcActionListener(databaseName));
-                        popup.add(menuItem);
-                    }
-                }
-
-                // custom/other jdbc connection
-                {
-                    final ImageIcon icon = imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
-                            IconUtils.ICON_SIZE_SMALL);
-                    final JMenuItem menuItem = WidgetFactory.createMenuItem("Other database", icon);
-                    menuItem.addActionListener(createJdbcActionListener(null));
-                    popup.add(menuItem);
-                }
-
-                // composite datastore
-                final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
-                        imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-                compositeMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog,
-                                _analysisJobBuilderWindow.getWindowContext(), _userPreferences);
-                        dialog.open();
-                    }
-                });
-
-                final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
-                        imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
-                databaseDriversMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        OptionsDialog dialog = _optionsDialogProvider.get();
-                        dialog.selectDatabaseDriversTab();
-                        dialog.setVisible(true);
-                    }
-                });
-
-                popup.add(databaseDriversMenuItem);
-                popup.add(new JSeparator(JSeparator.HORIZONTAL));
-                popup.add(compositeMenuItem);
-                popup.setBorder(WidgetUtils.BORDER_THIN);
-
-                popup.show(moreDatastoreTypesButton, 0, moreDatastoreTypesButton.getHeight());
+                final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog,
+                        _analysisJobBuilderWindow.getWindowContext(), _userPreferences);
+                dialog.open();
             }
         });
 
-        panel.add(Box.createHorizontalStrut(10));
-        panel.add(moreDatastoreTypesButton);
+        final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
+                imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
+        databaseDriversMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OptionsDialog dialog = _optionsDialogProvider.get();
+                dialog.selectDatabaseDriversTab();
+                dialog.setVisible(true);
+            }
+        });
 
-        return panel;
+        moreDatastoreTypesMenu.add(databaseDriversMenuItem);
+        moreDatastoreTypesMenu.add(new JSeparator(JSeparator.HORIZONTAL));
+        moreDatastoreTypesMenu.add(compositeMenuItem);
+        return moreDatastoreTypesButton;
     }
 
     private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {

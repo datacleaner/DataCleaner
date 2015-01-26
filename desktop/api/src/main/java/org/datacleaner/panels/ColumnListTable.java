@@ -107,7 +107,7 @@ public final class ColumnListTable extends DCPanel {
             headerPanel.add(tableNameLabel);
 
             if (_windowContext != null) {
-                final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
+                final JButton previewButton = WidgetFactory.createSmallButton(IconUtils.ACTION_PREVIEW);
                 previewButton.setToolTipText("Preview table rows");
                 previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
                         .getDatastore(), _columns.keySet()));

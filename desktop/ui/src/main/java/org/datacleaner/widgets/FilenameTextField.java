@@ -48,7 +48,7 @@ public final class FilenameTextField extends DCPanel {
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _textField = WidgetFactory.createTextField("Filename");
-    private final JButton _browseButton = WidgetFactory.createPrimaryButton("Browse", IconUtils.ACTION_BROWSE);
+    private final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
     private final List<FileSelectionListener> _listeners = new ArrayList<FileSelectionListener>();
     private final List<FileFilter> _chooseableFileFilters = new ArrayList<FileFilter>();
     private volatile FileFilter _selectedFileFilter;

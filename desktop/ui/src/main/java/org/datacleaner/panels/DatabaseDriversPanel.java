@@ -57,6 +57,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
 import org.datacleaner.util.http.WebServiceHttpClient;
 import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.table.DCTable;
 import org.datacleaner.windows.AddDatabaseDriverDialog;
 import org.slf4j.Logger;
@@ -106,46 +107,41 @@ public class DatabaseDriversPanel extends DCPanel {
     private void updateComponents() {
         this.removeAll();
 
-        final JButton addDriverButton = WidgetFactory.createDefaultButton("Add database driver", IconUtils.ACTION_ADD);
-        addDriverButton.addActionListener(new ActionListener() {
+        final PopupButton addDriverButton = WidgetFactory.createDefaultPopupButton("Add database driver",
+                IconUtils.ACTION_ADD);
+        final JPopupMenu addDriverMenu = addDriverButton.getMenu();
+
+        final JMenu automaticDownloadAndInstallMenu = new JMenu("Automatic download and install");
+        automaticDownloadAndInstallMenu.setIcon(imageManager.getImageIcon("images/actions/download.png"));
+
+        final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
+        for (DatabaseDriverDescriptor dd : drivers) {
+            final String[] urls = dd.getDownloadUrls();
+            if (urls != null && _databaseDriverCatalog.getState(dd) == DatabaseDriverState.NOT_INSTALLED) {
+                final JMenuItem downloadAndInstallMenuItem = WidgetFactory.createMenuItem(dd.getDisplayName(),
+                        dd.getIconImagePath());
+                downloadAndInstallMenuItem.addActionListener(createDownloadActionListener(dd));
+                automaticDownloadAndInstallMenu.add(downloadAndInstallMenuItem);
+            }
+        }
+
+        if (automaticDownloadAndInstallMenu.getMenuComponentCount() == 0) {
+            automaticDownloadAndInstallMenu.setEnabled(false);
+        }
+
+        final JMenuItem localJarFilesMenuItem = WidgetFactory.createMenuItem("Local JAR file(s)...",
+                IconUtils.FILE_ARCHIVE);
+        localJarFilesMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                final JMenu menu = new JMenu("Automatic download and install");
-                menu.setIcon(imageManager.getImageIcon("images/actions/download.png"));
-
-                final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
-                for (DatabaseDriverDescriptor dd : drivers) {
-                    final String[] urls = dd.getDownloadUrls();
-                    if (urls != null && _databaseDriverCatalog.getState(dd) == DatabaseDriverState.NOT_INSTALLED) {
-                        final JMenuItem downloadAndInstallMenuItem = WidgetFactory.createMenuItem(dd.getDisplayName(),
-                                dd.getIconImagePath());
-                        downloadAndInstallMenuItem.addActionListener(createDownloadActionListener(dd));
-                        menu.add(downloadAndInstallMenuItem);
-                    }
-                }
-
-                if (menu.getMenuComponentCount() == 0) {
-                    menu.setEnabled(false);
-                }
-
-                final JMenuItem localJarFilesMenuItem = WidgetFactory.createMenuItem("Local JAR file(s)...",
-                        "images/filetypes/archive.png");
-                localJarFilesMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
-                                DatabaseDriversPanel.this, _windowContext, _userPreferences);
-                        dialog.setVisible(true);
-                    }
-                });
-
-                final JPopupMenu popup = new JPopupMenu();
-                popup.add(menu);
-                popup.add(localJarFilesMenuItem);
-                popup.show(addDriverButton, 0, addDriverButton.getHeight());
+                AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
+                        DatabaseDriversPanel.this, _windowContext, _userPreferences);
+                dialog.setVisible(true);
             }
         });
+
+        addDriverMenu.add(automaticDownloadAndInstallMenu);
+        addDriverMenu.add(localJarFilesMenuItem);
 
         final DCTable table = getDatabaseDriverTable();
         this.add(DCPanel.flow(Alignment.RIGHT, addDriverButton), BorderLayout.NORTH);

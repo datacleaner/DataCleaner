@@ -107,7 +107,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
         if (_dataType == String.class || _dataType == Object.class) {
             final JButton expressionColumnButton = WidgetFactory
-                    .createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
+                    .createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
             expressionColumnButton.setToolTipText("Create expression/value based column");
             expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener.forSingleColumn(this));
             expressionColumnButton.setFocusable(false);

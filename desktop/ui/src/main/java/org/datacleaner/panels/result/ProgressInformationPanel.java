@@ -29,14 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.Icon;
 import javax.swing.JTextArea;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.ProgressCounter;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -61,13 +59,6 @@ public class ProgressInformationPanel extends DCPanel {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormat.forPattern("HH:mm:ss");
 
-    private static final ImageManager imageManager = ImageManager.get();
-
-    private static final Icon ICON_PROGRESS = imageManager.getImageIcon("images/menu/progress.png",
-            IconUtils.ICON_SIZE_SMALL);
-    private static final Icon ICON_EXECUTION_LOG = imageManager.getImageIcon("images/menu/log.png",
-            IconUtils.ICON_SIZE_SMALL);
-
     private final JTextArea _executionLogTextArea;
     private final DCPanel _progressBarPanel;
     private final ConcurrentMap<Table, TableProgressInformationPanel> _tableProgressInformationPanels;
@@ -88,10 +79,10 @@ public class ProgressInformationPanel extends DCPanel {
         _progressBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         _progressBarPanel.setLayout(new VerticalLayout(4));
 
-        final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", ICON_PROGRESS);
+        final JXTaskPane progressTaskPane = WidgetFactory.createTaskPane("Progress", IconUtils.ACTION_EXECUTE);
         progressTaskPane.add(_progressBarPanel);
 
-        final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", ICON_EXECUTION_LOG);
+        final JXTaskPane executionLogTaskPane = WidgetFactory.createTaskPane("Execution log", IconUtils.ACTION_LOG);
         executionLogTaskPane.add(_executionLogTextArea);
 
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
@@ -124,14 +115,14 @@ public class ProgressInformationPanel extends DCPanel {
             stringWriter.append("(No stack trace provided)");
         } else {
             throwable = ErrorUtils.unwrapForPresentation(throwable);
-            
+
             final String exceptionMessage = throwable.getMessage();
             if (!Strings.isNullOrEmpty(exceptionMessage)) {
                 stringWriter.append('\n');
                 stringWriter.append('\n');
                 stringWriter.append(exceptionMessage);
             }
-            
+
             stringWriter.append('\n');
             stringWriter.append('\n');
             PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -281,7 +272,7 @@ public class ProgressInformationPanel extends DCPanel {
 
         Collection<TableProgressInformationPanel> tableProgressInformationPanels = _tableProgressInformationPanels
                 .values();
-        
+
         for (TableProgressInformationPanel tableProgressInformationPanel : tableProgressInformationPanels) {
             tableProgressInformationPanel.setProgressFinished();
         }

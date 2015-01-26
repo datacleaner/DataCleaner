@@ -70,6 +70,7 @@ public final class IconUtils {
     public static final String MODEL_TABLE = "images/model/table.png";
     public static final String MODEL_COLUMN = "images/model/column.png";
     public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
+    public static final String MODEL_COLUMN_EXPRESSION = "images/model/column_expression.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
@@ -77,15 +78,18 @@ public final class IconUtils {
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
 
+    public static final String MENU_OPEN = "images/menu/open.png";
+    public static final String MENU_SAVE = "images/menu/save.png";
+    public static final String MENU_NEW = "images/menu/new.png";
+    public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
-    public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
-    public static final String ACTION_OPEN = "images/actions/open.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
-    public static final String ACTION_CLOSE = "images/actions/close.png";
+    public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
+    public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
@@ -99,16 +103,23 @@ public final class IconUtils {
     public static final String ACTION_FORWARD = "images/actions/forward.png";
     public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
     public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
+    public static final String ACTION_STOP = "images/actions/stop.png";
+    public static final String ACTION_LOG = "images/actions/log.png";
+    public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 
+    // TODO: 'valid.png' needs a visual update
+    public static final String STATUS_VALID = "images/status/valid.png";
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";
-    public static final String STATUS_VALID = "images/status/valid.png";
 
-    public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
-    public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";
+    public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
+
+    public static final String CHART_BAR = "images/chart-types/bar.png";
+    public static final String CHART_LINE = "images/chart-types/line.png";
+    public static final String CHART_SCATTER = "images/chart-types/scatter.png";
 
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";

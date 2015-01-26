@@ -36,12 +36,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -54,8 +55,12 @@ import javax.swing.text.JTextComponent;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.widgets.DarkButtonUI;
+import org.datacleaner.widgets.DarkToggleButtonUI;
 import org.datacleaner.widgets.DefaultButtonUI;
+import org.datacleaner.widgets.DefaultToggleButtonUI;
 import org.datacleaner.widgets.PrimaryButtonUI;
+import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
@@ -180,6 +185,7 @@ public final class WidgetUtils {
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
+    public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
                     BORDER_WIDE_WIDTH - 1, 9));
@@ -503,7 +509,15 @@ public final class WidgetUtils {
     }
 
     public static DCPanel decorateWithShadow(JComponent comp) {
-        return decorateWithShadow(comp, true, 4);
+        final boolean outline;
+        if (comp instanceof DCTablePanel) {
+            // table panels has it's own special outline
+            outline = false;
+        } else {
+            outline = true;
+        }
+        
+        return decorateWithShadow(comp, outline, 4);
     }
 
     /**
@@ -578,11 +592,23 @@ public final class WidgetUtils {
         }
     }
 
-    public static void setPrimaryButtonStyle(JButton b) {
+    public static void setPrimaryButtonStyle(AbstractButton b) {
         b.setUI(PrimaryButtonUI.get());
     }
+    
+    public static void setDarkButtonStyle(AbstractButton b) {
+        if (b instanceof JToggleButton) {
+            b.setUI(DarkToggleButtonUI.get());
+        } else {
+            b.setUI(DarkButtonUI.get());
+        }
+    }
 
-    public static void setDefaultButtonStyle(JButton b) {
-        b.setUI(DefaultButtonUI.get());
+    public static void setDefaultButtonStyle(AbstractButton b) {
+        if (b instanceof JToggleButton) {
+            b.setUI(DefaultToggleButtonUI.get());
+        } else {
+            b.setUI(DefaultButtonUI.get());
+        }
     }
 }

@@ -22,7 +22,6 @@ package org.datacleaner.widgets.result;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -57,6 +56,7 @@ import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.JXEditorPane;
@@ -197,42 +197,9 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
         panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
 
         final Datastore datastore = result.getDatastore(_datastoreCatalog);
-        final Insets buttonMargin = new Insets(1, 4, 1, 4);
         if (datastore != null && datastore.getName() != null) {
-            final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
-            if (!datastore.equals(ds)) {
-                final JButton addDatastoreButton = new JButton("Add to datastores",
-                        imageManager.getImageIcon(IconUtils.ACTION_ADD));
-                addDatastoreButton.setMargin(buttonMargin);
-                addDatastoreButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _datastoreCatalog.addDatastore(datastore);
-                        addDatastoreButton.setEnabled(false);
-                    }
-                });
-                panel.add(addDatastoreButton);
-                panel.add(Box.createHorizontalStrut(4));
-            }
 
-            final JButton analyzeButton = new JButton("Analyze this datastore",
-                    imageManager.getImageIcon(IconUtils.MODEL_JOB));
-            analyzeButton.setMargin(buttonMargin);
-            analyzeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
-                    AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-                    window.setDatastore(datastore);
-                    window.open();
-                }
-            });
-            panel.add(analyzeButton);
-            panel.add(Box.createHorizontalStrut(4));
-
-            final JButton previewButton = new JButton("Preview table",
-                    imageManager.getImageIcon("images/actions/preview_data.png"));
-            previewButton.setMargin(buttonMargin);
+            final JButton previewButton = WidgetFactory.createPrimaryButton("Preview table", IconUtils.ACTION_PREVIEW);
             previewButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -250,6 +217,35 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                 }
             });
             panel.add(previewButton);
+            panel.add(Box.createHorizontalStrut(4));
+
+            final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
+            if (!datastore.equals(ds)) {
+                final JButton addDatastoreButton = WidgetFactory.createDefaultButton("Add to datastores",
+                        IconUtils.ACTION_ADD);
+                addDatastoreButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        _datastoreCatalog.addDatastore(datastore);
+                        addDatastoreButton.setEnabled(false);
+                    }
+                });
+                panel.add(addDatastoreButton);
+                panel.add(Box.createHorizontalStrut(4));
+            }
+
+            final JButton analyzeButton = WidgetFactory.createDefaultButton("Analyze this datastore",
+                    IconUtils.MODEL_JOB);
+            analyzeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, null));
+                    AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                    window.setDatastore(datastore);
+                    window.open();
+                }
+            });
+            panel.add(analyzeButton);
         }
         return panel;
     }

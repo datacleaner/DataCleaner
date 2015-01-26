@@ -19,7 +19,6 @@
  */
 package org.datacleaner.widgets.result;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Insets;
@@ -39,16 +38,16 @@ import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.ValueCountingAnalyzerResult;
 import org.datacleaner.result.ValueFrequency;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ChartUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -245,9 +244,9 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         });
 
         final DCPanel rightPanel = new DCPanel();
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.add(_backButton, BorderLayout.NORTH);
-        rightPanel.add(_table.toPanel(), BorderLayout.CENTER);
+        rightPanel.setLayout(new VerticalLayout());
+        rightPanel.add(_backButton);
+        rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
 
         final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         split.setOpaque(false);
@@ -277,7 +276,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                 panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
                 JLabel label = new JLabel(count + "");
-                JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
+                JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -369,7 +368,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             };
 
             DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(count, Alignment.LEFT,
-                    action, AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
+                    action, IconUtils.ACTION_DRILL_TO_DETAIL);
 
             model.setValueAt(panel, i, 1);
         } else {

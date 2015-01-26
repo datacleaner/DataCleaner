@@ -22,7 +22,6 @@ package org.datacleaner.panels;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
 import javax.swing.Icon;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -60,8 +59,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     private final JXTextField _jobDescriptionTextField;
     private final JXTextField _authorTextField;
 
-    @Inject
-    protected MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
+    public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
         super(ImageManager.get().getImage("images/window/metadata-tab-background.png"), 95, 95,
                 WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;

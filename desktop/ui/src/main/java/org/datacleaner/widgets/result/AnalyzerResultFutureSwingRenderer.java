@@ -30,6 +30,7 @@ import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
+import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,20 +64,22 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
             public void onSuccess(AnalyzerResult result) {
                 Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result, SwingRenderingFormat.class);
                 if (renderer != null) {
-                    JComponent jComponent = renderer.render(result);
-                    resultPanel.add(jComponent);
+                    logger.debug("renderer.render({})", result);
+                    final JComponent component = renderer.render(result);
+                    resultPanel.add(component);
                 } else {
-                    logger.error("No renderer found for: " + result);
+                    final String message = "No renderer found for result type " + result.getClass().getName();
+                    logger.error(message);
+                    throw new IllegalStateException(message);
                 }
                 
                 resultPanel.remove(busyLabel);
                 resultPanel.updateUI();
-                
             }
 
             @Override
             public void onError(RuntimeException error) {
-                logger.error("Error occured while retrieving AnalyzerResult from AnalyzerResultFuture" + error);
+                WidgetUtils.showErrorMessage("Unable to fetch result", error);
             }
             
         });

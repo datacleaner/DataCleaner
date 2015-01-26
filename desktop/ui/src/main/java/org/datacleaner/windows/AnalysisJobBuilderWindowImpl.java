@@ -148,11 +148,11 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
     private final JToggleButton _graphViewButton;
-    private final JobClassicView _classicView;
     private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
     private final JComponent _editingContentView;
     private final UsageLogger _usageLogger;
+    private JobClassicView _classicView;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -198,10 +198,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _classicView = new JobClassicView(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
-
         _graph = new JobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
-        final DCPanel graphPanel = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
         _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
@@ -219,8 +216,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
-        _editingContentView.add(_classicView, BorderLayout.CENTER);
-        _editingContentView.add(graphPanel, BorderLayout.CENTER);
 
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new BorderLayout());
@@ -230,15 +225,27 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final boolean graphPreferred = isGraphPreferred();
 
         if (graphPreferred) {
-            setEditingView(graphPanel);
+            setEditingViewGraph();
         } else {
-            setEditingView(_classicView);
+            setEditingViewClassic();
         }
 
-        _classicViewButton = createViewToggleButton("Classic view", _classicView,
-                "images/actions/editing-view-classic.png");
+        _classicViewButton = createViewToggleButton("Classic view", "images/actions/editing-view-classic.png");
+        _classicViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditingViewClassic();
+            }
+        });
+
         _classicViewButton.setSelected(!graphPreferred);
-        _graphViewButton = createViewToggleButton("Graph view", graphPanel, "images/actions/editing-view-graph.png");
+        _graphViewButton = createViewToggleButton("Graph view", "images/actions/editing-view-graph.png");
+        _graphViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditingViewGraph();
+            }
+        });
         _graphViewButton.setSelected(graphPreferred);
 
         final ActionListener viewToggleButtonActionListener = new ActionListener() {
@@ -397,6 +404,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 _welcomePanel.setVisible(true);
             }
         }
+    }
+
+    private void setEditingViewGraph() {
+        setEditingView(_graph.getPanel());
+        _classicView = null;
+    }
+
+    private void setEditingViewClassic() {
+        if (_classicView == null) {
+            _classicView = new JobClassicView(getWindowContext(), _analysisJobBuilder, _presenterRendererFactory,
+                    _usageLogger);
+        }
+        setEditingView(_classicView);
     }
 
     private void setEditingView(JComponent component) {
@@ -668,8 +688,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         WidgetUtils.centerOnScreen(this);
 
-        initializeExistingComponents();
-
         return panel;
     }
 
@@ -818,8 +836,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 
-    private JToggleButton createViewToggleButton(final String text, final JComponent editingContentView,
-            final String iconPath) {
+    private JToggleButton createViewToggleButton(final String text, final String iconPath) {
         final ImageIcon icon = imageManager.getImageIcon(iconPath);
         final JToggleButton button = new JToggleButton(text, icon);
         button.setFont(WidgetUtils.FONT_SMALL);
@@ -827,12 +844,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         button.setBackground(WidgetUtils.BG_COLOR_DARK);
         button.setBorderPainted(false);
         button.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(0, 4, 0, 4)));
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setEditingView(editingContentView);
-            }
-        });
         return button;
     }
 
@@ -841,22 +852,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
      */
     @Override
     public void applyPropertyValues() {
-        _classicView.applyPropertyValues();
-    }
-
-    /**
-     * Method used to initialize any components that may be in the
-     * AnalysisJobBuilder before this window has been created. Typically this
-     * will only happen when opening a saved job.
-     */
-    private void initializeExistingComponents() {
-        onSourceColumnsChanged();
+        if (_classicView != null) {
+            _classicView.applyPropertyValues();
+        }
     }
 
     private void onSourceColumnsChanged() {
         boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty();
-        
-        _classicView.onSourceColumnsChanged(everythingEnabled);
+
+        if (_classicView != null) {
+            _classicView.onSourceColumnsChanged(everythingEnabled);
+        }
 
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
@@ -886,14 +892,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                _classicView.initializeAnalyzer(analyzerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addAnalyzer(analyzerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
 
             @Override
             public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                _classicView.removeAnalyzer(analyzerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.removeAnalyzer(analyzerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
@@ -916,14 +926,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
-                _classicView.initializeTransformer(transformerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addTransformer(transformerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
 
             @Override
             public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
-                _classicView.removeTransformer(transformerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.removeTransformer(transformerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
@@ -952,14 +966,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
-                _classicView.initializeFilter(filterJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addFilter(filterJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
 
             @Override
             public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder) {
-                _classicView.removeFilter(filterJobBuilder);
+                if (_classicView != null) {
+                    _classicView.removeFilter(filterJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }

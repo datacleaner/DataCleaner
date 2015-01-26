@@ -133,26 +133,33 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
         add(_tabbedPane, BorderLayout.CENTER);
     }
 
+    /**
+     * Method used to initialize any components that may be in the
+     * AnalysisJobBuilder before this window has been created. Typically this
+     * will only happen when opening a saved job.
+     */
     private void initializeExistingComponents() {
         final List<FilterComponentBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterComponentBuilders();
         for (FilterComponentBuilder<?, ?> fjb : filterJobBuilders) {
-            initializeFilter(fjb);
+            addFilter(fjb);
         }
 
         final List<TransformerComponentBuilder<?>> transformerJobBuilders = _analysisJobBuilder
                 .getTransformerComponentBuilders();
         for (TransformerComponentBuilder<?> tjb : transformerJobBuilders) {
-            initializeTransformer(tjb);
+            addTransformer(tjb);
         }
 
         final List<AnalyzerComponentBuilder<?>> analyzerJobBuilders = _analysisJobBuilder
                 .getAnalyzerComponentBuilders();
         for (AnalyzerComponentBuilder<?> ajb : analyzerJobBuilders) {
-            initializeAnalyzer((AnalyzerComponentBuilder<?>) ajb);
+            addAnalyzer((AnalyzerComponentBuilder<?>) ajb);
         }
+        
+        onSourceColumnsChanged(!_analysisJobBuilder.getSourceColumns().isEmpty());
     }
 
-    public void initializeAnalyzer(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
+    public void addAnalyzer(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(analyzerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -177,7 +184,7 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
         _tabbedPane.setSelectedIndex(tabIndex);
     }
 
-    public void initializeTransformer(final TransformerComponentBuilder<?> transformerJobBuilder) {
+    public void addTransformer(final TransformerComponentBuilder<?> transformerJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(transformerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -201,7 +208,7 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
         });
     }
 
-    public void initializeFilter(final FilterComponentBuilder<?, ?> filterJobBuilder) {
+    public void addFilter(final FilterComponentBuilder<?, ?> filterJobBuilder) {
         @SuppressWarnings("unchecked")
         final Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(filterJobBuilder, ComponentBuilderPresenterRenderingFormat.class);

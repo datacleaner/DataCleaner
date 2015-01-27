@@ -420,7 +420,7 @@ public class OptionsDialog extends AbstractWindow {
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
-        panel.setPreferredSize(500, 500);
+        panel.setPreferredSize(700, 500);
         return panel;
     }
 

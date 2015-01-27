@@ -19,23 +19,55 @@
  */
 package org.datacleaner.extension.output;
 
-import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
+import java.io.File;
+
+import org.junit.Test;
 
 import junit.framework.TestCase;
 
 public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
-	public void testValidateSheetName() throws Exception {
-		CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
-		analyzer.sheetName = "foo";
-		analyzer.validate();
-		
-		analyzer.sheetName = "foo.bar";
-		try {
-			analyzer.validate();
-			fail("Exception expected");
-		} catch (Exception e) {
-			assertEquals("Sheet name cannot contain dots (.)", e.getMessage());
-		}
-	}
+    @Test
+    public void testValidateSheetName() throws Exception {
+        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        analyzer.sheetName = "foo";
+        analyzer.validate();
+
+        analyzer.sheetName = "foo.bar";
+        try {
+            analyzer.validate();
+            fail("Exception expected");
+        } catch (Exception e) {
+            assertEquals("Sheet name cannot contain dots (.)", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testValidateOverwriteFile() throws Exception {
+        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+
+        analyzer.sheetName = "foo";
+        analyzer.overwriteFile = false;
+
+        final File file = analyzer.file;
+        assertNotNull(file);
+        assertFalse(file.exists());
+        analyzer.validate();
+
+        try {
+            file.createNewFile();
+            assertTrue(file.exists()); 
+            assertFalse(analyzer.overwriteFile); 
+            analyzer.validate();
+            fail("Exception expected");
+        } catch (Exception e) {
+            assertEquals("The file already exits and the columns selected do not match", e.getMessage());
+        }
+
+        analyzer.overwriteFile = true;
+        analyzer.validate();
+        file.delete();
+        assertFalse(file.exists());
+
+    }
 }

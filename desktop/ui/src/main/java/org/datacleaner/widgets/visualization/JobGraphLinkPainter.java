@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.visualization;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -35,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -51,7 +49,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,10 +215,8 @@ public class JobGraphLinkPainter {
                 }
             } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
                 final JPopupMenu popup = new JPopupMenu();
-                final int iconSize = IconUtils.ICON_SIZE_MEDIUM;
-                final Icon icon = ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH, iconSize);
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
-                    final JMenuItem menuItem = new JMenuItem(filterOutcome.getSimpleName(), icon);
+                    final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(), IconUtils.FILTER_IMAGEPATH);
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -228,13 +224,9 @@ public class JobGraphLinkPainter {
                             componentBuilder.setComponentRequirement(requirement);
                         }
                     });
-                    final int preferredWidth = menuItem.getPreferredSize().width;
-                    menuItem.setPreferredSize(new Dimension(Math.max(preferredWidth, 200), iconSize + 20));
-                    menuItem.setBorder(null);
                     popup.add(menuItem);
-
-                    popup.show(_graphContext.getVisualizationViewer(), mouseEvent.getX(), mouseEvent.getY());
                 }
+                popup.show(_graphContext.getVisualizationViewer(), mouseEvent.getX(), mouseEvent.getY());
 
                 // we return false because no change was applied (yet)
                 logger.debug("createLink(...) returning false - popup with choices presented to user");

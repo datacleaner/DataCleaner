@@ -22,20 +22,26 @@ package org.datacleaner.widgets.result;
 import javax.swing.JComponent;
 import javax.swing.table.TableModel;
 
+import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
+import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.result.TableModelResult;
-import org.datacleaner.result.renderer.AbstractRenderer;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
-public class TableModelResultSwingRenderer extends AbstractRenderer<TableModelResult, JComponent> {
+public class TableModelResultSwingRenderer implements Renderer<TableModelResult, JComponent> {
 
 	@Override
 	public JComponent render(TableModelResult result) {
 		TableModel tableModel = result.toTableModel();
 		DCTable table = new DCTable(tableModel);
 		return table.toPanel();
+	}
+	
+	@Override
+	public RendererPrecedence getPrecedence(TableModelResult renderable) {
+	    return RendererPrecedence.LOW;
 	}
 
 }

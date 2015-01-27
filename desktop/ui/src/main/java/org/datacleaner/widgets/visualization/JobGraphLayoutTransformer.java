@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets.visualization;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -33,10 +34,11 @@ import java.util.Set;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
-import org.elasticsearch.common.collect.IdentityHashSet;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
+import org.datacleaner.util.IconUtils;
+import org.elasticsearch.common.collect.IdentityHashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,6 +191,13 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
             JobGraphMetadata.setPointForTable(_analysisJobBuilder, (Table) vertex, point.x, point.y);
         }
 
+        if (point.x < 0 || point.y < 0) {
+            // apply max(offset, value) to avoid location outside of canvas
+            final int xValue = Math.max(X_OFFSET, point.x);
+            final int yValue = Math.max(Y_OFFSET, point.y);
+            point = new Point(xValue, yValue);
+        }
+
         return point;
     }
 
@@ -253,5 +262,19 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
             }
         }
         return max;
+    }
+
+    public Dimension getPreferredSize() {
+        // sensible minimum size of the canvas
+        int maxX = 600;
+        int maxY = 400;
+
+        final Collection<Point> points = _points.values();
+        for (Point point : points) {
+            maxX = Math.max(maxX, point.x + IconUtils.ICON_SIZE_LARGE);
+            maxY = Math.max(maxY, point.y + IconUtils.ICON_SIZE_LARGE);
+        }
+
+        return new Dimension(maxX, maxY);
     }
 }

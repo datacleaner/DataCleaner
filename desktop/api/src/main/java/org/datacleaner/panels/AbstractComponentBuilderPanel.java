@@ -76,7 +76,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
             int watermarkVerticalPosition, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition,
-                WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+                WidgetUtils.COLOR_WELL_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _componentBuilder = componentBuilder;
@@ -110,7 +110,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     @Override
     public final JComponent createJComponent() {
         init();
-        JComponent decorate = decorate(this);
+        JComponent decorate = decorateMainPanel(this);
         return decorate;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
      * @param panel
      * @return
      */
-    protected JComponent decorate(DCPanel panel) {
+    protected JComponent decorateMainPanel(DCPanel panel) {
         return panel;
     }
 

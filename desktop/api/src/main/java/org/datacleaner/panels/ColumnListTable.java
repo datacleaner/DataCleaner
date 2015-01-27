@@ -37,7 +37,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -66,7 +65,8 @@ public final class ColumnListTable extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String[] headers = new String[] { "Name", "Type", "" };
+    private static final String[] HEADERS_WITH_ACTION_COLUMN = new String[] { "Name", "Type", "" };
+    private static final String[] HEADERS_WITHOUT_ACTIONS = new String[] { "Name", "Type" };
 
     private final ImageManager imageManager = ImageManager.get();
     private final AnalysisJobBuilder _analysisJobBuilder;
@@ -107,7 +107,7 @@ public final class ColumnListTable extends DCPanel {
             headerPanel.add(tableNameLabel);
 
             if (_windowContext != null) {
-                final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
+                final JButton previewButton = WidgetFactory.createSmallButton(IconUtils.ACTION_PREVIEW);
                 previewButton.setToolTipText("Preview table rows");
                 previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
                         .getDatastore(), _columns.keySet()));
@@ -138,7 +138,7 @@ public final class ColumnListTable extends DCPanel {
             add(headerPanel, BorderLayout.NORTH);
         }
 
-        _columnTable = new DCTable(headers);
+        _columnTable = new DCTable(HEADERS_WITH_ACTION_COLUMN);
         _columnTable.setSortable(false);
         _columnTable.setColumnControlVisible(false);
         _columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
@@ -152,6 +152,21 @@ public final class ColumnListTable extends DCPanel {
     }
 
     private void updateComponents() {
+        boolean hasPhysicalColumns = false;
+        for (final InputColumn<?> column : _columns.keySet()) {
+            if (column.isPhysicalColumn()) {
+                hasPhysicalColumns = true;
+                break;
+            }
+        }
+
+        final String[] headers;
+        if (hasPhysicalColumns) {
+            headers = HEADERS_WITH_ACTION_COLUMN;
+        } else {
+            headers = HEADERS_WITHOUT_ACTIONS;
+        }
+
         TableModel model = new DefaultTableModel(headers, _columns.size());
         int i = 0;
         for (final Entry<InputColumn<?>, JComponent> entry : _columns.entrySet()) {
@@ -163,9 +178,9 @@ public final class ColumnListTable extends DCPanel {
             final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
             model.setValueAt(dataTypeString, i, 1);
 
-            final DCPanel buttonPanel = new DCPanel();
-            buttonPanel.setLayout(new GridBagLayout());
             if (column.isPhysicalColumn()) {
+                final DCPanel buttonPanel = new DCPanel();
+                buttonPanel.setLayout(new GridBagLayout());
                 final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
                 removeButton.setToolTipText("Remove column from source");
                 removeButton.addActionListener(new ActionListener() {
@@ -175,21 +190,23 @@ public final class ColumnListTable extends DCPanel {
                     }
                 });
                 WidgetUtils.addToGridBag(removeButton, buttonPanel, 0, 0);
+                model.setValueAt(buttonPanel, i, 2);
             }
 
-            model.setValueAt(buttonPanel, i, 2);
             i++;
         }
         _columnTable.setModel(model);
 
-        final TableColumnExt columnExt = _columnTable.getColumnExt(2);
-        columnExt.setMinWidth(26);
-        columnExt.setMaxWidth(80);
-        columnExt.setPreferredWidth(30);
+        if (hasPhysicalColumns) {
+            final TableColumnExt columnExt = _columnTable.getColumnExt(2);
+            columnExt.setMinWidth(26);
+            columnExt.setMaxWidth(80);
+            columnExt.setPreferredWidth(30);
+        }
 
         _columnTable.setRowHeight(DCTable.EDITABLE_TABLE_ROW_HEIGHT);
 
-        JPanel tablePanel = _columnTable.toPanel();
+        DCPanel tablePanel = _columnTable.toPanel();
         if (_addShadowBorder) {
             tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
         }

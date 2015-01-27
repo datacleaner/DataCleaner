@@ -29,6 +29,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.metamodel.schema.Column;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.connection.AccessDatastore;
@@ -71,20 +72,26 @@ public final class IconUtils {
     public static final String MODEL_TABLE = "images/model/table.png";
     public static final String MODEL_COLUMN = "images/model/column.png";
     public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
+    public static final String MODEL_COLUMN_EXPRESSION = "images/model/column_expression.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
     public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
     public static final String MODEL_RESULT = "images/model/result.png";
+    public static final String MODEL_SOURCE = "images/model/source.png";
+    public static final String MODEL_METADATA = "images/model/metadata.png";
 
+    public static final String MENU_OPEN = "images/menu/open.png";
+    public static final String MENU_SAVE = "images/menu/save.png";
+    public static final String MENU_NEW = "images/menu/new.png";
+    public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
-    public static final String ACTION_NEW = "images/actions/new.png";
     public static final String ACTION_EXECUTE = "images/actions/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
-    public static final String ACTION_OPEN = "images/actions/open.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
-    public static final String ACTION_CLOSE = "images/actions/close.png";
+    public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
+    public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
@@ -96,16 +103,25 @@ public final class IconUtils {
     public static final String ACTION_HELP = "images/actions/help.png";
     public static final String ACTION_BACK = "images/actions/back.png";
     public static final String ACTION_FORWARD = "images/actions/forward.png";
+    public static final String ACTION_SCROLLDOWN_DARK = "images/actions/scrolldown_dark.png";
+    public static final String ACTION_SCROLLDOWN_BRIGHT = "images/actions/scrolldown_bright.png";
+    public static final String ACTION_STOP = "images/actions/stop.png";
+    public static final String ACTION_LOG = "images/actions/log.png";
+    public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
     public static final String WEBSITE = "images/actions/website.png";
 
+    // TODO: 'valid.png' needs a visual update
+    public static final String STATUS_VALID = "images/status/valid.png";
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";
-    public static final String STATUS_VALID = "images/status/valid.png";
 
-    public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
-    public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";
+    public static final String ACTION_REORDER_COLUMNS = "images/actions/reorder-columns.png";
+
+    public static final String CHART_BAR = "images/chart-types/bar.png";
+    public static final String CHART_LINE = "images/chart-types/line.png";
+    public static final String CHART_SCATTER = "images/chart-types/scatter.png";
 
     public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
     public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";
@@ -189,31 +205,44 @@ public final class IconUtils {
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath, newWidth);
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore) {
-        String imagePath = getDatastoreImagePath(datastore, true);
+        final String imagePath = getDatastoreImagePath(datastore, true);
         return _imageManager.getImageIcon(imagePath);
     }
 
-    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
-        Class<? extends ComponentCategory> categoryClass = category.getClass();
+    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
+        final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
+        return getCategoryIcon(superCategoryClass, false);
+    }
 
-        final String bundledIconPath = getImagePathForClass(categoryClass);
+    public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
+        final Class<? extends ComponentCategory> categoryClass = category.getClass();
+        return getCategoryIcon(categoryClass, true);
+    }
+
+    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder) {
+        final String bundledIconPath = getImagePathForClass(cls);
 
         final int totalSize = ICON_SIZE_MEDIUM;
+
+        if (!decorateWithFolder && bundledIconPath != null) {
+            return _imageManager.getImageIcon(bundledIconPath, totalSize);
+        }
+
         final Image decoration;
         final int decorationSize = ICON_SIZE_SMALL;
         if (bundledIconPath == null) {
             decoration = null;
         } else {
-            final ClassLoader classLoader = categoryClass.getClassLoader();
+            final ClassLoader classLoader = cls.getClassLoader();
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 
-        final Image folderIcon = _imageManager.getImage("images/filetypes/folder.png", totalSize);
+        final Image folderIcon = _imageManager.getImage(FILE_FOLDER, totalSize);
 
         if (decoration == null) {
             return new ImageIcon(folderIcon);
@@ -267,7 +296,7 @@ public final class IconUtils {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
+        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
             // plugins get a special icon
             return "images/component-types/plugin.png";
         }

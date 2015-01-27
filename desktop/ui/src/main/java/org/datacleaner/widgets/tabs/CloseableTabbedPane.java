@@ -54,6 +54,8 @@ public final class CloseableTabbedPane extends JTabbedPane {
     private static final long serialVersionUID = -411551524171347329L;
     private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
 
+    public static final Color COLOR_BACKGROUND = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
+
     private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
     private final List<Integer> _unclosables = new LinkedList<Integer>();
     private final List<Integer> _separators = new LinkedList<Integer>();
@@ -84,7 +86,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
         super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         setUI(new CloseableTabbedPaneUI(this));
         setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        setBackground(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        setBackground(COLOR_BACKGROUND);
         setOpaque(true);
         if (addBorder) {
             setBorder(WidgetUtils.BORDER_WIDE);

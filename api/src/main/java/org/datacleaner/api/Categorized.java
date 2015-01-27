@@ -35,5 +35,21 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface Categorized {
 
-	public Class<? extends ComponentCategory>[] value();
+    /**
+     * Defines the top-level component category. This categorization is very
+     * broad and is normally inferred from the component type itself. Rather the
+     * {@link #value()} is a more typical categorization to define, since it
+     * defines the finer grained categorization of the components.
+     * 
+     * @return
+     */
+    public Class<? extends ComponentSuperCategory> superCategory() default ComponentSuperCategory.class;
+
+    /**
+     * Defines the category of component within the top-level structure as
+     * defined by {@link #superCategory()}.
+     * 
+     * @return
+     */
+    public Class<? extends ComponentCategory>[] value() default ComponentCategory.class;
 }

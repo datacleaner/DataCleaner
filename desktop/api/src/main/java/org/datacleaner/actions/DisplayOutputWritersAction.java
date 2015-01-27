@@ -63,7 +63,7 @@ public class DisplayOutputWritersAction {
     public List<JMenuItem> createMenuItems() {
         List<JMenuItem> result = new ArrayList<JMenuItem>();
         for (final AnalyzerDescriptor<?> descriptor : getDescriptors()) {
-            JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
+            JMenuItem outputWriterMenuItem = new DescriptorMenuItem(_analysisJobBuilder, null, descriptor);
             outputWriterMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

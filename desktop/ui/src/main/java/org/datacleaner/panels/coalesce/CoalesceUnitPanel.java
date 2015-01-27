@@ -89,7 +89,7 @@ public class CoalesceUnitPanel extends DCPanel {
         _outerPanel.add(comboBoxPanel, BorderLayout.SOUTH);
 
         setLayout(new BorderLayout());
-        add(WidgetUtils.decorateWithShadow(_outerPanel, true, 4), BorderLayout.CENTER);
+        add(WidgetUtils.decorateWithShadow(_outerPanel), BorderLayout.CENTER);
 
         List<InputColumn<?>> availableInputColumns = _parent.getAvailableInputColumns();
         setAvailableInputColumns(availableInputColumns);

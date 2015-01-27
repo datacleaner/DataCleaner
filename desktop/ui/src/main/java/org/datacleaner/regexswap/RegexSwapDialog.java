@@ -34,7 +34,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
@@ -213,7 +212,7 @@ public class RegexSwapDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final JPanel regexDetailsPanel = createRegexDetailsPanel();
+        final DCPanel regexDetailsPanel = createRegexDetailsPanel();
 
         final DCPanel treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         treePanel.setBorder(WidgetUtils.BORDER_WIDE);
@@ -230,7 +229,7 @@ public class RegexSwapDialog extends AbstractDialog {
         return panel;
     }
 
-    private JPanel createRegexDetailsPanel() {
+    private DCPanel createRegexDetailsPanel() {
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(Box.createHorizontalGlue());
         toolBar.add(_importRegexButton);

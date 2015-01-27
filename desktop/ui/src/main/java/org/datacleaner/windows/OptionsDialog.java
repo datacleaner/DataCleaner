@@ -401,7 +401,7 @@ public class OptionsDialog extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE);
+        final JButton closeButton = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

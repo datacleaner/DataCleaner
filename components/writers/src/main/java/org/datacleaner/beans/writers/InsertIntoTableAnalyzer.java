@@ -55,6 +55,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExecutionLogMessage;
 import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -64,8 +65,7 @@ import org.datacleaner.api.Provided;
 import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.api.Validate;
-import org.datacleaner.api.FileProperty.FileAccessMode;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.CsvDatastore;
@@ -79,7 +79,7 @@ import org.slf4j.LoggerFactory;
 
 @Named("Insert into table")
 @Description("Insert records into a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to insert these values into the table.")
-@Categorized(WriteDataCategory.class)
+@Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
 public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice {
 
@@ -234,7 +234,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
                     + _targetColumns.length + ", expected " + values.length + ")");
         }
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         if (datastore == null || tableName == null) {
@@ -468,8 +468,7 @@ public class InsertIntoTableAnalyzer implements Analyzer<WriteDataResult>, Actio
                     }
 
                     if (insertCount > 0) {
-                        _componentContext.publishMessage(new ExecutionLogMessage(insertCount
-                                + " inserts executed"));
+                        _componentContext.publishMessage(new ExecutionLogMessage(insertCount + " inserts executed"));
                     }
                 }
             });

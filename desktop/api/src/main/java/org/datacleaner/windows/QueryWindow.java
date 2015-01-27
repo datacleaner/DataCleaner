@@ -117,7 +117,7 @@ public class QueryWindow extends AbstractWindow {
         WidgetUtils.addToGridBag(_queryButton, buttonPanel, 1, 2, 2, 1);
 
         final JScrollPane scrolledTextArea = new JScrollPane(_queryTextArea);
-        final DCPanel decoratedTextField = WidgetUtils.decorateWithShadow(scrolledTextArea, true, 2);
+        final DCPanel decoratedTextField = WidgetUtils.decorateWithShadow(scrolledTextArea);
 
         _upperPanel = new DCPanel();
         _upperPanel.setLayout(new BorderLayout());

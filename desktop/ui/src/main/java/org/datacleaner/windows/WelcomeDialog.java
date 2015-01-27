@@ -51,7 +51,7 @@ public class WelcomeDialog extends JDialog {
 
         final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
         banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
-        final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner, true, 5);
+        final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
@@ -59,7 +59,7 @@ public class WelcomeDialog extends JDialog {
 
         final ImageManager imageManager = ImageManager.get();
 
-        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon("images/actions/execute.png",
+        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE,
                 IconUtils.ICON_SIZE_MEDIUM));
         closeButton.addActionListener(new ActionListener() {
             @Override
@@ -69,7 +69,7 @@ public class WelcomeDialog extends JDialog {
         });
 
         final JButton websiteButton = new JButton("Visit the DataCleaner website", imageManager.getImageIcon(
-                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+                IconUtils.WEBSITE, IconUtils.ICON_SIZE_MEDIUM));
         websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
 
         panel.add(DCPanel.flow(Alignment.RIGHT, 10, 10, websiteButton, closeButton), BorderLayout.SOUTH);

@@ -23,18 +23,17 @@ import java.awt.Color;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
-
-import com.jgoodies.looks.plastic.PlasticButtonUI;
 
 /***
  * A {@link ButtonUI} for dark buttons in the DataCleaner user interface.
  */
-public class DarkButtonUI extends PlasticButtonUI {
+public class DarkButtonUI extends MetalButtonUI {
 
     public static final Color COLOR_BG_SELECT = WidgetUtils.BG_COLOR_LESS_DARK;
-    public static final Color COLOR_BG_DEFAULT = WidgetUtils.BG_COLOR_DARKEST;
+    public static final Color COLOR_BG_DEFAULT = WidgetUtils.BG_COLOR_DARK;
 
     private static final DarkButtonUI INSTANCE = new DarkButtonUI();
 
@@ -43,11 +42,6 @@ public class DarkButtonUI extends PlasticButtonUI {
     }
 
     private DarkButtonUI() {
-    }
-
-    @Override
-    protected boolean is3D(AbstractButton b) {
-        return false;
     }
 
     @Override

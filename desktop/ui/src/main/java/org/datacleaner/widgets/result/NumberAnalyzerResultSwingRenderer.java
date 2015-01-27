@@ -38,6 +38,7 @@ import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.ChartUtils;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
@@ -124,7 +125,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
                     };
 
                     DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
-                            Alignment.RIGHT, action, "images/chart-types/line.png");
+                            Alignment.RIGHT, action, IconUtils.CHART_LINE);
                     table.setValueAt(panel, rowNumber, columnNumber);
                 }
             }

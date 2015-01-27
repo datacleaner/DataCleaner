@@ -41,7 +41,7 @@ import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.datacleaner.windows.AbstractDialog;
@@ -107,8 +107,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
             @Override
             protected JComponent getDialogContent() {
-                final AnalyzerDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder
-                        .getDescriptor();
+                final AnalyzerDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
                 final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
                 tabbedPane.addTab(descriptor.getDisplayName(),
                         IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE),
@@ -123,7 +122,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
             }
         };
 
-        final JButton runButton = new JButton("Run", ImageManager.get().getImageIcon("images/actions/execute.png"));
+        final JButton runButton = WidgetFactory.createPrimaryButton("Run", IconUtils.ACTION_EXECUTE);
         runButton.addActionListener(new ActionListener() {
 
             @Override
@@ -132,13 +131,22 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
                 ResultWindow window = injector.getInstance(ResultWindow.class);
                 window.open();
-                dialog.dispose();
+                dialog.close();
                 window.startAnalysis();
+            }
+        });
+        
+        final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.close();
             }
         });
 
         presenter.addToButtonPanel(runButton);
+        presenter.addToButtonPanel(closeButton);
 
-        dialog.setVisible(true);
+        dialog.open();
     }
 }

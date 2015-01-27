@@ -21,6 +21,10 @@ package org.datacleaner.widgets;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -32,98 +36,126 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tooltip.DCToolTip;
+import org.datacleaner.widgets.visualization.JobGraphMetadata;
 
 /**
  * MenuItem for a component descriptor.
  */
-public class DescriptorMenuItem extends JMenuItem {
+public class DescriptorMenuItem extends JMenuItem implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ComponentDescriptor<?> _descriptor;
+    private final ComponentDescriptor<?> _descriptor;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final Point2D _coordinate;
 
-	public DescriptorMenuItem(ComponentDescriptor<?> descriptor) {
-		super(descriptor.getDisplayName());
-		_descriptor = descriptor;
-		ToolTipManager.sharedInstance().registerComponent(this);
-	}
+    public DescriptorMenuItem(AnalysisJobBuilder analysisJobBuilder, Point2D coordinate,
+            ComponentDescriptor<?> descriptor) {
+        super(descriptor.getDisplayName());
+        _analysisJobBuilder = analysisJobBuilder;
+        _coordinate = coordinate;
+        _descriptor = descriptor;
+        addActionListener(this);
+        ToolTipManager.sharedInstance().registerComponent(this);
+    }
 
-	@Override
-	public Icon getIcon() {
-		return IconUtils.getDescriptorIcon(_descriptor);
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final Map<String, String> metadata;
+        if (_coordinate == null) {
+            metadata = null;
+        } else {
+            metadata = JobGraphMetadata.createMetadataProperties(_coordinate);
+        }
 
-	@Override
-	public String getToolTipText() {
-		return _descriptor.toString();
-	}
+        if (_descriptor instanceof AnalyzerDescriptor) {
+            _analysisJobBuilder.addAnalyzer((AnalyzerDescriptor<?>) _descriptor, null, null, metadata);
+        } else if (_descriptor instanceof TransformerDescriptor) {
+            _analysisJobBuilder.addTransformer((TransformerDescriptor<?>) _descriptor, null, null, metadata);
+        } else if (_descriptor instanceof FilterDescriptor) {
+            _analysisJobBuilder.addFilter((FilterDescriptor<?, ?>) _descriptor, null, null, metadata);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
 
-	@Override
-	public JToolTip createToolTip() {
-		JToolTip toolTip = new DCToolTip(this, createToolTipPanel());
-		return toolTip;
-	}
+    @Override
+    public Icon getIcon() {
+        return IconUtils.getDescriptorIcon(_descriptor);
+    }
 
-	protected JComponent createToolTipPanel() {
-		DCPanel panel = new DCPanel();
-		panel.setOpaque(true);
-		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
+    @Override
+    public String getToolTipText() {
+        return _descriptor.toString();
+    }
 
-		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor,
-				IconUtils.ICON_SIZE_LARGE));
-		iconLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
-		iconLabel.setOpaque(false);
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip toolTip = new DCToolTip(this, createToolTipPanel());
+        return toolTip;
+    }
 
-		JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
-		nameLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		nameLabel.setOpaque(false);
-		nameLabel.setFont(WidgetUtils.FONT_HEADER1);
+    protected JComponent createToolTipPanel() {
+        DCPanel panel = new DCPanel();
+        panel.setOpaque(true);
+        panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 
-		// if the bean has a description, add it in the CENTER of the tooltip
-		String description = _descriptor.getDescription();
-		if (StringUtils.isNullOrEmpty(description)) {
+        JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_LARGE));
+        iconLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
+        iconLabel.setOpaque(false);
 
-			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0);
-			WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
+        JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
+        nameLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        nameLabel.setOpaque(false);
+        nameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		} else {
-			String[] lines = description.split("\n");
+        // if the bean has a description, add it in the CENTER of the tooltip
+        String description = _descriptor.getDescription();
+        if (StringUtils.isNullOrEmpty(description)) {
 
-			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1,
-					lines.length + 1, GridBagConstraints.WEST);
-			WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
+            WidgetUtils.addToGridBag(iconLabel, panel, 0, 0);
+            WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
 
-			int width = 0;
-			int height = 0;
+        } else {
+            String[] lines = description.split("\n");
 
-			for (int i = 0; i < lines.length; i++) {
-				String line = lines[i];
+            WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1, lines.length + 1, GridBagConstraints.WEST);
+            WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
 
-				DCLabel label = DCLabel.brightMultiLine(line);
-				label.setMaximumWidth(350);
+            int width = 0;
+            int height = 0;
 
-				Dimension ps = label.getPreferredSize();
-				height += ps.height + 8;
-				width = Math.max(ps.width, width);
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
 
-				WidgetUtils.addToGridBag(label, panel, 1, i + 1);
-			}
+                DCLabel label = DCLabel.brightMultiLine(line);
+                label.setMaximumWidth(350);
 
-			width += iconLabel.getPreferredSize().width + 30;
-			height += nameLabel.getPreferredSize().height + 30;
+                Dimension ps = label.getPreferredSize();
+                height += ps.height + 8;
+                width = Math.max(ps.width, width);
 
-			panel.setPreferredSize(new Dimension(width, height));
-		}
+                WidgetUtils.addToGridBag(label, panel, 1, i + 1);
+            }
 
-		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN,
-				WidgetUtils.BORDER_EMPTY);
-		panel.setBorder(border);
-		return panel;
-	}
+            width += iconLabel.getPreferredSize().width + 30;
+            height += nameLabel.getPreferredSize().height + 30;
+
+            panel.setPreferredSize(new Dimension(width, height));
+        }
+
+        Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
+        panel.setBorder(border);
+        return panel;
+    }
 }

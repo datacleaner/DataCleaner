@@ -87,7 +87,7 @@ public class UniqueKeyCheckAnalyzerResultSwingRenderer extends AbstractRenderer<
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());
-        leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel, true, 4));
+        leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel));
 
         final Map<String, Integer> samples = result.getNonUniqueSamples();
         if (samples == null || samples.isEmpty()) {

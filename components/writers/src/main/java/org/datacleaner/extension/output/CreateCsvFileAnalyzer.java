@@ -52,7 +52,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Provided;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -67,7 +67,7 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Named("Create CSV file")
 @Alias("Write to CSV file")
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
-@Categorized(WriteDataCategory.class)
+@Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
@@ -103,10 +103,12 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Initialize
     public void initTempFile() throws Exception {
-        if(columnToBeSortedOn != null) {
-            _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
-        } else {
-            _targetFile = file ;
+        if (_targetFile == null) {
+            if(columnToBeSortedOn != null) {
+                _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+            } else {
+                _targetFile = file ;
+            }
         }
     }
 
@@ -161,6 +163,13 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             }
         }
        
+        if (_targetFile == null) {
+            try {
+                initTempFile();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar, quoteChar, escapeChar, includeHeader, columns);
     }

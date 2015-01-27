@@ -58,6 +58,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExecutionLogMessage;
 import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -67,8 +68,7 @@ import org.datacleaner.api.Provided;
 import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
 import org.datacleaner.api.Validate;
-import org.datacleaner.api.FileProperty.FileAccessMode;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.components.convert.ConvertToBooleanTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.CsvDatastore;
@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 
 @Named("Update table")
 @Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore.")
-@Categorized(WriteDataCategory.class)
+@Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
 public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice {
 

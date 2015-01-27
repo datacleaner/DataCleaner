@@ -20,9 +20,11 @@
 package org.datacleaner.descriptors;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RenderingFormat;
@@ -75,18 +77,16 @@ public interface DescriptorProvider {
     public Collection<TransformerDescriptor<?>> getTransformerDescriptors();
 
     /**
-     * Gets a {@link TransformerDescriptor} by its {@link Transformer}
-     * class.
+     * Gets a {@link TransformerDescriptor} by its {@link Transformer} class.
      * 
      * @param transformerClass
      * @return
      */
-    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(
-            Class<T> transformerClass);
+    public <T extends Transformer> TransformerDescriptor<T> getTransformerDescriptorForClass(Class<T> transformerClass);
 
     /**
-     * Gets a {@link TransformerDescriptor} by its display name (or secondly
-     * by searching using {@link Alias}es).
+     * Gets a {@link TransformerDescriptor} by its display name (or secondly by
+     * searching using {@link Alias}es).
      * 
      * @param name
      * @return
@@ -117,6 +117,33 @@ public interface DescriptorProvider {
      * @return
      */
     public FilterDescriptor<?, ?> getFilterDescriptorByDisplayName(String name);
+
+    /**
+     * Gets all the {@link ComponentSuperCategory} categories that are
+     * represented in the components known to this {@link DescriptorProvider}.
+     * 
+     * @return
+     */
+    public Set<ComponentSuperCategory> getComponentSuperCategories();
+
+    /**
+     * Gets all the {@link ComponentDescriptor}s known to this
+     * {@link DescriptorProvider}
+     * 
+     * @return
+     */
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptors();
+
+    /**
+     * Gets all the {@link ComponentDescriptor}s known to this
+     * {@link DescriptorProvider} that are categories as per the provided
+     * {@link ComponentSuperCategory}.
+     * 
+     * @param category
+     * @return
+     */
+    public Collection<? extends ComponentDescriptor<?>> getComponentDescriptorsOfSuperCategory(
+            ComponentSuperCategory category);
 
     /**
      * Gets all {@link RendererBeanDescriptor}s currently registered.

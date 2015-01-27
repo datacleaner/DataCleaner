@@ -24,12 +24,14 @@ import java.util.StringTokenizer;
 import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.components.categories.ImproveSuperCategory;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.reference.SynonymCatalog;
 
@@ -42,6 +44,7 @@ import org.datacleaner.reference.SynonymCatalog;
 @Named("Synonym lookup")
 @Alias("Synonym replacement")
 @Description("Replaces strings with their synonyms")
+@Categorized(superCategory=ImproveSuperCategory.class)
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured

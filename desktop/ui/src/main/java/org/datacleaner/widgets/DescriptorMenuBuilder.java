@@ -19,7 +19,12 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +36,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.ImmutableRef;
+import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.ComponentCategory;
-import org.datacleaner.components.categories.WriteDataCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.DeprecatedComponentPredicate;
 import org.datacleaner.util.DisplayNameComparator;
@@ -41,27 +51,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Popup menu that groups together bean descriptors by their shared
- * {@link ComponentCategory}.
- * 
- * @param <E>
+ * Builder object that can build menus with {@link ComponentDescriptor} items in
+ * it. Click a {@link ComponentDescriptor} will add it to the job
  */
-public abstract class DescriptorMenuBuilder {
+public final class DescriptorMenuBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DescriptorMenuBuilder.class);
 
-    private final List<? extends ComponentDescriptor<?>> _descriptors;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final UsageLogger _usageLogger;
+    private final Ref<Collection<? extends ComponentDescriptor<?>>> _componentDescriptorsRef;
     private final boolean _buildSubmenus;
+    private final Point2D _coordinate;
 
-    public DescriptorMenuBuilder(Collection<? extends ComponentDescriptor<?>> descriptors) {
-        this(descriptors, true);
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+            final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate) {
+        this(analysisJobBuilder, usageLogger, descriptors, coordinate, true);
     }
 
-    public DescriptorMenuBuilder(Collection<? extends ComponentDescriptor<?>> descriptors, boolean buildSubmenus) {
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+            final ComponentSuperCategory superCategory, final Point2D coordinate) {
+        this(analysisJobBuilder, usageLogger, superCategory, coordinate, true);
+    }
+
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+            final Collection<? extends ComponentDescriptor<?>> descriptors, final Point2D coordinate,
+            final boolean buildSubmenus) {
         final Collection<? extends ComponentDescriptor<?>> filteredDescriptors = CollectionUtils.filter(descriptors,
                 new DeprecatedComponentPredicate());
-        _descriptors = CollectionUtils2.sorted(filteredDescriptors, new DisplayNameComparator());
+        final List<ComponentDescriptor<?>> componentDescriptors = new ArrayList<>(filteredDescriptors);
+        Collections.sort(componentDescriptors, new DisplayNameComparator());
+
+        _analysisJobBuilder = analysisJobBuilder;
+        _usageLogger = usageLogger;
+        _coordinate = coordinate;
         _buildSubmenus = buildSubmenus;
+        _componentDescriptorsRef = new ImmutableRef<Collection<? extends ComponentDescriptor<?>>>(componentDescriptors);
+    }
+
+    public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
+            final ComponentSuperCategory superCategory, final Point2D coordinate, final boolean buildSubmenus) {
+        _analysisJobBuilder = analysisJobBuilder;
+        _usageLogger = usageLogger;
+        _coordinate = coordinate;
+        _buildSubmenus = buildSubmenus;
+        _componentDescriptorsRef = new Ref<Collection<? extends ComponentDescriptor<?>>>() {
+            @Override
+            public Collection<? extends ComponentDescriptor<?>> get() {
+                final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration()
+                        .getDescriptorProvider();
+                final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
+                        .getComponentDescriptorsOfSuperCategory(superCategory);
+                return componentDescriptors;
+            }
+        };
     }
 
     public void addItemsToMenu(JMenu menu) {
@@ -73,8 +116,13 @@ public abstract class DescriptorMenuBuilder {
     }
 
     private void initialize(final JComponent outerMenu) {
+        final Collection<? extends ComponentDescriptor<?>> unsortedComponentDescriptors = _componentDescriptorsRef
+                .get();
+        final List<? extends ComponentDescriptor<?>> componentDescriptors = CollectionUtils2
+                .sorted(unsortedComponentDescriptors);
+
         if (!_buildSubmenus) {
-            for (ComponentDescriptor<?> descriptor : _descriptors) {
+            for (ComponentDescriptor<?> descriptor : componentDescriptors) {
                 final JMenuItem menuItem = createMenuItem(descriptor);
                 outerMenu.add(menuItem);
             }
@@ -85,7 +133,7 @@ public abstract class DescriptorMenuBuilder {
 
         // build sub menus
         {
-            for (ComponentDescriptor<?> descriptor : _descriptors) {
+            for (ComponentDescriptor<?> descriptor : componentDescriptors) {
                 final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
                 for (ComponentCategory componentCategory : componentCategories) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
@@ -119,7 +167,7 @@ public abstract class DescriptorMenuBuilder {
 
         // place items that are not in any submenus
         {
-            for (final ComponentDescriptor<?> descriptor : _descriptors) {
+            for (final ComponentDescriptor<?> descriptor : componentDescriptors) {
                 boolean placedInSubmenu = false;
                 final Class<?> componentClass = descriptor.getComponentClass();
                 JMenuItem menuItem = createMenuItem(descriptor);
@@ -142,14 +190,17 @@ public abstract class DescriptorMenuBuilder {
                 }
             }
         }
-
-        // disregard WriteDataCategory
-        final DescriptorMenu writeDataMenu = descriptorMenus.get(new WriteDataCategory());
-        if (writeDataMenu != null) {
-            outerMenu.remove(writeDataMenu);
-        }
     }
 
-    protected abstract JMenuItem createMenuItem(ComponentDescriptor<?> descriptor);
+    private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {
+        final DescriptorMenuItem menuItem = new DescriptorMenuItem(_analysisJobBuilder, _coordinate, descriptor);
+        menuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _usageLogger.logComponentUsage(descriptor);
+            }
+        });
+        return menuItem;
+    }
 
 }

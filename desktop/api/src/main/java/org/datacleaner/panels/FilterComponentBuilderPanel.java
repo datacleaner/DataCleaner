@@ -111,8 +111,8 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         _filterJobBuilder.removeChangeListener(this);
     }
 
-    protected JComponent decorate(DCPanel panel) {
-        JComponent result = super.decorate(panel);
+    protected JComponent decorateMainPanel(DCPanel panel) {
+        JComponent result = super.decorateMainPanel(panel);
         addTaskPane(imageManager.getImageIcon("images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL),
                 "This filter categorizes records as...", _outcomePanel);
         return result;

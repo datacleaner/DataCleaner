@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -82,6 +83,7 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
@@ -144,9 +146,7 @@ public final class ResultWindow extends AbstractWindow {
 
         _pluggableButtons = new ArrayList<JComponent>(1);
 
-        _cancelButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
-                IconUtils.ICON_SIZE_MEDIUM));
-        _cancelButton.setOpaque(false);
+        _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
 
         final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
             @Override
@@ -155,26 +155,27 @@ public final class ResultWindow extends AbstractWindow {
             }
         };
 
-        _publishButton = new JButton("Publish to server", imageManager.getImageIcon(IconUtils.MENU_DQ_MONITOR,
-                IconUtils.ICON_SIZE_MEDIUM));
-        _publishButton.setOpaque(false);
+        _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
         _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
                 resultRef, _jobFilename));
 
-        _saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
-                IconUtils.ICON_SIZE_MEDIUM));
-        _saveButton.setOpaque(false);
+        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE);
         _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
 
-        _exportButton = new JButton("Export to HTML", imageManager.getImageIcon("images/actions/website.png",
-                IconUtils.ICON_SIZE_MEDIUM));
-        _exportButton.setOpaque(false);
+        _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
         _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
 
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             JComponent component = pluggableComponent.eval(this);
             if (component != null) {
+                if (component instanceof AbstractButton) {
+                    // tweak buttons to fit our styling
+                    AbstractButton b = (AbstractButton) component;
+                    b.setOpaque(true);
+                    WidgetUtils.setDefaultButtonStyle(b);
+                }
+
                 _pluggableButtons.add(component);
             }
         }

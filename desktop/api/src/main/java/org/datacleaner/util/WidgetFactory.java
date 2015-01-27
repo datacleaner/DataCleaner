@@ -42,7 +42,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.widgets.DCTaskPaneContainer;
-import org.datacleaner.widgets.DarkButtonUI;
+import org.datacleaner.widgets.PopupButton;
 import org.elasticsearch.common.base.Strings;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
@@ -101,6 +101,14 @@ public final class WidgetFactory {
         final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM);
         return icon;
     }
+    
+
+    public static PopupButton createDefaultPopupButton(String text, String imagePath) {
+        PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
+        b.setFocusPainted(false);
+        WidgetUtils.setDefaultButtonStyle(b);
+        return b;
+    }
 
     private static JButton createBasicButton(String text, Icon icon) {
         final JButton b = new JButton();
@@ -144,7 +152,7 @@ public final class WidgetFactory {
 
     public static JButton createDarkButton(String text, Icon icon) {
         final JButton b = createBasicButton(text, icon);
-        b.setUI(DarkButtonUI.get());
+        WidgetUtils.setDarkButtonStyle(b);
         final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
         b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
         return b;
@@ -255,11 +263,21 @@ public final class WidgetFactory {
         DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
         return taskPaneContainer;
     }
+    
+    public static JXTaskPane createTaskPane(String title, String imagePath) {
+        final ImageIcon icon;
+        if (Strings.isNullOrEmpty(imagePath)) {
+            icon = null;
+        } else {
+            icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+        }
+        return createTaskPane(title, icon);
+    }
 
     public static JXTaskPane createTaskPane(String title, Icon icon) {
         JXTaskPane taskPane = new JXTaskPane();
         Container cp = taskPane.getContentPane();
-        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_DARKEST));
+        ((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK));
         taskPane.setFocusable(false);
         taskPane.setTitle(title);
         if (icon != null) {

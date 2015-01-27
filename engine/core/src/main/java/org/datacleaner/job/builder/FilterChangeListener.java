@@ -19,21 +19,10 @@
  */
 package org.datacleaner.job.builder;
 
-
 /**
  * Listener interface for receiving notifications when filters are being added
  * or removed from an analysis job.
- * 
- * 
  */
-public interface FilterChangeListener {
-
-	public void onAdd(FilterComponentBuilder<?, ?> filterJobBuilder);
-	
-	public void onConfigurationChanged(FilterComponentBuilder<?, ?> filterJobBuilder);
-	
-	public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder);
-
-	public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder);
+public interface FilterChangeListener extends ComponentChangeListener<FilterComponentBuilder<?, ?>> {
 
 }

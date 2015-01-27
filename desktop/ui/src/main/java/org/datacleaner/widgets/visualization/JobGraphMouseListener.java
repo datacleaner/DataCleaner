@@ -25,29 +25,28 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Collection;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.actions.AnalyzeButtonActionListener;
-import org.datacleaner.actions.DisplayOutputWritersAction;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.datacleaner.actions.RenameComponentMenuItem;
-import org.datacleaner.actions.TransformButtonActionListener;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -81,6 +80,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
+    private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
+    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
+
     private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
     private final RendererFactory _presenterRendererFactory;
@@ -91,13 +93,19 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     // regular mouse listener aware of each other's actions.
     private boolean _clickCaught = false;
 
+    private Point _pressedPoint;
+
     public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
-            RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger) {
+            RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger,
+            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs,
+            Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _presenterRendererFactory = presenterRendererFactory;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
+        _componentConfigurationDialogs = componentConfigurationDialogs;
+        _tableConfigurationDialogs = tableConfigurationDialogs;
     }
 
     /**
@@ -110,7 +118,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         showConfigurationDialog(componentBuilder);
     }
 
-    private void showConfigurationDialog(ComponentBuilder componentBuilder) {
+    private void showConfigurationDialog(final ComponentBuilder componentBuilder) {
+        final ComponentConfigurationDialog existingDialog = _componentConfigurationDialogs.get(componentBuilder);
+        if (existingDialog != null) {
+            existingDialog.toFront();
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer = (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
                 .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
@@ -118,8 +132,15 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (renderer != null) {
             final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
 
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(componentBuilder,
-                    _graphContext.getAnalysisJobBuilder(), presenter);
+            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
+                    componentBuilder, _graphContext.getAnalysisJobBuilder(), presenter);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    _componentConfigurationDialogs.remove(componentBuilder);
+                }
+            });
+            _componentConfigurationDialogs.put(componentBuilder, dialog);
             dialog.open();
         }
     }
@@ -130,9 +151,24 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param table
      * @param me
      */
-    public void onTableDoubleClicked(Table table, MouseEvent me) {
+    public void onTableDoubleClicked(final Table table, MouseEvent me) {
+        final SourceTableConfigurationDialog existingDialog = _tableConfigurationDialogs.get(table);
+        if (existingDialog != null) {
+            existingDialog.toFront();
+            return;
+        }
+
         SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
                 _graphContext.getAnalysisJobBuilder(), table);
+
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                _tableConfigurationDialogs.remove(table);
+            }
+        });
+        _tableConfigurationDialogs.put(table, dialog);
+
         dialog.open();
     }
 
@@ -220,83 +256,33 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     public void onCanvasRightClicked(final MouseEvent me) {
         _linkPainter.cancelLink();
 
-        final ImageManager imageManager = ImageManager.get();
+        final JPopupMenu popup = new JPopupMenu();
+
+        final Point point = me.getPoint();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
         final AnalyzerBeansConfiguration configuration = analysisJobBuilder.getConfiguration();
-        final Point point = me.getPoint();
+        final Set<ComponentSuperCategory> superCategories = configuration.getDescriptorProvider()
+                .getComponentSuperCategories();
+        for (ComponentSuperCategory superCategory : superCategories) {
+            final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(analysisJobBuilder, _usageLogger,
+                    superCategory, point);
 
-        final JMenu transformMenuItem = new JMenu("Transform");
-        transformMenuItem
-                .setIcon(imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-        {
-            final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
-                    configuration, analysisJobBuilder, _usageLogger);
-            final Collection<? extends ComponentDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                    .getTransformerDescriptors();
-            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
-                @Override
-                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
-                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
-                    return menuItem;
-                }
-            };
-            descriptorMenuBuilder.addItemsToMenu(transformMenuItem);
+            final JMenu menu = new JMenu(superCategory.getName());
+            menu.setIcon(IconUtils.getComponentSuperCategoryIcon(superCategory));
+            menuBuilder.addItemsToMenu(menu);
+            popup.add(menu);
         }
 
-        final JMenu filterMenuItem = new JMenu("Filter");
-        filterMenuItem.setIcon(imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-        {
-            final TransformButtonActionListener transformButtonHelper = new TransformButtonActionListener(
-                    configuration, analysisJobBuilder, _usageLogger);
-            final Collection<? extends ComponentDescriptor<?>> descriptors = configuration.getDescriptorProvider()
-                    .getFilterDescriptors();
-            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors, false) {
-                @Override
-                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
-                    final JMenuItem menuItem = transformButtonHelper.createMenuItem(descriptor, point);
-                    return menuItem;
-                }
-            };
-            descriptorMenuBuilder.addItemsToMenu(filterMenuItem);
-        }
-
-        final JMenu analyzeMenuItem = new JMenu("Analyze");
-        analyzeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-        {
-            final AnalyzeButtonActionListener analyzeButtonHelper = new AnalyzeButtonActionListener(configuration,
-                    analysisJobBuilder, _usageLogger);
-            final Collection<? extends ComponentDescriptor<?>> descriptors = analyzeButtonHelper.getDescriptors();
-            final DescriptorMenuBuilder descriptorMenuBuilder = new DescriptorMenuBuilder(descriptors) {
-                @Override
-                protected JMenuItem createMenuItem(ComponentDescriptor<?> descriptor) {
-                    final JMenuItem menuItem = analyzeButtonHelper.createMenuItem(descriptor, point);
-                    return menuItem;
-                }
-            };
-            descriptorMenuBuilder.addItemsToMenu(analyzeMenuItem);
-        }
-
-        final JMenu writeMenuItem = new JMenu("Write");
-        writeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
-                IconUtils.ICON_SIZE_SMALL));
-        {
-            final DisplayOutputWritersAction writeButtonHelper = new DisplayOutputWritersAction(analysisJobBuilder);
-            final List<JMenuItem> menuItems = writeButtonHelper.createMenuItems();
-            for (JMenuItem menuItem : menuItems) {
-                writeMenuItem.add(menuItem);
-            }
-        }
-
-        final JPopupMenu popup = new JPopupMenu();
-        popup.add(transformMenuItem);
-        popup.add(filterMenuItem);
-        popup.add(analyzeMenuItem);
-        popup.add(writeMenuItem);
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
     @Override
     public void graphReleased(Object v, MouseEvent me) {
+        if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
+            // avoid updating any coordinates when nothing has been moved
+            return;
+        }
+
         final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
 
         final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
@@ -316,10 +302,15 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
             }
         }
+
+        if (selectedObjects.length > 0) {
+            _graphContext.getJobGraph().refresh();
+        }
     }
 
     @Override
     public void graphPressed(Object v, MouseEvent me) {
+        _pressedPoint = me.getPoint();
     }
 
     @Override

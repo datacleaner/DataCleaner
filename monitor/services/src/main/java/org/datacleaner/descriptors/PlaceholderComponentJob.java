@@ -27,6 +27,7 @@ import java.util.Set;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultReducer;
 import org.datacleaner.api.ComponentCategory;
+import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -214,6 +215,11 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
 
     @Override
     public ComponentConfiguration getConfiguration() {
+        return null;
+    }
+
+    @Override
+    public ComponentSuperCategory getComponentSuperCategory() {
         return null;
     }
 }

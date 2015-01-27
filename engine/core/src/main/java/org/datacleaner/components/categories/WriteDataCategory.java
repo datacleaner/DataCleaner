@@ -19,13 +19,18 @@
  */
 package org.datacleaner.components.categories;
 
+import org.datacleaner.api.Categorized;
 
+/**
+ * Category used both for {@link Categorized#superCategory()} and
+ * {@link Categorized#value()} categorization.
+ */
 public class WriteDataCategory extends AbstractComponentCategory {
-	
-	private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getName() {
-		return "Write data...";
-	}
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public String getName() {
+        return "Write data...";
+    }
 }

@@ -29,15 +29,7 @@ import org.datacleaner.data.MutableInputColumn;
  * 
  * 
  */
-public interface TransformerChangeListener {
-
-	public void onAdd(TransformerComponentBuilder<?> transformerJobBuilder);
-
-	public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder);
-
-	public void onConfigurationChanged(TransformerComponentBuilder<?> transformerJobBuilder);
-
-	public void onRequirementChanged(TransformerComponentBuilder<?> transformerJobBuilder);
+public interface TransformerChangeListener extends ComponentChangeListener<TransformerComponentBuilder<?>> {
 
 	/**
 	 * This method will be invoked each time a change in a transformer's output

@@ -23,15 +23,14 @@ import java.awt.Color;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
-
-import com.jgoodies.looks.plastic.PlasticButtonUI;
 
 /***
  * A {@link ButtonUI} for default buttons in the DataCleaner user interface.
  */
-public class DefaultButtonUI extends PlasticButtonUI {
+public class DefaultButtonUI extends MetalButtonUI {
 
     private static final DefaultButtonUI INSTANCE = new DefaultButtonUI();
 
@@ -40,11 +39,6 @@ public class DefaultButtonUI extends PlasticButtonUI {
     }
 
     private DefaultButtonUI() {
-    }
-
-    @Override
-    protected boolean is3D(AbstractButton b) {
-        return false;
     }
 
     @Override

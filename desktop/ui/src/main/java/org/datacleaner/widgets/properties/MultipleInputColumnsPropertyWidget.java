@@ -38,7 +38,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -81,7 +80,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
     // border for the button panel and search box to make them "indented"
     // similar to the check boxes.
-    private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0, 1, WidgetUtils.BG_COLOR_BRIGHT);
+    private static final EmptyBorder _indentBorder = new EmptyBorder(1, 17, 0, 1);
 
     private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
         @Override
@@ -120,7 +119,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     public MultipleInputColumnsPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
-        setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        // setBorder(WidgetUtils.BORDER_LIST_ITEM);
         _checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
         _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
         _firstUpdate = true;
@@ -173,15 +172,14 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         if (propertyDescriptor.isArray()) {
             if (_dataType == String.class || _dataType == Object.class) {
                 final JButton expressionColumnButton = WidgetFactory
-                        .createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
+                        .createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
                 expressionColumnButton.setToolTipText("Create expression/value based column");
                 expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener
                         .forMultipleColumns(this));
                 _buttonPanel.add(expressionColumnButton);
             }
 
-            final JButton reorderColumnsButton = WidgetFactory
-                    .createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
+            final JButton reorderColumnsButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REORDER_COLUMNS);
             reorderColumnsButton.setToolTipText("Reorder columns");
             reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
             _buttonPanel.add(reorderColumnsButton);
@@ -518,6 +516,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             _checkBoxes.put(inputColumn, checkBox);
         }
         _checkBoxes.putAll(checkBoxesCopy);
+        setValue(sortedValue);
     }
 
     private JComponent getOrCreateCheckBoxDecoration(InputColumn<?> inputColumn, boolean selected) {

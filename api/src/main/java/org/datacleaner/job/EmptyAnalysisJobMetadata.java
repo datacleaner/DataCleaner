@@ -37,61 +37,51 @@ class EmptyAnalysisJobMetadata implements AnalysisJobMetadata {
 
     @Override
     public String getJobVersion() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getJobDescription() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getAuthor() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Date getCreatedDate() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Date getUpdatedDate() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public String getDatastoreName() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public List<String> getSourceColumnPaths() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public List<ColumnType> getSourceColumnTypes() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Map<String, String> getVariables() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Map<String, String> getProperties() {
-        // TODO Auto-generated method stub
         return null;
     }
 

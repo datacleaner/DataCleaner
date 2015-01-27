@@ -22,18 +22,17 @@ package org.datacleaner.panels;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -54,8 +53,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
     private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
     private final WindowContext _windowContext;
 
-    @Inject
-    protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+    public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
         super(ImageManager.get().getImage("images/window/source-tab-background.png"), 0, 100);
         _analysisJobBuilder = analysisJobBuilder;
         _windowContext = windowContext;

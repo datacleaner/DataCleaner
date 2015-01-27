@@ -39,6 +39,7 @@ import org.datacleaner.actions.QuickAnalysisActionListener;
 import org.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -121,7 +122,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 }
 
                 final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
-                        "images/component-types/analyzer.png");
+                        IconUtils.ANALYZER_IMAGEPATH);
 
                 Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
                         .createInjector();
@@ -131,20 +132,20 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
                 popup.add(quickAnalysisMenuItem);
 
-                final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", "images/model/query.png");
+                final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", IconUtils.MODEL_QUERY);
                 queryMenuItem.addActionListener(new QueryActionListener(_schemaTree.getWindowContext(),
                         _analysisJobBuilder, table));
                 popup.add(queryMenuItem);
 
                 final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem(
-                        "Save table as Excel spreadsheet", "images/component-types/type_output_writer.png");
+                        "Save table as Excel spreadsheet", IconUtils.COMPONENT_TYPE_WRITE_DATA);
                 SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
                         .getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
                 saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
                 popup.add(saveAsExcelFileMenuItem);
 
                 final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
-                        "images/component-types/type_output_writer.png");
+                        IconUtils.COMPONENT_TYPE_WRITE_DATA);
                 SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
                         .getInstance(SaveTableAsCsvFileActionListener.class);
 
@@ -152,7 +153,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 popup.add(saveAsCsvFileMenuItem);
 
                 final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
-                        "images/actions/preview_data.png");
+                        IconUtils.ACTION_PREVIEW);
                 previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
                         _schemaTree.getDatastore(), columns));
                 popup.add(previewMenuItem);

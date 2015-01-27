@@ -113,13 +113,13 @@ public final class CollectionUtils2 {
     }
 
     public static <E> List<E> sorted(Collection<E> col, Comparator<? super E> comparator) {
-        ArrayList<E> list = new ArrayList<E>(col);
+        final List<E> list = new ArrayList<>(col);
         Collections.sort(list, comparator);
         return list;
     }
 
-    public static <E extends Comparable<E>> List<E> sorted(Collection<E> col) {
-        ArrayList<E> list = new ArrayList<E>(col);
+    public static <E extends Comparable<? super E>> List<E> sorted(Collection<E> col) {
+        final List<E> list = new ArrayList<>(col);
         Collections.sort(list);
         return list;
     }

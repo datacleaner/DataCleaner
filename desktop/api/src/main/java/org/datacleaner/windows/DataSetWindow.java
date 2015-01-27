@@ -29,7 +29,6 @@ import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
@@ -119,7 +118,7 @@ public class DataSetWindow extends AbstractWindow {
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new BorderLayout());
-        _loadingIcon.setPreferredSize(300, 300);
+        _loadingIcon.setPreferredSize(700, 300);
         panel.add(_loadingIcon, BorderLayout.NORTH);
         panel.add(tablePanel, BorderLayout.CENTER);
         if (pagingButtonPanel != null) {
@@ -148,20 +147,14 @@ public class DataSetWindow extends AbstractWindow {
                     TableModel tableModel = get();
                     _table.setModel(tableModel);
 
-                    if (_table.getColumnCount() > 10) {
+                    final int columnCount = _table.getColumnCount();
+                    if (columnCount > 10) {
                         _table.setHorizontalScrollEnabled(true);
                     }
                     updatePagingButtons();
 
                     _loadingIcon.setVisible(false);
                     _table.setVisible(true);
-
-                    if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
-                        Dimension dimensions = autoSetSize();
-                        getContentPane().setSize(dimensions);
-                        pack();
-                        centerOnScreen();
-                    }
 
                 } catch (Exception e) {
                     DataSetWindow.this.dispose();

@@ -84,7 +84,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
 			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
-			window.setVisible(true);
+			window.open();
 		}
 	}
 }

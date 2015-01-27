@@ -37,16 +37,19 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.database.DatabaseDescriptorImpl;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.StringUtils;
@@ -89,7 +92,6 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     private static final ImageManager imageManager = ImageManager.get();
 
     private final DatabaseDriverCatalog _databaseDriverCatalog;
-    private final JXTextField _datastoreNameTextField;
     private final JXTextField _driverClassNameTextField;
     private final DCCheckBox<Object> _multipleConnectionsCheckBox;
     private final DCComboBox<Object> _databaseDriverComboBox;
@@ -102,6 +104,9 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
+        
+        setSaveButtonEnabled(false);
+        
         _optionsDialogProvider = optionsDialogProvider;
         _databaseDriverCatalog = databaseDriverCatalog;
 
@@ -125,7 +130,6 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
         _multipleConnectionsCheckBox.setOpaque(false);
         _multipleConnectionsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-        _datastoreNameTextField = WidgetFactory.createTextField("Name", TEXT_FIELD_WIDTH);
         _driverClassNameTextField = WidgetFactory.createTextField("Driver class name", TEXT_FIELD_WIDTH);
 
         final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
@@ -215,6 +219,42 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
 
             _driverClassNameTextField.setText(originalDatastore.getDriverClass());
         }
+        
+        _databaseDriverComboBox.addListener(new Listener<Object>() {
+
+            @Override
+            public void onItemSelected(Object item) {
+                validateAndUpdate();
+            }
+        });
+        
+        _driverClassNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+                
+    }
+    
+    protected boolean validateForm() {
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
+        }
+        
+        final DatabaseDriverDescriptor databaseDriverDescriptor = (DatabaseDescriptorImpl) _databaseDriverComboBox.getSelectedItem();
+        if (databaseDriverDescriptor == null) {
+            String databaseDriverClass = _driverClassNameTextField.getText();
+            if (StringUtils.isNullOrEmpty(databaseDriverClass)) {
+                setStatusError("Please specify database driver class or choose one from the list");
+                return false;
+            }
+        }
+
+        setStatusValid();
+        return true;
     }
 
     public void setSelectedDatabase(String databaseName) {
@@ -379,6 +419,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
                 + "If you see an additional panel, this provides an alternative means of connecting "
                 + "without having to know the URL format for your specific database type."), BorderLayout.NORTH);
         outerPanel.add(formContainerPanel, BorderLayout.CENTER);
+        outerPanel.add(_statusLabel, BorderLayout.SOUTH);
 
         outerPanel.setPreferredSize(getDialogWidth(), 500);
 

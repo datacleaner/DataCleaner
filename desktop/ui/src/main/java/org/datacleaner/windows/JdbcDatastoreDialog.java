@@ -104,9 +104,9 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
             WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
-        
+
         setSaveButtonEnabled(false);
-        
+
         _optionsDialogProvider = optionsDialogProvider;
         _databaseDriverCatalog = databaseDriverCatalog;
 
@@ -219,7 +219,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
 
             _driverClassNameTextField.setText(originalDatastore.getDriverClass());
         }
-        
+
         _databaseDriverComboBox.addListener(new Listener<Object>() {
 
             @Override
@@ -227,24 +227,25 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
                 validateAndUpdate();
             }
         });
-        
+
         _driverClassNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
             }
         });
-                
+
     }
-    
+
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
-        final DatabaseDriverDescriptor databaseDriverDescriptor = (DatabaseDescriptorImpl) _databaseDriverComboBox.getSelectedItem();
+
+        final DatabaseDriverDescriptor databaseDriverDescriptor = (DatabaseDescriptorImpl) _databaseDriverComboBox
+                .getSelectedItem();
         if (databaseDriverDescriptor == null) {
             String databaseDriverClass = _driverClassNameTextField.getText();
             if (StringUtils.isNullOrEmpty(databaseDriverClass)) {
@@ -399,7 +400,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
                 testButton.setText(getTestButtonText());
             }
         });
-        
+
         final DCPanel buttonPanel = getButtonPanel();
         buttonPanel.add(testButton);
 
@@ -419,7 +420,11 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
                 + "If you see an additional panel, this provides an alternative means of connecting "
                 + "without having to know the URL format for your specific database type."), BorderLayout.NORTH);
         outerPanel.add(formContainerPanel, BorderLayout.CENTER);
-        outerPanel.add(_statusLabel, BorderLayout.SOUTH);
+        // Uncomment to add the status bar. It is hidden by default as no
+        // validation on generic and specific connection settings is in place,
+        // so the status bar is displaying "Datastore ready" in situations when
+        // it is actually not ready.
+        // outerPanel.add(_statusLabel, BorderLayout.SOUTH);
 
         outerPanel.setPreferredSize(getDialogWidth(), 500);
 

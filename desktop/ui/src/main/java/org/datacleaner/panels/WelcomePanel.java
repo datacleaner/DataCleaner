@@ -424,7 +424,7 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
         panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("ElasticSearch database", "Connect to an ElasticSearch database",
+        panel.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
                 IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
 
         panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",

@@ -159,12 +159,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     @Override
     public String getWindowTitle() {
-        return "ElasticSearch database";
+        return "ElasticSearch index";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "ElasticSearch database";
+        return "ElasticSearch index";
     }
 
     @Override

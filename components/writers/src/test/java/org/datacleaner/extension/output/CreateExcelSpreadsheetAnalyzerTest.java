@@ -61,7 +61,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("The file already exits and the columns selected do not match", e.getMessage());
+            assertEquals("The file already exists and the columns selected do not match", e.getMessage());
         }
 
         analyzer.overwriteFile = true;

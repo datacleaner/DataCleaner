@@ -76,7 +76,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
 
         if (file.exists() && !overwriteFile) {
-            throw new IllegalStateException("The file already exits and the columns selected do not match");
+            throw new IllegalStateException("The file already exists and the columns selected do not match");
         }
     }
 
@@ -101,7 +101,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             if (delete) {
                 file = new File(pathname);
             } else {
-                throw new IllegalStateException("The previous file could not be deleted");
+                throw new IllegalStateException("The existing file could not be deleted");
             }
         }
 

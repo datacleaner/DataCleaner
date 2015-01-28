@@ -35,11 +35,13 @@ import javax.swing.event.ChangeListener;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
@@ -61,10 +63,12 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AccessDatastoreDialog;
+import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
@@ -280,6 +284,24 @@ public class DatastorePanel extends DCPanel {
                     dialog.open();
                 }
             });
+        } else if (datastore instanceof CassandraDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(CassandraDatastore.class, datastore).createInjector();
+                    CassandraDatastoreDialog dialog = injector.getInstance(CassandraDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(ElasticSearchDatastore.class, datastore).createInjector();
+                    ElasticSearchDatastoreDialog dialog = injector.getInstance(ElasticSearchDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
         } else if (datastore instanceof CouchDbDatastore) {
             editButton.addActionListener(new ActionListener() {
                 @Override
@@ -339,26 +361,32 @@ public class DatastorePanel extends DCPanel {
         if (datastore instanceof FileDatastore) {
             return ((FileDatastore) datastore).getFilename();
         } else if (datastore instanceof JdbcDatastore) {
-            JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-            String jdbcUrl = jdbcDatastore.getJdbcUrl();
-            String datasourceJndiUrl = jdbcDatastore.getDatasourceJndiUrl();
+            final JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
+            final String jdbcUrl = jdbcDatastore.getJdbcUrl();
+            final String datasourceJndiUrl = jdbcDatastore.getDatasourceJndiUrl();
             if (StringUtils.isNullOrEmpty(datasourceJndiUrl)) {
                 return jdbcUrl;
             }
             return datasourceJndiUrl;
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            final ElasticSearchDatastore elasticSearchDatastore = (ElasticSearchDatastore) datastore;
+            return elasticSearchDatastore.getClusterName() + " - " + elasticSearchDatastore.getIndexName();
+        } else if (datastore instanceof CassandraDatastore) {
+            final CassandraDatastore cassandraDatastore = (CassandraDatastore) datastore;
+            return cassandraDatastore.getKeyspace();
         } else if (datastore instanceof MongoDbDatastore) {
-            MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
+            final MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
             return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - "
                     + mongoDbDatastore.getDatabaseName();
         } else if (datastore instanceof CouchDbDatastore) {
-            CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
+            final CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
             return (couchDbDatastore.isSslEnabled() ? "https://" : "http://") + couchDbDatastore.getHostname() + ":"
                     + couchDbDatastore.getPort();
         } else if (datastore instanceof PojoDatastore) {
             return "In-memory collection of records.";
         } else if (datastore instanceof CompositeDatastore) {
-            List<? extends Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
-            StringBuilder sb = new StringBuilder();
+            final List<? extends Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
+            final StringBuilder sb = new StringBuilder();
             for (Datastore ds : datastores) {
                 if (sb.length() != 0) {
                     sb.append(", ");

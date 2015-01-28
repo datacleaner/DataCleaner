@@ -229,7 +229,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         CassandraDatastore cassandraDatastore = (CassandraDatastore) datastoreCatalog.getDatastore("my cassandra db");
         assertEquals("localhost", cassandraDatastore.getHostname());
         assertEquals(9042, cassandraDatastore.getPort());
-        assertEquals("my_keyspace", cassandraDatastore.getKeySpace());
+        assertEquals("my_keyspace", cassandraDatastore.getKeyspace());
         assertEquals("foo", cassandraDatastore.getUsername());
         assertEquals("bar", cassandraDatastore.getPassword());
         assertEquals("[SimpleTableDef[name=table,columnNames=[bah, baz],columnTypes=[STRING, STRING]]]",

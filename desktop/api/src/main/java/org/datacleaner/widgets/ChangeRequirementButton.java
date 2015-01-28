@@ -19,14 +19,12 @@
  */
 package org.datacleaner.widgets;
 
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -121,8 +119,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                         setText(requirement.toString());
                     }
                 }
-
-                updateParentUI();
             }
         };
         try {
@@ -133,30 +129,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
             }
         } catch (Exception e) {
             logger.error("Failed to update ChangeRequirementButton", e);
-        }
-    }
-
-    // hack to update the UI of the parent tab - seems there's a problem with
-    // updating the JXTaskPaneContainers if a popup appear above them.
-    protected void updateParentUI() {
-        Container parent = getParent();
-        while (parent != null) {
-            Container nextParent = parent.getParent();
-            if (nextParent == null) {
-                break;
-            }
-            if (!(nextParent instanceof JComponent)) {
-                break;
-            }
-            parent = nextParent;
-        }
-
-        updateUI();
-        if (parent instanceof JComponent) {
-            logger.debug("Updating parent of {}", this);
-            ((JComponent) parent).updateUI();
-        } else {
-            logger.debug("Tried to updateParentUI, but failed to find a JComponent in parent hierarchy of {}!", this);
         }
     }
 

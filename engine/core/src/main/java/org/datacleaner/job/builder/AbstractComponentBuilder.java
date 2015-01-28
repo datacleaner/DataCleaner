@@ -182,12 +182,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         setConfiguredProperties(beanConfiguration);
     }
 
-    /**
-     * Sets the configured properties of this component based on a
-     * {@link ComponentConfiguration}.
-     * 
-     * @param configuration
-     */
+    @Override
     public void setConfiguredProperties(ComponentConfiguration configuration) {
         boolean changed = false;
         final Set<ConfiguredPropertyDescriptor> properties = getDescriptor().getConfiguredProperties();
@@ -235,9 +230,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         return _name;
     }
 
-    public B setName(String name) {
+    @Override
+    public void setName(String name) {
         _name = name;
-        return (B) this;
     }
 
     @Override
@@ -548,15 +543,12 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         return (B) this;
     }
 
-    public void setRequirement(FilterComponentBuilder<?, ?> filterJobBuilder, String category) {
-        EnumSet<?> categories = filterJobBuilder.getDescriptor().getOutcomeCategories();
-        for (Enum<?> c : categories) {
-            if (c.name().equals(category)) {
-                setRequirement(filterJobBuilder.getFilterOutcome(c));
-                return;
-            }
+    public void setRequirement(FilterComponentBuilder<?, ?> filterComponentBuilder, String category) {
+        final FilterOutcome filterOutcome = filterComponentBuilder.getFilterOutcome(category);
+        if (filterOutcome == null) {
+            throw new IllegalArgumentException("No such category found in available outcomes: " + category);
         }
-        throw new IllegalArgumentException("No such category found in available outcomes: " + category);
+        setRequirement(filterOutcome);
     }
 
     public void setRequirement(FilterComponentBuilder<?, ?> filterJobBuilder, Enum<?> category) {

@@ -25,12 +25,12 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 
@@ -48,22 +48,22 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
     }
 
     @Override
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        Analyzer<?> analyzer = analyzerJobBuilder.getComponentInstance();
-        if (analyzer instanceof PrecedingComponentConsumer) {
-            LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
+        Component component = componentBuilder.getComponentInstance();
+        if (component instanceof PrecedingComponentConsumer) {
+            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
                     .getInjectionManager(null), null, true);
-            helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
-            ((PrecedingComponentConsumer) analyzer).configureForTransformedData(analysisJobBuilder,
+            helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
+            ((PrecedingComponentConsumer) component).configureForTransformedData(analysisJobBuilder,
                     _transformerJobBuilder.getDescriptor());
         }
 
-        if (analyzerJobBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
+        if (componentBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
             List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
             List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-            analyzerJobBuilder.clearInputColumns();
-            analyzerJobBuilder.addInputColumns(inputColumns);
-            analyzerJobBuilder.addInputColumns(outputColumns);
+            componentBuilder.clearInputColumns();
+            componentBuilder.addInputColumns(inputColumns);
+            componentBuilder.addInputColumns(outputColumns);
         }
     }
 

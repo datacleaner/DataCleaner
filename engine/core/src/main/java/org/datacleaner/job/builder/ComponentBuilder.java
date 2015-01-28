@@ -29,6 +29,7 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
@@ -48,6 +49,15 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @return
      */
     public boolean isConfigured();
+
+    /**
+     * Sets the name of the {@link ComponentBuilder}. Names can be used to
+     * identify the individual components of a job, in case there are multiple
+     * components of the same type. See {@link #getName()}.
+     * 
+     * @param name
+     */
+    public void setName(String name);
 
     /**
      * Gets the underlying component object/instance that is being built.
@@ -147,6 +157,14 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @param configuredPropeties
      */
     public void setConfiguredProperties(Map<ConfiguredPropertyDescriptor, Object> configuredPropeties);
+
+    /**
+     * Sets the configured properties of this component based on a
+     * {@link ComponentConfiguration}.
+     * 
+     * @param componentConfiguration
+     */
+    public void setConfiguredProperties(ComponentConfiguration componentConfiguration);
 
     /**
      * Gets the value of a particular configured property in the underlying

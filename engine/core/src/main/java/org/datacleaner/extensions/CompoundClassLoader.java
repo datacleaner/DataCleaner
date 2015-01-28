@@ -18,9 +18,11 @@
  */
 package org.datacleaner.extensions;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 
 /**
  * This class loader scans a set of class loaders for class definitions.
@@ -41,8 +43,7 @@ public class CompoundClassLoader extends ClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(String name)
-            throws ClassNotFoundException {
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         return this.loadClass(name, false);
     }
 
@@ -58,7 +59,7 @@ public class CompoundClassLoader extends ClassLoader {
         }
         return class1;
     }
-
+    
     @Override
     public URL getResource(String name) {
         URL url = null;
@@ -69,6 +70,32 @@ public class CompoundClassLoader extends ClassLoader {
             url = cl.getResource(name);
         }
         return url;
+    }
+    
+    @Override
+    public Enumeration<URL> getResources(final String name) throws IOException {
+        return new Enumeration<URL>() {
+            
+            private final URL resource = getResource(name);
+            private boolean checked = false;
+            
+            @Override
+            public boolean hasMoreElements() {
+                if (resource == null) {
+                    return false;
+                }
+                if (!checked) {
+                    checked = true;
+                    return true;
+                }
+                return false;
+            }
+            
+            @Override
+            public URL nextElement() {
+                return resource;
+            }
+        };
     }
 
     private Class<?> locateClass(String name) {

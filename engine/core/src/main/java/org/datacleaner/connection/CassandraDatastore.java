@@ -34,7 +34,7 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
 
     public static final int DEFAULT_PORT = 9042;
 
-    private final String _keySpace;
+    private final String _keyspace;
     private final SimpleTableDef[] _tableDefs;
     private final String _hostname;
     private final int _port;
@@ -42,20 +42,20 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
     private final String _password;
     private final boolean _ssl;
 
-    public CassandraDatastore(String name, String hostname, String keySpace) {
-        this(name, hostname, DEFAULT_PORT, keySpace);
+    public CassandraDatastore(String name, String hostname, String keyspace) {
+        this(name, hostname, DEFAULT_PORT, keyspace);
     }
 
-    public CassandraDatastore(String name, String hostname, int port, String keySpace) {
-        this(name, hostname, port, keySpace, null, null, false, null);
+    public CassandraDatastore(String name, String hostname, int port, String keyspace) {
+        this(name, hostname, port, keyspace, null, null, false, null);
     }
 
-    public CassandraDatastore(String name, String hostname, int port, String keySpace, String username,
+    public CassandraDatastore(String name, String hostname, int port, String keyspace, String username,
             String password, boolean ssl, SimpleTableDef[] tableDefs) {
         super(name);
         _hostname = hostname;
         _port = port;
-        _keySpace = keySpace;
+        _keyspace = keyspace;
         _username = username;
         _password = password;
         _ssl = ssl;
@@ -82,9 +82,9 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
         final Cluster cluster = clusterBuilder.build();
         final CassandraDataContext dataContext;
         if (_tableDefs == null || _tableDefs.length == 0) {
-            dataContext = new CassandraDataContext(cluster, _keySpace);
+            dataContext = new CassandraDataContext(cluster, _keyspace);
         } else {
-            dataContext = new CassandraDataContext(cluster, _keySpace, _tableDefs);
+            dataContext = new CassandraDataContext(cluster, _keyspace, _tableDefs);
         }
         return new DatastoreConnectionImpl<CassandraDataContext>(dataContext, this);
     }
@@ -97,8 +97,8 @@ public class CassandraDatastore extends UsageAwareDatastore<CassandraDataContext
         return _port;
     }
 
-    public String getKeySpace() {
-        return _keySpace;
+    public String getKeyspace() {
+        return _keyspace;
     }
 
     public String getUsername() {

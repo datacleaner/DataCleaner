@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
@@ -215,6 +216,15 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     protected PropertyWidget<?> createPropertyWidget(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor propertyDescriptor) {
         return getPropertyWidgetFactory().create(propertyDescriptor);
+    }
+
+    protected void addTaskPane(String iconImagePath, String title, JComponent content) {
+        addTaskPane(iconImagePath, title, content, true);
+    }
+    
+    protected void addTaskPane(String iconImagePath, String title, JComponent content, boolean expanded) {
+        final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_SMALL);
+        addTaskPane(icon, title, content, expanded);
     }
 
     protected void addTaskPane(Icon icon, String title, JComponent content) {

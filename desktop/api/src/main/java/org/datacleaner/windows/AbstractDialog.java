@@ -41,7 +41,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     private volatile boolean initialized = false;
     private final WindowContext _windowContext;
-    
+
     private Image _bannerImage;
 
     private volatile Color _topBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
@@ -64,12 +64,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         _windowContext = windowContext;
         _bannerImage = bannerImage;
     }
-    
+
     public void setBannerImage(Image bannerImage) {
         _bannerImage = bannerImage;
         _banner = null;
     }
-    
+
     public Image getBannerImage() {
         return _bannerImage;
     }
@@ -166,9 +166,21 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         JComponent dialogContent = getDialogContent();
         panel.add(dialogContent, BorderLayout.CENTER);
 
-        panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height);
+        panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height
+                + getDialogHeightBuffer());
 
         return panel;
+    }
+
+    /**
+     * Method that can be overridden by subclasses to add "buffer space" to the
+     * height of the dialog. This is usually used if the contents of the dialog
+     * is expected to grow as the user uses it.
+     * 
+     * @return
+     */
+    protected int getDialogHeightBuffer() {
+        return 0;
     }
 
     protected DCBannerPanel createBanner(Image bannerImage) {

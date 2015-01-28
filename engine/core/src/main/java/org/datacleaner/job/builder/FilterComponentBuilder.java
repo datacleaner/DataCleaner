@@ -166,6 +166,15 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
     }
 
     public FilterOutcome getFilterOutcome(Object category) {
+        if (category instanceof String) {
+            final EnumSet<?> categories = getDescriptor().getOutcomeCategories();
+            for (Enum<?> c : categories) {
+                if (c.name().equals(category)) {
+                    category = c;
+                    break;
+                }
+            }
+        }
         final FilterOutcome outcome = _outcomes.get(category);
         if (outcome == null) {
             throw new IllegalArgumentException(category + " is not a valid category for " + this);

@@ -28,9 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,21 +49,15 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.Version;
-import org.datacleaner.actions.ComponentBuilderTabTextActionListener;
-import org.datacleaner.actions.HideTabTextActionListener;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -88,22 +79,11 @@ import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
-import org.datacleaner.panels.AbstractComponentBuilderPanel;
-import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
-import org.datacleaner.panels.ComponentBuilderPresenter;
-import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
-import org.datacleaner.panels.FilterComponentBuilderPresenter;
-import org.datacleaner.panels.MetadataPanel;
 import org.datacleaner.panels.SchemaTreePanel;
-import org.datacleaner.panels.SelectDatastorePanel;
-import org.datacleaner.panels.SourceColumnsPanel;
-import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.panels.WelcomePanel;
-import org.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
@@ -120,9 +100,7 @@ import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
-import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.TabCloseEvent;
-import org.datacleaner.widgets.tabs.TabCloseListener;
+import org.datacleaner.widgets.tabs.JobClassicView;
 import org.datacleaner.widgets.visualization.JobGraph;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
@@ -135,8 +113,7 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        TabCloseListener {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -145,26 +122,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
     private static final ImageManager imageManager = ImageManager.get();
 
-    private static final int TAB_ICON_SIZE = IconUtils.ICON_SIZE_LARGE;
-
     private static final int DEFAULT_WINDOW_WIDTH = 1000;
     private static final int DEFAULT_WINDOW_HEIGHT = 710;
 
-    private static final int SOURCE_TAB = 0;
-    private static final int METADATA_TAB = 1;
-
-    private final Map<AnalyzerComponentBuilder<?>, AnalyzerComponentBuilderPresenter> _analyzerPresenters = new LinkedHashMap<>();
-    private final Map<TransformerComponentBuilder<?>, TransformerComponentBuilderPresenter> _transformerPresenters = new LinkedHashMap<>();
-    private final Map<FilterComponentBuilder<?, ?>, FilterComponentBuilderPresenter> _filterPresenters = new LinkedHashMap<>();
-    private final Map<ComponentBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<>();
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalyzerBeansConfiguration _configuration;
     private final RendererFactory _presenterRendererFactory;
-    private final CloseableTabbedPane _tabbedPane;
     private final DCLabel _statusLabel = DCLabel.bright("");
     private final CollapsibleTreePanel _leftPanel;
-    private final SourceColumnsPanel _sourceColumnsPanel;
     private final SchemaTreePanel _schemaTreePanel;
     private final JButton _saveButton;
     private final JButton _saveAsButton;
@@ -178,18 +144,15 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
-    private final DatastoreManagementPanel _datastoreManagementPanel;
-    private final SelectDatastorePanel _selectDataStorePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
     private final JToggleButton _graphViewButton;
-    private final MetadataPanel _metadataPanel;
     private final JobGraph _graph;
     private final DCPanel _contentContainerPanel;
     private final JComponent _editingContentView;
     private final UsageLogger _usageLogger;
-    private volatile AbstractComponentBuilderPanel _latestPanel = null;
+    private JobClassicView _classicView;
     private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
@@ -197,8 +160,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
-            SchemaTreePanel schemaTreePanel, SourceColumnsPanel sourceColumnsPanel,
-            Provider<RunAnalysisActionListener> runAnalysisActionProvider, MetadataPanel metadataPanel,
+            SchemaTreePanel schemaTreePanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
             AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder, UserPreferences userPreferences,
             @Nullable @JobFile FileObject jobFilename,
             Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
@@ -237,7 +199,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _injectorBuilder = injectorBuilder;
 
         _graph = new JobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
-        final DCPanel graphPanel = _graph.getPanel();
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
         _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
@@ -250,35 +211,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
         _welcomePanel = new WelcomePanel();
-        _datastoreManagementPanel = new DatastoreManagementPanel(configuration, this, _glassPane,
-                _optionsDialogProvider, _injectorBuilder, openAnalysisJobActionListener, databaseDriverCatalog,
-                _userPreferences);
-        _selectDataStorePanel = new SelectDatastorePanel();
-        
-        _sourceColumnsPanel = sourceColumnsPanel;
-
-        _tabbedPane = new CloseableTabbedPane(false);
-        _tabbedPane.addTabCloseListener(this);
-        _tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public synchronized void stateChanged(ChangeEvent e) {
-                if (_latestPanel != null) {
-                    _latestPanel.applyPropertyValues(false);
-                }
-                Component selectedComponent = _tabbedPane.getSelectedComponent();
-                if (selectedComponent instanceof AbstractComponentBuilderPanel) {
-                    _latestPanel = (AbstractComponentBuilderPanel) selectedComponent;
-                } else {
-                    _latestPanel = null;
-                }
-                updateStatusLabel();
-            }
-        });
+        _welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
-        _editingContentView.add(_tabbedPane, BorderLayout.CENTER);
-        _editingContentView.add(graphPanel, BorderLayout.CENTER);
 
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _contentContainerPanel.setLayout(new BorderLayout());
@@ -288,15 +224,27 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         final boolean graphPreferred = isGraphPreferred();
 
         if (graphPreferred) {
-            setEditingView(graphPanel);
+            setEditingViewGraph();
         } else {
-            setEditingView(_tabbedPane);
+            setEditingViewClassic();
         }
 
-        _classicViewButton = createViewToggleButton("Classic view", _tabbedPane,
-                "images/actions/editing-view-classic.png");
+        _classicViewButton = createViewToggleButton("Classic view", "images/actions/editing-view-classic.png");
+        _classicViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditingViewClassic();
+            }
+        });
+
         _classicViewButton.setSelected(!graphPreferred);
-        _graphViewButton = createViewToggleButton("Graph view", graphPanel, "images/actions/editing-view-graph.png");
+        _graphViewButton = createViewToggleButton("Graph view", "images/actions/editing-view-graph.png");
+        _graphViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEditingViewGraph();
+            }
+        });
         _graphViewButton.setSelected(graphPreferred);
 
         final ActionListener viewToggleButtonActionListener = new ActionListener() {
@@ -319,7 +267,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _graphViewButton.addActionListener(viewToggleButtonActionListener);
 
         _schemaTreePanel = schemaTreePanel;
-        _metadataPanel = metadataPanel;
 
         _leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
         _leftPanel.setVisible(false);
@@ -454,6 +401,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 _welcomePanel.setVisible(true);
             }
         }
+    }
+
+    private void setEditingViewGraph() {
+        setEditingView(_graph.getPanel());
+        _classicView = null;
+    }
+
+    private void setEditingViewClassic() {
+        if (_classicView == null) {
+            _classicView = new JobClassicView(getWindowContext(), _analysisJobBuilder, _presenterRendererFactory,
+                    _usageLogger);
+        }
+        setEditingView(_classicView);
     }
 
     private void setEditingView(JComponent component) {
@@ -642,21 +602,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             setDatastore(_datastore);
         }
 
-        // add source tab
-        _tabbedPane.addTab("Source", imageManager.getImageIcon(IconUtils.MODEL_SOURCE, TAB_ICON_SIZE),
-                WidgetUtils.scrolleable(_sourceColumnsPanel));
-        _tabbedPane.setRightClickActionListener(SOURCE_TAB, new HideTabTextActionListener(_tabbedPane, SOURCE_TAB));
-        _tabbedPane.setUnclosableTab(SOURCE_TAB);
-
-        // add metadata tab
-        _tabbedPane.addTab("Metadata", imageManager.getImageIcon(IconUtils.MODEL_METADATA, TAB_ICON_SIZE),
-                _metadataPanel);
-        _tabbedPane.setRightClickActionListener(METADATA_TAB, new HideTabTextActionListener(_tabbedPane, METADATA_TAB));
-        _tabbedPane.setUnclosableTab(METADATA_TAB);
-
-        // add separator for fixed vs dynamic tabs
-        _tabbedPane.addSeparator();
-
         final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider
                 .get();
         _saveButton.addActionListener(saveAnalysisJobActionListener);
@@ -739,8 +684,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.add(statusBar, BorderLayout.SOUTH);
 
         WidgetUtils.centerOnScreen(this);
-
-        initializeExistingComponents();
 
         return panel;
     }
@@ -890,8 +833,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         popupButton.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 
-    private JToggleButton createViewToggleButton(final String text, final JComponent editingContentView,
-            final String iconPath) {
+    private JToggleButton createViewToggleButton(final String text, final String iconPath) {
         final ImageIcon icon = imageManager.getImageIcon(iconPath);
         final JToggleButton button = new JToggleButton(text, icon);
         button.setFont(WidgetUtils.FONT_SMALL);
@@ -899,12 +841,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         button.setBackground(WidgetUtils.BG_COLOR_DARK);
         button.setBorderPainted(false);
         button.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(0, 4, 0, 4)));
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setEditingView(editingContentView);
-            }
-        });
         return button;
     }
 
@@ -913,56 +849,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
      */
     @Override
     public void applyPropertyValues() {
-        for (FilterComponentBuilderPresenter presenter : _filterPresenters.values()) {
-            presenter.applyPropertyValues();
+        if (_classicView != null) {
+            _classicView.applyPropertyValues();
         }
-
-        for (TransformerComponentBuilderPresenter presenter : _transformerPresenters.values()) {
-            presenter.applyPropertyValues();
-        }
-
-        for (AnalyzerComponentBuilderPresenter presenter : _analyzerPresenters.values()) {
-            presenter.applyPropertyValues();
-        }
-    }
-
-    /**
-     * Method used to initialize any components that may be in the
-     * AnalysisJobBuilder before this window has been created. Typically this
-     * will only happen when opening a saved job.
-     */
-    private void initializeExistingComponents() {
-        List<FilterComponentBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterComponentBuilders();
-        for (FilterComponentBuilder<?, ?> fjb : filterJobBuilders) {
-            initializeFilter(fjb);
-        }
-
-        List<TransformerComponentBuilder<?>> transformerJobBuilders = _analysisJobBuilder
-                .getTransformerComponentBuilders();
-        for (TransformerComponentBuilder<?> tjb : transformerJobBuilders) {
-            initializeTransformer(tjb);
-        }
-
-        List<AnalyzerComponentBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerComponentBuilders();
-        for (AnalyzerComponentBuilder<?> ajb : analyzerJobBuilders) {
-            initializeAnalyzer((AnalyzerComponentBuilder<?>) ajb);
-        }
-
-        onSourceColumnsChanged();
     }
 
     private void onSourceColumnsChanged() {
-        boolean everythingEnabled = true;
+        boolean everythingEnabled = !_analysisJobBuilder.getSourceColumns().isEmpty();
 
-        if (_analysisJobBuilder.getSourceColumns().isEmpty()) {
-            _tabbedPane.setSelectedIndex(SOURCE_TAB);
-            everythingEnabled = false;
+        if (_classicView != null) {
+            _classicView.onSourceColumnsChanged(everythingEnabled);
         }
 
-        int tabCount = _tabbedPane.getTabCount();
-        for (int i = 1; i < tabCount; i++) {
-            _tabbedPane.setEnabledAt(i, everythingEnabled);
-        }
         _saveButton.setEnabled(everythingEnabled);
         _saveAsButton.setEnabled(everythingEnabled);
 
@@ -986,141 +884,23 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return true;
     }
 
-    @Override
-    public void tabClosed(TabCloseEvent ev) {
-        Component panel = ev.getTabContents();
-
-        if (panel != null) {
-            // if panel was a row processing analyzer panel
-            for (Iterator<AnalyzerComponentBuilderPresenter> it = _analyzerPresenters.values().iterator(); it.hasNext();) {
-                AnalyzerComponentBuilderPresenter analyzerPresenter = it.next();
-                if (_jobBuilderTabs.get(analyzerPresenter) == panel) {
-                    _analysisJobBuilder.removeAnalyzer(analyzerPresenter.getComponentBuilder());
-                    return;
-                }
-            }
-
-            // if panel was a transformer panel
-            for (Iterator<TransformerComponentBuilderPresenter> it = _transformerPresenters.values().iterator(); it
-                    .hasNext();) {
-                TransformerComponentBuilderPresenter transformerPresenter = it.next();
-                if (_jobBuilderTabs.get(transformerPresenter) == panel) {
-                    _analysisJobBuilder.removeTransformer(transformerPresenter.getComponentBuilder());
-                    return;
-                }
-            }
-
-            // if panel was a filter panel
-            for (Iterator<FilterComponentBuilderPresenter> it = _filterPresenters.values().iterator(); it.hasNext();) {
-                FilterComponentBuilderPresenter filterPresenter = it.next();
-                if (_jobBuilderTabs.get(filterPresenter) == panel) {
-                    _analysisJobBuilder.removeFilter(filterPresenter.getComponentBuilder());
-                    return;
-                }
-            }
-        }
-        logger.info("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
-    }
-
-    private void initializeAnalyzer(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        @SuppressWarnings("unchecked")
-        final Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<AnalyzerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(analyzerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
-        AnalyzerComponentBuilderPresenter presenter = (AnalyzerComponentBuilderPresenter) renderer
-                .render(analyzerJobBuilder);
-
-        _analyzerPresenters.put(analyzerJobBuilder, presenter);
-        JComponent comp = presenter.createJComponent();
-        _tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
-                IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
-        _jobBuilderTabs.put(presenter, comp);
-        final int tabIndex = _tabbedPane.getTabCount() - 1;
-        _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(
-                _analysisJobBuilder, analyzerJobBuilder, tabIndex, _tabbedPane));
-        _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(analyzerJobBuilder) {
-            @Override
-            protected void onNameChanged() {
-                _tabbedPane.setTitleAt(tabIndex, LabelUtils.getLabel(analyzerJobBuilder));
-            }
-        });
-
-        _tabbedPane.setSelectedIndex(tabIndex);
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    private void initializeTransformer(final TransformerComponentBuilder<?> transformerJobBuilder) {
-        @SuppressWarnings("unchecked")
-        final Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<TransformerComponentBuilder<?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(transformerJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
-        final TransformerComponentBuilderPresenter presenter = (TransformerComponentBuilderPresenter) renderer
-                .render(transformerJobBuilder);
-
-        _transformerPresenters.put(transformerJobBuilder, presenter);
-        final JComponent comp = presenter.createJComponent();
-        _tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
-                IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
-        _jobBuilderTabs.put(presenter, comp);
-        final int tabIndex = _tabbedPane.getTabCount() - 1;
-        _tabbedPane.setSelectedIndex(tabIndex);
-        _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(
-                _analysisJobBuilder, transformerJobBuilder, tabIndex, _tabbedPane));
-        _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(transformerJobBuilder) {
-            @Override
-            protected void onNameChanged() {
-                _tabbedPane.setTitleAt(tabIndex, LabelUtils.getLabel(transformerJobBuilder));
-            }
-        });
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
-    private void initializeFilter(final FilterComponentBuilder<?, ?> filterJobBuilder) {
-        @SuppressWarnings("unchecked")
-        final Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter> renderer = (Renderer<FilterComponentBuilder<?, ?>, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(filterJobBuilder, ComponentBuilderPresenterRenderingFormat.class);
-        final FilterComponentBuilderPresenter presenter = (FilterComponentBuilderPresenter) renderer
-                .render(filterJobBuilder);
-
-        _filterPresenters.put(filterJobBuilder, presenter);
-        JComponent comp = presenter.createJComponent();
-        _tabbedPane.addTab(LabelUtils.getLabel(filterJobBuilder),
-                IconUtils.getDescriptorIcon(filterJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
-        _jobBuilderTabs.put(presenter, comp);
-        final int tabIndex = _tabbedPane.getTabCount() - 1;
-        if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-            // the max rows shortcut must be disabled using checkbox on
-            // source
-            // tab
-            _tabbedPane.setUnclosableTab(tabIndex);
-        } else {
-            _tabbedPane.setSelectedIndex(tabIndex);
-            _tabbedPane.setRightClickActionListener(tabIndex, new ComponentBuilderTabTextActionListener(
-                    _analysisJobBuilder, filterJobBuilder, tabIndex, _tabbedPane));
-            _tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(filterJobBuilder) {
-                @Override
-                protected void onNameChanged() {
-                    _tabbedPane.setTitleAt(tabIndex, LabelUtils.getLabel(filterJobBuilder));
-                }
-            });
-        }
-        updateStatusLabel();
-        _graph.refresh();
-    }
-
     private AnalyzerChangeListener createAnalyzerChangeListener() {
         return new AnalyzerChangeListener() {
 
             @Override
             public void onAdd(final AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                initializeAnalyzer(analyzerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addAnalyzer(analyzerJobBuilder);
+                }
+                updateStatusLabel();
+                _graph.refresh();
             }
 
             @Override
             public void onRemove(AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-                AnalyzerComponentBuilderPresenter presenter = _analyzerPresenters.remove(analyzerJobBuilder);
-                JComponent comp = _jobBuilderTabs.remove(presenter);
-                _tabbedPane.remove(comp);
+                if (_classicView != null) {
+                    _classicView.removeAnalyzer(analyzerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
@@ -1143,14 +923,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void onAdd(final TransformerComponentBuilder<?> transformerJobBuilder) {
-                initializeTransformer(transformerJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addTransformer(transformerJobBuilder);
+                }
+                updateStatusLabel();
+                _graph.refresh();
             }
 
             @Override
             public void onRemove(TransformerComponentBuilder<?> transformerJobBuilder) {
-                TransformerComponentBuilderPresenter presenter = _transformerPresenters.remove(transformerJobBuilder);
-                JComponent comp = _jobBuilderTabs.remove(presenter);
-                _tabbedPane.remove(comp);
+                if (_classicView != null) {
+                    _classicView.removeTransformer(transformerJobBuilder);
+                }
                 updateStatusLabel();
                 _graph.refresh();
             }
@@ -1179,17 +963,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             @Override
             public void onAdd(final FilterComponentBuilder<?, ?> filterJobBuilder) {
-                initializeFilter(filterJobBuilder);
+                if (_classicView != null) {
+                    _classicView.addFilter(filterJobBuilder);
+                }
+                updateStatusLabel();
+                _graph.refresh();
             }
 
             @Override
             public void onRemove(FilterComponentBuilder<?, ?> filterJobBuilder) {
-                FilterComponentBuilderPresenter presenter = _filterPresenters.remove(filterJobBuilder);
-                JComponent comp = _jobBuilderTabs.remove(presenter);
-                _tabbedPane.remove(comp);
-
-                if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-                    _sourceColumnsPanel.getMaxRowsFilterShortcutPanel().resetToDefault();
+                if (_classicView != null) {
+                    _classicView.removeFilter(filterJobBuilder);
                 }
                 updateStatusLabel();
                 _graph.refresh();

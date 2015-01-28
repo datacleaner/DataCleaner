@@ -42,14 +42,15 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -80,10 +81,12 @@ import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
@@ -123,10 +126,10 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
     private final InjectorBuilder _injectorBuilder;
     private final UserPreferences _userPreferences;
 
-    public DatastoreManagementPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
-            DCGlassPane glassPane, Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog,
-            UserPreferences userPreferences) {
+    public DatastoreManagementPanel(AnalyzerBeansConfiguration configuration,
+            AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
+            Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
+            DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super();
         _datastorePanels = new ArrayList<DatastorePanel>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
@@ -197,6 +200,18 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
         });
 
         setLayout(new VerticalLayout(4));
+
+        add(Box.createVerticalStrut(10));
+
+        final DCLabel jobsHeaderLabel = DCLabel.dark("Jobs");
+        jobsHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(jobsHeaderLabel);
+
+        add(Box.createVerticalStrut(40));
+
+        final DCLabel datastoreHeaderLabel = DCLabel.dark("Datastores");
+        datastoreHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
+        add(datastoreHeaderLabel);
 
         final DCLabel registerNewDatastoreLabel = DCLabel.dark("Register new:");
         registerNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
@@ -322,6 +337,12 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
 
         panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
+                IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
 
         panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                 IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));

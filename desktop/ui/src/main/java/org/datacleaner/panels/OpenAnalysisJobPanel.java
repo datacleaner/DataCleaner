@@ -58,7 +58,7 @@ import com.google.common.base.Strings;
 import com.google.inject.Injector;
 
 /**
- * Panel that is shown in the {@link WelcomePanel} to present a recently opened
+ * Panel that is shown in the {@link DatastoreManagementPanel} to present a recently opened
  * {@link AnalysisJob}.
  */
 public class OpenAnalysisJobPanel extends DCPanel {

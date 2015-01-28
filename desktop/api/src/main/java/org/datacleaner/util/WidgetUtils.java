@@ -60,6 +60,8 @@ import org.datacleaner.widgets.DarkToggleButtonUI;
 import org.datacleaner.widgets.DefaultButtonUI;
 import org.datacleaner.widgets.DefaultToggleButtonUI;
 import org.datacleaner.widgets.PrimaryButtonUI;
+import org.datacleaner.widgets.WhiteButtonUI;
+import org.datacleaner.widgets.WhiteToggleButtonUI;
 import org.datacleaner.widgets.table.DCTablePanel;
 import org.datacleaner.windows.ErrorDialog;
 import org.jdesktop.swingx.JXErrorPane;
@@ -182,6 +184,10 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
             new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+
+    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
+            new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+    
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
@@ -611,4 +617,13 @@ public final class WidgetUtils {
             b.setUI(DefaultButtonUI.get());
         }
     }
+    
+    public static void setWhiteButtonStyle(AbstractButton b) {
+        if (b instanceof JToggleButton) {
+            b.setUI(WhiteToggleButtonUI.get());
+        } else {
+            b.setUI(WhiteButtonUI.get());
+        }
+    }
+
 }

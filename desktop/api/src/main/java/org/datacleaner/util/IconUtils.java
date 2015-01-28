@@ -135,6 +135,9 @@ public final class IconUtils {
     public static final String STRING_PATTERN_REGEX_IMAGEPATH = "images/model/stringpattern_regex.png";
     public static final String STRING_PATTERN_REGEXSWAP_IMAGEPATH = "images/model/stringpattern_regexswap.png";
 
+    public static final String DATASTORE_TYPE_CLOUD_BRIGHT = "images/model/cloud_bright.png";
+    public static final String DATASTORE_TYPE_CLOUD_DARK = "images/model/cloud_dark.png";
+    
     public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
     public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
     public static final String XML_IMAGEPATH = "images/datastore-types/xml.png";

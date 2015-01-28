@@ -80,7 +80,7 @@ import com.google.inject.Injector;
 
 /**
  * A panel that presents a datastore and shows edit/remove buttons. This panel
- * is placed as a child inside the {@link WelcomePanel}.
+ * is placed as a child inside the {@link DatastoreManagementPanel}.
  */
 public class DatastorePanel extends DCPanel {
 
@@ -90,14 +90,14 @@ public class DatastorePanel extends DCPanel {
 
     private final Datastore _datastore;
     private final MutableDatastoreCatalog _datastoreCatalog;
-    private final WelcomePanel _datastoreListPanel;
+    private final DatastoreManagementPanel _datastoreListPanel;
     private final JCheckBox _checkBox;
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
 
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-            WelcomePanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
+            DatastoreManagementPanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
             InjectorBuilder injectorBuilder) {
         super(WidgetUtils.COLOR_WELL_BACKGROUND);
         _datastore = datastore;

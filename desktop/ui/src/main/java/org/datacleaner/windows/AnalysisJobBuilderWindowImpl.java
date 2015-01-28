@@ -94,10 +94,12 @@ import org.datacleaner.panels.ComponentBuilderPresenter;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.datacleaner.panels.FilterComponentBuilderPresenter;
 import org.datacleaner.panels.MetadataPanel;
 import org.datacleaner.panels.SchemaTreePanel;
+import org.datacleaner.panels.SelectDatastorePanel;
 import org.datacleaner.panels.SourceColumnsPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.panels.WelcomePanel;
@@ -176,6 +178,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
+    private final DatastoreManagementPanel _datastoreManagementPanel;
+    private final SelectDatastorePanel _selectDataStorePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
@@ -245,10 +249,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
-        _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
-                openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
-        _welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
-
+        _welcomePanel = new WelcomePanel();
+        _datastoreManagementPanel = new DatastoreManagementPanel(configuration, this, _glassPane,
+                _optionsDialogProvider, _injectorBuilder, openAnalysisJobActionListener, databaseDriverCatalog,
+                _userPreferences);
+        _selectDataStorePanel = new SelectDatastorePanel();
+        
         _sourceColumnsPanel = sourceColumnsPanel;
 
         _tabbedPane = new CloseableTabbedPane(false);
@@ -443,8 +449,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 });
                 timer.setRepeats(false);
                 timer.start();
-
-                _welcomePanel.requestSearchFieldFocus();
 
                 _editingContentView.setVisible(false);
                 _welcomePanel.setVisible(true);

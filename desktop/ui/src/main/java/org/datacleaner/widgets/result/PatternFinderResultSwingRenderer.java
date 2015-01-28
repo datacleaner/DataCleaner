@@ -174,8 +174,9 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 				.setName("Ungrouped pattern finders");
 
 		final AnalyzerComponentBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
-				PatternFinderAnalyzer.class).setName("Grouped PF");
+				PatternFinderAnalyzer.class);
 		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
+		groupedPatternFinder.setName("Grouped PF");
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
 				.getDescriptor().getConfiguredProperty("Group column"));

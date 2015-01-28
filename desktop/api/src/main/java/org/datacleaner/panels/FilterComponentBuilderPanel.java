@@ -20,6 +20,7 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,44 +39,48 @@ import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.ChangeRequirementMenuBuilder;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.widgets.PopupButton;
+import org.datacleaner.widgets.properties.FormPanel;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Specialization of {@link AbstractComponentBuilderPanel} for {@link Filter}s.
  */
-public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel implements FilterComponentBuilderPresenter,
-        FilterChangeListener {
+public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel implements
+        FilterComponentBuilderPresenter, FilterChangeListener {
 
     private static final long serialVersionUID = 1L;
 
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
-    private final FilterComponentBuilder<?, ?> _filterJobBuilder;
+    private final FilterComponentBuilder<?, ?> _filterComponentBuilder;
     private final DCPanel _outcomePanel;
 
     public FilterComponentBuilderPanel(FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
             PropertyWidgetFactory propertyWidgetFactory) {
-        this(WATERMARK_IMAGE, 95, 95, filterJobBuilder, windowContext, propertyWidgetFactory);
+        this(null, 95, 95, filterJobBuilder, windowContext, propertyWidgetFactory);
     }
 
     protected FilterComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, FilterComponentBuilder<?, ?> filterJobBuilder, WindowContext windowContext,
-            PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, filterJobBuilder,
+            int watermarkVerticalPosition, FilterComponentBuilder<?, ?> filterComponentBuilder,
+            WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory) {
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, filterComponentBuilder,
                 propertyWidgetFactory);
 
-        _filterJobBuilder = filterJobBuilder;
+        _filterComponentBuilder = filterComponentBuilder;
 
         _outcomePanel = new DCPanel();
-        final Set<String> categoryNames = _filterJobBuilder.getDescriptor().getOutcomeCategoryNames();
+        _outcomePanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment()));
+        final Set<String> categoryNames = _filterComponentBuilder.getDescriptor().getOutcomeCategoryNames();
         for (final String categoryName : categoryNames) {
-            final JButton outcomeButton = new JButton(categoryName, imageManager.getImageIcon(
-                    "images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL));
+            final PopupButton outcomeButton = WidgetFactory.createDefaultPopupButton(categoryName,
+                    IconUtils.FILTER_OUTCOME_PATH);
 
-            outcomeButton.addActionListener(new DisplayOptionsForFilterOutcomeActionListener(_filterJobBuilder,
-                    categoryName));
+            outcomeButton.addActionListener(new DisplayOptionsForFilterOutcomeActionListener(outcomeButton,
+                    _filterComponentBuilder, categoryName));
             _outcomePanel.add(outcomeButton);
         }
 
@@ -83,12 +88,13 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DCPanel messagePanel = new DCPanel();
+                final DCPanel messagePanel = new DCPanel();
                 messagePanel.setLayout(new BorderLayout());
                 messagePanel.add(new JLabel(imageManager.getImageIcon("images/help/help_requirement_mapping.png")),
                         BorderLayout.WEST);
                 messagePanel.add(DCLabel.darkMultiLine("Filter outcomes can be set as requirements<br>"
-                        + "for other components, using the<br>" + "\"(no requirement specified)\" buttons.<br><br>"
+                        + "for other components, using the<br>" + "\""
+                        + ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT + "\" buttons.<br><br>"
                         + "You can also click the categories directly to eg.<br>"
                         + "write categorized records or to map them<br>"
                         + "as requirements for existing or new components."));
@@ -102,25 +108,28 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
     @Override
     public void addNotify() {
         super.addNotify();
-        _filterJobBuilder.addChangeListener(this);
+        _filterComponentBuilder.addChangeListener(this);
     }
 
     @Override
     public void removeNotify() {
         super.removeNotify();
-        _filterJobBuilder.removeChangeListener(this);
+        _filterComponentBuilder.removeChangeListener(this);
     }
 
     protected JComponent decorateMainPanel(DCPanel panel) {
-        JComponent result = super.decorateMainPanel(panel);
-        addTaskPane(imageManager.getImageIcon("images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL),
-                "This filter categorizes records as...", _outcomePanel);
+        final JComponent result = super.decorateMainPanel(panel);
+
+        final FormPanel outcomeFormPanel = new FormPanel();
+        outcomeFormPanel.addFormEntry("This filter categorizes records as", null, _outcomePanel);
+
+        addTaskPane(IconUtils.FILTER_OUTCOME_PATH, "Outcomes", outcomeFormPanel);
         return result;
     }
 
     @Override
     public FilterComponentBuilder<?, ?> getComponentBuilder() {
-        return _filterJobBuilder;
+        return _filterComponentBuilder;
     }
 
     @Override
@@ -135,7 +144,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
     @Override
     public void onRemove(FilterComponentBuilder<?, ?> fjb) {
     }
-    
+
     @Override
     public void onRequirementChanged(FilterComponentBuilder<?, ?> filterJobBuilder) {
     }

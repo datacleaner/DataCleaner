@@ -38,7 +38,6 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -56,9 +55,6 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.get();
-    private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
-
     private final TransformerComponentBuilder<?> _componentBuilder;
     private final ColumnListTable _outputColumnsTable;
     private final JButton _previewButton;
@@ -68,7 +64,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
     public TransformerComponentBuilderPanel(TransformerComponentBuilder<?> transformerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
             AnalyzerBeansConfiguration configuration) {
-        this(WATERMARK_IMAGE, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
+        this(null, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
     protected TransformerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
@@ -132,8 +128,7 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         outputColumnsPanel.add(WidgetUtils.decorateWithShadow(_outputColumnsTable), BorderLayout.CENTER);
         outputColumnsPanel.add(bottomButtonPanel, BorderLayout.SOUTH);
 
-        addTaskPane(imageManager.getImageIcon(IconUtils.MODEL_SOURCE, IconUtils.ICON_SIZE_SMALL), "Output columns",
-                outputColumnsPanel);
+        addTaskPane(IconUtils.MODEL_SOURCE, "Output columns", outputColumnsPanel);
         return result;
     }
 

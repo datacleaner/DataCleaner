@@ -24,7 +24,6 @@ import java.awt.Image;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
@@ -35,38 +34,35 @@ public class AnalyzerComponentBuilderPanel extends AbstractComponentBuilderPanel
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager imageManager = ImageManager.get();
-    private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/analyzer-tab-background.png");
-
-    private final AnalyzerComponentBuilder<?> _analyzerJobBuilder;
+    private final AnalyzerComponentBuilder<?> _analyzerComponentBuilder;
 
     public AnalyzerComponentBuilderPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
-        this(WATERMARK_IMAGE, 95, 95, analyzerJobBuilder, propertyWidgetFactory);
+        this(null, 95, 95, analyzerJobBuilder, propertyWidgetFactory);
     }
 
     public AnalyzerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
-            int watermarkVerticalPosition, AnalyzerComponentBuilder<?> analyzerJobBuilder,
+            int watermarkVerticalPosition, AnalyzerComponentBuilder<?> analyzerComponentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, analyzerJobBuilder,
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, analyzerComponentBuilder,
                 propertyWidgetFactory);
-        _analyzerJobBuilder = analyzerJobBuilder;
+        _analyzerComponentBuilder = analyzerComponentBuilder;
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
-        _analyzerJobBuilder.addChangeListener(this);
+        _analyzerComponentBuilder.addChangeListener(this);
     }
 
     @Override
     public void removeNotify() {
         super.removeNotify();
-        _analyzerJobBuilder.removeChangeListener(this);
+        _analyzerComponentBuilder.removeChangeListener(this);
     }
 
     @Override
     public AnalyzerComponentBuilder<?> getComponentBuilder() {
-        return _analyzerJobBuilder;
+        return _analyzerComponentBuilder;
     }
 
     @Override

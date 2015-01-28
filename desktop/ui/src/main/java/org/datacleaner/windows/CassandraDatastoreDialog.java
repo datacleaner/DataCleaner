@@ -90,7 +90,7 @@ public class CassandraDatastoreDialog extends AbstractDatastoreDialog<CassandraD
             _datastoreNameTextField.setEnabled(false);
             _hostnameTextField.setText(originalDatastore.getHostname());
             _portTextField.setText(originalDatastore.getPort() + "");
-            _keyspaceTextField.setText(originalDatastore.getKeySpace());
+            _keyspaceTextField.setText(originalDatastore.getKeyspace());
         }
     }
     

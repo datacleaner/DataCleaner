@@ -368,6 +368,10 @@ public class DatastorePanel extends DCPanel {
                 return jdbcUrl;
             }
             return datasourceJndiUrl;
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            return ((ElasticSearchDatastore) datastore).getClusterName();
+        } else if (datastore instanceof CassandraDatastore) {
+            return ((CassandraDatastore) datastore).getKeyspace();
         } else if (datastore instanceof MongoDbDatastore) {
             MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
             return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - "

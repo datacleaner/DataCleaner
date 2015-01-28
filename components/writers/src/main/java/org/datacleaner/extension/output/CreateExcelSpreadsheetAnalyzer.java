@@ -76,7 +76,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
 
         if (file.exists() && !overwriteFile) {
-            throw new IllegalStateException("The file already exists and the columns selected do not match");
+            throw new IllegalStateException("The file already exists or the columns selected do not match. Please configure the job to overwrite the existing file.");
         }
     }
 

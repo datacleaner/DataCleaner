@@ -19,11 +19,9 @@
  */
 package org.datacleaner.extension.output;
 
-import java.io.File;
+import junit.framework.TestCase;
 
 import org.junit.Test;
-
-import junit.framework.TestCase;
 
 public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
@@ -49,25 +47,28 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.sheetName = "foo";
         analyzer.overwriteFile = false;
 
-        final File file = analyzer.file;
-        assertNotNull(file);
-        assertFalse(file.exists());
+        assertNotNull(analyzer.file);
+        
+        analyzer.file.delete();
+        assertFalse(analyzer.file.exists());
         analyzer.validate();
 
         try {
-            file.createNewFile();
-            assertTrue(file.exists()); 
+            analyzer.file.createNewFile();
+            assertTrue(analyzer.file.exists()); 
             assertFalse(analyzer.overwriteFile); 
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("The file already exists and the columns selected do not match", e.getMessage());
+            assertEquals("The file already exists or the columns selected do not match. Please configure the job to overwrite the existing file.", e.getMessage());
+        }finally{
+            analyzer.file.delete(); 
         }
 
         analyzer.overwriteFile = true;
         analyzer.validate();
-        file.delete();
-        assertFalse(file.exists());
+        analyzer.file.delete();
+        assertFalse(analyzer.file.exists());
 
     }
 }

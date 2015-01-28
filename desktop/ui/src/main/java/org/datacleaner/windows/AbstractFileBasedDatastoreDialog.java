@@ -108,8 +108,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
 
         if (originalDatastore != null) {
-            _datastoreNameTextField.setText(originalDatastore.getName());
-            _datastoreNameTextField.setEnabled(false);
             if (originalDatastore instanceof FileDatastore) {
                 final FileDatastore fileDatastore = (FileDatastore) originalDatastore;
                 final String filename = fileDatastore.getFilename();

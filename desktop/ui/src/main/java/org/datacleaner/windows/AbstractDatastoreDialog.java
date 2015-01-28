@@ -108,6 +108,11 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
             setBannerImage(image);
         }
         
+        if (originalDatastore != null) {
+            _datastoreNameTextField.setText(originalDatastore.getName());
+            _datastoreNameTextField.setEnabled(false);
+        }
+        
         // add listeners after setting initial values.
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override

@@ -49,7 +49,7 @@ public class GraphUtils {
         // prevent instantiation
     }
     
-    public static final Shape ARROW_SHAPE = ArrowFactory.getWedgeArrow(10, 10);
+    public static final Shape ARROW_SHAPE = ArrowFactory.getWedgeArrow(6, 6);
 
     public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
         final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();

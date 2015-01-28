@@ -31,7 +31,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.InjectorBuilder;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.LoadingIcon;
 import org.datacleaner.widgets.tree.SchemaTree;
@@ -42,14 +41,12 @@ public class SchemaTreePanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.get();
-
 	private final InjectorBuilder _injectorBuilder;
 	private JComponent _updatePanel;
 
 	@Inject
 	protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
-		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_injectorBuilder = injectorBuilder;
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(4, 4, 4, 4));

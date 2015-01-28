@@ -117,7 +117,12 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
 
     @Override
     protected int getDialogWidth() {
-        return 600;
+        return 750;
+    }
+    
+    @Override
+    protected int getDialogHeightBuffer() {
+        return 50;
     }
 
     @Override

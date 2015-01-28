@@ -45,6 +45,7 @@ import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -375,6 +376,20 @@ public final class AnalysisJobBuilder implements Closeable {
         return this;
     }
 
+    public ComponentBuilder addComponent(ComponentDescriptor<?> descriptor) {
+        final ComponentBuilder builder;
+        if (descriptor instanceof FilterDescriptor) {
+            builder = addFilter((FilterDescriptor<?, ?>) descriptor);
+        } else if (descriptor instanceof TransformerDescriptor) {
+            builder = addTransformer((TransformerDescriptor<?>) descriptor);
+        } else if (descriptor instanceof AnalyzerDescriptor) {
+            builder = addAnalyzer((AnalyzerDescriptor<?>) descriptor);
+        } else {
+            throw new UnsupportedOperationException("Unknown component type: " + descriptor);
+        }
+        return builder;
+    }
+
     /**
      * Creates a filter job builder like the incoming filter job. Note that
      * input (columns and requirements) will not be mapped since these depend on
@@ -386,16 +401,8 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return the builder object for the specific component
      */
     protected Object addComponent(ComponentJob componentJob) {
-        final AbstractComponentBuilder<?, ?, ?> builder;
-        if (componentJob instanceof FilterJob) {
-            builder = addFilter((FilterDescriptor<?, ?>) componentJob.getDescriptor());
-        } else if (componentJob instanceof TransformerJob) {
-            builder = addTransformer((TransformerDescriptor<?>) componentJob.getDescriptor());
-        } else if (componentJob instanceof AnalyzerJob) {
-            builder = addAnalyzer((AnalyzerDescriptor<?>) componentJob.getDescriptor());
-        } else {
-            throw new UnsupportedOperationException("Unknown component job type: " + componentJob);
-        }
+        final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
+        final ComponentBuilder builder = addComponent(descriptor);
 
         builder.setName(componentJob.getName());
         builder.setConfiguredProperties(componentJob.getConfiguration());

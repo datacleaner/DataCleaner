@@ -23,23 +23,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.Component;
 import org.datacleaner.components.categories.WriteDataCategory;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.widgets.DescriptorMenu;
+import org.datacleaner.widgets.PopupButton;
 
 /**
  * Action that displays output writers for a filter's outcome.
@@ -50,11 +50,14 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
 
     private final FilterComponentBuilder<?, ?> _filterJobBuilder;
     private final String _categoryName;
+    private final PopupButton _popupButton;
 
-    public DisplayOptionsForFilterOutcomeActionListener(FilterComponentBuilder<?, ?> filterJobBuilder, String categoryName) {
+    public DisplayOptionsForFilterOutcomeActionListener(PopupButton popupButton,
+            FilterComponentBuilder<?, ?> filterJobBuilder, String categoryName) {
         super(filterJobBuilder.getAnalysisJobBuilder());
         _filterJobBuilder = filterJobBuilder;
         _categoryName = categoryName;
+        _popupButton = popupButton;
     }
 
     @Override
@@ -95,25 +98,25 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
             }
         });
 
-        final JPopupMenu popup = new JPopupMenu();
+        final JPopupMenu popup = _popupButton.getMenu();
+        popup.removeAll();
         popup.add(writeDataMenu);
         popup.add(setAsDefaultOutcomeMenuItem);
-
-        final JComponent component = (JComponent) e.getSource();
-        popup.show(component, 0, component.getHeight());
     }
 
     @Override
-    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerComponentBuilder<?> analyzerJobBuilder) {
-        Analyzer<?> analyzer = analyzerJobBuilder.getComponentInstance();
-        if (analyzer instanceof PrecedingComponentConsumer) {
-            LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, ComponentBuilder componentBuilder) {
+        final Component component = componentBuilder.getComponentInstance();
+        if (component instanceof PrecedingComponentConsumer) {
+            final LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
                     .getInjectionManager(null), null, true);
-            helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
-            ((PrecedingComponentConsumer) analyzer).configureForFilterOutcome(analysisJobBuilder,
+            helper.assignProvidedProperties(componentBuilder.getDescriptor(), component);
+            ((PrecedingComponentConsumer) component).configureForFilterOutcome(analysisJobBuilder,
                     _filterJobBuilder.getDescriptor(), _categoryName);
         }
-        analyzerJobBuilder.setRequirement(_filterJobBuilder, _categoryName);
+        final FilterOutcome outcome = _filterJobBuilder.getFilterOutcome(_categoryName);
+        final ComponentRequirement requirement = new SimpleComponentRequirement(outcome);
+        componentBuilder.setComponentRequirement(requirement);
     }
 
 }

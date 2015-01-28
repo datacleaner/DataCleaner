@@ -29,6 +29,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
 public class ChangeRequirementMenu extends JMenu {
+    
     private static final long serialVersionUID = 1L;
 
     public ChangeRequirementMenu(ComponentBuilder componentBuilder) {

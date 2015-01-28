@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -73,7 +74,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
         _filterComponentBuilder = filterComponentBuilder;
 
         _outcomePanel = new DCPanel();
-        _outcomePanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment()));
+        _outcomePanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
         final Set<String> categoryNames = _filterComponentBuilder.getDescriptor().getOutcomeCategoryNames();
         for (final String categoryName : categoryNames) {
             final PopupButton outcomeButton = WidgetFactory.createDefaultPopupButton(categoryName,
@@ -82,6 +83,7 @@ public class FilterComponentBuilderPanel extends AbstractComponentBuilderPanel i
             outcomeButton.addActionListener(new DisplayOptionsForFilterOutcomeActionListener(outcomeButton,
                     _filterComponentBuilder, categoryName));
             _outcomePanel.add(outcomeButton);
+            _outcomePanel.add(Box.createHorizontalStrut(4));
         }
 
         final JButton helpButton = WidgetFactory.createSmallButton(IconUtils.ACTION_HELP);

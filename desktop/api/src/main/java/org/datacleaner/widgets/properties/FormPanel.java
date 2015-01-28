@@ -41,8 +41,8 @@ public class FormPanel extends DCPanel {
     
     private static final long serialVersionUID = 1L;
 
-    private static final int FIELD_LABEL_WIDTH = 200;
-    private static final Insets insets = new Insets(4, 4, 4, 4);;
+    private static final int FIELD_LABEL_WIDTH = 240;
+    private static final Insets INSETS = new Insets(2, 2, 2, 2);
     private int _rowCounter;
 
     public FormPanel() {
@@ -70,7 +70,9 @@ public class FormPanel extends DCPanel {
         }
 
         final DCLabel mainLabel = DCLabel.dark(mainLabelText);
-        mainLabel.setFont(WidgetUtils.FONT_SMALL);
+//        mainLabel.setFont(WidgetUtils.FONT_SMALL);
+        mainLabel.setFont(WidgetUtils.FONT_NORMAL);
+        mainLabel.setBorder(new EmptyBorder(6, 0, 0, 0));
 
         final JXLabel minorLabel;
         if (StringUtils.isNullOrEmpty(minorLabelText)) {
@@ -98,15 +100,15 @@ public class FormPanel extends DCPanel {
      */
     public void addFormEntry(JLabel mainLabel, JLabel minorLabel, JComponent component) {
         add(mainLabel, new GridBagConstraints(0, _rowCounter, 1, 1, 0d, 0d, GridBagConstraints.NORTHWEST,
-                GridBagConstraints.BOTH, insets, 0, 0));
+                GridBagConstraints.BOTH, INSETS, 0, 0));
 
         if (minorLabel != null) {
             add(minorLabel, new GridBagConstraints(0, _rowCounter + 1, 1, 1, 0d, 1d, GridBagConstraints.NORTHWEST,
-                    GridBagConstraints.BOTH, insets, 0, 0));
+                    GridBagConstraints.BOTH, INSETS, 0, 0));
         }
 
         add(component, new GridBagConstraints(1, _rowCounter, 1, 2, 1d, 1d, GridBagConstraints.NORTHEAST,
-                GridBagConstraints.BOTH, insets, 0, 0));
+                GridBagConstraints.BOTH, INSETS, 0, 0));
 
         // each property spans two "rows"
         _rowCounter = _rowCounter + 2;

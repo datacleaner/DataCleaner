@@ -20,16 +20,14 @@
 package org.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.util.Collection;
@@ -40,37 +38,30 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BoundedRangeModel;
-import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.TransferHandler;
 
-import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.Transformer;
-import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.windows.ComponentConfigurationDialog;
 import org.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
@@ -78,15 +69,12 @@ import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.VisualizationViewer.GraphMouse;
 import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
-import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
  * Class capable of creating graphs that visualize {@link AnalysisJob}s or parts
@@ -94,11 +82,9 @@ import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
  */
 public final class JobGraph {
 
-    private static final String MORE_COLUMNS_VERTEX = "...";
+    public static final String MORE_COLUMNS_VERTEX = "...";
 
-    private static final ImageManager imageManager = ImageManager.get();
     private static final Logger logger = LoggerFactory.getLogger(JobGraph.class);
-
     private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
     private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
     private final Set<Object> _highlighedVertexes;
@@ -107,18 +93,21 @@ public final class JobGraph {
     private final DCPanel _panel;
     private final WindowContext _windowContext;
     private final UsageLogger _usageLogger;
+    private final UserPreferences _userPreferences;
 
     private int _scrollHorizontal;
     private int _scrollVertical;
 
-    public JobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
-        this(windowContext, analysisJobBuilder, null, usageLogger);
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, UsageLogger usageLogger) {
+        this(windowContext, userPreferences, analysisJobBuilder, null, usageLogger);
     }
 
-    public JobGraph(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder,
-            RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
+    public JobGraph(WindowContext windowContext, UserPreferences userPreferences,
+            AnalysisJobBuilder analysisJobBuilder, RendererFactory presenterRendererFactory, UsageLogger usageLogger) {
         _highlighedVertexes = new HashSet<Object>();
         _analysisJobBuilder = analysisJobBuilder;
+        _userPreferences = userPreferences;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
         _componentConfigurationDialogs = new IdentityHashMap<>();
@@ -323,7 +312,7 @@ public final class JobGraph {
                 }
 
                 if (imagePath != null) {
-                    g.drawImage(imageManager.getImage(imagePath), xOffset - 120, yOffset - 30, null);
+                    g.drawImage(ImageManager.get().getImage(imagePath), xOffset - 120, yOffset - 30, null);
                 }
             }
         });
@@ -350,144 +339,24 @@ public final class JobGraph {
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
-        // render fonts (some may be highlighted)
-        renderContext.setVertexFontTransformer(new Transformer<Object, Font>() {
+        JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes);
 
-            private final Font normalFont = WidgetUtils.FONT_SMALL;
-            private final Font highlighedFont = normalFont.deriveFont(Font.BOLD);
+        // instrument the render context with all our transformers and stuff
+        renderContext.setVertexFontTransformer(transformers.getVertexFontTransformer());
+        renderContext.setVertexLabelTransformer(JobGraphTransformers.VERTEX_LABEL_TRANSFORMER);
+        renderContext.setEdgeArrowPredicate(JobGraphTransformers.EDGE_ARROW_PREDICATE);
+        renderContext.setEdgeArrowTransformer(JobGraphTransformers.EDGE_ARROW_TRANSFORMER);
+        renderContext.setEdgeLabelTransformer(JobGraphTransformers.EDGE_LABEL_TRANSFORMER);
+        renderContext.setEdgeShapeTransformer(transformers.getEdgeShapeTransformer());
+        renderContext.setEdgeLabelClosenessTransformer(JobGraphTransformers.EDGE_LABEL_CLOSENESS_TRANSFORMER);
+        renderContext.setEdgeLabelRenderer(transformers.getEdgeLabelRenderer());
+        renderContext.setVertexIconTransformer(JobGraphTransformers.VERTEX_ICON_TRANSFORMER);
+        renderContext.setVertexShapeTransformer(JobGraphTransformers.VERTEX_SHAPE_TRANSFORMER);
 
-            @Override
-            public Font transform(Object vertex) {
-                if (_highlighedVertexes.contains(vertex)) {
-                    return highlighedFont;
-                }
-                return normalFont;
-            }
-        });
+        final JButton graphPreferencesButton = createGraphPreferencesButton();
+        visualizationViewer.setLayout(new BorderLayout());
+        visualizationViewer.add(DCPanel.flow(Alignment.RIGHT, 0, 0, graphPreferencesButton), BorderLayout.SOUTH);
 
-        // render labels
-        renderContext.setVertexLabelTransformer(new Transformer<Object, String>() {
-            @Override
-            public String transform(Object obj) {
-                if (obj instanceof InputColumn) {
-                    return ((InputColumn<?>) obj).getName();
-                }
-                if (obj instanceof ComponentBuilder) {
-                    return LabelUtils.getLabel((ComponentBuilder) obj);
-                }
-                if (obj instanceof FilterOutcome) {
-                    return ((FilterOutcome) obj).getCategory().name();
-                }
-                if (obj instanceof Table) {
-                    return ((Table) obj).getName();
-                }
-                if (obj instanceof Class) {
-                    Class<?> cls = (Class<?>) obj;
-                    if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                        return "Analyzer result";
-                    }
-                    return cls.getSimpleName();
-                }
-                return obj.toString();
-            }
-        });
-
-        // render arrows
-        final Predicate<Context<Graph<Object, JobGraphLink>, JobGraphLink>> edgeArrowPredicate = TruePredicate
-                .getInstance();
-        renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
-        renderContext
-                .setEdgeArrowTransformer(new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape>() {
-                    @Override
-                    public Shape transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
-                        return GraphUtils.ARROW_SHAPE;
-                    }
-                });
-
-        renderContext.setEdgeLabelTransformer(new Transformer<JobGraphLink, String>() {
-            @Override
-            public String transform(JobGraphLink link) {
-                final ComponentRequirement req = link.getRequirement();
-                if (req == null) {
-                    return null;
-                }
-                return req.getSimpleName();
-            }
-        });
-
-        renderContext
-                .setEdgeLabelClosenessTransformer(new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Number>() {
-                    @Override
-                    public Number transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
-                        return 0.4d;
-                    }
-                });
-
-        renderContext.setEdgeLabelRenderer(new EdgeLabelRenderer() {
-            @Override
-            public void setRotateEdgeLabels(boolean state) {
-            }
-
-            @Override
-            public boolean isRotateEdgeLabels() {
-                return true;
-            }
-
-            @Override
-            public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
-                    boolean isSelected, T edge) {
-                final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
-                final JLabel label = new JLabel(value + "", icon, JLabel.LEFT);
-                label.setFont(WidgetUtils.FONT_SMALL);
-                return label;
-            }
-        });
-
-        // render icons
-        renderContext.setVertexIconTransformer(new Transformer<Object, Icon>() {
-
-            @Override
-            public Icon transform(Object obj) {
-                if (obj == MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
-                    return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
-                }
-                if (obj instanceof ComponentBuilder) {
-                    final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
-                    final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-                    final boolean configured;
-                    if (componentBuilder.getInput().length == 0) {
-                        configured = true;
-                    } else {
-                        configured = componentBuilder.isConfigured(false);
-                    }
-                    return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
-                }
-                if (obj instanceof FilterOutcome) {
-                    return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
-                }
-                if (obj instanceof Table) {
-                    return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
-                }
-                if (obj instanceof Class) {
-                    Class<?> cls = (Class<?>) obj;
-                    if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                        return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
-                    }
-                }
-                return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
-            }
-        });
-        
-        renderContext.setVertexShapeTransformer(new Transformer<Object, Shape>() {
-
-            @Override
-            public Shape transform(Object input) {
-                int size = IconUtils.ICON_SIZE_LARGE;
-                int offset = - size / 2;
-                return new Rectangle(new Point(offset, offset), new Dimension(size, size));
-            }
-        });
-        
         // we save the values of the scrollbars in order to allow refreshes to
         // retain scroll position.
         final GraphZoomScrollPane scrollPane = new GraphZoomScrollPane(visualizationViewer);
@@ -507,7 +376,27 @@ public final class JobGraph {
         };
         scrollPane.getHorizontalScrollBar().addAdjustmentListener(adjustmentListener);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
+
         return scrollPane;
+    }
+
+    private JButton createGraphPreferencesButton() {
+        final JButton uiPreferencesButton = WidgetFactory.createSmallButton(ImageManager.get().getImageIcon(
+                IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_MEDIUM));
+        uiPreferencesButton.setOpaque(false);
+        uiPreferencesButton.setBorder(null);
+        uiPreferencesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JobGraphPreferencesPanel panel = new JobGraphPreferencesPanel(_userPreferences, JobGraph.this);
+
+                final JPopupMenu popup = new JPopupMenu("Graph UI Preferences");
+                popup.add(panel);
+                final Dimension panelSize = panel.getPreferredSize();
+                popup.show(uiPreferencesButton, -1 * panelSize.width - 4, 0);
+            }
+        });
+        return uiPreferencesButton;
     }
 
     private void setScrollbarValue(JScrollBar scrollBar, int value) {

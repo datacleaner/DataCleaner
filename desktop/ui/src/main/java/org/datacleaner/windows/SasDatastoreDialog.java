@@ -47,7 +47,7 @@ public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<S
 	protected SasDatastoreDialog(@Nullable SasDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
 			WindowContext windowContext, UserPreferences userPreferences) {
 		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
-		_tableCountLabel = DCLabel.bright("");
+		_tableCountLabel = DCLabel.bright("Please choose the directory to infer the tables");
 
 		if (originalDatastore != null) {
 			onFileSelected(new File(originalDatastore.getFilename()));

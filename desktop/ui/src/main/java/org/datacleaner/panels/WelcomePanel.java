@@ -48,11 +48,13 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -84,10 +86,12 @@ import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
@@ -415,6 +419,12 @@ public class WelcomePanel extends DCPanel implements DatastoreChangeListener {
 
         panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
+                IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
+
+        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
 
         panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                 IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));

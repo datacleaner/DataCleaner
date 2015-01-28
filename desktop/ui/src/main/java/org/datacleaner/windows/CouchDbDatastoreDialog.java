@@ -19,10 +19,14 @@
  */
 package org.datacleaner.windows;
 
+import java.util.List;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
+import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.SimpleTableDef;
@@ -30,18 +34,18 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
 public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatastore> implements SchemaFactory {
 
@@ -51,7 +55,6 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     private final JXTextField _portTextField;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordField;
-    private final JXTextField _datastoreNameTextField;
     private final JCheckBox _sslCheckBox;
     private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
@@ -60,12 +63,36 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
             @Nullable CouchDbDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
-        _datastoreNameTextField = WidgetFactory.createTextField();
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
         _usernameTextField = WidgetFactory.createTextField();
         _passwordField = WidgetFactory.createPasswordField();
+        
+        _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _passwordField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
 
         _sslCheckBox = new JCheckBox("Connect via SSL", false);
         _sslCheckBox.setOpaque(false);
@@ -99,46 +126,46 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     }
 
     @Override
-    protected JComponent getDialogContent() {
-        final DCPanel formPanel = new DCPanel();
-        formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+    protected boolean validateForm() {
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
+        }
+        
+        final String hostname = _hostnameTextField.getText();
+        if (StringUtils.isNullOrEmpty(hostname)) {
+            setStatusError("Please enter hostname");
+            return false;
+        }
+        
+        final String port = _portTextField.getText();
+        if (StringUtils.isNullOrEmpty(port)) {
+            setStatusError("Please enter port number");
+            return false;
+        } else {
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt <= 0) {
+                    setStatusError("Please enter a valid (positive port number)");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                setStatusError("Please enter a valid port number");
+                return false;
+            }
+        }
+        
+        final String keyspace = _usernameTextField.getText();
+        if (StringUtils.isNullOrEmpty(keyspace)) {
+            setStatusError("Please enter username");
+            return false;
+        }
+        
+        // No password field validating as sometimes passwords are empty strings
 
-        int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(_sslCheckBox, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Username:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_usernameTextField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Password:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_passwordField, formPanel, 1, row);
-        row++;
-
-        WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
-        row++;
-
-        final DCPanel buttonPanel = getButtonPanel();
-
-        final DCPanel centerPanel = new DCPanel();
-        centerPanel.setLayout(new VerticalLayout(4));
-        centerPanel.add(formPanel);
-        centerPanel.add(buttonPanel);
-
-        return centerPanel;
+        setStatusValid();
+        return true;
     }
 
     protected CouchDbDatastore createDatastore() {
@@ -164,5 +191,17 @@ public class CouchDbDatastoreDialog extends AbstractDatastoreDialog<CouchDbDatas
     @Override
     protected String getDatastoreIconPath() {
         return IconUtils.COUCHDB_IMAGEPATH;
+    }
+    
+    @Override
+    protected List<Entry<String, JComponent>> getFormElements() {
+        List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Connect via SSL", _sslCheckBox));
+        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
+        result.add(new ImmutableEntry<String, JComponent>("Schema model", _tableDefinitionWidget));
+        return result;
     }
 }

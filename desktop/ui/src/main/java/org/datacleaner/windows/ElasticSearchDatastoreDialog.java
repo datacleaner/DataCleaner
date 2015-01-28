@@ -27,10 +27,9 @@ import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.HBaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -41,26 +40,38 @@ import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
 import org.jdesktop.swingx.JXTextField;
 
-public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore> implements SchemaFactory {
+public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
+        SchemaFactory {
 
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
-    private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
+    private final JXTextField _clusterNameTextField;
+    private final JXTextField _indexNameTextField;
 
     @Inject
-    public HBaseDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable HBaseDatastore originalDatastore, UserPreferences userPreferences) {
+    public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
+            @Nullable ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
+        setSaveButtonEnabled(false);
+        
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
+        _clusterNameTextField = WidgetFactory.createTextField();
+        _indexNameTextField = WidgetFactory.createTextField();
+
         
+        _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
         _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -73,18 +84,29 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
                 validateAndUpdate();
             }
         });
+        _clusterNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _indexNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
 
         if (originalDatastore == null) {
             _hostnameTextField.setText("localhost");
-            _portTextField.setText("2181");
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
+            _portTextField.setText("9300");
         } else {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEnabled(false);
-            _hostnameTextField.setText(originalDatastore.getZookeeperHostname());
-            _portTextField.setText(originalDatastore.getZookeeperPort() + "");
-            final SimpleTableDef[] tableDefs = originalDatastore.getTableDefs();
-            _tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
+            _hostnameTextField.setText(originalDatastore.getHostname());
+            _portTextField.setText(originalDatastore.getPort() + "");
+            _clusterNameTextField.setText(originalDatastore.getClusterName());
+            _indexNameTextField.setText(originalDatastore.getIndexName());
         }
     }
     
@@ -119,32 +141,54 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
             }
         }
         
+        final String clusterName = _clusterNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(clusterName)) {
+            setStatusError("Please enter cluster name");
+            return false;
+        }
+        
+        final String indexName = _indexNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(indexName)) {
+            setStatusError("Please enter index name");
+            return false;
+        }
+
         setStatusValid();
         return true;
     }
 
     @Override
     public String getWindowTitle() {
-        return "HBase database";
+        return "ElasticSearch index";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "HBase database";
+        return "ElasticSearch index";
     }
 
     @Override
-    protected HBaseDatastore createDatastore() {
+    protected boolean isWindowResizable() {
+        return true;
+    }
+
+    @Override
+    protected int getDialogWidth() {
+        return 400;
+    }
+
+    protected ElasticSearchDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String hostname = _hostnameTextField.getText();
         final Integer port = Integer.parseInt(_portTextField.getText());
-        final SimpleTableDef[] tableDefinitions = _tableDefinitionWidget.getTableDefs();
-        return new HBaseDatastore(name, hostname, port, tableDefinitions);
+        final String clusterName = _clusterNameTextField.getText();
+        final String indexName = _indexNameTextField.getText();
+        return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName);
     }
 
     @Override
     public Schema createSchema() {
-        final HBaseDatastore datastore = createDatastore();
+        final ElasticSearchDatastore datastore = createDatastore();
         try (final DatastoreConnection con = datastore.openConnection()) {
             final Schema schema = con.getDataContext().getDefaultSchema();
             return schema;
@@ -153,7 +197,7 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
 
     @Override
     protected String getDatastoreIconPath() {
-        return IconUtils.HBASE_IMAGEPATH;
+        return IconUtils.ELASTICSEARCH_IMAGEPATH;
     }
     
     @Override
@@ -161,7 +205,9 @@ public class HBaseDatastoreDialog extends AbstractDatastoreDialog<HBaseDatastore
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Schema model", _tableDefinitionWidget));
+        result.add(new ImmutableEntry<String, JComponent>("Cluster name", _clusterNameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Index name", _indexNameTextField));
         return result;
     }
+
 }

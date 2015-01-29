@@ -685,6 +685,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.add(_contentContainerPanel, BorderLayout.CENTER);
 
         panel.add(statusBar, BorderLayout.SOUTH);
+        
+        // invoke to trigger enablement/disablement of buttons.
+        onSourceColumnsChanged();
 
         WidgetUtils.centerOnScreen(this);
 

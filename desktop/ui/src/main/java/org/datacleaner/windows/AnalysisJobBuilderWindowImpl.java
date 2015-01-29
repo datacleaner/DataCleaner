@@ -198,7 +198,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _graph = new JobGraph(windowContext, _analysisJobBuilder, _presenterRendererFactory, usageLogger);
+        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory, usageLogger);
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
         _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());

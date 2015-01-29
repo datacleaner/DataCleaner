@@ -59,7 +59,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     String sheetName;
 
     @Configured
-    boolean overwriteFile;
+    boolean overwriteFileIfExists;
 
     @Override
     public String getSuggestedLabel() {
@@ -75,8 +75,8 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             throw new IllegalStateException("Sheet name cannot contain dots (.)");
         }
 
-        if (file.exists() && !overwriteFile) {
-            throw new IllegalStateException("The file already exists or the columns selected do not match. Please configure the job to overwrite the existing file.");
+        if (file.exists() && !overwriteFileIfExists) {
+            throw new IllegalStateException("The file already exists and the columns selected do not match. Please configure the job to overwrite the existing file.");
         }
     }
 
@@ -95,7 +95,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Override
     public OutputWriter createOutputWriter() {
 
-        if (file.exists() && overwriteFile) {
+        if (file.exists() && overwriteFileIfExists) {
             final String pathname = file.getPath();
             final boolean delete = file.delete();
             if (delete) {

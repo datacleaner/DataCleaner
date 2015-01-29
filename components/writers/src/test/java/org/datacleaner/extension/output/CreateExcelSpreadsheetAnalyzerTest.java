@@ -45,30 +45,29 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
         analyzer.sheetName = "foo";
-        analyzer.overwriteFile = false;
+        analyzer.overwriteFileIfExists = false;
 
         assertNotNull(analyzer.file);
-        
-        analyzer.file.delete();
         assertFalse(analyzer.file.exists());
         analyzer.validate();
+        
+        analyzer.overwriteFileIfExists = true;
+        analyzer.validate();
+        assertFalse(analyzer.file.exists());
 
+        analyzer.file.createNewFile();
+        assertTrue(analyzer.file.exists());
+        analyzer.validate();
+        
         try {
-            analyzer.file.createNewFile();
-            assertTrue(analyzer.file.exists()); 
-            assertFalse(analyzer.overwriteFile); 
+            analyzer.overwriteFileIfExists = false;
+            assertFalse(analyzer.overwriteFileIfExists); 
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("The file already exists or the columns selected do not match. Please configure the job to overwrite the existing file.", e.getMessage());
+            assertEquals("The file already exists and the columns selected do not match. Please configure the job to overwrite the existing file.", e.getMessage());
         }finally{
             analyzer.file.delete(); 
         }
-
-        analyzer.overwriteFile = true;
-        analyzer.validate();
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
-
     }
 }

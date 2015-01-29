@@ -29,53 +29,42 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void test() throws Exception {
+        
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         analyzer.file = new File("csvtest.csv");
-        analyzer.file.delete();
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         // Case 1 - file does not exists
         assertFalse(analyzer.file.exists());
         assertEquals("csvtest.csv", analyzer.getSuggestedLabel());
-        analyzer.overwriteFile = false;
+        analyzer.overwriteFileIfExists = false;
         analyzer.validate();
-
-        try {
-            analyzer.overwriteFile = true;
-            analyzer.validate();
-            fail("Exception expected");
-        } catch (Exception e) {
-            assertEquals("The file can not be overwritten because the file does not exist", e.getMessage());
-        }
+        
+        analyzer.overwriteFileIfExists = true;
+        analyzer.validate();
 
         // Case 2 - file exists
         final boolean createNewFile = analyzer.file.createNewFile();
         assertTrue(createNewFile);
 
         try {
-            writeFile(analyzer, false);
+            assertTrue(analyzer.file.exists());
+            analyzer.overwriteFileIfExists = false;
+            analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
             assertEquals("The file already exists. Please configure the job to overwrite the existing file.",
                     e.getMessage());
+           
         }
-
-        try {
-            writeFile(analyzer, true);
-            fail("Exception Expected"); 
-        } catch (Exception e) {
-            // there are no columns to write in the file. Therefore we will get a Null Pointer exception. 
-            assertEquals(null, e.getMessage());
-        } finally {
-            analyzer.file.delete();
-        }
-    }
-
-    private void writeFile(CreateCsvFileAnalyzer analyzer, boolean overwrite) {
-        analyzer.overwriteFile = overwrite;
+        
+        assertTrue(analyzer.file.exists());
+        analyzer.overwriteFileIfExists = true;
         analyzer.validate();
-        analyzer.createOutputWriter();
+        
+        analyzer.file.delete();
+        assertFalse(analyzer.file.exists());
+        
     }
-
 }

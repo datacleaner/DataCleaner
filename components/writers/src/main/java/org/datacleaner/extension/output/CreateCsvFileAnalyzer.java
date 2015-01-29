@@ -92,7 +92,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     InputColumn<?> columnToBeSortedOn;
 
     @Configured
-    boolean overwriteFile;
+    boolean overwriteFileIfExists;
 
     @Inject
     @Provided
@@ -125,8 +125,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Validate
     public void validate() {
-        if (!file.exists() && overwriteFile == true) {
-            throw new IllegalStateException("The file can not be overwritten because the file does not exist");
+        if (file.exists() && !overwriteFileIfExists) {
+            throw new IllegalStateException("The file already exists. Please configure the job to overwrite the existing file.");
         }
     }
 
@@ -148,11 +148,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
-        
-        if (file.exists() && overwriteFile==false){
-            throw new IllegalStateException("The file already exists. Please configure the job to overwrite the existing file.");
-        }
-        
+                
         List<String> headers = new ArrayList<String>();
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();

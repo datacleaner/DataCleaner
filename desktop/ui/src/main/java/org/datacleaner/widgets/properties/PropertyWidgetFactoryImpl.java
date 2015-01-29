@@ -38,6 +38,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -246,6 +247,10 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         PropertyWidget<?> propertyWidget = _propertyWidgetCollection.getMappedPropertyWidget(propertyDescriptor);
         if (propertyWidget != null) {
             return propertyWidget;
+        }
+        
+        if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
+            return null;
         }
 
         if (getComponentBuilder() instanceof AnalyzerComponentBuilder) {

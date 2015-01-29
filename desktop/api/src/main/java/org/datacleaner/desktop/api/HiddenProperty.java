@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.api;
+package org.datacleaner.desktop.api;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -28,37 +28,20 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+import org.datacleaner.api.Configured;
+
 /**
- * Annotation containing supplementary metadata about a {@link Configured}
- * string property. This metadata can be used as a way to give hints to the UI
- * as to how the content should be presented.
+ * Additional annotation that can be put on a {@link Configured} property to
+ * hide it from the Desktop UI of DataCleaner.
+ * 
+ * Hidden properties will still be configurable through XML files or
+ * programmatic instrumentation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 @Documented
 @Inherited
 @Qualifier
-public @interface StringProperty {
+public @interface HiddenProperty {
 
-    /**
-     * @return true if the input field is multiline
-     */
-    public boolean multiline() default false;
-
-    /**
-     * @return the mime type (and optionally aliases/alternative mime types) of
-     *         the property
-     */
-    public String[] mimeType() default {};
-
-    /**
-     * @return true if the input field represents a password (or other similar
-     *         security token), not shown literally to the user.
-     */
-    public boolean password() default false;
-
-    /**
-     * @return true if an empty string value is acceptable
-     */
-    public boolean emptyString() default false;
 }

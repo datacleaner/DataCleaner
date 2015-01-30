@@ -688,6 +688,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         
         // invoke to trigger enablement/disablement of buttons.
         onSourceColumnsChanged();
+        updateStatusLabel();
 
         WidgetUtils.centerOnScreen(this);
 

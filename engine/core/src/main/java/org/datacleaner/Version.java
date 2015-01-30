@@ -70,7 +70,7 @@ public class Version {
     private static String determineVersion() {
         final Properties properties = new Properties();
         final InputStream inputStream = Version.class
-                .getResourceAsStream("/META-INF/maven/org.datacleaner/DataCleaner-core/pom.properties");
+                .getResourceAsStream("/META-INF/maven/org.eobjects.datacleaner/DataCleaner-api/pom.properties");
         try {
             properties.load(inputStream);
         } catch (Exception e) {

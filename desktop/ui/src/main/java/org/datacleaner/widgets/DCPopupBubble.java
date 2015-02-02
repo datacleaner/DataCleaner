@@ -113,6 +113,11 @@ public class DCPopupBubble {
             public void mouseExited(MouseEvent e) {
                 DCPopupBubble.this.hide();
             }
+            
+             @Override
+            public void mouseClicked(MouseEvent e) {
+                 DCPopupBubble.this.hide();
+            }
         });
     }
 }

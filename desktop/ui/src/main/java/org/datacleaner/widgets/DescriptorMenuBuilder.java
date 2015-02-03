@@ -190,7 +190,6 @@ public final class DescriptorMenuBuilder {
                 }
             }
         }
-       
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {

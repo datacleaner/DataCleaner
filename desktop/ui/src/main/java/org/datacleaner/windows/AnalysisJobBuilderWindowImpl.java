@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -61,6 +62,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
@@ -81,10 +83,13 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.datacleaner.panels.SchemaTreePanel;
+import org.datacleaner.panels.SelectDatastorePanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
+import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -113,9 +118,11 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow, DatastoreSelectedListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
+
+    private AnalysisWindowPanelType _currentPanelType;
 
     private static final long serialVersionUID = 1L;
 
@@ -144,6 +151,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
+    private final DatastoreManagementPanel _datastoreManagementPanel;
+    private final SelectDatastorePanel _selectDatastorePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
@@ -210,16 +219,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
-        _welcomePanel = new WelcomePanel();
-        _welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
+        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get());
+        _welcomePanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
+                _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
+        _selectDatastorePanel = new SelectDatastorePanel(_glassPane, injectorBuilder, databaseDriverCatalog, (DatastoreCatalog) configuration.getDatastoreCatalog(), this);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
 
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        _contentContainerPanel.setLayout(new BorderLayout());
-        _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
-        _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
+        _contentContainerPanel.setLayout(new CardLayout());
+        _contentContainerPanel.add(_welcomePanel, AnalysisWindowPanelType.WELCOME.getName());
+        _contentContainerPanel.add(_editingContentView, AnalysisWindowPanelType.EDITING_CONTEXT.getName());
+        _contentContainerPanel.add(_datastoreManagementPanel, AnalysisWindowPanelType.MANAGE_DS.getName());
+        _contentContainerPanel.add(_selectDatastorePanel, AnalysisWindowPanelType.SELECT_DS.getName());
 
         final boolean graphPreferred = isGraphPreferred();
 
@@ -272,6 +287,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+    }
+
+    @Override
+    public void changePanel(AnalysisWindowPanelType panel) {
+        if (_datastore == null) {
+            _currentPanelType = panel;
+        } else {
+            _currentPanelType = AnalysisWindowPanelType.EDITING_CONTEXT;
+        }
+        updateCurrentPanel();
+    }
+
+    private void updateCurrentPanel() {
+        ((CardLayout) _contentContainerPanel.getLayout()).show(_contentContainerPanel, _currentPanelType.getName());
+        updateLeftPanelVisibility(_currentPanelType == AnalysisWindowPanelType.EDITING_CONTEXT);
+        updateWindowTitle();
     }
 
     private boolean isGraphPreferred() {
@@ -364,42 +395,32 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         if (datastore == null) {
             _analysisJobBuilder.reset();
-            displayWelcomeView();
+            changePanel(AnalysisWindowPanelType.WELCOME);
         } else {
-            displayEditingView();
+            changePanel(AnalysisWindowPanelType.EDITING_CONTEXT);
         }
 
         updateStatusLabel();
     }
 
-    private void displayEditingView() {
-        _leftPanel.setVisible(true);
-        if (_leftPanel.isCollapsed()) {
-            _leftPanel.setCollapsed(false);
-        }
-
-        _welcomePanel.setVisible(false);
-        _editingContentView.setVisible(true);
-    }
-
-    private void displayWelcomeView() {
-        if (isShowing()) {
-            if (_datastore == null) {
-                if (!_leftPanel.isCollapsed()) {
-                    _leftPanel.setCollapsed(true);
-                }
-                final Timer timer = new Timer(500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _leftPanel.setVisible(false);
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
-
-                _editingContentView.setVisible(false);
-                _welcomePanel.setVisible(true);
+    private void updateLeftPanelVisibility(boolean show) {
+        if (show) {
+            _leftPanel.setVisible(true);
+            if (_leftPanel.isCollapsed()) {
+                _leftPanel.setCollapsed(false);
             }
+        } else {
+            if (!_leftPanel.isCollapsed()) {
+                _leftPanel.setCollapsed(true);
+            }
+            final Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _leftPanel.setVisible(false);
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
     }
 
@@ -432,7 +453,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     protected void onWindowVisible() {
-        displayWelcomeView();
+        changePanel(AnalysisWindowPanelType.WELCOME);
     }
 
     public void updateStatusLabel() {
@@ -511,48 +532,39 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             return false;
         }
 
-        final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
-
-        final boolean windowClosing;
-        final boolean exit;
-
-        if (count == 1) {
-            // if this is the last workspace window
-            if (isDatastoreSet() && isDatastoreSelectionEnabled()) {
-                // if datastore is set and datastore selection is enabled,
-                // return to datastore selection.
-                resetJob();
-                exit = false;
-                windowClosing = false;
+        switch (_currentPanelType) {
+        case WELCOME:
+            final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
+            if (count == 1) {
+                if(getWindowContext().showExitDialog()) {
+                    cleanupForWindowClose();
+                    getWindowContext().exit();
+                }
             } else {
-                // if datastore is not set, show exit dialog
-                exit = getWindowContext().showExitDialog();
-                windowClosing = exit;
+                cleanupForWindowClose();
+                return true;
             }
-        } else {
-            // if there are more workspace windows, simply close the window
-            exit = false;
-            windowClosing = true;
+            break;
+        case EDITING_CONTEXT:
+            resetJob();
+            break;
+        default:
+            changePanel(AnalysisWindowPanelType.WELCOME);
         }
 
-        if (windowClosing) {
-            _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-            _analysisJobBuilder.getTransformerChangeListeners().remove(this);
-            _analysisJobBuilder.getFilterChangeListeners().remove(this);
-            _analysisJobBuilder.getSourceColumnListeners().remove(this);
-            _analysisJobBuilder.close();
-            if (_datastoreConnection != null) {
-                _datastoreConnection.close();
-            }
-            getContentPane().removeAll();
-        }
+        return false;
+    }
 
-        if (exit) {
-            // trigger removeAll() to make sure removeNotify() methods are
-            // invoked.
-            getWindowContext().exit();
+    private void cleanupForWindowClose() {
+        _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
+        _analysisJobBuilder.getFilterChangeListeners().remove(this);
+        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        _analysisJobBuilder.close();
+        if (_datastoreConnection != null) {
+            _datastoreConnection.close();
         }
-        return windowClosing;
+        getContentPane().removeAll();
     }
 
     private void resetJob() {
@@ -573,7 +585,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public String getWindowTitle() {
-        String title = "Analysis job";
+        String title;
+        if (_currentPanelType != null) {
+            title = _currentPanelType.getName();
+        } else {
+            title = AnalysisWindowPanelType.WELCOME.getName();
+        }
+
         if (_datastore != null) {
             String datastoreName = _datastore.getName();
             if (!StringUtils.isNullOrEmpty(datastoreName)) {
@@ -1014,5 +1032,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
+    }
+
+    @Override
+    public void datastoreSelected(Datastore datastore) {
+        setDatastore(datastore);
     }
 }

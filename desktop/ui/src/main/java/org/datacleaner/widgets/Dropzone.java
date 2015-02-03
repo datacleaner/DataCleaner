@@ -26,7 +26,7 @@ public class Dropzone extends DCPanel{
         
         add(Box.createVerticalStrut(10));
         
-        JButton orClickButton = new JButton("(or click)");
+        JButton orClickButton = new JButton("(or click to use dialog)");
         WidgetUtils.setPrimaryButtonStyle(orClickButton);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(orClickButton);

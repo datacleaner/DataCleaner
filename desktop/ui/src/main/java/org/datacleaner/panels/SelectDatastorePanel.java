@@ -1,24 +1,24 @@
 package org.datacleaner.panels;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.JFrame;
 import javax.swing.JSeparator;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 
 public class SelectDatastorePanel extends DCPanel {
     private static final long serialVersionUID = 1L;
 
-    public SelectDatastorePanel() {
+    public SelectDatastorePanel(DCGlassPane glassPane, InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog, DatastoreCatalog datastoreCatalog, DatastoreSelectedListener datastoreSelectListener) {
         setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(10, 10, 10, 10)));
         setLayout(new GridBagLayout());
 
@@ -37,7 +37,7 @@ public class SelectDatastorePanel extends DCPanel {
         c.weightx = 1.0;
         c.anchor = GridBagConstraints.PAGE_START;
         c.fill = GridBagConstraints.HORIZONTAL;
-        add(new AddDataStorePanel(), c);
+        add(new AddDataStorePanel(databaseDriverCatalog, injectorBuilder, datastoreSelectListener), c);
         
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -61,18 +61,6 @@ public class SelectDatastorePanel extends DCPanel {
         c.gridy = 1;
         c.weightx = 1.0;
         c.fill = GridBagConstraints.BOTH;
-        add(new ExistingDatastorePanel(), c);
+        add(new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener), c);
     }
-    
-    public static void main(String[] args) {
-        LookAndFeelManager.get().init();
-        
-        final JFrame frame = new JFrame("Create datastore test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(800, 600));
-        frame.add(new SelectDatastorePanel(), BorderLayout.PAGE_START);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
 }

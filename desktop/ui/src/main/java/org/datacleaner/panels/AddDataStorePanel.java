@@ -3,17 +3,12 @@ package org.datacleaner.panels;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.util.List;
 
 import javax.swing.JMenuItem;
-import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.CassandraDatastore;
@@ -28,6 +23,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
+import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -43,27 +39,25 @@ import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
 import org.datacleaner.windows.SugarCrmDatastoreDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
 public class AddDataStorePanel extends DCPanel {
-    private static final Logger logger = LoggerFactory.getLogger(AddDataStorePanel.class);
     private static final long serialVersionUID = 1L;
 
     private final InjectorBuilder _injectorBuilder;
     private final DatastoreSelectedListener _datastoreSelectedListener;
 
     private final Dropzone _dropzone;
-    
-    public AddDataStorePanel(final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder, final DatastoreSelectedListener datastoreSelectedListener) {
+
+    public AddDataStorePanel(final MutableDatastoreCatalog datastoreCatalog,
+            final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
+            final DatastoreSelectedListener datastoreSelectedListener) {
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _injectorBuilder = injectorBuilder;
         _datastoreSelectedListener = datastoreSelectedListener;
-        
-        _dropzone = new Dropzone();
+        _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener);
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -140,11 +134,13 @@ public class AddDataStorePanel extends DCPanel {
                 IconUtils.DATASTORE_TYPE_CLOUD_DARK, IconUtils.ICON_SIZE_LARGE));
         WidgetUtils.setWhiteButtonStyle(cloudButton);
         add(cloudButton, c);
-        
-        cloudButton.getMenu().add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
-                IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        cloudButton.getMenu().add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
-                SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+
+        cloudButton.getMenu().add(
+                createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
+                        IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
+        cloudButton.getMenu().add(
+                createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
+                        SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
     }
 
     private JMenuItem createNewJdbcDatastoreButton(final String title, final String description,
@@ -162,7 +158,7 @@ public class AddDataStorePanel extends DCPanel {
                 dialog.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        if(dialog.getSavedDatastore() != null){
+                        if (dialog.getSavedDatastore() != null) {
                             _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
                         }
                     }
@@ -172,51 +168,9 @@ public class AddDataStorePanel extends DCPanel {
         return item;
     }
 
-    private void makeDropbuttonDroppable(){
-        TransferHandler handler =   new TransferHandler() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean canImport(TransferHandler.TransferSupport info) {
-                // we only import FileList
-                if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                    return false;
-                }
-                return true;
-            }
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public boolean importData(TransferHandler.TransferSupport info) {
-                if (!info.isDrop()) {
-                    return false;
-                }
-
-                // Check for FileList flavor
-                if (!info.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                    logger.warn("List doesn't accept a drop of this type.");
-                    return false;
-                }
-
-                // Get the fileList that is being dropped.
-                Transferable t = info.getTransferable();
-                List<File> data;
-                try {
-                    data = (List<File>)t.getTransferData(DataFlavor.javaFileListFlavor);
-                } 
-                catch (Exception e) { return false; }
-                for (File file : data) {
-                    //model.addElement(file);
-                }
-                return true;
-            }
-
-        };
-        _dropzone.setTransferHandler(handler);
-    }
-    
     private <D extends Datastore> JMenuItem createNewDatastoreButton(final String title, final String description,
-            final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDatastoreDialog<D>> dialogClass) {
+            final String imagePath, final Class<D> datastoreClass,
+            final Class<? extends AbstractDatastoreDialog<D>> dialogClass) {
         final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
         item.setToolTipText(description);
 
@@ -225,12 +179,12 @@ public class AddDataStorePanel extends DCPanel {
             public void actionPerformed(ActionEvent event) {
                 Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
                 final AbstractDatastoreDialog<D> dialog = injectorWithNullDatastore.getInstance(dialogClass);
-                
+
                 dialog.setVisible(true);
                 dialog.addWindowListener(new WindowAdapter() {
                     @Override
                     public void windowClosed(WindowEvent e) {
-                        if(dialog.getSavedDatastore() != null){
+                        if (dialog.getSavedDatastore() != null) {
                             _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
                         }
                     }

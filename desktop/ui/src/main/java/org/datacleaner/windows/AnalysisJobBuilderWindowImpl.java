@@ -62,7 +62,6 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
@@ -90,6 +89,7 @@ import org.datacleaner.panels.SelectDatastorePanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.DatastoreSelectedListener;
+import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -224,7 +224,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastorePanel(_glassPane, injectorBuilder, databaseDriverCatalog, (DatastoreCatalog) configuration.getDatastoreCatalog(), this);
+        _selectDatastorePanel = new SelectDatastorePanel(_glassPane, injectorBuilder, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), this);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());

@@ -25,6 +25,8 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -817,8 +819,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 });
                 windowsMenuItem.add(closeAllWindowsItem);
             }
+            
+           
         });
-
+        
         popupButton.getMenu().removeAll();
         popupButton.getMenu().add(dictionariesMenuItem);
         popupButton.getMenu().add(synonymCatalogsMenuItem);
@@ -1022,4 +1026,5 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
     }
+    
 }

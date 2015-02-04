@@ -34,7 +34,7 @@ import org.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
-    public interface PopupCallback {
+    public static interface PopupCallback {
         /**
          * Give a last chance to refuse popping up
          * @return true if the popup is okay, false to inhibit

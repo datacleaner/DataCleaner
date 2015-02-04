@@ -726,9 +726,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
                     superCategory, null);
             menuBuilder.addItemsToPopupMenu(menu);
-            if (menu.isVisible()) {
-                popupBubble.hide();
-            }
             toolBar.add(popupButton);
             _superCategoryButtons.add(popupButton);
         }

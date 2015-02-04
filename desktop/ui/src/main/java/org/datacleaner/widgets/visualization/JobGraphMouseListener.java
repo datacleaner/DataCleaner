@@ -140,7 +140,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 @Override
                 public void windowClosed(WindowEvent e) {
                     _componentConfigurationDialogs.remove(componentBuilder);
-                    _graphContext.getJobGraph().getPanel().updateUI();
+                    _graphContext.getJobGraph().refresh();
                 }
             });
             _componentConfigurationDialogs.put(componentBuilder, dialog);
@@ -227,7 +227,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
             @Override
             protected void onNameChanged() {
-                _graphContext.getJobGraph().getPanel().updateUI();
+                _graphContext.getJobGraph().refresh();
             }
         });
         popup.add(renameMenuItem);

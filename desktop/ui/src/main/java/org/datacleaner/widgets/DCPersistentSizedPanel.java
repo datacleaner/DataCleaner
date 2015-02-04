@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.UserPreferencesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,55 +35,21 @@ import org.slf4j.LoggerFactory;
  */
 public class DCPersistentSizedPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger logger = LoggerFactory.getLogger(DCPersistentSizedPanel.class);
-	
-	private final String _identifier;
-	private final int _defaultWidth;
-	private final int _defaultHeight;
-	private final UserPreferences _userPreferences;
+    private static final long serialVersionUID = 1L;
 
-	public DCPersistentSizedPanel(UserPreferences userPreferences, String identifier, int defaultWidth, int defaultHeight) {
-		_identifier = identifier;
-		_defaultWidth = defaultWidth;
-		_defaultHeight = defaultHeight;
-		_userPreferences = userPreferences;
+   // private static final Logger logger = LoggerFactory.getLogger(DCPersistentSizedPanel.class);
 
-		setPreferredSize(getPreferredSizeFromUserPreferences());
-	}
-	
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		
-		Map<String, String> properties = _userPreferences.getAdditionalProperties();
+    private final UserPreferencesUtils _userPreferenceUtils; 
 
-		Dimension size = getSize();
-		logger.info("Persisting panel size: {}", size);
-		properties.put(getWidthPropertyKey(), "" + size.width);
-		properties.put(getHeightPropertyKey(), "" + size.height);
-	}
+    public DCPersistentSizedPanel(final UserPreferencesUtils userPreferenceUtils) {
 
-	private Dimension getPreferredSizeFromUserPreferences() {
-		Map<String, String> properties = _userPreferences.getAdditionalProperties();
-		String widthStr = properties.get(getWidthPropertyKey());
-		if (widthStr == null) {
-			widthStr = "" + _defaultWidth;
-		}
-		String heightStr = properties.get(getHeightPropertyKey());
-		if (heightStr == null) {
-			heightStr = "" + _defaultHeight;
-		}
+        _userPreferenceUtils = userPreferenceUtils;
+        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getPreferredSizeFromUserPreferences();
+        setPreferredSize(preferredSizeFromUserPreferences);
 
-		return new Dimension(Integer.parseInt(widthStr), Integer.parseInt(heightStr));
-	}
-
-	private String getHeightPropertyKey() {
-		return getClass().getName() + "." + _identifier + ".height";
-	}
-
-	private String getWidthPropertyKey() {
-		return getClass().getName() + "." + _identifier + ".width";
-	}
+    }
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+    }
 }

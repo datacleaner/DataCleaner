@@ -21,7 +21,6 @@ package org.datacleaner.windows;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -95,7 +94,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
         Dimension preferredSize = content.getPreferredSize();
 
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        /*Toolkit toolkit = Toolkit.getDefaultToolkit();
 
         int maxWidth = toolkit.getScreenSize().width - 30;
         int maxHeight = toolkit.getScreenSize().height - 30;
@@ -107,7 +106,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
             preferredSize.width = Math.max(preferredSize.width, currentSize.width);
             preferredSize.width = Math.max(preferredSize.height, currentSize.height);
         }
-
+             */
         getContentPane().setPreferredSize(preferredSize);
         pack();
 

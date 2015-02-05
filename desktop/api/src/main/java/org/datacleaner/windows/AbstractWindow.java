@@ -49,18 +49,22 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+
     }
+
+    protected abstract boolean isWindowMaximized();
 
     protected void initialize() {
         updateWindowTitle();
         setIconImage(getWindowIcon());
         setResizable(isWindowResizable());
-
         JComponent content = getWindowContent();
         getContentPane().add(content);
-
+        final boolean isWindowMaximized = isWindowMaximized();
+        if (isWindowMaximized) {
+            this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        }
         autoSetSize(content);
-
         _windowContext.onShow(this);
     }
 
@@ -105,8 +109,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
             Dimension currentSize = getContentPane().getSize();
             preferredSize.width = Math.max(preferredSize.width, currentSize.width);
             preferredSize.width = Math.max(preferredSize.height, currentSize.height);
-        } 
-             
+        }
+
         getContentPane().setPreferredSize(preferredSize);
         pack();
 

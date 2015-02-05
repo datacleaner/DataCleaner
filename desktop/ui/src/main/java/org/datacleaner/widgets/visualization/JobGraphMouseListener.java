@@ -40,7 +40,6 @@ import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
-import org.datacleaner.actions.RenameComponentMenuItem;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;

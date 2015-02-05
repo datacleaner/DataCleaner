@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -91,7 +94,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.UserPreferencesUtils;
+import org.datacleaner.util.UserWindowSizePreferencesUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CollapsibleTreePanel;
@@ -114,7 +117,8 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
+        WindowListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -159,7 +163,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private DatastoreConnection _datastoreConnection;
     private boolean _datastoreSelectionEnabled;
     private JComponent _windowContent;
-    private UserPreferencesUtils _userPreferenceUtils;
+    private UserWindowSizePreferencesUtils _userWindowSizePreferenceUtils;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
@@ -185,8 +189,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
-        _userPreferenceUtils = new UserPreferencesUtils(_userPreferences, getClass().getName(), DEFAULT_WINDOW_WIDTH,
-                DEFAULT_WINDOW_HEIGHT);
+        _userWindowSizePreferenceUtils = new UserWindowSizePreferencesUtils(_userPreferences, getClass().getName(),
+                DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -689,7 +693,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPersistentSizedPanel(_userPreferenceUtils);
+        final DCPanel panel = new DCPersistentSizedPanel(_userWindowSizePreferenceUtils);
         panel.setLayout(new BorderLayout());
         panel.add(toolBarPanel, BorderLayout.NORTH);
         panel.add(_leftPanel, BorderLayout.WEST);
@@ -1034,5 +1038,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+        if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            _userWindowSizePreferenceUtils.setUserPreferredSize(getSize(), true);
+        } else {
+            _userWindowSizePreferenceUtils.setUserPreferredSize(getSize(), false);
+        }
+    }
+
+    @Override
+    protected boolean isWindowMaximized() {
+        return _userWindowSizePreferenceUtils.isWindowMaximized();
     }
 }

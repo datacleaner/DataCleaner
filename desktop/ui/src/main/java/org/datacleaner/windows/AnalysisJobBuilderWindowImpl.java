@@ -595,8 +595,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             currentOutputStream = new ByteArrayOutputStream();
             writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
             String currentJob = new String(currentOutputStream.toByteArray());
+            String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
             String lastSavedJob = IOUtils.toString(lastSavedOutputStream);
-            return !currentJob.equals(lastSavedJob);
+            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
+            return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
         } catch (FileSystemException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {

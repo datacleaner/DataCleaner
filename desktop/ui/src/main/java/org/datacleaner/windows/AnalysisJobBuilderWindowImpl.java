@@ -198,7 +198,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory, usageLogger);
+        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory,
+                usageLogger);
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
         _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
@@ -685,7 +686,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.add(_contentContainerPanel, BorderLayout.CENTER);
 
         panel.add(statusBar, BorderLayout.SOUTH);
-        
+
         // invoke to trigger enablement/disablement of buttons.
         onSourceColumnsChanged();
         updateStatusLabel();
@@ -703,18 +704,29 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             final String description = "<html><b>" + name + "</b><br/>" + superCategory.getDescription() + "</html>";
 
             final PopupButton popupButton = new PopupButton(name);
+
             applyMenuPopupButttonStyling(popupButton);
 
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
                     IconUtils.getComponentSuperCategoryIcon(superCategory));
-            popupBubble.attachTo(popupButton);
+            
+            popupBubble.attachTo(popupButton, new DCPopupBubble.PopupCallback() {
+                @Override
+                public boolean onBeforeShow() {
+                    for(PopupButton scButton : _superCategoryButtons) {
+                        if(scButton.isSelected()){
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
 
             final JPopupMenu menu = popupButton.getMenu();
 
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
                     superCategory, null);
             menuBuilder.addItemsToPopupMenu(menu);
-
             toolBar.add(popupButton);
             _superCategoryButtons.add(popupButton);
         }

@@ -39,7 +39,7 @@ public class DCPersistentSizedPanel extends DCPanel {
     public DCPersistentSizedPanel(final UserPreferencesUtils userPreferenceUtils) {
 
         _userPreferenceUtils = userPreferenceUtils;
-        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getPreferredSizeUserPreferences();
+        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getPreferredSize();
         setPreferredSize(preferredSizeFromUserPreferences);
 
     }

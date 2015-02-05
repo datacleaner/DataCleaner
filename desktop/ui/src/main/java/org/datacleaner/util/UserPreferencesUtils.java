@@ -43,7 +43,7 @@ public class UserPreferencesUtils {
         return _userPreferences;
     }
 
-    public Dimension getPreferredSize() {
+    public Dimension getUserPreferredSize() {
         Map<String, String> properties = _userPreferences.getAdditionalProperties();
         String widthStr = properties.get(getWidthPropertyKey());
         if (widthStr == null) {

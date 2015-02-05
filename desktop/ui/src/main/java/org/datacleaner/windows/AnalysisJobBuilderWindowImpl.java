@@ -582,8 +582,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return windowClosing;
     }
 
-    private boolean isJobUnsaved(FileObject jobFile, AnalysisJobBuilder analysisJobBuilder) {
-        if (jobFile == null) {
+    private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
+        if (lastSavedJobFile == null) {
             return true;
         }
 

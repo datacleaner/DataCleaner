@@ -22,14 +22,11 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,8 +114,7 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        WindowListener {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -283,7 +279,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
-       
+
     }
 
     private boolean isGraphPreferred() {
@@ -1039,13 +1035,4 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
     }
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-        final int width2 = ((DCPersistentSizedPanel) _windowContent).getWidth();
-        final int height2 = ((DCPersistentSizedPanel) _windowContent).getHeight();
-        final Dimension panelSize = new Dimension(width2, height2);
-        _userPreferenceUtils.setUserPreferredMaximizedSize(panelSize);
-    }
-
-  }
+}

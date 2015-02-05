@@ -20,18 +20,13 @@
 package org.datacleaner.widgets;
 
 import java.awt.Dimension;
-import java.util.Map;
 
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.UserPreferencesUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A panel that stores it's preferred size in the user preferences.
  * 
- * @author Kasper Sørensen
  */
 public class DCPersistentSizedPanel extends DCPanel {
 
@@ -44,12 +39,14 @@ public class DCPersistentSizedPanel extends DCPanel {
     public DCPersistentSizedPanel(final UserPreferencesUtils userPreferenceUtils) {
 
         _userPreferenceUtils = userPreferenceUtils;
-        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getPreferredSizeFromUserPreferences();
+        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getPreferredSizeUserPreferences();
         setPreferredSize(preferredSizeFromUserPreferences);
 
     }
     @Override
     public void removeNotify() {
         super.removeNotify();
+        final Dimension size = getSize();
+        _userPreferenceUtils.setUserPreferredSize(size);
     }
 }

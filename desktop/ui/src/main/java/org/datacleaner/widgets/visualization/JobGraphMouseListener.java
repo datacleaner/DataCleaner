@@ -217,8 +217,6 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             popup.add(createLinkMenuItem(componentBuilder));
         }
 
-        popup.add(new RenameComponentMenuItem(componentBuilder));
-
         if (componentBuilder instanceof TransformerComponentBuilder) {
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;
             final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(

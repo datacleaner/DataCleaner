@@ -247,4 +247,9 @@ public class DataSetWindow extends AbstractWindow {
     protected boolean isCentered() {
         return true;
     }
+
+    @Override
+    protected boolean isWindowMaximized() {
+        return false;
+    }
 }

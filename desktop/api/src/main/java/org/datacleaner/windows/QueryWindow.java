@@ -158,4 +158,8 @@ public class QueryWindow extends AbstractWindow {
         return outerPanel;
     }
 
+    @Override
+    protected boolean isWindowMaximized() {
+        return false;
+    }
 }

@@ -27,6 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
@@ -50,7 +54,10 @@ import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -69,6 +76,7 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -198,7 +206,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _glassPane = new DCGlassPane(this);
         _injectorBuilder = injectorBuilder;
 
-        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory, usageLogger);
+        _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory,
+                usageLogger);
 
         _analysisJobBuilder.getAnalyzerChangeListeners().add(createAnalyzerChangeListener());
         _analysisJobBuilder.getTransformerChangeListeners().add(createTransformerChangeListener());
@@ -524,6 +533,21 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (isDatastoreSet() && isDatastoreSelectionEnabled()) {
                 // if datastore is set and datastore selection is enabled,
                 // return to datastore selection.
+
+                if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
+
+                    Object[] buttons = { "Save changes", "Discard changes", "Cancel closing" };
+                    int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
+                            "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[2]);
+
+                    if (unsavedChangesChoice == 0) { // save changes
+                        _saveButton.doClick();
+                    } else if (unsavedChangesChoice == 2) { // cancel closing
+                        return false;
+                    }
+                }
+
                 resetJob();
                 exit = false;
                 windowClosing = false;
@@ -556,6 +580,31 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             getWindowContext().exit();
         }
         return windowClosing;
+    }
+
+    private boolean isJobUnsaved(FileObject jobFile, AnalysisJobBuilder analysisJobBuilder) {
+        if (jobFile == null) {
+            return true;
+        }
+
+        InputStream lastSavedOutputStream = null;
+        ByteArrayOutputStream currentOutputStream = null;
+        try {
+            lastSavedOutputStream = getJobFile().getContent().getInputStream();
+            JaxbJobWriter writer = new JaxbJobWriter(_configuration);
+            currentOutputStream = new ByteArrayOutputStream();
+            writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
+            String currentJob = new String(currentOutputStream.toByteArray());
+            String lastSavedJob = IOUtils.toString(lastSavedOutputStream);
+            return !currentJob.equals(lastSavedJob);
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            FileHelper.safeClose(currentOutputStream);
+            FileHelper.safeClose(lastSavedOutputStream);
+        }
     }
 
     private void resetJob() {
@@ -685,7 +734,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         panel.add(_contentContainerPanel, BorderLayout.CENTER);
 
         panel.add(statusBar, BorderLayout.SOUTH);
-        
+
         // invoke to trigger enablement/disablement of buttons.
         onSourceColumnsChanged();
         updateStatusLabel();

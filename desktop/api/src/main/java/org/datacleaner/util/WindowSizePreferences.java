@@ -30,13 +30,17 @@ public class WindowSizePreferences {
     private final String _identifier;
     private final int _defaultWidth;
     private final int _defaultHeight;
-/**
- * 
- * @param userPreferences represents the settings provided by the user at runtime @{link UserPreferences} 
- * @param identifier represents the name of the class that calls it 
- * @param defaultWidth is the default width 
- * @param defaultHeight is the default height
- */
+
+    /**
+     * 
+     * @param userPreferences
+     *            represents the settings provided by the user at runtime @{link
+     *            UserPreferences}
+     * @param identifier
+     *            represents the name of the class that calls this class
+     * @param defaultWidth represents the default width
+     * @param defaultHeight represents the default height
+     */
     public WindowSizePreferences(final UserPreferences userPreferences, final String identifier,
             final int defaultWidth, int defaultHeight) {
         _identifier = identifier;

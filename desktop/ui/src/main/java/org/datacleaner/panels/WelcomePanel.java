@@ -61,7 +61,6 @@ public class WelcomePanel extends DCPanel {
 
     private static final Font WELCOME_BANNER_FONT = WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(30f);
     private static final Font WELCOME_SUBBANNER_FONT = WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(24f);
-    private static final Font WELCOME_OTHER_OPTIONS_FONT = WidgetUtils.FONT_HEADER2;
 
     private static final Border CONTAINER_BORDER = new EmptyBorder(20, 40, 20, 40);
 
@@ -97,9 +96,6 @@ public class WelcomePanel extends DCPanel {
     }
 
     private DCPanel createButtonPanel() {
-        final DCLabel otherOptionsLabel = DCLabel.bright("Other options:");
-        otherOptionsLabel.setFont(WELCOME_OTHER_OPTIONS_FONT);
-
         final JButton newJobButton = WidgetFactory.createPrimaryButton("New job from scratch", IconUtils.MODEL_JOB);
         newJobButton.addActionListener(new ActionListener() {
 
@@ -134,8 +130,6 @@ public class WelcomePanel extends DCPanel {
 
         final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        // buttonPanel.add(otherOptionsLabel);
-        // buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(newJobButton);
         buttonPanel.add(browseJobsButton);
         buttonPanel.add(recentJobsButton);

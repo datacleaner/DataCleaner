@@ -853,6 +853,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JToggleButton createViewToggleButton(final String text, final String iconPath) {
         final ImageIcon icon = imageManager.getImageIcon(iconPath);
         final JToggleButton button = new JToggleButton(text, icon);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setFont(WidgetUtils.FONT_SMALL);
         button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         button.setBackground(WidgetUtils.BG_COLOR_DARK);

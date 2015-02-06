@@ -1,5 +1,6 @@
 package org.datacleaner.panels;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,7 +15,11 @@ import javax.swing.JSeparator;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 
+//TODO: Consider a more descriptive class name?
 public class DetailPanel extends DCPanel {
+    
+    private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_LESS_BRIGHT;
+    private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_BRIGHTEST;
 
     private static final long serialVersionUID = 1L;
 
@@ -28,34 +33,38 @@ public class DetailPanel extends DCPanel {
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
         final DCLabel titleLabel = DCLabel.bright(title);
         final DCLabel bodyLabel = DCLabel.brightMultiLine(body);
-        if(icon == null){
+        if (icon == null) {
             titleLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(30f));
             bodyLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(18f));
         } else {
             titleLabel.setFont(WidgetUtils.FONT_BANNER);
             bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
         }
-        
+        titleLabel.setForeground(COLOR_NORMAL);
+        bodyLabel.setForeground(COLOR_NORMAL);
+
         final JSeparator horizontalRule = new JSeparator(JSeparator.HORIZONTAL);
         horizontalRule.setForeground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
         horizontalRule.setBackground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
 
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                titleLabel.setForeground(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                titleLabel.setForeground(COLOR_HOVER);
+                bodyLabel.setForeground(COLOR_HOVER);
                 setBorder(WidgetUtils.BORDER_LIST_ITEM_HIGHLIGHTED);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                titleLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-                setCursor(Cursor.getDefaultCursor());
+                titleLabel.setForeground(COLOR_NORMAL);
+                bodyLabel.setForeground(COLOR_NORMAL);
                 setBorder(WidgetUtils.BORDER_LIST_ITEM);
             }
         });
-        
+
         GridBagConstraints c = new GridBagConstraints();
 
         Insets questionInsets = new Insets(5, 5, 5, 5);

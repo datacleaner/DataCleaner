@@ -115,9 +115,9 @@ public final class WidgetUtils {
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(18f);
-    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(16f);
-    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(13f);
+    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(19f);
+    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(17f);
+    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(15f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
@@ -190,6 +190,9 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
             BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+    
+    public static final Border BORDER_LIST_ITEM_SUBTLE = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
+            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
 
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);

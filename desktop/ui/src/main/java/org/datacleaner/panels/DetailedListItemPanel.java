@@ -30,37 +30,42 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 
-//TODO: Consider a more descriptive class name?
-public class DetailPanel extends DCPanel {
-    
+public class DetailedListItemPanel extends DCPanel {
+
     private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_LESS_BRIGHT;
     private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_BRIGHTEST;
 
     private static final long serialVersionUID = 1L;
 
-    public DetailPanel(final String title, final String body) {
+    public DetailedListItemPanel(final String title, final String body) {
         this(null, title, body);
     }
 
-    public DetailPanel(final Icon icon, final String title, final String body) {
+    public DetailedListItemPanel(final Icon icon, final String title, final String body) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         setLayout(new GridBagLayout());
-        setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
+        
         final DCLabel titleLabel = DCLabel.bright(title);
-        final DCLabel bodyLabel = DCLabel.brightMultiLine(body);
-        if (icon == null) {
-            titleLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(30f));
-            bodyLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(18f));
-        } else {
-            titleLabel.setFont(WidgetUtils.FONT_BANNER);
-            bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
-        }
-        titleLabel.setForeground(COLOR_NORMAL);
+        titleLabel.setFont(WidgetUtils.FONT_BANNER);
+        titleLabel.setForeground(COLOR_HOVER);
+        titleLabel.setBorder(new EmptyBorder(12, 12, 6, 0));
+
+        final JTextArea bodyLabel = new JTextArea();
+        bodyLabel.setLineWrap(true);
+        bodyLabel.setWrapStyleWord(true);
+        bodyLabel.setText(body);
+        bodyLabel.setEditable(false);
+        bodyLabel.setOpaque(false);
+        bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
         bodyLabel.setForeground(COLOR_NORMAL);
+        bodyLabel.setBorder(new EmptyBorder(6, 12, 12, 0));
 
         final JSeparator horizontalRule = new JSeparator(JSeparator.HORIZONTAL);
         horizontalRule.setForeground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
@@ -68,21 +73,21 @@ public class DetailPanel extends DCPanel {
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        addMouseListener(new MouseAdapter() {
+        final MouseAdapter mouseListener = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                titleLabel.setForeground(COLOR_HOVER);
                 bodyLabel.setForeground(COLOR_HOVER);
                 setBorder(WidgetUtils.BORDER_LIST_ITEM_HIGHLIGHTED);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                titleLabel.setForeground(COLOR_NORMAL);
                 bodyLabel.setForeground(COLOR_NORMAL);
-                setBorder(WidgetUtils.BORDER_LIST_ITEM);
+                setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
             }
-        });
+        };
+        addMouseListener(mouseListener);
+        bodyLabel.addMouseListener(mouseListener);
 
         GridBagConstraints c = new GridBagConstraints();
 

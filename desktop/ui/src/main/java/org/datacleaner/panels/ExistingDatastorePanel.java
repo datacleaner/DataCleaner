@@ -43,7 +43,7 @@ public class ExistingDatastorePanel extends DCPanel {
         String[] datastoreNames = datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = datastoreCatalog.getDatastore(datastoreNames[i]);
-            final DetailPanel datastorePanel = new DetailPanel(imageManager.getImageIcon(
+            final DetailedListItemPanel datastorePanel = new DetailedListItemPanel(imageManager.getImageIcon(
                     IconUtils.CSV_IMAGEPATH, IconUtils.ICON_SIZE_LARGE), "<html><b>" + datastore.getName()
                     + "</b></html>", datastore.getDescription());
 

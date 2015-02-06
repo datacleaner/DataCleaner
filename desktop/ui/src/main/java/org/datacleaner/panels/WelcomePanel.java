@@ -20,9 +20,12 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -45,6 +49,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
@@ -62,10 +67,12 @@ public class WelcomePanel extends DCPanel {
     private static final Font WELCOME_BANNER_FONT = WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(30f);
     private static final Font WELCOME_SUBBANNER_FONT = WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(24f);
 
-    private static final Border CONTAINER_BORDER = new EmptyBorder(20, 40, 20, 40);
+    private static final int MARGIN_SIDE = 40;
 
     private static final Image BACKGROUND_IMAGE = ImageManager.get().getImage(
             "images/window/welcome-panel-background.jpg");
+
+    private static final int MAX_WIDTH = 900;
 
     private final UserPreferences _userPreferences;
     private final AnalysisJobBuilderWindow _window;
@@ -78,7 +85,7 @@ public class WelcomePanel extends DCPanel {
         _userPreferences = userPreferences;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 
-        setBorder(CONTAINER_BORDER);
+        setBorder(new EmptyBorder(20   , MARGIN_SIDE, 20, MARGIN_SIDE));
         setLayout(new BorderLayout());
 
         final DCLabel welcomeLabel = new DCLabel(false, "Welcome!", WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
@@ -86,11 +93,10 @@ public class WelcomePanel extends DCPanel {
         welcomeLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
         add(welcomeLabel, BorderLayout.NORTH);
 
-        final DCPanel containerPanel = createWizardListPanel();
-        add(containerPanel, BorderLayout.CENTER);
+        final DCPanel wizardListPanel = createWizardListPanel();
+        add(wizardListPanel, BorderLayout.CENTER);
 
         final DCPanel buttonPanel = createButtonPanel();
-        buttonPanel.setMaximumSize(new Dimension(600, Integer.MAX_VALUE));
         add(buttonPanel, BorderLayout.SOUTH);
 
     }
@@ -137,22 +143,18 @@ public class WelcomePanel extends DCPanel {
 
         final DCPanel containerPanel = new DCPanel(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         containerPanel.setLayout(new BorderLayout());
-        containerPanel.setBorder(CONTAINER_BORDER);
+        containerPanel.setBorder(new EmptyBorder(0, MARGIN_SIDE, 20, MARGIN_SIDE));
         containerPanel.add(buttonPanel, BorderLayout.CENTER);
 
         return containerPanel;
     }
 
     private DCPanel createWizardListPanel() {
-        final DCPanel wizardListPanel = new DCPanel(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
-        wizardListPanel.setLayout(new VerticalLayout(10));
-        wizardListPanel.setBorder(CONTAINER_BORDER);
 
         final DCLabel subtitleLabel = DCLabel.bright("What's your question for DataCleaner?");
         subtitleLabel.setFont(WELCOME_SUBBANNER_FONT);
-        wizardListPanel.add(subtitleLabel);
         subtitleLabel.setBorder(WidgetUtils.BORDER_EMPTY);
-        final DetailPanel questionPanel1 = new DetailPanel(
+        final DetailedListItemPanel questionPanel1 = new DetailedListItemPanel(
                 "<html>Are my <b>addresses correct</b> and <b>up-to-date</b>?</html>",
                 "Use the Neopost Address Correction and Mail Suppression services on your contact list to correct your addresses and check if people have moved to new places or if they have passed away.");
         questionPanel1.addMouseListener(new MouseAdapter() {
@@ -161,19 +163,53 @@ public class WelcomePanel extends DCPanel {
                 _window.changePanel(AnalysisWindowPanelType.SELECT_DS);
             }
         });
-        wizardListPanel.add(questionPanel1);
 
-        final DetailPanel questionPanel2 = new DetailPanel(
+        final DetailedListItemPanel questionPanel2 = new DetailedListItemPanel(
                 "<html>Do I have <b>duplicate</b> customers?</html>",
                 "Inspect your customers with DataCleaner’s Duplicate Detection function to identify the possible duplicated records in your database or file.");
-        wizardListPanel.add(questionPanel2);
 
-        final DetailPanel questionPanel3 = new DetailPanel(
+        final DetailedListItemPanel questionPanel3 = new DetailedListItemPanel(
                 "<html>Are my records properly <b>filled</b>?</html>",
                 "Validate the proper completeness and conformity with rules of your records. Use this wizard to configure common data profiling features to suit the fields of your data set.");
-        wizardListPanel.add(questionPanel3);
 
-        return wizardListPanel;
+        final DCPanel wizardListPanel = new DCPanel();
+        wizardListPanel.setLayout(new VerticalLayout(14));
+        wizardListPanel.add(subtitleLabel);
+        wizardListPanel.add(Box.createVerticalStrut(1));
+        wizardListPanel.add(questionPanel1);
+        wizardListPanel.add(questionPanel2);
+        wizardListPanel.add(questionPanel3);
+        return respectMaxWidth(wizardListPanel, WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT, new EmptyBorder(20, MARGIN_SIDE, 0, MARGIN_SIDE), MAX_WIDTH,
+                Alignment.CENTER);
+    }
+
+    private DCPanel respectMaxWidth(DCPanel panel, Color containerBackground, Border containerBorder, int maxWidth,
+            Alignment alignment) {
+        panel.setMinimumSize(new Dimension(maxWidth, 1));
+
+        final DCPanel containerPanel = new DCPanel(containerBackground);
+        containerPanel.setBorder(containerBorder);
+        containerPanel.setLayout(new GridBagLayout());
+
+        int row = 0;
+
+        if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT) {
+            WidgetUtils.addToGridBag(Box.createHorizontalGlue(), containerPanel, row, 0, 1, 1,
+                    GridBagConstraints.CENTER, 0, 1.0, 1.0, GridBagConstraints.BOTH);
+            row++;
+        }
+
+        WidgetUtils.addToGridBag(panel, containerPanel, row, 0, 1, 1, GridBagConstraints.CENTER, 0, 0.0, 0.0,
+                GridBagConstraints.BOTH);
+        row++;
+
+        if (alignment == Alignment.CENTER || alignment == Alignment.LEFT) {
+            WidgetUtils.addToGridBag(Box.createHorizontalGlue(), containerPanel, row, 0, 1, 1,
+                    GridBagConstraints.CENTER, 0, 1.0, 1.0, GridBagConstraints.BOTH);
+            row++;
+        }
+
+        return containerPanel;
     }
 
     private List<FileObject> getRecentJobFiles() {

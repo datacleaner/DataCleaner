@@ -54,7 +54,7 @@ public class AnalyzerResultFutureTest extends TestCase {
     public void testAddListenerWhenResultIsReady() throws Exception {
         final NumberResult result1 = new NumberResult(42);
 
-        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFuture<>("foo",
+        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
                 new ImmutableRef<NumberResult>(result1));
 
         final NumberResult result2 = future.get();
@@ -112,7 +112,7 @@ public class AnalyzerResultFutureTest extends TestCase {
             }
         };
 
-        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFuture<>("foo", resultRef);
+        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo", resultRef);
 
         for (int i = 0; i < threads.length; i++) {
             final Listener<NumberResult> listener = listeners[i];
@@ -151,7 +151,7 @@ public class AnalyzerResultFutureTest extends TestCase {
     public void testSerializationAndDeserialization() throws Exception {
         final NumberResult result1 = new NumberResult(42);
 
-        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFuture<>("foo",
+        final AnalyzerResultFuture<NumberResult> future = new AnalyzerResultFutureImpl<>("foo",
                 new ImmutableRef<NumberResult>(result1));
 
         future.addListener(new Listener<NumberResult>() {

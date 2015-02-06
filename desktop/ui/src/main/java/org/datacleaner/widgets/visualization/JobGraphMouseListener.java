@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -40,6 +41,7 @@ import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
+
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
@@ -58,6 +60,7 @@ import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.ChangeRequirementMenu;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.windows.ComponentConfigurationDialog;
@@ -137,6 +140,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 @Override
                 public void windowClosed(WindowEvent e) {
                     _componentConfigurationDialogs.remove(componentBuilder);
+                    _graphContext.getJobGraph().refresh();
                 }
             });
             _componentConfigurationDialogs.put(componentBuilder, dialog);
@@ -216,6 +220,17 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         if (componentBuilder instanceof InputColumnSourceJob || componentBuilder instanceof HasFilterOutcomes) {
             popup.add(createLinkMenuItem(componentBuilder));
         }
+
+        final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
+        final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
+        renameMenuItem.addActionListener(new RenameComponentActionListener(componentBuilder) {
+
+            @Override
+            protected void onNameChanged() {
+                _graphContext.getJobGraph().refresh();
+            }
+        });
+        popup.add(renameMenuItem);
 
         if (componentBuilder instanceof TransformerComponentBuilder) {
             final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) componentBuilder;

@@ -723,14 +723,24 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
                     IconUtils.getComponentSuperCategoryIcon(superCategory));
-            popupBubble.attachTo(popupButton);
+            
+            popupBubble.attachTo(popupButton, new DCPopupBubble.PopupCallback() {
+                @Override
+                public boolean onBeforeShow() {
+                    for(PopupButton scButton : _superCategoryButtons) {
+                        if(scButton.isSelected()){
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
 
             final JPopupMenu menu = popupButton.getMenu();
 
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
                     superCategory, null);
             menuBuilder.addItemsToPopupMenu(menu);
-
             toolBar.add(popupButton);
             _superCategoryButtons.add(popupButton);
         }

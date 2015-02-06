@@ -157,5 +157,4 @@ public class QueryWindow extends AbstractWindow {
 
         return outerPanel;
     }
-
 }

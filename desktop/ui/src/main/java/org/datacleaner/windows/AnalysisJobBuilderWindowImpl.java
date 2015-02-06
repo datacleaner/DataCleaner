@@ -27,9 +27,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +47,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -98,6 +104,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CollapsibleTreePanel;
@@ -120,7 +127,8 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
+        WindowListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -164,6 +172,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
     private boolean _datastoreSelectionEnabled;
+    private JComponent _windowContent;
+    private WindowSizePreferences _windowSizePreference;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
@@ -189,6 +199,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
+        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(),
+                DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -281,6 +293,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
+
     }
 
     private boolean isGraphPreferred() {
@@ -662,6 +675,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     protected JComponent getWindowContent() {
+        if (_windowContent == null) {
+            _windowContent = getWindowPanelContent();
+        }
+        return _windowContent;
+    }
+
+    private JComponent getWindowPanelContent() {
         if (_datastore != null) {
             setDatastore(_datastore);
         }
@@ -736,8 +756,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBarPanel.setLayout(new BorderLayout());
         toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-        final DCPanel panel = new DCPersistentSizedPanel(_userPreferences, getClass().getName(), DEFAULT_WINDOW_WIDTH,
-                DEFAULT_WINDOW_HEIGHT);
+        final DCPanel panel = new DCPersistentSizedPanel(_windowSizePreference);
         panel.setLayout(new BorderLayout());
         panel.add(toolBarPanel, BorderLayout.NORTH);
         panel.add(_leftPanel, BorderLayout.WEST);
@@ -752,7 +771,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         updateStatusLabel();
 
         WidgetUtils.centerOnScreen(this);
-
         return panel;
     }
 
@@ -764,7 +782,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             final String description = "<html><b>" + name + "</b><br/>" + superCategory.getDescription() + "</html>";
 
             final PopupButton popupButton = new PopupButton(name);
-
             applyMenuPopupButttonStyling(popupButton);
 
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
@@ -889,6 +906,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 });
                 windowsMenuItem.add(closeAllWindowsItem);
             }
+
         });
 
         popupButton.getMenu().removeAll();
@@ -1093,5 +1111,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+        if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            _windowSizePreference.setUserPreferredSize(null, true);
+        } else {
+            _windowSizePreference.setUserPreferredSize(getSize(), false);
+        }
+    }
+
+    @Override
+    protected boolean maximizeWindow() {
+        return _windowSizePreference.isWindowMaximized();
     }
 }

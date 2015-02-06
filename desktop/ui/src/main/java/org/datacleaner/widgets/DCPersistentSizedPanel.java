@@ -20,69 +20,28 @@
 package org.datacleaner.widgets;
 
 import java.awt.Dimension;
-import java.util.Map;
 
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.user.UserPreferences;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.util.WindowSizePreferences;
 
 /**
  * A panel that stores it's preferred size in the user preferences.
  * 
- * @author Kasper Sørensen
  */
 public class DCPersistentSizedPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger logger = LoggerFactory.getLogger(DCPersistentSizedPanel.class);
-	
-	private final String _identifier;
-	private final int _defaultWidth;
-	private final int _defaultHeight;
-	private final UserPreferences _userPreferences;
+    private static final long serialVersionUID = 1L;
 
-	public DCPersistentSizedPanel(UserPreferences userPreferences, String identifier, int defaultWidth, int defaultHeight) {
-		_identifier = identifier;
-		_defaultWidth = defaultWidth;
-		_defaultHeight = defaultHeight;
-		_userPreferences = userPreferences;
+    private final WindowSizePreferences _userPreferenceUtils;
 
-		setPreferredSize(getPreferredSizeFromUserPreferences());
-	}
-	
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		
-		Map<String, String> properties = _userPreferences.getAdditionalProperties();
+    public DCPersistentSizedPanel(final WindowSizePreferences userWindowSizePreferenceUtils) {
+        _userPreferenceUtils = userWindowSizePreferenceUtils;
+        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getUserPreferredSize();
+        setPreferredSize(preferredSizeFromUserPreferences);
+    }
 
-		Dimension size = getSize();
-		logger.info("Persisting panel size: {}", size);
-		properties.put(getWidthPropertyKey(), "" + size.width);
-		properties.put(getHeightPropertyKey(), "" + size.height);
-	}
-
-	private Dimension getPreferredSizeFromUserPreferences() {
-		Map<String, String> properties = _userPreferences.getAdditionalProperties();
-		String widthStr = properties.get(getWidthPropertyKey());
-		if (widthStr == null) {
-			widthStr = "" + _defaultWidth;
-		}
-		String heightStr = properties.get(getHeightPropertyKey());
-		if (heightStr == null) {
-			heightStr = "" + _defaultHeight;
-		}
-
-		return new Dimension(Integer.parseInt(widthStr), Integer.parseInt(heightStr));
-	}
-
-	private String getHeightPropertyKey() {
-		return getClass().getName() + "." + _identifier + ".height";
-	}
-
-	private String getWidthPropertyKey() {
-		return getClass().getName() + "." + _identifier + ".width";
-	}
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+    }
 }

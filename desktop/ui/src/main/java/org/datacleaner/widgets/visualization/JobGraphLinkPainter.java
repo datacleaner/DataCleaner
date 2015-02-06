@@ -122,11 +122,13 @@ public class JobGraphLinkPainter {
         logger.debug("endLink({})", endVertex);
         boolean result = false;
         if (_startVertex != null && endVertex != null) {
-            final boolean created = createLink(_startVertex, endVertex, mouseEvent);
-            if (created && _graphContext.getVisualizationViewer().isVisible()) {
-                _graphContext.getJobGraph().refresh();
+            if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
+                final boolean created = createLink(_startVertex, endVertex, mouseEvent);
+                if (created && _graphContext.getVisualizationViewer().isVisible()) {
+                    _graphContext.getJobGraph().refresh();
+                }
+                result = true;
             }
-            result = true;
         }
         stopDrawing();
         return result;

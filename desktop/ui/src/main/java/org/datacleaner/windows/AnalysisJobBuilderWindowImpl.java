@@ -28,7 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,6 @@ import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.util.FileHelper;
@@ -586,22 +585,29 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         if (lastSavedJobFile == null) {
             return true;
         }
+        try {
+            if (!lastSavedJobFile.exists()) {
+                return true;
+            }
+        } catch (FileSystemException e) {
+            logger.warn("Error while determining if the job file already exists", e);
+        }
 
         InputStream lastSavedOutputStream = null;
         ByteArrayOutputStream currentOutputStream = null;
         try {
-            lastSavedOutputStream = getJobFile().getContent().getInputStream();
+            File jobFile = new File(getJobFile().getURL().getFile());
+            String lastSavedJob = FileHelper.readFileAsString(jobFile);
+            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
+
             JaxbJobWriter writer = new JaxbJobWriter(_configuration);
             currentOutputStream = new ByteArrayOutputStream();
             writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
             String currentJob = new String(currentOutputStream.toByteArray());
             String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
-            String lastSavedJob = IOUtils.toString(lastSavedOutputStream);
-            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
+            
             return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
         } catch (FileSystemException e) {
-            throw new IllegalStateException(e);
-        } catch (IOException e) {
             throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(currentOutputStream);

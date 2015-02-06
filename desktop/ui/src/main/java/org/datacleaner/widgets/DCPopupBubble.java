@@ -34,8 +34,16 @@ import org.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
+    public static interface PopupCallback {
+        /**
+         * Give a last chance to refuse popping up
+         * @return true if the popup is okay, false to inhibit
+         */
+        boolean onBeforeShow();
+    }
+    
     private static final ImageManager imageManager = ImageManager.get();
-
+    
     private final DCGlassPane _glassPane;
     private final DCPanel _panel;
     private int _xOnScreen;
@@ -98,10 +106,16 @@ public class DCPopupBubble {
     }
 
     public void attachTo(final JComponent component) {
+        attachTo(component, null);
+    }
+
+    public void attachTo(final JComponent component, final PopupCallback popupCallback) {
         component.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (component.isEnabled()) {
+                if (popupCallback != null && !popupCallback.onBeforeShow()) {
+                    return;
+                } else if (component.isEnabled()) {
                     Point locationOnScreen = component.getLocationOnScreen();
                     DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15,
                             locationOnScreen.y + component.getHeight());
@@ -111,6 +125,11 @@ public class DCPopupBubble {
 
             @Override
             public void mouseExited(MouseEvent e) {
+                DCPopupBubble.this.hide();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 DCPopupBubble.this.hide();
             }
         });

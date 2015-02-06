@@ -28,7 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.CubicCurve2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,7 +65,6 @@ public class JobGraphLinkPainter {
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
     private final JobGraphContext _graphContext;
-    private final CubicCurve2D _rawEdge;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
 
@@ -76,8 +75,6 @@ public class JobGraphLinkPainter {
 
     public JobGraphLinkPainter(JobGraphContext graphContext) {
         _graphContext = graphContext;
-        _rawEdge = new CubicCurve2D.Float();
-        _rawEdge.setCurve(0.0f, 0.0f, 0.20f, 20, .33f, -15, 1.0f, 0.0f);
         _edgePaintable = new EdgePaintable();
         _arrowPaintable = new ArrowPaintable();
     }
@@ -216,7 +213,8 @@ public class JobGraphLinkPainter {
             } else if (filterOutcomes != null && !filterOutcomes.isEmpty()) {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
-                    final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(), IconUtils.FILTER_IMAGEPATH);
+                    final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(),
+                            IconUtils.FILTER_IMAGEPATH);
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -237,25 +235,10 @@ public class JobGraphLinkPainter {
         return false;
     }
 
-    /**
-     * code lifted from PluggableRenderer to move an edge shape into an
-     * arbitrary position
-     */
     private void transformEdgeShape(Point2D down, Point2D out) {
-        float x1 = (float) down.getX();
-        float y1 = (float) down.getY();
-        float x2 = (float) out.getX();
-        float y2 = (float) out.getY();
-
-        AffineTransform xform = AffineTransform.getTranslateInstance(x1, y1);
-
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float thetaRadians = (float) Math.atan2(dy, dx);
-        xform.rotate(thetaRadians);
-        float dist = (float) Math.sqrt(dx * dx + dy * dy);
-        xform.scale(dist / _rawEdge.getBounds().getWidth(), 1.0);
-        _edgeShape = xform.createTransformedShape(_rawEdge);
+        Shape shape = new Line2D.Float(down, out);
+        _edgeShape = shape;
+        return;
     }
 
     private void transformArrowShape(Point2D down, Point2D out) {

@@ -29,9 +29,9 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Annotation containing supplementary metadata about a string property. This
- * metadata can be used as a way to give hints to the UI as to how the content
- * should be presented.
+ * Annotation containing supplementary metadata about a {@link Configured}
+ * string property. This metadata can be used as a way to give hints to the UI
+ * as to how the content should be presented.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
@@ -56,7 +56,7 @@ public @interface StringProperty {
      *         security token), not shown literally to the user.
      */
     public boolean password() default false;
-    
+
     /**
      * @return true if an empty string value is acceptable
      */

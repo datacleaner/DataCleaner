@@ -17,24 +17,31 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.actions;
+package org.datacleaner.desktop.api;
 
-import javax.swing.JMenuItem;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
+import javax.inject.Qualifier;
 
-public class RenameComponentMenuItem extends JMenuItem {
+import org.datacleaner.api.Configured;
 
-    private static final long serialVersionUID = 1L;
+/**
+ * Additional annotation that can be put on a {@link Configured} property to
+ * hide it from the Desktop UI of DataCleaner.
+ * 
+ * Hidden properties will still be configurable through XML files or
+ * programmatic instrumentation.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+@Documented
+@Inherited
+@Qualifier
+public @interface HiddenProperty {
 
-    public RenameComponentMenuItem(ComponentBuilder componentBuilder) {
-        super("Rename component", ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL));
-        addActionListener(new RenameComponentActionListener(componentBuilder) {
-            @Override
-            protected void onNameChanged() {
-            }
-        });
-    }
 }

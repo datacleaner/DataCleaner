@@ -19,8 +19,6 @@
  */
 package org.datacleaner.result.renderer;
 
-import java.util.concurrent.Future;
-
 import javax.inject.Inject;
 
 import org.datacleaner.api.AnalyzerResult;
@@ -32,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A renderer for analyzers returning {@link Future}. Waits for the Future to
+ * A renderer for analyzers returning {@link AnalyzerFutureResult}. Waits for the Future to
  * finish processing and renders the wrapped {@link AnalyzerResult}.
  */
 @RendererBean(TextRenderingFormat.class)
@@ -70,7 +68,7 @@ public class ToStringFutureTextRenderer implements Renderer<AnalyzerResultFuture
         } catch (RuntimeException error) {
             String message = "Unable to fetch result";
             logger.error(message, error);
-            throw new IllegalStateException(message);
+            throw new IllegalStateException(message, error);
         }
     }
 

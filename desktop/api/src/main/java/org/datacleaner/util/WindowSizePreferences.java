@@ -38,8 +38,10 @@ public class WindowSizePreferences {
      *            UserPreferences}
      * @param identifier
      *            represents the name of the class that calls this class
-     * @param defaultWidth represents the default width
-     * @param defaultHeight represents the default height
+     * @param defaultWidth
+     *            represents the default width
+     * @param defaultHeight
+     *            represents the default height
      */
     public WindowSizePreferences(final UserPreferences userPreferences, final String identifier,
             final int defaultWidth, int defaultHeight) {
@@ -57,7 +59,7 @@ public class WindowSizePreferences {
         Map<String, String> properties = _userPreferences.getAdditionalProperties();
         final String isMaximized = properties.get(getIsMaximizedWindowPropertyKey());
         if (isMaximized == null) {
-            return false;
+            return true;
         }
         return Boolean.parseBoolean(isMaximized);
     }
@@ -77,8 +79,11 @@ public class WindowSizePreferences {
 
     public void setUserPreferredSize(Dimension size, boolean isMaximized) {
         Map<String, String> properties = _userPreferences.getAdditionalProperties();
-        properties.put(getWidthPropertyKey(), "" + size.width);
-        properties.put(getHeightPropertyKey(), "" + size.height);
+        if (size != null) {
+            properties.put(getWidthPropertyKey(), "" + size.width);
+            properties.put(getHeightPropertyKey(), "" + size.height);
+        } 
+        
         properties.put(getIsMaximizedWindowPropertyKey(), "" + isMaximized);
         _userPreferences.save();
     }

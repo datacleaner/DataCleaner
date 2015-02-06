@@ -1053,7 +1053,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public void windowClosed(WindowEvent e) {
         if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
-            _windowSizePreference.setUserPreferredSize(getSize(), true);
+            _windowSizePreference.setUserPreferredSize(null, true);
         } else {
             _windowSizePreference.setUserPreferredSize(getSize(), false);
         }

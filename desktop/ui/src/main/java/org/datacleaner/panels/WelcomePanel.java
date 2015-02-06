@@ -20,7 +20,6 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -82,12 +81,11 @@ public class WelcomePanel extends DCPanel {
         _userPreferences = userPreferences;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 
-        setBorder(new EmptyBorder(20, 40, 20, 40));
         setLayout(new BorderLayout());
 
         final DCLabel welcomeLabel = new DCLabel(false, "Welcome!", WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
         welcomeLabel.setFont(WELCOME_BANNER_FONT);
-        welcomeLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        welcomeLabel.setBorder(new EmptyBorder(20, 20, 10, 0));
         add(welcomeLabel, BorderLayout.NORTH);
 
         final JComponent wizardListPanel = createWizardListPanel();
@@ -131,19 +129,18 @@ public class WelcomePanel extends DCPanel {
             }
         });
 
-        final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
+        final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(newJobButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(browseJobsButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(recentJobsButton);
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(manageDatastoresButton);
-
-        final DCPanel containerPanel = new DCPanel(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
-        containerPanel.setLayout(new BorderLayout());
-        containerPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
-        containerPanel.add(buttonPanel, BorderLayout.CENTER);
-
-        return containerPanel;
+        buttonPanel.setBorder(new EmptyBorder(0, 0, 6, 0));
+        
+        return buttonPanel;
     }
 
     private JComponent createWizardListPanel() {
@@ -168,9 +165,6 @@ public class WelcomePanel extends DCPanel {
                 "<html>Are my records properly <b>filled</b>?</html>",
                 "Validate the proper completeness and conformity with rules of your records. Use this wizard to configure common data profiling features to suit the fields of your data set.");
 
-        final DetailedListItemPanel questionPanel4 = new DetailedListItemPanel(
-                "<html>is <b>foo</b> equal to <b>bar</b>?</html>", "Lorem ipsum - yea hello world!");
-
         final DCPanel wizardListPanel = new DCPanel();
         wizardListPanel.setLayout(new VerticalLayout(14));
         wizardListPanel.add(Box.createVerticalStrut(1));
@@ -179,16 +173,15 @@ public class WelcomePanel extends DCPanel {
         wizardListPanel.add(questionPanel1);
         wizardListPanel.add(questionPanel2);
         wizardListPanel.add(questionPanel3);
-        wizardListPanel.add(questionPanel4);
         wizardListPanel.add(Box.createVerticalStrut(1));
 
-        return addScrollerAndMaxWidth(wizardListPanel, WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT, MAX_WIDTH);
+        return addScrollerAndMaxWidth(wizardListPanel, MAX_WIDTH);
     }
 
-    private JComponent addScrollerAndMaxWidth(DCPanel panel, Color containerBackground, int maxWidth) {
+    private JComponent addScrollerAndMaxWidth(DCPanel panel, int maxWidth) {
         panel.setMaximumSize(new Dimension(maxWidth, Integer.MAX_VALUE));
 
-        DCPanel wrappingPanel = new DCPanel(containerBackground);
+        DCPanel wrappingPanel = new DCPanel();
         wrappingPanel.setLayout(new BoxLayout(wrappingPanel, BoxLayout.Y_AXIS));
         wrappingPanel.add(panel);
 

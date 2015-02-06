@@ -31,7 +31,7 @@ import org.kohsuke.args4j.Option;
  */
 public class CliArguments {
 
-    private static final String[] USAGE_TOKENS = new String[] { "-usage", "--usage", "-help", "--help", "-?" };
+    private static final String[] USAGE_TOKENS = new String[] { "-usage", "--usage", "-help", "--help", "-?", "/?", "/help", "/usage" };
 
     /**
      * Parses the CLI arguments and creates a CliArguments instance

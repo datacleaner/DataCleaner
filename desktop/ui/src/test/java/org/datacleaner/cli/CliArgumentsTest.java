@@ -24,6 +24,11 @@ import java.util.TreeMap;
 import junit.framework.TestCase;
 
 public class CliArgumentsTest extends TestCase {
+    
+    public void testSlashUsage() throws Exception {
+        CliArguments args = CliArguments.parse("/?".split(" "));
+        assertTrue(args.isUsageMode());
+    }
 
 	public void testIsSetFalse() throws Exception {
 		CliArguments args;

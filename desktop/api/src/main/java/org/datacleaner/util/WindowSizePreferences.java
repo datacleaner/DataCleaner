@@ -24,14 +24,20 @@ import java.util.Map;
 
 import org.datacleaner.user.UserPreferences;
 
-public class UserWindowSizePreferencesUtils {
+public class WindowSizePreferences {
 
     private final UserPreferences _userPreferences;
     private final String _identifier;
     private final int _defaultWidth;
     private final int _defaultHeight;
-
-    public UserWindowSizePreferencesUtils(final UserPreferences userPreferences, final String identifier,
+/**
+ * 
+ * @param userPreferences represents the settings provided by the user at runtime @{link UserPreferences} 
+ * @param identifier represents the name of the class that calls it 
+ * @param defaultWidth is the default width 
+ * @param defaultHeight is the default height
+ */
+    public WindowSizePreferences(final UserPreferences userPreferences, final String identifier,
             final int defaultWidth, int defaultHeight) {
         _identifier = identifier;
         _defaultWidth = defaultWidth;

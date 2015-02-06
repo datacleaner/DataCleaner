@@ -547,10 +547,4 @@ public final class ResultWindow extends AbstractWindow {
         _publishButton.setVisible(!running);
         _exportButton.setVisible(!running);
     }
-
-    @Override
-    protected boolean isWindowMaximized() {
-        return false;
-    }
-
 }

@@ -128,10 +128,4 @@ public final class DetailsResultWindow extends AbstractWindow {
 
         _taskPaneContainer.add(taskPane);
     }
-
-    @Override
-    protected boolean isWindowMaximized() {
-        return false;
-    }
-
 }

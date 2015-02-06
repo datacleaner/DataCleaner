@@ -22,7 +22,7 @@ package org.datacleaner.widgets;
 import java.awt.Dimension;
 
 import org.datacleaner.panels.DCPanel;
-import org.datacleaner.util.UserWindowSizePreferencesUtils;
+import org.datacleaner.util.WindowSizePreferences;
 
 /**
  * A panel that stores it's preferred size in the user preferences.
@@ -32,9 +32,9 @@ public class DCPersistentSizedPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final UserWindowSizePreferencesUtils _userPreferenceUtils;
+    private final WindowSizePreferences _userPreferenceUtils;
 
-    public DCPersistentSizedPanel(final UserWindowSizePreferencesUtils userWindowSizePreferenceUtils) {
+    public DCPersistentSizedPanel(final WindowSizePreferences userWindowSizePreferenceUtils) {
         _userPreferenceUtils = userWindowSizePreferenceUtils;
         final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getUserPreferredSize();
         setPreferredSize(preferredSizeFromUserPreferences);

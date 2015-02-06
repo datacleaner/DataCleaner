@@ -52,7 +52,9 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
     }
 
-    protected abstract boolean isWindowMaximized();
+    protected boolean isWindowMaximized(){
+        return false;
+    }
 
     protected void initialize() {
         updateWindowTitle();
@@ -120,7 +122,9 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         return preferredSize;
     }
 
-    protected abstract boolean isWindowResizable();
+    protected boolean isWindowResizable(){
+        return false; 
+    }
 
     protected abstract boolean isCentered();
 

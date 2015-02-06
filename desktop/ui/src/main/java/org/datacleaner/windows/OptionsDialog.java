@@ -455,9 +455,4 @@ public class OptionsDialog extends AbstractWindow {
     public UserPreferences getUserPreferences() {
         return _userPreferences;
     }
-
-    @Override
-    protected boolean isWindowMaximized() {
-        return false;
-    }
 }

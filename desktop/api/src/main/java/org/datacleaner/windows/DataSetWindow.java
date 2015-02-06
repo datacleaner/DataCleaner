@@ -99,11 +99,6 @@ public class DataSetWindow extends AbstractWindow {
     }
 
     @Override
-    protected boolean isWindowResizable() {
-        return true;
-    }
-
-    @Override
     public Image getWindowIcon() {
         return ImageManager.get().getImage(IconUtils.ACTION_PREVIEW);
     }
@@ -248,8 +243,5 @@ public class DataSetWindow extends AbstractWindow {
         return true;
     }
 
-    @Override
-    protected boolean isWindowMaximized() {
-        return false;
-    }
+    
 }

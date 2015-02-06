@@ -597,6 +597,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         ByteArrayOutputStream currentOutputStream = null;
         try {
             File jobFile = new File(getJobFile().getURL().getFile());
+            if (jobFile.length() == 0) {
+                return true;
+            }
+            
             String lastSavedJob = FileHelper.readFileAsString(jobFile);
             String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
 

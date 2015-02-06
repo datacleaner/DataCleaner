@@ -52,7 +52,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
     }
 
-    protected boolean isWindowMaximized(){
+    protected boolean maximizeWindow(){
         return false;
     }
 
@@ -62,8 +62,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         setResizable(isWindowResizable());
         JComponent content = getWindowContent();
         getContentPane().add(content);
-        final boolean isWindowMaximized = isWindowMaximized();
-        if (isWindowMaximized) {
+        final boolean maximizeWindow = maximizeWindow();
+        if (maximizeWindow) {
             this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         }
         autoSetSize(content);

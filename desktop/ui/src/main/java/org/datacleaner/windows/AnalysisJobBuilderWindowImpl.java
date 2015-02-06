@@ -1060,7 +1060,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
-    protected boolean isWindowMaximized() {
+    protected boolean maximizeWindow() {
         return _windowSizePreference.isWindowMaximized();
     }
 }

@@ -127,8 +127,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
-    private AnalysisWindowPanelType _currentPanelType;
-
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
@@ -173,7 +171,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private boolean _datastoreSelectionEnabled;
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
-
+    private AnalysisWindowPanelType _currentPanelType;
+    
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,

@@ -606,7 +606,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
-    public boolean isWindowResizable() {
+    protected boolean isWindowResizable() {
         return true;
     }
 

@@ -243,5 +243,8 @@ public class DataSetWindow extends AbstractWindow {
         return true;
     }
 
-    
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 }

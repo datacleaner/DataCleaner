@@ -122,9 +122,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         return preferredSize;
     }
 
-    protected boolean isWindowResizable(){
-        return false; 
-    }
+    protected abstract boolean isWindowResizable();
 
     protected abstract boolean isCentered();
 

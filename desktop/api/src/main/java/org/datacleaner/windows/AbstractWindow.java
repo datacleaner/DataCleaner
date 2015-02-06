@@ -49,18 +49,24 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(this);
         getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+
+    }
+
+    protected boolean maximizeWindow(){
+        return false;
     }
 
     protected void initialize() {
         updateWindowTitle();
         setIconImage(getWindowIcon());
         setResizable(isWindowResizable());
-
         JComponent content = getWindowContent();
         getContentPane().add(content);
-
+        final boolean maximizeWindow = maximizeWindow();
+        if (maximizeWindow) {
+            this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        }
         autoSetSize(content);
-
         _windowContext.onShow(this);
     }
 
@@ -81,7 +87,6 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
                 setVisible(true);
             }
         });
-
     }
 
     @Override
@@ -97,8 +102,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-        int maxWidth = toolkit.getScreenSize().width - 30;
-        int maxHeight = toolkit.getScreenSize().height - 30;
+        int maxWidth = toolkit.getScreenSize().width;
+        int maxHeight = toolkit.getScreenSize().height;
         preferredSize.width = Math.min(preferredSize.width, maxWidth);
         preferredSize.height = Math.min(preferredSize.height, maxHeight);
 
@@ -114,7 +119,6 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
         if (isCentered()) {
             centerOnScreen();
         }
-
         return preferredSize;
     }
 

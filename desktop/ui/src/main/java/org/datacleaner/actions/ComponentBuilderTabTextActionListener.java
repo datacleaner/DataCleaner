@@ -55,7 +55,6 @@ public class ComponentBuilderTabTextActionListener extends AbstractJobBuilderPop
     @Override
     protected void onNameChanged() {
         _tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getComponentBuilder()));
-        _tabbedPane.updateUI();
     }
 
     @Override

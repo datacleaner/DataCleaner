@@ -122,8 +122,8 @@ import org.slf4j.LoggerFactory;
  * {@link AnalysisJobBuilder} class.
  */
 @Singleton
-public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow, DatastoreSelectedListener
-        WindowListener {
+public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
+        DatastoreSelectedListener, WindowListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -198,8 +198,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
-        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(),
-                DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(), DEFAULT_WINDOW_WIDTH,
+                DEFAULT_WINDOW_HEIGHT);
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -234,7 +234,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastorePanel(_glassPane, injectorBuilder, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), this);
+        _selectDatastorePanel = new SelectDatastorePanel(_glassPane, injectorBuilder, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), this);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -546,7 +547,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         case WELCOME:
             final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
             if (count == 1) {
-                if(getWindowContext().showExitDialog()) {
+                if (getWindowContext().showExitDialog()) {
                     cleanupForWindowClose();
                     getWindowContext().exit();
                 }
@@ -737,12 +738,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
                     IconUtils.getComponentSuperCategoryIcon(superCategory));
-            
+
             popupBubble.attachTo(popupButton, new DCPopupBubble.PopupCallback() {
                 @Override
                 public boolean onBeforeShow() {
-                    for(PopupButton scButton : _superCategoryButtons) {
-                        if(scButton.isSelected()){
+                    for (PopupButton scButton : _superCategoryButtons) {
+                        if (scButton.isSelected()) {
                             return false;
                         }
                     }
@@ -1069,7 +1070,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public void datastoreSelected(Datastore datastore) {
         setDatastore(datastore);
     }
-    
+
     public void windowClosed(WindowEvent e) {
         if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             _windowSizePreference.setUserPreferredSize(null, true);

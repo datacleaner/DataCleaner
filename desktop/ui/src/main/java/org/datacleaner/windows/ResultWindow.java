@@ -547,5 +547,4 @@ public final class ResultWindow extends AbstractWindow {
         _publishButton.setVisible(!running);
         _exportButton.setVisible(!running);
     }
-
 }

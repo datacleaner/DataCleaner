@@ -128,5 +128,4 @@ public final class DetailsResultWindow extends AbstractWindow {
 
         _taskPaneContainer.add(taskPane);
     }
-
 }

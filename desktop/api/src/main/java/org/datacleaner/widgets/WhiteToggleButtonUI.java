@@ -20,6 +20,7 @@
 package org.datacleaner.widgets;
 
 import java.awt.Color;
+import java.awt.Cursor;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
@@ -47,6 +48,7 @@ public class WhiteToggleButtonUI extends MetalToggleButtonUI {
         b.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setForeground(WidgetUtils.BG_COLOR_DARK);
         b.setBorder(WidgetUtils.BORDER_BUTTON_DEFAULT);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
     @Override

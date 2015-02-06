@@ -23,12 +23,11 @@ public class DetailPanel extends DCPanel {
     }
 
     public DetailPanel(final Icon icon, final String title, final String body) {
-        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         setLayout(new GridBagLayout());
         setBorder(WidgetUtils.BORDER_LIST_ITEM);
-        final DCLabel titleLabel;
-        titleLabel = DCLabel.dark(title);
-        final DCLabel bodyLabel = DCLabel.darkMultiLine(body);
+        final DCLabel titleLabel = DCLabel.bright(title);
+        final DCLabel bodyLabel = DCLabel.brightMultiLine(body);
         if(icon == null){
             titleLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(30f));
             bodyLabel.setFont(WidgetUtils.FONT_UBUNTU_PLAIN.deriveFont(18f));
@@ -51,7 +50,7 @@ public class DetailPanel extends DCPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                titleLabel.setForeground(WidgetUtils.BG_COLOR_DARKEST);
+                titleLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
                 setCursor(Cursor.getDefaultCursor());
                 setBorder(WidgetUtils.BORDER_LIST_ITEM);
             }

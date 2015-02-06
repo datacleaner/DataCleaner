@@ -133,6 +133,9 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_BRIGHT = slightlyBrighter(BG_COLOR_ORANGE_MEDIUM);
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
+    // white with 10% alpha/opacity
+    public static final Color BG_SEMI_TRANSPARENT_BRIGHT = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
@@ -185,13 +188,19 @@ public final class WidgetUtils {
     public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
             new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
 
-    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
-            new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
-    
+    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
+            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
     public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
+
+    public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
+    
+//    public static final Border BORDER_BUTTON_DARK = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1, false),
+//            new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
+
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
                     BORDER_WIDE_WIDTH - 1, 9));
@@ -522,7 +531,7 @@ public final class WidgetUtils {
         } else {
             outline = true;
         }
-        
+
         return decorateWithShadow(comp, outline, 4);
     }
 
@@ -601,7 +610,7 @@ public final class WidgetUtils {
     public static void setPrimaryButtonStyle(AbstractButton b) {
         b.setUI(PrimaryButtonUI.get());
     }
-    
+
     public static void setDarkButtonStyle(AbstractButton b) {
         if (b instanceof JToggleButton) {
             b.setUI(DarkToggleButtonUI.get());
@@ -617,7 +626,7 @@ public final class WidgetUtils {
             b.setUI(DefaultButtonUI.get());
         }
     }
-    
+
     public static void setWhiteButtonStyle(AbstractButton b) {
         if (b instanceof JToggleButton) {
             b.setUI(WhiteToggleButtonUI.get());

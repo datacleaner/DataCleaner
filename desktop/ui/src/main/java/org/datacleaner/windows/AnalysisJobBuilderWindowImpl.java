@@ -339,7 +339,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         } else {
             button.setBorder(new EmptyBorder(10, 4, 10, 4));
         }
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         WidgetUtils.setDarkButtonStyle(button);
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);

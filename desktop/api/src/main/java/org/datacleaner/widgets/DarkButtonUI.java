@@ -20,6 +20,7 @@
 package org.datacleaner.widgets;
 
 import java.awt.Color;
+import java.awt.Cursor;
 
 import javax.swing.AbstractButton;
 import javax.swing.plaf.ButtonUI;
@@ -50,6 +51,8 @@ public class DarkButtonUI extends MetalButtonUI {
         b.setBackground(COLOR_BG_DEFAULT);
         b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         b.setFocusPainted(false);
+        b.setBorder(WidgetUtils.BORDER_BUTTON_DARK);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
     @Override

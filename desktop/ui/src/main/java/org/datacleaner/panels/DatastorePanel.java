@@ -30,6 +30,9 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -103,7 +106,7 @@ public class DatastorePanel extends DCPanel {
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
             DatastoreManagementPanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
             InjectorBuilder injectorBuilder) {
-        super(WidgetUtils.COLOR_WELL_BACKGROUND);
+        super(WidgetUtils.BG_COLOR_DARK);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;
@@ -133,7 +136,7 @@ public class DatastorePanel extends DCPanel {
         });
 
         final String datastoreName = datastore.getName();
-        final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description
+        final DCLabel datastoreNameLabel = DCLabel.bright("<html><b>" + datastoreName + "</b><br/>" + description
                 + "</html>");
         datastoreNameLabel.setIconTextGap(10);
         datastoreNameLabel.setIcon(icon);
@@ -170,7 +173,7 @@ public class DatastorePanel extends DCPanel {
 
     private JButton createRemoveButton(final Datastore datastore) {
         final String name = datastore.getName();
-        final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+        final JButton removeButton = createSmallButton(IconUtils.ACTION_REMOVE);
         removeButton.setToolTipText("Remove datastore");
         removeButton.addActionListener(new ActionListener() {
             @Override
@@ -183,14 +186,11 @@ public class DatastorePanel extends DCPanel {
                 }
             }
         });
-        // if (!_datastoreCatalog.isDatastoreMutable(name)) {
-        // removeButton.setEnabled(false);
-        // }
         return removeButton;
     }
 
     private JButton createEditButton(final Datastore datastore) {
-        final JButton editButton = WidgetFactory.createSmallButton(IconUtils.ACTION_EDIT);
+        final JButton editButton = createSmallButton(IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit datastore");
 
         if (datastore instanceof JdbcDatastore) {
@@ -352,6 +352,12 @@ public class DatastorePanel extends DCPanel {
         }
 
         return editButton;
+    }
+
+    private JButton createSmallButton(String imagePath) {
+        final JButton smallButton = WidgetFactory.createDarkButton(null, imagePath);
+        smallButton.setBorder(new CompoundBorder(new LineBorder(WidgetUtils.BG_COLOR_LESS_DARK), new EmptyBorder(2, 4, 2, 4)));
+        return smallButton;
     }
 
     private static String getDescription(Datastore datastore) {

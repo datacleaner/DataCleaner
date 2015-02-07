@@ -36,6 +36,10 @@ import javax.swing.border.TitledBorder;
 
 import org.datacleaner.widgets.Alignment;
 
+/**
+ * Useful extension of {@link JPanel} which provides utility methods, background
+ * image rendering and coloring.
+ */
 public class DCPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;

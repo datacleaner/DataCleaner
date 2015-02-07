@@ -19,6 +19,7 @@
  */
 package org.datacleaner.panels;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -32,13 +33,13 @@ import java.util.Set;
 
 import javax.inject.Provider;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
@@ -108,7 +109,7 @@ import com.google.inject.Injector;
  * Panel to select which job or datastore to use. Shown in the "source" tab, if
  * no datastore or job has been selected to begin with.
  */
-public class DatastoreManagementPanel extends DCPanel implements DatastoreChangeListener {
+public class DatastoreManagementPanel extends DCSplashPanel implements DatastoreChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -131,6 +132,7 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
             Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super();
+        
         _datastorePanels = new ArrayList<DatastorePanel>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
         _analysisJobBuilderWindow = analysisJobBuilderWindow;
@@ -140,7 +142,7 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
         _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
-        // initialize "analyze" button
+        // initialize "Build job" button
         _analyzeButton = WidgetFactory.createPrimaryButton("Build job", IconUtils.MODEL_JOB);
         _analyzeButton.addActionListener(new ActionListener() {
             @Override
@@ -163,8 +165,6 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
 
         // initialize search text field
         _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter datastores");
-        _searchDatastoreTextField.setBorder(new CompoundBorder(new EmptyBorder(4, 0, 0, 0), WidgetUtils.BORDER_THIN));
-        _searchDatastoreTextField.setOpaque(false);
         _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -199,42 +199,38 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
             }
         });
 
-        setLayout(new VerticalLayout(4));
+        setLayout(new BorderLayout());
 
-        add(Box.createVerticalStrut(10));
+        final DCLabel titleLabel = createTitleLabel("Datastore Management") ;
+        add(titleLabel, BorderLayout.NORTH);
+        
+        final DCPanel containerPanel = new DCPanel();
+        containerPanel.setLayout(new VerticalLayout(4));
 
-        final DCLabel jobsHeaderLabel = DCLabel.dark("Jobs");
-        jobsHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
-        add(jobsHeaderLabel);
-
-        add(Box.createVerticalStrut(40));
-
-        final DCLabel datastoreHeaderLabel = DCLabel.dark("Datastores");
-        datastoreHeaderLabel.setFont(WidgetUtils.FONT_HEADER1);
-        add(datastoreHeaderLabel);
-
-        final DCLabel registerNewDatastoreLabel = DCLabel.dark("Register new:");
+        final DCLabel registerNewDatastoreLabel = DCLabel.bright("Register new:");
         registerNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-
-        final DCPanel newDatastorePanel = new DCPanel();
-        newDatastorePanel.setLayout(new VerticalLayout(4));
-        newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
-        newDatastorePanel.add(registerNewDatastoreLabel);
-        newDatastorePanel.add(createNewDatastorePanel());
-
-        add(newDatastorePanel);
 
         _datastoreListPanel = new DCPanel();
         _datastoreListPanel.setLayout(new VerticalLayout(4));
         _datastoreListPanel.setBorder(new EmptyBorder(10, 10, 4, 0));
-        add(_datastoreListPanel);
+        containerPanel.add(_datastoreListPanel);
         updateDatastores();
 
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
         buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         buttonPanel.add(_analyzeButton);
-        add(buttonPanel);
+        containerPanel.add(buttonPanel);
+        
+        add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
+        
+        final DCPanel newDatastorePanel = new DCPanel();
+        newDatastorePanel.setLayout(new BorderLayout());
+        newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
+        newDatastorePanel.add(registerNewDatastoreLabel, BorderLayout.NORTH);
+        newDatastorePanel.add(createNewDatastorePanel(), BorderLayout.CENTER);
+        
+        add(wrapContentInScrollerWithMaxWidth(newDatastorePanel), BorderLayout.SOUTH);
     }
 
     private void updateDatastores() {
@@ -242,17 +238,13 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
         _datastoreListPanel.removeAll();
         _datastorePanels.clear();
 
-        final DCLabel existingDatastoresLabel = DCLabel.dark("Existing datastores:");
+        final DCLabel existingDatastoresLabel = DCLabel.bright("Existing datastores:");
         existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER2);
 
-        final DCPanel searchDatastorePanel = DCPanel.around(_searchDatastoreTextField);
-        searchDatastorePanel.setBorder(WidgetUtils.BORDER_SHADOW);
-
         final DCPanel headerPanel = new DCPanel();
-        headerPanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
-        headerPanel.add(existingDatastoresLabel);
-        headerPanel.add(Box.createHorizontalStrut(20));
-        headerPanel.add(searchDatastorePanel);
+        headerPanel.setLayout(new BorderLayout());
+        headerPanel.add(existingDatastoresLabel, BorderLayout.WEST);
+        headerPanel.add(_searchDatastoreTextField, BorderLayout.EAST);
 
         _datastoreListPanel.add(headerPanel);
 
@@ -298,68 +290,73 @@ public class DatastoreManagementPanel extends DCPanel implements DatastoreChange
     }
 
     private DCPanel createNewDatastorePanel() {
-        final DCPanel panel = new DCPanel();
-        panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-        panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        panel.add(createNewDatastoreButton("CSV file",
+        final int alignment = Alignment.CENTER.getFlowLayoutAlignment();
+        final DCPanel panel1 = new DCPanel();
+        panel1.setLayout(new FlowLayout(alignment, 10, 10));
+        panel1.add(createNewDatastoreButton("CSV file",
                 "Comma-separated values (CSV) file (or file with other separators)", IconUtils.CSV_IMAGEPATH,
                 CsvDatastore.class, CsvDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("Excel spreadsheet",
+        panel1.add(createNewDatastoreButton("Excel spreadsheet",
                 "Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
                 IconUtils.EXCEL_IMAGEPATH, ExcelDatastore.class, ExcelDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
+        panel1.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
                 IconUtils.ACCESS_IMAGEPATH, AccessDatastore.class, AccessDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
+        panel1.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
                 IconUtils.SAS_IMAGEPATH, SasDatastore.class, SasDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
+        panel1.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
                 DbaseDatastore.class, DbaseDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("Fixed width file",
+        panel1.add(createNewDatastoreButton("Fixed width file",
                 "Text file with fixed width values. Each value spans a fixed amount of text characters.",
                 IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
+        panel1.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
                 IconUtils.XML_IMAGEPATH, XmlDatastore.class, XmlDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("JSON file", "JavaScript Object NOtation file (.json).",
+        panel1.add(createNewDatastoreButton("JSON file", "JavaScript Object NOtation file (.json).",
                 IconUtils.JSON_IMAGEPATH, JsonDatastore.class, JsonDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
+        panel1.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
                 IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
 
-        panel.add(Box.createHorizontalStrut(10));
-
-        panel.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
+        panel1.add(Box.createHorizontalStrut(10));
+        panel1.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
                 IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
+        panel1.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
                 SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
 
-        panel.add(Box.createHorizontalStrut(10));
-
-        panel.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
+        final DCPanel panel2 = new DCPanel();
+        panel2.setLayout(new FlowLayout(alignment, 10, 10));
+        
+        panel2.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
                 IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
+        panel2.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
                 IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
+        panel2.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
                 IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+        panel2.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
                 IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
 
-        panel.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
+        panel2.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                 IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();
 
-        createDefaultDatabaseButtons(panel, databaseNames);
+        createDefaultDatabaseButtons(panel2, databaseNames);
 
-        panel.add(Box.createHorizontalStrut(10));
-        panel.add(createMoreDatabasesButton(databaseNames));
+        panel2.add(Box.createHorizontalStrut(10));
+        panel2.add(createMoreDatabasesButton(databaseNames));
+        
+        final DCPanel containerPanel = new DCPanel();
+        containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
+        containerPanel.add(panel1);
+        containerPanel.add(panel2);
 
-        return panel;
+        return containerPanel;
     }
 
     private Component createMoreDatabasesButton(Set<String> databaseNames) {
-        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
+        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDarkPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
 
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();

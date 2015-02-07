@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
@@ -33,18 +34,20 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
  * datastore selection and menus in general.
  */
 public interface AnalysisJobBuilderWindow extends DCWindow {
-    public enum AnalysisWindowPanelType {
+    
+    public enum AnalysisWindowPanelType implements HasName {
         WELCOME("Welcome"), SELECT_DS("Select datastore"), MANAGE_DS("Manage datastores"), EDITING_CONTEXT(
                 "Analysis Job");
 
-        String name;
+        private final String _name;
 
         private AnalysisWindowPanelType(String name) {
-            this.name = name;
+            _name = name;
         }
 
+        @Override
         public String getName() {
-            return name;
+            return _name;
         }
     }
 

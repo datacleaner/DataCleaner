@@ -115,7 +115,7 @@ public final class WidgetUtils {
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(19f);
+    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(20f);
     public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(17f);
     public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(15f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);

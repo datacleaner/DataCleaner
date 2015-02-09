@@ -89,6 +89,7 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
         assertEquals(
                 "[AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.CrosstabTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.MetricBasedResultTextRenderer], "
+                        + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.ToStringFutureTextRenderer], "
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.result.renderer.ToStringTextRenderer]]",
                 new TreeSet<RendererBeanDescriptor<?>>(rendererComponentDescriptors).toString());
     }

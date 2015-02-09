@@ -28,8 +28,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +51,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
@@ -55,6 +62,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
@@ -73,6 +82,7 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -172,7 +182,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
     private AnalysisWindowPanelType _currentPanelType;
-    
+
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
@@ -228,7 +238,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
-        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(), _injectorBuilder);
+        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
+                _injectorBuilder);
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
@@ -555,6 +566,23 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
             break;
         case EDITING_CONTEXT:
+            // if datastore is set and datastore selection is enabled,
+            // return to datastore selection.
+
+            if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
+
+                final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
+                final int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
+                        "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[2]);
+
+                if (unsavedChangesChoice == 0) { // save changes
+                    _saveButton.doClick();
+                } else if (unsavedChangesChoice == 2) { // cancel closing
+                    return false;
+                }
+            }
+
             resetJob();
             break;
         default:
@@ -574,6 +602,46 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _datastoreConnection.close();
         }
         getContentPane().removeAll();
+    }
+
+    private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
+        if (lastSavedJobFile == null) {
+            return true;
+        }
+        try {
+            if (!lastSavedJobFile.exists()) {
+                return true;
+            }
+        } catch (FileSystemException e) {
+            logger.warn("Error while determining if the job file already exists", e);
+        }
+
+        InputStream lastSavedOutputStream = null;
+        ByteArrayOutputStream currentOutputStream = null;
+        try {
+            File jobFile = new File(getJobFile().getURL().getFile());
+            if (jobFile.length() == 0) {
+                return true;
+            }
+
+            String lastSavedJob = FileHelper.readFileAsString(jobFile);
+            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll(
+                    "<job-metadata>.*</job-metadata>", "");
+
+            JaxbJobWriter writer = new JaxbJobWriter(_configuration);
+            currentOutputStream = new ByteArrayOutputStream();
+            writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
+            String currentJob = new String(currentOutputStream.toByteArray());
+            String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>",
+                    "");
+
+            return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            FileHelper.safeClose(currentOutputStream);
+            FileHelper.safeClose(lastSavedOutputStream);
+        }
     }
 
     private void resetJob() {

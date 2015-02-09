@@ -25,6 +25,7 @@ import javax.inject.Named;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFutureImpl;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
@@ -55,13 +56,13 @@ public class MockFutureAnalyzer implements Analyzer<AnalyzerResultFuture<Analyze
 
     @Override
     public AnalyzerResultFuture<AnalyzerResult> getResult() {
-        return new AnalyzerResultFuture<AnalyzerResult>("MockAnalyzerResultFuture", new LazyRef<AnalyzerResult>() {
+        return new AnalyzerResultFutureImpl<AnalyzerResult>("MockAnalyzerResultFuture", new LazyRef<AnalyzerResult>() {
 
             @Override
             protected AnalyzerResult fetch() throws Throwable {
                 try {
-                    logger.info("Sleeping for 5 seconds...");
-                    Thread.sleep(5000);
+                    logger.info("Sleeping for 3 seconds...");
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     logger.warn("MockAnalyzerResultFuture sleep period interrupted!");
                 }

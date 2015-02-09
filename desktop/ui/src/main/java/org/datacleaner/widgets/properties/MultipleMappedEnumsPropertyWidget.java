@@ -74,7 +74,7 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 
         @Override
         protected void setValue(final E[] value) {
-            if (MappedEnumsPropertyWidget.this.isUpdating()) {
+            if (MultipleMappedEnumsPropertyWidget.this.isUpdating()) {
                 return;
             }
             setMappedEnums(value);

@@ -230,6 +230,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
         newDatastorePanel.add(registerNewDatastoreLabel, BorderLayout.NORTH);
         newDatastorePanel.add(createNewDatastorePanel(), BorderLayout.CENTER);
+        
+        add(createBackToWelcomeScreenButton(analysisJobBuilderWindow), BorderLayout.WEST);
 
         add(wrapContentInScrollerWithMaxWidth(newDatastorePanel), BorderLayout.SOUTH);
     }

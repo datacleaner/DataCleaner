@@ -29,13 +29,14 @@ import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class SelectDatastorePanel extends DCSplashPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public SelectDatastorePanel(DCGlassPane glassPane, InjectorBuilder injectorBuilder,
+    public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane, InjectorBuilder injectorBuilder,
             DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
             DatastoreSelectedListener datastoreSelectListener) {
         final DCPanel containerPanel = new DCPanel();
@@ -63,5 +64,6 @@ public class SelectDatastorePanel extends DCSplashPanel {
 
         add(createTitleLabel("Select datastore"), BorderLayout.NORTH);
         add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
+        add(createBackToWelcomeScreenButton(window), BorderLayout.WEST);
     }
 }

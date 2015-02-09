@@ -21,15 +21,23 @@ package org.datacleaner.panels;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
+import org.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
 
 /**
  * Panel super class for those panels that show up as a splash in the welcoming
@@ -58,6 +66,23 @@ public class DCSplashPanel extends DCPanel {
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
         titleLabel.setBorder(new EmptyBorder(20, 20, 10, 0));
         return titleLabel;
+    }
+
+    protected JComponent createBackToWelcomeScreenButton(final AnalysisJobBuilderWindow window) {
+        final JButton backButton = WidgetFactory.createDarkButton("Back", IconUtils.ACTION_BACK);
+        backButton.setOpaque(false);
+        backButton.setBorder(null);
+        backButton.setMargin(new Insets(0, 0, 0, 0));
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                window.changePanel(AnalysisWindowPanelType.WELCOME);
+            }
+        });
+
+        final DCPanel panel = DCPanel.around(backButton);
+        panel.setBorder(new EmptyBorder(0, 20, 0, 0));
+        return panel;
     }
 
     /**

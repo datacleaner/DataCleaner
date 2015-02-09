@@ -54,7 +54,7 @@ public class DCSplashPanel extends DCPanel {
      * @return
      */
     protected DCLabel createTitleLabel(String text) {
-        DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
+        final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
         titleLabel.setBorder(new EmptyBorder(20, 20, 10, 0));
         return titleLabel;

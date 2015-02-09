@@ -112,7 +112,7 @@ public class WelcomePanel extends DCSplashPanel {
         if (result == null) {
             result = new DCPanel();
         }
-
+        
         return wrapContentInScrollerWithMaxWidth(result);
     }
 

@@ -20,16 +20,20 @@
 package org.datacleaner.widgets;
 
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
@@ -48,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Dropzone extends DCPanel {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(Dropzone.class);
     private static final long serialVersionUID = 1L;
     private MutableDatastoreCatalog _datastoreCatalog;
@@ -56,40 +60,53 @@ public class Dropzone extends DCPanel {
 
     public Dropzone(final MutableDatastoreCatalog datastoreCatalog,
             final DatastoreSelectedListener datastoreSelectListener) {
-        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
-        setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_DARK), new EmptyBorder(10,
-                10, 10, 10)));
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        DCLabel dropFileLabel = DCLabel.dark("Drop file");
+        setLayout(new GridBagLayout());
+
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f,
+                false), new EmptyBorder(30, 30, 30, 30)));
+        
+        final DCLabel dropFileLabel = DCLabel.bright("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
-        dropFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(dropFileLabel);
+        add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
-        add(Box.createVerticalStrut(10));
-
-        JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to use dialog)", IconUtils.DATASTORE_TYPE_FILE_BRIGHT);
+        final JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to browse)", IconUtils.FILE_FILE);
+        orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(orClickButton);
+        
+        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        
         orClickButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                final DCFileChooser fileChooser = new DCFileChooser();
-                final int result = fileChooser.showOpenDialog(Dropzone.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-
-                    if (file.exists()) {
-                        Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
-                                datastoreCatalog, file);
-                        datastoreSelectListener.datastoreSelected(datastore);
-                    }
-                }
+                showFileChooser();
             }
         });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showFileChooser();
+            }
+        });
+
         makeDroppable();
+    }
+
+    protected void showFileChooser() {
+        final DCFileChooser fileChooser = new DCFileChooser();
+        final int result = fileChooser.showOpenDialog(Dropzone.this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            final File file = fileChooser.getSelectedFile();
+
+            if (file.exists()) {
+                final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
+                        _datastoreCatalog, file);
+                _datastoreSelectListener.datastoreSelected(datastore);
+            }
+        }
     }
 
     private void makeDroppable() {
@@ -134,7 +151,7 @@ public class Dropzone extends DCPanel {
                 if (!file.exists()) {
                     return false;
                 }
-                
+
                 Datastore datastore = DatastoreCreationUtil
                         .createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
                 _datastoreSelectListener.datastoreSelected(datastore);

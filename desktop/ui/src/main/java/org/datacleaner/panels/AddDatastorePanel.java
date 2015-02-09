@@ -44,9 +44,9 @@ import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDatastoreDialog;
@@ -61,18 +61,18 @@ import org.datacleaner.windows.SugarCrmDatastoreDialog;
 
 import com.google.inject.Injector;
 
-public class AddDataStorePanel extends DCPanel {
-    
+public class AddDatastorePanel extends DCPanel {
+
     private static final long serialVersionUID = 1L;
 
     private final InjectorBuilder _injectorBuilder;
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
 
-    public AddDataStorePanel(final MutableDatastoreCatalog datastoreCatalog,
+    public AddDatastorePanel(final MutableDatastoreCatalog datastoreCatalog,
             final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
             final DatastoreSelectedListener datastoreSelectedListener) {
-        
+
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _injectorBuilder = injectorBuilder;
@@ -87,15 +87,10 @@ public class AddDataStorePanel extends DCPanel {
         c.fill = GridBagConstraints.BOTH;
         add(_dropzone, c);
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weightx = 1.0;
-        c.insets = new Insets(0, 0, 0, 5);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        PopupButton databaseButton = new PopupButton("Add database", ImageManager.get().getImageIcon(
-                IconUtils.DATASTORE_TYPE_DATABASE_DARK, IconUtils.ICON_SIZE_LARGE));
-        WidgetUtils.setWhiteButtonStyle(databaseButton);
+        final PopupButton databaseButton = WidgetFactory.createDarkPopupButton("Database",
+                IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+        databaseButton.setFont(WidgetUtils.FONT_HEADER2);
+        databaseButton.setBorder(WidgetUtils.BORDER_BUTTON_DARK_WITH_LINE);
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
             databaseButton.getMenu().add(
@@ -142,18 +137,20 @@ public class AddDataStorePanel extends DCPanel {
                 createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                         IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
-        add(databaseButton, c);
+        final PopupButton cloudButton = WidgetFactory.createDarkPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
+        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
+        cloudButton.setBorder(WidgetUtils.BORDER_BUTTON_DARK_WITH_LINE);
+
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
 
         c = new GridBagConstraints();
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 1;
+        c.gridwidth = 2;
         c.weightx = 1.0;
         c.insets = new Insets(0, 5, 0, 0);
         c.fill = GridBagConstraints.HORIZONTAL;
-        PopupButton cloudButton = new PopupButton("Add cloud service", ImageManager.get().getImageIcon(
-                IconUtils.DATASTORE_TYPE_CLOUD_DARK, IconUtils.ICON_SIZE_LARGE));
-        WidgetUtils.setWhiteButtonStyle(cloudButton);
-        add(cloudButton, c);
+        add(buttonPanel, c);
 
         cloudButton.getMenu().add(
                 createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",

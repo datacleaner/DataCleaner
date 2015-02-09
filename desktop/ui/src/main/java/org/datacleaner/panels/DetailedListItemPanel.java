@@ -51,11 +51,11 @@ public class DetailedListItemPanel extends DCPanel {
         super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         setLayout(new GridBagLayout());
         setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
-        
+
         final DCLabel titleLabel = DCLabel.bright(title);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
         titleLabel.setForeground(COLOR_HOVER);
-        titleLabel.setBorder(new EmptyBorder(12, 12, 6, 0));
+        titleLabel.setBorder(new EmptyBorder(12, 12, 4, 12));
 
         final JTextArea bodyLabel = new JTextArea();
         bodyLabel.setLineWrap(true);
@@ -65,7 +65,7 @@ public class DetailedListItemPanel extends DCPanel {
         bodyLabel.setOpaque(false);
         bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
         bodyLabel.setForeground(COLOR_NORMAL);
-        bodyLabel.setBorder(new EmptyBorder(6, 12, 12, 0));
+        bodyLabel.setBorder(new EmptyBorder(4, 12, 12, 12));
 
         final JSeparator horizontalRule = new JSeparator(JSeparator.HORIZONTAL);
         horizontalRule.setForeground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
@@ -91,13 +91,11 @@ public class DetailedListItemPanel extends DCPanel {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        Insets questionInsets = new Insets(5, 5, 5, 5);
-
         if (icon != null) {
             c.gridx = 0;
             c.gridy = 0;
             c.gridheight = 3;
-            c.insets = questionInsets;
+            c.insets = new Insets(5, 5, 5, 5);
             add(new JLabel(icon), c);
         }
 
@@ -106,7 +104,6 @@ public class DetailedListItemPanel extends DCPanel {
         c.gridx = 1;
         c.gridy = 0;
         c.weightx = 1.0;
-        c.insets = questionInsets;
         c.anchor = GridBagConstraints.LINE_START;
         add(titleLabel, c);
 
@@ -116,7 +113,7 @@ public class DetailedListItemPanel extends DCPanel {
             c.gridx = 1;
             c.gridy = 1;
             c.weightx = 1.0;
-            c.insets = questionInsets;
+            c.insets = new Insets(10, 12, 10, 12);
             c.anchor = GridBagConstraints.LINE_START;
             add(horizontalRule, c);
         }
@@ -126,7 +123,6 @@ public class DetailedListItemPanel extends DCPanel {
         c.gridx = 1;
         c.gridy = 2;
         c.weightx = 1.0;
-        c.insets = questionInsets;
         c.anchor = GridBagConstraints.LINE_START;
         add(bodyLabel, c);
     }

@@ -20,6 +20,7 @@
 package org.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -47,10 +48,13 @@ import javax.swing.TransferHandler;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
 import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
@@ -59,6 +63,7 @@ import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -252,8 +257,10 @@ public final class JobGraph {
                 }
 
                 final String title;
-                final String subTitle;
+                String subTitle;
                 final String imagePath;
+                boolean warning=false; 
+                boolean error=false;
 
                 g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
                 if (_analysisJobBuilder.getSourceColumns().size() == 0) {
@@ -278,9 +285,31 @@ public final class JobGraph {
                             + "So add one or more such components.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else {
-                    title = null;
+                    title=null;
                     subTitle = null;
                     imagePath = null;
+                    
+                    try {
+                        if (!_analysisJobBuilder.isConfigured(true)) {
+                            subTitle="Job is not correctly configured";
+                            warning=true; 
+                        }
+                    } catch (Exception ex) {
+                        logger.debug("Job not correctly configured", ex);
+                        final String errorMessage;
+                        if (ex instanceof UnconfiguredConfiguredPropertyException) {
+                            UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
+                            ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
+                                    .getConfiguredProperty();
+                            ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException.getComponentBuilder();
+                            errorMessage = "Property '" + configuredProperty.getName() + "' in "
+                                    + LabelUtils.getLabel(componentBuilder) + " is not set!";
+                        } else {
+                            errorMessage = ex.getMessage();
+                        }
+                        subTitle="Job error status: " + errorMessage;
+                        error=true; 
+                    }
                 }
 
                 final int yOffset = size.height - 150;
@@ -302,6 +331,13 @@ public final class JobGraph {
                 }
 
                 if (subTitle != null) {
+                    
+                    if (error){
+                        g.setColor(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
+                    }else if(warning){
+                        g.setColor(Color.YELLOW);
+                    }
+                    
                     final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
                     int y = yOffset + 10;

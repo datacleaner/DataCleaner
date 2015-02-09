@@ -68,7 +68,7 @@ public class DCSplashPanel extends DCPanel {
      * @param maxWidth
      * @return
      */
-    protected JComponent wrapContentInScrollerWithMaxWidth(DCPanel panel) {
+    protected JComponent wrapContentInScrollerWithMaxWidth(JComponent panel) {
         panel.setMaximumSize(new Dimension(MAX_WIDTH, Integer.MAX_VALUE));
 
         DCPanel wrappingPanel = new DCPanel();

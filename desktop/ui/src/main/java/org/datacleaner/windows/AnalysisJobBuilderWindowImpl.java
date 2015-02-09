@@ -228,7 +228,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
-        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get());
+        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(), _injectorBuilder);
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);

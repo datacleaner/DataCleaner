@@ -159,7 +159,7 @@ public class DatastorePanel extends DCPanel {
         final JButton editButton = createEditButton(datastore);
         final JButton removeButton = createRemoveButton(datastore);
 
-        setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
 
         WidgetUtils.addToGridBag(DCPanel.flow(_checkBox, datastoreNameLabel), this, 0, 0, GridBagConstraints.WEST, 1.0,
                 1.0);

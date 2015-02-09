@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,21 +36,32 @@ import javax.swing.border.EmptyBorder;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
+import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
-import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+import com.google.inject.Injector;
+
+/**
+ * The initial panel that is shown to the user when starting the application.
+ * This panel features a pluggable content part (see
+ * {@link SystemProperties#UI_DESKTOP_WELCOME_PANEL} and a button panels where a
+ * new job can be started, an existing job can be opened and datastores can be
+ * managed.
+ */
 public class WelcomePanel extends DCSplashPanel {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(WelcomePanel.class);
 
     private static final long serialVersionUID = 1L;
@@ -60,25 +69,51 @@ public class WelcomePanel extends DCSplashPanel {
     private final UserPreferences _userPreferences;
     private final AnalysisJobBuilderWindow _window;
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
+    private final InjectorBuilder _injectorBuilder;
 
     public WelcomePanel(final AnalysisJobBuilderWindow window, final UserPreferences userPreferences,
-            final OpenAnalysisJobActionListener openAnalysisJobActionListener) {
+            final OpenAnalysisJobActionListener openAnalysisJobActionListener, final InjectorBuilder injectorBuilder) {
         super();
         _window = window;
         _userPreferences = userPreferences;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
+        _injectorBuilder = injectorBuilder;
 
         setLayout(new BorderLayout());
 
-        final DCLabel welcomeLabel = createTitleLabel("Welcome!");
+        final DCLabel welcomeLabel = createTitleLabel("Welcome to DataCleaner");
         add(welcomeLabel, BorderLayout.NORTH);
 
-        final JComponent wizardListPanel = createWizardListPanel();
-        add(wizardListPanel, BorderLayout.CENTER);
+        final JComponent contentPanel = createContentPanel();
+        add(contentPanel, BorderLayout.CENTER);
 
         final DCPanel buttonPanel = createButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
+    }
 
+    private JComponent createContentPanel() {
+        JComponent result = null;
+
+        final String welcomePanelClassName = SystemProperties
+                .getString(SystemProperties.UI_DESKTOP_WELCOME_PANEL, null);
+        if (!Strings.isNullOrEmpty(welcomePanelClassName)) {
+            final Injector injector = _injectorBuilder.with(WelcomePanel.class, this).createInjector();
+            try {
+                @SuppressWarnings("unchecked")
+                final Class<? extends JComponent> componentClass = (Class<? extends JComponent>) Class
+                        .forName(welcomePanelClassName);
+
+                return injector.getInstance(componentClass);
+            } catch (Exception e) {
+                logger.error("Failed to instantiate welcome panel class: {}", welcomePanelClassName, e);
+            }
+        }
+
+        if (result == null) {
+            result = new DCPanel();
+        }
+
+        return wrapContentInScrollerWithMaxWidth(result);
     }
 
     private DCPanel createButtonPanel() {
@@ -93,6 +128,7 @@ public class WelcomePanel extends DCSplashPanel {
 
         final PopupButton recentJobsButton = WidgetFactory.createDarkPopupButton("Recent jobs",
                 IconUtils.FILE_HOME_FOLDER);
+        recentJobsButton.setMenuPosition(MenuPosition.RIGHT);
 
         final JButton browseJobsButton = WidgetFactory.createDarkButton("Browse jobs", IconUtils.FILE_FOLDER);
         browseJobsButton.addActionListener(_openAnalysisJobActionListener);
@@ -124,43 +160,8 @@ public class WelcomePanel extends DCSplashPanel {
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(manageDatastoresButton);
         buttonPanel.setBorder(new EmptyBorder(0, 0, 6, 0));
-        
+
         return buttonPanel;
-    }
-
-    private JComponent createWizardListPanel() {
-        final DCLabel subtitleLabel = DCLabel.bright("What's your question for DataCleaner?");
-        subtitleLabel.setFont(WidgetUtils.FONT_HEADER1);
-        subtitleLabel.setBorder(WidgetUtils.BORDER_EMPTY);
-        final DetailedListItemPanel questionPanel1 = new DetailedListItemPanel(
-                "<html>Are my <b>addresses correct</b> and <b>up-to-date</b>?</html>",
-                "Use the Neopost Address Correction and Mail Suppression services on your contact list to correct your addresses and check if people have moved to new places or if they have passed away.");
-        questionPanel1.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                _window.changePanel(AnalysisWindowPanelType.SELECT_DS);
-            }
-        });
-
-        final DetailedListItemPanel questionPanel2 = new DetailedListItemPanel(
-                "<html>Do I have <b>duplicate</b> customers?</html>",
-                "Inspect your customers with DataCleaner’s Duplicate Detection function to identify the possible duplicated records in your database or file.");
-
-        final DetailedListItemPanel questionPanel3 = new DetailedListItemPanel(
-                "<html>Are my records properly <b>filled</b>?</html>",
-                "Validate the proper completeness and conformity with rules of your records. Use this wizard to configure common data profiling features to suit the fields of your data set.");
-
-        final DCPanel wizardListPanel = new DCPanel();
-        wizardListPanel.setLayout(new VerticalLayout(14));
-        wizardListPanel.add(Box.createVerticalStrut(1));
-        wizardListPanel.add(subtitleLabel);
-        wizardListPanel.add(Box.createVerticalStrut(1));
-        wizardListPanel.add(questionPanel1);
-        wizardListPanel.add(questionPanel2);
-        wizardListPanel.add(questionPanel3);
-        wizardListPanel.add(Box.createVerticalStrut(1));
-
-        return wrapContentInScrollerWithMaxWidth(wizardListPanel);
     }
 
     private List<FileObject> getRecentJobFiles() {

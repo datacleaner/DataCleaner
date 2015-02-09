@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -42,24 +43,41 @@ public class DCPopupBubble {
         boolean onBeforeShow();
     }
     
-    private static final ImageManager imageManager = ImageManager.get();
+    public static enum Position {
+        TOP, BOTTOM
+    }
+    
+    private static final Image BACKGROUND_IMAGE_BOTTOM = ImageManager.get().getImage("images/window/popup-bubble-bottom.png");
+    private static final Image BACKGROUND_IMAGE_TOP = ImageManager.get().getImage("images/window/popup-bubble-top.png");
     
     private final DCGlassPane _glassPane;
     private final DCPanel _panel;
     private int _xOnScreen;
     private int _yOnScreen;
+    private Position _position;
 
     public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen) {
         this(glassPane, text, xOnScreen, yOnScreen, (Icon) null);
     }
-
+    
     public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, String iconPath) {
-        this(glassPane, text, xOnScreen, yOnScreen, (iconPath == null ? null : imageManager.getImageIcon(iconPath)));
+        this(glassPane, text, xOnScreen, yOnScreen, ImageManager.get().getImageIcon(iconPath));
+    }
+    
+    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon) {
+        this(glassPane, text, xOnScreen, yOnScreen, icon, Position.BOTTOM);
     }
 
-    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon) {
+    public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, Icon icon, Position position) {
         _glassPane = glassPane;
-        _panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
+        _position = position;
+        
+        if (_position == Position.BOTTOM) {
+            _panel = new DCPanel(BACKGROUND_IMAGE_BOTTOM, 0, 0);
+        } else {
+            _panel = new DCPanel(BACKGROUND_IMAGE_TOP, 0, 0);
+        }
+        
         _xOnScreen = xOnScreen;
         _yOnScreen = yOnScreen;
         final DCLabel label = DCLabel.bright(text);
@@ -68,7 +86,11 @@ public class DCPopupBubble {
         }
         label.setFont(WidgetUtils.FONT_SMALL);
         label.setSize(240, 60);
-        label.setLocation(5, 20);
+        if (_position == Position.BOTTOM) {
+            label.setLocation(5, 20);
+        } else {
+            label.setLocation(5, 5);
+        }
         label.setVerticalAlignment(JLabel.CENTER);
 
         _panel.setLayout(null);
@@ -116,9 +138,15 @@ public class DCPopupBubble {
                 if (popupCallback != null && !popupCallback.onBeforeShow()) {
                     return;
                 } else if (component.isEnabled()) {
-                    Point locationOnScreen = component.getLocationOnScreen();
-                    DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15,
-                            locationOnScreen.y + component.getHeight());
+                    final Point locationOnScreen = component.getLocationOnScreen();
+                    final int x = locationOnScreen.x + 15;
+                    if (_position == Position.BOTTOM) {
+                        DCPopupBubble.this.setLocationOnScreen(x,
+                                locationOnScreen.y + component.getHeight());
+                    } else {
+                        DCPopupBubble.this.setLocationOnScreen(x,
+                                locationOnScreen.y - 81);
+                    }
                     DCPopupBubble.this.show();
                 }
             }

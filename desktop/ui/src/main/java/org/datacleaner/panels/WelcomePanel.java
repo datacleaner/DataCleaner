@@ -128,7 +128,7 @@ public class WelcomePanel extends DCSplashPanel {
 
         final PopupButton recentJobsButton = WidgetFactory.createDarkPopupButton("Recent jobs",
                 IconUtils.FILE_HOME_FOLDER);
-        recentJobsButton.setMenuPosition(MenuPosition.RIGHT);
+        recentJobsButton.setMenuPosition(MenuPosition.TOP);
 
         final JButton browseJobsButton = WidgetFactory.createDarkButton("Browse jobs", IconUtils.FILE_FOLDER);
         browseJobsButton.addActionListener(_openAnalysisJobActionListener);

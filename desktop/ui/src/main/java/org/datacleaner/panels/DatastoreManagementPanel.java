@@ -367,7 +367,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private Component createMoreDatabasesButton(Set<String> databaseNames) {
         final PopupButton moreDatastoreTypesButton = WidgetFactory.createDarkPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
-        moreDatastoreTypesButton.setMenuPosition(MenuPosition.RIGHT);
+        moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
 
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
         // installed databases

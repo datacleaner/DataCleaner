@@ -139,6 +139,10 @@ public final class IconUtils {
 
     public static final String DATASTORE_TYPE_CLOUD_BRIGHT = "images/model/cloud_bright.png";
     public static final String DATASTORE_TYPE_CLOUD_DARK = "images/model/cloud_dark.png";
+    public static final String DATASTORE_TYPE_DATABASE_BRIGHT = "images/model/database_bright.png";
+    public static final String DATASTORE_TYPE_DATABASE_DARK = "images/model/database_dark.png";
+    public static final String DATASTORE_TYPE_FILE_BRIGHT = "images/model/file_bright.png";
+    public static final String DATASTORE_TYPE_FILE_DARK = "images/model/file_dark.png";
     
     public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
     public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";

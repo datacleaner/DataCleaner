@@ -62,16 +62,17 @@ import org.datacleaner.windows.SugarCrmDatastoreDialog;
 import com.google.inject.Injector;
 
 public class AddDataStorePanel extends DCPanel {
+    
     private static final long serialVersionUID = 1L;
 
     private final InjectorBuilder _injectorBuilder;
     private final DatastoreSelectedListener _datastoreSelectedListener;
-
     private final Dropzone _dropzone;
 
     public AddDataStorePanel(final MutableDatastoreCatalog datastoreCatalog,
             final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
             final DatastoreSelectedListener datastoreSelectedListener) {
+        
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _injectorBuilder = injectorBuilder;
@@ -93,7 +94,7 @@ public class AddDataStorePanel extends DCPanel {
         c.insets = new Insets(0, 0, 0, 5);
         c.fill = GridBagConstraints.HORIZONTAL;
         PopupButton databaseButton = new PopupButton("Add database", ImageManager.get().getImageIcon(
-                IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_LARGE));
+                IconUtils.DATASTORE_TYPE_DATABASE_DARK, IconUtils.ICON_SIZE_LARGE));
         WidgetUtils.setWhiteButtonStyle(databaseButton);
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {

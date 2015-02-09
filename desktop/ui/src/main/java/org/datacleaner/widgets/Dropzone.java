@@ -41,6 +41,8 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.util.DatastoreCreationUtil;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +69,7 @@ public class Dropzone extends DCPanel {
 
         add(Box.createVerticalStrut(10));
 
-        JButton orClickButton = new JButton("(or click to use dialog)");
-        WidgetUtils.setPrimaryButtonStyle(orClickButton);
+        JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to use dialog)", IconUtils.DATASTORE_TYPE_FILE_BRIGHT);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(orClickButton);
         orClickButton.addActionListener(new ActionListener() {

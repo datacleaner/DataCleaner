@@ -40,10 +40,12 @@ import org.datacleaner.user.MutableDatastoreCatalog;
 public class DatastoreCreationUtil {
 
     public enum FileDatastoreEnum {
-        CSV("csv", "tsv", "txt", "dat"), EXCEL("xls", "xlsx"), ACCESS("mdb"), SAS(), DBASE("dbf"), XML("xml"), JSON(
-                "json"), OPENOFFICE("odb");
+        CSV("csv", "tsv", "txt", "dat"), EXCEL("xls", "xlsx"), ACCESS("mdb"),
 
-        private List<String> _extensions;
+        // TODO: Add .sas7bdat file support
+        SAS(), DBASE("dbf"), XML("xml"), JSON("json"), OPENOFFICE("odb");
+
+        private final List<String> _extensions;
 
         private FileDatastoreEnum(String... extensions) {
             _extensions = Arrays.asList(extensions);

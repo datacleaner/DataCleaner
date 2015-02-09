@@ -118,6 +118,7 @@ public class PopupButton extends JToggleButton {
         if (menuPosition == null) {
             menuPosition = MenuPosition.BOTTOM;
         }
+        
         final int x;
         final int y;
         switch (menuPosition) {
@@ -126,10 +127,13 @@ public class PopupButton extends JToggleButton {
             y = getHeight();
             break;
         case TOP:
+            // hack to trigger menu.getHeight() to return non-0 value
+            menu.show(this, 0, 0);
             x = 0;
             y = menu.getHeight() * -1;
             break;
         case LEFT:
+            // hack to trigger menu.getWidth() to return non-0 value
             x = menu.getWidth() * -1;
             y = 0;
             break;

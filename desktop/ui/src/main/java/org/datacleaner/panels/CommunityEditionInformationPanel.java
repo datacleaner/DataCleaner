@@ -31,6 +31,7 @@ import javax.swing.border.LineBorder;
 import org.datacleaner.actions.MoveComponentTimerActionListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
@@ -75,13 +76,12 @@ public class CommunityEditionInformationPanel extends JPanel {
                 .darkMultiLine("With DataCleaner professional edition you also get additional goodies; such as national identifier checks, duplicate detection, DQ metric exports and more.");
         add(text2);
 
-        JButton tryProfessionalButton = new JButton("Try professional edition", ImageManager.get().getImageIcon(
-                "images/window/app-icon.png", IconUtils.ICON_SIZE_MEDIUM));
+        JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
+                "images/window/app-icon.png");
         tryProfessionalButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
         add(DCPanel.around(tryProfessionalButton));
 
-        JButton compareEditionsButton = new JButton("Compare the editions", ImageManager.get().getImageIcon(
-                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+        JButton compareEditionsButton = WidgetFactory.createDefaultButton("Compare the editions", IconUtils.WEBSITE);
         compareEditionsButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
         add(DCPanel.around(compareEditionsButton));
     }

@@ -35,6 +35,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetFactory;
@@ -81,7 +82,7 @@ public class QueryWindow extends AbstractWindow {
         _limitTextField.setText("500");
 
         _table = new DCTable();
-        _queryButton = new JButton("Execute query");
+        _queryButton = WidgetFactory.createPrimaryButton("Execute query", IconUtils.MODEL_QUERY);
         _queryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -134,7 +135,7 @@ public class QueryWindow extends AbstractWindow {
     public Image getWindowIcon() {
         return ImageManager.get().getImage("images/model/query.png");
     }
-
+    
     @Override
     protected boolean isWindowResizable() {
         return true;

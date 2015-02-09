@@ -79,8 +79,6 @@ import com.google.inject.Injector;
 /**
  * Bootstraps an instance of DataCleaner into a running state. The initial state
  * of the application will be dependent on specified options (or defaults).
- * 
- * @author Kasper Sørensen
  */
 public final class Bootstrap {
 

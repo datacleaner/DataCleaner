@@ -99,7 +99,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _sourceColumnMapping = new SourceColumnMapping(metadata);
         _variableTextFields = new HashMap<String, JXTextField>();
 
-        _openButton = new JButton("Open job");
+        _openButton = WidgetFactory.createPrimaryButton("Open job", IconUtils.MODEL_JOB);
         _openButton.addActionListener(new ActionListener() {
 
             @Override
@@ -218,7 +218,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             }
         });
 
-        _autoMapButton = new JButton("Map automatically");
+        _autoMapButton = WidgetFactory.createDefaultButton("Map automatically");
         _autoMapButton.setVisible(false);
         _autoMapButton.addActionListener(new ActionListener() {
             @Override
@@ -309,7 +309,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
             tableLabel.setIcon(imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL));
             WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
-            final JButton clearButton = new JButton("Clear");
+            final JButton clearButton = WidgetFactory.createDefaultButton("Clear");
             clearButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

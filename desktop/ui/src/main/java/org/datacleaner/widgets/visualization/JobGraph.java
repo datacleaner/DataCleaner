@@ -48,7 +48,6 @@ import javax.swing.TransferHandler;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;

@@ -360,7 +360,7 @@ public class DatastorePanel extends DCPanel {
         return smallButton;
     }
 
-    private static String getDescription(Datastore datastore) {
+    public static String getDescription(Datastore datastore) {
         if (datastore.getDescription() != null) {
             return datastore.getDescription();
         }

@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +202,8 @@ public class JobGraphLinkPainter {
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
                     if (inputProperty.isArray()) {
-                        componentBuilder.addInputColumns(sourceColumns, inputProperty);
+                        componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
+                                inputProperty);
                     } else {
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
@@ -235,6 +238,22 @@ public class JobGraphLinkPainter {
         }
         logger.debug("createLink(...) returning false - no applicable action");
         return false;
+    }
+
+    private Collection<? extends InputColumn<?>> getRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,
+            ConfiguredPropertyDescriptor inputProperty) {
+        assert inputProperty.isInputColumn();
+
+        List<InputColumn<?>> result = new ArrayList<>();
+        final Class<?> expectedDataType = inputProperty.getTypeArgument(0);
+        for (InputColumn<?> inputColumn : sourceColumns) {
+            final Class<?> actualDataType = inputColumn.getDataType();
+            if (ReflectionUtils.is(actualDataType, expectedDataType, false)) {
+                result.add(inputColumn);
+            }
+        }
+
+        return result;
     }
 
     private void transformEdgeShape(Point2D down, Point2D out) {

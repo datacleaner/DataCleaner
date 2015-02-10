@@ -437,6 +437,7 @@ public final class WidgetUtils {
         if (comp != null) {
             scroll.setViewportView(comp);
         }
+        scroll.getVerticalScrollBar().setUnitIncrement(20);
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         return scroll;

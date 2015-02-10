@@ -290,7 +290,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private DCPanel createNewDatastorePanel() {
-        final int alignment = Alignment.CENTER.getFlowLayoutAlignment();
+        final int alignment = Alignment.LEFT.getFlowLayoutAlignment();
         final DCPanel panel1 = new DCPanel();
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
         panel1.add(createNewDatastoreButton("CSV file",
@@ -364,7 +364,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private Component createMoreDatabasesButton(Set<String> databaseNames) {
-        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDarkPopupButton("More databases",
+        final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
 

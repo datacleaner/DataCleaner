@@ -63,9 +63,9 @@ import org.datacleaner.descriptors.TransformerDescriptor;
  */
 public final class IconUtils {
 
-    public static int ICON_SIZE_LARGE = 32;
-    public static int ICON_SIZE_MEDIUM = 22;
-    public static int ICON_SIZE_SMALL = 16;
+    public static final int ICON_SIZE_LARGE = 32;
+    public static final int ICON_SIZE_MEDIUM = 22;
+    public static final int ICON_SIZE_SMALL = 16;
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";

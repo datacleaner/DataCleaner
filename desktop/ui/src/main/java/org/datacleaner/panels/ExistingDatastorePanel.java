@@ -31,24 +31,35 @@ import org.datacleaner.util.IconUtils;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class ExistingDatastorePanel extends DCPanel {
+
     private static final long serialVersionUID = 1L;
+
+    private final DatastoreCatalog _datastoreCatalog;
+    private final DatastoreSelectedListener _datastoreSelectListener;
 
     public ExistingDatastorePanel(final DatastoreCatalog datastoreCatalog,
             final DatastoreSelectedListener datastoreSelectListener) {
+        _datastoreCatalog = datastoreCatalog;
+        _datastoreSelectListener = datastoreSelectListener;
         setLayout(new VerticalLayout(4));
         setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+        updateDatastores();
+    }
+
+    public void updateDatastores() {
+        removeAll();
+        String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
-            final Datastore datastore = datastoreCatalog.getDatastore(datastoreNames[i]);
-            final DetailedListItemPanel datastorePanel = new DetailedListItemPanel(
-                    IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_LARGE), "<html><b>" + datastore.getName()
-                    + "</b></html>", DatastorePanel.getDescription(datastore));
+            final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
+            final DetailedListItemPanel datastorePanel = new DetailedListItemPanel(IconUtils.getDatastoreIcon(
+                    datastore, IconUtils.ICON_SIZE_LARGE), "<html><b>" + datastore.getName() + "</b></html>",
+                    DatastorePanel.getDescription(datastore));
 
             datastorePanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    datastoreSelectListener.datastoreSelected(datastore);
+                    _datastoreSelectListener.datastoreSelected(datastore);
                 }
             });
             add(datastorePanel);

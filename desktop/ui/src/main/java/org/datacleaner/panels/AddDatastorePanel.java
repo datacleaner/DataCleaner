@@ -43,6 +43,7 @@ import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -71,13 +72,13 @@ public class AddDatastorePanel extends DCPanel {
 
     public AddDatastorePanel(final MutableDatastoreCatalog datastoreCatalog,
             final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
-            final DatastoreSelectedListener datastoreSelectedListener) {
+            final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences) {
 
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _injectorBuilder = injectorBuilder;
         _datastoreSelectedListener = datastoreSelectedListener;
-        _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener);
+        _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener, userPreferences);
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;

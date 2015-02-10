@@ -44,6 +44,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -51,34 +52,42 @@ import org.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A dropzone where the user can drop files to register them as datastores.
+ */
 public class Dropzone extends DCPanel {
 
     private static final Logger logger = LoggerFactory.getLogger(Dropzone.class);
     private static final long serialVersionUID = 1L;
-    private MutableDatastoreCatalog _datastoreCatalog;
-    private DatastoreSelectedListener _datastoreSelectListener;
+
+    private final MutableDatastoreCatalog _datastoreCatalog;
+    private final DatastoreSelectedListener _datastoreSelectListener;
+    private final UserPreferences _userPreferences;
 
     public Dropzone(final MutableDatastoreCatalog datastoreCatalog,
-            final DatastoreSelectedListener datastoreSelectListener) {
+            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
+        _userPreferences = userPreferences;
         setLayout(new GridBagLayout());
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f,
                 false), new EmptyBorder(30, 30, 30, 30)));
-        
+
         final DCLabel dropFileLabel = DCLabel.bright("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
-        add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+        add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
 
         final JButton orClickButton = WidgetFactory.createPrimaryButton("(or click to browse)", IconUtils.FILE_FILE);
         orClickButton.setFont(WidgetUtils.FONT_HEADER2);
         orClickButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
-        
+
+        add(orClickButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
+                GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));
+
         orClickButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -96,7 +105,7 @@ public class Dropzone extends DCPanel {
     }
 
     protected void showFileChooser() {
-        final DCFileChooser fileChooser = new DCFileChooser();
+        final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getOpenDatastoreDirectory());
         final int result = fileChooser.showOpenDialog(Dropzone.this);
         if (result == JFileChooser.APPROVE_OPTION) {
             final File file = fileChooser.getSelectedFile();
@@ -105,6 +114,16 @@ public class Dropzone extends DCPanel {
                 final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
                         _datastoreCatalog, file);
                 _datastoreSelectListener.datastoreSelected(datastore);
+                
+                final File directory;
+                if (file.isFile()) {
+                    directory = file.getParentFile();
+                } else if (file.isDirectory()) {
+                    directory = file;
+                } else {
+                    directory = _userPreferences.getOpenDatastoreDirectory();
+                }
+                _userPreferences.setOpenDatastoreDirectory(directory);
             }
         }
     }

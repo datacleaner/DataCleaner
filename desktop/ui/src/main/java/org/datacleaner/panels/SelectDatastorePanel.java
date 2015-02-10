@@ -22,26 +22,34 @@ package org.datacleaner.panels;
 import java.awt.BorderLayout;
 
 import javax.swing.Box;
+import javax.swing.SwingUtilities;
 
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class SelectDatastorePanel extends DCSplashPanel {
+public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChangeListener {
 
     private static final long serialVersionUID = 1L;
 
-    public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane, InjectorBuilder injectorBuilder,
-            DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
-            DatastoreSelectedListener datastoreSelectListener) {
+    private final MutableDatastoreCatalog _datastoreCatalog;
+    private final ExistingDatastorePanel _existingDatastoresPanel;
+
+    public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane,
+            InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
+            MutableDatastoreCatalog datastoreCatalog, UserPreferences userPreferences, DatastoreSelectedListener datastoreSelectListener) {
+        _datastoreCatalog = datastoreCatalog;
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new VerticalLayout());
-        
+
         containerPanel.add(Box.createVerticalStrut(20));
 
         final DCLabel newDatastoreLabel = DCLabel.bright("Use new datastore");
@@ -49,7 +57,7 @@ public class SelectDatastorePanel extends DCSplashPanel {
         containerPanel.add(newDatastoreLabel);
 
         containerPanel.add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
-                datastoreSelectListener));
+                datastoreSelectListener, userPreferences));
 
         containerPanel.add(Box.createVerticalStrut(20));
 
@@ -57,13 +65,48 @@ public class SelectDatastorePanel extends DCSplashPanel {
         existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
         containerPanel.add(existingDatastoreLabel);
 
-        final ExistingDatastorePanel existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog,
-                datastoreSelectListener);
-        containerPanel.add(existingDatastoresPanel);
+        _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
+        containerPanel.add(_existingDatastoresPanel);
         setLayout(new BorderLayout());
 
         add(createTitleLabel("Select datastore"), BorderLayout.NORTH);
         add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
         add(createBackToWelcomeScreenButton(window), BorderLayout.WEST);
+    }
+
+    public void updateDatastores() {
+        _existingDatastoresPanel.updateDatastores();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        _datastoreCatalog.addListener(this);
+    }
+
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        _datastoreCatalog.removeListener(this);
+    }
+
+    @Override
+    public void onAdd(Datastore datastore) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateDatastores();
+            }
+        });
+    }
+
+    @Override
+    public void onRemove(Datastore datastore) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateDatastores();
+            }
+        });
     }
 }

@@ -84,7 +84,7 @@ public class WelcomePanel extends DCSplashPanel {
         final JComponent contentPanel = createContentPanel();
         add(contentPanel, BorderLayout.CENTER);
 
-        final DCPanel buttonPanel = createButtonPanel();
+        final JComponent buttonPanel = createButtonPanel();
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
@@ -110,10 +110,10 @@ public class WelcomePanel extends DCSplashPanel {
             result = new DCPanel();
         }
 
-        return wrapContentInScrollerWithMaxWidth(result);
+        return wrapContent(result);
     }
 
-    private DCPanel createButtonPanel() {
+    private JComponent createButtonPanel() {
         final JButton newJobButton = WidgetFactory.createPrimaryButton("New job from scratch", IconUtils.MODEL_JOB);
         newJobButton.addActionListener(new ActionListener() {
 
@@ -156,9 +156,9 @@ public class WelcomePanel extends DCSplashPanel {
         buttonPanel.add(recentJobsButton);
         buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(manageDatastoresButton);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 6, 0));
+        buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        return buttonPanel;
+        return wrapContent(buttonPanel);
     }
 
     private List<FileObject> getRecentJobFiles() {

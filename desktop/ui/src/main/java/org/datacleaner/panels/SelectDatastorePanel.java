@@ -71,7 +71,7 @@ public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChan
         setLayout(new BorderLayout());
 
         add(createTitleLabel("Select datastore", true), BorderLayout.NORTH);
-        add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
+        add(wrapContent(containerPanel), BorderLayout.CENTER);
     }
 
     public void updateDatastores() {

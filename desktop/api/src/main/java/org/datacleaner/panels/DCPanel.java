@@ -167,14 +167,20 @@ public class DCPanel extends JPanel {
         }
 
         if (_watermark != null) {
-            int x = getWidth() - _imageWidth;
-            x = (int) (x * _horizontalAlignment);
-
-            int y = getHeight() - _imageHeight;
-            y = (int) (y * _verticalAlignment);
-
-            g.drawImage(_watermark, x, y, this);
+            paintPanelBackgroundImage(g, _watermark, _imageWidth, _imageHeight, _horizontalAlignment,
+                    _verticalAlignment);
         }
+    }
+
+    protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
+            float horizontalAlignment, float verticalAlignment) {
+        int x = getWidth() - imageWidth;
+        x = (int) (x * horizontalAlignment);
+
+        int y = getHeight() - imageHeight;
+        y = (int) (y * verticalAlignment);
+
+        g.drawImage(watermark, x, y, imageWidth, imageHeight, this);
     }
 
     protected void paintPanelBackgroundColor(Graphics g) {

@@ -222,7 +222,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         buttonPanel.add(_analyzeButton);
         containerPanel.add(buttonPanel);
 
-        add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
+        add(wrapContent(containerPanel), BorderLayout.CENTER);
 
         final DCPanel newDatastorePanel = new DCPanel();
         newDatastorePanel.setLayout(new BorderLayout());
@@ -230,7 +230,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         newDatastorePanel.add(registerNewDatastoreLabel, BorderLayout.NORTH);
         newDatastorePanel.add(createNewDatastorePanel(), BorderLayout.CENTER);
 
-        add(wrapContentInScrollerWithMaxWidth(newDatastorePanel), BorderLayout.SOUTH);
+        add(wrapContent(newDatastorePanel), BorderLayout.SOUTH);
     }
 
     private void updateDatastores() {

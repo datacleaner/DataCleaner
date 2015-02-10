@@ -21,6 +21,7 @@ package org.datacleaner.panels;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -52,13 +53,13 @@ public class DCSplashPanel extends DCPanel {
     private static final Image BACKGROUND_IMAGE = ImageManager.get().getImage(
             "images/window/welcome-panel-background.jpg");
 
-    private static final int MAX_WIDTH = 900;
+    private static final int WIDTH_CONTENT = 800;
     private static final int MARGIN_LEFT = 20;
 
     private final AnalysisJobBuilderWindow _window;
 
     public DCSplashPanel(final AnalysisJobBuilderWindow window) {
-        super(BACKGROUND_IMAGE, 95, 50, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        super(BACKGROUND_IMAGE, 100, 100, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _window = window;
     }
 
@@ -101,7 +102,7 @@ public class DCSplashPanel extends DCPanel {
                 _window.changePanel(AnalysisWindowPanelType.WELCOME);
             }
         });
-        
+
         return backButton;
     }
 
@@ -112,8 +113,8 @@ public class DCSplashPanel extends DCPanel {
      * @param panel
      * @return
      */
-    protected JComponent wrapContentInScrollerWithMaxWidth(JComponent panel) {
-        panel.setMaximumSize(new Dimension(MAX_WIDTH, Integer.MAX_VALUE));
+    protected JComponent wrapContent(JComponent panel) {
+        panel.setMaximumSize(new Dimension(WIDTH_CONTENT, Integer.MAX_VALUE));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         final DCPanel wrappingPanel = new DCPanel();
@@ -124,5 +125,27 @@ public class DCSplashPanel extends DCPanel {
 
         final JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
         return scroll;
+    }
+
+    @Override
+    protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
+            float horizontalAlignment, float verticalAlignment) {
+        final int minimumImageWidth = 150;
+        final int imageContentOverlap = 100;
+
+        final int panelWidth = getWidth();
+        final int availableSpace = panelWidth + imageContentOverlap - WIDTH_CONTENT - MARGIN_LEFT;
+        if (availableSpace > imageWidth) {
+            // there's plenty of room
+            super.paintPanelBackgroundImage(g, watermark, imageWidth, imageHeight, horizontalAlignment,
+                    verticalAlignment);
+        } else if (availableSpace > minimumImageWidth) {
+            // scale the watermark
+            final int paintedWidth = availableSpace;
+            final double factor = 1.0 * availableSpace / imageWidth;
+            final int paintedHeight = (int) (factor * imageHeight);
+            super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, horizontalAlignment,
+                    verticalAlignment);
+        }
     }
 }

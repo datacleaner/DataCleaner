@@ -20,7 +20,6 @@
 package org.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -258,8 +257,6 @@ public final class JobGraph {
                 final String title;
                 String subTitle;
                 final String imagePath;
-                boolean warning=false; 
-                boolean error=false;
 
                 g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
                 if (_analysisJobBuilder.getSourceColumns().size() == 0) {
@@ -284,14 +281,13 @@ public final class JobGraph {
                             + "So add one or more such components.";
                     imagePath = "images/window/canvas-bg-plus.png";
                 } else {
-                    title=null;
+                    title = null;
                     subTitle = null;
                     imagePath = null;
-                    
+
                     try {
                         if (!_analysisJobBuilder.isConfigured(true)) {
-                            subTitle="Job is not correctly configured";
-                            warning=true; 
+                            subTitle = "Job is not correctly configured";
                         }
                     } catch (Exception ex) {
                         logger.debug("Job not correctly configured", ex);
@@ -300,14 +296,14 @@ public final class JobGraph {
                             UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
                             ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
                                     .getConfiguredProperty();
-                            ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException.getComponentBuilder();
-                            errorMessage = "Property '" + configuredProperty.getName() + "' in "
-                                    + LabelUtils.getLabel(componentBuilder) + " is not set!";
+                            ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
+                                    .getComponentBuilder();
+                            errorMessage = "Please set '" + configuredProperty.getName() + "' in "
+                                    + LabelUtils.getLabel(componentBuilder) + " to continue";
                         } else {
                             errorMessage = ex.getMessage();
                         }
-                        subTitle="Job error status: " + errorMessage;
-                        error=true; 
+                        subTitle = errorMessage;
                     }
                 }
 
@@ -330,13 +326,7 @@ public final class JobGraph {
                 }
 
                 if (subTitle != null) {
-                    
-                    if (error){
-                        g.setColor(WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT);
-                    }else if(warning){
-                        g.setColor(Color.YELLOW);
-                    }
-                    
+
                     final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
                     int y = yOffset + 10;

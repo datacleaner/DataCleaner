@@ -326,7 +326,6 @@ public final class JobGraph {
                 }
 
                 if (subTitle != null) {
-
                     final String[] lines = subTitle.split("\n");
                     g.setFont(WidgetUtils.FONT_BANNER.deriveFont(subTitleFontSize));
                     int y = yOffset + 10;

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.util.ImmutableEntry;
 import org.apache.metamodel.util.FileHelper;
@@ -44,8 +45,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Sorter, deduplicator and writer that uses temporary files as storage to
  * support high volume sorted data.
- * 
- * Note: This class is NOT thread-safe.
  * 
  * @param <R>
  *            the row type, HAS to be serializable
@@ -76,7 +75,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
      * Buffer containing sorted rows in memory
      */
     private final Map<R, Integer> _buffer;
-    private int _nullCount;
+    private AtomicInteger _nullCount;
 
     public SortMergeWriter(Comparator<? super R> comparator) {
         this(50000, comparator);
@@ -87,6 +86,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
         _tempFiles = new ArrayList<File>();
         _buffer = new TreeMap<R, Integer>(comparator);
         _comparator = comparator;
+        _nullCount = new AtomicInteger();
     }
 
     public void append(R line) {
@@ -96,17 +96,19 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
     public void append(R line, int frequency) {
         if (line == null) {
             // special handling of null
-            _nullCount += frequency;
+            _nullCount.addAndGet(frequency);
         } else {
-            Integer count = _buffer.get(line);
-            if (count == null) {
-                if (_buffer.size() == _bufferSize) {
-                    flushBuffer();
+            synchronized (this) {
+                Integer count = _buffer.get(line);
+                if (count == null) {
+                    if (_buffer.size() == _bufferSize) {
+                        flushBuffer();
+                    }
+                    count = 0;
                 }
-                count = 0;
+                count += frequency;
+                _buffer.put(line, count);
             }
-            count += frequency;
-            _buffer.put(line, count);
         }
     }
 
@@ -186,8 +188,9 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
             final boolean writeNullsFirst = writeNullsFirst();
 
-            if (_nullCount > 0 && writeNullsFirst) {
-                writeNull(writer, _nullCount);
+            final int nullCount = _nullCount.get();
+            if (nullCount > 0 && writeNullsFirst) {
+                writeNull(writer, nullCount);
                 rowCount++;
             }
 
@@ -200,8 +203,8 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                 }
                 _buffer.clear();
 
-                if (_nullCount > 0 && !writeNullsFirst) {
-                    writeNull(writer, _nullCount);
+                if (nullCount > 0 && !writeNullsFirst) {
+                    writeNull(writer, nullCount);
                     rowCount++;
                 }
 
@@ -261,8 +264,8 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                 rowCount++;
             }
 
-            if (_nullCount > 0 && !writeNullsFirst) {
-                writeNull(writer, _nullCount);
+            if (nullCount > 0 && !writeNullsFirst) {
+                writeNull(writer, nullCount);
                 rowCount++;
             }
 

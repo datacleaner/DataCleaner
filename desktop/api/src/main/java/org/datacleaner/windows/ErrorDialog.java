@@ -30,7 +30,9 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.JXEditorPane;
@@ -93,7 +95,7 @@ public class ErrorDialog extends AbstractDialog {
         });
         detailedMessagePane.setBorder(new EmptyBorder(10, 10, 40, 10));
 
-        final JButton button = new JButton("Close");
+        final JButton button = WidgetFactory.createPrimaryButton("Close", IconUtils.ACTION_CLOSE_BRIGHT);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

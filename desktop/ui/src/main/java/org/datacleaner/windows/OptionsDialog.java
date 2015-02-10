@@ -375,7 +375,7 @@ public class OptionsDialog extends AbstractWindow {
         _updateMemoryTimer.setInitialDelay(0);
         _updateMemoryTimer.start();
 
-        JButton button = new JButton("Perform garbage collection");
+        JButton button = WidgetFactory.createDefaultButton("Perform garbage collection");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

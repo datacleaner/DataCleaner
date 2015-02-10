@@ -33,7 +33,7 @@ import javax.swing.JLabel;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -51,28 +51,24 @@ public class WelcomeDialog extends JDialog {
 
         final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
         banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
-        final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
-        panel.add(shadowedBanner, BorderLayout.CENTER);
+        panel.add(banner, BorderLayout.CENTER);
 
-        final ImageManager imageManager = ImageManager.get();
-
-        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon(IconUtils.ACTION_FORWARD,
-                IconUtils.ICON_SIZE_MEDIUM));
-        closeButton.addActionListener(new ActionListener() {
+        final JButton continueButton = WidgetFactory.createDefaultButton("Continue", IconUtils.ACTION_FORWARD);
+        continueButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 WelcomeDialog.this.setVisible(false);
             }
         });
 
-        final JButton websiteButton = new JButton("Visit the DataCleaner website", imageManager.getImageIcon(
-                IconUtils.WEBSITE, IconUtils.ICON_SIZE_MEDIUM));
+        final JButton websiteButton = WidgetFactory.createDefaultButton("Visit the DataCleaner website",
+                IconUtils.WEBSITE);
         websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
 
-        panel.add(DCPanel.flow(Alignment.RIGHT, 10, 10, websiteButton, closeButton), BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.CENTER, continueButton, websiteButton), BorderLayout.SOUTH);
 
         getContentPane().add(panel);
         pack();
@@ -80,5 +76,4 @@ public class WelcomeDialog extends JDialog {
         WidgetUtils.centerOnScreen(this);
         setModal(true);
     }
-
 }

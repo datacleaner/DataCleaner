@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.border.CompoundBorder;
@@ -42,6 +41,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.datacleaner.widgets.table.DCTable;
 import org.slf4j.Logger;
@@ -85,18 +85,24 @@ public class ReorderColumnsActionListener implements ActionListener {
 
         final JDialog dialog = new JDialog();
 
-        final JButton button = new JButton("Save order", new ImageIcon(image));
-        button.addActionListener(new ActionListener() {
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save order", IconUtils.ACTION_REORDER_COLUMNS);
+        saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveReorderedValue(list);
                 dialog.dispose();
             }
         });
-
-        final DCPanel buttonPanel = new DCPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        buttonPanel.add(button);
+        
+        final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+        
+        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, cancelButton);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));

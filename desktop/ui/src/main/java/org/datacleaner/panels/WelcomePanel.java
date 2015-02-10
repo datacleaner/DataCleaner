@@ -41,7 +41,6 @@ import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;
@@ -67,21 +66,19 @@ public class WelcomePanel extends DCSplashPanel {
     private static final long serialVersionUID = 1L;
 
     private final UserPreferences _userPreferences;
-    private final AnalysisJobBuilderWindow _window;
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
     private final InjectorBuilder _injectorBuilder;
 
     public WelcomePanel(final AnalysisJobBuilderWindow window, final UserPreferences userPreferences,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener, final InjectorBuilder injectorBuilder) {
-        super();
-        _window = window;
+        super(window);
         _userPreferences = userPreferences;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
         _injectorBuilder = injectorBuilder;
 
         setLayout(new BorderLayout());
 
-        final DCLabel welcomeLabel = createTitleLabel("Welcome to DataCleaner");
+        final JComponent welcomeLabel = createTitleLabel("Welcome to DataCleaner", false);
         add(welcomeLabel, BorderLayout.NORTH);
 
         final JComponent contentPanel = createContentPanel();
@@ -112,7 +109,7 @@ public class WelcomePanel extends DCSplashPanel {
         if (result == null) {
             result = new DCPanel();
         }
-        
+
         return wrapContentInScrollerWithMaxWidth(result);
     }
 
@@ -122,15 +119,15 @@ public class WelcomePanel extends DCSplashPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                _window.changePanel(AnalysisWindowPanelType.SELECT_DS);
+                getWindow().changePanel(AnalysisWindowPanelType.SELECT_DS);
             }
         });
 
-        final PopupButton recentJobsButton = WidgetFactory.createDarkPopupButton("Recent jobs",
+        final PopupButton recentJobsButton = WidgetFactory.createDefaultPopupButton("Recent jobs",
                 IconUtils.FILE_HOME_FOLDER);
         recentJobsButton.setMenuPosition(MenuPosition.TOP);
 
-        final JButton browseJobsButton = WidgetFactory.createDarkButton("Browse jobs", IconUtils.FILE_FOLDER);
+        final JButton browseJobsButton = WidgetFactory.createDefaultButton("Browse jobs", IconUtils.FILE_FOLDER);
         browseJobsButton.addActionListener(_openAnalysisJobActionListener);
 
         final List<FileObject> recentJobFiles = getRecentJobFiles();
@@ -141,12 +138,12 @@ public class WelcomePanel extends DCSplashPanel {
             recentJobsMenu.add(menuItem);
         }
 
-        final JButton manageDatastoresButton = WidgetFactory.createDarkButton("Manage datastores",
+        final JButton manageDatastoresButton = WidgetFactory.createDefaultButton("Manage datastores",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         manageDatastoresButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                _window.changePanel(AnalysisWindowPanelType.MANAGE_DS);
+                getWindow().changePanel(AnalysisWindowPanelType.MANAGE_DS);
             }
         });
 

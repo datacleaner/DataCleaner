@@ -66,7 +66,7 @@ public class Dropzone extends DCPanel {
 
     public Dropzone(final MutableDatastoreCatalog datastoreCatalog,
             final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
-        super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
+        super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
         _userPreferences = userPreferences;
@@ -76,7 +76,7 @@ public class Dropzone extends DCPanel {
         setBorder(new CompoundBorder(BorderFactory.createDashedBorder(WidgetUtils.BG_COLOR_MEDIUM, 3f, 3.0f, 3.0f,
                 false), new EmptyBorder(30, 30, 30, 30)));
 
-        final DCLabel dropFileLabel = DCLabel.bright("<html><b>Drop file</b> here</html>");
+        final DCLabel dropFileLabel = DCLabel.dark("<html><b>Drop file</b> here</html>");
         dropFileLabel.setFont(WidgetUtils.FONT_BANNER);
         add(dropFileLabel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
                 GridBagConstraints.NONE, new Insets(0, 0, 10, 0), 0, 0));

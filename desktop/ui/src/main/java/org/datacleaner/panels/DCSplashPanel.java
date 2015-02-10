@@ -19,6 +19,7 @@
  */
 package org.datacleaner.panels;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Insets;
@@ -26,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -35,6 +37,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
@@ -50,9 +53,17 @@ public class DCSplashPanel extends DCPanel {
             "images/window/welcome-panel-background.jpg");
 
     private static final int MAX_WIDTH = 900;
+    private static final int MARGIN_LEFT = 20;
 
-    public DCSplashPanel() {
-        super(BACKGROUND_IMAGE, 50, 100, WidgetUtils.BG_COLOR_DARKEST);
+    private final AnalysisJobBuilderWindow _window;
+
+    public DCSplashPanel(final AnalysisJobBuilderWindow window) {
+        super(BACKGROUND_IMAGE, 95, 50, WidgetUtils.COLOR_DEFAULT_BACKGROUND);
+        _window = window;
+    }
+
+    public AnalysisJobBuilderWindow getWindow() {
+        return _window;
     }
 
     /**
@@ -61,28 +72,37 @@ public class DCSplashPanel extends DCPanel {
      * @param string
      * @return
      */
-    protected DCLabel createTitleLabel(String text) {
+    protected JComponent createTitleLabel(String text, boolean includeBackButton) {
         final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
-        titleLabel.setBorder(new EmptyBorder(20, 20, 10, 0));
-        return titleLabel;
+
+        final EmptyBorder border = new EmptyBorder(20, MARGIN_LEFT, 10, 0);
+
+        if (includeBackButton) {
+            final DCPanel panel = DCPanel.flow(Alignment.LEFT, MARGIN_LEFT, 0, createBackToWelcomeScreenButton(),
+                    titleLabel);
+            panel.setBorder(border);
+            return panel;
+        } else {
+            titleLabel.setBorder(border);
+            return titleLabel;
+        }
     }
 
-    protected JComponent createBackToWelcomeScreenButton(final AnalysisJobBuilderWindow window) {
-        final JButton backButton = WidgetFactory.createDarkButton("Back", IconUtils.ACTION_BACK);
+    private JComponent createBackToWelcomeScreenButton() {
+        final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_BACK);
+        final JButton backButton = WidgetFactory.createDefaultButton(null, icon);
         backButton.setOpaque(false);
         backButton.setBorder(null);
         backButton.setMargin(new Insets(0, 0, 0, 0));
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                window.changePanel(AnalysisWindowPanelType.WELCOME);
+                _window.changePanel(AnalysisWindowPanelType.WELCOME);
             }
         });
-
-        final DCPanel panel = DCPanel.around(backButton);
-        panel.setBorder(new EmptyBorder(0, 20, 0, 0));
-        return panel;
+        
+        return backButton;
     }
 
     /**
@@ -90,17 +110,19 @@ public class DCSplashPanel extends DCPanel {
      * content to keep it nicely in place on the screen.
      * 
      * @param panel
-     * @param maxWidth
      * @return
      */
     protected JComponent wrapContentInScrollerWithMaxWidth(JComponent panel) {
         panel.setMaximumSize(new Dimension(MAX_WIDTH, Integer.MAX_VALUE));
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        DCPanel wrappingPanel = new DCPanel();
-        wrappingPanel.setLayout(new BoxLayout(wrappingPanel, BoxLayout.Y_AXIS));
+        final DCPanel wrappingPanel = new DCPanel();
+        final BoxLayout layout = new BoxLayout(wrappingPanel, BoxLayout.PAGE_AXIS);
+        wrappingPanel.setLayout(layout);
         wrappingPanel.add(panel);
+        wrappingPanel.setBorder(new EmptyBorder(0, MARGIN_LEFT, 0, 0));
 
-        JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
+        final JScrollPane scroll = WidgetUtils.scrolleable(wrappingPanel);
         return scroll;
     }
 }

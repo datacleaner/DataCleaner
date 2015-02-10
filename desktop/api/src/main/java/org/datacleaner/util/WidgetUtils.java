@@ -132,7 +132,7 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
     // white with 10% alpha/opacity
-    public static final Color BG_SEMI_TRANSPARENT_BRIGHT = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+    public static final Color BG_SEMI_TRANSPARENT = new Color(0.0f, 0.0f, 0.0f, 0.05f);
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3

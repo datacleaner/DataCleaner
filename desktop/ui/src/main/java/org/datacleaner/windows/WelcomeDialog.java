@@ -59,7 +59,7 @@ public class WelcomeDialog extends JDialog {
 
         final ImageManager imageManager = ImageManager.get();
 
-        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon(IconUtils.ACTION_EXECUTE,
+        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon(IconUtils.ACTION_FORWARD,
                 IconUtils.ICON_SIZE_MEDIUM));
         closeButton.addActionListener(new ActionListener() {
             @Override

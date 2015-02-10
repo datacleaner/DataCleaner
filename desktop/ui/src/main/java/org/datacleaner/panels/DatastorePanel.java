@@ -30,9 +30,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -106,7 +103,7 @@ public class DatastorePanel extends DCPanel {
     public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
             DatastoreManagementPanel datastoreListPanel, WindowContext windowContext, UserPreferences userPreferences,
             InjectorBuilder injectorBuilder) {
-        super(WidgetUtils.BG_COLOR_DARK);
+        super(WidgetUtils.BG_COLOR_BRIGHT);
         _datastore = datastore;
         _datastoreCatalog = datastoreCatalog;
         _datastoreListPanel = datastoreListPanel;
@@ -136,7 +133,7 @@ public class DatastorePanel extends DCPanel {
         });
 
         final String datastoreName = datastore.getName();
-        final DCLabel datastoreNameLabel = DCLabel.bright("<html><b>" + datastoreName + "</b><br/>" + description
+        final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description
                 + "</html>");
         datastoreNameLabel.setIconTextGap(10);
         datastoreNameLabel.setIcon(icon);
@@ -355,8 +352,7 @@ public class DatastorePanel extends DCPanel {
     }
 
     private JButton createSmallButton(String imagePath) {
-        final JButton smallButton = WidgetFactory.createDarkButton(null, imagePath);
-        smallButton.setBorder(new CompoundBorder(new LineBorder(WidgetUtils.BG_COLOR_LESS_DARK), new EmptyBorder(2, 4, 2, 4)));
+        final JButton smallButton = WidgetFactory.createDefaultButton(null, imagePath);
         return smallButton;
     }
 

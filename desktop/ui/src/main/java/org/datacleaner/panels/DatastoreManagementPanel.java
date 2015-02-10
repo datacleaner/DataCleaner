@@ -36,6 +36,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -117,7 +118,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private static final ImageManager imageManager = ImageManager.get();
 
     private final MutableDatastoreCatalog _datastoreCatalog;
-    private final AnalysisJobBuilderWindow _analysisJobBuilderWindow;
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final List<DatastorePanel> _datastorePanels;
@@ -132,11 +132,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
             Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
-        super();
+        super(analysisJobBuilderWindow);
 
         _datastorePanels = new ArrayList<DatastorePanel>();
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
-        _analysisJobBuilderWindow = analysisJobBuilderWindow;
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
         _injectorBuilder = injectorBuilder;
@@ -156,7 +155,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                         // issues apparent early
                         try (DatastoreConnection datastoreConnection = datastore.openConnection()) {
                             datastoreConnection.getDataContext().getSchemaNames();
-                            _analysisJobBuilderWindow.setDatastore(datastore);
+                            getWindow().setDatastore(datastore);
                         }
                         return;
                     }
@@ -202,13 +201,13 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         setLayout(new BorderLayout());
 
-        final DCLabel titleLabel = createTitleLabel("Datastore Management");
+        final JComponent titleLabel = createTitleLabel("Datastore Management", true);
         add(titleLabel, BorderLayout.NORTH);
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new VerticalLayout(4));
 
-        final DCLabel registerNewDatastoreLabel = DCLabel.bright("Register new:");
+        final DCLabel registerNewDatastoreLabel = DCLabel.dark("Register new:");
         registerNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         _datastoreListPanel = new DCPanel();
@@ -230,8 +229,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         newDatastorePanel.setBorder(new EmptyBorder(10, 10, 10, 0));
         newDatastorePanel.add(registerNewDatastoreLabel, BorderLayout.NORTH);
         newDatastorePanel.add(createNewDatastorePanel(), BorderLayout.CENTER);
-        
-        add(createBackToWelcomeScreenButton(analysisJobBuilderWindow), BorderLayout.WEST);
 
         add(wrapContentInScrollerWithMaxWidth(newDatastorePanel), BorderLayout.SOUTH);
     }
@@ -241,7 +238,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _datastoreListPanel.removeAll();
         _datastorePanels.clear();
 
-        final DCLabel existingDatastoresLabel = DCLabel.bright("Existing datastores:");
+        final DCLabel existingDatastoresLabel = DCLabel.dark("Existing datastores:");
         existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER2);
 
         final DCPanel headerPanel = new DCPanel();
@@ -256,8 +253,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
-            DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-                    _analysisJobBuilderWindow.getWindowContext(), _userPreferences, _injectorBuilder);
+            DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this, getWindow()
+                    .getWindowContext(), _userPreferences, _injectorBuilder);
             _datastorePanels.add(datastorePanel);
             _datastoreListPanel.add(datastorePanel);
 
@@ -399,8 +396,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         compositeMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog,
-                        _analysisJobBuilderWindow.getWindowContext(), _userPreferences);
+                final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog, getWindow()
+                        .getWindowContext(), _userPreferences);
                 dialog.open();
             }
         });

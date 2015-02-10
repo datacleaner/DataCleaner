@@ -88,10 +88,9 @@ public class AddDatastorePanel extends DCPanel {
         c.fill = GridBagConstraints.BOTH;
         add(_dropzone, c);
 
-        final PopupButton databaseButton = WidgetFactory.createDarkPopupButton("Database",
+        final PopupButton databaseButton = WidgetFactory.createDefaultPopupButton("Database",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
-        databaseButton.setBorder(WidgetUtils.BORDER_BUTTON_DARK_WITH_LINE);
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
             databaseButton.getMenu().add(
@@ -138,9 +137,8 @@ public class AddDatastorePanel extends DCPanel {
                 createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                         IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
 
-        final PopupButton cloudButton = WidgetFactory.createDarkPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
+        final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
         cloudButton.setFont(WidgetUtils.FONT_HEADER2);
-        cloudButton.setBorder(WidgetUtils.BORDER_BUTTON_DARK_WITH_LINE);
 
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
 

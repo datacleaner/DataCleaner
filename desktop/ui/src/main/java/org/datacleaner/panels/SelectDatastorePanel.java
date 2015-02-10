@@ -46,13 +46,14 @@ public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChan
     public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane,
             InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
             MutableDatastoreCatalog datastoreCatalog, UserPreferences userPreferences, DatastoreSelectedListener datastoreSelectListener) {
+        super(window);
         _datastoreCatalog = datastoreCatalog;
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new VerticalLayout());
 
         containerPanel.add(Box.createVerticalStrut(20));
 
-        final DCLabel newDatastoreLabel = DCLabel.bright("Use new datastore");
+        final DCLabel newDatastoreLabel = DCLabel.dark("Use new datastore");
         newDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
         containerPanel.add(newDatastoreLabel);
 
@@ -61,7 +62,7 @@ public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChan
 
         containerPanel.add(Box.createVerticalStrut(20));
 
-        final DCLabel existingDatastoreLabel = DCLabel.bright("Use existing datastore");
+        final DCLabel existingDatastoreLabel = DCLabel.dark("Use existing datastore");
         existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
         containerPanel.add(existingDatastoreLabel);
 
@@ -69,9 +70,8 @@ public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChan
         containerPanel.add(_existingDatastoresPanel);
         setLayout(new BorderLayout());
 
-        add(createTitleLabel("Select datastore"), BorderLayout.NORTH);
+        add(createTitleLabel("Select datastore", true), BorderLayout.NORTH);
         add(wrapContentInScrollerWithMaxWidth(containerPanel), BorderLayout.CENTER);
-        add(createBackToWelcomeScreenButton(window), BorderLayout.WEST);
     }
 
     public void updateDatastores() {

@@ -38,8 +38,8 @@ import org.datacleaner.widgets.DCLabel;
 
 public class DetailedListItemPanel extends DCPanel {
 
-    private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_BRIGHTEST;
+    private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_MEDIUM;
+    private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_DARK;
 
     private static final long serialVersionUID = 1L;
 
@@ -48,7 +48,7 @@ public class DetailedListItemPanel extends DCPanel {
     }
 
     public DetailedListItemPanel(final Icon icon, final String title, final String body) {
-        super(WidgetUtils.BG_SEMI_TRANSPARENT_BRIGHT);
+        super(WidgetUtils.BG_SEMI_TRANSPARENT);
         setLayout(new GridBagLayout());
         setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
 

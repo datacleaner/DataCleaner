@@ -119,13 +119,18 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
             oos = new ObjectOutputStream(new FileOutputStream(file));
 
-            Set<Entry<R, Integer>> entries = _buffer.entrySet();
-            for (Entry<R, Integer> entry : entries) {
+            final List<Entry<R, Integer>> copyOfEntries;
+            synchronized (this) {
+                final Set<Entry<R, Integer>> entries = _buffer.entrySet();
+                copyOfEntries = new ArrayList<>(entries);
+                _buffer.clear();
+                _tempFiles.add(file);
+            }
+
+            for (Entry<R, Integer> entry : copyOfEntries) {
                 oos.writeObject(entry.getKey());
                 oos.writeInt(entry.getValue());
             }
-            _buffer.clear();
-            _tempFiles.add(file);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } finally {

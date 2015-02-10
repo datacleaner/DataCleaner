@@ -25,6 +25,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CsvDatastore;
@@ -91,11 +92,14 @@ public class DatastoreCreationUtil {
     }
 
     public static Datastore createDatastoreFromEnum(FileDatastoreEnum fileDatastore, File file, String datastoreName) {
-        String filename = file.getAbsolutePath();
+        final String filename = file.getAbsolutePath();
+        final FileResource resource = new FileResource(file);
 
         switch (fileDatastore) {
         case CSV:
-            return new CsvDatastore(datastoreName, new FileResource(file));
+            final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
+            final CsvConfiguration csvConfiguration = detection.suggestCsvConfiguration();
+            return new CsvDatastore(datastoreName, resource, csvConfiguration);
         case EXCEL:
             return new ExcelDatastore(datastoreName, new FileResource(filename), filename);
         case ACCESS:
@@ -105,7 +109,7 @@ public class DatastoreCreationUtil {
         case DBASE:
             return new DbaseDatastore(datastoreName, filename);
         case JSON:
-            return new JsonDatastore(datastoreName, new FileResource(file));
+            return new JsonDatastore(datastoreName, resource);
         case OPENOFFICE:
             return new OdbDatastore(datastoreName, filename);
         case XML:

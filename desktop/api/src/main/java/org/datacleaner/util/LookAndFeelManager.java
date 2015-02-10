@@ -19,6 +19,7 @@
  */
 package org.datacleaner.util;
 
+import java.awt.Color;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -29,7 +30,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
 import org.datacleaner.widgets.DCComboBoxUI;
@@ -106,19 +106,12 @@ public final class LookAndFeelManager {
         PopupFactory.setSharedInstance(new DCPopupFactory());
 
         EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
-        LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
         UIManager.put("ScrollPane.border", emptyBorder);
 
         // OptionPane background and Panel background are linked because the
         // JOptionPane features unstyleable and opaque Panels.
         UIManager.put("OptionPane.background", WidgetUtils.COLOR_WELL_BACKGROUND);
         UIManager.put("Panel.background", WidgetUtils.COLOR_WELL_BACKGROUND);
-
-        UIManager.put("Menu.border", borderDarkest3);
-        UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
 
         UIManager.put("List.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
         UIManager.put("List.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
@@ -136,21 +129,28 @@ public final class LookAndFeelManager {
         UIManager.put("SplitPane.border", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("SplitPaneDivider.border", new EmptyBorder(0, 0, 0, 0));
 
+        final Color menuBackground = WidgetUtils.BG_COLOR_LESS_BRIGHT;
+        UIManager.put("PopupMenu.background", menuBackground);
+        UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("PopupMenu.border", emptyBorder);
-        UIManager.put("PopupMenu.background", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-        UIManager.put("MenuItem.border", borderDarkest3);
-        UIManager.put("MenuItem.background", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("Menu.background", menuBackground);
+        UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("Menu.border", WidgetUtils.BORDER_MENU_ITEM);
+        UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_DARKEST);
+        UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_MEDIUM);
+        UIManager.put("MenuItem.background", menuBackground);
+        UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("MenuItem.border", WidgetUtils.BORDER_MENU_ITEM);
+        UIManager.put("MenuBar.background", menuBackground);
+        UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_DARK);
         UIManager.put("MenuBar.border", emptyBorder);
-        UIManager.put("MenuBar.background", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
 
         // separator styling
-        UIManager.put("Separator.background", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("Separator.foreground", WidgetUtils.BG_COLOR_MEDIUM);
-        UIManager.put("Separator.highlight", WidgetUtils.BG_COLOR_DARKEST);
-        UIManager.put("Separator.shadow", WidgetUtils.BG_COLOR_DARKEST);
+        final Color separatorColor = WidgetUtils.slightlyDarker(menuBackground);
+        UIManager.put("Separator.background", separatorColor);
+        UIManager.put("Separator.foreground", separatorColor);
+        UIManager.put("Separator.highlight", separatorColor);
+        UIManager.put("Separator.shadow", separatorColor);
 
         // white background for input components
         UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);

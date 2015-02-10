@@ -191,6 +191,8 @@ public final class WidgetUtils {
                     BORDER_WIDE_WIDTH - 1, 9));
     public static final Border BORDER_BUTTON_PRIMARY = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
 
+    public static final Object BORDER_MENU_ITEM = new EmptyBorder(2, 2, 2, 2);
+
     /**
      * A highlighter for coloring odd/even rows in a table
      */
@@ -516,7 +518,7 @@ public final class WidgetUtils {
         } else {
             outline = true;
         }
-        
+
         return decorateWithShadow(comp, outline, 4);
     }
 
@@ -595,7 +597,7 @@ public final class WidgetUtils {
     public static void setPrimaryButtonStyle(AbstractButton b) {
         b.setUI(PrimaryButtonUI.get());
     }
-    
+
     public static void setDarkButtonStyle(AbstractButton b) {
         if (b instanceof JToggleButton) {
             b.setUI(DarkToggleButtonUI.get());

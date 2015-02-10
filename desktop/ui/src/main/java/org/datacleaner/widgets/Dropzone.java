@@ -46,6 +46,7 @@ import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
+import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -106,6 +107,9 @@ public class Dropzone extends DCPanel {
 
     protected void showFileChooser() {
         final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getOpenDatastoreDirectory());
+        fileChooser.addChoosableFileFilter(FileFilters.ALL);
+        fileChooser.setFileFilter(FileFilters.allDataFiles());
+
         final int result = fileChooser.showOpenDialog(Dropzone.this);
         if (result == JFileChooser.APPROVE_OPTION) {
             final File file = fileChooser.getSelectedFile();
@@ -114,7 +118,7 @@ public class Dropzone extends DCPanel {
                 final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
                         _datastoreCatalog, file);
                 _datastoreSelectListener.datastoreSelected(datastore);
-                
+
                 final File directory;
                 if (file.isFile()) {
                     directory = file.getParentFile();

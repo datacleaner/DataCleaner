@@ -48,9 +48,11 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
@@ -59,6 +61,7 @@ import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.GraphUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
@@ -251,9 +254,9 @@ public final class JobGraph {
                     return;
                 }
 
-                final String title;
-                final String subTitle;
-                final String imagePath;
+                String title;
+                String subTitle;
+                String imagePath;
 
                 g.setColor(WidgetUtils.BG_COLOR_MEDIUM);
                 if (_analysisJobBuilder.getSourceColumns().size() == 0) {
@@ -281,6 +284,31 @@ public final class JobGraph {
                     title = null;
                     subTitle = null;
                     imagePath = null;
+
+                    try {
+                        if (!_analysisJobBuilder.isConfigured(true)) {
+                            title = "Configure the job ...";
+                            subTitle = "Job is not correctly configured";
+                            imagePath = "images/window/canvas-bg-error.png";
+                        }
+                    } catch (Exception ex) {
+                        logger.debug("Job not correctly configured", ex);
+                        final String errorMessage;
+                        if (ex instanceof UnconfiguredConfiguredPropertyException) {
+                            UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
+                            ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
+                                    .getConfiguredProperty();
+                            ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
+                                    .getComponentBuilder();
+                            title = "Configure " + "'" + LabelUtils.getLabel(componentBuilder) + "' ...";
+                            errorMessage = "Please set '" + configuredProperty.getName() + "' to continue";
+                        } else {
+                            title = "Something went wrong ...";
+                            errorMessage = ex.getMessage();
+                        }
+                        subTitle = errorMessage;
+                        imagePath = "images/window/canvas-bg-error.png";
+                    }
                 }
 
                 final int yOffset = size.height - 150;

@@ -287,9 +287,9 @@ public final class JobGraph {
 
                     try {
                         if (!_analysisJobBuilder.isConfigured(true)) {
-                            title="Configure the job ..."; 
+                            title = "Configure the job ...";
                             subTitle = "Job is not correctly configured";
-                            imagePath="images/window/canvas-bg-error.png"; 
+                            imagePath = "images/window/canvas-bg-error.png";
                         }
                     } catch (Exception ex) {
                         logger.debug("Job not correctly configured", ex);
@@ -300,15 +300,15 @@ public final class JobGraph {
                                     .getConfiguredProperty();
                             ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
                                     .getComponentBuilder();
-                            title="Configure the component " + "'" + LabelUtils.getLabel(componentBuilder) + "' ..."; 
-                            errorMessage = "Please set '" + configuredProperty.getName() + "' in "
-                                    + "'" + LabelUtils.getLabel(componentBuilder) + "'" + " to continue";
+                            title = "Configure the component " + "'" + LabelUtils.getLabel(componentBuilder) + "' ...";
+                            errorMessage = "Please set '" + configuredProperty.getName() + "' in " + "'"
+                                    + LabelUtils.getLabel(componentBuilder) + "'" + " to continue";
                         } else {
-                            title="Something went wrong ..."; 
+                            title = "Something went wrong ...";
                             errorMessage = ex.getMessage();
                         }
                         subTitle = errorMessage;
-                        imagePath="images/window/canvas-bg-error.png"; 
+                        imagePath = "images/window/canvas-bg-error.png";
                     }
                 }
 

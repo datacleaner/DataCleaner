@@ -63,9 +63,9 @@ import org.datacleaner.descriptors.TransformerDescriptor;
  */
 public final class IconUtils {
 
-    public static int ICON_SIZE_LARGE = 32;
-    public static int ICON_SIZE_MEDIUM = 22;
-    public static int ICON_SIZE_SMALL = 16;
+    public static final int ICON_SIZE_LARGE = 32;
+    public static final int ICON_SIZE_MEDIUM = 22;
+    public static final int ICON_SIZE_SMALL = 16;
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
@@ -87,7 +87,7 @@ public final class IconUtils {
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
-    public static final String ACTION_EXECUTE = "images/actions/execute.png";
+    public static final String ACTION_EXECUTE = "images/menu/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
     public static final String ACTION_SAVE = "images/actions/save.png";
     public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
@@ -137,6 +137,7 @@ public final class IconUtils {
     public static final String STRING_PATTERN_REGEX_IMAGEPATH = "images/model/stringpattern_regex.png";
     public static final String STRING_PATTERN_REGEXSWAP_IMAGEPATH = "images/model/stringpattern_regexswap.png";
 
+    public static final String CLOUD_IMAGEPATH = "images/datastore-types/cloud.png";
     public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
     public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
     public static final String XML_IMAGEPATH = "images/datastore-types/xml.png";

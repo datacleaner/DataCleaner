@@ -113,9 +113,9 @@ public final class WidgetUtils {
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
     }
 
-    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(18f);
-    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(16f);
-    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(13f);
+    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(20f);
+    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(17f);
+    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(15f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
@@ -130,6 +130,9 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 168, 0);
     public static final Color BG_COLOR_ORANGE_BRIGHT = slightlyBrighter(BG_COLOR_ORANGE_MEDIUM);
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
+
+    // white with 10% alpha/opacity
+    public static final Color BG_SEMI_TRANSPARENT = new Color(0.0f, 0.0f, 0.0f, 0.05f);
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
@@ -182,10 +185,23 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM = new CompoundBorder(new MatteBorder(0, 3, 0, 0, BG_COLOR_BLUE_MEDIUM),
             new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT));
+
+    public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
+            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+    
+    public static final Border BORDER_LIST_ITEM_SUBTLE = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
+            BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+
     public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
     public static final Border BORDER_INPUT = new CompoundBorder(BORDER_THIN, BORDER_EMPTY);
 
     public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
+
+    public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
+    
+    public static final Border BORDER_BUTTON_DARK_WITH_LINE = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1, false),
+            new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
+
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
                     BORDER_WIDE_WIDTH - 1, 9));
@@ -423,6 +439,7 @@ public final class WidgetUtils {
         if (comp != null) {
             scroll.setViewportView(comp);
         }
+        scroll.getVerticalScrollBar().setUnitIncrement(20);
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         return scroll;

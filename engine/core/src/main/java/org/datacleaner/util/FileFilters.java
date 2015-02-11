@@ -88,4 +88,8 @@ public final class FileFilters {
             "Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
     public static final ExtensionFilter ANALYSIS_EXECUTION_LOG_XML = new ExtensionFilter(
             "Analysis job execution log (.analysis.execution.log.xml)", ".analysis.execution.log.xml");
+
+    public static FileFilter allDataFiles() {
+        return combined("All data files", CSV, TSV, DAT, TXT, XLS, XLSX, MDB, ACCDB, DBF, ODB, XML, JSON);
+    }
 }

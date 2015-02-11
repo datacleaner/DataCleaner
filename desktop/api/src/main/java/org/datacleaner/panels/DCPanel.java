@@ -27,6 +27,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -35,6 +36,10 @@ import javax.swing.border.TitledBorder;
 
 import org.datacleaner.widgets.Alignment;
 
+/**
+ * Useful extension of {@link JPanel} which provides utility methods, background
+ * image rendering and coloring.
+ */
 public class DCPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -129,6 +134,8 @@ public class DCPanel extends JPanel {
         super();
         if (topColor == null || bottomColor == null) {
             setOpaque(false);
+        } else if (topColor.getAlpha() < 255) {
+            setOpaque(false);
         } else {
             setOpaque(true);
         }
@@ -149,36 +156,47 @@ public class DCPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (isOpaque()) {
-            // int x = getX();
-            // int y = getY();
-
-            int x = 0;
-            int y = 0;
-
-            if (_topColor == null || _bottomColor == null) {
-                super.paintComponent(g);
-            } else {
-                GradientPaint paint = new GradientPaint(x, y, _topColor, x, getHeight(), _bottomColor);
-                if (g instanceof Graphics2D) {
-                    Graphics2D g2d = (Graphics2D) g;
-                    g2d.setPaint(paint);
-                } else {
-                    g.setColor(_bottomColor);
-                }
-                g.fillRect(x, y, getWidth(), getHeight());
+        if (_topColor != null) {
+            if (isOpaque()) {
+                paintPanelBackgroundColor(g);
+            } else if (_topColor.getAlpha() < 255) {
+                paintPanelBackgroundColor(g);
             }
+        } else {
+            super.paintComponent(g);
         }
 
         if (_watermark != null) {
-            int x = getWidth() - _imageWidth;
-            x = (int) (x * _horizontalAlignment);
-
-            int y = getHeight() - _imageHeight;
-            y = (int) (y * _verticalAlignment);
-
-            g.drawImage(_watermark, x, y, this);
+            paintPanelBackgroundImage(g, _watermark, _imageWidth, _imageHeight, _horizontalAlignment,
+                    _verticalAlignment);
         }
+    }
+
+    protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
+            float horizontalAlignment, float verticalAlignment) {
+        int x = getWidth() - imageWidth;
+        x = (int) (x * horizontalAlignment);
+
+        int y = getHeight() - imageHeight;
+        y = (int) (y * verticalAlignment);
+
+        g.drawImage(watermark, x, y, imageWidth, imageHeight, this);
+    }
+
+    protected void paintPanelBackgroundColor(Graphics g) {
+        Paint paint;
+        if (_topColor == _bottomColor || _bottomColor == null) {
+            paint = _topColor;
+        } else {
+            paint = new GradientPaint(0, 0, _topColor, 0, getHeight(), _bottomColor);
+        }
+        if (g instanceof Graphics2D) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setPaint(paint);
+        } else {
+            g.setColor(_topColor);
+        }
+        g.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public DCPanel setPreferredSize(int width, int height) {

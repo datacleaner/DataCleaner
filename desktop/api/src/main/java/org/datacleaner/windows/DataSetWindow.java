@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
@@ -78,6 +79,7 @@ public class DataSetWindow extends AbstractWindow {
         _previousPageButton = WidgetFactory.createDefaultButton("Previous page", IconUtils.ACTION_BACK);
         _previousPageButton.setEnabled(false);
         _nextPageButton = WidgetFactory.createDefaultButton("Next page", IconUtils.ACTION_FORWARD);
+        _nextPageButton.setHorizontalTextPosition(SwingConstants.LEFT);
         _nextPageButton.setEnabled(false);
     }
 

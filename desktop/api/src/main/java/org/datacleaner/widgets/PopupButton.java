@@ -51,20 +51,31 @@ import org.datacleaner.util.LookAndFeelManager;
 public class PopupButton extends JToggleButton {
 
     private static final long serialVersionUID = 1L;
+
+    public static enum MenuPosition {
+        TOP, BOTTOM, LEFT, RIGHT;
+    }
+
     private final JPopupMenu popupMenu = new JPopupMenu();
+    private MenuPosition menuPosition;
 
     public PopupButton(String text) {
         this(text, null);
     }
 
     public PopupButton(String text, Icon icon) {
+        this(text, icon, MenuPosition.BOTTOM);
+    }
+
+    public PopupButton(String text, Icon icon, MenuPosition position) {
         super(text, icon);
+        this.menuPosition = position;
 
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isSelected()) {
-                    popupMenu.show(PopupButton.this, 0, getHeight());
+                    showPopup(popupMenu);
                 }
             }
         });
@@ -93,6 +104,47 @@ public class PopupButton extends JToggleButton {
                 }
             }
         });
+    }
+
+    public void setMenuPosition(MenuPosition menuPosition) {
+        this.menuPosition = menuPosition;
+    }
+
+    public MenuPosition getMenuPosition() {
+        return menuPosition;
+    }
+
+    protected void showPopup(JPopupMenu menu) {
+        if (menuPosition == null) {
+            menuPosition = MenuPosition.BOTTOM;
+        }
+        
+        final int x;
+        final int y;
+        switch (menuPosition) {
+        case BOTTOM:
+            x = 0;
+            y = getHeight();
+            break;
+        case TOP:
+            // hack to trigger menu.getHeight() to return non-0 value
+            menu.show(this, 0, 0);
+            x = 0;
+            y = menu.getHeight() * -1;
+            break;
+        case LEFT:
+            // hack to trigger menu.getWidth() to return non-0 value
+            x = menu.getWidth() * -1;
+            y = 0;
+            break;
+        case RIGHT:
+            x = getWidth();
+            y = 0;
+            break;
+        default:
+            throw new UnsupportedOperationException("Unsupported position: " + menuPosition);
+        }
+        menu.show(this, x, y);
     }
 
     public JPopupMenu getMenu() {

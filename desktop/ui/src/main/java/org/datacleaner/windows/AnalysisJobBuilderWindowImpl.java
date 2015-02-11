@@ -20,6 +20,7 @@
 package org.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -94,10 +95,14 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.datacleaner.panels.SchemaTreePanel;
+import org.datacleaner.panels.SelectDatastorePanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
+import org.datacleaner.user.DatastoreSelectedListener;
+import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -128,7 +133,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        WindowListener {
+        DatastoreSelectedListener, WindowListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -159,6 +164,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final Provider<OptionsDialog> _optionsDialogProvider;
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
+    private final DatastoreManagementPanel _datastoreManagementPanel;
+    private final SelectDatastorePanel _selectDatastorePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
@@ -174,6 +181,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private boolean _datastoreSelectionEnabled;
     private JComponent _windowContent;
     private WindowSizePreferences _windowSizePreference;
+    private AnalysisWindowPanelType _currentPanelType;
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
@@ -199,8 +207,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
-        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(),
-                DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(), DEFAULT_WINDOW_WIDTH,
+                DEFAULT_WINDOW_HEIGHT);
 
         if (analysisJobBuilder == null) {
             _analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -230,17 +238,23 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 
-        _welcomePanel = new WelcomePanel(configuration, this, _glassPane, optionsDialogProvider, injectorBuilder,
-                openAnalysisJobActionListener, databaseDriverCatalog, userPreferences);
-        _welcomePanel.setBorder(new EmptyBorder(4, 4, 0, 20));
+        _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
+                _injectorBuilder);
+
+        _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
+                _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
+        _selectDatastorePanel = new SelectDatastorePanel(this, _glassPane, injectorBuilder, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences, this);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
 
         _contentContainerPanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        _contentContainerPanel.setLayout(new BorderLayout());
-        _contentContainerPanel.add(_welcomePanel, BorderLayout.NORTH);
-        _contentContainerPanel.add(_editingContentView, BorderLayout.CENTER);
+        _contentContainerPanel.setLayout(new CardLayout());
+        _contentContainerPanel.add(_welcomePanel, AnalysisWindowPanelType.WELCOME.getName());
+        _contentContainerPanel.add(_editingContentView, AnalysisWindowPanelType.EDITING_CONTEXT.getName());
+        _contentContainerPanel.add(_datastoreManagementPanel, AnalysisWindowPanelType.MANAGE_DS.getName());
+        _contentContainerPanel.add(_selectDatastorePanel, AnalysisWindowPanelType.SELECT_DS.getName());
 
         final boolean graphPreferred = isGraphPreferred();
 
@@ -296,6 +310,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     }
 
+    @Override
+    public void changePanel(AnalysisWindowPanelType panel) {
+        if (_datastore == null) {
+            _currentPanelType = panel;
+        } else {
+            _currentPanelType = AnalysisWindowPanelType.EDITING_CONTEXT;
+        }
+        updateCurrentPanel();
+    }
+
+    private void updateCurrentPanel() {
+        ((CardLayout) _contentContainerPanel.getLayout()).show(_contentContainerPanel, _currentPanelType.getName());
+        updateLeftPanelVisibility(_currentPanelType == AnalysisWindowPanelType.EDITING_CONTEXT);
+        updateWindowTitle();
+    }
+
     private boolean isGraphPreferred() {
         final Map<String, String> additionalProperties = _userPreferences.getAdditionalProperties();
         final String property = additionalProperties.get(USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE);
@@ -330,7 +360,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         } else {
             button.setBorder(new EmptyBorder(10, 4, 10, 4));
         }
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         WidgetUtils.setDarkButtonStyle(button);
         if (popupDescription != null) {
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
@@ -386,44 +415,32 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         if (datastore == null) {
             _analysisJobBuilder.reset();
-            displayWelcomeView();
+            changePanel(AnalysisWindowPanelType.WELCOME);
         } else {
-            displayEditingView();
+            changePanel(AnalysisWindowPanelType.EDITING_CONTEXT);
         }
 
         updateStatusLabel();
     }
 
-    private void displayEditingView() {
-        _leftPanel.setVisible(true);
-        if (_leftPanel.isCollapsed()) {
-            _leftPanel.setCollapsed(false);
-        }
-
-        _welcomePanel.setVisible(false);
-        _editingContentView.setVisible(true);
-    }
-
-    private void displayWelcomeView() {
-        if (isShowing()) {
-            if (_datastore == null) {
-                if (!_leftPanel.isCollapsed()) {
-                    _leftPanel.setCollapsed(true);
-                }
-                final Timer timer = new Timer(500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        _leftPanel.setVisible(false);
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
-
-                _welcomePanel.requestSearchFieldFocus();
-
-                _editingContentView.setVisible(false);
-                _welcomePanel.setVisible(true);
+    private void updateLeftPanelVisibility(boolean show) {
+        if (show) {
+            _leftPanel.setVisible(true);
+            if (_leftPanel.isCollapsed()) {
+                _leftPanel.setCollapsed(false);
             }
+        } else {
+            if (!_leftPanel.isCollapsed()) {
+                _leftPanel.setCollapsed(true);
+            }
+            final Timer timer = new Timer(500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _leftPanel.setVisible(false);
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
     }
 
@@ -456,7 +473,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     protected void onWindowVisible() {
-        displayWelcomeView();
+        changePanel(AnalysisWindowPanelType.WELCOME);
     }
 
     public void updateStatusLabel() {
@@ -535,63 +552,56 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             return false;
         }
 
-        final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
-
-        final boolean windowClosing;
-        final boolean exit;
-
-        if (count == 1) {
-            // if this is the last workspace window
-            if (isDatastoreSet() && isDatastoreSelectionEnabled()) {
-                // if datastore is set and datastore selection is enabled,
-                // return to datastore selection.
-
-                if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
-
-                    Object[] buttons = { "Save changes", "Discard changes", "Cancel closing" };
-                    int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
-                            "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[2]);
-
-                    if (unsavedChangesChoice == 0) { // save changes
-                        _saveButton.doClick();
-                    } else if (unsavedChangesChoice == 2) { // cancel closing
-                        return false;
-                    }
+        switch (_currentPanelType) {
+        case WELCOME:
+            final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
+            if (count == 1) {
+                if (getWindowContext().showExitDialog()) {
+                    cleanupForWindowClose();
+                    getWindowContext().exit();
                 }
-
-                resetJob();
-                exit = false;
-                windowClosing = false;
             } else {
-                // if datastore is not set, show exit dialog
-                exit = getWindowContext().showExitDialog();
-                windowClosing = exit;
+                cleanupForWindowClose();
+                return true;
             }
-        } else {
-            // if there are more workspace windows, simply close the window
-            exit = false;
-            windowClosing = true;
+            break;
+        case EDITING_CONTEXT:
+            // if datastore is set and datastore selection is enabled,
+            // return to datastore selection.
+
+            if (isJobUnsaved(getJobFile(), _analysisJobBuilder) && (_saveButton.isEnabled())) {
+
+                final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
+                final int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
+                        "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[2]);
+
+                if (unsavedChangesChoice == 0) { // save changes
+                    _saveButton.doClick();
+                } else if (unsavedChangesChoice == 2) { // cancel closing
+                    return false;
+                }
+            }
+
+            resetJob();
+            break;
+        default:
+            changePanel(AnalysisWindowPanelType.WELCOME);
         }
 
-        if (windowClosing) {
-            _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-            _analysisJobBuilder.getTransformerChangeListeners().remove(this);
-            _analysisJobBuilder.getFilterChangeListeners().remove(this);
-            _analysisJobBuilder.getSourceColumnListeners().remove(this);
-            _analysisJobBuilder.close();
-            if (_datastoreConnection != null) {
-                _datastoreConnection.close();
-            }
-            getContentPane().removeAll();
-        }
+        return false;
+    }
 
-        if (exit) {
-            // trigger removeAll() to make sure removeNotify() methods are
-            // invoked.
-            getWindowContext().exit();
+    private void cleanupForWindowClose() {
+        _analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
+        _analysisJobBuilder.getFilterChangeListeners().remove(this);
+        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        _analysisJobBuilder.close();
+        if (_datastoreConnection != null) {
+            _datastoreConnection.close();
         }
-        return windowClosing;
+        getContentPane().removeAll();
     }
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
@@ -613,16 +623,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             if (jobFile.length() == 0) {
                 return true;
             }
-            
+
             String lastSavedJob = FileHelper.readFileAsString(jobFile);
-            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
+            String lastSavedJobNoMetadata = lastSavedJob.replaceAll("\n", "").replaceAll(
+                    "<job-metadata>.*</job-metadata>", "");
 
             JaxbJobWriter writer = new JaxbJobWriter(_configuration);
             currentOutputStream = new ByteArrayOutputStream();
             writer.write(_analysisJobBuilder.toAnalysisJob(false), currentOutputStream);
             String currentJob = new String(currentOutputStream.toByteArray());
-            String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>", "");
-            
+            String currentJobNoMetadata = currentJob.replaceAll("\n", "").replaceAll("<job-metadata>.*</job-metadata>",
+                    "");
+
             return !currentJobNoMetadata.equals(lastSavedJobNoMetadata);
         } catch (FileSystemException e) {
             throw new IllegalStateException(e);
@@ -650,7 +662,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public String getWindowTitle() {
-        String title = "Analysis job";
+        String title;
+        if (_currentPanelType != null) {
+            title = _currentPanelType.getName();
+        } else {
+            title = AnalysisWindowPanelType.WELCOME.getName();
+        }
+
         if (_datastore != null) {
             String datastoreName = _datastore.getName();
             if (!StringUtils.isNullOrEmpty(datastoreName)) {
@@ -786,12 +804,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
             DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
                     IconUtils.getComponentSuperCategoryIcon(superCategory));
-            
+
             popupBubble.attachTo(popupButton, new DCPopupBubble.PopupCallback() {
                 @Override
                 public boolean onBeforeShow() {
-                    for(PopupButton scButton : _superCategoryButtons) {
-                        if(scButton.isSelected()){
+                    for (PopupButton scButton : _superCategoryButtons) {
+                        if (scButton.isSelected()) {
                             return false;
                         }
                     }
@@ -933,6 +951,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private JToggleButton createViewToggleButton(final String text, final String iconPath) {
         final ImageIcon icon = imageManager.getImageIcon(iconPath);
         final JToggleButton button = new JToggleButton(text, icon);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.setFont(WidgetUtils.FONT_SMALL);
         button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         button.setBackground(WidgetUtils.BG_COLOR_DARK);
@@ -1114,6 +1133,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
+    public void datastoreSelected(Datastore datastore) {
+        setDatastore(datastore);
+    }
+
     public void windowClosed(WindowEvent e) {
         if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
             _windowSizePreference.setUserPreferredSize(null, true);

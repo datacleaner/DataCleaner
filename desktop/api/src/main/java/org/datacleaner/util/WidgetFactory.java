@@ -102,6 +102,12 @@ public final class WidgetFactory {
         return icon;
     }
     
+    public static PopupButton createDarkPopupButton(String text, String imagePath) {
+        PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
+        b.setFocusPainted(false);
+        WidgetUtils.setDarkButtonStyle(b);
+        return b;
+    }
 
     public static PopupButton createDefaultPopupButton(String text, String imagePath) {
         PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
@@ -153,8 +159,6 @@ public final class WidgetFactory {
     public static JButton createDarkButton(String text, Icon icon) {
         final JButton b = createBasicButton(text, icon);
         WidgetUtils.setDarkButtonStyle(b);
-        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
-        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
         return b;
     }
 

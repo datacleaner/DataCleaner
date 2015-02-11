@@ -27,13 +27,13 @@ import javax.swing.JMenuItem;
 
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.panels.WelcomePanel;
+import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
 /**
- * Menu item that represents opening a "recent" job on the {@link WelcomePanel}
+ * Menu item that represents opening a "recent" job on the {@link DatastoreManagementPanel}
  * 's "more jobs" drop down menu.
  */
 public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener {

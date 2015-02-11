@@ -231,6 +231,7 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
+      
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 

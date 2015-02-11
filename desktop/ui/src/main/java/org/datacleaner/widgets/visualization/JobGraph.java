@@ -300,9 +300,8 @@ public final class JobGraph {
                                     .getConfiguredProperty();
                             ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
                                     .getComponentBuilder();
-                            title = "Configure the component " + "'" + LabelUtils.getLabel(componentBuilder) + "' ...";
-                            errorMessage = "Please set '" + configuredProperty.getName() + "' in " + "'"
-                                    + LabelUtils.getLabel(componentBuilder) + "'" + " to continue";
+                            title = "Configure " + "'" + LabelUtils.getLabel(componentBuilder) + "' ...";
+                            errorMessage = "Please set '" + configuredProperty.getName() + "' to continue";
                         } else {
                             title = "Something went wrong ...";
                             errorMessage = ex.getMessage();

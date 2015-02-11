@@ -29,8 +29,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.Timer;
 
 import org.datacleaner.util.WidgetUtils;
@@ -39,27 +38,24 @@ import org.datacleaner.util.WidgetUtils;
  * Encapsulated Swing glass pane, ensures correct access to it.
  */
 public class DCGlassPane {
-
-	private final JFrame _frame;
-	private final JPanel _glassPane;
-	private final JDialog _dialog;
-
+	private final JRootPane _rootPane;
+	private final Container _glassPane;
+	
 	public DCGlassPane(JFrame frame) {
-		_frame = frame;
-		_dialog = null;
-		_glassPane = (JPanel) frame.getGlassPane();
-		_glassPane.setLayout(null);
-		_glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+	    this(frame.getRootPane());
 	}
 
 	public DCGlassPane(JDialog dialog) {
-		_frame = null;
-		_dialog = dialog;
-		_glassPane = (JPanel) dialog.getGlassPane();
-		_glassPane.setLayout(null);
-		_glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+		this(dialog.getRootPane());
 	}
-
+	
+	public DCGlassPane(JRootPane rootpane){
+	    _rootPane = rootpane;
+	    _glassPane = (Container) rootpane.getGlassPane();
+        _glassPane.setLayout(null);
+        _glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+	}
+	
 	public void showTooltip(final JComponent comp, int timeoutMillis) {
 		add(comp);
 
@@ -104,17 +100,7 @@ public class DCGlassPane {
 	}
 
 	private Container getContentPaneInternal() {
-		if (_frame == null) {
-			return _dialog.getContentPane();
-		}
-		return _frame.getContentPane();
-	}
-
-	private JMenuBar getJMenuBarInternal() {
-		if (_frame == null) {
-			return _dialog.getJMenuBar();
-		}
-		return _frame.getJMenuBar();
+	    return _rootPane.getContentPane();
 	}
 
 	public boolean isEmpty() {
@@ -125,10 +111,6 @@ public class DCGlassPane {
 		Point contentPaneLocation = getContentPaneInternal().getLocationOnScreen();
 		int x = contentPaneLocation.x;
 		int y = contentPaneLocation.y;
-		JMenuBar menuBar = getJMenuBarInternal();
-		if (menuBar != null) {
-			y -= menuBar.getHeight();
-		}
 		return new Point(x, y);
 	}
 }

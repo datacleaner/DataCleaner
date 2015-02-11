@@ -63,9 +63,11 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     protected final JLabel _statusLabel;
     private final MutableDatastoreCatalog _mutableDatastoreCatalog;
     private final D _originalDatastore;
+    private D _savedDatastore = null;
     private final JButton _saveButton;
     private final JButton _cancelButton;
     private final UserPreferences _userPreferences;
+    
     protected final DCPanel _outerPanel = new DCPanel();
     
     protected final JXTextField _datastoreNameTextField;
@@ -84,7 +86,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         _saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final Datastore datastore = createDatastore();
+                final Datastore datastore = _savedDatastore = createDatastore();
 
                 if (_originalDatastore != null) {
                     _mutableDatastoreCatalog.removeDatastore(_originalDatastore);
@@ -187,6 +189,10 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         _saveButton.setEnabled(enabled);
     }
 
+    public D getSavedDatastore(){
+        return _savedDatastore;
+    }
+    
     @Override
     public Image getWindowIcon() {
         return imageManager.getImage(getDatastoreIconPath());

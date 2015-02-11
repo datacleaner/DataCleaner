@@ -24,16 +24,22 @@ import org.datacleaner.job.AnalysisJob;
 import com.google.common.base.Strings;
 
 /**
- * Represents commonly referenced system properties which DataCleaner makes
- * use of.
+ * Represents commonly referenced system properties which DataCleaner makes use
+ * of.
  */
 public class SystemProperties {
-    
+
     /**
      * Property which in case of a "true" value makes the UI visible even with
      * command line parameters.
      */
     public static final String UI_VISIBLE = "datacleaner.ui.visible";
+
+    /**
+     * Property which defines which panel to use for the welcome screen of the
+     * desktop UI.
+     */
+    public static final String UI_DESKTOP_WELCOME_PANEL = "datacleaner.ui.desktop.panel";
 
     /**
      * Identifies the name of a client that is embedding datacleaner.

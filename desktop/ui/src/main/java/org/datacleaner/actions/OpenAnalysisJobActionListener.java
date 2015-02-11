@@ -19,7 +19,6 @@
  */
 package org.datacleaner.actions;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -101,7 +100,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_RESULT_SER);
         fileChooser.setFileFilter(FileFilters.combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML,
                 FileFilters.ANALYSIS_RESULT_SER));
-        int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
+        int openFileResult = fileChooser.showOpenDialog(_parentWindow.toComponent());
 
         if (openFileResult == JFileChooser.APPROVE_OPTION) {
             final FileObject file = fileChooser.getSelectedFileObject();

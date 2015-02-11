@@ -56,7 +56,7 @@ public class WelcomeDialog extends JDialog {
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.CENTER);
 
-        final JButton continueButton = WidgetFactory.createPrimaryButton("Continue", IconUtils.ACTION_EXECUTE);
+        final JButton continueButton = WidgetFactory.createDefaultButton("Continue", IconUtils.ACTION_FORWARD);
         continueButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

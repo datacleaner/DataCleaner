@@ -32,11 +32,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LookAndFeelManager;
+import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.HorizontalLayout;
 
@@ -70,8 +73,7 @@ public class ComboButton extends JPanel {
             }
         };
 
-        Border border = new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN);
-
+        final Border border = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1, false);
         setBorder(border);
     }
 
@@ -86,21 +88,22 @@ public class ComboButton extends JPanel {
      * @return
      */
     public AbstractButton addButton(String text, boolean toggleButton) {
-        return addButton(null, text, toggleButton);
+        return addButton(text, (Icon) null, toggleButton);
     }
 
     /**
+     * Adds a button to this {@link ComboButton}
      * 
-     * @param icon
-     *            the icon of the button
      * @param text
      *            the text of the button
+     * @param icon
+     *            the icon of the button
      * @param toggleButton
      *            whether or not this button should be a toggle button (true) or
      *            a regular button (false)
      * @return
      */
-    public AbstractButton addButton(Icon icon, String text, boolean toggleButton) {
+    public AbstractButton addButton(String text, Icon icon, boolean toggleButton) {
         AbstractButton button;
         if (toggleButton) {
             button = new JToggleButton(text, icon);
@@ -108,37 +111,78 @@ public class ComboButton extends JPanel {
         } else {
             button = new JButton(text, icon);
         }
+
+        addButton(button);
+        return button;
+    }
+
+    /**
+     * Adds a button to this {@link ComboButton}. Beware that this method does
+     * change the styling (colors, borders etc.) of the button to make it fit the {@link ComboButton}.
+     * 
+     * @param button
+     */
+    public void addButton(AbstractButton button) {
+        WidgetUtils.setDefaultButtonStyle(button);
+        button.setBorder(new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9, WidgetUtils.BORDER_WIDE_WIDTH - 1, 9));
         button.setOpaque(false);
-        button.setBorderPainted(false);
         _buttons.add(button);
 
         add(button);
+    }
 
-        return button;
+    /**
+     * Gets the currently selected toggle button, if any.
+     * 
+     * @return
+     */
+    public JToggleButton getSelectedToggleButton() {
+        for (AbstractButton button : _buttons) {
+            if (button instanceof JToggleButton) {
+                if (button.isSelected()) {
+                    return (JToggleButton) button;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Adds a button to this {@link ComboButton}
+     * 
+     * @param text
+     *            the text of the button
+     * @param iconImagePath
+     *            the icon path of the button
+     * @param toggleButton
+     *            whether or not this button should be a toggle button (true) or
+     *            a regular button (false)
+     * @return
+     */
+    public AbstractButton addButton(String text, String iconImagePath, boolean toggleButton) {
+        ImageIcon icon = ImageManager.get().getImageIcon(iconImagePath, IconUtils.ICON_SIZE_MEDIUM);
+        return addButton(text, icon, toggleButton);
     }
 
     // a simple test app
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
 
-        ImageIcon icon = ImageManager.get().getImageIcon("images/actions/add.png", 32);
-
         final ComboButton comboButton1 = new ComboButton();
-        comboButton1.addButton(icon, "Foo!", true);
-        comboButton1.addButton("Boo!", true);
+        comboButton1.addButton("Foo!", IconUtils.ACTION_ADD, true);
+        comboButton1.addButton("Boo!", IconUtils.ACTION_REMOVE, true);
 
         final ComboButton comboButton2 = new ComboButton();
-        comboButton1.addButton(icon, "Foo!", false);
-        comboButton1.addButton("Boo!", false);
-        comboButton1.addButton("Mrr!", true);
-        comboButton1.addButton("Rrrh!", true);
+        comboButton2.addButton("Foo!", IconUtils.ACTION_ADD, false);
+        comboButton2.addButton("Boo!", IconUtils.ACTION_REMOVE, false);
+        comboButton2.addButton("Mrr!", IconUtils.ACTION_REFRESH, true);
+        comboButton2.addButton("Rrrh!", IconUtils.ACTION_DRILL_TO_DETAIL, true);
 
-        final DCPanel panel = new DCPanel();
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.add(comboButton1);
-
         panel.add(comboButton2);
 
-        JButton regularButton = new JButton("Regular button");
+        JButton regularButton = WidgetFactory.createDefaultButton("Regular button", IconUtils.ACTION_ADD);
         panel.add(regularButton);
 
         final JFrame frame = new JFrame("test");

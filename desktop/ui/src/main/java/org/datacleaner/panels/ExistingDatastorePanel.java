@@ -55,7 +55,6 @@ public class ExistingDatastorePanel extends DCPanel {
             final DetailedListItemPanel datastorePanel = new DetailedListItemPanel(IconUtils.getDatastoreIcon(
                     datastore, IconUtils.ICON_SIZE_LARGE), "<html><b>" + datastore.getName() + "</b></html>",
                     DatastorePanel.getDescription(datastore));
-
             datastorePanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {

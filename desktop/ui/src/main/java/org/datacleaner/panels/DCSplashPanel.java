@@ -113,7 +113,7 @@ public class DCSplashPanel extends DCPanel {
      * @param panel
      * @return
      */
-    protected JComponent wrapContent(JComponent panel) {
+    protected JScrollPane wrapContent(JComponent panel) {
         panel.setMaximumSize(new Dimension(WIDTH_CONTENT, Integer.MAX_VALUE));
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -130,8 +130,8 @@ public class DCSplashPanel extends DCPanel {
     @Override
     protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
             float horizontalAlignment, float verticalAlignment) {
-        final int minimumImageWidth = 150;
-        final int imageContentOverlap = 100;
+        final int minimumImageWidth = 250;
+        final int imageContentOverlap = 40;
 
         final int panelWidth = getWidth();
         final int availableSpace = panelWidth + imageContentOverlap - WIDTH_CONTENT - MARGIN_LEFT;

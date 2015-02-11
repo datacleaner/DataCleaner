@@ -20,8 +20,11 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.Box;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.datacleaner.connection.Datastore;
@@ -42,36 +45,47 @@ public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChan
 
     private final MutableDatastoreCatalog _datastoreCatalog;
     private final ExistingDatastorePanel _existingDatastoresPanel;
+    private final DCPanel _containerPanel;
 
     public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane,
             InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
-            MutableDatastoreCatalog datastoreCatalog, UserPreferences userPreferences, DatastoreSelectedListener datastoreSelectListener) {
+            MutableDatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
+            DatastoreSelectedListener datastoreSelectListener) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
-        final DCPanel containerPanel = new DCPanel();
-        containerPanel.setLayout(new VerticalLayout());
+        _containerPanel = new DCPanel();
+        _containerPanel.setLayout(new VerticalLayout());
 
-        containerPanel.add(Box.createVerticalStrut(20));
+        _containerPanel.add(Box.createVerticalStrut(20));
 
         final DCLabel newDatastoreLabel = DCLabel.dark("Use new datastore");
         newDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        containerPanel.add(newDatastoreLabel);
+        _containerPanel.add(newDatastoreLabel);
 
-        containerPanel.add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
+        _containerPanel.add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
                 datastoreSelectListener, userPreferences));
 
-        containerPanel.add(Box.createVerticalStrut(20));
+        _containerPanel.add(Box.createVerticalStrut(20));
 
         final DCLabel existingDatastoreLabel = DCLabel.dark("Use existing datastore");
         existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        containerPanel.add(existingDatastoreLabel);
+        _containerPanel.add(existingDatastoreLabel);
 
         _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
-        containerPanel.add(_existingDatastoresPanel);
+        _containerPanel.add(_existingDatastoresPanel);
         setLayout(new BorderLayout());
 
+        final JScrollPane scroll = wrapContent(_containerPanel);
+
         add(createTitleLabel("Select datastore", true), BorderLayout.NORTH);
-        add(wrapContent(containerPanel), BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
+        
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                scroll.getVerticalScrollBar().setValue(0);
+            }
+        });
     }
 
     public void updateDatastores() {

@@ -28,6 +28,7 @@ import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -141,10 +142,13 @@ public final class LabelUtils {
             }
 
             final ComponentRequirement requirement = analyzerJob.getComponentRequirement();
+
             if (includeRequirements && requirement != null) {
-                label.append(" (");
-                label.append(requirement.toString());
-                label.append(")");
+                if (!(requirement instanceof AnyComponentRequirement)) {
+                    label.append(" (");
+                    label.append(requirement.toString());
+                    label.append(")");
+                }
             }
         }
 

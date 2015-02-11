@@ -140,9 +140,7 @@ public final class LabelUtils {
                 }
                 label.append(")");
             }
-
             final ComponentRequirement requirement = analyzerJob.getComponentRequirement();
-
             if (includeRequirements && requirement != null) {
                 if (!(requirement instanceof AnyComponentRequirement)) {
                     label.append(" (");

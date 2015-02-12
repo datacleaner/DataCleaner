@@ -23,6 +23,7 @@ import java.io.File;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
@@ -59,7 +60,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     String sheetName;
 
     @Configured
-    boolean overwriteFileIfExists;
+    boolean overwriteSheetIfExists;
 
     @Override
     public String getSuggestedLabel() {
@@ -75,8 +76,19 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             throw new IllegalStateException("Sheet name cannot contain dots (.)");
         }
 
-        if (file.exists() && !overwriteFileIfExists) {
-            throw new IllegalStateException("The file already exists and the columns selected do not match. Please configure the job to overwrite the existing file.");
+        if (file.exists()) {
+            Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
+            final Schema[] schemas = datastore.openConnection().getDataContext().getSchemas();
+            final String[] tableNames = schemas[1].getTableNames();
+
+            for (int i = 0; i < tableNames.length; i++) {
+                if (tableNames[i].equals(sheetName)) {
+                    if (!overwriteSheetIfExists) {
+                        throw new IllegalStateException("The sheet '" + sheetName
+                                + "' already exists. Please select another sheet name.");
+                    }
+                }
+            }
         }
     }
 
@@ -94,16 +106,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Override
     public OutputWriter createOutputWriter() {
-
-        if (file.exists() && overwriteFileIfExists) {
-            final String pathname = file.getPath();
-            final boolean delete = file.delete();
-            if (delete) {
-                file = new File(pathname);
-            } else {
-                throw new IllegalStateException("The existing file could not be deleted");
-            }
-        }
 
         String[] headers = new String[columns.length];
         for (int i = 0; i < headers.length; i++) {

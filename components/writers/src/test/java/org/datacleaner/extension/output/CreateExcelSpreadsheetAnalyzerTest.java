@@ -19,6 +19,8 @@
  */
 package org.datacleaner.extension.output;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -42,32 +44,45 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
     @Test
     public void testValidateOverwriteFile() throws Exception {
+
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
         analyzer.sheetName = "foo";
-        analyzer.overwriteFileIfExists = false;
+        analyzer.overwriteSheetIfExists = false;
 
         assertNotNull(analyzer.file);
         assertFalse(analyzer.file.exists());
         analyzer.validate();
-        
-        analyzer.overwriteFileIfExists = true;
+
+        analyzer.overwriteSheetIfExists = true;
         analyzer.validate();
         assertFalse(analyzer.file.exists());
 
-        analyzer.file.createNewFile();
+        analyzer.file = new File("src/test/resources/multiple_Sheets.xlsx");
         assertTrue(analyzer.file.exists());
         analyzer.validate();
-        
+
         try {
-            analyzer.overwriteFileIfExists = false;
-            assertFalse(analyzer.overwriteFileIfExists); 
+            analyzer.overwriteSheetIfExists = false;
+            assertFalse(analyzer.overwriteSheetIfExists);
+            analyzer.sheetName = "Sheet1";
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("The file already exists and the columns selected do not match. Please configure the job to overwrite the existing file.", e.getMessage());
-        }finally{
-            analyzer.file.delete(); 
+            assertEquals("The sheet 'Sheet1' already exists. Please select another sheet name.", e.getMessage());
         }
+
+        analyzer.overwriteSheetIfExists = true;
+        assertTrue(analyzer.overwriteSheetIfExists);
+        analyzer.sheetName = "Sheet1";
+        analyzer.validate();
+
+        analyzer.sheetName = "Bar";
+        assertTrue(analyzer.overwriteSheetIfExists);
+        analyzer.validate();
+
+        analyzer.overwriteSheetIfExists = false;
+        assertFalse(analyzer.overwriteSheetIfExists);
+        analyzer.validate();
     }
 }

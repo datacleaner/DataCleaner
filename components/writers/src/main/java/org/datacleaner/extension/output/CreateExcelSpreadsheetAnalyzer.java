@@ -24,10 +24,8 @@ import java.io.File;
 import javax.inject.Named;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.drop.DropTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.Alias;
@@ -43,6 +41,7 @@ import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
 import org.datacleaner.components.categories.WriteSuperCategory;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.descriptors.FilterDescriptor;
@@ -84,13 +83,14 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
         if (file.exists()) {
             Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
-            final Schema[] schemas = datastore.openConnection().getDataContext().getSchemas();
-            final String[] tableNames = schemas[1].getTableNames();
-            for (int i = 0; i < tableNames.length; i++) {
-                if (tableNames[i].equals(sheetName)) {
-                    if (!overwriteSheetIfExists) {
-                        throw new IllegalStateException("The sheet '" + sheetName
-                                + "' already exists. Please select another sheet name.");
+            try (final DatastoreConnection connection = datastore.openConnection()) {
+                final String[] tableNames = connection.getDataContext().getDefaultSchema().getTableNames();
+                for (int i = 0; i < tableNames.length; i++) {
+                    if (tableNames[i].equals(sheetName)) {
+                        if (!overwriteSheetIfExists) {
+                            throw new IllegalStateException("The sheet '" + sheetName
+                                    + "' already exists. Please select another sheet name.");
+                        }
                     }
                 }
             }
@@ -116,23 +116,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     file.getAbsolutePath());
             try (final UpdateableDatastoreConnection connection = datastore.openConnection()) {
                 final DataContext dataContext = connection.getDataContext();
-                final Schema[] schemas = dataContext.getSchemas();
-                if (schemas.length >= 1) {
-                    final String[] tableNames = schemas[1].getTableNames();
-                    for (int i = 0; i < tableNames.length; i++) {
-                        if (tableNames[i].equals(sheetName)) {
-                            if (overwriteSheetIfExists) {
-                                final Table tableSheet = dataContext.getTableByQualifiedLabel(sheetName);
-                                final UpdateableDataContext updateableDataContext = connection
-                                        .getUpdateableDataContext();
-                                updateableDataContext.executeUpdate(new UpdateScript() {
-                                    @Override
-                                    public void run(UpdateCallback callback) {
-                                        callback.dropTable(tableSheet).execute();
-                                        ;
-                                    }
-                                });
-                            }
+                final String[] tableNames = dataContext.getDefaultSchema().getTableNames();
+                for (int i = 0; i < tableNames.length; i++) {
+                    if (tableNames[i].equals(sheetName)) {
+                        if (overwriteSheetIfExists) {
+                            final Table tableSheet = dataContext.getTableByQualifiedLabel(sheetName);
+                            final UpdateableDataContext updateableDataContext = connection.getUpdateableDataContext();
+                            updateableDataContext.executeUpdate(new DropTable(tableSheet));
                         }
                     }
                 }

@@ -86,7 +86,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
             Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
             final Schema[] schemas = datastore.openConnection().getDataContext().getSchemas();
             final String[] tableNames = schemas[1].getTableNames();
-
             for (int i = 0; i < tableNames.length; i++) {
                 if (tableNames[i].equals(sheetName)) {
                     if (!overwriteSheetIfExists) {
@@ -112,29 +111,28 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Override
     public OutputWriter createOutputWriter() {
-
         if (file.exists()) {
             ExcelDatastore datastore = new ExcelDatastore(file.getName(), new FileResource(file),
                     file.getAbsolutePath());
-            final UpdateableDatastoreConnection openConnection = datastore.openConnection();
-            final DataContext dataContext = openConnection.getDataContext();
-            final Schema[] schemas = dataContext.getSchemas();
-            if (schemas.length >= 1) {
-                final String[] tableNames = schemas[1].getTableNames();
-
-                for (int i = 0; i < tableNames.length; i++) {
-                    if (tableNames[i].equals(sheetName)) {
-                        if (overwriteSheetIfExists) {
-                            final String schemaName = schemas[1].getName();
-                            final Table tableSheet = dataContext.getSchemaByName(schemaName).getTable(i);
-                            final UpdateableDataContext updateableDataContext = openConnection
-                                    .getUpdateableDataContext();
-                            updateableDataContext.executeUpdate(new UpdateScript() {
-                                @Override
-                                public void run(UpdateCallback callback) {
-                                    callback.dropTable(tableSheet);
-                                }
-                            });
+            try (final UpdateableDatastoreConnection connection = datastore.openConnection()) {
+                final DataContext dataContext = connection.getDataContext();
+                final Schema[] schemas = dataContext.getSchemas();
+                if (schemas.length >= 1) {
+                    final String[] tableNames = schemas[1].getTableNames();
+                    for (int i = 0; i < tableNames.length; i++) {
+                        if (tableNames[i].equals(sheetName)) {
+                            if (overwriteSheetIfExists) {
+                                final Table tableSheet = dataContext.getTableByQualifiedLabel(sheetName);
+                                final UpdateableDataContext updateableDataContext = connection
+                                        .getUpdateableDataContext();
+                                updateableDataContext.executeUpdate(new UpdateScript() {
+                                    @Override
+                                    public void run(UpdateCallback callback) {
+                                        callback.dropTable(tableSheet).execute();
+                                        ;
+                                    }
+                                });
+                            }
                         }
                     }
                 }
@@ -145,7 +143,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
-
         return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
     }
 

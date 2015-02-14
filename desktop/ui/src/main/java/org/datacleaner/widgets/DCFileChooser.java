@@ -51,7 +51,7 @@ public class DCFileChooser extends JFileChooser {
     public DCFileChooser() {
         this((File) null);
     }
-
+    
     public DCFileChooser(File dir) {
         super(dir);
         setPreferredSize(new Dimension(600, 550));

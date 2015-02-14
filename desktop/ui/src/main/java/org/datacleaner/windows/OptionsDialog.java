@@ -96,7 +96,7 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane
                 .addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
         _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
-        _tabbedPane.addTab("Extensions", imageManager.getImageIcon("images/component-types/plugin.png"),
+        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN),
                 extensionPackagesPanel);
 
         _tabbedPane.setUnclosableTab(0);

@@ -219,7 +219,7 @@ public class JobGraphLinkPainter {
                 final JPopupMenu popup = new JPopupMenu();
                 for (final FilterOutcome filterOutcome : filterOutcomes) {
                     final JMenuItem menuItem = WidgetFactory.createMenuItem(filterOutcome.getSimpleName(),
-                            IconUtils.FILTER_IMAGEPATH);
+                            IconUtils.FILTER_OUTCOME_PATH);
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {

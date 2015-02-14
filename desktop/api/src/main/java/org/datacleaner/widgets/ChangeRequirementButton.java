@@ -53,7 +53,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangeRequirementButton.class);
     private static final ImageManager imageManager = ImageManager.get();
-    private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH,
+    private static final Icon filterIcon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH,
             IconUtils.ICON_SIZE_MEDIUM);
 
     private final ComponentBuilder _componentBuilder;

@@ -158,7 +158,7 @@ public class JobGraphTransformers {
             @Override
             public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
                     boolean isSelected, T edge) {
-                final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL);
+                final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_SMALL);
                 final JLabel label = new JLabel(value + "", icon, JLabel.LEFT);
                 label.setFont(_normalFont);
                 return label;

@@ -34,7 +34,7 @@ public class ChangeRequirementMenu extends JMenu {
 
     public ChangeRequirementMenu(ComponentBuilder componentBuilder) {
         super("Set requirement");
-        setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+        setIcon(ImageManager.get().getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_SMALL));
 
         final ChangeRequirementMenuBuilder menuBuilder = new ChangeRequirementMenuBuilder(componentBuilder);
         if (menuBuilder.isFilterRequirementsAvailable()) {

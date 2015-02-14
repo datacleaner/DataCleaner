@@ -108,7 +108,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
                 });
 
                 final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
-                        IconUtils.ANALYZER_IMAGEPATH);
+                        IconUtils.MODEL_QUICK_ANALYSIS);
 
                 Injector injector = _injectorBuilder.with(Column[].class, new Column[] { column })
                         .with(Table.class, null).createInjector();

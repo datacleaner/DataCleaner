@@ -66,6 +66,11 @@ public final class IconUtils {
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
+    
+    public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
+    public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
+    public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
+    public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
@@ -79,6 +84,7 @@ public final class IconUtils {
     public static final String MODEL_RESULT = "images/model/result.png";
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
+    public static final String MODEL_QUICK_ANALYSIS = ANALYZER_IMAGEPATH;
 
     public static final String MENU_OPEN = "images/menu/open.png";
     public static final String MENU_SAVE = "images/menu/save.png";
@@ -110,8 +116,8 @@ public final class IconUtils {
     public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
     public static final String WEBSITE = "images/actions/website.png";
+    public static final String PLUGIN = "images/component-types/plugin.png";
 
-    // TODO: 'valid.png' needs a visual update
     public static final String STATUS_VALID = "images/status/valid.png";
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
@@ -156,11 +162,6 @@ public final class IconUtils {
     public static final String HBASE_IMAGEPATH = "images/datastore-types/hbase.png";
     public static final String CASSANDRA_IMAGEPATH = "images/datastore-types/cassandra.png";
     public static final String ELASTICSEARCH_IMAGEPATH = "images/datastore-types/elasticsearch.png";
-
-    public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
-    public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
-    public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
-    public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
 
     public static final String FILE_FOLDER = "images/filetypes/folder.png";
     public static final String FILE_ARCHIVE = "images/filetypes/archive.png";
@@ -299,13 +300,13 @@ public final class IconUtils {
 
         if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
             // plugins get a special icon
-            return "images/component-types/plugin.png";
+            return PLUGIN;
         }
 
         final ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
         final Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
         if (categories.contains(new WriteDataCategory())) {
-            return "images/component-types/type_output_writer.png";
+            return COMPONENT_TYPE_WRITE_DATA;
         }
 
         final String displayName = beanDescriptor.getDisplayName().toLowerCase();

@@ -31,8 +31,6 @@ import org.datacleaner.util.ImageManager;
 /**
  * A {@link FileIconFactory} implementation that returns DataCleaner's icons for
  * file system elements.
- * 
- * @author Kasper Sørensen
  */
 public class DefaultFileIconFactory implements FileIconFactory {
 

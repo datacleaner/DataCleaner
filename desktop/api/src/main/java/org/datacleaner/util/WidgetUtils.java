@@ -166,7 +166,11 @@ public final class WidgetUtils {
 
     // Red: #d32424
     public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);
+    
+    // Purple: #d3249c
     public static final Color ADDITIONAL_COLOR_PURPLE_BRIGHT = new ColorUIResource(211, 36, 156);
+    
+    // Cyan: #24d1d3
     public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
 
     public static final int BORDER_WIDE_WIDTH = 4;

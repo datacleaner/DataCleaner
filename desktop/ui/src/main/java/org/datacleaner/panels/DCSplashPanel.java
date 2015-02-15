@@ -130,22 +130,32 @@ public class DCSplashPanel extends DCPanel {
     @Override
     protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
             float horizontalAlignment, float verticalAlignment) {
-        final int minimumImageWidth = 250;
-        final int imageContentOverlap = 40;
 
+        final int minimumImageWidth = 1050;
         final int panelWidth = getWidth();
-        final int availableSpace = panelWidth + imageContentOverlap - WIDTH_CONTENT - MARGIN_LEFT;
-        if (availableSpace > imageWidth) {
+
+        if (panelWidth >= imageWidth) {
             // there's plenty of room
             super.paintPanelBackgroundImage(g, watermark, imageWidth, imageHeight, horizontalAlignment,
                     verticalAlignment);
-        } else if (availableSpace > minimumImageWidth) {
-            // scale the watermark
-            final int paintedWidth = availableSpace;
-            final double factor = 1.0 * availableSpace / imageWidth;
-            final int paintedHeight = (int) (factor * imageHeight);
-            super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, horizontalAlignment,
-                    verticalAlignment);
+            return;
         }
+
+        if (panelWidth < minimumImageWidth) {
+            // paint it left-aligned
+            final int paintedWidth = minimumImageWidth;
+            final double factor = 1.0 * paintedWidth / imageWidth;
+            final int paintedHeight = (int) (factor * imageHeight);
+
+            super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, 0, verticalAlignment);
+            return;
+        }
+
+        // scale the watermark but keep right-alignment
+        final int paintedWidth = panelWidth;
+        final double factor = 1.0 * paintedWidth / imageWidth;
+        final int paintedHeight = (int) (factor * imageHeight);
+        super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, horizontalAlignment,
+                verticalAlignment);
     }
 }

@@ -57,6 +57,8 @@ import org.datacleaner.output.excel.ExcelOutputWriterFactory;
 @Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
+    private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
+
     @Configured
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
     File file = new File("DataCleaner-staging.xlsx");
@@ -77,8 +79,10 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Validate
     public void validate() {
-        if (sheetName.indexOf(".") != -1) {
-            throw new IllegalStateException("Sheet name cannot contain dots (.)");
+        for (char c : ILLEGAL_SHEET_CHARS) {
+            if (sheetName.indexOf(c) != -1) {
+                throw new IllegalStateException("Sheet name cannot contain '" + c + "'");
+            }
         }
 
         if (file.exists()) {
@@ -99,14 +103,23 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Override
     public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
-        final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-        sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
+        final String dsName = ajb.getDatastore().getName();
+        sheetName = fixSheetName("output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName);
     }
 
     @Override
     public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
-        final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-        sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
+        final String dsName = ajb.getDatastore().getName();
+        sheetName = fixSheetName("output-" + dsName + "-" + descriptor.getDisplayName());
+    }
+
+    private String fixSheetName(String sheet) {
+        for (char c : ILLEGAL_SHEET_CHARS) {
+            while (sheet.indexOf(c) != -1) {
+                sheet = sheet.replace(c, '-');
+            }
+        }
+        return sheet;
     }
 
     @Override

@@ -23,6 +23,11 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
@@ -38,8 +43,30 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("Sheet name cannot contain dots (.)", e.getMessage());
+            assertEquals("Sheet name cannot contain '.'", e.getMessage());
         }
+    }
+
+    @Test
+    public void testFixSheetName() throws Exception {
+        final Datastore datastore = EasyMock.createMock(Datastore.class);
+        final FilterDescriptor<?, ?> filterDescriptor = EasyMock.createMock(FilterDescriptor.class);
+
+        EasyMock.expect(datastore.openConnection()).andReturn(null);
+        EasyMock.expect(datastore.getName()).andReturn("data:store");
+        EasyMock.expect(filterDescriptor.getDisplayName()).andReturn("my fil-ter");
+
+        EasyMock.replay(datastore, filterDescriptor);
+
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        ajb.setDatastore(datastore);
+
+        final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+        analyzer.configureForFilterOutcome(ajb, filterDescriptor, "OUT.COME");
+
+        assertEquals("output-data-store-my fil-ter-OUT-COME", analyzer.sheetName);
+
+        EasyMock.verify(datastore, filterDescriptor);
     }
 
     @Test

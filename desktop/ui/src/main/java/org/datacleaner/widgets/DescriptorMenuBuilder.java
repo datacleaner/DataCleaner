@@ -167,12 +167,15 @@ public final class DescriptorMenuBuilder {
 
         // place items that are not in any submenus
         {
-            for (final ComponentDescriptor<?> descriptor : componentDescriptors) {
+            final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
+                    .sorted(componentDescriptors);
+            for (final ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
                 boolean placedInSubmenu = false;
                 final Class<?> componentClass = descriptor.getComponentClass();
                 JMenuItem menuItem = createMenuItem(descriptor);
                 if (menuItem != null) {
-                    for (DescriptorMenu descriptorMenu : descriptorMenus.values()) {
+                    List<DescriptorMenu> sortedMenusDescriptors = CollectionUtils2.sorted(descriptorMenus.values());
+                    for (DescriptorMenu descriptorMenu : sortedMenusDescriptors) {
                         if (descriptorMenu.containsComponentClass(componentClass)) {
                             descriptorMenu.add(menuItem);
                             placedInSubmenu = true;

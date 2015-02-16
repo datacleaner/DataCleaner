@@ -50,7 +50,7 @@ public class ClasspathScanDescriptorProviderTest extends TestCase {
 
         transformerComponentDescriptors = new TreeSet<>(transformerComponentDescriptors);
         
-        assertEquals("org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer", transformerComponentDescriptors
+        assertEquals("org.datacleaner.beans.transform.ConcatenatorTransformer", transformerComponentDescriptors
                 .iterator().next().getComponentClass().getName());
     }
 

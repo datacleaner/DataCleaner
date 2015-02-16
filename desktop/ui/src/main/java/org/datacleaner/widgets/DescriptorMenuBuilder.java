@@ -142,7 +142,6 @@ public final class DescriptorMenuBuilder {
                         descriptorMenus.put(componentCategory, menu);
                     }
                     menu.addComponentClass(descriptor.getComponentClass());
-
                 }
             }
         }

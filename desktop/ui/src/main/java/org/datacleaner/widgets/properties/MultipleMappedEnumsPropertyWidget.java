@@ -289,7 +289,9 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         }
         for (InputColumn<?> inputColumn : values) {
             final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-            comboBox.setVisible(true);
+            if (comboBox != null) {
+                comboBox.setVisible(true);
+            }
         }
     }
 

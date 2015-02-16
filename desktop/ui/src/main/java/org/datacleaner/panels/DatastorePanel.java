@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
@@ -40,6 +41,7 @@ import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
@@ -75,6 +77,7 @@ import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.OdbDatastoreDialog;
+import org.datacleaner.windows.QueryWindow;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
 import org.datacleaner.windows.SasDatastoreDialog;
 import org.datacleaner.windows.SugarCrmDatastoreDialog;
@@ -154,6 +157,7 @@ public class DatastorePanel extends DCPanel {
         datastoreNameLabel.addMouseListener(invokeCheckBoxMouseListener);
 
         final JButton editButton = createEditButton(datastore);
+        final JButton queryButton = createQueryButton(datastore);
         final JButton removeButton = createRemoveButton(datastore);
 
         setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
@@ -161,7 +165,8 @@ public class DatastorePanel extends DCPanel {
         WidgetUtils.addToGridBag(DCPanel.flow(_checkBox, datastoreNameLabel), this, 0, 0, GridBagConstraints.WEST, 1.0,
                 1.0);
         WidgetUtils.addToGridBag(editButton, this, 1, 0, GridBagConstraints.EAST);
-        WidgetUtils.addToGridBag(removeButton, this, 2, 0, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(queryButton, this, 2, 0, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(removeButton, this, 3, 0, GridBagConstraints.EAST);
     }
 
     public Datastore getDatastore() {
@@ -170,7 +175,7 @@ public class DatastorePanel extends DCPanel {
 
     private JButton createRemoveButton(final Datastore datastore) {
         final String name = datastore.getName();
-        final JButton removeButton = createSmallButton(IconUtils.ACTION_REMOVE);
+        final JButton removeButton = WidgetFactory.createDefaultButton("Remove", IconUtils.ACTION_REMOVE);
         removeButton.setToolTipText("Remove datastore");
         removeButton.addActionListener(new ActionListener() {
             @Override
@@ -186,8 +191,35 @@ public class DatastorePanel extends DCPanel {
         return removeButton;
     }
 
+    private JButton createQueryButton(final Datastore datastore) {
+        final JButton queryButton = WidgetFactory.createDefaultButton("Query", IconUtils.MODEL_QUERY);
+        queryButton.setToolTipText("Query datastore");
+        queryButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String queryString;
+                final DatastoreConnection connection = datastore.openConnection();
+                try {
+                    Table[] tables = connection.getSchemaNavigator().getDefaultSchema().getTables();
+                    if (tables.length > 0) {
+                        queryString = "SELECT *\nFROM " + tables[0].getQualifiedLabel();
+                    } else {
+                        queryString = "SELECT *\nFROM ?";
+                    }
+                } finally {
+                    connection.close();
+                }
+                QueryWindow queryWindow = new QueryWindow(_windowContext, datastore, queryString);
+                queryWindow.open();
+            }
+        });
+
+        return queryButton;
+    }
+
     private JButton createEditButton(final Datastore datastore) {
-        final JButton editButton = createSmallButton(IconUtils.ACTION_EDIT);
+        final JButton editButton = WidgetFactory.createDefaultButton("Edit", IconUtils.ACTION_EDIT);
         editButton.setToolTipText("Edit datastore");
 
         if (datastore instanceof JdbcDatastore) {
@@ -349,11 +381,6 @@ public class DatastorePanel extends DCPanel {
         }
 
         return editButton;
-    }
-
-    private JButton createSmallButton(String imagePath) {
-        final JButton smallButton = WidgetFactory.createDefaultButton(null, imagePath);
-        return smallButton;
     }
 
     public static String getDescription(Datastore datastore) {

@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -133,7 +134,8 @@ public final class DescriptorMenuBuilder {
         // build sub menus
         {
             for (ComponentDescriptor<?> descriptor : componentDescriptors) {
-                for (ComponentCategory componentCategory : descriptor.getComponentCategories()) {
+                final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
+                for (ComponentCategory componentCategory : componentCategories) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
                     if (menu == null) {
                         menu = new DescriptorMenu(componentCategory);

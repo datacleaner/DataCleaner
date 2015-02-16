@@ -351,13 +351,19 @@ class SimpleComponentDescriptor<B> extends AbstractDescriptor<B> implements Comp
         if (o == null) {
             return 1;
         }
-        Class<?> otherBeanClass = o.getComponentClass();
-        if (otherBeanClass == null) {
+        Class<?> otherComponentClass = o.getComponentClass();
+        if (otherComponentClass == null) {
             return 1;
         }
-        String thisBeanClassName = this.getComponentClass().toString();
-        String thatBeanClassName = otherBeanClass.toString();
-        return thisBeanClassName.compareTo(thatBeanClassName);
+        
+        int diff = this.getDisplayName().compareTo(o.getDisplayName());
+        if (diff == 0) {
+            String thisBeanClassName = this.getComponentClass().toString();
+            String thatBeanClassName = otherComponentClass.toString();
+            diff = thisBeanClassName.compareTo(thatBeanClassName);
+        }
+        
+        return diff;
     }
 
     @Override

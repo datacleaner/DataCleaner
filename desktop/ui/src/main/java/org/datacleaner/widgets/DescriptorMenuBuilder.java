@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -134,7 +133,8 @@ public final class DescriptorMenuBuilder {
         // build sub menus
         {
             for (ComponentDescriptor<?> descriptor : componentDescriptors) {
-                final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
+                final Collection<ComponentCategory> componentCategories = new ArrayList<ComponentCategory>(
+                        descriptor.getComponentCategories());
                 for (ComponentCategory componentCategory : componentCategories) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
                     if (menu == null) {
@@ -142,6 +142,7 @@ public final class DescriptorMenuBuilder {
                         descriptorMenus.put(componentCategory, menu);
                     }
                     menu.addComponentClass(descriptor.getComponentClass());
+                   
                 }
             }
         }
@@ -166,13 +167,15 @@ public final class DescriptorMenuBuilder {
         }
 
         // place items that are not in any submenus
-        {
-            for (final ComponentDescriptor<?> descriptor : componentDescriptors) {
+        { 
+            final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2.sorted(componentDescriptors);
+            for (final ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
                 boolean placedInSubmenu = false;
                 final Class<?> componentClass = descriptor.getComponentClass();
                 JMenuItem menuItem = createMenuItem(descriptor);
                 if (menuItem != null) {
-                    for (DescriptorMenu descriptorMenu : descriptorMenus.values()) {
+                    List<DescriptorMenu> sortedMenusDescriptors = CollectionUtils2.sorted(descriptorMenus.values());
+                    for (DescriptorMenu descriptorMenu : sortedMenusDescriptors) {
                         if (descriptorMenu.containsComponentClass(componentClass)) {
                             descriptorMenu.add(menuItem);
                             placedInSubmenu = true;

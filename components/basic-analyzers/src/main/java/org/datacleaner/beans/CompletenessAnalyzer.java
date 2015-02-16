@@ -33,6 +33,7 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.Provided;
 import org.datacleaner.components.categories.ValidationCategory;
 import org.datacleaner.storage.RowAnnotation;
@@ -43,6 +44,10 @@ import org.datacleaner.util.StringUtils;
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
 @Categorized(ValidationCategory.class)
 public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult> {
+
+    public static final String PROPERTY_VALUES = "Values";
+    public static final String PROPERTY_CONDITIONS = "Conditions";
+    public static final String PROPERTY_EVALUATION_MODE = "Evaluation mode";
 
     public static enum Condition implements HasName {
         NOT_BLANK_OR_NULL("Not <blank> or <null>"), NOT_NULL("Not <null>");
@@ -58,35 +63,36 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             return _name;
         }
     }
-    
+
     public static enum EvaluationMode implements HasName {
-        ALL_FIELDS("When all fields are incomplete, the record is incomplete"), ANY_FIELD("When any field is incomplete, the record is incomplete");
+        ALL_FIELDS("When all fields are incomplete, the record is incomplete"), ANY_FIELD(
+                "When any field is incomplete, the record is incomplete");
 
         private final String _name;
-        
+
         private EvaluationMode(String name) {
             _name = name;
         }
-        
+
         @Override
         public String getName() {
             return _name;
         }
-        
     }
 
     @Inject
-    @Configured("Values")
+    @Configured(PROPERTY_VALUES)
     @Description("Values to check for completeness")
     InputColumn<?>[] _valueColumns;
 
     @Inject
-    @Configured("Conditions")
+    @Configured(PROPERTY_CONDITIONS)
     @Description("The conditions of which a value is determined to be filled or not")
+    @MappedProperty(PROPERTY_VALUES)
     Condition[] _conditions;
-    
+
     @Inject
-    @Configured("Evaluation mode")
+    @Configured(PROPERTY_EVALUATION_MODE)
     EvaluationMode _evaluationMode = EvaluationMode.ANY_FIELD;
 
     @Inject
@@ -124,7 +130,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);
                 return;
             }
-            
+
             if (valid) {
                 allInvalid = false;
             }

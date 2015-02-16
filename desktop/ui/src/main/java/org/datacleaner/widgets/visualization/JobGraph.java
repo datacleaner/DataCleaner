@@ -347,7 +347,9 @@ public final class JobGraph {
 
         final JobGraphContext graphContext = new JobGraphContext(this, visualizationViewer, _analysisJobBuilder);
 
-        final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(graphContext);
+        final JobGraphActions actions = new JobGraphActions(graphContext, _windowContext, _presenterRendererFactory,
+                _componentConfigurationDialogs, _tableConfigurationDialogs);
+        final JobGraphLinkPainter linkPainter = new JobGraphLinkPainter(graphContext, actions);
 
         final JobGraphLinkPainterMousePlugin linkPainterMousePlugin = new JobGraphLinkPainterMousePlugin(linkPainter,
                 graphContext);
@@ -357,9 +359,8 @@ public final class JobGraph {
             pluggableGraphMouse.add(linkPainterMousePlugin);
         }
 
-        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter,
-                _presenterRendererFactory, _windowContext, _usageLogger, _componentConfigurationDialogs,
-                _tableConfigurationDialogs);
+        final JobGraphMouseListener graphMouseListener = new JobGraphMouseListener(graphContext, linkPainter, actions,
+                _windowContext, _usageLogger);
 
         visualizationViewer.addGraphMouseListener(graphMouseListener);
         visualizationViewer.addMouseListener(graphMouseListener);

@@ -67,6 +67,7 @@ public class JobGraphLinkPainter {
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
     private final JobGraphContext _graphContext;
+    private final JobGraphActions _actions;
     private final VisualizationServer.Paintable _edgePaintable;
     private final VisualizationServer.Paintable _arrowPaintable;
 
@@ -75,8 +76,9 @@ public class JobGraphLinkPainter {
     private Object _startVertex;
     private Point2D _startPoint;
 
-    public JobGraphLinkPainter(JobGraphContext graphContext) {
+    public JobGraphLinkPainter(JobGraphContext graphContext, JobGraphActions actions) {
         _graphContext = graphContext;
+        _actions = actions;
         _edgePaintable = new EdgePaintable();
         _arrowPaintable = new ArrowPaintable();
     }
@@ -202,9 +204,11 @@ public class JobGraphLinkPainter {
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
                     if (inputProperty.isArray()) {
+                        _actions.showConfigurationDialog(componentBuilder);
                         componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
+                        _actions.showConfigurationDialog(componentBuilder);
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
 

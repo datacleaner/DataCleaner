@@ -25,8 +25,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +41,6 @@ import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.ComponentSuperCategory;
-import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -54,17 +51,12 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
-import org.datacleaner.panels.ComponentBuilderPresenter;
-import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
-import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.widgets.ChangeRequirementMenu;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
-import org.datacleaner.windows.ComponentConfigurationDialog;
-import org.datacleaner.windows.SourceTableConfigurationDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,12 +74,10 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
-    private final Map<ComponentBuilder, ComponentConfigurationDialog> _componentConfigurationDialogs;
-    private final Map<Table, SourceTableConfigurationDialog> _tableConfigurationDialogs;
 
     private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
-    private final RendererFactory _presenterRendererFactory;
+    private final JobGraphActions _actions;
     private final WindowContext _windowContext;
     private final UsageLogger _usageLogger;
 
@@ -97,17 +87,13 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private Point _pressedPoint;
 
-    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
-            RendererFactory presenterRendererFactory, WindowContext windowContext, UsageLogger usageLogger,
-            Map<ComponentBuilder, ComponentConfigurationDialog> componentConfigurationDialogs,
-            Map<Table, SourceTableConfigurationDialog> tableConfigurationDialogs) {
+    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter, JobGraphActions actions,
+       WindowContext windowContext, UsageLogger usageLogger) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
-        _presenterRendererFactory = presenterRendererFactory;
+        _actions = actions;
         _windowContext = windowContext;
         _usageLogger = usageLogger;
-        _componentConfigurationDialogs = componentConfigurationDialogs;
-        _tableConfigurationDialogs = tableConfigurationDialogs;
     }
 
     /**
@@ -117,35 +103,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onComponentDoubleClicked(ComponentBuilder componentBuilder, MouseEvent me) {
-        showConfigurationDialog(componentBuilder);
-    }
-
-    private void showConfigurationDialog(final ComponentBuilder componentBuilder) {
-        final ComponentConfigurationDialog existingDialog = _componentConfigurationDialogs.get(componentBuilder);
-        if (existingDialog != null) {
-            existingDialog.toFront();
-            return;
-        }
-
-        @SuppressWarnings("unchecked")
-        final Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter> renderer = (Renderer<ComponentBuilder, ? extends ComponentBuilderPresenter>) _presenterRendererFactory
-                .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
-
-        if (renderer != null) {
-            final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
-
-            final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
-                    componentBuilder, _graphContext.getAnalysisJobBuilder(), presenter);
-            dialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosed(WindowEvent e) {
-                    _componentConfigurationDialogs.remove(componentBuilder);
-                    _graphContext.getJobGraph().refresh();
-                }
-            });
-            _componentConfigurationDialogs.put(componentBuilder, dialog);
-            dialog.open();
-        }
+        _actions.showConfigurationDialog(componentBuilder);
     }
 
     /**
@@ -155,24 +113,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
      * @param me
      */
     public void onTableDoubleClicked(final Table table, MouseEvent me) {
-        final SourceTableConfigurationDialog existingDialog = _tableConfigurationDialogs.get(table);
-        if (existingDialog != null) {
-            existingDialog.toFront();
-            return;
-        }
-
-        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
-                _graphContext.getAnalysisJobBuilder(), table);
-
-        dialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                _tableConfigurationDialogs.remove(table);
-            }
-        });
-        _tableConfigurationDialogs.put(table, dialog);
-
-        dialog.open();
+        _actions.showTableConfigurationDialog(table);
     }
 
     /**
@@ -212,7 +153,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         configureComponentMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showConfigurationDialog(componentBuilder);
+                _actions.showConfigurationDialog(componentBuilder);
             }
         });
         popup.add(configureComponentMenuItem);

@@ -43,7 +43,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
             analyzer.validate();
             fail("Exception expected");
         } catch (Exception e) {
-            assertEquals("Sheet name cannot contain dots (.)", e.getMessage());
+            assertEquals("Sheet name cannot contain '.'", e.getMessage());
         }
     }
 

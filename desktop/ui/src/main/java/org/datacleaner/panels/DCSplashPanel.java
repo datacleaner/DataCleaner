@@ -26,6 +26,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -50,8 +51,8 @@ import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
 public class DCSplashPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Image BACKGROUND_IMAGE = ImageManager.get().getImage(
-            "images/window/welcome-panel-background.jpg");
+
+    private static final Image BACKGROUND_IMAGE = getBackgroundImage();
 
     private static final int WIDTH_CONTENT = 800;
     private static final int MARGIN_LEFT = 20;
@@ -157,5 +158,16 @@ public class DCSplashPanel extends DCPanel {
         final int paintedHeight = (int) (factor * imageHeight);
         super.paintPanelBackgroundImage(g, watermark, paintedWidth, paintedHeight, horizontalAlignment,
                 verticalAlignment);
+    }
+
+    private static Image getBackgroundImage() {
+        final Calendar now = Calendar.getInstance();
+        final int hourOfDay = now.get(Calendar.HOUR_OF_DAY);
+        if (hourOfDay >= 5 && hourOfDay < 7) {
+            // only people with kids will be working at this hour ...
+            return ImageManager.get().getImage("images/window/welcome-panel-background-early.jpg");
+        }
+
+        return ImageManager.get().getImage("images/window/welcome-panel-background.jpg");
     }
 }

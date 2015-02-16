@@ -133,16 +133,14 @@ public final class DescriptorMenuBuilder {
         // build sub menus
         {
             for (ComponentDescriptor<?> descriptor : componentDescriptors) {
-                final Collection<ComponentCategory> componentCategories = new ArrayList<ComponentCategory>(
-                        descriptor.getComponentCategories());
-                for (ComponentCategory componentCategory : componentCategories) {
+                for (ComponentCategory componentCategory : descriptor.getComponentCategories()) {
                     DescriptorMenu menu = descriptorMenus.get(componentCategory);
                     if (menu == null) {
                         menu = new DescriptorMenu(componentCategory);
                         descriptorMenus.put(componentCategory, menu);
                     }
                     menu.addComponentClass(descriptor.getComponentClass());
-                   
+
                 }
             }
         }
@@ -167,8 +165,9 @@ public final class DescriptorMenuBuilder {
         }
 
         // place items that are not in any submenus
-        { 
-            final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2.sorted(componentDescriptors);
+        {
+            final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
+                    .sorted(componentDescriptors);
             for (final ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
                 boolean placedInSubmenu = false;
                 final Class<?> componentClass = descriptor.getComponentClass();

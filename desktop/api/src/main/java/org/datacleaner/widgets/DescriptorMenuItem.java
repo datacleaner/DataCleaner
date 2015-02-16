@@ -61,11 +61,18 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
 
     public DescriptorMenuItem(AnalysisJobBuilder analysisJobBuilder, Point2D coordinate,
             ComponentDescriptor<?> descriptor) {
+        this(analysisJobBuilder, coordinate, descriptor, true);
+    }
+
+    public DescriptorMenuItem(AnalysisJobBuilder analysisJobBuilder, Point2D coordinate,
+            ComponentDescriptor<?> descriptor, boolean addDefaultActionListener) {
         super(descriptor.getDisplayName());
         _analysisJobBuilder = analysisJobBuilder;
         _coordinate = coordinate;
         _descriptor = descriptor;
-        addActionListener(this);
+        if (addDefaultActionListener) {
+            addActionListener(this);
+        }
         ToolTipManager.sharedInstance().registerComponent(this);
     }
 

@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor-extensions</artifactId>
-		<version>4.0-RC4</version>
+		<version>4.0-RC5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-pentaho-job-engine</artifactId>
 	<description>A 'job engine' for DataCleaner monitor that allows users to schedule Pentaho Data Integration (aka. Kettle) jobs alongside other job types.</description>

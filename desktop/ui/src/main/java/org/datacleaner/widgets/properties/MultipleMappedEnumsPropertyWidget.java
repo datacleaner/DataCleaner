@@ -22,6 +22,7 @@ package org.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -280,6 +281,20 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
         return panel;
     }
 
+    @Override
+    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
+        final Collection<DCComboBox<E>> allComboBoxes = _mappedEnumComboBoxes.values();
+        for (DCComboBox<E> comboBox : allComboBoxes) {
+            comboBox.setVisible(false);
+        }
+        for (InputColumn<?> inputColumn : values) {
+            final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
+            if (comboBox != null) {
+                comboBox.setVisible(true);
+            }
+        }
+    }
+
     public MappedEnumsPropertyWidget getMappedEnumsPropertyWidget() {
         return _mappedEnumsPropertyWidget;
     }
@@ -302,20 +317,10 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 
         return result.toArray(array);
     }
-
+    
     @Override
-    protected void selectAll() {
-        for (DCComboBox<E> comboBox : _mappedEnumComboBoxes.values()) {
-            comboBox.setVisible(true);
-        }
-        super.selectAll();
-    }
-
-    @Override
-    protected void selectNone() {
-        for (DCComboBox<E> comboBox : _mappedEnumComboBoxes.values()) {
-            comboBox.setVisible(false);
-        }
-        super.selectNone();
+    protected void onBatchFinished() {
+        super.onBatchFinished();
+        _mappedEnumsPropertyWidget.fireValueChanged();
     }
 }

@@ -22,7 +22,6 @@ package org.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -324,25 +323,16 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
     }
 
     @Override
-    protected void selectAll() {
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                Collection<SourceColumnComboBox> comboBoxes = _mappedColumnComboBoxes.values();
-                for (SourceColumnComboBox comboBox : comboBoxes) {
-                    comboBox.setVisible(true);
-                }
-                MultipleMappedColumnsPropertyWidget.super.selectAll();
-            }
-        });
-    }
-
-    @Override
-    protected void selectNone() {
+    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
         for (SourceColumnComboBox sourceColumnComboBox : _mappedColumnComboBoxes.values()) {
             sourceColumnComboBox.setVisible(false);
         }
-        super.selectNone();
+        for (InputColumn<?> inputColumn : values) {
+            final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+            if (comboBox != null) {
+                comboBox.setVisible(true);
+            }
+        }
     }
 
     @Override

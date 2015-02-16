@@ -107,7 +107,8 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
         _mappedInputColumnComboBoxes = new WeakHashMap<InputColumn<?>, DCComboBox<InputColumn<?>>>();
         _mappedInputColumnsProperty = mappedColumnsProperty;
 
-        _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(componentBuilder, mappedColumnsProperty);
+        _mappedInputColumnsPropertyWidget = new MappedInputColumnsPropertyWidget(componentBuilder,
+                mappedColumnsProperty);
 
         final InputColumn<?>[] currentValue = getCurrentValue();
         final InputColumn<?>[] currentMappedColumnsValue = (InputColumn<?>[]) componentBuilder
@@ -314,25 +315,16 @@ public class MultipleMappedInputColumnsPropertyWidget extends MultipleInputColum
     }
 
     @Override
-    protected void selectAll() {
-        batchUpdateWidget(new Runnable() {
-            @Override
-            public void run() {
-                Collection<DCComboBox<InputColumn<?>>> comboBoxes = _mappedInputColumnComboBoxes.values();
-                for (DCComboBox<InputColumn<?>> comboBox : comboBoxes) {
-                    comboBox.setVisible(true);
-                }
-                MultipleMappedInputColumnsPropertyWidget.super.selectAll();
-            }
-        });
-    }
-
-    @Override
-    protected void selectNone() {
+    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
         for (DCComboBox<InputColumn<?>> comboBox : _mappedInputColumnComboBoxes.values()) {
             comboBox.setVisible(false);
         }
-        super.selectNone();
+        for (InputColumn<?> inputColumn : values) {
+            final DCComboBox<InputColumn<?>> comboBox = _mappedInputColumnComboBoxes.get(inputColumn);
+            if (comboBox != null) {
+                comboBox.setVisible(true);
+            }
+        }
     }
 
     @Override

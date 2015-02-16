@@ -22,6 +22,7 @@ package org.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -207,6 +208,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                             cb.setSelected(false);
                         }
                     }
+                    onValuesBatchSelected(Arrays.asList(value));
                 }
             });
         }
@@ -424,28 +426,43 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
         batchUpdateWidget(new Runnable() {
             @Override
             public void run() {
+                final List<InputColumn<?>> valueList = new ArrayList<>();
                 for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
                     if (ArrayUtils.contains(values, cb.getValue())) {
                         cb.setSelected(true, true);
+                        valueList.add(cb.getValue());
                     } else {
                         cb.setSelected(false, true);
                     }
                 }
+                onValuesBatchSelected(valueList);
             }
         });
 
         updateUI();
     }
 
+    /**
+     * Overrideable method for subclasses to get informed when values have been
+     * selected in a batch update
+     * 
+     * @param values
+     */
+    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
+    }
+
     protected void selectAll() {
         batchUpdateWidget(new Runnable() {
             @Override
             public void run() {
+                final List<InputColumn<?>> valueList = new ArrayList<>();
                 for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
                     if (cb.isEnabled()) {
                         cb.setSelected(true);
+                        valueList.add(cb.getValue());
                     }
                 }
+                onValuesBatchSelected(valueList);
             }
         });
     }
@@ -457,6 +474,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
                 for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
                     cb.setSelected(false);
                 }
+                onValuesBatchSelected(Collections.<InputColumn<?>> emptyList());
             }
         });
     }

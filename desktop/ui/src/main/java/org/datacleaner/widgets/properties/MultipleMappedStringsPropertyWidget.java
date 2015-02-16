@@ -256,18 +256,21 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
     }
 
     @Override
-    protected void selectAll() {
-        for (JXTextField textField : _mappedTextFields.values()) {
-            textField.setVisible(true);
-        }
-        super.selectAll();
-    }
-
-    @Override
-    protected void selectNone() {
+    protected void onValuesBatchSelected(List<InputColumn<?>> values) {
         for (JXTextField textField : _mappedTextFields.values()) {
             textField.setVisible(false);
         }
-        super.selectNone();
+        for (InputColumn<?> inputColumn : values) {
+            final JXTextField textField = _mappedTextFields.get(inputColumn);
+            if (textField != null) {
+                textField.setVisible(true);
+            }
+        }
+    }
+
+    @Override
+    protected void onBatchFinished() {
+        super.onBatchFinished();
+        _mappedStringsPropertyWidget.fireValueChanged();
     }
 }

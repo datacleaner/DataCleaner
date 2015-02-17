@@ -70,5 +70,4 @@ class ExcelDataContextWriter implements Closeable {
     public void insertValues(Object[] values) {
         _buffer.addToBuffer(values);
     }
-
 }

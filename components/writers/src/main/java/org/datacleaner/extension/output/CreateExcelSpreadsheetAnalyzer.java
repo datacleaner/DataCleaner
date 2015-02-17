@@ -87,18 +87,12 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Configured(order = 1, required = false)
     InputColumn<?> columnToBeSortedOn;
 
-    private Character separatorChar = ',';
-
-    private Character quoteChar = '"';
-
-    private Character escapeChar = '\\';
-
-    private boolean includeHeader = true;
-
+    private final  Character separatorChar = ',';
+    private final Character quoteChar = '"';
+    private final Character escapeChar = '\\';
+    private final boolean includeHeader = true;
     private File _targetFile;
-
     private int indexOfColumnToBeSortedOn = -1;
-
     private boolean isColumnToBeSortedOnPresentInInput = true;
 
     @Initialize

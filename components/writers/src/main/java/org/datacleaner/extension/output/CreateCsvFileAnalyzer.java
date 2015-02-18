@@ -240,7 +240,6 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                     final String[] columnNames = headers.toArray(new String[0]);
                     final String line = csvWriter.buildLine(columnNames);
                     writer.write(line);
-                    writer.append('\n');
                 }
 
                 @Override
@@ -262,7 +261,6 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                         }
                         final String line = csvWriter.buildLine(stringValues);
                         writer.write(line);
-                        writer.append('\n');
                     }
                 }
 

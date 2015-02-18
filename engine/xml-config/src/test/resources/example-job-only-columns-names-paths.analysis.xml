@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+	<job-metadata>
+		<job-description>Created with DataCleaner Community edition UNKNOWN
+		</job-description>
+		<author>claudiap</author>
+		<updated-date>2015-02-18+01:00</updated-date>
+		<metadata-properties>
+			<property name="CoordinatesY.UKSuppression Test Files.UKContactData.csv">83</property>
+			<property name="CoordinatesX.UKSuppression Test Files.UKContactData.csv">136</property>
+		</metadata-properties>
+	</job-metadata>
+	<source>
+		<data-context ref="UKContactData.csv" />
+		<columns>
+			<column id="col_0" path="RecordId" type="STRING" />
+			<column id="col_1" path="Company" type="STRING" />
+			<column id="col_2" path="FirstName" type="STRING" />
+			<column id="col_3" path="LastName" type="STRING" />
+			<column id="col_4" path="AddressLine1" type="STRING" />
+			<column id="col_5" path="AddressLine2" type="STRING" />
+			<column id="col_6" path="AddressLine3" type="STRING" />
+			<column id="col_7" path="AddressLine4" type="STRING" />
+			<column id="col_8" path="City" type="STRING" />
+			<column id="col_9" path="State" type="STRING" />
+			<column id="col_10" path="Country" type="STRING" />
+			<column id="col_11" path="Postcode" type="STRING" />
+		</columns>
+	</source>
+	<transformation />
+	<analysis>
+		<analyzer>
+			<descriptor ref="Create CSV file" />
+			<metadata-properties>
+				<property name="CoordinatesY">209</property>
+				<property name="CoordinatesX">409</property>
+			</metadata-properties>
+			<properties>
+				<property name="File" value="cleo.txt" />
+				<property name="Separator char" value="&amp;#44;" />
+				<property name="Quote char" value="&amp;quot;" />
+				<property name="Escape char" value="\" />
+				<property name="Include header" value="true" />
+				<property name="Overwrite file if exists" value="true" />
+			</properties>
+			<input ref="col_0" name="Columns" />
+			<input ref="col_1" name="Columns" />
+			<input ref="col_2" name="Columns" />
+			<input ref="col_3" name="Columns" />
+			<input ref="col_4" name="Columns" />
+			<input ref="col_5" name="Columns" />
+			<input ref="col_6" name="Columns" />
+			<input ref="col_7" name="Columns" />
+			<input ref="col_8" name="Columns" />
+			<input ref="col_9" name="Columns" />
+			<input ref="col_10" name="Columns" />
+			<input ref="col_11" name="Columns" />
+		</analyzer>
+	</analysis>
+</job>

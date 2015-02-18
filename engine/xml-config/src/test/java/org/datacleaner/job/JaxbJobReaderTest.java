@@ -71,8 +71,8 @@ public class JaxbJobReaderTest extends TestCase {
 
     public void testReadComponentNames() throws Exception {
         JobReader<InputStream> reader = new JaxbJobReader(conf);
-        AnalysisJob job = reader
-                .read(new FileInputStream(new File("src/test/resources/example-job-component-names.xml")));
+        AnalysisJob job = reader.read(new FileInputStream(
+                new File("src/test/resources/example-job-component-names.xml")));
 
         assertEquals(1, job.getAnalyzerJobs().size());
         assertEquals("analyzer_1", job.getAnalyzerJobs().iterator().next().getName());
@@ -82,6 +82,18 @@ public class JaxbJobReaderTest extends TestCase {
 
         assertEquals(1, job.getTransformerJobs().size());
         assertEquals("email_std_1", job.getTransformerJobs().iterator().next().getName());
+    }
+
+    public void testReadOnlyColumnNamePaths() throws Exception {
+        JobReader<InputStream> reader = new JaxbJobReader(conf);
+        final FileInputStream source = new FileInputStream(new File(
+                "src/test/resources/example-job-only-columns-names-paths.analysis.xml"));
+        final AnalysisJobMetadata metadata = reader.readMetadata(source);
+        assertNotNull(metadata);
+        assertEquals("UKContactData.csv", metadata.getDatastoreName());
+        assertEquals(
+                "[RecordId, Company, FirstName, LastName, AddressLine1, AddressLine2, AddressLine3, AddressLine4, City, State, Country, Postcode]",
+                metadata.getSourceColumnPaths().toString());
     }
 
     public void testReadMetadataFull() throws Exception {
@@ -95,7 +107,7 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("An example job with complete metadata", metadata.getJobDescription());
         assertEquals("1.1", metadata.getJobVersion());
         assertEquals("[PUBLIC.PERSONS.FIRSTNAME, PUBLIC.PERSONS.LASTNAME]", metadata.getSourceColumnPaths().toString());
-        assertEquals("propertyValue", metadata.getProperties().get("propertyName")) ;
+        assertEquals("propertyValue", metadata.getProperties().get("propertyName"));
 
         assertNotNull(metadata.getCreatedDate());
         assertNotNull(metadata.getUpdatedDate());

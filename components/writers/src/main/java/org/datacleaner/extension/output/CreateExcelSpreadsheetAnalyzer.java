@@ -87,7 +87,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Configured(order = 1, required = false)
     InputColumn<?> columnToBeSortedOn;
 
-    private final  Character separatorChar = ',';
+    private final Character separatorChar = ',';
     private final Character quoteChar = '"';
     private final Character escapeChar = '\\';
     private final boolean includeHeader = true;
@@ -178,135 +178,144 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                 }
             }
         }
-
+        // If the user wants the file sorted after a column we create a
+        // temporary file and return a CSV writer in order
+        // to make a MergeSort on it, otherwise we return a normal Excel writer
         if (columnToBeSortedOn != null) {
-
-            List<String> headers = new ArrayList<String>();
-            for (int i = 0; i < columns.length; i++) {
-                String columnName = columns[i].getName();
-                headers.add(columnName);
-                if (columnToBeSortedOn != null) {
-                    if (columnName.equals(columnToBeSortedOn.getName())) {
-                        indexOfColumnToBeSortedOn = i;
-                    }
-                }
-            }
-
-            if (indexOfColumnToBeSortedOn == -1) {
-                this.isColumnToBeSortedOnPresentInInput = false;
-                indexOfColumnToBeSortedOn = columns.length;
-                headers.add(columnToBeSortedOn.getName());
-                InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
-                for (int i = 0; i < columns.length; i++) {
-                    newColumns[i] = columns[i];
-                }
-                newColumns[columns.length] = columnToBeSortedOn;
-                columns = newColumns;
-            }
-
-            if (_targetFile == null) {
-                try {
-                    initTempFile();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]),
-                    separatorChar, quoteChar, escapeChar, includeHeader, columns);
+            return createTemporaryCsvWriter();
         } else {
             return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
         }
     }
 
+    private OutputWriter createTemporaryCsvWriter() {
+        final List<String> headers = new ArrayList<String>();
+        for (int i = 0; i < columns.length; i++) {
+            String columnName = columns[i].getName();
+            headers.add(columnName);
+            if (columnToBeSortedOn != null) {
+                if (columnName.equals(columnToBeSortedOn.getName())) {
+                    indexOfColumnToBeSortedOn = i;
+                }
+            }
+        }
+
+        if (indexOfColumnToBeSortedOn == -1) {
+            this.isColumnToBeSortedOnPresentInInput = false;
+            indexOfColumnToBeSortedOn = columns.length;
+            headers.add(columnToBeSortedOn.getName());
+            InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
+            for (int i = 0; i < columns.length; i++) {
+                newColumns[i] = columns[i];
+            }
+            newColumns[columns.length] = columnToBeSortedOn;
+            columns = newColumns;
+        }
+
+        if (_targetFile == null) {
+            try {
+                initTempFile();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
+                quoteChar, escapeChar, includeHeader, columns);
+    }
+
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
-
         if (columnToBeSortedOn != null) {
-
-            final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                    FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
-
-            final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
-            final Table table = tempDataContext.getDefaultSchema().getTable(0);
-
-            final Comparator<? super Row> comparator = new Comparator<Row>() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public int compare(Row row1, Row row2) {
-                    Comparable<Object> value1 = (Comparable<Object>) row1.getValue(indexOfColumnToBeSortedOn);
-                    Comparable<Object> value2 = (Comparable<Object>) row2.getValue(indexOfColumnToBeSortedOn);
-                    int comparableResult = CompareUtils.compare(value1, value2);
-                    if (comparableResult != 0) {
-                        return comparableResult;
-                    } else {
-                        // The values of the data at the row, and column to be
-                        // sorted on are
-                        // exactly the same. Now look at other values of all the
-                        // columns to
-                        // find if the two rows are same.
-                        int numberOfSelectItems = row1.getSelectItems().length;
-                        for (int i = 0; i < numberOfSelectItems; i++) {
-                            Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
-                            Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
-                            if (CompareUtils.compare(rowValue1, rowValue2) == 0) {
-                                continue;
-                            } else {
-                                return CompareUtils.compare(rowValue1, rowValue2);
-                            }
-                        }
-                    }
-
-                    return comparableResult;
-                }
-            };
-
-            final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
-                    comparator) {
-
-                @Override
-                protected ExcelDataContextWriter createWriter(File file) {
-                    return new ExcelDataContextWriter(file, sheetName);
-                }
-
-                @Override
-                protected void writeHeader(ExcelDataContextWriter writer) throws IOException {
-                    List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
-                    if (!isColumnToBeSortedOnPresentInInput) {
-                        headers.remove(columnToBeSortedOn.getName());
-                    }
-                    writer.createTable(headers);
-                }
-
-                @Override
-                protected void writeRow(ExcelDataContextWriter writer, Row row, int count) throws IOException {
-                    for (int i = 0; i < count; i++) {
-                        List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
-                        if (!isColumnToBeSortedOnPresentInInput) {
-                            valuesList.remove(indexOfColumnToBeSortedOn);
-                        }
-                        final Object[] values = valuesList.toArray(new Object[0]);
-                        writer.insertValues(values);
-                    }
-                }
-            };
-
-            // read from the temp file and sort it into the final file
-            final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
-            try {
-                while (dataSet.next()) {
-                    final Row row = dataSet.getRow();
-                    sortMergeWriter.append(row);
-                }
-            } finally {
-                dataSet.close();
-            }
-            sortMergeWriter.write(file);
+            // Sorts the file using merge sort in the temporary file and then
+            // write into the final file
+            mergeSortFile();
         }
         final FileResource resource = new FileResource(file);
         final Datastore datastore = new ExcelDatastore(file.getName(), resource, file.getAbsolutePath());
         final WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
         return result;
+    }
+
+    private void mergeSortFile() {
+        final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
+                FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
+
+        final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
+        final Table table = tempDataContext.getDefaultSchema().getTable(0);
+
+        final Comparator<? super Row> comparator = new Comparator<Row>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public int compare(Row row1, Row row2) {
+                Comparable<Object> value1 = (Comparable<Object>) row1.getValue(indexOfColumnToBeSortedOn);
+                Comparable<Object> value2 = (Comparable<Object>) row2.getValue(indexOfColumnToBeSortedOn);
+                int comparableResult = CompareUtils.compare(value1, value2);
+                if (comparableResult != 0) {
+                    return comparableResult;
+                } else {
+                    // The values of the data at the row, and column to be
+                    // sorted on are
+                    // exactly the same. Now look at other values of all the
+                    // columns to
+                    // find if the two rows are same.
+                    int numberOfSelectItems = row1.getSelectItems().length;
+                    for (int i = 0; i < numberOfSelectItems; i++) {
+                        Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
+                        Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
+                        if (CompareUtils.compare(rowValue1, rowValue2) == 0) {
+                            continue;
+                        } else {
+                            return CompareUtils.compare(rowValue1, rowValue2);
+                        }
+                    }
+                }
+
+                return comparableResult;
+            }
+        };
+
+        final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
+                comparator) {
+
+            @Override
+            protected ExcelDataContextWriter createWriter(File file) {
+                return new ExcelDataContextWriter(file, sheetName);
+            }
+
+            @Override
+            protected void writeHeader(ExcelDataContextWriter writer) throws IOException {
+                List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
+                if (!isColumnToBeSortedOnPresentInInput) {
+                    headers.remove(columnToBeSortedOn.getName());
+                }
+                writer.createTable(headers);
+            }
+
+            @Override
+            protected void writeRow(ExcelDataContextWriter writer, Row row, int count) throws IOException {
+                for (int i = 0; i < count; i++) {
+                    List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
+                    if (!isColumnToBeSortedOnPresentInInput) {
+                        valuesList.remove(indexOfColumnToBeSortedOn);
+                    }
+                    final Object[] values = valuesList.toArray(new Object[0]);
+                    writer.insertValues(values);
+                }
+            }
+        };
+
+        // read from the temp file and sort it into the final file
+        final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
+        try {
+            while (dataSet.next()) {
+                final Row row = dataSet.getRow();
+                sortMergeWriter.append(row);
+            }
+        } finally {
+            dataSet.close();
+        }
+        sortMergeWriter.write(file);
     }
 
     public void setFile(File file) {

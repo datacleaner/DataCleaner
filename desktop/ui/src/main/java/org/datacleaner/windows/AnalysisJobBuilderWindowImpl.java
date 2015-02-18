@@ -416,19 +416,25 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             changePanel(AnalysisWindowPanelType.WELCOME);
         } else {
             changePanel(AnalysisWindowPanelType.EDITING_CONTEXT);
-            if (con != null) {
-                final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
-                final int datastoreSize = defaultSchema.getTables().length;
-                if (datastoreSize <= 1) {
-                    final Column[] columns = defaultSchema.getTable(0).getColumns();
-                    for (int i=)
-                       _analysisJobBuilder.addSourceColumns(columns); 
-                }
-            }
-
+            addTableToSource(con);
         }
 
         updateStatusLabel();
+    }
+
+    private void addTableToSource(final DatastoreConnection con) {
+        if (con != null) {
+            final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
+            final int datastoreSize = defaultSchema.getTables().length;
+            if (datastoreSize <= 1) {
+                final Column[] columns = defaultSchema.getTable(0).getColumns();
+                for (int i = 0; i < columns.length; i++) {
+                    if (!_analysisJobBuilder.containsSourceColumn(columns[i])) {
+                        _analysisJobBuilder.addSourceColumns(columns);
+                    }
+                }
+            }
+        }
     }
 
     private void updateLeftPanelVisibility(boolean show) {

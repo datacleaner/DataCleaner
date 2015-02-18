@@ -202,6 +202,10 @@
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<artifactId>xml-apis</artifactId>
+			<groupId>xml-apis</groupId>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

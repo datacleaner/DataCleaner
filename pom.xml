@@ -6,19 +6,19 @@
 		<sshwagon.version>2.6</sshwagon.version>
 		<javadoc.version>2.9.1</javadoc.version>
 		<scala.version>2.11.4</scala.version>
-		<slf4j.version>1.7.7</slf4j.version>
-		<junit.version>4.11</junit.version>
-		<easymock.version>3.3</easymock.version>
+		<slf4j.version>1.7.10</slf4j.version>
+		<junit.version>4.12</junit.version>
+		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>18.0</guava.version>
-		<metamodel.version>4.3.0-incubating</metamodel.version>
-		<metamodel.extras.version>4.2.1</metamodel.extras.version>
-		<gwt.version>2.6.0</gwt.version>
-		<spring.core.version>3.2.8.RELEASE</spring.core.version>
-		<spring.security.version>3.2.1.RELEASE</spring.security.version>
+		<metamodel.version>4.3.1</metamodel.version>
+		<metamodel.extras.version>4.3.1</metamodel.extras.version>
+		<gwt.version>2.7.0</gwt.version>
+		<spring.core.version>3.2.12.RELEASE</spring.core.version>
+		<spring.security.version>3.2.5.RELEASE</spring.security.version>
 		<quartz.version>2.1.7</quartz.version>
-		<freemarker.version>2.3.19</freemarker.version>
-		<icu4j.version>4.8.1.1</icu4j.version>
+		<freemarker.version>2.3.21</freemarker.version>
+		<icu4j.version>54.1.1</icu4j.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -570,6 +570,11 @@
 				<version>${httpcomponents.version}</version>
 			</dependency>
 			
+			<dependency>
+				<artifactId>xml-apis</artifactId>
+				<groupId>xml-apis</groupId>
+				<version>1.4.01</version>				
+			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>
 				<groupId>net.sourceforge.jtds</groupId>

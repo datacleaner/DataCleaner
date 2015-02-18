@@ -126,7 +126,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Validate
     public void validate() {
         if (file.exists() && !overwriteFileIfExists) {
-            throw new IllegalStateException("The file already exists. Please configure the job to overwrite the existing file.");
+            throw new IllegalStateException(
+                    "The file already exists. Please configure the job to overwrite the existing file.");
         }
     }
 
@@ -148,7 +149,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Override
     public OutputWriter createOutputWriter() {
-                
+
         List<String> headers = new ArrayList<String>();
         for (int i = 0; i < columns.length; i++) {
             String columnName = columns[i].getName();
@@ -181,7 +182,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                 throw new RuntimeException(e);
             }
         }
-        
+
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
                 quoteChar, escapeChar, includeHeader, columns);
     }

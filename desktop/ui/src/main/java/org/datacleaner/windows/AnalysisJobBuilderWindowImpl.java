@@ -28,14 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +60,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.actions.NewAnalysisJobActionListener;
@@ -307,7 +306,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _leftPanel.setVisible(false);
         _leftPanel.setCollapsed(true);
         _schemaTreePanel.setUpdatePanel(_leftPanel);
-
     }
 
     @Override
@@ -418,6 +416,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             changePanel(AnalysisWindowPanelType.WELCOME);
         } else {
             changePanel(AnalysisWindowPanelType.EDITING_CONTEXT);
+            if (con != null) {
+                final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
+                final int datastoreSize = defaultSchema.getTables().length;
+                if (datastoreSize <= 1) {
+                    final Column[] columns = defaultSchema.getTable(0).getColumns();
+                    for (int i=)
+                       _analysisJobBuilder.addSourceColumns(columns); 
+                }
+            }
+
         }
 
         updateStatusLabel();

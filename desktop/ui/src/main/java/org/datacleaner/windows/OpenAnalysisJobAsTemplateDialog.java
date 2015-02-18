@@ -139,11 +139,16 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         _sourceColumnComboBoxes = new HashMap<String, List<SourceColumnComboBox>>();
         for (String columnPath : columnPaths) {
             int columnDelim = columnPath.lastIndexOf('.');
-            assert columnDelim != -1;
-
-            // this tablePath will be used to group together columns from the
-            // same original table
-            final String tablePath = columnPath.substring(0, columnDelim);
+            final String tablePath;
+            if (columnDelim == -1) {
+                // some column path contain only the column name
+                tablePath = _metadata.getDatastoreName();
+            } else {
+                // this tablePath will be used to group together columns from
+                // the same original table
+                // The column's path contains also the table name in the path
+                tablePath = columnPath.substring(0, columnDelim);
+            }
 
             final SourceColumnComboBox comboBox = new SourceColumnComboBox();
             comboBox.setEnabled(false);
@@ -291,7 +296,8 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), panel, 2, row);
 
         row++;
-        WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)), panel, 0, row);
+        WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH)), panel,
+                0, row);
         WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
 
         DCPanel datastoreButtonPanel = new DCPanel();

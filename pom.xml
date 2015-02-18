@@ -570,6 +570,11 @@
 				<version>${httpcomponents.version}</version>
 			</dependency>
 			
+			<dependency>
+				<artifactId>xml-apis</artifactId>
+				<groupId>xml-apis</groupId>
+				<version>1.4.01</version>				
+			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>
 				<groupId>net.sourceforge.jtds</groupId>

@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,9 +126,10 @@ public class WelcomePanel extends DCSplashPanel {
         final PopupButton recentJobsButton = WidgetFactory.createDefaultPopupButton("Recent jobs",
                 IconUtils.FILE_HOME_FOLDER);
         recentJobsButton.setMenuPosition(MenuPosition.TOP);
-        recentJobsButton.addMouseListener(new MouseAdapter() {
+        recentJobsButton.addActionListener(new ActionListener() {
+
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 refreshRecentJobs(recentJobsButton);
             }
         });
@@ -168,7 +167,7 @@ public class WelcomePanel extends DCSplashPanel {
          * content is removed so that we do not have duplicates
          */
         recentJobsMenu.removeAll();
-        
+
         for (int i = 0; i < recentJobFiles.size(); i++) {
             final FileObject jobFile = recentJobFiles.get(i);
             final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);

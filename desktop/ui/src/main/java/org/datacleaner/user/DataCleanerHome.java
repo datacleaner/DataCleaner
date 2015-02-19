@@ -86,8 +86,10 @@ public final class DataCleanerHome {
             logger.info("Resolved env. variable DATACLEANER_HOME ({}) to: {}", env, candidate);
         } else {
         	final String sysProp = System.getProperty("DATACLEANER_HOME");
-        	candidate = manager.resolveFile(sysProp);
-        	logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
+        	if (!StringUtils.isNullOrEmpty(sysProp)) {
+        		candidate = manager.resolveFile(sysProp);
+        		logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
+        	}
         } 
 
         if (isUsable(candidate)) {

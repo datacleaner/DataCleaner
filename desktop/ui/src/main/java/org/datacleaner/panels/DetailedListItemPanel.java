@@ -30,8 +30,8 @@ import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.util.WidgetUtils;
@@ -44,17 +44,28 @@ public class DetailedListItemPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
     private final JTextArea _bodyLabel;
+    private final Border _normalBorder;
+    private final Border _hoverBorder;
 
     public DetailedListItemPanel(final String title, final String body) {
         this(null, title, body);
     }
 
     public DetailedListItemPanel(final Icon icon, final String title, final String body) {
-        super(WidgetUtils.BG_SEMI_TRANSPARENT);
-        setLayout(new GridBagLayout());
-        setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
+        this(WidgetUtils.BG_SEMI_TRANSPARENT, WidgetUtils.BORDER_LIST_ITEM_SUBTLE,
+                WidgetUtils.BORDER_LIST_ITEM_HIGHLIGHTED, icon, title, body);
+    }
 
-        final DCLabel titleLabel = DCLabel.bright(title);
+    public DetailedListItemPanel(final Color backgroundColor, final Border normalBorder, final Border hoverBorder,
+            final Icon icon, final String title, final String body) {
+        super(backgroundColor);
+        setLayout(new GridBagLayout());
+        setBorder(normalBorder);
+
+        _normalBorder = normalBorder;
+        _hoverBorder = hoverBorder;
+
+        final DCLabel titleLabel = DCLabel.dark(title);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
         titleLabel.setForeground(COLOR_HOVER);
         titleLabel.setBorder(new EmptyBorder(12, 12, 4, 12));
@@ -69,23 +80,19 @@ public class DetailedListItemPanel extends DCPanel {
         _bodyLabel.setForeground(COLOR_NORMAL);
         _bodyLabel.setBorder(new EmptyBorder(4, 12, 12, 12));
 
-        final JSeparator horizontalRule = new JSeparator(JSeparator.HORIZONTAL);
-        horizontalRule.setForeground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
-        horizontalRule.setBackground(WidgetUtils.BG_COLOR_ORANGE_MEDIUM);
-
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         final MouseAdapter mouseListener = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 _bodyLabel.setForeground(COLOR_HOVER);
-                setBorder(WidgetUtils.BORDER_LIST_ITEM_HIGHLIGHTED);
+                setBorder(_hoverBorder);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 _bodyLabel.setForeground(COLOR_NORMAL);
-                setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
+                setBorder(_normalBorder);
             }
         };
         addMouseListener(mouseListener);
@@ -108,17 +115,6 @@ public class DetailedListItemPanel extends DCPanel {
         c.anchor = GridBagConstraints.LINE_START;
         add(titleLabel, c);
 
-        if (icon == null) {
-            c = new GridBagConstraints();
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridx = 1;
-            c.gridy = 1;
-            c.weightx = 1.0;
-            c.insets = new Insets(10, 12, 10, 12);
-            c.anchor = GridBagConstraints.LINE_START;
-            add(horizontalRule, c);
-        }
-
         c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
@@ -127,13 +123,13 @@ public class DetailedListItemPanel extends DCPanel {
         c.anchor = GridBagConstraints.LINE_START;
         add(_bodyLabel, c);
     }
-    
+
     @Override
     public synchronized void addMouseListener(MouseListener mouseListener) {
         super.addMouseListener(mouseListener);
         _bodyLabel.addMouseListener(mouseListener);
     }
-    
+
     @Override
     public synchronized void removeMouseListener(MouseListener mouseListener) {
         super.removeMouseListener(mouseListener);

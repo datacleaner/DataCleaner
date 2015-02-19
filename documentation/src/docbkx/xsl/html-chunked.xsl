@@ -4,6 +4,7 @@
   <xsl:import href="urn:docbkx:stylesheet"/>
   <xsl:output method="html" encoding="UTF-8" indent="no"/>
 
+<!-- 
   <xsl:template name="user.footer.content">
 	<xsl:if test="@id">
 		<div id="disqus_thread"></div>
@@ -21,6 +22,7 @@
 		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 	</xsl:if>
   </xsl:template>
+ -->
 
   <!--
     Important links:

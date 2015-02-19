@@ -112,7 +112,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         assert _inputColumnsProperty != null;
         assert _inputColumnsProperty.getType() == InputColumn[].class;
         final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-                analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " -> ");
+                analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " → ");
         _overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
 
         // the String[] property

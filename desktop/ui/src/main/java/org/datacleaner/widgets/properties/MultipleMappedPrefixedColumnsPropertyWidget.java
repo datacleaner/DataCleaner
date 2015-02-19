@@ -27,6 +27,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.SourceColumnComboBox;
 
@@ -36,22 +37,25 @@ import org.datacleaner.widgets.SourceColumnComboBox;
  */
 public class MultipleMappedPrefixedColumnsPropertyWidget extends MultipleMappedColumnsPropertyWidget {
 
-	private final String _prefix;
+    private final String _prefix;
 
-	public MultipleMappedPrefixedColumnsPropertyWidget(ComponentBuilder componentBuilder,
-			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty,
-			String prefix) {
-		super(componentBuilder, inputColumnsProperty, mappedColumnsProperty);
-		_prefix = prefix;
-	}
+    public MultipleMappedPrefixedColumnsPropertyWidget(ComponentBuilder componentBuilder,
+            ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty,
+            String prefix) {
+        super(componentBuilder, inputColumnsProperty, mappedColumnsProperty);
+        _prefix = prefix;
+    }
 
-	@Override
-	protected JComponent decorateSourceColumnComboBox(InputColumn<?> inputColumn,
-			SourceColumnComboBox sourceColumnComboBox) {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(DCLabel.dark(_prefix), BorderLayout.WEST);
-		panel.add(sourceColumnComboBox, BorderLayout.CENTER);
-		return panel;
-	}
+    @Override
+    protected JComponent decorateSourceColumnComboBox(InputColumn<?> inputColumn,
+            SourceColumnComboBox sourceColumnComboBox) {
+        final DCLabel label = DCLabel.dark(_prefix);
+        label.setFont(WidgetUtils.FONT_MONOSPACE);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(label, BorderLayout.WEST);
+        panel.add(sourceColumnComboBox, BorderLayout.CENTER);
+        return panel;
+    }
 }

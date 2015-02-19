@@ -408,7 +408,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _datastoreConnection.close();
         }
         _analysisJobBuilder.setDatastore(datastore);
-        _schemaTreePanel.setDatastore(datastore, expandTree);
         _datastoreConnection = con;
 
         if (datastore == null) {
@@ -419,7 +418,20 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             addTableToSource(con);
         }
 
+        setSchemaTree(datastore, expandTree, con);
         updateStatusLabel();
+    }
+
+    private void setSchemaTree(final Datastore datastore, boolean expandTree, final DatastoreConnection con) {
+        if (con != null) {
+            final Schema defaultSchema = con.getSchemaNavigator().getDefaultSchema();
+            final int datastoreSize = defaultSchema.getTables().length;
+            if (datastoreSize == 1) {
+                _schemaTreePanel.setDatastore(datastore, true);
+            } else {
+                _schemaTreePanel.setDatastore(datastore, expandTree);
+            }
+        }
     }
 
     private void addTableToSource(final DatastoreConnection con) {

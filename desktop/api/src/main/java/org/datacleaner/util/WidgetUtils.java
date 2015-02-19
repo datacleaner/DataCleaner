@@ -166,10 +166,10 @@ public final class WidgetUtils {
 
     // Red: #d32424
     public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);
-    
+
     // Purple: #d3249c
     public static final Color ADDITIONAL_COLOR_PURPLE_BRIGHT = new ColorUIResource(211, 36, 156);
-    
+
     // Cyan: #24d1d3
     public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
 
@@ -192,7 +192,7 @@ public final class WidgetUtils {
 
     public static final Border BORDER_LIST_ITEM_HIGHLIGHTED = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
             BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_BLUE_MEDIUM));
-    
+
     public static final Border BORDER_LIST_ITEM_SUBTLE = new CompoundBorder(new MatteBorder(0, 3, 0, 0,
             BG_COLOR_BLUE_MEDIUM), new MatteBorder(0, 0, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
 
@@ -202,9 +202,9 @@ public final class WidgetUtils {
     public static final Border BORDER_TABLE_PANEL = new MatteBorder(1, 1, 0, 0, BG_COLOR_LESS_BRIGHT);
 
     public static final Border BORDER_BUTTON_DARK = new EmptyBorder(BORDER_WIDE_WIDTH, 10, BORDER_WIDE_WIDTH, 10);
-    
-    public static final Border BORDER_BUTTON_DARK_WITH_LINE = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1, false),
-            new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
+
+    public static final Border BORDER_BUTTON_DARK_WITH_LINE = new CompoundBorder(new LineBorder(BG_COLOR_LESS_DARK, 1,
+            false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9, BORDER_WIDE_WIDTH - 1, 9));
 
     public static final Border BORDER_BUTTON_DEFAULT = new CompoundBorder(
             new LineBorder(BG_COLOR_LESS_BRIGHT, 1, false), new EmptyBorder(BORDER_WIDE_WIDTH - 1, 9,
@@ -227,6 +227,11 @@ public final class WidgetUtils {
     // grid bag contraint defaults
     public static final int DEFAULT_PADDING = 2;
     public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
+
+    /**
+     * Commonly used insets - empty
+     */
+    public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
 
     private WidgetUtils() {
         // prevent instantiation
@@ -265,8 +270,8 @@ public final class WidgetUtils {
     }
 
     public static void centerOnScreen(Component component) {
-        Dimension paneSize = component.getSize();
-        Dimension screenSize = component.getToolkit().getScreenSize();
+        final Dimension paneSize = component.getSize();
+        final Dimension screenSize = component.getToolkit().getScreenSize();
         component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
     }
 
@@ -316,8 +321,8 @@ public final class WidgetUtils {
             layout = new GridBagLayout();
             panel.setLayout(layout);
         }
-        GridBagLayout gridBagLayout = (GridBagLayout) layout;
-        GridBagConstraints constraints = new GridBagConstraints();
+        final GridBagLayout gridBagLayout = (GridBagLayout) layout;
+        final GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
         constraints.gridy = gridy;
         constraints.gridwidth = width;

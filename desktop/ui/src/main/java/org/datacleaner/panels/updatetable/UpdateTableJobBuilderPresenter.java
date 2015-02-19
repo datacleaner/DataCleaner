@@ -119,7 +119,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 			assert _valueInputColumnsProperty != null;
 			assert _valueInputColumnsProperty.getType() == InputColumn[].class;
 			final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-					analyzerJobBuilder, _valueInputColumnsProperty, _valueColumnNamesProperty," -> ");
+					analyzerJobBuilder, _valueInputColumnsProperty, _valueColumnNamesProperty," → ");
 			_overriddenPropertyWidgets.put(_valueInputColumnsProperty, inputColumnsPropertyWidget);
 
 			// the String[] property
@@ -137,7 +137,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 			assert _conditionInputColumnsProperty != null;
 			assert _conditionInputColumnsProperty.getType() == InputColumn[].class;
 			final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
-					analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty," == ");
+					analyzerJobBuilder, _conditionInputColumnsProperty, _conditionColumnNamesProperty," = ");
 			
 			_overriddenPropertyWidgets.put(_conditionInputColumnsProperty, inputColumnsPropertyWidget);
 

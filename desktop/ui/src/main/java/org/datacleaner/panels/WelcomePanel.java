@@ -100,7 +100,7 @@ public class WelcomePanel extends DCSplashPanel {
                 final Class<? extends JComponent> componentClass = (Class<? extends JComponent>) Class
                         .forName(welcomePanelClassName);
 
-                return injector.getInstance(componentClass);
+                result = injector.getInstance(componentClass);
             } catch (Exception e) {
                 logger.error("Failed to instantiate welcome panel class: {}", welcomePanelClassName, e);
             }

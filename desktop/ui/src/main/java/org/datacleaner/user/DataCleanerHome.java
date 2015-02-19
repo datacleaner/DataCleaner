@@ -101,9 +101,11 @@ public final class DataCleanerHome {
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
         } else {
-            // in normal mode, the default folder will be in the working
-            // directory
-            candidate = manager.resolveFile(".");
+            if (candidate == null) {
+            	// in normal mode, the default folder will be in the working
+            	// directory
+            	candidate = manager.resolveFile(".");
+            }
             if (isWriteable(candidate)) {
                 logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);
             } else {

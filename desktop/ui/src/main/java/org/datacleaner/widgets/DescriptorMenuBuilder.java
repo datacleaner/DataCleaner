@@ -25,6 +25,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.ImmutableRef;
-import org.apache.metamodel.util.Ref;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -56,11 +55,34 @@ import org.slf4j.LoggerFactory;
  */
 public final class DescriptorMenuBuilder {
 
+    /**
+     * Used to get the menu structure. This will be called with all categories
+     * first, then all component descriptors.
+     *
+     */
+    public interface MenuCallback {
+        /**
+         * Will be called once for each descriptor, in sorted order. Always
+         * called after {@link #addCategory(ComponentCategory)}, so categories
+         * will exist when called.
+         * 
+         * @param descriptor
+         */
+        public void addComponentDescriptor(ComponentDescriptor<?> descriptor);
+
+        /**
+         * Will be called once for each category, in sorted order.
+         * 
+         * @param descriptorMenu
+         */
+        public void addCategory(ComponentCategory category);
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(DescriptorMenuBuilder.class);
 
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final UsageLogger _usageLogger;
-    private final Ref<Collection<? extends ComponentDescriptor<?>>> _componentDescriptorsRef;
+    private final Collection<? extends ComponentDescriptor<?>> _componentDescriptors;
     private final boolean _buildSubmenus;
     private final Point2D _coordinate;
 
@@ -86,7 +108,7 @@ public final class DescriptorMenuBuilder {
         _usageLogger = usageLogger;
         _coordinate = coordinate;
         _buildSubmenus = buildSubmenus;
-        _componentDescriptorsRef = new ImmutableRef<Collection<? extends ComponentDescriptor<?>>>(componentDescriptors);
+        _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
     public DescriptorMenuBuilder(final AnalysisJobBuilder analysisJobBuilder, final UsageLogger usageLogger,
@@ -95,16 +117,11 @@ public final class DescriptorMenuBuilder {
         _usageLogger = usageLogger;
         _coordinate = coordinate;
         _buildSubmenus = buildSubmenus;
-        _componentDescriptorsRef = new Ref<Collection<? extends ComponentDescriptor<?>>>() {
-            @Override
-            public Collection<? extends ComponentDescriptor<?>> get() {
-                final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration()
-                        .getDescriptorProvider();
-                final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
-                        .getComponentDescriptorsOfSuperCategory(superCategory);
-                return componentDescriptors;
-            }
-        };
+
+        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
+                .getComponentDescriptorsOfSuperCategory(superCategory);
+        _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);
     }
 
     public void addItemsToMenu(JMenu menu) {
@@ -115,84 +132,87 @@ public final class DescriptorMenuBuilder {
         initialize(menu);
     }
 
-    private void initialize(final JComponent outerMenu) {
-        final Collection<? extends ComponentDescriptor<?>> unsortedComponentDescriptors = _componentDescriptorsRef
-                .get();
-        final List<? extends ComponentDescriptor<?>> componentDescriptors = CollectionUtils2
-                .sorted(unsortedComponentDescriptors);
+    public static void createMenuStructure(final MenuCallback callback,
+            Collection<? extends ComponentDescriptor<?>> componentDescriptors, boolean buildSubmenus) {
+        final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
+                .sorted(componentDescriptors);
 
-        if (!_buildSubmenus) {
-            for (ComponentDescriptor<?> descriptor : componentDescriptors) {
-                final JMenuItem menuItem = createMenuItem(descriptor);
-                outerMenu.add(menuItem);
-            }
-            return;
-        }
-
-        final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
+        final Map<ComponentCategory, List<Class<?>>> categories = new HashMap<>();
 
         // build sub menus
         {
-            for (ComponentDescriptor<?> descriptor : componentDescriptors) {
+            for (ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
                 final Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
                 for (ComponentCategory componentCategory : componentCategories) {
-                    DescriptorMenu menu = descriptorMenus.get(componentCategory);
-                    if (menu == null) {
-                        menu = new DescriptorMenu(componentCategory);
-                        descriptorMenus.put(componentCategory, menu);
+                    List<Class<?>> categoryList = categories.get(componentCategory);
+                    if (categoryList == null) {
+                        categoryList = new ArrayList<Class<?>>();
+                        categories.put(componentCategory, categoryList);
                     }
-                    menu.addComponentClass(descriptor.getComponentClass());
+                    categoryList.add(descriptor.getComponentClass());
                 }
             }
         }
 
         {
             // place sub menus
-            final List<DescriptorMenu> sortedMenus = CollectionUtils2.sorted(descriptorMenus.values());
-            for (DescriptorMenu descriptorMenu : sortedMenus) {
-                final int count = descriptorMenu.getComponentClassCount();
+            final List<ComponentCategory> sortedCategories = CollectionUtils2.sorted(categories.keySet(),
+                    new Comparator<ComponentCategory>() {
+                        public int compare(ComponentCategory o1, ComponentCategory o2) {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+
+            for (ComponentCategory category : sortedCategories) {
+                final int count = categories.get(category).size();
                 if (count <= 1) {
                     // disregard categories with only a single component in
                     // them!
-                    ComponentCategory category = descriptorMenu.getComponentCategory();
                     logger.info("Disregarding menu for category '{}' because of too few components ({})", category,
                             count);
-                    descriptorMenus.remove(category);
+                    categories.remove(category);
                 } else {
                     // add menu
-                    outerMenu.add(descriptorMenu);
+                    callback.addCategory(category);
                 }
             }
         }
 
-        // place items that are not in any submenus
-        {
-            final List<? extends ComponentDescriptor<?>> sortedComponentDescriptors = CollectionUtils2
-                    .sorted(componentDescriptors);
-            for (final ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
+        for (ComponentDescriptor<?> descriptor : sortedComponentDescriptors) {
+            callback.addComponentDescriptor(descriptor);
+        }
+
+    }
+
+    private void initialize(final JComponent outerMenu) {
+        final Map<ComponentCategory, DescriptorMenu> descriptorMenus = new HashMap<ComponentCategory, DescriptorMenu>();
+
+        MenuCallback callback = new MenuCallback() {
+            @Override
+            public void addCategory(ComponentCategory category) {
+                DescriptorMenu menu = new DescriptorMenu(category);
+                descriptorMenus.put(category, menu);
+                outerMenu.add(menu);
+            }
+
+            @Override
+            public void addComponentDescriptor(ComponentDescriptor<?> descriptor) {
                 boolean placedInSubmenu = false;
-                final Class<?> componentClass = descriptor.getComponentClass();
-                JMenuItem menuItem = createMenuItem(descriptor);
-                if (menuItem != null) {
-                    List<DescriptorMenu> sortedMenusDescriptors = CollectionUtils2.sorted(descriptorMenus.values());
-                    for (DescriptorMenu descriptorMenu : sortedMenusDescriptors) {
-                        if (descriptorMenu.containsComponentClass(componentClass)) {
-                            descriptorMenu.add(menuItem);
-                            placedInSubmenu = true;
-
-                            // create a new menu item (or else it will be moved
-                            // instead of added.
-                            menuItem = createMenuItem(descriptor);
-                        }
-                    }
-
-                    if (!placedInSubmenu) {
-                        // add menu item
-                        outerMenu.add(menuItem);
+                for (ComponentCategory category : descriptor.getComponentCategories()) {
+                    if (descriptorMenus.containsKey(category)) {
+                        placedInSubmenu = true;
+                        JMenuItem menuItem = createMenuItem(descriptor);
+                        descriptorMenus.get(category).add(menuItem);
                     }
                 }
+
+                if (!placedInSubmenu) {
+                    outerMenu.add(createMenuItem(descriptor));
+                }
             }
-        }
+        };
+
+        createMenuStructure(callback, _componentDescriptors, _buildSubmenus);
     }
 
     private JMenuItem createMenuItem(final ComponentDescriptor<?> descriptor) {

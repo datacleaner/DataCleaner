@@ -326,7 +326,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     @Override
     public void mousePressed(MouseEvent me) {
-        logger.info("mousePressed({}) (clickCaught={})", me, _clickCaught);
+        logger.debug("mousePressed({}) (clickCaught={})", me, _clickCaught);
         if (!_clickCaught) {
             int button = me.getButton();
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {

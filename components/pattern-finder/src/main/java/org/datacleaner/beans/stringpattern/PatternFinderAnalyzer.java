@@ -58,36 +58,44 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(PatternFinderAnalyzer.class);
 
+    public static final String PROPERTY_COLUMN = "Column";
+    public static final String PROPERTY_GROUP_COLUMN = "Group column";
+    public static final String PROPERTY_DISCRIMINATE_TEXT_CASE = "Discriminate text case";
+    public static final String PROPERTY_DISCRIMINATE_NEGATIVE_NUMBERS = "Discriminate negative numbers";
+    public static final String PROPERTY_DISCRIMINATE_DECIMALS = "Discriminate decimals";
+    public static final String PROPERTY_ENABLE_MIXED_TOKENS = "Enable mixed tokens";
+    public static final String PROPERTY_IGNORE_REPEATED_SPACES = "Ignore repeated spaces";
+
     public static final String MEASURE_SAMPLE = "Sample";
     public static final String MEASURE_MATCH_COUNT = "Match count";
     public static final String DIMENSION_NAME_MEASURES = "Measures";
     public static final String DIMENSION_NAME_PATTERN = "Pattern";
 
-    @Configured(order = 1)
+    @Configured(order = 1, value = PROPERTY_COLUMN)
     @ColumnProperty(escalateToMultipleJobs = true)
     InputColumn<String> column;
 
-    @Configured(required = false, order = 2)
+    @Configured(required = false, order = 2, value = PROPERTY_GROUP_COLUMN)
     @Description("Optional column to group patterns by")
     InputColumn<String> groupColumn;
 
-    @Configured(required = false, order = 3)
+    @Configured(required = false, order = 3, value = PROPERTY_DISCRIMINATE_TEXT_CASE)
     @Description("Separate text tokens based on case")
     Boolean discriminateTextCase = true;
 
-    @Configured(required = false, order = 4)
+    @Configured(required = false, order = 4, value = PROPERTY_DISCRIMINATE_NEGATIVE_NUMBERS)
     @Description("Separate number tokens based on negativity")
     Boolean discriminateNegativeNumbers = false;
 
-    @Configured(required = false, order = 5)
+    @Configured(required = false, order = 5, value = PROPERTY_DISCRIMINATE_DECIMALS)
     @Description("Separate number tokens for decimals")
     Boolean discriminateDecimals = true;
 
-    @Configured(required = false, order = 6)
+    @Configured(required = false, order = 6, value = PROPERTY_ENABLE_MIXED_TOKENS)
     @Description("Use '?'-tokens for mixed text and numbers")
     Boolean enableMixedTokens = true;
 
-    @Configured(required = false, order = 7)
+    @Configured(required = false, order = 7, value = PROPERTY_IGNORE_REPEATED_SPACES)
     @Description("Ignore whitespace differences")
     Boolean ignoreRepeatedSpaces = false;
 
@@ -223,7 +231,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
             return new PatternFinderResult(column, groupColumn, crosstabs, _configuration);
         }
     }
-    
+
     public static Crosstab<Serializable> createCrosstab() {
         CrosstabDimension measuresDimension = new CrosstabDimension(DIMENSION_NAME_MEASURES);
         measuresDimension.addCategory(MEASURE_MATCH_COUNT);

@@ -85,12 +85,12 @@ public final class DataCleanerHome {
             candidate = manager.resolveFile(env);
             logger.info("Resolved env. variable DATACLEANER_HOME ({}) to: {}", env, candidate);
         } else {
-        	final String sysProp = System.getProperty("DATACLEANER_HOME");
-        	if (!StringUtils.isNullOrEmpty(sysProp)) {
-        		candidate = manager.resolveFile(sysProp);
-        		logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
-        	}
-        } 
+            final String sysProp = System.getProperty("DATACLEANER_HOME");
+            if (!StringUtils.isNullOrEmpty(sysProp)) {
+                candidate = manager.resolveFile(sysProp);
+                logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
+            }
+        }
 
         if (isUsable(candidate)) {
             return candidate;
@@ -103,10 +103,10 @@ public final class DataCleanerHome {
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
         } else {
-            if (candidate == null) {
-            	// in normal mode, the default folder will be in the working
-            	// directory
-            	candidate = manager.resolveFile(".");
+            if (!isUsable(candidate)) {
+                // in normal mode, the default folder will be in the working
+                // directory
+                candidate = manager.resolveFile(".");
             }
             if (isWriteable(candidate)) {
                 logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);

@@ -89,7 +89,7 @@ public final class WidgetFactory {
     public static JMenuItem createMenuItem(String text, String iconPath) {
         Icon icon = null;
         if (iconPath != null) {
-            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
+            icon = ImageManager.get().getImageIcon(iconPath, IconUtils.ICON_SIZE_MENU_ITEM);
         }
         return createMenuItem(text, icon);
     }
@@ -98,7 +98,7 @@ public final class WidgetFactory {
         if (Strings.isNullOrEmpty(imagePath)) {
             return null;
         }
-        final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM);
+        final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
         return icon;
     }
     

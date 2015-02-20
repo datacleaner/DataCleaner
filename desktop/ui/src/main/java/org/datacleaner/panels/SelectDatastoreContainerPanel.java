@@ -53,7 +53,7 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
         super(window);
         _datastoreCatalog = datastoreCatalog;
         _selectDatastorePanel = new SelectDatastorePanel(injectorBuilder, databaseDriverCatalog, datastoreCatalog,
-                userPreferences, this);
+                userPreferences, this, true);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);

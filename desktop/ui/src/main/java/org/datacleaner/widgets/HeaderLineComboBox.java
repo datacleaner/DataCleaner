@@ -29,8 +29,6 @@ import org.datacleaner.util.NumberDocument;
 
 /**
  * A combo box for selecing header lines for eg. CSV or fixed width files.
- * 
- * @author Kasper Sørensen
  */
 public class HeaderLineComboBox extends DCComboBox<Integer> {
 

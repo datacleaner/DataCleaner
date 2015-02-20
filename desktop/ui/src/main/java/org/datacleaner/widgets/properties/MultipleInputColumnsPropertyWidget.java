@@ -152,8 +152,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             }
         });
 
-        _notAvailableCheckBox = new DCCheckBox<InputColumn<?>>("<html><font color=\"gray\">- no <i>"
-                + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>", false);
+        if (_dataType == null || _dataType == Object.class) {
+            _notAvailableCheckBox = new DCCheckBox<InputColumn<?>>(
+                    "<html><font color=\"gray\">- no columns available -</font></html>", false);
+        } else {
+            _notAvailableCheckBox = new DCCheckBox<InputColumn<?>>("<html><font color=\"gray\">- no <i>"
+                    + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>", false);
+        }
         _notAvailableCheckBox.setEnabled(false);
 
         _buttonPanel = new DCPanel();

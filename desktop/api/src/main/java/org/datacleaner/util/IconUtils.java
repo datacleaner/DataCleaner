@@ -67,6 +67,9 @@ public final class IconUtils {
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
     
+    public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
+    public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
+
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";

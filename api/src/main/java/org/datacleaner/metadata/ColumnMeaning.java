@@ -33,6 +33,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // generic items
 
+    OTHER("Disregard", "Other", "Nothing"),
+
     KEY_PRIMARY("Primary Key", "Record ID", "ID", "Identifier", "key", "PKID", "Record key"),
 
     KEY_FOREIGN("Foreign Key", "FK"),
@@ -68,11 +70,11 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PRODUCT_LINE("Product line", "Product type", "Product area"),
 
-    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount"),
+    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount", "Quantity in stock"),
 
     // MONEY oriented items
 
-    MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost", "Credit"),
+    MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost", "Credit", "Buy price", "Payment amount"),
 
     MONEY_CURRENCY("Money currency", "Currency", "Valuta", "Exchange"),
 

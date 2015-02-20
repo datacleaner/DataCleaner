@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.CassandraDatastore;
@@ -69,16 +70,22 @@ public class AddDatastorePanel extends DCPanel {
     private final InjectorBuilder _injectorBuilder;
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
+    private final DatabaseDriverCatalog _databaseDriverCatalog;
+    private final DatastoreCatalog _datastoreCatalog;
 
     public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
             final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
-            final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences) {
-
+            final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
+            boolean showExistingDatastoresButton) {
+        super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
+        _datastoreCatalog = datastoreCatalog;
         _injectorBuilder = injectorBuilder;
+        _databaseDriverCatalog = databaseDriverCatalog;
         _datastoreSelectedListener = datastoreSelectedListener;
         _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener, userPreferences);
+
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -88,27 +95,85 @@ public class AddDatastorePanel extends DCPanel {
         c.fill = GridBagConstraints.BOTH;
         add(_dropzone, c);
 
+        final PopupButton databaseButton = createDatabaseButton();
+
+        final PopupButton cloudButton = createCloudButton();
+
+        final DCPanel buttonPanel;
+        if (showExistingDatastoresButton) {
+            PopupButton existingDatastoresButton = createExistingDatastoresButton();
+            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton, existingDatastoresButton);
+        } else {
+            buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
+        }
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.weightx = 1.0;
+        c.insets = new Insets(0, 5, 0, 0);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        add(buttonPanel, c);
+
+    }
+
+    private PopupButton createExistingDatastoresButton() {
+        final PopupButton existingDatastoresButton = WidgetFactory.createDefaultPopupButton("Existing datastores",
+                IconUtils.FILE_FOLDER);
+        final JPopupMenu menu = existingDatastoresButton.getMenu();
+        final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+        for (String datastoreName : datastoreNames) {
+            final Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
+            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreName,
+                    IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_MENU_ITEM));
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _datastoreSelectedListener.datastoreSelected(datastore);
+                }
+            });
+
+            menu.add(menuItem);
+        }
+        return existingDatastoresButton;
+    }
+
+    private PopupButton createCloudButton() {
+        final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
+                IconUtils.CLOUD_IMAGEPATH);
+        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
+        cloudButton.getMenu().add(
+                createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
+                        IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
+        cloudButton.getMenu().add(
+                createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
+                        SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        return cloudButton;
+    }
+
+    private PopupButton createDatabaseButton() {
         final PopupButton databaseButton = WidgetFactory.createDefaultPopupButton("Database",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
             databaseButton.getMenu().add(
                     createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
                             "images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
         }
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
             databaseButton.getMenu().add(
                     createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
                             "images/datastore-types/databases/postgresql.png",
                             DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
         }
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
             databaseButton.getMenu().add(
                     createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
                             "images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
         }
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
             databaseButton.getMenu().add(
                     createNewJdbcDatastoreButton("Microsoft SQL Server connection",
                             "Connect to a Microsoft SQL Server database",
@@ -136,27 +201,7 @@ public class AddDatastorePanel extends DCPanel {
         databaseButton.getMenu().add(
                 createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
                         IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
-
-        final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service", IconUtils.CLOUD_IMAGEPATH);
-        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
-
-        final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, databaseButton, cloudButton);
-
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.weightx = 1.0;
-        c.insets = new Insets(0, 5, 0, 0);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(buttonPanel, c);
-
-        cloudButton.getMenu().add(
-                createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
-                        IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        cloudButton.getMenu().add(
-                createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
-                        SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        return databaseButton;
     }
 
     private JMenuItem createNewJdbcDatastoreButton(final String title, final String description,

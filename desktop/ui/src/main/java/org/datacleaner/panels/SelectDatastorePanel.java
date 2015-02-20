@@ -37,30 +37,39 @@ public class SelectDatastorePanel extends DCPanel {
 
     public SelectDatastorePanel(InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
             DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
-            DatastoreSelectedListener datastoreSelectListener) {
+            DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
 
         add(Box.createVerticalStrut(20));
 
-        final JComponent newDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use new datastore");
-        add(newDatastoreLabel);
+        if (showExistingDatastoresAsLongList) {
+            // no need to show this label if existing datastores are shown as
+            // popup button
+            final JComponent newDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use new datastore");
+            add(newDatastoreLabel);
+        }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
-                datastoreSelectListener, userPreferences));
+        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder, datastoreSelectListener,
+                userPreferences, !showExistingDatastoresAsLongList));
 
-        add(Box.createVerticalStrut(20));
+        if (showExistingDatastoresAsLongList) {
+            final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");
+            _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
 
-        final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");
-        add(existingDatastoreLabel);
+            add(Box.createVerticalStrut(20));
+            add(existingDatastoreLabel);
+            add(_existingDatastoresPanel);
+        } else {
+            _existingDatastoresPanel = null;
+        }
 
-        _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
-        add(_existingDatastoresPanel);
-        
         updateDatastores();
     }
 
     public void updateDatastores() {
-        _existingDatastoresPanel.updateDatastores();
+        if (_existingDatastoresPanel != null) {
+            _existingDatastoresPanel.updateDatastores();
+        }
     }
 }

@@ -103,19 +103,31 @@ public final class DataCleanerHome {
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
         } else {
-            if (!isUsable(candidate)) {
-                // in normal mode, the default folder will be in the working
-                // directory
-                candidate = manager.resolveFile(".");
-            }
+            // in normal mode, the default folder will be in the working
+            // directory
             if (isWriteable(candidate)) {
-                logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in '.' -> {}", candidate);
+                logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
             } else {
-                final String path = getUserHomeCandidatePath();
-                candidate = manager.resolveFile(path);
-                logger.info(
-                        "Application directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
-                        path, candidate);
+                // Workaround: isWritable is not reliable for a non-existent directory. Just create it and check again.
+                if (!candidate.exists()) {
+                    candidate.createFolder();
+                }
+                if (isWriteable(candidate)) {
+                    logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
+                } else {
+                    candidate = manager.resolveFile(".");
+                    if (isWriteable(candidate)) {
+                        logger.info(
+                                "Application directory is not writeable. Attempting to build DATACLEANER_HOME in the working directory: {}",
+                                candidate);
+                    } else {
+                        final String path = getUserHomeCandidatePath();
+                        candidate = manager.resolveFile(path);
+                        logger.info(
+                                "Application directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
+                                path, candidate);
+                    }
+                }
             }
 
         }

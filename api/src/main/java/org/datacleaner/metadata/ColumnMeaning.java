@@ -41,11 +41,13 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // PERSON oriented items
 
-    PERSON_NAME_GIVEN("First name", "Given name", "Forename", "Christian name", "1st name", "Name one"),
+    PERSON_NAME_GIVEN("First name", "Given name", "Forename", "Christian name", "1st name", "Name one",
+            "Contact first name", "Contact given name"),
 
-    PERSON_NAME_FAMILY("Last name", "Family name", "Surname", "2nd name", "Name two"),
+    PERSON_NAME_FAMILY("Last name", "Family name", "Surname", "2nd name", "Name two", "Contact last name",
+            "Contact family name"),
 
-    PERSON_NAME_FULL("Full name", "Name", "Person name"),
+    PERSON_NAME_FULL("Full name", "Name", "Person name", "Contact", "Contact name"),
 
     PERSON_GENDER("Gender", "Sex"),
 
@@ -58,7 +60,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
     COMPANY_REGISTRATION_NUMBER("Company registration number", "Reg number"),
 
     COMPANY_NAME("Company name", "Company", "Organization", "Business", "Organisation", "Employer", "Firm",
-            "Workplace", "Works at", "Vendor", "Supplier"),
+            "Workplace", "Works at", "Vendor", "Supplier", "Customer", "Customer name"),
 
     // PRODUCT oriented items
 
@@ -72,7 +74,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // MONEY oriented items
 
-    MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost"),
+    MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost", "Credit"),
 
     MONEY_CURRENCY("Money currency", "Currency", "Valuta", "Exchange"),
 

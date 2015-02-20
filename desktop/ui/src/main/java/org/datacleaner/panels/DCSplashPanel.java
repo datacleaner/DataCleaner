@@ -111,6 +111,12 @@ public class DCSplashPanel extends DCPanel {
             return titleLabel;
         }
     }
+    
+    public static JComponent createSubtitleLabel(String text) {
+        final DCLabel label = DCLabel.dark(text);
+        label.setFont(WidgetUtils.FONT_HEADER2);
+        return label;
+    }
 
     public static JComponent createBackToWelcomeScreenButton(final ActionListener backButtonActionListener) {
         final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_BACK);

@@ -19,7 +19,8 @@
  */
 package org.datacleaner.api;
 
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -87,7 +88,7 @@ public class AnalyzerResultFutureTest extends TestCase {
         final Thread[] threads = new Thread[threadCount];
         @SuppressWarnings({ "unchecked" })
         final Listener<NumberResult>[] listeners = new Listener[threadCount];
-        final Queue<Object> resultQueue = new ArrayBlockingQueue<>(threadCount);
+        final ArrayBlockingQueue<Object> resultQueue = new ArrayBlockingQueue<>(threadCount);
 
         for (int i = 0; i < listeners.length; i++) {
             listeners[i] = new Listener<NumberResult>() {
@@ -134,8 +135,13 @@ public class AnalyzerResultFutureTest extends TestCase {
 
         future.get();
 
-        assertEquals("[43, 43, 43, 43, 43]", resultQueue.toString());
-        assertEquals(halfOfTheThreads, resultQueue.size());
+        // to avoid any race conditions we use the drainTo method before calling
+        // toString().
+        final List<Object> result = new ArrayList<>();
+        resultQueue.drainTo(result);
+
+        assertEquals("[43, 43, 43, 43, 43]", result.toString());
+        assertEquals(halfOfTheThreads, result.size());
 
         for (int i = halfOfTheThreads; i < threads.length; i++) {
             threads[i].start();
@@ -144,8 +150,10 @@ public class AnalyzerResultFutureTest extends TestCase {
             threads[i].join();
         }
 
-        assertEquals("[43, 43, 43, 43, 43, 43, 43, 43, 43, 43]", resultQueue.toString());
-        assertEquals(threads.length, resultQueue.size());
+        resultQueue.drainTo(result);
+
+        assertEquals("[43, 43, 43, 43, 43, 43, 43, 43, 43, 43]", result.toString());
+        assertEquals(threads.length, result.size());
     }
 
     public void testSerializationAndDeserialization() throws Exception {

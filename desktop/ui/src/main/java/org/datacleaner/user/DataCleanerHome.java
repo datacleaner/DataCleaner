@@ -109,7 +109,7 @@ public final class DataCleanerHome {
                 logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
             } else {
                 // Workaround: isWritable is not reliable for a non-existent directory. Just create it and check again.
-                if (!candidate.exists()) {
+                if ((candidate != null) && (!candidate.exists())) {
                     candidate.createFolder();
                 }
                 if (isWriteable(candidate)) {
@@ -171,6 +171,10 @@ public final class DataCleanerHome {
     }
 
     private static boolean isWriteable(FileObject candidate) throws FileSystemException {
+        if (candidate == null) {
+            return false;
+        }
+        
         if (!candidate.isWriteable()) {
             return false;
         }

@@ -42,13 +42,14 @@ public class DetailedListItemPanel extends DCPanel {
 
     private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_MEDIUM;
     private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_DARK;
-    
+
     private static final int MARGIN_LEFT = 20;
 
     private static final long serialVersionUID = 1L;
     private final JTextArea _bodyLabel;
     private final Border _normalBorder;
     private final Border _hoverBorder;
+    private boolean _hoverEffect;
 
     public DetailedListItemPanel(final String title, final String body) {
         this(null, title, body);
@@ -62,6 +63,7 @@ public class DetailedListItemPanel extends DCPanel {
     public DetailedListItemPanel(final Color backgroundColor, final Border normalBorder, final Border hoverBorder,
             final Icon icon, final String title, final String body) {
         super(backgroundColor);
+        _hoverEffect = false;
         setLayout(new GridBagLayout());
         setBorder(normalBorder);
 
@@ -82,23 +84,6 @@ public class DetailedListItemPanel extends DCPanel {
         _bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
         _bodyLabel.setForeground(COLOR_NORMAL);
         _bodyLabel.setBorder(new EmptyBorder(4, MARGIN_LEFT, 12, 12));
-
-        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        final MouseAdapter mouseListener = new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                _bodyLabel.setForeground(COLOR_HOVER);
-                setBorder(_hoverBorder);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                _bodyLabel.setForeground(COLOR_NORMAL);
-                setBorder(_normalBorder);
-            }
-        };
-        addMouseListener(mouseListener);
 
         GridBagConstraints c = new GridBagConstraints();
 
@@ -126,7 +111,7 @@ public class DetailedListItemPanel extends DCPanel {
         c.anchor = GridBagConstraints.LINE_START;
         add(_bodyLabel, c);
     }
-    
+
     public void addBelow(JComponent component) {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -138,8 +123,33 @@ public class DetailedListItemPanel extends DCPanel {
         add(component, c);
     }
 
+    private void installHoverEffect() {
+        if (_hoverEffect) {
+            // already installed
+            return;
+        }
+        _hoverEffect = true;
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        final MouseAdapter hoverMouseListener = new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                _bodyLabel.setForeground(COLOR_HOVER);
+                setBorder(_hoverBorder);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                _bodyLabel.setForeground(COLOR_NORMAL);
+                setBorder(_normalBorder);
+            }
+        };
+        addMouseListener(hoverMouseListener);
+    }
+
     @Override
     public synchronized void addMouseListener(MouseListener mouseListener) {
+        installHoverEffect();
         super.addMouseListener(mouseListener);
         _bodyLabel.addMouseListener(mouseListener);
     }

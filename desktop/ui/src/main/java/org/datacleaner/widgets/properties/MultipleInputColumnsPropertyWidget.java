@@ -260,7 +260,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
     }
 
     private void updateVisibility() {
-        _searchDatastoreTextField.setVisible(_checkBoxes.size() > 5);
+        _searchDatastoreTextField.setVisible(_checkBoxes.size() > 16);
         if (_checkBoxes.isEmpty()) {
             add(_notAvailableCheckBox);
         } else {

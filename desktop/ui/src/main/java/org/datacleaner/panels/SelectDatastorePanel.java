@@ -20,14 +20,13 @@
 package org.datacleaner.panels;
 
 import javax.swing.Box;
+import javax.swing.JComponent;
 
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class SelectDatastorePanel extends DCPanel {
@@ -44,8 +43,7 @@ public class SelectDatastorePanel extends DCPanel {
 
         add(Box.createVerticalStrut(20));
 
-        final DCLabel newDatastoreLabel = DCLabel.dark("Use new datastore");
-        newDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
+        final JComponent newDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use new datastore");
         add(newDatastoreLabel);
 
         add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
@@ -53,8 +51,7 @@ public class SelectDatastorePanel extends DCPanel {
 
         add(Box.createVerticalStrut(20));
 
-        final DCLabel existingDatastoreLabel = DCLabel.dark("Use existing datastore");
-        existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
+        final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");
         add(existingDatastoreLabel);
 
         _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);

@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.util.HasAliases;
 
-import com.google.common.base.Strings;
-
 /**
  * A common and general enum of 'meanings of columns/fields' in a table. This
  * type is available as a convenience for mapping and registering metadata.
@@ -222,7 +220,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
      * @return
      */
     public static final ColumnMeaning find(String str) {
-        if (Strings.isNullOrEmpty(str)) {
+        if (str == null) {
             return null;
         }
         try {

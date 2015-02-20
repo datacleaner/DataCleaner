@@ -19,8 +19,13 @@
  */
 package org.datacleaner.metadata;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.util.HasAliases;
+
+import com.google.common.base.Strings;
 
 /**
  * A common and general enum of 'meanings of columns/fields' in a table. This
@@ -93,19 +98,17 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // PHONE oriented items
 
-    PHONE_PHONENUMBER("Phone number", "Phone", "Mobile", "Mobile phone", "Cellphone", "*phone*", "Telefon", "Tel.",
-            "Mobil", "*Telefon*", "mobiel", "telefoon", "tel"),
+    PHONE_PHONENUMBER("Phone number", "Phone", "Mobile", "Mobile phone", "Cellphone", "Telefon", "Mobil", "Tel", "Mob"),
 
-    PHONE_FAX("Fax number", "Fax", "Faxnummer", "fax", "faxnummer"),
+    PHONE_FAX("Fax number", "Fax", "Faxnummer"),
 
     // EMAIL oriented items
 
-    EMAIL_ADDRESS("Email", "Mail", "Email address", "Mail address", "e-mail", "@"),
+    EMAIL_ADDRESS("Email", "Mail", "Email address", "Mail address", "@"),
 
     // ONLINE oriented items
 
-    ONLINE_WEBSITE("Website", "Website URL", "url", "www", "Homepage", "Homepage URL", "Blog URL", "Blog", "Web",
-            "Homepage"),
+    ONLINE_WEBSITE("Website", "Website URL", "url", "www", "Homepage", "Homepage URL", "Blog URL", "Blog", "Web"),
 
     ONLINE_TWITTER("Twitter ID", "Twitter", "Twitter account"),
 
@@ -114,6 +117,30 @@ public enum ColumnMeaning implements HasName, HasAliases {
     ONLINE_LINKEDIN("LinkedIn ID", "LinkedIn", "LinkedIn account"),
 
     ;
+
+    private static Map<String, ColumnMeaning> _matchingMap;
+
+    // build reusable matching map for find(...) method
+    static {
+        _matchingMap = new HashMap<>();
+        final ColumnMeaning[] values = values();
+
+        for (final ColumnMeaning columnMeaning : values) {
+            populateMatchMap(columnMeaning.getName(), columnMeaning);
+            final String[] aliases = columnMeaning.getAliases();
+            for (String alias : aliases) {
+                populateMatchMap(alias, columnMeaning);
+            }
+        }
+    }
+
+    private static void populateMatchMap(String key, ColumnMeaning columnMeaning) {
+        key = standardizeForMatching(key);
+        ColumnMeaning oldValue = _matchingMap.put(key, columnMeaning);
+        if (oldValue != null) {
+            throw new IllegalStateException("Multiple ColumnMeanings with name/alias: " + key);
+        }
+    }
 
     private final String _name;
     private final String[] _aliases;
@@ -126,6 +153,33 @@ public enum ColumnMeaning implements HasName, HasAliases {
         } else {
             _aliases = aliases;
         }
+    }
+
+    private static String standardizeForMatching(String key) {
+        key = key.trim();
+        key = replaceAll(key, ".", "");
+        key = replaceAll(key, ",", "");
+        key = replaceAll(key, "'", "");
+        key = replaceAll(key, " ", "");
+        key = replaceAll(key, "_", "");
+        key = replaceAll(key, "-", "");
+
+        return key.toLowerCase();
+    }
+
+    /**
+     * Non-regex based replace-all method
+     * 
+     * @param str
+     * @param searchFor
+     * @param replaceWith
+     * @return
+     */
+    private static String replaceAll(String str, String searchFor, String replaceWith) {
+        while (str.indexOf(searchFor) != -1) {
+            str = str.replace(searchFor, replaceWith);
+        }
+        return str;
     }
 
     /**
@@ -156,5 +210,26 @@ public enum ColumnMeaning implements HasName, HasAliases {
     @Override
     public String[] getAliases() {
         return _aliases;
+    }
+
+    /**
+     * Attempts to find a match to a {@link ColumnMeaning} based on the given
+     * string.
+     * 
+     * @param str
+     * @return
+     */
+    public static final ColumnMeaning find(String str) {
+        if (Strings.isNullOrEmpty(str)) {
+            return null;
+        }
+        try {
+            return valueOf(str);
+        } catch (Exception e) {
+            // do nothing
+        }
+
+        final String key = standardizeForMatching(str);
+        return _matchingMap.get(key);
     }
 }

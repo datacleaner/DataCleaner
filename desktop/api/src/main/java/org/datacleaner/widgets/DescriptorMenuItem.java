@@ -36,10 +36,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.FilterDescriptor;
-import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
@@ -85,15 +82,7 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
             metadata = JobGraphMetadata.createMetadataProperties(_coordinate);
         }
 
-        if (_descriptor instanceof AnalyzerDescriptor) {
-            _analysisJobBuilder.addAnalyzer((AnalyzerDescriptor<?>) _descriptor, null, null, metadata);
-        } else if (_descriptor instanceof TransformerDescriptor) {
-            _analysisJobBuilder.addTransformer((TransformerDescriptor<?>) _descriptor, null, null, metadata);
-        } else if (_descriptor instanceof FilterDescriptor) {
-            _analysisJobBuilder.addFilter((FilterDescriptor<?, ?>) _descriptor, null, null, metadata);
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        _analysisJobBuilder.addComponent(_descriptor, null, null, metadata);
     }
 
     @Override

@@ -406,6 +406,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
         builder.setName(componentJob.getName());
         builder.setConfiguredProperties(componentJob.getConfiguration());
+        builder.setMetadataProperties(componentJob.getMetadataProperties());
 
         if (componentJob instanceof InputColumnSourceJob) {
             InputColumn<?>[] output = ((InputColumnSourceJob) componentJob).getOutput();

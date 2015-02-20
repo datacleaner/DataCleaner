@@ -71,8 +71,12 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
+    
+    public static final String PROPERTY_FILE = "File";
+    public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
+    public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
 
-    @Configured(order = 1)
+    @Configured(value=PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
     File file;
 
@@ -88,10 +92,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Configured(order = 5, required = false)
     boolean includeHeader = true;
 
-    @Configured(order = 6, required = false)
+    @Configured(order = 6, required = false, value=PROPERTY_COLUMN_TO_BE_SORTED_ON)
     InputColumn<?> columnToBeSortedOn;
 
-    @Configured
+    @Configured(value=PROPERTY_OVERWRITE_FILE_IF_EXISTS)
     boolean overwriteFileIfExists;
 
     @Inject

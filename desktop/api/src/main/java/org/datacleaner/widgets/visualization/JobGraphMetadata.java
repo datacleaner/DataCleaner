@@ -67,15 +67,19 @@ public class JobGraphMetadata {
         return postFix;
     }
 
+    public static Map<String, String> createMetadataProperties(int x, int y) {
+        final Map<String, String> metadataProperties = new HashMap<>();
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x);
+        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y);
+        return metadataProperties;
+    }
+
     public static Map<String, String> createMetadataProperties(Point2D p) {
         if (p == null) {
             return null;
         }
-        final Map<String, String> metadataProperties = new HashMap<>();
         final int x = (int) p.getX();
         final int y = (int) p.getY();
-        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x);
-        metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y);
-        return metadataProperties;
+        return createMetadataProperties(x, y);
     }
 }

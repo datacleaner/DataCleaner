@@ -20,6 +20,7 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,21 +32,27 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.datacleaner.Version;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.OpenAnalysisJobMenuItem;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.AnalysisJobBuilderWindow.AnalysisWindowPanelType;
+import org.jdesktop.swingx.JXEditorPane;
+import org.jdesktop.swingx.VerticalLayout;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +115,38 @@ public class WelcomePanel extends DCSplashPanel {
 
         if (result == null) {
             result = new DCPanel();
+            if (Version.isCommunityEdition()) {
+                final JXEditorPane editorPane = new JXEditorPane("text/html",
+                        "You're now using the <b>Community Edition</b> of DataCleaner.<br/><br/>"
+                                + "We hope that you enjoy this free product. We encourage you to also check out the "
+                                + "commercial DataCleaner editions which feature added functionality, "
+                                + "helpful getting started wizards and commercial support. "
+                                + "You can find more information about them online.");
+                editorPane.setEditable(false);
+                editorPane.setOpaque(false);
+                editorPane.setFont(WidgetUtils.FONT_HEADER2);
+                editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
+
+                final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
+                        "images/window/app-icon.png");
+                tryProfessionalButton
+                        .addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
+
+                final JButton readMoreButton = WidgetFactory.createDefaultButton("Compare the editions",
+                        IconUtils.WEBSITE);
+                readMoreButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
+
+                final DCPanel innerPanel = new DCPanel();
+                innerPanel.setLayout(new VerticalLayout());
+                innerPanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_LEFT_ONLY, new EmptyBorder(0, 20,
+                        0, 0)));
+                innerPanel.add(editorPane);
+                innerPanel.add(DCPanel.flow(tryProfessionalButton, readMoreButton));
+
+                result.setLayout(new VerticalLayout());
+                result.add(Box.createVerticalStrut(100));
+                result.add(innerPanel);
+            }
         }
 
         return wrapContent(result);

@@ -108,17 +108,17 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
         _filenameField = new FilenameTextField(getUserPreferences().getOpenDatastoreDirectory(), true);
 
         if (originalDatastore != null) {
-            if (originalDatastore instanceof FileDatastore) {
-                final FileDatastore fileDatastore = (FileDatastore) originalDatastore;
-                final String filename = fileDatastore.getFilename();
-                _filenameField.setFilename(filename);
-            } else if (originalDatastore instanceof ResourceDatastore) {
+            if (originalDatastore instanceof ResourceDatastore) {
                 final ResourceDatastore resourceDatastore = (ResourceDatastore) originalDatastore;
                 final Resource resource = resourceDatastore.getResource();
                 if (resource instanceof FileResource) {
                     final File file = ((FileResource) resource).getFile();
                     _filenameField.setFile(file);
                 }
+            } else if (originalDatastore instanceof FileDatastore) {
+                final FileDatastore fileDatastore = (FileDatastore) originalDatastore;
+                final String filename = fileDatastore.getFilename();
+                _filenameField.setFilename(filename);
             }
         }
 
@@ -332,7 +332,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
             return dataSet;
         }
     }
-    
+
     @Override
     protected final JComponent getDialogContent() {
         DCPanel formPanel = new DCPanel();

@@ -132,7 +132,7 @@ public class DCSplashPanel extends DCPanel {
     protected void paintPanelBackgroundImage(Graphics g, Image watermark, int imageWidth, int imageHeight,
             float horizontalAlignment, float verticalAlignment) {
 
-        final int minimumImageWidth = 1050;
+        final int minimumImageWidth = 1150;
         final int panelWidth = getWidth();
 
         if (panelWidth >= imageWidth) {

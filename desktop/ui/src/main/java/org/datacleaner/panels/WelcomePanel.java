@@ -126,17 +126,15 @@ public class WelcomePanel extends DCSplashPanel {
         final PopupButton recentJobsButton = WidgetFactory.createDefaultPopupButton("Recent jobs",
                 IconUtils.FILE_HOME_FOLDER);
         recentJobsButton.setMenuPosition(MenuPosition.TOP);
+        recentJobsButton.addActionListener(new ActionListener() {
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshRecentJobs(recentJobsButton);
+            }
+        });
         final JButton browseJobsButton = WidgetFactory.createDefaultButton("Browse jobs", IconUtils.FILE_FOLDER);
         browseJobsButton.addActionListener(_openAnalysisJobActionListener);
-
-        final List<FileObject> recentJobFiles = getRecentJobFiles();
-        final JPopupMenu recentJobsMenu = recentJobsButton.getMenu();
-        for (int i = 0; i < recentJobFiles.size(); i++) {
-            final FileObject jobFile = recentJobFiles.get(i);
-            final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
-            recentJobsMenu.add(menuItem);
-        }
 
         final JButton manageDatastoresButton = WidgetFactory.createDefaultButton("Manage datastores",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
@@ -159,6 +157,22 @@ public class WelcomePanel extends DCSplashPanel {
         buttonPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
         return wrapContent(buttonPanel);
+    }
+
+    private void refreshRecentJobs(final PopupButton recentJobsButton) {
+        final List<FileObject> recentJobFiles = getRecentJobFiles();
+        final JPopupMenu recentJobsMenu = recentJobsButton.getMenu();
+        /*
+         * The menu is rebuild every time the user clicks on the menu, so the
+         * content is removed so that we do not have duplicates
+         */
+        recentJobsMenu.removeAll();
+
+        for (int i = 0; i < recentJobFiles.size(); i++) {
+            final FileObject jobFile = recentJobFiles.get(i);
+            final JMenuItem menuItem = new OpenAnalysisJobMenuItem(jobFile, _openAnalysisJobActionListener);
+            recentJobsMenu.add(menuItem);
+        }
     }
 
     private List<FileObject> getRecentJobFiles() {

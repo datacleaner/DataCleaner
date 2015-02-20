@@ -231,6 +231,11 @@ public final class WidgetUtils {
     public static final int DEFAULT_PADDING = 2;
     public static final int DEFAULT_ANCHOR = GridBagConstraints.WEST;
 
+    /**
+     * Commonly used insets - empty
+     */
+    public static final Insets INSETS_EMPTY = new Insets(0, 0, 0, 0);
+
     private WidgetUtils() {
         // prevent instantiation
     }
@@ -268,8 +273,8 @@ public final class WidgetUtils {
     }
 
     public static void centerOnScreen(Component component) {
-        Dimension paneSize = component.getSize();
-        Dimension screenSize = component.getToolkit().getScreenSize();
+        final Dimension paneSize = component.getSize();
+        final Dimension screenSize = component.getToolkit().getScreenSize();
         component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
     }
 
@@ -319,8 +324,8 @@ public final class WidgetUtils {
             layout = new GridBagLayout();
             panel.setLayout(layout);
         }
-        GridBagLayout gridBagLayout = (GridBagLayout) layout;
-        GridBagConstraints constraints = new GridBagConstraints();
+        final GridBagLayout gridBagLayout = (GridBagLayout) layout;
+        final GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
         constraints.gridy = gridy;
         constraints.gridwidth = width;

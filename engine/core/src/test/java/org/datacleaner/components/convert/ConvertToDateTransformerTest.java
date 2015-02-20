@@ -22,6 +22,8 @@ package org.datacleaner.components.convert;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -32,7 +34,13 @@ import org.datacleaner.data.MockInputRow;
 
 public class ConvertToDateTransformerTest extends TestCase {
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat dateFormat;
+    
+    protected void setUp() throws Exception {
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+    };
+    
 
     public void testConvertWithNumberOnlyDateMask() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();

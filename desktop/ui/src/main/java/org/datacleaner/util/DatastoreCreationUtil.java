@@ -30,6 +30,7 @@ import org.apache.metamodel.util.FileResource;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JsonDatastore;
@@ -73,7 +74,7 @@ public class DatastoreCreationUtil {
         return FileDatastoreEnum.getDatastoreTypeFromFile(file);
     }
 
-    public static Datastore createAndAddUniqueDatastoreFromFile(MutableDatastoreCatalog catalog, File file) {
+    public static Datastore createAndAddUniqueDatastoreFromFile(DatastoreCatalog catalog, File file) {
         String name = file.getName();
         if (catalog.containsDatastore(name)) {
             final String originalName = name;
@@ -83,7 +84,9 @@ public class DatastoreCreationUtil {
             } while (catalog.containsDatastore(name));
         }
         Datastore datastore = createDatastoreFromFile(file, name);
-        catalog.addDatastore(datastore);
+        if (catalog instanceof MutableDatastoreCatalog) {
+            ((MutableDatastoreCatalog) catalog).addDatastore(datastore);
+        }
         return datastore;
     }
 

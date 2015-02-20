@@ -29,40 +29,53 @@ import org.apache.metamodel.util.HasNameMapper;
 
 public class DatastoreCatalogImpl implements DatastoreCatalog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Collection<Datastore> _datastores;
+    private final Collection<Datastore> _datastores;
 
-	public DatastoreCatalogImpl(Collection<Datastore> datastores) {
-		if (datastores == null) {
-			throw new IllegalArgumentException("datastores cannot be null");
-		}
-		_datastores = datastores;
-	}
+    public DatastoreCatalogImpl(Collection<Datastore> datastores) {
+        if (datastores == null) {
+            throw new IllegalArgumentException("datastores cannot be null");
+        }
+        _datastores = datastores;
+    }
 
-	public DatastoreCatalogImpl(Datastore... datastores) {
-		_datastores = new ArrayList<Datastore>();
-		for (Datastore datastore : datastores) {
-			_datastores.add(datastore);
-		}
-	}
+    @Override
+    public boolean containsDatastore(String name) {
+        if (name == null) {
+            return false;
+        }
+        for (Datastore datastore : _datastores) {
+            if (name.equals(datastore.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public String[] getDatastoreNames() {
-		List<String> names = CollectionUtils.map(_datastores, new HasNameMapper());
-		Collections.sort(names);
-		return names.toArray(new String[names.size()]);
-	}
+    public DatastoreCatalogImpl(Datastore... datastores) {
+        _datastores = new ArrayList<Datastore>();
+        for (Datastore datastore : datastores) {
+            _datastores.add(datastore);
+        }
+    }
 
-	@Override
-	public Datastore getDatastore(String name) {
-		if (name != null) {
-			for (Datastore ds : _datastores) {
-				if (name.equals(ds.getName())) {
-					return ds;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public String[] getDatastoreNames() {
+        List<String> names = CollectionUtils.map(_datastores, new HasNameMapper());
+        Collections.sort(names);
+        return names.toArray(new String[names.size()]);
+    }
+
+    @Override
+    public Datastore getDatastore(String name) {
+        if (name != null) {
+            for (Datastore ds : _datastores) {
+                if (name.equals(ds.getName())) {
+                    return ds;
+                }
+            }
+        }
+        return null;
+    }
 }

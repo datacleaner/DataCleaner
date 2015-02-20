@@ -19,108 +19,51 @@
  */
 package org.datacleaner.panels;
 
-import java.awt.BorderLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-
 import javax.swing.Box;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
-import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
-import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.DatastoreSelectedListener;
-import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class SelectDatastorePanel extends DCSplashPanel implements DatastoreChangeListener {
+public class SelectDatastorePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final MutableDatastoreCatalog _datastoreCatalog;
     private final ExistingDatastorePanel _existingDatastoresPanel;
-    private final DCPanel _containerPanel;
 
-    public SelectDatastorePanel(AnalysisJobBuilderWindow window, DCGlassPane glassPane,
-            InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
-            MutableDatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
+    public SelectDatastorePanel(InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
+            DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
             DatastoreSelectedListener datastoreSelectListener) {
-        super(window);
-        _datastoreCatalog = datastoreCatalog;
-        _containerPanel = new DCPanel();
-        _containerPanel.setLayout(new VerticalLayout());
+        super();
+        setLayout(new VerticalLayout());
 
-        _containerPanel.add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(20));
 
         final DCLabel newDatastoreLabel = DCLabel.dark("Use new datastore");
         newDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        _containerPanel.add(newDatastoreLabel);
+        add(newDatastoreLabel);
 
-        _containerPanel.add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
+        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
                 datastoreSelectListener, userPreferences));
 
-        _containerPanel.add(Box.createVerticalStrut(20));
+        add(Box.createVerticalStrut(20));
 
         final DCLabel existingDatastoreLabel = DCLabel.dark("Use existing datastore");
         existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        _containerPanel.add(existingDatastoreLabel);
+        add(existingDatastoreLabel);
 
         _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
-        _containerPanel.add(_existingDatastoresPanel);
-        setLayout(new BorderLayout());
-
-        final JScrollPane scroll = wrapContent(_containerPanel);
-
-        add(createTitleLabel("Select datastore", true), BorderLayout.NORTH);
-        add(scroll, BorderLayout.CENTER);
+        add(_existingDatastoresPanel);
         
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                scroll.getVerticalScrollBar().setValue(0);
-            }
-        });
+        updateDatastores();
     }
 
     public void updateDatastores() {
         _existingDatastoresPanel.updateDatastores();
-    }
-
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        _datastoreCatalog.addListener(this);
-    }
-
-    @Override
-    public void removeNotify() {
-        super.removeNotify();
-        _datastoreCatalog.removeListener(this);
-    }
-
-    @Override
-    public void onAdd(Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateDatastores();
-            }
-        });
-    }
-
-    @Override
-    public void onRemove(Datastore datastore) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateDatastores();
-            }
-        });
     }
 }

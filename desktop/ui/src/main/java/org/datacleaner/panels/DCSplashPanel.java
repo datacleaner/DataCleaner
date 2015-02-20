@@ -74,15 +74,36 @@ public class DCSplashPanel extends DCPanel {
      * @param string
      * @return
      */
-    protected JComponent createTitleLabel(String text, boolean includeBackButton) {
+    public JComponent createTitleLabel(String text, boolean includeBackButton) {
+        if (includeBackButton) {
+            ActionListener actionListener = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _window.changePanel(AnalysisWindowPanelType.WELCOME);
+                }
+            };
+            return createTitleLabel(text, actionListener);
+        }
+        return createTitleLabel(text, null);
+    }
+
+    /**
+     * Creates a label for the title of the screen
+     * 
+     * @param text
+     * @param includeBackButton
+     * @param window
+     * @return
+     */
+    public static JComponent createTitleLabel(String text, ActionListener backButtonActionListener) {
         final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
 
         final EmptyBorder border = new EmptyBorder(20, MARGIN_LEFT, 10, 0);
 
-        if (includeBackButton) {
-            final DCPanel panel = DCPanel.flow(Alignment.LEFT, MARGIN_LEFT, 0, createBackToWelcomeScreenButton(),
-                    titleLabel);
+        if (backButtonActionListener != null) {
+            final DCPanel panel = DCPanel.flow(Alignment.LEFT, MARGIN_LEFT, 0,
+                    createBackToWelcomeScreenButton(backButtonActionListener), titleLabel);
             panel.setBorder(border);
             return panel;
         } else {
@@ -91,18 +112,13 @@ public class DCSplashPanel extends DCPanel {
         }
     }
 
-    private JComponent createBackToWelcomeScreenButton() {
+    public static JComponent createBackToWelcomeScreenButton(final ActionListener backButtonActionListener) {
         final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_BACK);
         final JButton backButton = WidgetFactory.createDefaultButton(null, icon);
         backButton.setOpaque(false);
         backButton.setBorder(null);
         backButton.setMargin(new Insets(0, 0, 0, 0));
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                _window.changePanel(AnalysisWindowPanelType.WELCOME);
-            }
-        });
+        backButton.addActionListener(backButtonActionListener);
 
         return backButton;
     }

@@ -41,9 +41,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreSelectedListener;
-import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DatastoreCreationUtil;
 import org.datacleaner.util.FileFilters;
@@ -61,11 +61,11 @@ public class Dropzone extends DCPanel {
     private static final Logger logger = LoggerFactory.getLogger(Dropzone.class);
     private static final long serialVersionUID = 1L;
 
-    private final MutableDatastoreCatalog _datastoreCatalog;
+    private final DatastoreCatalog _datastoreCatalog;
     private final DatastoreSelectedListener _datastoreSelectListener;
     private final UserPreferences _userPreferences;
 
-    public Dropzone(final MutableDatastoreCatalog datastoreCatalog,
+    public Dropzone(final DatastoreCatalog datastoreCatalog,
             final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;

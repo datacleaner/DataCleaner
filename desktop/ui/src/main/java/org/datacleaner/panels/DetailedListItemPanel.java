@@ -29,6 +29,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
@@ -41,6 +42,8 @@ public class DetailedListItemPanel extends DCPanel {
 
     private static final Color COLOR_NORMAL = WidgetUtils.BG_COLOR_MEDIUM;
     private static final Color COLOR_HOVER = WidgetUtils.BG_COLOR_DARK;
+    
+    private static final int MARGIN_LEFT = 20;
 
     private static final long serialVersionUID = 1L;
     private final JTextArea _bodyLabel;
@@ -68,7 +71,7 @@ public class DetailedListItemPanel extends DCPanel {
         final DCLabel titleLabel = DCLabel.dark(title);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
         titleLabel.setForeground(COLOR_HOVER);
-        titleLabel.setBorder(new EmptyBorder(12, 12, 4, 12));
+        titleLabel.setBorder(new EmptyBorder(12, MARGIN_LEFT, 4, 12));
 
         _bodyLabel = new JTextArea();
         _bodyLabel.setLineWrap(true);
@@ -78,7 +81,7 @@ public class DetailedListItemPanel extends DCPanel {
         _bodyLabel.setOpaque(false);
         _bodyLabel.setFont(WidgetUtils.FONT_HEADER2);
         _bodyLabel.setForeground(COLOR_NORMAL);
-        _bodyLabel.setBorder(new EmptyBorder(4, 12, 12, 12));
+        _bodyLabel.setBorder(new EmptyBorder(4, MARGIN_LEFT, 12, 12));
 
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -103,7 +106,7 @@ public class DetailedListItemPanel extends DCPanel {
             c.gridx = 0;
             c.gridy = 0;
             c.gridheight = 3;
-            c.insets = new Insets(5, 5, 5, 5);
+            c.insets = new Insets(5, MARGIN_LEFT, 5, 5);
             add(new JLabel(icon), c);
         }
 
@@ -122,6 +125,17 @@ public class DetailedListItemPanel extends DCPanel {
         c.weightx = 1.0;
         c.anchor = GridBagConstraints.LINE_START;
         add(_bodyLabel, c);
+    }
+    
+    public void addBelow(JComponent component) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 3;
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.LINE_START;
+        c.insets = new Insets(0, MARGIN_LEFT, 5, 5);
+        add(component, c);
     }
 
     @Override

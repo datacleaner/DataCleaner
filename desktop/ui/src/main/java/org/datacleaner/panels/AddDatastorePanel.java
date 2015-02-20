@@ -33,6 +33,7 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.HBaseDatastore;
 import org.datacleaner.connection.JdbcDatastore;
@@ -42,7 +43,6 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
-import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -70,7 +70,7 @@ public class AddDatastorePanel extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
 
-    public AddDatastorePanel(final MutableDatastoreCatalog datastoreCatalog,
+    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
             final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences) {
 

@@ -28,11 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,10 +97,9 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatastoreManagementPanel;
 import org.datacleaner.panels.ExecuteJobWithoutAnalyzersDialog;
 import org.datacleaner.panels.SchemaTreePanel;
-import org.datacleaner.panels.SelectDatastorePanel;
+import org.datacleaner.panels.SelectDatastoreContainerPanel;
 import org.datacleaner.panels.WelcomePanel;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
@@ -108,9 +107,9 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
@@ -132,7 +131,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-        DatastoreSelectedListener, WindowListener {
+        WindowListener {
 
     private static final String USER_PREFERENCES_PROPERTY_EDITING_MODE_PREFERENCE = "editing_mode_preference";
 
@@ -164,7 +163,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCGlassPane _glassPane;
     private final WelcomePanel _welcomePanel;
     private final DatastoreManagementPanel _datastoreManagementPanel;
-    private final SelectDatastorePanel _selectDatastorePanel;
+    private final SelectDatastoreContainerPanel _selectDatastorePanel;
     private final UserPreferences _userPreferences;
     private final InjectorBuilder _injectorBuilder;
     private final JToggleButton _classicViewButton;
@@ -242,8 +241,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastorePanel(this, _glassPane, injectorBuilder, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences, this);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, injectorBuilder, databaseDriverCatalog,
+                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -1152,11 +1151,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     @Override
     public AnalysisJobBuilder getAnalysisJobBuilder() {
         return _analysisJobBuilder;
-    }
-
-    @Override
-    public void datastoreSelected(Datastore datastore) {
-        setDatastore(datastore);
     }
 
     public void windowClosed(WindowEvent e) {

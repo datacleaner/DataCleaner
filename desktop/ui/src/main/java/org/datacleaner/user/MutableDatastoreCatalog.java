@@ -57,6 +57,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         }
     }
 
+    @Override
     public boolean containsDatastore(String name) {
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
         for (Datastore datastore : datastores) {

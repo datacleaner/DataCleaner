@@ -27,6 +27,15 @@ import java.io.Serializable;
 public interface DatastoreCatalog extends Serializable {
 
     /**
+     * Determines if a datastore by a specific name is contained in the
+     * {@link DatastoreCatalog}.
+     * 
+     * @param name
+     * @return
+     */
+    public boolean containsDatastore(String name);
+
+    /**
      * Gets all the names of the datastores in this datastore catalog.
      * 
      * @return

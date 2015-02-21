@@ -35,18 +35,19 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -121,6 +122,62 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _datastoreConnection.close();
     }
 
+    public void expandSelectedData() {
+        final List<Table> tables = _analysisJobBuilder.getSourceTables();
+        for (Table table : tables) {
+            expandTable(table);
+        }
+    }
+
+    public void expandTable(Table table) {
+        final DefaultMutableTreeNode treeNode = getTreeNode(table);
+        if (treeNode == null) {
+            return;
+        }
+        final TreeNode[] pathElements = treeNode.getPath();
+        final TreePath path = new TreePath(pathElements);
+        expandPath(path);
+    }
+
+    public DefaultMutableTreeNode getTreeNode(final Schema schema) {
+        if (schema == null) {
+            return null;
+        }
+
+        final TreeNode root = (TreeNode) getModel().getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+            final Object userObject = child.getUserObject();
+            if (schema.equals(userObject)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    public DefaultMutableTreeNode getTreeNode(final Table table) {
+        if (table == null) {
+            return null;
+        }
+
+        final DefaultMutableTreeNode schemaNode = getTreeNode(table.getSchema());
+        if (schemaNode == null) {
+            return null;
+        }
+
+        LoadTablesSwingWorker worker = new LoadTablesSwingWorker(schemaNode);
+        worker.executeBlockingly();
+
+        for (int i = 0; i < schemaNode.getChildCount(); i++) {
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) schemaNode.getChildAt(i);
+            final Object userObject = child.getUserObject();
+            if (table.equals(userObject)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
     public WindowContext getWindowContext() {
         return _windowContext;
     }
@@ -143,7 +200,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
-    
+
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
         // Do nothing
     }
@@ -174,6 +231,33 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         public LoadTablesSwingWorker(DefaultMutableTreeNode schemaNode) {
             _schemaNode = schemaNode;
+        }
+
+        public boolean isNeeded() {
+            if (_schemaNode.getChildCount() == 1) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) _schemaNode.getChildAt(0);
+                if (LOADING_TABLES_STRING.equals(child.getUserObject())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void executeBlockingly() {
+            if (!isNeeded()) {
+                return;
+            }
+            final Schema schema = (Schema) _schemaNode.getUserObject();
+            final Table[] tables = schema.getTables();
+            for (Table table : tables) {
+                String name = table.getName();
+                logger.debug("Building table node: {}", name);
+                DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(table);
+                DefaultMutableTreeNode loadingColumnsNode = new DefaultMutableTreeNode(LOADING_COLUMNS_STRING);
+                tableNode.add(loadingColumnsNode);
+                _schemaNode.add(tableNode);
+            }
+            _schemaNode.remove(0);
         }
 
         @Override

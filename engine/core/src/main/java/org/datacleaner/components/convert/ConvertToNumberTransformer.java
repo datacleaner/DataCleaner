@@ -34,7 +34,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ConversionCategory;
-import org.datacleaner.components.categories.NumbersCategory;
 import org.datacleaner.util.Percentage;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 @Named("Convert to number")
 @Description("Converts anything to a number (or null if not possible).")
-@Categorized({ ConversionCategory.class, NumbersCategory.class })
+@Categorized(ConversionCategory.class)
 public class ConvertToNumberTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertToNumberTransformer.class);

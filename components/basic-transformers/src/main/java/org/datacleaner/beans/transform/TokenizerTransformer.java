@@ -44,7 +44,7 @@ import org.apache.metamodel.util.HasName;
  */
 @Named("Tokenizer")
 @Description("Tokenizes a String value (splits into substrings).")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class TokenizerTransformer implements Transformer {
 
     public static enum TokenTarget implements HasName {

@@ -37,7 +37,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
  */
 @Named("Concatenator")
 @Description("Concatenate several column values into one.")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class ConcatenatorTransformer implements Transformer {
 
 	@Configured

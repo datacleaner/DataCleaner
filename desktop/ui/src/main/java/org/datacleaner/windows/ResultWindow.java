@@ -242,7 +242,7 @@ public final class ResultWindow extends AbstractWindow {
             } else {
                 final ResultListPanel finalResultListPanel = resultPanel;
                 final String name = descriptor.getDisplayName();
-                final Icon icon = IconUtils.getDescriptorIcon(descriptor);
+                final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {

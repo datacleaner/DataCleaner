@@ -35,7 +35,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)

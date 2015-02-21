@@ -273,7 +273,7 @@ public final class WidgetFactory {
         if (Strings.isNullOrEmpty(imagePath)) {
             icon = null;
         } else {
-            icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+            icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_TASK_PANE);
         }
         return createTaskPane(title, icon);
     }

@@ -76,8 +76,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     protected AbstractComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
             int watermarkVerticalPosition, ComponentBuilder componentBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
-        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition,
-                WidgetUtils.COLOR_WELL_BACKGROUND);
+        super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.COLOR_WELL_BACKGROUND);
         _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
         _taskPaneContainer.setLayout(new VerticalLayout(4));
         _componentBuilder = componentBuilder;
@@ -141,7 +140,7 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
 
         for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
             buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
-                    propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
+                    propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_TASK_PANE, getClass().getClassLoader()),
                     propertyTaskPane.getTitle(), componentBuilder, propertyTaskPane.isExpanded());
 
             unconfiguredPropertyDescriptors.removeAll(propertyTaskPane.getProperties());
@@ -221,9 +220,9 @@ public abstract class AbstractComponentBuilderPanel extends DCPanel implements C
     protected void addTaskPane(String iconImagePath, String title, JComponent content) {
         addTaskPane(iconImagePath, title, content, true);
     }
-    
+
     protected void addTaskPane(String iconImagePath, String title, JComponent content, boolean expanded) {
-        final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_SMALL);
+        final ImageIcon icon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_TASK_PANE);
         addTaskPane(icon, title, content, expanded);
     }
 

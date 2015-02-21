@@ -67,6 +67,8 @@ public final class IconUtils {
 
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
+    public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;
+    public static final int ICON_SIZE_TASK_PANE = ICON_SIZE_SMALL;
 
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
@@ -200,11 +202,19 @@ public final class IconUtils {
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
         String imagePath = getDescriptorImagePath(descriptor, classLoader);
+        if (newWidth == ICON_SIZE_MENU_ITEM && PLUGIN == imagePath) {
+            return getTransparentIcon(newWidth);
+        }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
+    public static ImageIcon getTransparentIcon(int width) {
+        Image image = new BufferedImage(width, width, BufferedImage.TYPE_4BYTE_ABGR);
+        return new ImageIcon(image);
+    }
+
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
-        return getDescriptorIcon(descriptor, ICON_SIZE_MEDIUM);
+        return getDescriptorIcon(descriptor, ICON_SIZE_LARGE);
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {

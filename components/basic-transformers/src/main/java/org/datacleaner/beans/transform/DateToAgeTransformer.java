@@ -52,7 +52,7 @@ import org.joda.time.Years;
  */
 @Named("Date to age")
 @Description("Turn a Date-column into columns of age (both in years and in days).")
-@Categorized({ DateAndTimeCategory.class })
+@Categorized(DateAndTimeCategory.class)
 public class DateToAgeTransformer implements Transformer {
 
 	@Configured("Date column")

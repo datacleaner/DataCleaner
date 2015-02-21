@@ -54,8 +54,6 @@ import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.FilterDescriptor;
-import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -66,7 +64,7 @@ public final class IconUtils {
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
-    
+
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
 
@@ -301,123 +299,13 @@ public final class IconUtils {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
-            // plugins get a special icon
-            return PLUGIN;
-        }
-
         final ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
         final Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
         if (categories.contains(new WriteDataCategory())) {
             return COMPONENT_TYPE_WRITE_DATA;
         }
 
-        final String displayName = beanDescriptor.getDisplayName().toLowerCase();
-
-        String imagePath;
-        if (descriptor instanceof TransformerDescriptor<?>) {
-            imagePath = TRANSFORMER_IMAGEPATH;
-        } else if (descriptor instanceof FilterDescriptor<?, ?>) {
-            imagePath = FILTER_IMAGEPATH;
-        } else {
-            imagePath = ANALYZER_IMAGEPATH;
-        }
-
-        if (displayName.indexOf("boolean") != -1) {
-            imagePath = "images/component-types/type_boolean.png";
-        }
-        if (displayName.indexOf("validat") != -1) {
-            imagePath = "images/component-types/type_validate.png";
-        }
-        if (displayName.indexOf("internet") != -1 || displayName.indexOf("url") != -1) {
-            imagePath = "images/component-types/type_internet.png";
-        }
-        if (displayName.indexOf("identity") != -1 || displayName.indexOf("name") != -1) {
-            imagePath = "images/component-types/type_identity.png";
-        }
-        if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1
-                || displayName.indexOf("token") != -1 || displayName.indexOf("whitespace") != -1) {
-            imagePath = "images/component-types/type_string.png";
-        }
-        if (displayName.indexOf("time") != -1 || displayName.indexOf("date") != -1) {
-            imagePath = "images/component-types/type_time.png";
-        }
-        if (displayName.indexOf("number") != -1) {
-            imagePath = "images/component-types/type_number.png";
-        }
-        if (displayName.indexOf("convert") != -1) {
-            imagePath = "images/component-types/type_convert.png";
-        }
-        if (displayName.indexOf("length") != -1) {
-            imagePath = "images/component-types/type_length.png";
-        }
-        if (displayName.indexOf("email") != -1) {
-            imagePath = "images/component-types/type_email.png";
-        }
-        if (displayName.indexOf("compare") != -1) {
-            imagePath = "images/component-types/type_compare.png";
-        }
-        if (displayName.indexOf("sound") != -1 || displayName.indexOf("phonetic") != -1) {
-            imagePath = "images/component-types/type_sound.png";
-        }
-        if (displayName.indexOf("pattern") != -1 || displayName.indexOf("expression") != -1
-                || displayName.indexOf("regex") != -1) {
-            imagePath = "images/component-types/type_expression.png";
-        }
-        if (displayName.indexOf("dictionary") != -1) {
-            imagePath = "images/component-types/type_dictionary.png";
-        }
-        if (displayName.indexOf("synonym") != -1) {
-            imagePath = "images/component-types/type_synonym.png";
-        }
-        if (displayName.indexOf("match") != -1) {
-            imagePath = "images/component-types/type_match.png";
-        }
-        if (displayName.indexOf("coalesce") != -1) {
-            imagePath = "images/component-types/type_coalesce.png";
-        }
-        if (displayName.indexOf("expression language") != -1) {
-            imagePath = "images/model/column_expression.png";
-        }
-        if (displayName.indexOf("java") != -1) {
-            imagePath = "images/component-types/type_java.png";
-        }
-        if (displayName.indexOf("javascript") != -1) {
-            imagePath = "images/component-types/type_javascript.png";
-        }
-        if (displayName.indexOf("xml") != -1) {
-            imagePath = "images/component-types/type_xml.png";
-        }
-
-        // some individual icons
-        if (displayName.equals("concatenator")) {
-            imagePath = "images/component-types/type_concatenator.png";
-        }
-        if (displayName.equals("date to age")) {
-            imagePath = "images/component-types/type_date_to_age.png";
-        }
-        if (displayName.equals("convert to string")) {
-            imagePath = "images/component-types/type_convert_to_string.png";
-        }
-        if (displayName.equals("date gap analyzer")) {
-            imagePath = "images/component-types/type_date_gap_analyzer.png";
-        }
-        if (displayName.equals("pattern finder")) {
-            imagePath = "images/component-types/type_pattern_finder.png";
-        }
-        if (displayName.equals("date/time analyzer")) {
-            imagePath = "images/component-types/type_date_time_analyzer.png";
-        }
-        if (displayName.equals("string analyzer")) {
-            imagePath = "images/component-types/type_string_analyzer.png";
-        }
-        if (displayName.equals("whitespace trimmer")) {
-            imagePath = "images/component-types/type_whitespace_trimmer.png";
-        }
-        if (displayName.equals("value distribution")) {
-            imagePath = "images/component-types/type_value_distribution.png";
-        }
-        return imagePath;
+        return PLUGIN;
     }
 
     public static Icon getColumnIcon(InputColumn<?> column, int iconSize) {

@@ -502,7 +502,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getVersion());
-            _statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
+            _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
                 executeable = true;
@@ -708,7 +708,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public Image getWindowIcon() {
-        return imageManager.getImage(IconUtils.MODEL_JOB);
+        return imageManager.getImage(IconUtils.APPLICATION_ICON);
     }
 
     @Override

@@ -53,7 +53,10 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -70,6 +73,10 @@ public final class IconUtils {
     public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;
     public static final int ICON_SIZE_TASK_PANE = ICON_SIZE_SMALL;
 
+    private static final ImageIcon ICON_TRANSPARENT_SMALL = createTransparentIcon(ICON_SIZE_SMALL);
+    private static final ImageIcon ICON_TRANSPARENT_MEDIUM = createTransparentIcon(ICON_SIZE_MEDIUM);
+    private static final ImageIcon ICON_TRANSPARENT_LARGE = createTransparentIcon(ICON_SIZE_LARGE);
+
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
@@ -83,7 +90,7 @@ public final class IconUtils {
     public static final String MODEL_COLUMN_EXPRESSION = "images/model/column_expression.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
-    public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
+    public static final String MODEL_JOB = "images/model/job.png";
     public static final String MODEL_RESULT = "images/model/result.png";
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
@@ -118,6 +125,7 @@ public final class IconUtils {
     public static final String ACTION_LOG = "images/actions/log.png";
     public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
+    public static final String APPLICATION_ICON = "images/window/app-icon.png";
     public static final String WEBSITE = "images/actions/website.png";
     public static final String PLUGIN = "images/component-types/plugin.png";
 
@@ -199,17 +207,54 @@ public final class IconUtils {
         return new ImageIcon(bufferedImage);
     }
 
+    /**
+     * Gets the icon of a component based on it's {@link ComponentDescriptor}.
+     * 
+     * @param descriptor
+     * @param newWidth
+     * @return
+     */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
+        return getDescriptorIcon(descriptor, newWidth, false);
+    }
+
+    /**
+     * Gets the icon of a component based on it's {@link ComponentDescriptor}.
+     * 
+     * @param descriptor
+     * @param newWidth
+     * @param allowTransparentForUnspecific
+     *            whether or not to use a transparent icon in case only a
+     *            generic icon could be found. This is useful for menu items
+     *            where the icon is not a requirement.
+     * @return
+     */
+    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
+            boolean allowTransparentForUnspecific) {
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
-        String imagePath = getDescriptorImagePath(descriptor, classLoader);
-        if (newWidth == ICON_SIZE_MENU_ITEM && PLUGIN == imagePath) {
+        final boolean allowGeneric = !allowTransparentForUnspecific;
+        final String imagePath = getDescriptorImagePath(descriptor, classLoader, allowGeneric);
+        if (imagePath == null) {
             return getTransparentIcon(newWidth);
         }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
     public static ImageIcon getTransparentIcon(int width) {
-        Image image = new BufferedImage(width, width, BufferedImage.TYPE_4BYTE_ABGR);
+        switch (width) {
+        case ICON_SIZE_SMALL:
+            return ICON_TRANSPARENT_SMALL;
+        case ICON_SIZE_MEDIUM:
+            return ICON_TRANSPARENT_MEDIUM;
+        case ICON_SIZE_LARGE:
+            return ICON_TRANSPARENT_LARGE;
+        default:
+            return createTransparentIcon(width);
+        }
+    }
+
+    private static ImageIcon createTransparentIcon(int width) {
+        final Image image = new BufferedImage(width, width, BufferedImage.TYPE_4BYTE_ABGR);
         return new ImageIcon(image);
     }
 
@@ -302,20 +347,35 @@ public final class IconUtils {
         return iconPath;
     }
 
-    protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader) {
+    protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader,
+            boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
         if (bundledIconPath != null) {
             return bundledIconPath;
         }
 
-        final ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
-        final Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+        if (!allowGeneric) {
+            return null;
+        }
+
+        final ComponentDescriptor<?> descriptorDescriptor = (ComponentDescriptor<?>) descriptor;
+        final Set<ComponentCategory> categories = descriptorDescriptor.getComponentCategories();
         if (categories.contains(new WriteDataCategory())) {
             return COMPONENT_TYPE_WRITE_DATA;
         }
 
-        return PLUGIN;
+        if (descriptor instanceof TransformerDescriptor) {
+            return TRANSFORMER_IMAGEPATH;
+        }
+        if (descriptor instanceof FilterDescriptor) {
+            return FILTER_IMAGEPATH;
+        }
+        if (descriptor instanceof AnalyzerDescriptor) {
+            return ANALYZER_IMAGEPATH;
+        }
+
+        throw new UnsupportedOperationException("Unexpected descriptor type: " + descriptor);
     }
 
     public static Icon getColumnIcon(InputColumn<?> column, int iconSize) {

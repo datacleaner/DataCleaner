@@ -83,7 +83,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 
     @Override
     public Image getWindowIcon() {
-        return imageManager.getImage("images/model/result.png");
+        return imageManager.getImage(IconUtils.MODEL_RESULT);
     }
 
     @Override

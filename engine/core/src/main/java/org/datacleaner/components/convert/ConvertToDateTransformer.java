@@ -38,7 +38,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ConversionCategory;
-import org.datacleaner.components.categories.DateAndTimeCategory;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.TodayDate;
 import org.datacleaner.util.convert.YesterdayDate;
@@ -50,7 +49,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 @Named("Convert to date")
 @Description("Converts anything to a date (or null).")
-@Categorized({ ConversionCategory.class, DateAndTimeCategory.class })
+@Categorized(ConversionCategory.class)
 public class ConvertToDateTransformer implements Transformer {
 
     private static final String[] prototypePatterns = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy" };

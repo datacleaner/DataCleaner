@@ -59,8 +59,6 @@ import com.google.inject.Injector;
 /**
  * The FileChooser "accessory" that will display analysis job information when
  * the user selected a job file.
- * 
- * @author Kasper Sørensen
  */
 public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements PropertyChangeListener {
 
@@ -68,7 +66,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
     private static final ImageManager imageManager = ImageManager.get();
-    private static final ImageIcon ICON_APP = ImageManager.get().getImageIcon("images/window/app-icon.png");
+    private static final ImageIcon ICON_APP = ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON);
     private static final int WIDTH = 220;
 
     private final AnalyzerBeansConfiguration _configuration;

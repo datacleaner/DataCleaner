@@ -502,7 +502,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         if (_datastore == null) {
             setStatusLabelText("Welcome to DataCleaner " + Version.getVersion());
-            _statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
+            _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {
                 executeable = true;
@@ -595,7 +595,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 final Object[] buttons = { "Save changes", "Discard changes", "Cancel" };
                 final int unsavedChangesChoice = JOptionPane.showOptionDialog(this,
                         "The job has unsaved changes. What would you like to do?", "Unsaved changes detected",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[2]);
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, buttons, buttons[1]);
 
                 if (unsavedChangesChoice == 0) { // save changes
                     _saveButton.doClick();
@@ -627,6 +627,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private boolean isJobUnsaved(FileObject lastSavedJobFile, AnalysisJobBuilder analysisJobBuilder) {
         if (lastSavedJobFile == null) {
+            if (analysisJobBuilder.getComponentCount() == 0) {
+                // user didn't actually do anything yet
+                return false;
+            }
             return true;
         }
         try {
@@ -704,7 +708,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Override
     public Image getWindowIcon() {
-        return imageManager.getImage(IconUtils.MODEL_JOB);
+        return imageManager.getImage(IconUtils.APPLICATION_ICON);
     }
 
     @Override

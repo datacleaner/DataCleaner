@@ -32,6 +32,7 @@ import javax.swing.JDialog;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetUtils;
 
@@ -44,8 +45,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     private Image _bannerImage;
 
-    private volatile Color _topBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
-    private volatile Color _bottomBackgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
+    private volatile Color _backgroundColor = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
     private DCBannerPanel _banner;
 
     public AbstractDialog(WindowContext windowContext) {
@@ -82,8 +82,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
     }
 
     protected void setBackgroundColor(Color backgroundColor) {
-        _topBackgroundColor = backgroundColor;
-        _bottomBackgroundColor = backgroundColor;
+        _backgroundColor = backgroundColor;
     }
 
     @Override
@@ -147,12 +146,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     @Override
     public Image getWindowIcon() {
-        return ImageManager.get().getImage("images/window/app-icon.png");
+        return ImageManager.get().getImage(IconUtils.APPLICATION_ICON);
     }
 
     protected final JComponent getWindowContent() {
-        @SuppressWarnings("deprecation")
-        DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
+        final DCPanel panel = new DCPanel(_backgroundColor);
         panel.setLayout(new BorderLayout());
 
         final int bannerHeight;

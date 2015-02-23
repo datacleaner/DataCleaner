@@ -34,7 +34,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
 
 @Named("Plain search/replace")
 @Description("Search and replace text in String values.")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class PlainSearchReplaceTransformer implements Transformer{
 
     @Configured(value = "Value", order = 1)

@@ -35,7 +35,7 @@ import com.google.common.html.HtmlEscapers;
 
 @Named("HTML encoder")
 @Description("Encodes/escapes plain text into HTML content")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class HtmlEncoderTransformer implements Transformer {
 
     @Configured

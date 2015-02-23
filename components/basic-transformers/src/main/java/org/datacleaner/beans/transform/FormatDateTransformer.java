@@ -35,7 +35,7 @@ import org.datacleaner.components.categories.DateAndTimeCategory;
 
 @Named("Format date")
 @Description("Allows you to format a date as a string by applying your own date format.")
-@Categorized({ DateAndTimeCategory.class })
+@Categorized(DateAndTimeCategory.class)
 public class FormatDateTransformer implements Transformer {
 
     @Configured("Date")

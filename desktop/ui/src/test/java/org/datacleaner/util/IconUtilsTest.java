@@ -28,7 +28,7 @@ public class IconUtilsTest extends TestCase {
 
 	public void testGetBundledIconForDescriptor() throws Exception {
 		String imagePath = IconUtils.getDescriptorImagePath(Descriptors.ofAnalyzer(InsertIntoTableAnalyzer.class),
-				getClass().getClassLoader());
+				getClass().getClassLoader(), false);
 		assertEquals("org/datacleaner/beans/writers/InsertIntoTableAnalyzer.png", imagePath);
 	}
 }

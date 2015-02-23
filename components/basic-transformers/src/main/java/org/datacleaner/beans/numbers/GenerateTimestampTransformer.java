@@ -21,6 +21,7 @@ package org.datacleaner.beans.numbers;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -29,12 +30,10 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.DateAndTimeCategory;
-import org.datacleaner.components.categories.NumbersCategory;
-import org.apache.metamodel.util.HasName;
 
 @Named("Generate timestamp")
 @Description("Generates a timestamp representing the millisecond or nanosecond of processing the record")
-@Categorized({ NumbersCategory.class, DateAndTimeCategory.class })
+@Categorized(DateAndTimeCategory.class)
 public class GenerateTimestampTransformer implements Transformer {
 
     public static enum Unit implements HasName {

@@ -87,7 +87,7 @@ public class DescriptorMenuItem extends JMenuItem implements ActionListener {
 
     @Override
     public Icon getIcon() {
-        return IconUtils.getDescriptorIcon(_descriptor);
+        return IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_MENU_ITEM, true);
     }
 
     @Override

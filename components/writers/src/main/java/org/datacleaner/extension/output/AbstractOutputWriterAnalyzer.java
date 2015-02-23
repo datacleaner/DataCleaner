@@ -33,9 +33,11 @@ import org.datacleaner.output.OutputWriter;
 
 public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteDataResult>, PrecedingComponentConsumer {
 
+    public static final String PROPERTY_COLUMNS = "Columns";
+    
 	private final AtomicInteger rowCount = new AtomicInteger(0);
 
-	@Configured
+	@Configured(PROPERTY_COLUMNS)
 	InputColumn<?>[] columns;
 
 	protected OutputWriter outputWriter;

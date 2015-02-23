@@ -34,10 +34,16 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
  * datastore selection and menus in general.
  */
 public interface AnalysisJobBuilderWindow extends DCWindow {
-    
+
     public enum AnalysisWindowPanelType implements HasName {
-        WELCOME("Welcome"), SELECT_DS("Select datastore"), MANAGE_DS("Manage datastores"), EDITING_CONTEXT(
-                "Analysis Job");
+        
+        WELCOME("Welcome"),
+
+        SELECT_DS("Select datastore"),
+
+        MANAGE_DS("Manage datastores"),
+
+        EDITING_CONTEXT("Analysis Job");
 
         private final String _name;
 
@@ -144,7 +150,8 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
     public void setStatusLabelValid();
 
     /**
-     * Sets the icon of the status label to indicate an notice/informational situation
+     * Sets the icon of the status label to indicate an notice/informational
+     * situation
      */
     public void setStatusLabelNotice();
 
@@ -157,7 +164,8 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
 
     /**
      * Changes the current panel showing in the builder
+     * 
      * @param panel
      */
-    void changePanel(AnalysisWindowPanelType panel);
+    public void changePanel(AnalysisWindowPanelType panel);
 }

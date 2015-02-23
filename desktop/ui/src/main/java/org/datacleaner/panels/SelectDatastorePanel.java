@@ -20,14 +20,13 @@
 package org.datacleaner.panels;
 
 import javax.swing.Box;
+import javax.swing.JComponent;
 
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class SelectDatastorePanel extends DCPanel {
@@ -38,32 +37,39 @@ public class SelectDatastorePanel extends DCPanel {
 
     public SelectDatastorePanel(InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
             DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
-            DatastoreSelectedListener datastoreSelectListener) {
+            DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
 
         add(Box.createVerticalStrut(20));
 
-        final DCLabel newDatastoreLabel = DCLabel.dark("Use new datastore");
-        newDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        add(newDatastoreLabel);
+        if (showExistingDatastoresAsLongList) {
+            // no need to show this label if existing datastores are shown as
+            // popup button
+            final JComponent newDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use new datastore");
+            add(newDatastoreLabel);
+        }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder,
-                datastoreSelectListener, userPreferences));
+        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder, datastoreSelectListener,
+                userPreferences, !showExistingDatastoresAsLongList));
 
-        add(Box.createVerticalStrut(20));
+        if (showExistingDatastoresAsLongList) {
+            final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");
+            _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
 
-        final DCLabel existingDatastoreLabel = DCLabel.dark("Use existing datastore");
-        existingDatastoreLabel.setFont(WidgetUtils.FONT_HEADER2);
-        add(existingDatastoreLabel);
+            add(Box.createVerticalStrut(20));
+            add(existingDatastoreLabel);
+            add(_existingDatastoresPanel);
+        } else {
+            _existingDatastoresPanel = null;
+        }
 
-        _existingDatastoresPanel = new ExistingDatastorePanel(datastoreCatalog, datastoreSelectListener);
-        add(_existingDatastoresPanel);
-        
         updateDatastores();
     }
 
     public void updateDatastores() {
-        _existingDatastoresPanel.updateDatastores();
+        if (_existingDatastoresPanel != null) {
+            _existingDatastoresPanel.updateDatastores();
+        }
     }
 }

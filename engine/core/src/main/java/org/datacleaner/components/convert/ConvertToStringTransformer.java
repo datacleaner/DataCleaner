@@ -46,7 +46,7 @@ import org.datacleaner.components.categories.ConversionCategory;
  */
 @Named("Convert to string")
 @Description("Converts anything to a string (or null).")
-@Categorized({ ConversionCategory.class })
+@Categorized(ConversionCategory.class)
 public class ConvertToStringTransformer implements Transformer {
 
     @Inject

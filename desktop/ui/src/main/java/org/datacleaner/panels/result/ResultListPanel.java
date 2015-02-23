@@ -72,7 +72,7 @@ public class ResultListPanel extends DCPanel {
 
     public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
-        final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE);
+        final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TASK_PANE);
 
         final String resultLabel = LabelUtils.getLabel(componentJob);
 

@@ -72,16 +72,20 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
+    public static final String PROPERTY_FILE = "File";
+    public static final String PROPERTY_SHEET_NAME = "Sheet name";
+    public static final String PROPERTY_OVERWRITE_SHEET_IF_EXISTS = "Overwrite sheet if exists";
+    
     private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
 
-    @Configured
+    @Configured(PROPERTY_FILE)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
     File file = new File("DataCleaner-staging.xlsx");
 
-    @Configured
+    @Configured(PROPERTY_SHEET_NAME)
     String sheetName;
 
-    @Configured
+    @Configured(PROPERTY_OVERWRITE_SHEET_IF_EXISTS)
     boolean overwriteSheetIfExists;
 
     @Configured(order = 1, required = false)

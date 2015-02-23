@@ -115,7 +115,7 @@ public class AboutDialog extends AbstractDialog {
         CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 
         tabbedPane.addTab("About DataCleaner",
-                imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
+                imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
                 "About DataCleaner");
         tabbedPane.setUnclosableTab(0);
 

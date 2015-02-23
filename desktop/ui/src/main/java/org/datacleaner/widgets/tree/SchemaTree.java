@@ -41,6 +41,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.metamodel.schema.Column;
@@ -141,6 +142,62 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             removeMouseListener(mouseListener);
         }
         _datastoreConnection.close();
+    }
+
+    public void expandSelectedData() {
+        final List<Table> tables = _analysisJobBuilder.getSourceTables();
+        for (Table table : tables) {
+            expandTable(table);
+        }
+    }
+
+    public void expandTable(Table table) {
+        final DefaultMutableTreeNode treeNode = getTreeNode(table);
+        if (treeNode == null) {
+            return;
+        }
+        final TreeNode[] pathElements = treeNode.getPath();
+        final TreePath path = new TreePath(pathElements);
+        expandPath(path);
+    }
+
+    public DefaultMutableTreeNode getTreeNode(final Schema schema) {
+        if (schema == null) {
+            return null;
+        }
+
+        final TreeNode root = (TreeNode) getModel().getRoot();
+        for (int i = 0; i < root.getChildCount(); i++) {
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+            final Object userObject = child.getUserObject();
+            if (schema.equals(userObject)) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    public DefaultMutableTreeNode getTreeNode(final Table table) {
+        if (table == null) {
+            return null;
+        }
+
+        final DefaultMutableTreeNode schemaNode = getTreeNode(table.getSchema());
+        if (schemaNode == null) {
+            return null;
+        }
+
+        LoadTablesSwingWorker worker = new LoadTablesSwingWorker(schemaNode);
+        worker.executeBlockingly();
+
+        for (int i = 0; i < schemaNode.getChildCount(); i++) {
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) schemaNode.getChildAt(i);
+            final Object userObject = child.getUserObject();
+            if (table.equals(userObject)) {
+                return child;
+            }
+        }
+        return null;
     }
 
     public WindowContext getWindowContext() {
@@ -248,6 +305,33 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             _schemaNode = schemaNode;
         }
 
+        public boolean isNeeded() {
+            if (_schemaNode.getChildCount() == 1) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) _schemaNode.getChildAt(0);
+                if (LOADING_TABLES_STRING.equals(child.getUserObject())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void executeBlockingly() {
+            if (!isNeeded()) {
+                return;
+            }
+            final Schema schema = (Schema) _schemaNode.getUserObject();
+            final Table[] tables = schema.getTables();
+            for (Table table : tables) {
+                String name = table.getName();
+                logger.debug("Building table node: {}", name);
+                DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(table);
+                DefaultMutableTreeNode loadingColumnsNode = new DefaultMutableTreeNode(LOADING_COLUMNS_STRING);
+                tableNode.add(loadingColumnsNode);
+                _schemaNode.add(tableNode);
+            }
+            _schemaNode.remove(0);
+        }
+
         @Override
         protected Void doInBackground() throws Exception {
             Schema schema = (Schema) _schemaNode.getUserObject();
@@ -319,8 +403,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         if (value == null) {
-            return _rendererDelegate.getTreeCellRendererComponent(tree, "", selected,
-                    expanded, leaf, row, hasFocus);
+            return _rendererDelegate.getTreeCellRendererComponent(tree, "", selected, expanded, leaf, row, hasFocus);
         }
 
         Component component = null;

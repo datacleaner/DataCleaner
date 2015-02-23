@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 @Named("JavaScript transformer (advanced)")
 @Description("Supply your own piece of JavaScript to do a custom transformation")
-@Categorized({ ScriptingCategory.class })
+@Categorized(ScriptingCategory.class)
 @Concurrent(false)
 public class JavaScriptAdvancedTransformer implements Transformer {
 

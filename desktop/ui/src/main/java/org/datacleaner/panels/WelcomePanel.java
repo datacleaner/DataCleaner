@@ -75,6 +75,8 @@ public class WelcomePanel extends DCSplashPanel {
     private final UserPreferences _userPreferences;
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
     private final InjectorBuilder _injectorBuilder;
+    private final JComponent _buttonPanel;
+    private final JComponent _titleLabel;
 
     public WelcomePanel(final AnalysisJobBuilderWindow window, final UserPreferences userPreferences,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener, final InjectorBuilder injectorBuilder) {
@@ -83,16 +85,23 @@ public class WelcomePanel extends DCSplashPanel {
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
         _injectorBuilder = injectorBuilder;
 
-        setLayout(new BorderLayout());
-
-        final JComponent welcomeLabel = createTitleLabel("Welcome to DataCleaner", false);
-        add(welcomeLabel, BorderLayout.NORTH);
+        _titleLabel = createTitleLabel("Welcome to DataCleaner", false);
+        _buttonPanel = createButtonPanel();
 
         final JComponent contentPanel = createContentPanel();
-        add(contentPanel, BorderLayout.CENTER);
 
-        final JComponent buttonPanel = createButtonPanel();
-        add(buttonPanel, BorderLayout.SOUTH);
+        setLayout(new BorderLayout());
+        add(_titleLabel, BorderLayout.NORTH);
+        add(contentPanel, BorderLayout.CENTER);
+        add(_buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public JComponent getButtonPanel() {
+        return _buttonPanel;
+    }
+
+    public JComponent getTitleLabel() {
+        return _titleLabel;
     }
 
     private JComponent createContentPanel() {
@@ -128,7 +137,7 @@ public class WelcomePanel extends DCSplashPanel {
                 editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
 
                 final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
-                        "images/window/app-icon.png");
+                        IconUtils.APPLICATION_ICON);
                 tryProfessionalButton
                         .addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
 

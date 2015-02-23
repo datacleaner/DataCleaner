@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
@@ -65,8 +66,8 @@ public class Dropzone extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectListener;
     private final UserPreferences _userPreferences;
 
-    public Dropzone(final DatastoreCatalog datastoreCatalog,
-            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
+    public Dropzone(final DatastoreCatalog datastoreCatalog, final DatastoreSelectedListener datastoreSelectListener,
+            final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -115,8 +116,23 @@ public class Dropzone extends DCPanel {
             final File file = fileChooser.getSelectedFile();
 
             if (file.exists()) {
-                final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
-                        _datastoreCatalog, file);
+                Datastore datastore = null;
+                final String filename = file.getName();
+                final String filePath = file.getAbsolutePath();
+                final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+                for (int i = 0; i < datastoreNames.length; i++) {
+                    final Datastore existingDatastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
+                    if (existingDatastore instanceof FileDatastore) {
+                        FileDatastore fileDatastore = (FileDatastore) existingDatastore;
+                        final String datastoreFilename = fileDatastore.getFilename();
+                        if (filename.equals(datastoreFilename) || filePath.equals(datastoreFilename)) {
+                            datastore = _datastoreCatalog.getDatastore(filename);
+                        }
+                    }
+                }
+                if (datastore == null) {
+                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
                 final File directory;

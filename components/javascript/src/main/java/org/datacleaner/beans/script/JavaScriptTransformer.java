@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 @Named("JavaScript transformer (simple)")
 @Alias("JavaScript transformer")
 @Description("Supply your own piece of JavaScript to do a custom transformation")
-@Categorized({ ScriptingCategory.class })
+@Categorized(ScriptingCategory.class)
 public class JavaScriptTransformer implements Transformer {
 
 	private static final Logger logger = LoggerFactory

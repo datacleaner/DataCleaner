@@ -127,6 +127,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             addMouseListener(injector.getInstance(SchemaMouseListener.class));
             addMouseListener(injector.getInstance(TableMouseListener.class));
             addMouseListener(injector.getInstance(ColumnMouseListener.class));
+            addMouseListener(injector.getInstance(ComponentDescriptorMouseListener.class));
         }
         updateTree();
     }

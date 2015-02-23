@@ -104,7 +104,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _rendererDelegate = new DefaultTreeRenderer();
         setCellRenderer(this);
         setOpaque(false);
-        setRowHeight(0);
+        setRowHeight(24);
         addTreeWillExpandListener(this);
         setDragEnabled(true);
         setTransferHandler(DragDropUtils.createSourceTransferHandler());

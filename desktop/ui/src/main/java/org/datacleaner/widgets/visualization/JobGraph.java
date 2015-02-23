@@ -48,6 +48,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -224,6 +225,13 @@ public final class JobGraph {
                     _analysisJobBuilder.addSourceColumn(column);
                 }
 
+                if(data instanceof ComponentDescriptor<?>){
+                    final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) data;
+                    
+                    final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(dropPoint);
+                    
+                    _analysisJobBuilder.addComponent(descriptor, null, null, metadata);
+                }
                 return true;
             };
         });

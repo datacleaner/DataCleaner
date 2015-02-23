@@ -146,7 +146,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
                 panel.add(Box.createHorizontalStrut(4));
                 panel.add(new JLabel(label));
 
-                final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE);
+                final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_SAVE_DARK);
                 button.setToolTipText("Save as string pattern");
                 button.addActionListener(new ActionListener() {
                     @Override

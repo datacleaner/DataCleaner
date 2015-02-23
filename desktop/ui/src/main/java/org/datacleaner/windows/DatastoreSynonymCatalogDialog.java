@@ -203,7 +203,8 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Synonym columns:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_synonymColumnsPanel.createPanel(), formPanel, 1, row);
         row++;
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save Synonym Catalog", IconUtils.ACTION_SAVE);
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save Synonym Catalog",
+                IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

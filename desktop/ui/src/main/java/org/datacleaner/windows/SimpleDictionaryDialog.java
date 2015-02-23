@@ -105,7 +105,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(WidgetUtils.scrolleable(_valuesTextArea), formPanel, 1, row);
 
         final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
-                IconUtils.ACTION_SAVE);
+                IconUtils.ACTION_SAVE_BRIGHT);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

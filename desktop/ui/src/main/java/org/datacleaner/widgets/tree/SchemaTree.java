@@ -104,6 +104,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _rendererDelegate = new DefaultTreeRenderer();
         setCellRenderer(this);
         setOpaque(false);
+        setRowHeight(0);
         addTreeWillExpandListener(this);
         setDragEnabled(true);
         setTransferHandler(DragDropUtils.createSourceTransferHandler());
@@ -119,7 +120,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if(e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3){
+                    if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3) {
                         setSelectionPath(getPathForLocation(e.getX(), e.getY()));
                     }
                 }
@@ -353,7 +354,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, superCategory.getName(), selected,
                     expanded, leaf, row, hasFocus);
-            icon = IconUtils.getComponentSuperCategoryIcon(superCategory);
+            icon = IconUtils.invertImage(IconUtils.getComponentSuperCategoryIcon(superCategory));
         } else if (value instanceof ComponentCategory) {
             ComponentCategory category = (ComponentCategory) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, category.getName(), selected, expanded,

@@ -19,8 +19,10 @@
  */
 package org.datacleaner.util;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.net.URL;
 import java.util.Set;
 
@@ -486,5 +488,20 @@ public final class IconUtils {
             imagePath = COMPOSITE_IMAGEPATH;
         }
         return imagePath;
+    }
+
+    /**
+     * Inverts the colors of the icon. Takes less than one millisecond for supercategory icons.
+     * @param icon
+     * @return
+     */
+    public static ImageIcon invertImage(final Icon icon) {
+        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics g = bi.createGraphics();
+        // paint the Icon to the BufferedImage.
+        icon.paintIcon(null, g, 0, 0);
+    
+        RescaleOp op = new RescaleOp(-1.0f, 255f, null);
+        return new ImageIcon(op.filter(bi, null));
     }
 }

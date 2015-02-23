@@ -65,8 +65,8 @@ public class Dropzone extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectListener;
     private final UserPreferences _userPreferences;
 
-    public Dropzone(final DatastoreCatalog datastoreCatalog,
-            final DatastoreSelectedListener datastoreSelectListener, final UserPreferences userPreferences) {
+    public Dropzone(final DatastoreCatalog datastoreCatalog, final DatastoreSelectedListener datastoreSelectListener,
+            final UserPreferences userPreferences) {
         super(WidgetUtils.BG_SEMI_TRANSPARENT);
         _datastoreCatalog = datastoreCatalog;
         _datastoreSelectListener = datastoreSelectListener;
@@ -115,8 +115,13 @@ public class Dropzone extends DCPanel {
             final File file = fileChooser.getSelectedFile();
 
             if (file.exists()) {
-                final Datastore datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(
-                        _datastoreCatalog, file);
+                final Datastore datastore;
+                final String filename = file.getName();
+                if (_datastoreCatalog.containsDatastore(filename)) {
+                    datastore = _datastoreCatalog.getDatastore(filename);
+                } else {
+                    datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
+                }
                 _datastoreSelectListener.datastoreSelected(datastore);
 
                 final File directory;

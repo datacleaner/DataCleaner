@@ -55,8 +55,8 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     private final ComponentBuilderPresenter _presenter;
     private final ComponentBuilder _componentBuilder;
 
-    public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder, AnalysisJobBuilder analysisJobBuilder,
-            ComponentBuilderPresenter presenter) {
+    public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
+            AnalysisJobBuilder analysisJobBuilder, ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(windowContext, getBannerImage(componentBuilder));
@@ -119,7 +119,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     protected int getDialogWidth() {
         return 750;
     }
-    
+
     @Override
     protected int getDialogHeightBuffer() {
         return 50;
@@ -141,7 +141,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
         panel.setLayout(new BorderLayout());
         panel.add(configurationComponent, BorderLayout.CENTER);
         panel.add(DCPanel.flow(Alignment.CENTER, closeButton), BorderLayout.SOUTH);
-
+        panel.setPreferredSize(700, 500);
         return panel;
     }
 

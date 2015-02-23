@@ -178,7 +178,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 public void addCategory(ComponentCategory category) {
                     final DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(category);
                     categoryTreeNodes.put(category, treeNode);
-                    schemaNode.add(new DefaultMutableTreeNode(category));
+                    schemaNode.add(treeNode);
                 }
 
                 @Override

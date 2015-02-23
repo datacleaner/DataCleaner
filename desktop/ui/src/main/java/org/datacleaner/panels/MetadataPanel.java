@@ -60,7 +60,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
     private final JXTextField _authorTextField;
 
     public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
-        super(ImageManager.get().getImage(WidgetUtils.COLOR_DEFAULT_BACKGROUND));
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _analysisJobBuilder = analysisJobBuilder;
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 

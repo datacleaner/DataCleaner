@@ -309,11 +309,12 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     @Override
     public void graphClicked(Object v, MouseEvent me) {
         logger.debug("graphClicked({}, {})", v, me);
+        //We do nothing. We show the menu only when the mouse is released
     }
 
     @Override
-    public void mouseClicked(MouseEvent me) {
-        logger.debug("mouseClicked({}) (clickCaught={})", me, _clickCaught);
+    public void mouseReleased(MouseEvent me) {
+        logger.debug("mouseReleased({}) (clickCaught={})", me, _clickCaught);
         if (!_clickCaught) {
             int button = me.getButton();
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
@@ -323,18 +324,4 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         // reset the variable for next time
         _clickCaught = false;
     }
-
-    @Override
-    public void mousePressed(MouseEvent me) {
-        logger.debug("mousePressed({}) (clickCaught={})", me, _clickCaught);
-        if (!_clickCaught) {
-            int button = me.getButton();
-            if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                onCanvasRightClicked(me);
-            }
-        }
-        // reset the variable for next time
-        _clickCaught = false;
-    }
-
 }

@@ -61,7 +61,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        final TreePath path = _schemaTree.getSelectionPath();
+        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }

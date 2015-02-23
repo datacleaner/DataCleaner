@@ -20,6 +20,8 @@
 package org.datacleaner.widgets.tree;
 
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,6 +116,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
 
         if (_analysisJobBuilder != null) {
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if(e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3){
+                        setSelectionPath(getPathForLocation(e.getX(), e.getY()));
+                    }
+                }
+            });
             addMouseListener(injector.getInstance(SchemaMouseListener.class));
             addMouseListener(injector.getInstance(TableMouseListener.class));
             addMouseListener(injector.getInstance(ColumnMouseListener.class));

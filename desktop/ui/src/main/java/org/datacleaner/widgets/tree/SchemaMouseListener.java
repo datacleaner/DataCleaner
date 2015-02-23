@@ -55,7 +55,6 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 			return;
 		}
 	    
-	    _schemaTree.setSelectionPath(path);
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 		Object userObject = node.getUserObject();
 		if (userObject instanceof Schema) {

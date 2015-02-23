@@ -93,8 +93,16 @@ public final class DataCleanerHome {
         }
 
         if (isUsable(candidate)) {
+            // Found a directory with conf.xml already there
             return candidate;
+        } else {
+            return initializeDataCleanerHome(candidate);
         }
+
+    }
+
+    private static FileObject initializeDataCleanerHome(FileObject candidate) throws FileSystemException {
+        final FileSystemManager manager = VFSUtils.getFileSystemManager();
 
         if (ClassLoaderUtils.IS_WEB_START) {
             // in web start, the default folder will be in user.home
@@ -103,18 +111,24 @@ public final class DataCleanerHome {
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
         } else {
-            // in normal mode, the default folder will be in the working
-            // directory
+            // in normal mode it is trying to use specified directory first,
+            // working directory as a fallback or user home directory as a
+            // second fallback.
             if (isWriteable(candidate)) {
                 logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
             } else {
-                // Workaround: isWritable is not reliable for a non-existent directory. Just create it and check again.
+                // Workaround: isWritable is not reliable for a non-existent
+                // directory. Just create it and check again.
+                logger.debug(
+                        "DATACLEANER_HOME ({}) appears to be not writable. Applying a workaround: creating this directory and checking again.",
+                        candidate);
                 if ((candidate != null) && (!candidate.exists())) {
                     candidate.createFolder();
                 }
                 if (isWriteable(candidate)) {
-                    logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
+                    logger.info("Building DATACLEANER_HOME in {}", candidate);
                 } else {
+                    
                     candidate = manager.resolveFile(".");
                     if (isWriteable(candidate)) {
                         logger.info(
@@ -174,7 +188,7 @@ public final class DataCleanerHome {
         if (candidate == null) {
             return false;
         }
-        
+
         if (!candidate.isWriteable()) {
             return false;
         }

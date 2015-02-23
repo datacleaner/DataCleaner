@@ -80,13 +80,21 @@ public final class DataCleanerHome {
 
         FileObject candidate = null;
 
-        final String env = System.getenv("DATACLEANER_HOME");
+        String env = System.getenv("DATACLEANER_HOME");
         if (!StringUtils.isNullOrEmpty(env)) {
+            if (env.startsWith("~")) {
+                String userHomePath = System.getProperty("user.home");
+                env = env.replace("~", userHomePath);
+            }
             candidate = manager.resolveFile(env);
             logger.info("Resolved env. variable DATACLEANER_HOME ({}) to: {}", env, candidate);
         } else {
-            final String sysProp = System.getProperty("DATACLEANER_HOME");
+            String sysProp = System.getProperty("DATACLEANER_HOME");
             if (!StringUtils.isNullOrEmpty(sysProp)) {
+                if (sysProp.startsWith("~")) {
+                    String userHomePath = System.getProperty("user.home");
+                    sysProp = sysProp.replace("~", userHomePath);
+                }
                 candidate = manager.resolveFile(sysProp);
                 logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
             }
@@ -114,8 +122,9 @@ public final class DataCleanerHome {
             // in normal mode it is trying to use specified directory first,
             // working directory as a fallback or user home directory as a
             // second fallback.
+            logger.info("Running in standard mode.");
             if (isWriteable(candidate)) {
-                logger.info("Running in standard mode. Attempting to build DATACLEANER_HOME in {}", candidate);
+                logger.info("Attempting to build DATACLEANER_HOME in {}", candidate);
             } else {
                 // Workaround: isWritable is not reliable for a non-existent
                 // directory. Just create it and check again.
@@ -126,9 +135,8 @@ public final class DataCleanerHome {
                     candidate.createFolder();
                 }
                 if (isWriteable(candidate)) {
-                    logger.info("Building DATACLEANER_HOME in {}", candidate);
+                    logger.info("Attempting to build DATACLEANER_HOME in {}", candidate);
                 } else {
-                    
                     candidate = manager.resolveFile(".");
                     if (isWriteable(candidate)) {
                         logger.info(

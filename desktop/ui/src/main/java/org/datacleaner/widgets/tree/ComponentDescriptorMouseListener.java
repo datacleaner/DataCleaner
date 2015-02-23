@@ -41,7 +41,7 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         if (userObject instanceof ComponentDescriptor<?>) {
             final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
 
-            if(SwingUtilities.isLeftMouseButton(e)){
+            if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1){
                 _analysisJobBuilder.addComponent(componentDescriptor);                
             } else if(SwingUtilities.isRightMouseButton(e)){
                 JPopupMenu popup = new JPopupMenu();

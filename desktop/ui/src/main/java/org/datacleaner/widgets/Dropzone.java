@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
@@ -115,11 +116,21 @@ public class Dropzone extends DCPanel {
             final File file = fileChooser.getSelectedFile();
 
             if (file.exists()) {
-                final Datastore datastore;
+                Datastore datastore = null;
                 final String filename = file.getName();
-                if (_datastoreCatalog.containsDatastore(filename)) {
-                    datastore = _datastoreCatalog.getDatastore(filename);
-                } else {
+                final String filePath = file.getAbsolutePath();
+                final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
+                for (int i = 0; i < datastoreNames.length; i++) {
+                    final Datastore datastoreName = _datastoreCatalog.getDatastore(datastoreNames[i]);
+                    if (datastoreName instanceof FileDatastore) {
+                        FileDatastore fileDatastore = (FileDatastore) datastoreName;
+                        final String datastoreFilename = fileDatastore.getFilename();
+                        if (filename.equals(datastoreFilename) || filePath.equals(datastoreFilename)) {
+                            datastore = _datastoreCatalog.getDatastore(filename);
+                        }
+                    }
+                }
+                if (datastore == null) {
                     datastore = DatastoreCreationUtil.createAndAddUniqueDatastoreFromFile(_datastoreCatalog, file);
                 }
                 _datastoreSelectListener.datastoreSelected(datastore);

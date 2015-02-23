@@ -74,7 +74,6 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphMouseListener.class);
 
-
     private final JobGraphContext _graphContext;
     private final JobGraphLinkPainter _linkPainter;
     private final JobGraphActions _actions;
@@ -87,8 +86,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private Point _pressedPoint;
 
-    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter, JobGraphActions actions,
-       WindowContext windowContext, UsageLogger usageLogger) {
+    public JobGraphMouseListener(JobGraphContext graphContext, JobGraphLinkPainter linkPainter,
+            JobGraphActions actions, WindowContext windowContext, UsageLogger usageLogger) {
         _graphContext = graphContext;
         _linkPainter = linkPainter;
         _actions = actions;
@@ -231,75 +230,91 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     @Override
     public void graphReleased(Object v, MouseEvent me) {
-        if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
-            // avoid updating any coordinates when nothing has been moved
-            return;
-        }
+        logger.debug("Graph released");
 
-        final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
-
-        final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
-
-        final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
-
-        // update the coordinates metadata of the moved objects.
-
-        for (final Object vertex : selectedObjects) {
-            final Double x = graphLayout.getX(vertex);
-            final Double y = graphLayout.getY(vertex);
-            if (vertex instanceof HasMetadataProperties) {
-                final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex).getMetadataProperties();
-                metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
-                metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
-            } else if (vertex instanceof Table) {
-                JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
+        final int button = me.getButton();
+        if (button == MouseEvent.BUTTON1) {
+            if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
+                // avoid updating any coordinates when nothing has been moved
+                return;
             }
-        }
+            final PickedState<Object> pickedVertexState = _graphContext.getVisualizationViewer().getPickedVertexState();
 
-        if (selectedObjects.length > 0) {
-            _graphContext.getJobGraph().refresh();
+            final Object[] selectedObjects = pickedVertexState.getSelectedObjects();
+
+            final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
+
+            // update the coordinates metadata of the moved objects.
+
+            for (final Object vertex : selectedObjects) {
+                final Double x = graphLayout.getX(vertex);
+                final Double y = graphLayout.getY(vertex);
+                if (vertex instanceof HasMetadataProperties) {
+                    final Map<String, String> metadataProperties = ((HasMetadataProperties) vertex)
+                            .getMetadataProperties();
+                    metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
+                    metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
+                } else if (vertex instanceof Table) {
+                    JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
+                }
+            }
+            if (selectedObjects.length > 0) {
+                _graphContext.getJobGraph().refresh();
+            }
+        } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+            if (v instanceof ComponentBuilder) {
+                final ComponentBuilder componentBuilder = (ComponentBuilder) v;
+                onComponentRightClicked(componentBuilder, me);
+            } else if (v instanceof Table) {
+                final Table table = (Table) v;
+                onTableRightClicked(table, me);
+            }
         }
     }
 
     @Override
     public void graphPressed(Object v, MouseEvent me) {
+        logger.debug("graphPressed({}, {})", v, me);
         _pressedPoint = me.getPoint();
-    }
-
-    @Override
-    public void graphClicked(Object v, MouseEvent me) {
-        logger.debug("graphClicked({}, {})", v, me);
         _clickCaught = false;
         final int button = me.getButton();
-        if (v instanceof ComponentBuilder) {
-            final ComponentBuilder componentBuilder = (ComponentBuilder) v;
-            if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-                _clickCaught = true;
-                onComponentRightClicked(componentBuilder, me);
-            } else if (me.getClickCount() == 2) {
-                _clickCaught = true;
-                onComponentDoubleClicked(componentBuilder, me);
-            } else {
-                final boolean ended = _linkPainter.endLink(componentBuilder, me);
-                if (ended) {
-                    me.consume();
+        if (button == MouseEvent.BUTTON1) {
+            if (v instanceof ComponentBuilder) {
+                final ComponentBuilder componentBuilder = (ComponentBuilder) v;
+                if (me.getClickCount() == 2) {
+                    _clickCaught = true;
+                    onComponentDoubleClicked(componentBuilder, me);
+                } else {
+                    final boolean ended = _linkPainter.endLink(componentBuilder, me);
+                    if (ended) {
+                        me.consume();
+                    }
+                }
+            } else if (v instanceof Table) {
+                final Table table = (Table) v;
+                if (me.getClickCount() == 2) {
+                    _clickCaught = true;
+                    onTableDoubleClicked(table, me);
                 }
             }
-        } else if (v instanceof Table) {
-            final Table table = (Table) v;
-            if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+        } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+            if (v instanceof ComponentBuilder) {
                 _clickCaught = true;
-                onTableRightClicked(table, me);
-            } else if (me.getClickCount() == 2) {
+            } else if (v instanceof Table) {
                 _clickCaught = true;
-                onTableDoubleClicked(table, me);
             }
         }
     }
 
     @Override
-    public void mouseClicked(MouseEvent me) {
-        logger.debug("mouseClicked({}) (clickCaught={})", me, _clickCaught);
+    public void graphClicked(Object v, MouseEvent me) {
+        logger.debug("graphClicked({}, {})", v, me);
+        //We do nothing. We show the menu only when the mouse is released
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+        logger.debug("mouseReleased({}) (clickCaught={})", me, _clickCaught);
         if (!_clickCaught) {
             int button = me.getButton();
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {

@@ -121,9 +121,9 @@ public class Dropzone extends DCPanel {
                 final String filePath = file.getAbsolutePath();
                 final String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
                 for (int i = 0; i < datastoreNames.length; i++) {
-                    final Datastore datastoreName = _datastoreCatalog.getDatastore(datastoreNames[i]);
-                    if (datastoreName instanceof FileDatastore) {
-                        FileDatastore fileDatastore = (FileDatastore) datastoreName;
+                    final Datastore existingDatastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
+                    if (existingDatastore instanceof FileDatastore) {
+                        FileDatastore fileDatastore = (FileDatastore) existingDatastore;
                         final String datastoreFilename = fileDatastore.getFilename();
                         if (filename.equals(datastoreFilename) || filePath.equals(datastoreFilename)) {
                             datastore = _datastoreCatalog.getDatastore(filename);

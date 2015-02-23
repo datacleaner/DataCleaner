@@ -77,7 +77,7 @@ public class CommunityEditionInformationPanel extends JPanel {
         add(text2);
 
         JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
-                "images/window/app-icon.png");
+                IconUtils.APPLICATION_ICON);
         tryProfessionalButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
         add(DCPanel.around(tryProfessionalButton));
 

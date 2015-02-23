@@ -37,7 +37,7 @@ import com.google.common.net.UrlEscapers;
 
 @Named("URL encoder")
 @Description("Encodes/escapes a URL or part of a URL")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class UrlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat implements HasName {

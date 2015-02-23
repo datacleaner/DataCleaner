@@ -38,7 +38,7 @@ import org.datacleaner.components.categories.DateAndTimeCategory;
 
 @Named("Extract date part")
 @Description("Extract the parts of a date (year, month, day etc.)")
-@Categorized({ DateAndTimeCategory.class })
+@Categorized(DateAndTimeCategory.class)
 public class DatePartTransformer implements Transformer {
 
 	public static enum WeekDay {

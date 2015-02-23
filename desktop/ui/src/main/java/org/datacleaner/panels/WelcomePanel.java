@@ -137,7 +137,7 @@ public class WelcomePanel extends DCSplashPanel {
                 editorPane.setPreferredSize(new Dimension(DCSplashPanel.WIDTH_CONTENT, 120));
 
                 final JButton tryProfessionalButton = WidgetFactory.createDefaultButton("Try professional edition",
-                        "images/window/app-icon.png");
+                        IconUtils.APPLICATION_ICON);
                 tryProfessionalButton
                         .addActionListener(new OpenBrowserAction("http://datacleaner.org/get_datacleaner"));
 

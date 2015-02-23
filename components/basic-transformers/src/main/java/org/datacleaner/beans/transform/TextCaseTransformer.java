@@ -35,7 +35,7 @@ import org.apache.metamodel.util.HasName;
 
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class TextCaseTransformer implements Transformer {
 
     /**

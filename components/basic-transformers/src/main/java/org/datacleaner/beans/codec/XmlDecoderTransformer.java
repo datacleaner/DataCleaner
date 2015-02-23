@@ -35,7 +35,7 @@ import org.datacleaner.data.MockInputColumn;
 
 @Named("XML decoder")
 @Description("Decodes XML content into plain text")
-@Categorized({ StringManipulationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class XmlDecoderTransformer implements Transformer {
 
     @Configured

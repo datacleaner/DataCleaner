@@ -36,7 +36,7 @@ import org.apache.metamodel.util.HasName;
 
 @Named("Timestamp converter")
 @Description("Convert a timestamp (string or number) to a date field. Epoch is assumed to be 1970-01-01.")
-@Categorized({ DateAndTimeCategory.class })
+@Categorized(DateAndTimeCategory.class)
 public class TimestampConverter implements Transformer {
 
 	public static enum Unit implements HasName {

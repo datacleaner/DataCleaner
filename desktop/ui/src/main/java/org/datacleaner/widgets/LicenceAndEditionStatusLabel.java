@@ -59,7 +59,7 @@ public class LicenceAndEditionStatusLabel extends JLabel {
                 }
             });
         } else {
-            setIcon(ImageManager.get().getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
+            setIcon(ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
             _communityEditionInformationPanel = null;
         }
 

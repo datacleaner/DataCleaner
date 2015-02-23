@@ -48,8 +48,8 @@ public class DefaultFileIconFactory implements FileIconFactory {
             IconUtils.ICON_SIZE_MEDIUM);
     private static final ImageIcon ICON_FILE_ANALYSIS_JOB = imageManager.getImageIcon(IconUtils.MODEL_JOB,
             IconUtils.ICON_SIZE_MEDIUM);
-    private static final ImageIcon ICON_FILE_ANALYSIS_RESULT = imageManager.getImageIcon(
-            "images/filetypes/analysis_result.png", IconUtils.ICON_SIZE_MEDIUM);
+    private static final ImageIcon ICON_FILE_ANALYSIS_RESULT = imageManager.getImageIcon(IconUtils.MODEL_RESULT,
+            IconUtils.ICON_SIZE_MEDIUM);
     private static final ImageIcon ICON_FILE_XML = imageManager.getImageIcon(IconUtils.XML_IMAGEPATH,
             IconUtils.ICON_SIZE_MEDIUM);
     private static final ImageIcon ICON_FILE = imageManager.getImageIcon(IconUtils.FILE_FILE,

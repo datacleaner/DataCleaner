@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 @Named("JavaScript filter")
 @Description("Supply your own piece of JavaScript that evaluates whether rows should be included or excluded from processing.")
-@Categorized({ ScriptingCategory.class })
+@Categorized(ScriptingCategory.class)
 public class JavaScriptFilter implements Filter<JavaScriptFilter.Category> {
 
     public static enum Category {

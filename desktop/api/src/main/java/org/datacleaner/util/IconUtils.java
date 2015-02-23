@@ -53,6 +53,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
+import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
@@ -66,9 +67,15 @@ public final class IconUtils {
     public static final int ICON_SIZE_LARGE = 32;
     public static final int ICON_SIZE_MEDIUM = 22;
     public static final int ICON_SIZE_SMALL = 16;
-    
+
     public static final int ICON_SIZE_MENU_ITEM = ICON_SIZE_SMALL;
     public static final int ICON_SIZE_BUTTON = ICON_SIZE_MEDIUM;
+    public static final int ICON_SIZE_TAB = ICON_SIZE_MEDIUM;
+    public static final int ICON_SIZE_TASK_PANE = ICON_SIZE_SMALL;
+
+    private static final ImageIcon ICON_TRANSPARENT_SMALL = createTransparentIcon(ICON_SIZE_SMALL);
+    private static final ImageIcon ICON_TRANSPARENT_MEDIUM = createTransparentIcon(ICON_SIZE_MEDIUM);
+    private static final ImageIcon ICON_TRANSPARENT_LARGE = createTransparentIcon(ICON_SIZE_LARGE);
 
     public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
@@ -83,7 +90,7 @@ public final class IconUtils {
     public static final String MODEL_COLUMN_EXPRESSION = "images/model/column_expression.png";
     public static final String MODEL_QUERY = "images/model/query.png";
     public static final String MODEL_ROW = "images/model/row.png";
-    public static final String MODEL_JOB = "images/filetypes/analysis_job.png";
+    public static final String MODEL_JOB = "images/model/job.png";
     public static final String MODEL_RESULT = "images/model/result.png";
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
@@ -118,6 +125,7 @@ public final class IconUtils {
     public static final String ACTION_LOG = "images/actions/log.png";
     public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
 
+    public static final String APPLICATION_ICON = "images/window/app-icon.png";
     public static final String WEBSITE = "images/actions/website.png";
     public static final String PLUGIN = "images/component-types/plugin.png";
 
@@ -199,14 +207,59 @@ public final class IconUtils {
         return new ImageIcon(bufferedImage);
     }
 
+    /**
+     * Gets the icon of a component based on it's {@link ComponentDescriptor}.
+     * 
+     * @param descriptor
+     * @param newWidth
+     * @return
+     */
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
+        return getDescriptorIcon(descriptor, newWidth, false);
+    }
+
+    /**
+     * Gets the icon of a component based on it's {@link ComponentDescriptor}.
+     * 
+     * @param descriptor
+     * @param newWidth
+     * @param allowTransparentForUnspecific
+     *            whether or not to use a transparent icon in case only a
+     *            generic icon could be found. This is useful for menu items
+     *            where the icon is not a requirement.
+     * @return
+     */
+    public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth,
+            boolean allowTransparentForUnspecific) {
         final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
-        String imagePath = getDescriptorImagePath(descriptor, classLoader);
+        final boolean allowGeneric = !allowTransparentForUnspecific;
+        final String imagePath = getDescriptorImagePath(descriptor, classLoader, allowGeneric);
+        if (imagePath == null) {
+            return getTransparentIcon(newWidth);
+        }
         return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
     }
 
+    public static ImageIcon getTransparentIcon(int width) {
+        switch (width) {
+        case ICON_SIZE_SMALL:
+            return ICON_TRANSPARENT_SMALL;
+        case ICON_SIZE_MEDIUM:
+            return ICON_TRANSPARENT_MEDIUM;
+        case ICON_SIZE_LARGE:
+            return ICON_TRANSPARENT_LARGE;
+        default:
+            return createTransparentIcon(width);
+        }
+    }
+
+    private static ImageIcon createTransparentIcon(int width) {
+        final Image image = new BufferedImage(width, width, BufferedImage.TYPE_4BYTE_ABGR);
+        return new ImageIcon(image);
+    }
+
     public static ImageIcon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
-        return getDescriptorIcon(descriptor, ICON_SIZE_MEDIUM);
+        return getDescriptorIcon(descriptor, ICON_SIZE_LARGE);
     }
 
     public static ImageIcon getDatastoreIcon(Datastore datastore, int newWidth) {
@@ -294,130 +347,35 @@ public final class IconUtils {
         return iconPath;
     }
 
-    protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader) {
+    protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader,
+            boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();
         final String bundledIconPath = getImagePathForClass(componentClass, classLoader);
         if (bundledIconPath != null) {
             return bundledIconPath;
         }
 
-        if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.datacleaner")) {
-            // plugins get a special icon
-            return PLUGIN;
+        if (!allowGeneric) {
+            return null;
         }
 
-        final ComponentDescriptor<?> beanDescriptor = (ComponentDescriptor<?>) descriptor;
-        final Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+        final ComponentDescriptor<?> descriptorDescriptor = (ComponentDescriptor<?>) descriptor;
+        final Set<ComponentCategory> categories = descriptorDescriptor.getComponentCategories();
         if (categories.contains(new WriteDataCategory())) {
             return COMPONENT_TYPE_WRITE_DATA;
         }
 
-        final String displayName = beanDescriptor.getDisplayName().toLowerCase();
-
-        String imagePath;
-        if (descriptor instanceof TransformerDescriptor<?>) {
-            imagePath = TRANSFORMER_IMAGEPATH;
-        } else if (descriptor instanceof FilterDescriptor<?, ?>) {
-            imagePath = FILTER_IMAGEPATH;
-        } else {
-            imagePath = ANALYZER_IMAGEPATH;
+        if (descriptor instanceof TransformerDescriptor) {
+            return TRANSFORMER_IMAGEPATH;
+        }
+        if (descriptor instanceof FilterDescriptor) {
+            return FILTER_IMAGEPATH;
+        }
+        if (descriptor instanceof AnalyzerDescriptor) {
+            return ANALYZER_IMAGEPATH;
         }
 
-        if (displayName.indexOf("boolean") != -1) {
-            imagePath = "images/component-types/type_boolean.png";
-        }
-        if (displayName.indexOf("validat") != -1) {
-            imagePath = "images/component-types/type_validate.png";
-        }
-        if (displayName.indexOf("internet") != -1 || displayName.indexOf("url") != -1) {
-            imagePath = "images/component-types/type_internet.png";
-        }
-        if (displayName.indexOf("identity") != -1 || displayName.indexOf("name") != -1) {
-            imagePath = "images/component-types/type_identity.png";
-        }
-        if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1
-                || displayName.indexOf("token") != -1 || displayName.indexOf("whitespace") != -1) {
-            imagePath = "images/component-types/type_string.png";
-        }
-        if (displayName.indexOf("time") != -1 || displayName.indexOf("date") != -1) {
-            imagePath = "images/component-types/type_time.png";
-        }
-        if (displayName.indexOf("number") != -1) {
-            imagePath = "images/component-types/type_number.png";
-        }
-        if (displayName.indexOf("convert") != -1) {
-            imagePath = "images/component-types/type_convert.png";
-        }
-        if (displayName.indexOf("length") != -1) {
-            imagePath = "images/component-types/type_length.png";
-        }
-        if (displayName.indexOf("email") != -1) {
-            imagePath = "images/component-types/type_email.png";
-        }
-        if (displayName.indexOf("compare") != -1) {
-            imagePath = "images/component-types/type_compare.png";
-        }
-        if (displayName.indexOf("sound") != -1 || displayName.indexOf("phonetic") != -1) {
-            imagePath = "images/component-types/type_sound.png";
-        }
-        if (displayName.indexOf("pattern") != -1 || displayName.indexOf("expression") != -1
-                || displayName.indexOf("regex") != -1) {
-            imagePath = "images/component-types/type_expression.png";
-        }
-        if (displayName.indexOf("dictionary") != -1) {
-            imagePath = "images/component-types/type_dictionary.png";
-        }
-        if (displayName.indexOf("synonym") != -1) {
-            imagePath = "images/component-types/type_synonym.png";
-        }
-        if (displayName.indexOf("match") != -1) {
-            imagePath = "images/component-types/type_match.png";
-        }
-        if (displayName.indexOf("coalesce") != -1) {
-            imagePath = "images/component-types/type_coalesce.png";
-        }
-        if (displayName.indexOf("expression language") != -1) {
-            imagePath = "images/model/column_expression.png";
-        }
-        if (displayName.indexOf("java") != -1) {
-            imagePath = "images/component-types/type_java.png";
-        }
-        if (displayName.indexOf("javascript") != -1) {
-            imagePath = "images/component-types/type_javascript.png";
-        }
-        if (displayName.indexOf("xml") != -1) {
-            imagePath = "images/component-types/type_xml.png";
-        }
-
-        // some individual icons
-        if (displayName.equals("concatenator")) {
-            imagePath = "images/component-types/type_concatenator.png";
-        }
-        if (displayName.equals("date to age")) {
-            imagePath = "images/component-types/type_date_to_age.png";
-        }
-        if (displayName.equals("convert to string")) {
-            imagePath = "images/component-types/type_convert_to_string.png";
-        }
-        if (displayName.equals("date gap analyzer")) {
-            imagePath = "images/component-types/type_date_gap_analyzer.png";
-        }
-        if (displayName.equals("pattern finder")) {
-            imagePath = "images/component-types/type_pattern_finder.png";
-        }
-        if (displayName.equals("date/time analyzer")) {
-            imagePath = "images/component-types/type_date_time_analyzer.png";
-        }
-        if (displayName.equals("string analyzer")) {
-            imagePath = "images/component-types/type_string_analyzer.png";
-        }
-        if (displayName.equals("whitespace trimmer")) {
-            imagePath = "images/component-types/type_whitespace_trimmer.png";
-        }
-        if (displayName.equals("value distribution")) {
-            imagePath = "images/component-types/type_value_distribution.png";
-        }
-        return imagePath;
+        throw new UnsupportedOperationException("Unexpected descriptor type: " + descriptor);
     }
 
     public static Icon getColumnIcon(InputColumn<?> column, int iconSize) {

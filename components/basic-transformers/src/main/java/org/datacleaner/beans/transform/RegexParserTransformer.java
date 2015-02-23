@@ -31,13 +31,11 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
-import org.datacleaner.components.categories.ScriptingCategory;
 import org.datacleaner.components.categories.StringManipulationCategory;
 
 @Named("Regex parser")
 @Description("Parses strings using a regular expression and transforms it into substrings based on regex groups")
-@Categorized({ StringManipulationCategory.class, ScriptingCategory.class, MatchingAndStandardizationCategory.class })
+@Categorized(StringManipulationCategory.class)
 public class RegexParserTransformer implements Transformer {
 
     @Configured

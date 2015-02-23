@@ -83,7 +83,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 
     @Override
     public Image getWindowIcon() {
-        return imageManager.getImage("images/model/result.png");
+        return imageManager.getImage(IconUtils.MODEL_RESULT);
     }
 
     @Override
@@ -116,7 +116,7 @@ public final class DetailsResultWindow extends AbstractWindow {
     }
 
     public void addRenderedResult(JComponent component) {
-        ImageIcon icon = imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL);
+        ImageIcon icon = imageManager.getImageIcon(IconUtils.ACTION_DRILL_TO_DETAIL, IconUtils.ICON_SIZE_TASK_PANE);
         JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 
         final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);

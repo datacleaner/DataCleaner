@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -49,7 +48,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -68,7 +66,6 @@ import org.datacleaner.actions.NewAnalysisJobActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
-import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
@@ -77,7 +74,6 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
@@ -114,7 +110,6 @@ import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.DCPopupBubble;
-import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.tabs.JobClassicView;
@@ -783,8 +778,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         toolBar.add(moreButton);
 
         toolBar.add(WidgetFactory.createToolBarSeparator());
-        addComponentDescriptorButtons(toolBar);
-        toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
@@ -815,41 +808,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         WidgetUtils.centerOnScreen(this);
         return panel;
-    }
-
-    private void addComponentDescriptorButtons(JToolBar toolBar) {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
-        final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
-        for (ComponentSuperCategory superCategory : superCategories) {
-            final String name = superCategory.getName();
-            final String description = "<html><b>" + name + "</b><br/>" + superCategory.getDescription() + "</html>";
-
-            final PopupButton popupButton = new PopupButton(name);
-            applyMenuPopupButttonStyling(popupButton);
-
-            DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0,
-                    IconUtils.getComponentSuperCategoryIcon(superCategory));
-
-            popupBubble.attachTo(popupButton, new DCPopupBubble.PopupCallback() {
-                @Override
-                public boolean onBeforeShow() {
-                    for (PopupButton scButton : _superCategoryButtons) {
-                        if (scButton.isSelected()) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            });
-
-            final JPopupMenu menu = popupButton.getMenu();
-
-            final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(_analysisJobBuilder, _usageLogger,
-                    superCategory, null);
-            menuBuilder.addItemsToPopupMenu(menu);
-            toolBar.add(popupButton);
-            _superCategoryButtons.add(popupButton);
-        }
     }
 
     private JToggleButton createMoreMenuButton() {

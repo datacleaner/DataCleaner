@@ -119,7 +119,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         setCellRenderer(this);
         setOpaque(false);
         setRootVisible(false);
-        setRowHeight(24);
+        setRowHeight(22);
         addTreeWillExpandListener(this);
         setDragEnabled(true);
         setTransferHandler(DragDropUtils.createSourceTransferHandler());
@@ -248,18 +248,18 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             datastoreNode.add(schemaNode);
         }
 
-        rootNode.add(createToolbox());
+        rootNode.add(createLibrary());
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
 
-    private DefaultMutableTreeNode createToolbox() {
-        DefaultMutableTreeNode toolboxRoot = new DefaultMutableTreeNode("Toolbox");
+    private DefaultMutableTreeNode createLibrary() {
+        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode("Library");
         final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
-            toolboxRoot.add(schemaNode);
+            libraryRoot.add(schemaNode);
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors = _analysisJobBuilder
                     .getConfiguration().getDescriptorProvider().getComponentDescriptorsOfSuperCategory(superCategory);
 
@@ -293,7 +293,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             DescriptorMenuBuilder.createMenuStructure(menuCallback, componentDescriptors, true);
 
         }
-        return toolboxRoot;
+        return libraryRoot;
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
@@ -472,7 +472,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, descriptor.getDisplayName(), selected,
                     expanded, leaf, row, hasFocus);
-            icon = IconUtils.getDescriptorIcon(descriptor);
+            icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MENU_ITEM, false);
         } else if (value instanceof String) {
             component = _rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
                     hasFocus);

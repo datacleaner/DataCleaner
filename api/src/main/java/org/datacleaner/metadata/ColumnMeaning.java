@@ -74,12 +74,12 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PRODUCT_LINE("Product line", "Product type", "Product area"),
 
-    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount", "Quantity in stock"),
+    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount", "Quantity in stock", "Quantity ordered", "Quantity bought"),
 
     // MONEY oriented items
 
     MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost", "Credit", "Buy price", "Payment amount", "Total price",
-            "Unit price"),
+            "Unit price", "Price each"),
 
     MONEY_CURRENCY("Money currency", "Currency", "Valuta", "Exchange"),
 

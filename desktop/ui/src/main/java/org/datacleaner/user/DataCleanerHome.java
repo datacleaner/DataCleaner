@@ -132,10 +132,12 @@ public final class DataCleanerHome {
                         logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
                                 candidate);
                     } catch (FileSystemException e) {
+                        logger.info("Unable to create folder {}. No write permission in that location.", candidate);
                         candidate = initializeDataCleanerHomeFallback();
                     }
+                } else {
+                    candidate = initializeDataCleanerHomeFallback();
                 }
-
             }
 
         }
@@ -149,23 +151,24 @@ public final class DataCleanerHome {
             return candidate;
         }
 
-        logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
-        copyIfNonExisting(candidate, manager, "conf.xml");
-        copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
-        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
-
+        if (!isUsable(candidate)) {
+            logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
+            copyIfNonExisting(candidate, manager, "conf.xml");
+            copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
+        }
         return candidate;
     }
 
@@ -177,9 +180,7 @@ public final class DataCleanerHome {
         // Fallback to working directory
         candidate = manager.resolveFile(".");
         if (isWriteable(candidate)) {
-            logger.info(
-                    "Application directory is not writeable. Attempting to build DATACLEANER_HOME in the working directory: {}",
-                    candidate);
+            logger.info("Attempting to build DATACLEANER_HOME in the working directory: {}", candidate);
         } else {
             // Fallback to user home directory
             final String path = getUserHomeCandidatePath();

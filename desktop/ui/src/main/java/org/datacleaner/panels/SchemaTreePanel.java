@@ -89,6 +89,7 @@ public class SchemaTreePanel extends DCPanel {
 					updateParentPanel();
 					if (expandTree) {
 					    schemaTree.expandSelectedData();
+					    schemaTree.expandLibrary();
 					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);

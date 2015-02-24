@@ -118,6 +118,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         setCellRenderer(this);
         setOpaque(false);
+        setRootVisible(false);
         setRowHeight(24);
         addTreeWillExpandListener(this);
         setDragEnabled(true);
@@ -174,6 +175,15 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         expandPath(path);
     }
 
+    public void expandLibrary() {
+        final TreeNode root = (TreeNode) getModel().getRoot();
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(1);
+        final TreeNode[] pathElements = node.getPath();
+        expandPath(new TreePath(pathElements));
+        
+    }
+
+    
     public DefaultMutableTreeNode getTreeNode(final Schema schema) {
         if (schema == null) {
             return null;
@@ -181,7 +191,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         final TreeNode root = (TreeNode) getModel().getRoot();
         for (int i = 0; i < root.getChildCount(); i++) {
-            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+            final DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0).getChildAt(i);
             final Object userObject = child.getUserObject();
             if (schema.equals(userObject)) {
                 return child;
@@ -287,7 +297,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
-        // Do nothing
+        if(event.getPath().getPathCount() == 2){
+            throw new ExpandVetoException(event);
+        }
     }
 
     public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {

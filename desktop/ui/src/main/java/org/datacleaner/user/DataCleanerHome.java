@@ -80,24 +80,23 @@ public final class DataCleanerHome {
 
         FileObject candidate = null;
 
-        String env = System.getenv("DATACLEANER_HOME");
-        if (!StringUtils.isNullOrEmpty(env)) {
-            if (env.startsWith("~")) {
-                String userHomePath = System.getProperty("user.home");
-                env = env.replace("~", userHomePath);
-            }
-            candidate = manager.resolveFile(env);
-            logger.info("Resolved env. variable DATACLEANER_HOME ({}) to: {}", env, candidate);
+        String path = System.getenv("DATACLEANER_HOME");
+        if (!StringUtils.isNullOrEmpty(path)) {
+            logger.info("Resolved env. variable DATACLEANER_HOME: {}", path);
         } else {
-            String sysProp = System.getProperty("DATACLEANER_HOME");
-            if (!StringUtils.isNullOrEmpty(sysProp)) {
-                if (sysProp.startsWith("~")) {
-                    String userHomePath = System.getProperty("user.home");
-                    sysProp = sysProp.replace("~", userHomePath);
-                }
-                candidate = manager.resolveFile(sysProp);
-                logger.info("Resolved system property DATACLEANER_HOME ({}) to: {}", sysProp, candidate);
+            path = System.getProperty("DATACLEANER_HOME");
+            if (!StringUtils.isNullOrEmpty(path)) {
+                candidate = manager.resolveFile(path);
+                logger.info("Resolved system property DATACLEANER_HOME: {}", path, candidate);
             }
+        }
+
+        if (!StringUtils.isNullOrEmpty(path)) {
+            if (path.startsWith("~")) {
+                String userHomePath = System.getProperty("user.home");
+                path = path.replace("~", userHomePath);
+            }
+            candidate = manager.resolveFile(path);
         }
 
         if (isUsable(candidate)) {
@@ -119,37 +118,24 @@ public final class DataCleanerHome {
             logger.info("Running in WebStart mode. Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path,
                     candidate);
         } else {
-            // in normal mode it is trying to use specified directory first,
-            // working directory as a fallback or user home directory as a
-            // second fallback.
+            // in normal mode try to use specified directory first
             logger.info("Running in standard mode.");
             if (isWriteable(candidate)) {
                 logger.info("Attempting to build DATACLEANER_HOME in {}", candidate);
             } else {
                 // Workaround: isWritable is not reliable for a non-existent
-                // directory. Just create it and check again.
-                logger.debug(
-                        "DATACLEANER_HOME ({}) appears to be not writable. Applying a workaround: creating this directory and checking again.",
-                        candidate);
+                // directory. Trying to create it, if it does not exist.
                 if ((candidate != null) && (!candidate.exists())) {
-                    candidate.createFolder();
-                }
-                if (isWriteable(candidate)) {
-                    logger.info("Attempting to build DATACLEANER_HOME in {}", candidate);
-                } else {
-                    candidate = manager.resolveFile(".");
-                    if (isWriteable(candidate)) {
-                        logger.info(
-                                "Application directory is not writeable. Attempting to build DATACLEANER_HOME in the working directory: {}",
+                    logger.info("Folder {} does not exist. Trying to create it.", candidate);
+                    try {
+                        candidate.createFolder();
+                        logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.",
                                 candidate);
-                    } else {
-                        final String path = getUserHomeCandidatePath();
-                        candidate = manager.resolveFile(path);
-                        logger.info(
-                                "Application directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
-                                path, candidate);
+                    } catch (FileSystemException e) {
+                        candidate = initializeDataCleanerHomeFallback();
                     }
                 }
+
             }
 
         }
@@ -163,32 +149,49 @@ public final class DataCleanerHome {
             return candidate;
         }
 
-        if (!isUsable(candidate)) {
-            if (!candidate.exists()) {
-                logger.debug("DATACLEANER_HOME directory does not exist, creating: {}", candidate);
-                candidate.createFolder();
-            }
+        logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
+        copyIfNonExisting(candidate, manager, "conf.xml");
+        copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
+        copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
 
-            if (isWriteable(candidate)) {
-                logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
-                copyIfNonExisting(candidate, manager, "conf.xml");
-                copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
-                copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
+        return candidate;
+    }
+
+    private static FileObject initializeDataCleanerHomeFallback() throws FileSystemException {
+        final FileSystemManager manager = VFSUtils.getFileSystemManager();
+
+        FileObject candidate;
+
+        // Fallback to working directory
+        candidate = manager.resolveFile(".");
+        if (isWriteable(candidate)) {
+            logger.info(
+                    "Application directory is not writeable. Attempting to build DATACLEANER_HOME in the working directory: {}",
+                    candidate);
+        } else {
+            // Fallback to user home directory
+            final String path = getUserHomeCandidatePath();
+            candidate = manager.resolveFile(path);
+            logger.info(
+                    "Current working directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
+                    path, candidate);
+            if (!isWriteable(candidate)) {
+                throw new IllegalStateException("User home directory (" + candidate
+                        + ") is not writable. DataCleaner requires write access to its home directory.");
             }
         }
-
         return candidate;
     }
 

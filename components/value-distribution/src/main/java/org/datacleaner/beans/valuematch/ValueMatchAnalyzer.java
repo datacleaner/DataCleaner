@@ -45,20 +45,25 @@ import org.datacleaner.util.StringUtils;
 @Concurrent(true)
 public class ValueMatchAnalyzer implements Analyzer<ValueMatchAnalyzerResult>, HasLabelAdvice {
 
+    public static final String PROPERTY_COLUMN = "Column";
+    public static final String PROPERTY_EXPECTED_VALUES = "Expected values";
+    public static final String PROPERTY_CASE_SENSISTIVE_MATCHING = "Case sensitive matching";
+    public static final String PROPERTY_WHITESPACE_SENSITIVE_MATCHING = "White space sensitive matching";
+
     @Inject
-    @Configured(order = 10)
+    @Configured(value = PROPERTY_COLUMN, order = 10)
     InputColumn<?> column;
 
     @Inject
-    @Configured(order = 20)
+    @Configured(value = PROPERTY_EXPECTED_VALUES, order = 20)
     String[] expectedValues;
 
     @Inject
-    @Configured(order = 30)
+    @Configured(value = PROPERTY_CASE_SENSISTIVE_MATCHING, order = 30)
     boolean caseSensitiveMatching = true;
 
     @Inject
-    @Configured(order = 31)
+    @Configured(value = PROPERTY_WHITESPACE_SENSITIVE_MATCHING, order = 31)
     boolean whiteSpaceSensitiveMatching = true;
 
     @Inject

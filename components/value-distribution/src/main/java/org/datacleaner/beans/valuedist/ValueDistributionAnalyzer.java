@@ -49,23 +49,28 @@ import org.slf4j.LoggerFactory;
 @Concurrent(true)
 public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {
 
+    public static final String PROPERTY_COLUMN = "Column";
+    public static final String PROPERTY_GROUP_COLUMN = "Group column";
+    public static final String PROPERTY_RECORD_UNIQUE_VALUES = "Record unique values";
+    public static final String PROPERTY_RECORD_DRILL_DOWN_INFORMATION = "Record drill-down information";
+
     private static final Logger logger = LoggerFactory.getLogger(ValueDistributionAnalyzer.class);
 
     @Inject
-    @Configured(value = "Column", order = 1)
+    @Configured(value = PROPERTY_COLUMN, order = 1)
     @ColumnProperty(escalateToMultipleJobs = true)
     InputColumn<?> _column;
 
     @Inject
-    @Configured(value = "Group column", required = false, order = 2)
+    @Configured(value = PROPERTY_GROUP_COLUMN, required = false, order = 2)
     InputColumn<String> _groupColumn;
 
     @Inject
-    @Configured(value = "Record unique values", required = false, order = 3)
+    @Configured(value = PROPERTY_RECORD_UNIQUE_VALUES, required = false, order = 3)
     boolean _recordUniqueValues = true;
 
     @Inject
-    @Configured(value = "Record drill-down information", required = false, order = 4)
+    @Configured(value = PROPERTY_RECORD_DRILL_DOWN_INFORMATION, required = false, order = 4)
     @Description("Record extra information to allow drilling to the records that represent a particular value in the distribution")
     boolean _recordDrillDownInformation = true;
 

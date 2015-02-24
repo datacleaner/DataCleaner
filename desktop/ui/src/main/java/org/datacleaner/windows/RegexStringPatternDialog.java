@@ -83,7 +83,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
         _expressionNameField = WidgetFactory.createTextField("String pattern name");
         _expressionField = WidgetFactory.createTextField("Expression");
         _resetButton = WidgetFactory.createSmallButton("Reset", IconUtils.ACTION_RESET);
-        _saveButton = WidgetFactory.createPrimaryButton("Save Expression", IconUtils.ACTION_SAVE);
+        _saveButton = WidgetFactory.createPrimaryButton("Save Expression", IconUtils.ACTION_SAVE_BRIGHT);
     }
 
     public RegexStringPatternDialog(RegexStringPattern stringPattern, MutableReferenceDataCatalog catalog,

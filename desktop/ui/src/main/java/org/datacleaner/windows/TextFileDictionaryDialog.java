@@ -127,7 +127,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_encodingComboBox, formPanel, 1, row);
 
         row++;
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE);
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save dictionary", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

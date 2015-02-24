@@ -89,7 +89,7 @@ public class RegexSwapDialog extends AbstractDialog {
         _client = new RegexSwapClient(userPreferences.createHttpClient());
         _regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");
 
-        _importRegexButton = new JButton("Import regex", imageManager.getImageIcon(IconUtils.ACTION_SAVE));
+        _importRegexButton = new JButton("Import regex", imageManager.getImageIcon(IconUtils.ACTION_SAVE_DARK));
         _importRegexButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 RegexSwapStringPattern stringPattern = new RegexSwapStringPattern(_selectedRegex);

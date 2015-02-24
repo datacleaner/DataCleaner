@@ -174,7 +174,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
         public PopupButton createSaveToFileButton(final List<InputColumn<?>> inputColumns) {
             final PopupButton saveToFileButton = WidgetFactory.createDefaultPopupButton("Save dataset",
-                    IconUtils.ACTION_SAVE);
+                    IconUtils.ACTION_SAVE_DARK);
             final JPopupMenu menu = saveToFileButton.getMenu();
 
             final JMenuItem saveAsDatastoreItem = WidgetFactory.createMenuItem("As datastore",

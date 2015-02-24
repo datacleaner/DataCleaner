@@ -82,7 +82,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
 
-        _saveButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.ACTION_SAVE);
+        _saveButton = WidgetFactory.createPrimaryButton("Save datastore", IconUtils.ACTION_SAVE_BRIGHT);
         _saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

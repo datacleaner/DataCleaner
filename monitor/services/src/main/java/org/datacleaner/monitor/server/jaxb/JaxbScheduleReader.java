@@ -98,7 +98,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
                 scheduleDefinition.setVariableProvider(variableProviderDef);
             }
 
-            final Boolean distributedExecution = schedule.getDistributedExecution();
+            final Boolean distributedExecution = schedule.isDistributedExecution();
             if (distributedExecution != null && distributedExecution.booleanValue()) {
                 scheduleDefinition.setDistributedExecution(true);
             }

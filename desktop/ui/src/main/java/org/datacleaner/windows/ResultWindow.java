@@ -159,7 +159,7 @@ public final class ResultWindow extends AbstractWindow {
         _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
                 resultRef, _jobFilename));
 
-        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE);
+        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
         _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
 
         _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);

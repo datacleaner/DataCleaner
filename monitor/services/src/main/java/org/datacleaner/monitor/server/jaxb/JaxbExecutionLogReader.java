@@ -75,7 +75,7 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.datacleaner.
         executionLog.setTriggeredBy(jaxbExecutionLog.getTriggeredBy());
         executionLog.setLogOutput(jaxbExecutionLog.getLogOutput());
         
-        Boolean resultPersisted = jaxbExecutionLog.getResultPersisted();
+        Boolean resultPersisted = jaxbExecutionLog.isResultPersisted();
         resultPersisted = (resultPersisted == null) ? true : resultPersisted;
         executionLog.setResultPersisted(resultPersisted.booleanValue());
 

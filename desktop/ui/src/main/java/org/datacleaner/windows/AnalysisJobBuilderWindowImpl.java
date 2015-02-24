@@ -226,8 +226,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(createFilterChangeListener());
         _analysisJobBuilder.getSourceColumnListeners().add(createSourceColumnChangeListener());
 
-        _saveButton = createToolbarButton("Save", IconUtils.MENU_SAVE, null);
-        _saveAsButton = createToolbarButton("Save As...", IconUtils.MENU_SAVE, null);
+        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT, null);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT, null);
 
         _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
 

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -22,8 +23,7 @@
 
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb21-plugin</artifactId>
-				<version>0.8.3</version>
+				<artifactId>maven-jaxb2-plugin</artifactId>
 				<configuration>
 					<schemaDirectory>src/main/resources</schemaDirectory>
 					<forceRegenerate>false</forceRegenerate>
@@ -59,9 +59,7 @@
 								<value>job.xsd</value>
 							</schemaIncludes>
 							<bindingDirectory>src/main/bindings</bindingDirectory>
-							<bindingIncludes>
-								<value>bindings-job.xjb</value>
-							</bindingIncludes>
+							<bindingFiles>bindings-job.xjb</bindingFiles>
 						</configuration>
 					</execution>
 				</executions>
@@ -111,6 +109,25 @@
 									</pluginExecutionFilter>
 									<action>
 										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jvnet.jaxb2.maven2
+										</groupId>
+										<artifactId>
+											maven-jaxb2-plugin
+										</artifactId>
+										<versionRange>
+											[0.11,)
+										</versionRange>
+										<goals>
+											<goal>generate</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -206,7 +223,7 @@
 			<artifactId>xml-apis</artifactId>
 			<groupId>xml-apis</groupId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-testware</artifactId>

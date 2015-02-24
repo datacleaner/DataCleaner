@@ -421,6 +421,12 @@
 				</plugin>
 
 				<plugin>
+					<groupId>org.jvnet.jaxb2.maven2</groupId>
+					<artifactId>maven-jaxb2-plugin</artifactId>
+					<version>0.11.0</version>
+				</plugin>
+
+				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.7</version>
@@ -569,11 +575,11 @@
 				<artifactId>httpmime</artifactId>
 				<version>${httpcomponents.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<artifactId>xml-apis</artifactId>
 				<groupId>xml-apis</groupId>
-				<version>1.4.01</version>				
+				<version>1.4.01</version>
 			</dependency>
 			<!-- JDBC drivers -->
 			<dependency>

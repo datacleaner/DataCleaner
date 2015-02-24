@@ -321,7 +321,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
             }
         });
 
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE);
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save connection", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

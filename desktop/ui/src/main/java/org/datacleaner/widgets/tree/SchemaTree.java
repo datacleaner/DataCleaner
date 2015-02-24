@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,8 +35,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
+import javax.swing.ToolTipManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -58,13 +63,19 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.DragDropUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SchemaComparator;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptorMenuBuilder;
 import org.datacleaner.widgets.DescriptorMenuBuilder.MenuCallback;
+import org.datacleaner.widgets.tooltip.DCToolTip;
 import org.jdesktop.swingx.JXTree;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
 import org.slf4j.Logger;
@@ -103,6 +114,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _injectorBuilder = injectorBuilder;
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
+        ToolTipManager.sharedInstance().registerComponent(this);
+
         setCellRenderer(this);
         setOpaque(false);
         setRowHeight(24);
@@ -474,6 +487,63 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         }
 
         return component;
+    }
+
+    @Override
+    public JToolTip createToolTip() {
+        final DCPanel panel = new DCPanel();
+        panel.setOpaque(true);
+        panel.setBackground(WidgetUtils.BG_COLOR_DARK);
+        panel.setBorder(WidgetUtils.BORDER_THIN);
+        panel.setLayout(new VerticalLayout());
+        DCToolTip toolTip = new DCToolTip(this, panel);
+        toolTip.addPropertyChangeListener("tiptext", new PropertyChangeListener() {
+            String oldToolText = "";
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(evt.getNewValue().equals(oldToolText)){
+                    return;
+                }
+                
+                panel.removeAll();
+                
+                String description = (String) evt.getNewValue();
+                if(!StringUtils.isNullOrEmpty(description)) {
+                    String[] lines = description.split("\n");
+
+                    for (int i = 0; i < lines.length; i++) {
+                        String line = lines[i];
+
+                        DCLabel label = DCLabel.brightMultiLine(line);
+                        label.setBorder(new EmptyBorder(0, 4, 4, 0));
+                        label.setMaximumWidth(350);
+
+                        panel.add(label);
+                    }
+                }                
+            }
+        });
+        
+        return toolTip;
+        
+    }
+
+    @Override
+    public String getToolTipText(MouseEvent event) {
+        TreePath path = getPathForLocation(event.getX(), event.getY());
+        if (path == null) {
+            return null;
+        }
+
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+        final Object userObject = node.getUserObject();
+        if (userObject instanceof ComponentSuperCategory) {
+            return ((ComponentSuperCategory) userObject).getDescription();
+        } else if (userObject instanceof ComponentDescriptor<?>) {
+            return ((ComponentDescriptor<?>) userObject).getDescription();
+        }
+
+        return null;
     }
 
     public Datastore getDatastore() {

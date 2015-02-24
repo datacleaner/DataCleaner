@@ -15,23 +15,29 @@ import org.datacleaner.storage.RowAnnotationFactory
 import scala.collection.mutable.Map
 import org.datacleaner.util.LabelUtils
 
+object ScatterAnalyzer {
+  final val PROPERTY_VARIABLE1 = "Variable1"
+  final val PROPERTY_VARIABLE2 = "Variable2"
+  final val PROPERTY_GROUP_COLUMN = "Group column"
+}
+
 @Named("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
 
   @Inject
-  @Configured
+  @Configured(value = ScatterAnalyzer.PROPERTY_VARIABLE1)
   @Description("The field with the first variable. Will be plotted on the horizontal X-axis.")
   var variable1: InputColumn[Number] = null;
 
   @Inject
-  @Configured
+  @Configured(value = ScatterAnalyzer.PROPERTY_VARIABLE2)
   @Description("The field with the second variable. Will be plotted on the vertical Y-axis.")
   var variable2: InputColumn[Number] = null;
 
   @Inject
-  @Configured(required = false)
+  @Configured(value = ScatterAnalyzer.PROPERTY_GROUP_COLUMN, required = false)
   var groupColumn: InputColumn[_] = null;
 
   @Inject

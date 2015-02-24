@@ -10,15 +10,20 @@ import org.datacleaner.api.InputRow
 import org.datacleaner.api.Initialize
 import org.datacleaner.api.Validate
 
+object StackedAreaAnalyzer {
+  final val PROPERTY_MEASURE_COLUMNS = "Measure columns"
+  final val PROPERTY_CATEGORY_COLUMN = "Category column"
+}
+
 @Named("Stacked area plot")
 @Description("Plots a number of related measures in a stacked area chart. Useful visualization for showing the relative influence of each measure compared to the sum of measures.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class StackedAreaAnalyzer extends Analyzer[StackedAreaAnalyzerResult] {
 
-  @Configured(order = 1)
+  @Configured(value = StackedAreaAnalyzer.PROPERTY_MEASURE_COLUMNS, order = 1)
   var measureColumns: Array[InputColumn[Number]] = null
 
-  @Configured(order = 2)
+  @Configured(value = StackedAreaAnalyzer.PROPERTY_CATEGORY_COLUMN, order = 2)
   var categoryColumn: InputColumn[_] = null
 
   var result: StackedAreaAnalyzerResult = null;

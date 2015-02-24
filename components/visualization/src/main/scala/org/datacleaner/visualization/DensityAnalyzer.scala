@@ -14,18 +14,23 @@ import org.datacleaner.storage.RowAnnotationFactory
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.util.LabelUtils
 
+object DensityAnalyzer {
+  final val PROPERTY_VARIABLE1 = "Variable1"
+  final val PROPERTY_VARIABLE2 = "Variable2"
+}
+
 @Named("Density plot")
 @Description("Plots the occurences of two number variables in a density plot chart. A useful visualization for identifying freqencies of combinations in numeric data relationships.")
 @Categorized(Array(classOf[VisualizationCategory]))
 class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
 
   @Inject
-  @Configured
+  @Configured(value = DensityAnalyzer.PROPERTY_VARIABLE1)
   @Description("The field with the first variable. Will be plotted on the horizontal X-axis.")
   var variable1: InputColumn[Number] = null;
 
   @Inject
-  @Configured
+  @Configured(value = DensityAnalyzer.PROPERTY_VARIABLE2)
   @Description("The field with the second variable. Will be plotted on the vertical Y-axis.")
   var variable2: InputColumn[Number] = null;
 

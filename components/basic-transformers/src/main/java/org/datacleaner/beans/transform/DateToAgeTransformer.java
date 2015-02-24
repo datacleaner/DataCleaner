@@ -47,50 +47,52 @@ import org.joda.time.Years;
  * "http://kasper.eobjects.org/2010/09/developing-value-transformer-using.html"
  * >Developing a value transformer</a>.
  * </p>
- * 
- * 
  */
 @Named("Date to age")
 @Description("Turn a Date-column into columns of age (both in years and in days).")
 @Categorized(DateAndTimeCategory.class)
 public class DateToAgeTransformer implements Transformer {
 
-	@Configured("Date column")
-	InputColumn<Date> dateColumn;
+    public static final String PROPERTY_DATE_COLUMN = "Date column";
+    public static final String OUTPUT_COLUMN_AGE_DAYS = "Age in days";
+    public static final String OUTPUT_COLUMN_AGE_YEARS = "Age in years";
 
-	private Date today = new Date();
+    @Configured(PROPERTY_DATE_COLUMN)
+    InputColumn<Date> dateColumn;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(Integer.class, "Age in days", "Age in years");
-	}
+    private Date today = new Date();
 
-	@Override
-	public Integer[] transform(InputRow inputRow) {
-		Integer[] result = new Integer[2];
-		Date date = inputRow.getValue(dateColumn);
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(Integer.class, OUTPUT_COLUMN_AGE_DAYS, OUTPUT_COLUMN_AGE_YEARS);
+    }
 
-		if (date != null) {
-			long diffMillis = today.getTime() - date.getTime();
-			int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
+    @Override
+    public Integer[] transform(InputRow inputRow) {
+        Integer[] result = new Integer[2];
+        Date date = inputRow.getValue(dateColumn);
 
-			result[0] = diffDays;
+        if (date != null) {
+            long diffMillis = today.getTime() - date.getTime();
+            int diffDays = (int) (diffMillis / (1000 * 60 * 60 * 24));
 
-			// use Joda time to easily calculate the diff in years
-			int diffYears = Years.yearsBetween(new DateTime(date), new DateTime(today)).getYears();
-			result[1] = diffYears;
-		}
+            result[0] = diffDays;
 
-		return result;
-	}
+            // use Joda time to easily calculate the diff in years
+            int diffYears = Years.yearsBetween(new DateTime(date), new DateTime(today)).getYears();
+            result[1] = diffYears;
+        }
 
-	// injection for testing purposes only
-	public void setToday(Date today) {
-		this.today = today;
-	}
+        return result;
+    }
 
-	// injection for testing purposes only
-	public void setDateColumn(InputColumn<Date> dateColumn) {
-		this.dateColumn = dateColumn;
-	}
+    // injection for testing purposes only
+    public void setToday(Date today) {
+        this.today = today;
+    }
+
+    // injection for testing purposes only
+    public void setDateColumn(InputColumn<Date> dateColumn) {
+        this.dateColumn = dateColumn;
+    }
 }

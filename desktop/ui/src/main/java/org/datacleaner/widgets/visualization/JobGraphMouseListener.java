@@ -232,8 +232,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     public void graphReleased(Object v, MouseEvent me) {
         logger.debug("Graph released");
 
-        final int button = me.getButton();
-        if (button == MouseEvent.BUTTON1) {
+        if (isLeftClick(me)) {
             if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
                 // avoid updating any coordinates when nothing has been moved
                 return;
@@ -261,7 +260,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             if (selectedObjects.length > 0) {
                 _graphContext.getJobGraph().refresh();
             }
-        } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+        } else if (isRightClick(me)) {
             if (v instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) v;
                 onComponentRightClicked(componentBuilder, me);
@@ -277,8 +276,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         logger.debug("graphPressed({}, {})", v, me);
         _pressedPoint = me.getPoint();
         _clickCaught = false;
-        final int button = me.getButton();
-        if (button == MouseEvent.BUTTON1) {
+        if (isLeftClick(me)) {
             if (v instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) v;
                 if (me.getClickCount() == 2) {
@@ -297,7 +295,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                     onTableDoubleClicked(table, me);
                 }
             }
-        } else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+        } else if (isRightClick(me)) {
             if (v instanceof ComponentBuilder) {
                 _clickCaught = true;
             } else if (v instanceof Table) {
@@ -316,12 +314,31 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     public void mouseReleased(MouseEvent me) {
         logger.debug("mouseReleased({}) (clickCaught={})", me, _clickCaught);
         if (!_clickCaught) {
-            int button = me.getButton();
-            if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+            if (isRightClick(me)) {
                 onCanvasRightClicked(me);
             }
         }
         // reset the variable for next time
         _clickCaught = false;
+    }
+    
+    private boolean isLeftClick(MouseEvent me) {
+        int button = me.getButton();
+        return button == MouseEvent.BUTTON1 && (!me.isMetaDown());
+    }
+
+    private boolean isRightClick(MouseEvent me) {
+        int button = me.getButton();
+        if (button == MouseEvent.BUTTON2) {
+            return true;
+        }
+        if (button == MouseEvent.BUTTON3) {
+            return true;
+        }
+        // Mac OS X Cmd + click to achieve right-click
+        if (button == MouseEvent.BUTTON1 && (me.isMetaDown())) {
+            return true;
+        }
+        return false;
     }
 }

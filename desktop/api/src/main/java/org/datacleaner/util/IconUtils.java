@@ -97,7 +97,6 @@ public final class IconUtils {
     public static final String MODEL_QUICK_ANALYSIS = ANALYZER_IMAGEPATH;
 
     public static final String MENU_OPEN = "images/menu/open.png";
-    public static final String MENU_SAVE = "images/menu/save.png";
     public static final String MENU_NEW = "images/menu/new.png";
     public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
@@ -105,7 +104,15 @@ public final class IconUtils {
 
     public static final String ACTION_EXECUTE = "images/menu/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
-    public static final String ACTION_SAVE = "images/actions/save.png";
+    public static final String ACTION_SAVE_BRIGHT = "images/actions/save_bright.png";
+    public static final String ACTION_SAVE_DARK = "images/actions/save_dark.png";
+    
+    /**
+     * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK} instead
+     */
+    @Deprecated
+    public static final String ACTION_SAVE = ACTION_SAVE_DARK;
+    
     public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
     public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";

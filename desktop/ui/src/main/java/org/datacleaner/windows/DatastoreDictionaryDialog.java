@@ -183,7 +183,7 @@ public final class DatastoreDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_columnTextField, formPanel, 1, row);
 
         final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
-                IconUtils.ACTION_SAVE);
+                IconUtils.ACTION_SAVE_BRIGHT);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

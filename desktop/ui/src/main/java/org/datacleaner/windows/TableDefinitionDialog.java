@@ -55,9 +55,9 @@ public class TableDefinitionDialog extends AbstractDialog {
     public TableDefinitionDialog(WindowContext windowContext, SchemaFactory schemaFactory, SimpleTableDef[] tableDefs,
             Action<SimpleTableDef[]> saveAction) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
-        
+
         setBackgroundColor(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        
+
         _tableDefsPanel = new SimpleTableDefsPanel(schemaFactory, tableDefs);
         _saveAction = saveAction;
     }
@@ -93,7 +93,8 @@ public class TableDefinitionDialog extends AbstractDialog {
     }
 
     private DCPanel createButtonPanel() {
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save table definitions", IconUtils.ACTION_SAVE);
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save table definitions",
+                IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {

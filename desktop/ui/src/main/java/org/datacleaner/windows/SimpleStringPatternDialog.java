@@ -80,7 +80,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
         _expressionNameField = WidgetFactory.createTextField("String pattern name");
         _expressionField = WidgetFactory.createTextField("Expression");
         _resetButton = WidgetFactory.createSmallButton("Reset", IconUtils.ACTION_RESET);
-        _saveButton = WidgetFactory.createPrimaryButton("Save Pattern", IconUtils.ACTION_SAVE);
+        _saveButton = WidgetFactory.createPrimaryButton("Save Pattern", IconUtils.ACTION_SAVE_BRIGHT);
     }
 
     public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog,

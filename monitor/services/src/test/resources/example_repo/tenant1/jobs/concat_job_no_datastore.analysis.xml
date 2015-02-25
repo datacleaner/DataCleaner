@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <source>
+        <data-context ref="this is a datastore that does not exist"/>
+        <columns>
+            <column id="col_0" path="lastname" type="VARCHAR"/>
+            <column id="col_1" path="firstname" type="VARCHAR"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer>
+            <descriptor ref="Concatenator"/>
+            <metadata-properties>
+                <property name="CoordinatesY">244</property>
+                <property name="CoordinatesX">294</property>
+            </metadata-properties>
+            <properties>
+                <property name="Separator" value=" "/>
+            </properties>
+            <input ref="col_1"/>
+            <input ref="col_0"/>
+            <output id="col_2" name="fullname"/>
+        </transformer>
+    </transformation>
+    <analysis />
+</job>

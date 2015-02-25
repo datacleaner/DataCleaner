@@ -258,6 +258,12 @@
 			is to select the component and connect the components with Shift
 			button pressed.
 		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="connecting_components.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
 		<para>To wire a filter you need to set up a dependency on either of
 			it's outcomes. All components have a button for selecting filter
 			outcomes in the top-right corners of their configuration dialogs.

@@ -36,32 +36,68 @@
 
 		<tip>
 			<para>If the installer does not launch when you double-click it,
-				open a command prompt and enter:
+				open
+				a command prompt and enter:
 			</para>
 			<blockquote>
 				java -jar DataCleaner-[edition]-[version]-install.jar
 			</blockquote>
 		</tip>
-		
+
 		<para>Troubleshooting</para>
-		<para>Usually the installation procedure is trivial and self-explanatory. But in case something is not working as expected, please check the following points:</para>
-		
+		<para>Usually the installation procedure is trivial and
+			self-explanatory. But in case something is not working as expected,
+			please check the following points:
+		</para>
+
 		<orderedlist>
 			<listitem>
-				<para>On Windows systems, if you do not have <emphasis>Administrative privileges</emphasis> on the machine, we encourage you to install DataCleaner in your user's directory instead of in 'Program Files'.</para>
+				<para>
+					On Windows systems, if you do not have
+					<emphasis>Administrative privileges</emphasis>
+					on the machine, we encourage you to install DataCleaner in your
+					user's directory instead of in 'Program Files'.
+				</para>
 			</listitem>
 			<listitem>
-				<para>On some Windows systems you can get a warning '<emphasis>There is no script engine for file extension '.js'</emphasis>'. This happens when .js files (JavaScript) files are associated with an editor instead of Windows' built-in scripting engine. To resolve this issue, please refer to these help links:</para>
+				<para>
+					On some Windows systems you can get a warning '
+					<emphasis>There is no script engine for file extension '.js'
+					</emphasis>
+					'. This happens when .js files (JavaScript) files are associated
+					with an editor instead of Windows' built-in scripting engine. To
+					resolve this issue, please refer to these help links:
+				</para>
 				<orderedlist>
-					<listitem><para><link xl:href="http://answers.microsoft.com/en-us/windows/forum/windows_7-system/fix-there-is-no-script-engine-for-file-extension/95d58867-3f31-45e3-aeaf-32ecea4d33c1">answers.microsoft.com</link>, which address the issue and recommends...</para></listitem>
-					<listitem><para><link xl:href="http://www.winhelponline.com/articles/230/1/Error-There-is-no-script-engine-for-file-extension-when-running-js-files.html">winhelponline.com</link>, which has a fix for the issue</para></listitem>
+					<listitem>
+						<para>
+							<link
+								xl:href="http://answers.microsoft.com/en-us/windows/forum/windows_7-system/fix-there-is-no-script-engine-for-file-extension/95d58867-3f31-45e3-aeaf-32ecea4d33c1">answers.microsoft.com</link>
+							, which address the issue and recommends...
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<link
+								xl:href="http://www.winhelponline.com/articles/230/1/Error-There-is-no-script-engine-for-file-extension-when-running-js-files.html">winhelponline.com</link>
+							, which has a fix for the issue
+						</para>
+					</listitem>
 				</orderedlist>
 			</listitem>
 			<listitem>
-				<para>If you have issues with locating or selecting the software license file, you can skip the step in the installer by copying the license file manually to this folder: '~/.datacleaner' (where ~ is your User's home folder). Note that on Windows machines it is prohibited by Windows explorer to create directories starting with dot (.), but it can be done using the command prompt:</para>
-				<blockquote>mkdir .datacleaner</blockquote>
+				<para>If you have issues with locating or selecting the software
+					license file, you can skip the step in the installer by copying the
+					license file manually to this folder: '~/.datacleaner' (where ~ is
+					your User's home folder). Note that on Windows machines it is
+					prohibited by Windows explorer to create directories starting with
+					dot (.), but it can be done using the command prompt:
+				</para>
+				<blockquote>
+					mkdir .datacleaner
+				</blockquote>
 			</listitem>
-			
+
 		</orderedlist>
 
 	</section>
@@ -70,19 +106,54 @@
 		<title>Connecting to your datastore</title>
 		<para>Below is a screenshot of the initial screen that
 			will be
-			presented when launching DataCleaner (desktop edition), containing a
-			list of datastores. Above the list you will see a set of icons, each
-			representing a type of datastore. Click either of the icons to
-			register your own datastore.
+			presented when launching DataCleaner (desktop community edition).
+		</para>
+		A new datastore can be added in the "New job from scratch" or in
+		"Manage datastores" screens available by clicking the buttons in the
+		bottom of the screen.
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="welcome_screen.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			File datastores can be added using a drop zone (or browse
+			button) located in the top of the screen. Below, there are buttons
+			that enable adding databases or cloud services.
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="analysis_job_01_datastore_list.jpg"
+				<imagedata fileref="new_job_from_scratch_screen.jpg"
 					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
+		<para>
+			If the file is added
+			using the drop zone, its format will be
+			inferred. If you need more control
+			over how the file is going to be
+			interpreted, use the alternative way
+			to add a new datastore - "Manage
+			datastores" button in the welcome screen.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="datastore_management_screen.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			The "Datastore management" screen - except from viewing and
+			editing existing datastores - has an option to add a new one based on
+			its type. Choose an icon in the bottom of the screen that suits your
+			datastore type.
+		</para>
+
 		<para>Once you've registered ('created') your own datastore, you can
-			select it from the list and click 'Analyze!' to start working with
+			select it from the list and (in "New job from scratch" screen) or
+			select it from the list and click "Build job" (in "Datastore
+			Management" screen) to start working with
 			it!
 		</para>
 
@@ -110,7 +181,9 @@
 				<para>
 					<emphasis>Analyzers</emphasis>
 					, which are the most important components. Actually, without at
-					least one analyzer the job will not run. An analyzer is a component
+					least one analyzer the job will not run (if you execute the job
+					without adding one, DataCleaner will suggest adding a basic one
+					that will save the output to a file). An analyzer is a component
 					that inspects the data that it receives and generates a result or a
 					report. The majority of the data profiling cruft is created as
 					analyzers.
@@ -146,18 +219,25 @@
 			</listitem>
 		</orderedlist>
 		<para>Each of these
-			components will get their own tab, from where you
-			can configure them.
+			components will be presented as a node in the job
+			graph. Double-clicking a component (graph node) will bring its
+			configuration dialog.
 		</para>
 		<para>
 			Transformers and filters are added to your job using the "Transform"
-			button. Please refer to the reference chapter
+			and "Improve"
+			menus. The menus are available in the panel at the top
+			or by right-clicking on an empty space in the canvas.
+			Please refer to
+			the reference chapter
 			<link linkend="transformations">Transformations</link>
 			for more
 			information on specific transformers and filters.
 		</para>
 		<para>
-			Analyzers are added to your job using the "Analyze" button. Please
+			Analyzers are added to your job using the "Analyze" menu (in most
+			cases), but also "Write" menu for analyzers that save output to a
+			datastore. Please
 			refer to the reference chapter
 			<link linkend="analyzers">Analyzers</link>
 			for more
@@ -169,30 +249,30 @@
 		<title>Wiring components together</title>
 		<para>Simply adding a transformer or filter actually doesn't change
 			your job as such! This is because these components only have an
-			impact if you wire them together somehow.
+			impact if you wire them together.
 		</para>
-		<para>To wire a transformer you simply need to use it's output column.
-			DataCleaner will automatically build the flow so that a transformer
-			is executed before components that depend on it's output columns.
+		<para>To wire a transformer you simply need to draw an arrow between
+			the components in the graph. You can start drawing it by
+			right-clicking the first of the components and choosing "Link to..."
+			from the context menu. An alternative way to enter the drawing mode
+			is to select the component and connect the components with Shift
+			button pressed.
 		</para>
 		<para>To wire a filter you need to set up a dependency on either of
 			it's outcomes. All components have a button for selecting filter
-			outcomes in their top-right corners. Click this button to select a
-			filter outcome to depend on. If you have multiple filters you can
-			chain these simply by having dependent outcomes of the individual
-			filters.
+			outcomes in the top-right corners of their configuration dialogs.
+			Click this button to select a filter outcome to depend on. If you
+			have
+			multiple filters you can chain these simply by having dependent
+			outcomes of the individual filters.
 		</para>
-		<para>To get an overview of your current job flow, you can click the
-			"Visualize" button, which will present the job's contents in an
-			interactive flow
-			diagram:
-		</para>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="visualize_job.png" format="PNG"
-					scalefit="1" />
-			</imageobject>
-		</mediaobject>
+		<tip>
+			<para>
+				In the bottom part of the canvas, a help message is displayed
+				instructing what needs to be done in current moment to build a valid
+				job.
+			</para>
+		</tip>
 	</section>
 
 	<section id="executing">

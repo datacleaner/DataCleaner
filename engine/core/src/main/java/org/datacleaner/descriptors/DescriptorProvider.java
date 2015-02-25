@@ -44,7 +44,6 @@ import org.datacleaner.job.AnalysisJob;
  * used, and reuses existing descriptor definitions.
  */
 public interface DescriptorProvider {
-
     /**
      * Gets all the {@link AnalyzerDescriptor}s currently registered.
      * 
@@ -170,4 +169,17 @@ public interface DescriptorProvider {
      */
     public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
             Class<? extends RenderingFormat<?>> renderingFormat);
+
+    /**
+     * Add a {@link ComponentDescriptorsUpdatedListener} that will be notified if the list of descriptors change.
+     * 
+     * @param listener
+     */
+    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);
+
+    /**
+     * Remove a {@link ComponentDescriptorsUpdatedListener}
+     * @param listener
+     */
+    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);
 }

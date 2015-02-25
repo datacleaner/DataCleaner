@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +42,7 @@ import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.TodayDate;
 import org.datacleaner.util.convert.YesterdayDate;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -54,14 +56,16 @@ public class ConvertToDateTransformer implements Transformer {
 
     private static final String[] prototypePatterns = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy" };
 
-    private static final DateTimeFormatter NUMBER_BASED_DATE_FORMAT_LONG = DateTimeFormat.forPattern("yyyyMMdd");
-    private static final DateTimeFormatter NUMBER_BASED_DATE_FORMAT_SHORT = DateTimeFormat.forPattern("yyMMdd");
 
     private static ConvertToDateTransformer internalInstance;
 
     @Inject
     @Configured(order = 1)
     InputColumn<?>[] input;
+
+    @Inject
+    @Configured(order = 2)
+    String timeZone = TimeZone.getDefault().getID();
 
     @Inject
     @Configured(required = false, order = 2)
@@ -72,6 +76,8 @@ public class ConvertToDateTransformer implements Transformer {
     String[] dateMasks;
 
     private DateTimeFormatter[] _dateTimeFormatters;
+    private DateTimeFormatter _numberBasedDateTimeFormatterLong;
+    private DateTimeFormatter _numberBasedDateTimeFormatterShort;
 
     public static ConvertToDateTransformer getInternalInstance() {
         if (internalInstance == null) {
@@ -90,11 +96,16 @@ public class ConvertToDateTransformer implements Transformer {
         if (dateMasks == null) {
             dateMasks = getDefaultDateMasks();
         }
+        
+        final DateTimeZone zone = DateTimeZone.forID(timeZone);
+
+        _numberBasedDateTimeFormatterLong = DateTimeFormat.forPattern("yyyyMMdd").withZone(zone);
+        _numberBasedDateTimeFormatterShort = DateTimeFormat.forPattern("yyMMdd").withZone(zone);
 
         _dateTimeFormatters = new DateTimeFormatter[dateMasks.length];
         for (int i = 0; i < dateMasks.length; i++) {
             final String dateMask = dateMasks[i];
-            _dateTimeFormatters[i] = DateTimeFormat.forPattern(dateMask);
+            _dateTimeFormatters[i] = DateTimeFormat.forPattern(dateMask).withZone(zone);
         }
     }
 
@@ -166,6 +177,7 @@ public class ConvertToDateTransformer implements Transformer {
         // try also with SimpleDateFormat since it is more fault tolerant in
         // millisecond parsing
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.S");
+        format.setTimeZone(TimeZone.getTimeZone(timeZone));
         try {
             return format.parse(value);
         } catch (ParseException e) {
@@ -180,18 +192,18 @@ public class ConvertToDateTransformer implements Transformer {
     }
 
     protected Date convertFromNumber(Number value, boolean tryDateTimeFormatters) {
-        Number numberValue = (Number) value;
-        long longValue = numberValue.longValue();
+        final Number numberValue = (Number) value;
+        final long longValue = numberValue.longValue();
 
-        String stringValue = Long.toString(longValue);
+        final String stringValue = Long.toString(longValue);
 
         if (tryDateTimeFormatters) {
             for (int i = 0; i < _dateTimeFormatters.length; i++) {
-                String dateMask = dateMasks[i];
-                boolean isPotentialNumberDateMask = dateMask.indexOf("-") == -1 && dateMask.indexOf(".") == -1
+                final String dateMask = dateMasks[i];
+                final boolean isPotentialNumberDateMask = dateMask.indexOf("-") == -1 && dateMask.indexOf(".") == -1
                         && dateMask.indexOf("/") == -1;
                 if (isPotentialNumberDateMask) {
-                    DateTimeFormatter formatter = _dateTimeFormatters[i];
+                    final DateTimeFormatter formatter = _dateTimeFormatters[i];
                     try {
                         return formatter.parseDateTime(stringValue).toDate();
                     } catch (Exception e) {
@@ -204,7 +216,7 @@ public class ConvertToDateTransformer implements Transformer {
         // test if the number is actually a format of the type yyyyMMdd
         if (stringValue.length() == 8 && (stringValue.startsWith("1") || stringValue.startsWith("2"))) {
             try {
-                return NUMBER_BASED_DATE_FORMAT_LONG.parseDateTime(stringValue).toDate();
+                return _numberBasedDateTimeFormatterLong.parseDateTime(stringValue).toDate();
             } catch (Exception e) {
                 // do nothing, proceed to next method of conversion
             }
@@ -213,7 +225,7 @@ public class ConvertToDateTransformer implements Transformer {
         // test if the number is actually a format of the type yyMMdd
         if (stringValue.length() == 6) {
             try {
-                return NUMBER_BASED_DATE_FORMAT_SHORT.parseDateTime(stringValue).toDate();
+                return _numberBasedDateTimeFormatterShort.parseDateTime(stringValue).toDate();
             } catch (Exception e) {
                 // do nothing, proceed to next method of conversion
             }

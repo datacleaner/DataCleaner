@@ -107,10 +107,10 @@
 		<para>Below is a screenshot of the initial screen that
 			will be
 			presented when launching DataCleaner (desktop community edition).
-		</para>
 		A new datastore can be added in the "New job from scratch" or in
 		"Manage datastores" screens available by clicking the buttons in the
 		bottom of the screen.
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="welcome_screen.jpg" format="JPG"

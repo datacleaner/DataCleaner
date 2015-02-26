@@ -118,8 +118,8 @@ public final class AnalysisJobBuilder implements Closeable {
     private AnalysisJobBuilder(AnalyzerBeansConfiguration configuration, Datastore datastore,
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
-            List<TransformerComponentBuilder<?>> transformerJobBuilders, List<FilterComponentBuilder<?, ?>> filterJobBuilders,
-            List<AnalyzerComponentBuilder<?>> analyzerJobBuilders) {
+            List<TransformerComponentBuilder<?>> transformerJobBuilders,
+            List<FilterComponentBuilder<?, ?>> filterJobBuilders, List<AnalyzerComponentBuilder<?>> analyzerJobBuilders) {
         _configuration = configuration;
         _datastore = datastore;
         _analysisJobMetadata = metadata;
@@ -327,8 +327,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(Class<T> transformerClass) {
-        TransformerDescriptor<T> descriptor = _configuration.getDescriptorProvider()
-                .getTransformerDescriptorForClass(transformerClass);
+        TransformerDescriptor<T> descriptor = _configuration.getDescriptorProvider().getTransformerDescriptorForClass(
+                transformerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + transformerClass);
         }
@@ -374,6 +374,22 @@ public final class AnalysisJobBuilder implements Closeable {
             tjb.onRemoved();
         }
         return this;
+    }
+
+    public ComponentBuilder addComponent(ComponentDescriptor<?> descriptor,
+            Map<ConfiguredPropertyDescriptor, Object> configuredProperties, ComponentRequirement requirement,
+            Map<String, String> metadataProperties) {
+        if (descriptor instanceof FilterDescriptor) {
+            return addFilter((FilterDescriptor<?, ?>) descriptor, configuredProperties, requirement, metadataProperties);
+        } else if (descriptor instanceof TransformerDescriptor) {
+            return addTransformer((TransformerDescriptor<?>) descriptor, configuredProperties, requirement,
+                    metadataProperties);
+        } else if (descriptor instanceof AnalyzerDescriptor) {
+            return addAnalyzer((AnalyzerDescriptor<?>) descriptor, configuredProperties, requirement,
+                    metadataProperties);
+        } else {
+            throw new UnsupportedOperationException("Unknown component type: " + descriptor);
+        }
     }
 
     public ComponentBuilder addComponent(ComponentDescriptor<?> descriptor) {
@@ -461,7 +477,8 @@ public final class AnalysisJobBuilder implements Closeable {
         }
     }
 
-    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(FilterComponentBuilder<F, C> fjb) {
+    public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(
+            FilterComponentBuilder<F, C> fjb) {
         _filterComponentBuilders.add(fjb);
 
         if (fjb.getComponentRequirement() == null) {
@@ -535,7 +552,8 @@ public final class AnalysisJobBuilder implements Closeable {
         return addAnalyzer(analyzerJobBuilder);
     }
 
-    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(AnalyzerComponentBuilder<A> analyzerJobBuilder) {
+    public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(
+            AnalyzerComponentBuilder<A> analyzerJobBuilder) {
         _analyzerComponentBuilders.add(analyzerJobBuilder);
 
         if (analyzerJobBuilder.getComponentRequirement() == null) {
@@ -553,8 +571,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(Class<A> analyzerClass) {
         final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
-        final AnalyzerDescriptor<A> descriptor = descriptorProvider
-                .getAnalyzerDescriptorForClass(analyzerClass);
+        final AnalyzerDescriptor<A> descriptor = descriptorProvider.getAnalyzerDescriptorForClass(analyzerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + analyzerClass);
         }
@@ -806,8 +823,7 @@ public final class AnalysisJobBuilder implements Closeable {
         }
     }
 
-    public List<ComponentBuilder> getAvailableUnfilteredBeans(
-            FilterComponentBuilder<?, ?> filterJobBuilder) {
+    public List<ComponentBuilder> getAvailableUnfilteredBeans(FilterComponentBuilder<?, ?> filterJobBuilder) {
         final List<ComponentBuilder> result = new ArrayList<>();
         if (filterJobBuilder.isConfigured()) {
             final Table requiredTable = getOriginatingTable(filterJobBuilder);
@@ -977,7 +993,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void removeAllAnalyzers() {
-        final List<AnalyzerComponentBuilder<?>> analyzers = new ArrayList<AnalyzerComponentBuilder<?>>(_analyzerComponentBuilders);
+        final List<AnalyzerComponentBuilder<?>> analyzers = new ArrayList<AnalyzerComponentBuilder<?>>(
+                _analyzerComponentBuilders);
         for (AnalyzerComponentBuilder<?> ajb : analyzers) {
             removeAnalyzer(ajb);
         }
@@ -994,7 +1011,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public void removeAllFilters() {
-        final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<FilterComponentBuilder<?, ?>>(_filterComponentBuilders);
+        final List<FilterComponentBuilder<?, ?>> filters = new ArrayList<FilterComponentBuilder<?, ?>>(
+                _filterComponentBuilders);
         for (FilterComponentBuilder<?, ?> filterJobBuilder : filters) {
             removeFilter(filterJobBuilder);
         }
@@ -1033,7 +1051,8 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return
      */
     public int getComponentCount() {
-        return _filterComponentBuilders.size() + _transformerComponentBuilders.size() + _analyzerComponentBuilders.size();
+        return _filterComponentBuilders.size() + _transformerComponentBuilders.size()
+                + _analyzerComponentBuilders.size();
     }
 
     /**

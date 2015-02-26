@@ -87,6 +87,7 @@ public class SchemaTreePanel extends DCPanel {
 					removeAll();
 					add(schemaTreeScroll, BorderLayout.CENTER);
 					updateParentPanel();
+                    schemaTree.expandStandardPaths();
 					if (expandTree) {
 					    schemaTree.expandSelectedData();
 					}

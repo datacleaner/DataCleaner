@@ -47,7 +47,7 @@ public class DescriptorMenu extends JMenu implements Comparable<DescriptorMenu> 
 
 	@Override
 	public Icon getIcon() {
-		return IconUtils.getComponentCategoryIcon(_componentCategory);
+		return IconUtils.getComponentCategoryIcon(_componentCategory, IconUtils.ICON_SIZE_MENU_ITEM);
 	}
 
 	public ComponentCategory getComponentCategory() {

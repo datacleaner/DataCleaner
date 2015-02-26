@@ -51,6 +51,7 @@ public class CollapsibleTreePanel extends DCPanel {
 		_collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
 		_collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
 		_collapsibleTreePane.add(treeComponent);
+		_collapsibleTreePane.setAnimated(false);
 
 		_toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
 		_toggleTreeViewButton.setBorder(null);

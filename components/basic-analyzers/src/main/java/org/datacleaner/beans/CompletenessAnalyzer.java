@@ -27,7 +27,6 @@ import javax.inject.Named;
 
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Initialize;
@@ -35,14 +34,12 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.Provided;
-import org.datacleaner.components.categories.ValidationCategory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 import org.datacleaner.util.StringUtils;
 
 @Named("Completeness analyzer")
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
-@Categorized(ValidationCategory.class)
 public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult> {
 
     public static final String PROPERTY_VALUES = "Values";

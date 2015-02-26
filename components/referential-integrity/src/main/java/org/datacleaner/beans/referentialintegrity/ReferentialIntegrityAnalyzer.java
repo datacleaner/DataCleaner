@@ -24,7 +24,6 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Configured;
@@ -36,7 +35,6 @@ import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
-import org.datacleaner.components.categories.ValidationCategory;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.storage.RowAnnotation;
@@ -44,7 +42,6 @@ import org.datacleaner.storage.RowAnnotationFactory;
 
 @Named("Referential integrity")
 @Description("Check the integrity of a foreign key by checking that every value can be resolved in another table (which may be in a different datastore altogether).")
-@Categorized(ValidationCategory.class)
 public class ReferentialIntegrityAnalyzer implements Analyzer<ReferentialIntegrityAnalyzerResult> {
 
     private static final String PROPERTY_NAME_DATASTORE = "Datastore";

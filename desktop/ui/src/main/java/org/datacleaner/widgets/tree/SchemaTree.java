@@ -84,7 +84,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer, ComponentDescriptorsUpdatedListener {
+public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
+        ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
 
@@ -93,6 +94,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public static final String LOADING_TABLES_STRING = "Loading tables...";
     public static final String LOADING_COLUMNS_STRING = "Loading columns...";
     public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
+    public static final String LIBRARY_STRING = "Library";
     public static final String ROOT_NODE_STRING = "Schemas";
 
     private final Datastore _datastore;
@@ -116,7 +118,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
         _analysisJobBuilder.getConfiguration().getDescriptorProvider().addComponentDescriptorsUpdatedListener(this);
-        
+
         ToolTipManager.sharedInstance().registerComponent(this);
 
         setCellRenderer(this);
@@ -183,10 +185,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(1);
         final TreeNode[] pathElements = node.getPath();
         expandPath(new TreePath(pathElements));
-        
+
     }
 
-    
     public DefaultMutableTreeNode getTreeNode(final Schema schema) {
         if (schema == null) {
             return null;
@@ -251,17 +252,17 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             datastoreNode.add(schemaNode);
         }
 
-        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode("Library");
+        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode(LIBRARY_STRING);
         createLibrary(libraryRoot);
         rootNode.add(libraryRoot);
-        
+
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
 
     private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
         final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
-        
+
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
@@ -303,7 +304,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
-        if(event.getPath().getPathCount() == 2){
+        if (event.getPath().getPathCount() == 2) {
             throw new ExpandVetoException(event);
         }
     }
@@ -444,42 +445,45 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         if (value instanceof Datastore) {
             component = _rendererDelegate.getTreeCellRendererComponent(tree, ((Datastore) value).getName(), selected,
                     expanded, leaf, row, hasFocus);
-            icon = IconUtils.getDatastoreIcon((Datastore) value, IconUtils.ICON_SIZE_SMALL);
+            icon = IconUtils.getDatastoreIcon((Datastore) value, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof Schema) {
             Schema schema = ((Schema) value);
             String schemaName = schema.getName();
             component = _rendererDelegate.getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row,
                     hasFocus);
-            icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_SMALL);
+            icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_MENU_ITEM);
             if (SchemaComparator.isInformationSchema(schema)) {
-                icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_SMALL);
+                icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_MENU_ITEM);
             }
         } else if (value instanceof Table) {
             component = _rendererDelegate.getTreeCellRendererComponent(tree, ((Table) value).getName(), selected,
                     expanded, leaf, row, hasFocus);
-            icon = imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_SMALL);
+            icon = imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof Column) {
             Column column = (Column) value;
             String columnLabel = column.getName();
             component = _rendererDelegate.getTreeCellRendererComponent(tree, columnLabel, selected, expanded, leaf,
                     row, hasFocus);
-            icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_SMALL);
+            icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentSuperCategory) {
             ComponentSuperCategory superCategory = (ComponentSuperCategory) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, superCategory.getName(), selected,
                     expanded, leaf, row, hasFocus);
-            icon = IconUtils.invertImage(IconUtils.getComponentSuperCategoryIcon(superCategory));
+            icon = IconUtils.getComponentSuperCategoryIcon(superCategory, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentCategory) {
             ComponentCategory category = (ComponentCategory) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, category.getName(), selected, expanded,
                     leaf, row, hasFocus);
-            icon = IconUtils.getComponentCategoryIcon(category);
+            icon = IconUtils.getComponentCategoryIcon(category, IconUtils.ICON_SIZE_MENU_ITEM);
         } else if (value instanceof ComponentDescriptor<?>) {
             ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) value;
             component = _rendererDelegate.getTreeCellRendererComponent(tree, descriptor.getDisplayName(), selected,
                     expanded, leaf, row, hasFocus);
             icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_MENU_ITEM, false);
         } else if (value instanceof String) {
+            if (LIBRARY_STRING.equals(value)) {
+                icon = imageManager.getImageIcon(IconUtils.MODEL_COMPONENT_LIBRARY, IconUtils.ICON_SIZE_MENU_ITEM);
+            }
             component = _rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
                     hasFocus);
         }
@@ -517,16 +521,17 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         DCToolTip toolTip = new DCToolTip(this, panel);
         toolTip.addPropertyChangeListener("tiptext", new PropertyChangeListener() {
             String oldToolText = "";
+
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if(evt.getNewValue().equals(oldToolText)){
+                if (evt.getNewValue().equals(oldToolText)) {
                     return;
                 }
-                
+
                 panel.removeAll();
-                
+
                 String description = (String) evt.getNewValue();
-                if(!StringUtils.isNullOrEmpty(description)) {
+                if (!StringUtils.isNullOrEmpty(description)) {
                     String[] lines = description.split("\n");
 
                     for (int i = 0; i < lines.length; i++) {
@@ -538,12 +543,12 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
                         panel.add(label);
                     }
-                }                
+                }
             }
         });
-        
+
         return toolTip;
-        
+
     }
 
     @Override
@@ -571,7 +576,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     @Override
     public void componentDescriptorsUpdated() {
         final TreeNode root = (TreeNode) getModel().getRoot();
-        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode)root.getChildAt(1);
+        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
         libraryNode.removeAllChildren();
         createLibrary(libraryNode);
         DefaultTreeModel model = (DefaultTreeModel) getModel();

@@ -19,10 +19,8 @@
  */
 package org.datacleaner.util;
 
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.net.URL;
 import java.util.Set;
 
@@ -97,6 +95,7 @@ public final class IconUtils {
     public static final String MODEL_SOURCE = "images/model/source.png";
     public static final String MODEL_METADATA = "images/model/metadata.png";
     public static final String MODEL_QUICK_ANALYSIS = ANALYZER_IMAGEPATH;
+    public static final String MODEL_COMPONENT_LIBRARY = "images/model/component_library.png";
 
     public static final String MENU_OPEN = "images/menu/open.png";
     public static final String MENU_NEW = "images/menu/new.png";
@@ -108,13 +107,14 @@ public final class IconUtils {
     public static final String ACTION_EDIT = "images/actions/edit.png";
     public static final String ACTION_SAVE_BRIGHT = "images/actions/save_bright.png";
     public static final String ACTION_SAVE_DARK = "images/actions/save_dark.png";
-    
+
     /**
-     * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK} instead
+     * @deprecated use {@link #ACTION_SAVE_BRIGHT} or {@link #ACTION_SAVE_DARK}
+     *             instead
      */
     @Deprecated
     public static final String ACTION_SAVE = ACTION_SAVE_DARK;
-    
+
     public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
     public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
@@ -282,26 +282,34 @@ public final class IconUtils {
     }
 
     public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory) {
+        return getComponentSuperCategoryIcon(superCategory, ICON_SIZE_LARGE);
+    }
+
+    public static ImageIcon getComponentSuperCategoryIcon(ComponentSuperCategory superCategory, int newWidth) {
         final Class<? extends ComponentSuperCategory> superCategoryClass = superCategory.getClass();
-        return getCategoryIcon(superCategoryClass, false);
+        return getCategoryIcon(superCategoryClass, false, newWidth);
     }
 
     public static ImageIcon getComponentCategoryIcon(ComponentCategory category) {
-        final Class<? extends ComponentCategory> categoryClass = category.getClass();
-        return getCategoryIcon(categoryClass, true);
+        return getComponentCategoryIcon(category, ICON_SIZE_LARGE);
     }
 
-    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder) {
+    public static ImageIcon getComponentCategoryIcon(ComponentCategory category, int newWidth) {
+        final Class<? extends ComponentCategory> categoryClass = category.getClass();
+        return getCategoryIcon(categoryClass, true, newWidth);
+    }
+
+    private static ImageIcon getCategoryIcon(Class<?> cls, boolean decorateWithFolder, int newWidth) {
         final String bundledIconPath = getImagePathForClass(cls);
 
-        final int totalSize = ICON_SIZE_MEDIUM;
+        final int totalSize = newWidth;
 
         if (!decorateWithFolder && bundledIconPath != null) {
             return _imageManager.getImageIcon(bundledIconPath, totalSize);
         }
 
         final Image decoration;
-        final int decorationSize = ICON_SIZE_SMALL;
+        final int decorationSize = newWidth * 2 / 3;
         if (bundledIconPath == null) {
             decoration = null;
         } else {
@@ -456,20 +464,5 @@ public final class IconUtils {
             imagePath = COMPOSITE_IMAGEPATH;
         }
         return imagePath;
-    }
-
-    /**
-     * Inverts the colors of the icon. Takes less than one millisecond for supercategory icons.
-     * @param icon
-     * @return
-     */
-    public static ImageIcon invertImage(final Icon icon) {
-        BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics g = bi.createGraphics();
-        // paint the Icon to the BufferedImage.
-        icon.paintIcon(null, g, 0, 0);
-    
-        RescaleOp op = new RescaleOp(-1.0f, 255f, null);
-        return new ImageIcon(op.filter(bi, null));
     }
 }

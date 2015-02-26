@@ -20,12 +20,15 @@
 package org.datacleaner.panels;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Calendar;
 
 import javax.swing.BoxLayout;
@@ -95,13 +98,21 @@ public class DCSplashPanel extends DCPanel {
      * @param window
      * @return
      */
-    public static JComponent createTitleLabel(String text, ActionListener backButtonActionListener) {
+    public static JComponent createTitleLabel(final String text, final ActionListener backButtonActionListener) {
         final DCLabel titleLabel = new DCLabel(false, text, WidgetUtils.BG_COLOR_BLUE_MEDIUM, null);
         titleLabel.setFont(WidgetUtils.FONT_BANNER);
 
         final EmptyBorder border = new EmptyBorder(20, MARGIN_LEFT, 10, 0);
 
         if (backButtonActionListener != null) {
+            titleLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    backButtonActionListener.actionPerformed(null);
+                }
+            });
+            titleLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            
             final DCPanel panel = DCPanel.flow(Alignment.LEFT, MARGIN_LEFT, 0,
                     createBackToWelcomeScreenButton(backButtonActionListener), titleLabel);
             panel.setBorder(border);

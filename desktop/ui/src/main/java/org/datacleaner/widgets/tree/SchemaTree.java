@@ -180,12 +180,13 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         expandPath(path);
     }
 
-    public void expandLibrary() {
+    public void expandStandardPaths() {
         final TreeNode root = (TreeNode) getModel().getRoot();
-        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(1);
-        final TreeNode[] pathElements = node.getPath();
-        expandPath(new TreePath(pathElements));
-
+        final DefaultMutableTreeNode schemaNode = (DefaultMutableTreeNode) root.getChildAt(0);
+        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
+        
+        expandPath(new TreePath(schemaNode.getPath()));
+        expandPath(new TreePath(libraryNode.getPath()));
     }
 
     public DefaultMutableTreeNode getTreeNode(final Schema schema) {
@@ -581,6 +582,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         createLibrary(libraryNode);
         DefaultTreeModel model = (DefaultTreeModel) getModel();
         model.reload(libraryNode);
-        expandLibrary();
+        expandStandardPaths();
     }
 }

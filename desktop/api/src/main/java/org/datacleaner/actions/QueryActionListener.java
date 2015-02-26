@@ -27,6 +27,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.windows.QueryWindow;
+import org.apache.metamodel.query.FromClause;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
 
@@ -70,7 +71,12 @@ public class QueryActionListener implements ActionListener {
             }
         }
         
-        initialQuery.append("\nFROM " + _table.getQualifiedLabel() + " a");
+        String fromClause = _table.getQualifiedLabel();
+        if (fromClause.contains(" ")) {
+            fromClause = _table.getName();
+        }
+        
+        initialQuery.append("\nFROM " + fromClause + " a");
         
         final QueryWindow window = new QueryWindow(_windowContext, datastore, initialQuery.toString());
         window.open();

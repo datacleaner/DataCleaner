@@ -26,7 +26,6 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Initialize;
@@ -36,7 +35,6 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Validate;
 import org.datacleaner.beans.transform.DictionaryMatcherTransformer;
 import org.datacleaner.beans.transform.StringPatternMatcherTransformer;
-import org.datacleaner.components.categories.ValidationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -48,7 +46,6 @@ import org.datacleaner.reference.SynonymCatalog;
 @Alias("Matching analyzer")
 @Description("Check your data values against multiple forms of reference data in one simple analyzer step.\n"
 		+ "This analyzer provides a handy shortcut for doing matching with dictionaries, synonym lookups or string patterns matching, retrieving matching matrices for all matches.")
-@Categorized(ValidationCategory.class)
 public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
 	@Configured(order = 1)

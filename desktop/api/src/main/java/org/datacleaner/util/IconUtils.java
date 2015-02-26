@@ -309,7 +309,7 @@ public final class IconUtils {
         }
 
         final Image decoration;
-        final int decorationSize = newWidth * 2 / 3;
+        final int decorationSize = newWidth * 3 / 4;
         if (bundledIconPath == null) {
             decoration = null;
         } else {
@@ -317,7 +317,7 @@ public final class IconUtils {
             decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
         }
 
-        final Image folderIcon = _imageManager.getImage(FILE_FOLDER, totalSize);
+        final Image folderIcon = _imageManager.getImage("images/component-types/category.png", totalSize);
 
         if (decoration == null) {
             return new ImageIcon(folderIcon);

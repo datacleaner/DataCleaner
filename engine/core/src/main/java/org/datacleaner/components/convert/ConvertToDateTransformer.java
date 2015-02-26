@@ -38,6 +38,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.TodayDate;
@@ -55,7 +56,6 @@ import org.joda.time.format.DateTimeFormatter;
 public class ConvertToDateTransformer implements Transformer {
 
     private static final String[] prototypePatterns = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy" };
-
 
     private static ConvertToDateTransformer internalInstance;
 
@@ -91,12 +91,21 @@ public class ConvertToDateTransformer implements Transformer {
         dateMasks = getDefaultDateMasks();
     }
 
+    @Validate
+    public void validate() {
+        try {
+            TimeZone.getTimeZone(timeZone);
+        } catch (Exception e) {
+            throw new IllegalStateException("Time zone '" + timeZone + "' not recognized.");
+        }
+    }
+
     @Initialize
     public void init() {
         if (dateMasks == null) {
             dateMasks = getDefaultDateMasks();
         }
-        
+
         final DateTimeZone zone = DateTimeZone.forID(timeZone);
 
         _numberBasedDateTimeFormatterLong = DateTimeFormat.forPattern("yyyyMMdd").withZone(zone);

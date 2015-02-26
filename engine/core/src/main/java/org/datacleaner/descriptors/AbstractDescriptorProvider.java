@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.datacleaner.api.Analyzer;
@@ -41,6 +42,12 @@ import org.datacleaner.api.Transformer;
 public abstract class AbstractDescriptorProvider implements DescriptorProvider {
 
     private final boolean _autoDiscover;
+    
+    /**
+     * Creates a weak hashset. See {@link Collections#newSetFromMap(java.util.Map)}
+     */
+    private Set<ComponentDescriptorsUpdatedListener> _componentDescriptorsUpdatedListeners = Collections
+            .newSetFromMap(new WeakHashMap<ComponentDescriptorsUpdatedListener, Boolean>());
 
     /**
      * @deprecated use {@link #AbstractDescriptorProvider(boolean)} instead.
@@ -62,6 +69,7 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
      */
     public AbstractDescriptorProvider(boolean autoLoadDescriptorClasses) {
         _autoDiscover = autoLoadDescriptorClasses;
+
     }
 
     @Override
@@ -247,5 +255,32 @@ public abstract class AbstractDescriptorProvider implements DescriptorProvider {
             }
         }
         return result;
+    }
+
+    protected void notifyComponentDescriptorsUpdatedListeners() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (_componentDescriptorsUpdatedListeners) {
+                    for (ComponentDescriptorsUpdatedListener listener : _componentDescriptorsUpdatedListeners) {
+                        listener.componentDescriptorsUpdated();
+                    }                
+                    }
+                }
+            }).start();
+    }
+
+    @Override
+    public void addComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
+        synchronized (_componentDescriptorsUpdatedListeners) {
+            _componentDescriptorsUpdatedListeners.add(listener);
+        }
+    }
+
+    @Override
+    public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener) {
+        synchronized (_componentDescriptorsUpdatedListeners) {
+            _componentDescriptorsUpdatedListeners.remove(listener);
+        }
     }
 }

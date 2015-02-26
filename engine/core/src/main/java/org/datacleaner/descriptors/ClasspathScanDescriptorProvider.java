@@ -339,6 +339,7 @@ public final class ClasspathScanDescriptorProvider extends AbstractDescriptorPro
 
                     logger.debug("Scanned resources of {}: {}", packageName, count);
                 }
+                notifyComponentDescriptorsUpdatedListeners();
             }
         };
         _taskRunner.run(task, listener);

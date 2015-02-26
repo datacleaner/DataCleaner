@@ -59,6 +59,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.descriptors.ComponentDescriptorsUpdatedListener;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.Nullable;
@@ -83,7 +84,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 
-public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer {
+public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer, ComponentDescriptorsUpdatedListener {
 
     private static final long serialVersionUID = 7763827443642264329L;
 
@@ -114,6 +115,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _injectorBuilder = injectorBuilder;
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
+        _analysisJobBuilder.getConfiguration().getDescriptorProvider().addComponentDescriptorsUpdatedListener(this);
+        
         ToolTipManager.sharedInstance().registerComponent(this);
 
         setCellRenderer(this);
@@ -248,14 +251,17 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             datastoreNode.add(schemaNode);
         }
 
-        rootNode.add(createLibrary());
+        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode("Library");
+        createLibrary(libraryRoot);
+        rootNode.add(libraryRoot);
+        
         final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
         setModel(treeModel);
     }
 
-    private DefaultMutableTreeNode createLibrary() {
-        DefaultMutableTreeNode libraryRoot = new DefaultMutableTreeNode("Library");
+    private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
         final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
@@ -560,5 +566,16 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
     public Datastore getDatastore() {
         return _datastore;
+    }
+
+    @Override
+    public void componentDescriptorsUpdated() {
+        final TreeNode root = (TreeNode) getModel().getRoot();
+        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode)root.getChildAt(1);
+        libraryNode.removeAllChildren();
+        createLibrary(libraryNode);
+        DefaultTreeModel model = (DefaultTreeModel) getModel();
+        model.reload(libraryNode);
+        expandLibrary();
     }
 }

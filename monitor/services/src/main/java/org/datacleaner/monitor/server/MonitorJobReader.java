@@ -96,7 +96,7 @@ public class MonitorJobReader {
         };
 
         try (final AnalysisJobBuilder jobBuilder = _jobFile.readFile(readCallback)) {
-            final AnalysisJob job = jobBuilder.toAnalysisJob();
+            final AnalysisJob job = jobBuilder.toAnalysisJob(false);
             return job;
         }
     }

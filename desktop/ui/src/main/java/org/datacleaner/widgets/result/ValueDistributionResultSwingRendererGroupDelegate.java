@@ -113,6 +113,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _rendererFactory = rendererFactory;
         _windowContext = windowContext;
         _table = new DCTable("Value", LabelUtils.COUNT_LABEL);
+        _table.setColumnControlVisible(false);
         _table.setRowHeight(22);
 
         // create a map of predefined color mappings

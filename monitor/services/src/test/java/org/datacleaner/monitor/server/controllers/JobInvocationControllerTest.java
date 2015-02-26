@@ -80,4 +80,65 @@ public class JobInvocationControllerTest extends TestCase {
         assertTrue(number.doubleValue() >= 0);
         assertTrue(number.doubleValue() <= input);
     }
+
+    public void testInvokeFileWithoutAnalyzers() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+
+        sourceRecords.addRow(new Object[] { "foo", "bar" });
+
+        final JobInvocationPayload result = controller.invokeJob("tenant1", "concat_job_no_analyzers", sourceRecords);
+
+        final List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(1, rows.size());
+
+        final Object[] values = rows.get(0).getValues();
+        assertEquals("[bar foo]", Arrays.toString(values));
+    }
+
+    public void testInvokeFileWithShortColumnPaths() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+
+        sourceRecords.addRow(new Object[] { "foo", "bar" });
+
+        final JobInvocationPayload result = controller.invokeJob("tenant1", "concat_job_short_column_paths",
+                sourceRecords);
+
+        final List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(1, rows.size());
+
+        final Object[] values = rows.get(0).getValues();
+        assertEquals("[bar foo]", Arrays.toString(values));
+    }
+
+    public void testInvokeFileWithoutDatastoreMatch() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+
+        sourceRecords.addRow(new Object[] { "foo", "bar" });
+
+        final JobInvocationPayload result = controller.invokeJob("tenant1", "concat_job_no_datastore", sourceRecords);
+
+        final List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(1, rows.size());
+
+        final Object[] values = rows.get(0).getValues();
+        assertEquals("[bar foo]", Arrays.toString(values));
+    }
 }

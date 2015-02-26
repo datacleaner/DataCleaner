@@ -56,6 +56,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Strings;
+
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job}.invoke")
 public class JobInvocationController {
@@ -96,19 +98,19 @@ public class JobInvocationController {
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
-        
+
         if (!(job instanceof DataCleanerJobContext)) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
         }
 
-        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext)job;
+        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext) job;
         final String datastoreName = analysisJobContext.getSourceDatastoreName();
         final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
 
         final String tablePath = getTablePath(columnPaths);
 
-        final String schemaName;
-        final String tableName;
+        String schemaName;
+        String tableName;
         if (tablePath.indexOf('.') == -1) {
             tableName = tablePath;
             schemaName = null;
@@ -117,11 +119,21 @@ public class JobInvocationController {
             tableName = tablePath.substring(tablePath.indexOf('.') + 1);
         }
 
+        if (Strings.isNullOrEmpty(schemaName)) {
+            schemaName = "schema";
+        }
+        if (Strings.isNullOrEmpty(tableName)) {
+            tableName = "table";
+        }
+
         final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>(1);
         final List<String> columnNames = CollectionUtils.map(columnPaths, new Func<String, String>() {
             @Override
             public String eval(String columnPath) {
-                return columnPath.substring(tablePath.length() + 1);
+                if (!tablePath.isEmpty()) {
+                    return columnPath.substring(tablePath.length() + 1);
+                }
+                return columnPath;
             }
         });
 

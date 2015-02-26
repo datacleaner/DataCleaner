@@ -34,23 +34,25 @@ import org.datacleaner.data.MockInputRow;
 
 public class ConvertToDateTransformerTest extends TestCase {
 
+    private static final String TEST_TIMEZONE = "CET";
+
     private SimpleDateFormat dateFormat;
-    
+
     protected void setUp() throws Exception {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("CET"));
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
     };
-    
 
     public void testConvertWithNumberOnlyDateMask() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        transformer.timeZone = TEST_TIMEZONE;
         transformer.dateMasks = new String[] { "ddMMyyyy" };
         InputColumn<?> col = new MockInputColumn<Object>("datestr");
         transformer.input = new InputColumn[] { col };
         transformer.init();
 
         Date[] result;
-        
+
         result = transformer.transform(new MockInputRow().put(col, "31012014"));
         assertEquals("2014-01-31", dateFormat.format(result[0]));
 
@@ -63,10 +65,12 @@ public class ConvertToDateTransformerTest extends TestCase {
         cal.set(Calendar.YEAR, 1971);
         cal.set(Calendar.MONTH, Calendar.JANUARY);
         cal.set(Calendar.DATE, 1);
+        cal.setTimeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
 
         assertTrue(cal.getTime().getTime() > 5000000);
 
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
         assertEquals("1971-01-01", format(transformer.transformValue(cal)));
@@ -80,6 +84,7 @@ public class ConvertToDateTransformerTest extends TestCase {
 
     public void testConvertFromString() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
         assertEquals("1999-04-20", format(transformer.convertFromString("1999-04-20")));
@@ -89,11 +94,14 @@ public class ConvertToDateTransformerTest extends TestCase {
         assertEquals("2012-04-26", format(transformer.convertFromString("2012-04-26 19:12:19.792012")));
 
         Date result = transformer.convertFromString("2008-07-11 14:05:13");
-        assertEquals("2008-07-11 14:05:13", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(result));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone(TEST_TIMEZONE));
+        assertEquals("2008-07-11 14:05:13", format.format(result));
     }
 
     public void testConvertFromExpression() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        transformer.timeZone = TEST_TIMEZONE;
         transformer.init();
 
         final Date now = new Date();
@@ -108,6 +116,7 @@ public class ConvertToDateTransformerTest extends TestCase {
 
     public void testConvertSingleHourDigit() throws Exception {
         ConvertToDateTransformer transformer = new ConvertToDateTransformer();
+        transformer.timeZone = TEST_TIMEZONE;
         transformer.dateMasks = new String[] { "dd/MM/yyyy HH:mm" };
         transformer.init();
 

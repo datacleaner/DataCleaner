@@ -107,9 +107,9 @@
 		<para>Below is a screenshot of the initial screen that
 			will be
 			presented when launching DataCleaner (desktop community edition).
-		A new datastore can be added in the "New job from scratch" or in
-		"Manage datastores" screens available by clicking the buttons in the
-		bottom of the screen.
+			A new datastore can be added in the "New job from scratch" or in
+			"Manage datastores" screens available by clicking the buttons in the
+			bottom of the screen.
 		</para>
 		<mediaobject>
 			<imageobject>
@@ -139,8 +139,8 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="datastore_management_screen.jpg" format="JPG"
-					scalefit="1" />
+				<imagedata fileref="datastore_management_screen.jpg"
+					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>
@@ -260,8 +260,8 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="connecting_components.jpg"
-					format="JPG" scalefit="1" />
+				<imagedata fileref="connecting_components.jpg" format="JPG"
+					scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>To wire a filter you need to set up a dependency on either of
@@ -287,9 +287,11 @@
 			your job is correctly configured and ready to execute, check the
 			status bar in the bottom of the job building window.
 		</para>
-		<para>To execute the job, simply click the "Run analysis" button in
-			the top-right corner of the window. This will bring up the result
-			window, which contains:
+		<para>To execute the job, simply click the "Execute" button in
+			the
+			top-right corner of the window. This will bring up the result
+			window,
+			which contains:
 		</para>
 		<orderedlist>
 			<listitem>
@@ -319,16 +321,18 @@
 	<section id="saving_and_opening_jobs">
 		<title>Saving and opening jobs</title>
 		<para>You can save your jobs in order to reuse them at a later time.
-			Saving a job is simple: Simply click the "Save analysis job" button
-			in the top-left corner of the window.
+			Saving a job is simple: Simply click the "Save" button
+			in the top
+			panel of the window.
 		</para>
 		<para>Analysis jobs are saved in files with the ".analysis.xml"
 			extension. These files are XML files that are readable and editable
 			using any XML editor.
 		</para>
-		<para>Opening jobs can be done using the "File -> Open analysis
-			job..." menu item. Opening a job will restore a job building window
-			from where you can edit and run the job.
+		<para>Opening jobs can be done using the "Open" menu item. Opening a
+			job will restore a job building window
+			from where you can edit and run
+			the job.
 		</para>
 	</section>
 
@@ -367,7 +371,7 @@
 			datastore that have the same column names, you can click the "Map
 			automatically" button and they will be automatically assigned.
 			Otherwise you need to map the columns from the new datastore's
-			availabel columns.
+			available columns.
 		</para>
 		<para>Finally your job may contain 'Job-level variables'. These are
 			configurable properties of the job that you might also want to fill

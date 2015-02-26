@@ -67,7 +67,7 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
     
                 popup.setLabel(componentDescriptor.getDisplayName());
                 JMenuItem addTableItem = WidgetFactory.createMenuItem("Add to source",
-                        IconUtils.getDescriptorIcon(componentDescriptor));
+                        IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
     
                 addTableItem.addActionListener(new ActionListener() {
                     @Override

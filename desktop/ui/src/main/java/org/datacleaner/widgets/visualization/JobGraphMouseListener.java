@@ -220,7 +220,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                     superCategory, point);
 
             final JMenu menu = new JMenu(superCategory.getName());
-            menu.setIcon(IconUtils.getComponentSuperCategoryIcon(superCategory));
+            menu.setIcon(IconUtils.getComponentSuperCategoryIcon(superCategory, IconUtils.ICON_SIZE_MENU_ITEM));
             menuBuilder.addItemsToMenu(menu);
             popup.add(menu);
         }

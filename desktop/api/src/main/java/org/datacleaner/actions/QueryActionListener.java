@@ -23,13 +23,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.windows.QueryWindow;
-import org.apache.metamodel.query.FromClause;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.windows.QueryWindow;
 
 /**
  * Action listener that displays a query window

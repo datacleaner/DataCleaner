@@ -22,6 +22,7 @@
             <column id="col_10" path="CUSTOMERS.COUNTRY" type="VARCHAR"/>
             <column id="col_11" path="CUSTOMERS.SALESREPEMPLOYEENUMBER" type="INTEGER"/>
             <column id="col_12" path="CUSTOMERS.CREDITLIMIT" type="NUMERIC"/>
+            <column id="col_13" path="CUSTOMERS.JOBTITLE" type="VARCHAR"/>
         </columns>
     </source>
     <transformation/>
@@ -45,6 +46,7 @@
             <input ref="col_10" name="Columns"/>
             <input ref="col_11" name="Columns"/>
             <input ref="col_12" name="Columns"/>
+            <input ref="col_13" name="Columns"/>
         </analyzer>
     </analysis>
 </job>

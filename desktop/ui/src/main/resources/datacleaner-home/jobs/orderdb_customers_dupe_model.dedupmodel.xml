@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<deduplication-model threshold="0.001">
+<deduplication-model threshold="0.001" version="1">
     <columns>
         <column index="0" name="CUSTOMERNUMBER"/>
         <column index="1" name="CUSTOMERNAME"/>
@@ -14,16 +14,20 @@
         <column index="10" name="COUNTRY"/>
         <column index="11" name="SALESREPEMPLOYEENUMBER"/>
         <column index="12" name="CREDITLIMIT"/>
+        <column index="13" name="JOBTITLE"/>
     </columns>
     <preselection-model>
+        <subset>
+            <item column-index="0"/>
+        </subset>
         <subset>
             <item column-index="6"/>
         </subset>
         <subset>
-            <item column-index="5"/>
+            <item column-index="1"/>
         </subset>
         <subset>
-            <item column-index="1"/>
+            <item column-index="5"/>
         </subset>
         <subset>
             <item column-index="4"/>
@@ -44,6 +48,9 @@
             <item column-index="8"/>
         </subset>
         <subset>
+            <item column-index="13"/>
+        </subset>
+        <subset>
             <item column-index="11"/>
         </subset>
         <subset>
@@ -55,36 +62,36 @@
     </preselection-model>
     <matching-model>
         <rule fixed-score="true" score="0.0">
-            <condition feature="edit-distance" feature-modifier="unmodified" column-index="1" operator="less-than" threshold="0.6515151515151516"/>
+            <condition feature="edit-distance" feature-modifier="empty-low" column-index="5" operator="less-than" threshold="0.7944444444444444"/>
         </rule>
         <rule fixed-score="false">
-            <condition feature="edit-distance" feature-modifier="unmodified" column-index="2" operator="greater-than" threshold="0.6666666666666667"/>
+            <condition feature="exact" feature-modifier="unmodified" column-index="3" operator="greater-than" threshold="0.5"/>
         </rule>
     </matching-model>
-    <scoring-model bias="-7.995677541058537">
-        <term feature="exact" feature-modifier="unmodified" column-index="1" weight="-1.112095636684276"/>
-        <term feature="exact" feature-modifier="empty-high" column-index="1" weight="0.38798188275482004"/>
-        <term feature="exact" feature-modifier="empty-low" column-index="1" weight="-1.390673626504695"/>
-        <term feature="exact" feature-modifier="multiple-parts" column-index="1" weight="2.8913684871591268"/>
-        <term feature="edit-distance" feature-modifier="unmodified" column-index="1" weight="0.7795537045249623"/>
-        <term feature="edit-distance" feature-modifier="empty-high" column-index="1" weight="1.6226938097932113"/>
-        <term feature="edit-distance" feature-modifier="empty-low" column-index="1" weight="2.091966480225197"/>
-        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="1" weight="-0.05429848419478483"/>
-        <term feature="phonetic" feature-modifier="unmodified" column-index="1" weight="0.2012053466092598"/>
-        <term feature="phonetic" feature-modifier="empty-high" column-index="1" weight="-0.7962591225382654"/>
-        <term feature="phonetic" feature-modifier="empty-low" column-index="1" weight="0.10561880226752533"/>
-        <term feature="phonetic" feature-modifier="multiple-parts" column-index="1" weight="2.580771279077959"/>
-        <term feature="exact" feature-modifier="unmodified" column-index="2" weight="0.6245318207505962"/>
-        <term feature="exact" feature-modifier="empty-high" column-index="2" weight="0.8055762062221582"/>
-        <term feature="exact" feature-modifier="empty-low" column-index="2" weight="-0.809194808029944"/>
-        <term feature="exact" feature-modifier="multiple-parts" column-index="2" weight="-0.3772895443284256"/>
-        <term feature="edit-distance" feature-modifier="unmodified" column-index="2" weight="0.6615245122467637"/>
-        <term feature="edit-distance" feature-modifier="empty-high" column-index="2" weight="-0.545104686083584"/>
-        <term feature="edit-distance" feature-modifier="empty-low" column-index="2" weight="-0.13921070712848263"/>
-        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="2" weight="0.2521085950874918"/>
-        <term feature="phonetic" feature-modifier="unmodified" column-index="2" weight="0.6901334208562475"/>
-        <term feature="phonetic" feature-modifier="empty-high" column-index="2" weight="0.28167341570843957"/>
-        <term feature="phonetic" feature-modifier="empty-low" column-index="2" weight="0.5361660294043848"/>
-        <term feature="phonetic" feature-modifier="multiple-parts" column-index="2" weight="0.9882527330856634"/>
+    <scoring-model bias="-5.011193395833074">
+        <term feature="exact" feature-modifier="unmodified" column-index="3" weight="0.4052941612099402"/>
+        <term feature="exact" feature-modifier="empty-high" column-index="3" weight="0.9301111153595858"/>
+        <term feature="exact" feature-modifier="empty-low" column-index="3" weight="0.3250137466611112"/>
+        <term feature="exact" feature-modifier="multiple-parts" column-index="3" weight="1.4117070484820753"/>
+        <term feature="edit-distance" feature-modifier="unmodified" column-index="3" weight="-1.0174397615954673"/>
+        <term feature="edit-distance" feature-modifier="empty-high" column-index="3" weight="-0.2956597256799974"/>
+        <term feature="edit-distance" feature-modifier="empty-low" column-index="3" weight="-1.0674428824984565"/>
+        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="3" weight="-0.47278331254817413"/>
+        <term feature="phonetic" feature-modifier="unmodified" column-index="3" weight="0.6036990933822642"/>
+        <term feature="phonetic" feature-modifier="empty-high" column-index="3" weight="0.24688663597191607"/>
+        <term feature="phonetic" feature-modifier="empty-low" column-index="3" weight="0.7646203202629441"/>
+        <term feature="phonetic" feature-modifier="multiple-parts" column-index="3" weight="0.9267021101274826"/>
+        <term feature="exact" feature-modifier="unmodified" column-index="5" weight="-0.5032312117011183"/>
+        <term feature="exact" feature-modifier="empty-high" column-index="5" weight="0.6737948426432443"/>
+        <term feature="exact" feature-modifier="empty-low" column-index="5" weight="0.6568769254097431"/>
+        <term feature="exact" feature-modifier="multiple-parts" column-index="5" weight="3.3141951295471155"/>
+        <term feature="edit-distance" feature-modifier="unmodified" column-index="5" weight="0.7123322349594914"/>
+        <term feature="edit-distance" feature-modifier="empty-high" column-index="5" weight="0.5798197317577276"/>
+        <term feature="edit-distance" feature-modifier="empty-low" column-index="5" weight="0.22961445482468945"/>
+        <term feature="edit-distance" feature-modifier="multiple-parts" column-index="5" weight="-1.5932568796304925"/>
+        <term feature="phonetic" feature-modifier="unmodified" column-index="5" weight="0.39698237934105746"/>
+        <term feature="phonetic" feature-modifier="empty-high" column-index="5" weight="-1.2450834952169463"/>
+        <term feature="phonetic" feature-modifier="empty-low" column-index="5" weight="-0.7899549611688628"/>
+        <term feature="phonetic" feature-modifier="multiple-parts" column-index="5" weight="1.3746463297333456"/>
     </scoring-model>
 </deduplication-model>

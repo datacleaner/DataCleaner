@@ -106,7 +106,7 @@ public class CompoundClassLoader extends ClassLoader {
             }
             try {
                 result = cl.loadClass(name);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException|NoClassDefFoundError e) {
                 // Ignore - try the next class loader.
             }
         }

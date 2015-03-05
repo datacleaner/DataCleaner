@@ -52,7 +52,7 @@ public class JobGraphKeyListener extends KeyAdapter {
         if (e.getKeyChar() == KeyEvent.VK_DELETE) {
             final Set<Object> vertices = _graphContext.getSelectedVertices();
             logger.debug("Registered typed DEL. Vertices: {}", vertices);
-            if (vertices != null) {
+            if ((vertices != null) && (!vertices.isEmpty())) {
                 final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
                 for (Object vertex : vertices) {
                     if (vertex instanceof TransformerComponentBuilder) {

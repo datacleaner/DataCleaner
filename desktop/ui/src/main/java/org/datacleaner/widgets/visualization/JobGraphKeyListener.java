@@ -22,6 +22,7 @@ package org.datacleaner.widgets.visualization;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Set;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
@@ -49,25 +50,27 @@ public class JobGraphKeyListener extends KeyAdapter {
     public void keyTyped(KeyEvent e) {
         // react to DEL key strokes and delete components that are selected.
         if (e.getKeyChar() == KeyEvent.VK_DELETE) {
-            final Object vertex = _graphContext.getSelectedVertex();
-            logger.debug("Registered typed DEL. Vertex: {}", vertex);
-            if (vertex != null) {
+            final Set<Object> vertices = _graphContext.getSelectedVertices();
+            logger.debug("Registered typed DEL. Vertices: {}", vertices);
+            if (vertices != null) {
                 final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
-                if (vertex instanceof TransformerComponentBuilder) {
-                    final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
-                    analysisJobBuilder.removeTransformer(tjb);
-                } else if (vertex instanceof AnalyzerComponentBuilder) {
-                    final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) vertex;
-                    analysisJobBuilder.removeAnalyzer(ajb);
-                } else if (vertex instanceof FilterComponentBuilder) {
-                    final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) vertex;
-                    analysisJobBuilder.removeFilter(fjb);
-                } else if (vertex instanceof Table) {
-                    final Table table = (Table) vertex;
-                    analysisJobBuilder.removeSourceTable(table);
-                } else if (vertex instanceof Column) {
-                    final Column column = (Column) vertex;
-                    analysisJobBuilder.removeSourceColumn(column);
+                for (Object vertex : vertices) {
+                    if (vertex instanceof TransformerComponentBuilder) {
+                        final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
+                        analysisJobBuilder.removeTransformer(tjb);
+                    } else if (vertex instanceof AnalyzerComponentBuilder) {
+                        final AnalyzerComponentBuilder<?> ajb = (AnalyzerComponentBuilder<?>) vertex;
+                        analysisJobBuilder.removeAnalyzer(ajb);
+                    } else if (vertex instanceof FilterComponentBuilder) {
+                        final FilterComponentBuilder<?, ?> fjb = (FilterComponentBuilder<?, ?>) vertex;
+                        analysisJobBuilder.removeFilter(fjb);
+                    } else if (vertex instanceof Table) {
+                        final Table table = (Table) vertex;
+                        analysisJobBuilder.removeSourceTable(table);
+                    } else if (vertex instanceof Column) {
+                        final Column column = (Column) vertex;
+                        analysisJobBuilder.removeSourceColumn(column);
+                    }
                 }
             }
         }

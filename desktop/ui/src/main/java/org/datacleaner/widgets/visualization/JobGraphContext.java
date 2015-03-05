@@ -88,16 +88,21 @@ public class JobGraphContext {
     }
 
     public Object getSelectedVertex() {
-        final PickedState<Object> pickedVertexState = _visualizationViewer.getPickedVertexState();
-        if (pickedVertexState == null) {
-            return null;
-        }
-        final Set<Object> pickedVertices = pickedVertexState.getPicked();
+        Set<Object> pickedVertices = getSelectedVertices();
         // ensure that there is 1 and only 1 selected vertex
         if (pickedVertices == null || pickedVertices.size() != 1) {
             return null;
         }
         return pickedVertices.iterator().next();
+    }
+    
+    public Set<Object> getSelectedVertices() {
+        final PickedState<Object> pickedVertexState = _visualizationViewer.getPickedVertexState();
+        if (pickedVertexState == null) {
+            return null;
+        }
+        final Set<Object> pickedVertices = pickedVertexState.getPicked();
+        return pickedVertices;
     }
 
 }

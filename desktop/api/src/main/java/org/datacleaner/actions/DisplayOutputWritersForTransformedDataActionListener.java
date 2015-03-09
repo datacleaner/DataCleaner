@@ -58,13 +58,11 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
                     _transformerJobBuilder.getDescriptor());
         }
 
-        if (componentBuilder.getDescriptor().getConfiguredPropertiesForInput().size() == 1) {
-            List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
-            List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-            componentBuilder.clearInputColumns();
-            componentBuilder.addInputColumns(inputColumns);
-            componentBuilder.addInputColumns(outputColumns);
-        }
+        List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
+        List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
+        componentBuilder.clearInputColumns();
+        componentBuilder.addInputColumns(inputColumns);
+        componentBuilder.addInputColumns(outputColumns);
     }
 
     @Override

@@ -1,5 +1,0 @@
-"Company";"Addressline1";"Addressline2";"Addressline3";"Addressline4";"Country";"Phone number"
-"Human Inference";"Utrechtseweg 310 - Building B01";"6812 AR Arnhem";"";"";"NLD";"+31 (0)26 3550655"
-"Neopost";"113 Rue Jean Marin Naudin";"92220 Bagneux";"";"";"La France";"n/a"
-"Satori Software";"1301 5th Ave";"Suite 2200";"Seattle";"WA 98101-2676";"United States";"800-553-6477"
-"DMTI Spatial";"15 Allstate Parkway, Suite 400";"Markham, Ontario";"L3R 5B4";"";"CA";"+1-905-948-2000"

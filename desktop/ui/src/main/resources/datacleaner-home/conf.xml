@@ -31,6 +31,13 @@
 			<separator-char>;</separator-char>
 		</csv-datastore>
 		
+		<csv-datastore name="Customers" description="Example CSV-file with representing customers' details">
+			<filename>datastores/customers.csv</filename>
+			<encoding>UTF8</encoding>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+		</csv-datastore>
+		
 	</datastore-catalog>
 
 	<reference-data-catalog>

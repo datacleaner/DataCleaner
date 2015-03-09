@@ -29,6 +29,7 @@ import org.datacleaner.connection.SalesforceDatastore;
 public class DemoConfiguration {
 
     public static final String DATASTORE_FILE_CONTACTDATA = "datastores/contactdata.txt";
+    public static final String DATASTORE_FILE_CUSTOMERS = "datastores/customers.csv";
 
     public static final String JOB_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
     public static final String JOB_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce duplicate detection.analysis.xml";

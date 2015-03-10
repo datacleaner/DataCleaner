@@ -32,21 +32,21 @@ import org.datacleaner.util.WidgetUtils;
  */
 public class DCListCellRenderer extends DefaultListCellRenderer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-			boolean cellHasFocus) {
-		final Component result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+            boolean cellHasFocus) {
+        final Component result = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-		if (isSelected) {
-			result.setForeground(WidgetUtils.BG_COLOR_BLUE_DARK);
-			result.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		} else {
-			result.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
-			result.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		}
+        if (isSelected) {
+            result.setForeground(WidgetUtils.BG_COLOR_BLUE_DARK);
+            result.setBackground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        } else {
+            result.setForeground(WidgetUtils.BG_COLOR_DARKEST);
+            result.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

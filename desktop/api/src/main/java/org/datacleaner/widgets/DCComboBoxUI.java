@@ -21,6 +21,7 @@ package org.datacleaner.widgets;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.ListCellRenderer;
 import javax.swing.plaf.ComboBoxUI;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
@@ -48,5 +49,11 @@ public class DCComboBoxUI extends BasicComboBoxUI {
     protected JButton createArrowButton() {
         final JButton arrowButton = WidgetFactory.createSmallButton(IconUtils.ACTION_SCROLLDOWN_DARK);
         return arrowButton;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected ListCellRenderer createRenderer() {
+        return new DCListCellRenderer();
     }
 }

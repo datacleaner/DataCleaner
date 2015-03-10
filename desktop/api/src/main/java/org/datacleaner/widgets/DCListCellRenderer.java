@@ -41,10 +41,10 @@ public class DCListCellRenderer extends DefaultListCellRenderer {
 
 		if (isSelected) {
 			result.setForeground(WidgetUtils.BG_COLOR_BLUE_DARK);
-			result.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
+            result.setBackground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
 		} else {
-			result.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
-			result.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+			result.setForeground(WidgetUtils.BG_COLOR_DARKEST);
+            result.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		}
 
 		return result;

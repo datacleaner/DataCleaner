@@ -19,6 +19,8 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -30,6 +32,10 @@ import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.datacleaner.util.LookAndFeelManager;
 
 /**
  * Defines a common combobox class that has a more convenient listening
@@ -161,4 +167,20 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
     public String toString() {
         return "DCComboBox[items=" + getItemCount() + ", selected=" + getSelectedItem() + "]";
     }
+    
+    public static void main(String[] args) {
+        LookAndFeelManager.get().init();
+        JPanel comboPanel = new JPanel();
+        comboPanel.setLayout(new BorderLayout());
+        comboPanel.add(new DCComboBox<String>(new String[] {"a", "b", "c"}), BorderLayout.NORTH);
+
+        final JFrame frame = new JFrame("test");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(new Dimension(640, 480));
+        frame.add(comboPanel, BorderLayout.PAGE_START);
+
+        frame.pack();
+        frame.setVisible(true);
+    }
+
 }

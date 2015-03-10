@@ -9,11 +9,7 @@
 		class="org.datacleaner.monitor.configuration.ConfigurationFactory">
 		<property name="scannedPackages">
 			<list>
-				<value>org.datacleaner.beans</value>
-				<value>org.datacleaner.result.renderer</value>
-				<value>org.datacleaner.panels</value>
-				<value>org.datacleaner.widgets.result</value>
-				<value>org.datacleaner.extension</value>
+				<value>org.datacleaner</value>
 				<value>com.hi</value>
 				<value>com.neopost.cim</value>
 			</list>

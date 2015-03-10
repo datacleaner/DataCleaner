@@ -87,17 +87,13 @@ public class JobGraphContext {
         return (AbstractLayout<Object, JobGraphLink>) layout;
     }
 
-    public Object getSelectedVertex() {
+    public Set<Object> getSelectedVertices() {
         final PickedState<Object> pickedVertexState = _visualizationViewer.getPickedVertexState();
         if (pickedVertexState == null) {
             return null;
         }
         final Set<Object> pickedVertices = pickedVertexState.getPicked();
-        // ensure that there is 1 and only 1 selected vertex
-        if (pickedVertices == null || pickedVertices.size() != 1) {
-            return null;
-        }
-        return pickedVertices.iterator().next();
+        return pickedVertices;
     }
 
 }

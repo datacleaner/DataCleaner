@@ -24,12 +24,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -55,6 +59,10 @@ public class JobGraphPreferencesPanel extends DCPanel {
         _userPreferences = userPreferences;
         _jobGraph = jobGraph;
 
+        add(createHintsToggle());
+
+        add(Box.createHorizontalStrut(10));
+
         addLabel("Line style:");
         add(createLineStyleButton("images/menu/edge-straight.png", JobGraphTransformers.EDGE_STYLE_NAME_STRAIGHT));
         add(createLineStyleButton("images/menu/edge-curved.png", JobGraphTransformers.EDGE_STYLE_NAME_CURVED));
@@ -71,6 +79,43 @@ public class JobGraphPreferencesPanel extends DCPanel {
         add(createFontFactorButton(IconUtils.ACTION_ADD, 0.1f));
         add(createFontFactorButton(IconUtils.ACTION_REMOVE, -0.1f));
         add(Box.createHorizontalStrut(10));
+    }
+
+    private JComponent createHintsToggle() {
+        final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_HELP, IconUtils.ICON_SIZE_SMALL);
+        final JToggleButton toggle = new JToggleButton("Show hints", icon, true);
+        WidgetUtils.setDefaultButtonStyle(toggle);
+        toggle.setMargin(WidgetUtils.INSETS_EMPTY);
+        
+        toggle.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String existingValue = _userPreferences.getAdditionalProperties().get(
+                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                final String newValue;
+                if (existingValue == null || "true".equals(existingValue)) {
+                    newValue = "false";
+                } else {
+                    newValue = "true";
+                }
+                _userPreferences.getAdditionalProperties().put(
+                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS, newValue);
+                updateToggleText(toggle);
+                _jobGraph.refresh();
+            }
+        });
+        updateToggleText(toggle);
+        return toggle;
+    }
+
+    protected void updateToggleText(JToggleButton toggle) {
+        final String showHints = _userPreferences.getAdditionalProperties().get(
+                JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+        if (showHints == null || "true".equals(showHints)) {
+            toggle.setSelected(true);
+        } else {
+            toggle.setSelected(false);
+        }
     }
 
     private Component createFontFactorButton(final String imagePath, final float increment) {

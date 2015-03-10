@@ -61,6 +61,7 @@ import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
  */
 public class JobGraphTransformers {
 
+    public static final String USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS = "JobGraph.ShowCanvasHints";
     public static final String USER_PREFERENCES_PROPERTY_FONT_SIZE_FACTOR = "JobGraph.FontSizeFactor";
     public static final String USER_PREFERENCES_PROPERTY_EDGE_STYLE = "JobGraph.LineStyle";
 

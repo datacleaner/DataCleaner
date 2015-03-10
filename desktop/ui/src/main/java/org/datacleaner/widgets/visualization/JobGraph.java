@@ -225,11 +225,11 @@ public final class JobGraph {
                     _analysisJobBuilder.addSourceColumn(column);
                 }
 
-                if(data instanceof ComponentDescriptor<?>){
+                if (data instanceof ComponentDescriptor<?>) {
                     final ComponentDescriptor<?> descriptor = (ComponentDescriptor<?>) data;
-                    
+
                     final Map<String, String> metadata = JobGraphMetadata.createMetadataProperties(dropPoint);
-                    
+
                     _analysisJobBuilder.addComponent(descriptor, null, null, metadata);
                 }
                 return true;
@@ -256,9 +256,17 @@ public final class JobGraph {
                 g.fillRect(0, 0, visualizationViewer.getWidth(), visualizationViewer.getHeight());
 
                 final Dimension size = _panel.getSize();
-                if (size.height < 300) {
+                if (size.height < 300 || size.width < 500) {
                     // don't show the background hints - it will be too
                     // disturbing
+                    return;
+                }
+
+                final String showCanvasHints = _userPreferences.getAdditionalProperties().get(
+                        JobGraphTransformers.USER_PREFERENCES_PROPERTY_SHOW_CANVAS_HINTS);
+                if ("false".equals(showCanvasHints)) {
+                    // don't show the background hints - the user has decided
+                    // not to have them.
                     return;
                 }
 
@@ -294,7 +302,13 @@ public final class JobGraph {
                     imagePath = null;
 
                     try {
-                        if (!_analysisJobBuilder.isConfigured(true)) {
+                        if (_analysisJobBuilder.isConfigured(true)) {
+                            title = "Ready to execute";
+                            subTitle = "Click the 'Execute' button in the upper-right\ncorner when you're ready to run the job.";
+                            imagePath = "images/window/canvas-bg-execute.png";
+                            g.drawImage(ImageManager.get().getImage("images/window/canvas-bg-execute-hint.png"),
+                                    size.width - 175, 0, null);
+                        } else {
                             title = "Configure the job ...";
                             subTitle = "Job is not correctly configured";
                             imagePath = "images/window/canvas-bg-error.png";

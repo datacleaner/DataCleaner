@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -75,6 +76,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_SHEET_NAME = "Sheet name";
     public static final String PROPERTY_OVERWRITE_SHEET_IF_EXISTS = "Overwrite sheet if exists";
+    private static final String[] excelExtension  = {"xlsx", "xls"}; 
     
     private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
 
@@ -140,6 +142,11 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                 }
             }
         }
+        
+        if (!FilenameUtils.isExtension(file.getName(), excelExtension)){
+           throw new IllegalStateException("Please add the '.xlsx'  or '.xls' extension to the filename"); 
+        }
+       
     }
 
     @Override

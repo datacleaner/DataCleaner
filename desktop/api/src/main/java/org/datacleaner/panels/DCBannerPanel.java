@@ -92,7 +92,7 @@ public class DCBannerPanel extends JPanel {
         }
         setOpaque(false);
 
-        final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
+        final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 38);
         layout.setAlignOnBaseline(true);
         setLayout(layout);
     }
@@ -157,7 +157,7 @@ public class DCBannerPanel extends JPanel {
         if (_title1 != null) {
             int titleY = 45;
             if (_title2 != null) {
-                titleY = 35;
+                titleY = 33;
             }
 
             if (g instanceof Graphics2D) {

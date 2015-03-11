@@ -63,12 +63,17 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
         _threadFactory = new DaemonThreadFactory();
 
         // This queue is a buffer for tasks to be processed.
-        // It uses a hack that forces the ThreadPoolExecutor to block if a caller tries to submit a
-        // task when the pool is fully loaded. This will prevent to not process input row
-        // inside a RunRowProcessingPublisherTask thread (CallerRunsPolicy). If processing of such row
-        // would take a long time, it would cause other processing threads starvation after they
-        // finish their current work. So we rather block until the queue has place in it.
-        _workQueue = new BlockingQueueHack<>(taskCapacity);
+        // It uses a hack that forces the ThreadPoolExecutor to block if a
+        // caller tries to submit a
+        // task when the pool is fully loaded. This will prevent to not process
+        // input row
+        // inside a RunRowProcessingPublisherTask thread (CallerRunsPolicy). If
+        // processing of such row
+        // would take a long time, it would cause other processing threads
+        // starvation after they
+        // finish their current work. So we rather block until the queue has
+        // place in it.
+        _workQueue = new AlwaysBlockingQueue<>(taskCapacity);
 
         _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
                 _threadFactory, rejectionHandler);
@@ -125,14 +130,18 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
         }
     }
 
-    /** We keep this class as private because it shouldn't be used anywhere else, it is a hack. It
-     * actually breaks a blocking queue contract. The reason for it is that Java ThreadPoolExecutor
-     * does not support blocking behaviour for the caller. So we override the non-blocking
-     * method of the queue to behave as a blocking one.
+    /**
+     * We keep this class as private because it shouldn't be used anywhere else,
+     * it is a hack. It actually breaks a blocking queue contract. The reason
+     * for it is that Java ThreadPoolExecutor does not support blocking
+     * behaviour for the caller. So we override the non-blocking method of the
+     * queue to behave as a blocking one.
      */
-    class BlockingQueueHack<T> extends ArrayBlockingQueue<T> {
+    class AlwaysBlockingQueue<T> extends ArrayBlockingQueue<T> {
 
-        BlockingQueueHack(int size) {
+        private static final long serialVersionUID = 1L;
+
+        AlwaysBlockingQueue(int size) {
             super(size);
         }
 

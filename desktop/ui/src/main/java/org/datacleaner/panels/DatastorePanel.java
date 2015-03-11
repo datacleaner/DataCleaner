@@ -162,11 +162,12 @@ public class DatastorePanel extends DCPanel {
 
         setBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE);
 
-        WidgetUtils.addToGridBag(DCPanel.flow(_checkBox, datastoreNameLabel), this, 0, 0, GridBagConstraints.WEST, 1.0,
+        WidgetUtils.addToGridBag(_checkBox, this, 0, 0, GridBagConstraints.WEST);
+        WidgetUtils.addToGridBag(DCPanel.flow(datastoreNameLabel), this, 1, 0, GridBagConstraints.WEST, 1.0,
                 1.0);
-        WidgetUtils.addToGridBag(editButton, this, 1, 0, GridBagConstraints.EAST);
-        WidgetUtils.addToGridBag(queryButton, this, 2, 0, GridBagConstraints.EAST);
-        WidgetUtils.addToGridBag(removeButton, this, 3, 0, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(editButton, this, 2, 0, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(queryButton, this, 3, 0, GridBagConstraints.EAST);
+        WidgetUtils.addToGridBag(removeButton, this, 4, 0, GridBagConstraints.EAST);
     }
 
     public Datastore getDatastore() {

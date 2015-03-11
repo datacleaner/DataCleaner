@@ -20,16 +20,20 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.CompoundBorder;
@@ -42,6 +46,7 @@ import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -144,6 +149,21 @@ public class WelcomePanel extends DCSplashPanel {
                 final JButton readMoreButton = WidgetFactory.createDefaultButton("Compare the editions",
                         IconUtils.WEBSITE);
                 readMoreButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
+                
+                final JButton discussionForumButton = WidgetFactory.createDefaultButton("Visit the discussion forum",
+                        "images/menu/forum.png");
+                final OpenBrowserAction forumActionListener = new OpenBrowserAction("http://datacleaner.org/forum");
+                discussionForumButton
+                        .addActionListener(forumActionListener);
+                
+                final JLabel loveFeedbackAnimation = new JLabel(ImageManager.get().getImageIcon("images/window/we_love_community_and_feedback.gif"), JLabel.LEFT);
+                loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        forumActionListener.actionPerformed(null);
+                    }
+                });
 
                 final DCPanel innerPanel = new DCPanel();
                 innerPanel.setLayout(new VerticalLayout());
@@ -151,6 +171,11 @@ public class WelcomePanel extends DCSplashPanel {
                         0, 0)));
                 innerPanel.add(editorPane);
                 innerPanel.add(DCPanel.flow(tryProfessionalButton, readMoreButton));
+                innerPanel.add(Box.createVerticalStrut(80));
+                innerPanel.add(loveFeedbackAnimation);
+                innerPanel.add(Box.createVerticalStrut(20));
+                innerPanel.add(DCPanel.flow(discussionForumButton));
+                innerPanel.add(Box.createVerticalStrut(5));
 
                 result.setLayout(new VerticalLayout());
                 result.add(Box.createVerticalStrut(100));

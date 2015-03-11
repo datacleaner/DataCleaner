@@ -61,12 +61,12 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
 
         _threadFactory = new DaemonThreadFactory();
 
-		// This is a hack that forces the ThreadPoolExecutor to block if a caller tries to execute a
-		// task when the pool is fully loaded. This will prevent to not process input row
-		// inside a RunRowProcessingPublisherTask thread (CallerRunsPolicy). If processing of such row
-		// would take a long time, it would cause other processing threads starvation after they
-		// finish their current work.
-        _workQueue = new BlockingQueueHack<Runnable>(taskCapacity);
+        // This is a hack that forces the ThreadPoolExecutor to block if a caller tries to execute a
+        // task when the pool is fully loaded. This will prevent to not process input row
+        // inside a RunRowProcessingPublisherTask thread (CallerRunsPolicy). If processing of such row
+        // would take a long time, it would cause other processing threads starvation after they
+        // finish their current work.
+        _workQueue = new BlockingQueueHack<>(taskCapacity);
 
         _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
                 _threadFactory, rejectionHandler);
@@ -123,25 +123,25 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
         }
     }
 
-	/** We keep this class as private because it shouldn't be used anywhere else, it is a hack. It
-	 * actually breaks a blocking queue contract. The reason for it is that Java ThreadPoolExecutor
-	 * does not support blocking behaviour for the caller. So we override the non-blocking
-	 * method of the queue to behave as a blocking one.
-	 */
-	class BlockingQueueHack<T> extends ArrayBlockingQueue<T> {
+    /** We keep this class as private because it shouldn't be used anywhere else, it is a hack. It
+     * actually breaks a blocking queue contract. The reason for it is that Java ThreadPoolExecutor
+     * does not support blocking behaviour for the caller. So we override the non-blocking
+     * method of the queue to behave as a blocking one.
+     */
+    class BlockingQueueHack<T> extends ArrayBlockingQueue<T> {
 
-		BlockingQueueHack(int size) {
-			super(size);
-		}
+        BlockingQueueHack(int size) {
+            super(size);
+        }
 
-		public boolean offer(T task) {
-			try {
-				this.put(task);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-			return true;
-		}
-	}
+        public boolean offer(T task) {
+            try {
+                this.put(task);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+    }
 
 }

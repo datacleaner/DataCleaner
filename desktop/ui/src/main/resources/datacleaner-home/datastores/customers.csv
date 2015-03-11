@@ -1,4 +1,4 @@
-﻿"id","given_name","family_name","company","street","post_code","city","country","email","job_title","income"
+﻿"id","given_name","family_name","company","address_line","post_code","city","country","email","job_title","income"
 "3","Brice","Boers","Prudential Financial","1e Lambertusstraat 9","5921 JR","VENLO","NLD","Brice.Boers@domain.com","Executive Secretary","311174"
 "30","Roelant","van Honk","Sears Holdings","1e Lambertusstraat 9","5921 JR","VENLO","NLD","Roelant.van Honk@domain.com","Elevator Installer and Repairer","944516"
 "29","Karlos","Young","Tesoro","ROOM 528 B,140 COMMONWEALTH AVE","MA 2467","CHESTNUT HILL","USA","Karlos.Young@domain.com","Medical Assistant","856201"

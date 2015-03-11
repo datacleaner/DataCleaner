@@ -52,15 +52,24 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
     public MultiThreadedTaskRunner(int numThreads) {
         _numThreads = numThreads;
 
-        // if all threads are busy, newly submitted tasks will by run by caller
+        // if all threads are busy, newly submitted tasks will be run by caller
         final ThreadPoolExecutor.CallerRunsPolicy rejectionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
 
-        // there will be a minimum task capacity of 20, and preferably
-        // numThreads * 3 (to avoid blocking buffer behaviour)
-        final int taskCapacity = Math.max(20, numThreads * 3);
+        // there will be a minimum task capacity of 1000, and preferably
+        // numThreads * 10 (to avoid blocking buffer behaviour and to prepare
+        // tasks for working threads in advance)
+        final int taskCapacity = Math.max(1000, numThreads * 10);
 
         _threadFactory = new DaemonThreadFactory();
-        _workQueue = new ArrayBlockingQueue<Runnable>(taskCapacity);
+
+        // This queue is a buffer for tasks to be processed.
+        // It uses a hack that forces the ThreadPoolExecutor to block if a caller tries to submit a
+        // task when the pool is fully loaded. This will prevent to not process input row
+        // inside a RunRowProcessingPublisherTask thread (CallerRunsPolicy). If processing of such row
+        // would take a long time, it would cause other processing threads starvation after they
+        // finish their current work. So we rather block until the queue has place in it.
+        _workQueue = new BlockingQueueHack<>(taskCapacity);
+
         _executorService = new ThreadPoolExecutor(numThreads, numThreads, 60, TimeUnit.SECONDS, _workQueue,
                 _threadFactory, rejectionHandler);
     }
@@ -115,4 +124,26 @@ public final class MultiThreadedTaskRunner implements TaskRunner {
             task.run();
         }
     }
+
+    /** We keep this class as private because it shouldn't be used anywhere else, it is a hack. It
+     * actually breaks a blocking queue contract. The reason for it is that Java ThreadPoolExecutor
+     * does not support blocking behaviour for the caller. So we override the non-blocking
+     * method of the queue to behave as a blocking one.
+     */
+    class BlockingQueueHack<T> extends ArrayBlockingQueue<T> {
+
+        BlockingQueueHack(int size) {
+            super(size);
+        }
+
+        public boolean offer(T task) {
+            try {
+                this.put(task);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+    }
+
 }

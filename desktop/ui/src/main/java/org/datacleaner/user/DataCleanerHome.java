@@ -154,7 +154,7 @@ public final class DataCleanerHome {
         if (!isUsable(candidate)) {
             logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
             copyIfNonExisting(candidate, manager, "conf.xml");
-            copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CONTACTDATA);
+            copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CUSTOMERS);
             copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
             copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
             copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);

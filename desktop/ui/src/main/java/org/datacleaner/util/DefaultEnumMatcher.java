@@ -19,20 +19,17 @@
  */
 package org.datacleaner.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.util.HasAliases;
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.util.HasName;
 
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 /**
  * Default {@link EnumMatcher} implementation that uses a normalized/trimmed
@@ -41,6 +38,7 @@ import com.google.common.base.Strings;
  * <ul>
  * <li>The constant name of the enum</li>
  * <li>The name of the enum, if it implements {@link HasName}</li>
+ * <li>The keywords of the enum, if it implements {@link HasKeywords}</li>
  * <li>The alias(es) of the enum, if it implements {@link HasAliases}</li>
  * </ul>
  * 
@@ -83,40 +81,21 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
     }
 
     private void putMatch(String string, E e) {
-        final String normalizedString = normalize(string);
-        if (Strings.isNullOrEmpty(normalizedString)) {
-            return;
-        }
-        _exactMatchesMap.put(normalizedString, e);
-        
-        final Collection<String> secondaryMatches = findSecondaryMatchStrings(string);
-        for (String secondaryMatch : secondaryMatches) {
-            if (!_exactMatchesMap.containsKey(secondaryMatch)) {
-                _exactMatchesMap.put(secondaryMatch, e);            
-            }
+        final Collection<String> normalizedStrings = normalize(string, false);
+        for (String normalizedString : normalizedStrings) {
+            _exactMatchesMap.put(normalizedString, e);
         }
     }
 
     @Override
     public E suggestMatch(final String string) {
-        final String normalizedString = normalize(string);
-        if (Strings.isNullOrEmpty(normalizedString)) {
-            return null;
-        }
-        
-        final E exactMatchResult = _exactMatchesMap.get(normalizedString);
-        if (exactMatchResult != null) {
-            return exactMatchResult;
-        }
-        
-        final Collection<String> secondaryMatchStrings = findSecondaryMatchStrings(string);
-        for (String secondaryMatchString : secondaryMatchStrings) {
-            final E secondaryMatch = _exactMatchesMap.get(secondaryMatchString);
-            if (secondaryMatch != null) {
-                return secondaryMatch;
+        final Collection<String> normalizedStrings = normalize(string, true);
+        for (String normalizedString : normalizedStrings) {
+            final E exactMatchResult = _exactMatchesMap.get(normalizedString);
+            if (exactMatchResult != null) {
+                return exactMatchResult;
             }
         }
-
         return null;
     }
 
@@ -124,49 +103,41 @@ public class DefaultEnumMatcher<E extends Enum<?>> implements EnumMatcher<E> {
      * Normalizes the incoming string before doing matching
      * 
      * @param string
+     * @param aggressive
+     * @param tokenize
      * @return
      */
-    protected String normalize(String string) {
+    protected Collection<String> normalize(String string, boolean tokenize) {
         if (string == null) {
-            return null;
+            return Collections.emptyList();
         }
-        string = StringUtils.replaceWhitespaces(string, "");
-        string = StringUtils.replaceAll(string, "-", "");
-        string = StringUtils.replaceAll(string, "_", "");
-        string = StringUtils.replaceAll(string, "|", "");
-        string = StringUtils.replaceAll(string, "*", "");
-        string = string.toUpperCase();
-        return string;
-    }
-    
-    private Collection<String> findSecondaryMatchStrings(String string) {
-        if (string == null) {
-            return Collections.emptySet();
-        }
-        
-        string = StringUtils.replaceAll(string, "-", " ");
-        string = StringUtils.replaceAll(string, "_", " ");
-        string = StringUtils.replaceAll(string, "|", " ");
-        string = StringUtils.replaceAll(string, "*", " ");
-        string = StringUtils.replaceAll(string, "  ", " ");
-        string = string.trim();
-        string = string.toUpperCase();
-        
-        final Splitter splitter = Splitter.on(' ');
-        final List<String> words1 = splitter.splitToList(string);
+        if (tokenize) {
+            final Collection<String> result = new LinkedHashSet<>();
 
-        string = string.replaceAll("[0-9]", "");
-        
-        final List<String> words2 = splitter.splitToList(string);
-        
-        string = StringUtils.replaceWhitespaces(string, "");
-        
-        final List<String> words3 = splitter.splitToList(string);
-        
-        final Collection<String> result = new HashSet<String>();
-        result.addAll(words1);
-        result.addAll(words2);
-        result.addAll(words3);
-        return result;
+            result.addAll(normalize(string, false));
+
+            final Splitter splitter = Splitter.on(' ').omitEmptyStrings();
+            final List<String> tokens = splitter.splitToList(string);
+            for (String token : tokens) {
+                final Collection<String> normalizedTokens = normalize(token, false);
+                result.addAll(normalizedTokens);
+            }
+            return result;
+        } else {
+            string = StringUtils.replaceWhitespaces(string, "");
+            string = StringUtils.replaceAll(string, "-", "");
+            string = StringUtils.replaceAll(string, "_", "");
+            string = StringUtils.replaceAll(string, "|", "");
+            string = StringUtils.replaceAll(string, "*", "");
+            string = string.toUpperCase();
+            if (string.isEmpty()) {
+                return Collections.emptyList();
+            }
+            final String withoutNumbers = string.replaceAll("[0-9]", "");
+            if (withoutNumbers.equals(string) || withoutNumbers.isEmpty()) {
+                return Arrays.asList(string);
+            }
+            return Arrays.asList(string, withoutNumbers);
+        }
     }
 }

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
-	<name>Test extension</name>
-	<package>org.eobjects.foobar</package>
-	<description>This is just a dummy test file for unittesting the extension file reader.</description>
-</extension>

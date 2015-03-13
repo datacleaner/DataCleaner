@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.eobjects.datacleaner.monitor.jobwizard.movedata.CopyDataWizardTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.31 sec - in org.eobjects.datacleaner.monitor.jobwizard.movedata.CopyDataWizardTest

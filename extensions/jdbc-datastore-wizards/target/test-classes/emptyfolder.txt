@@ -1,1 +1,0 @@
-This file is here because git does not store empty folders, but the folder is needed to run GWT development mode properly from within Eclipse.

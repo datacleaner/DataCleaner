@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.eobjects.datacleaner.classloader.CompoundClassloaderTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.057 sec - in org.eobjects.datacleaner.classloader.CompoundClassloaderTest

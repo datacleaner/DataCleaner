@@ -40,6 +40,8 @@ public class DemoConfiguration {
 
     public static final String JOB_CUSTOMER_PROFILING = addFile("jobs/Customer profiling.analysis.xml");
     public static final String JOB_CUSTOMER_AGE_ANALYSIS = addFile("jobs/Customer age analysis.analysis.xml");
+    public static final String JOB_CUSTOMER_DEDUP_TRAINING = addFile("jobs/dedup_customers_training.analysis.xml");
+    public static final String JOB_CUSTOMER_DEDUP_DETECTION = addFile("jobs/dedup_customers_detection.analysis.xml");
     public static final String JOB_SFDC_DUPLICATE_DETECTION = addFile("jobs/Salesforce duplicate detection.analysis.xml");
     public static final String JOB_SFDC_DUPLICATE_TRAINING = addFile("jobs/Salesforce dedup training.analysis.xml");
     public static final String JOB_EXPORT_ORDERS_DATA = addFile("jobs/Export of Orders data mart.analysis.xml");
@@ -51,6 +53,8 @@ public class DemoConfiguration {
     public static final String OTHER_DEDUP_MODEL_SFDC_USERS = addFile("jobs/sfdc_dupe_model_users.dedupmodel.xml");
     public static final String OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_model.dedupmodel.xml");
     public static final String OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_reference.txt");
+    public static final String OTHER_DEDUP_MODEL_CUSTOMERS = addFile("jobs/dedup_customers.dedupmodel.xml");
+    public static final String OTHER_RESULT_DEDUP_CUSTOMERS = addFile("jobs/dedup_customers.analysis.result.dat");
 
     public static boolean isUnconfiguredDemoDatastore(Datastore ds) {
         if (ds instanceof SalesforceDatastore) {

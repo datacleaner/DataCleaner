@@ -8,7 +8,7 @@
 		</metadata-properties>
 	</job-metadata>
 	<source>
-		<data-context ref="customers.csv" />
+		<data-context ref="Customers" />
 		<columns>
 			<column id="col_0" path="id" type="STRING" />
 			<column id="col_1" path="given_name" type="STRING" />

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/pentaho-job/1.0"
+	xmlns:pentaho="http://eobjects.org/datacleaner/pentaho-job/1.0"
+	elementFormDefault="qualified">
+
+	<element name="pentaho-job" type="pentaho:pentahoJobType" />
+
+	<complexType name="pentahoJobType">
+		<all>
+			<element name="group-name" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="carte-hostname" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="carte-port" minOccurs="0" maxOccurs="1" type="int" />
+			<element name="carte-username" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="carte-password" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="transformation-name" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="transformation-id" minOccurs="0" maxOccurs="1" type="string" />
+		</all>
+	</complexType>
+
+</schema>

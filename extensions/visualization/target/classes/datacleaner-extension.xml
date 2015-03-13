@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Visualization analyzers</name>
+	<package>org.eobjects.datacleaner.visualization</package>
+	<description>Provides a number of analyzers for DataCleaner with emphasis on plotting and visualizing data in a graphical manner.</description>
+	<icon>org/eobjects/datacleaner/visualization/VisualizationExtension.png</icon>
+</extension>

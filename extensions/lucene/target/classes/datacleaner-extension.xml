@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://eobjects.org/datacleaner/extension/1.0">
+	<name>Lucene search for DataCleaner</name>
+	<package>org.eobjects.datacleaner.lucene</package>
+	<description>Use the power of Apache Lucene to search reference data in batch data cleansing jobs.</description>
+	<icon>org/eobjects/datacleaner/lucene/LuceneSearchCategory.png</icon>
+</extension>

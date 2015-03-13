@@ -125,11 +125,11 @@ public final class ExtensionPackage implements Serializable, HasName {
             // classes already loaded from the main locations.
 
             final ClassLoader jarFileClassLoader = ClassLoaderUtils.createClassLoader(getJarFiles(), null);
-            _allExtensionClassLoaders.add(jarFileClassLoader);
 
             final ClassLoader extensionLoader = new ExtensionClassLoader(jarFileClassLoader,
                     ClassLoaderUtils.getParentClassLoader(), "Extension: " + getName());
-            
+            _allExtensionClassLoaders.add(extensionLoader);
+
             _classLoader = extensionLoader;
         }
     }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0" xmlns:ns5="http://eobjects.org/datacleaner/custom-job/1.0">
+    <ns4:result-id>Sample Pentaho job-1364228636342</ns4:result-id>
+    <ns4:job-begin-date>2013-03-25T17:23:57.391+01:00</ns4:job-begin-date>
+    <ns4:job-end-date>2013-03-25T17:24:34.691+01:00</ns4:job-end-date>
+    <ns4:execution-status>SUCCESS</ns4:execution-status>
+    <ns4:trigger-type>MANUAL</ns4:trigger-type>
+    <ns4:triggered-by>admin</ns4:triggered-by>
+    <schedule>
+        <manual-trigger>true</manual-trigger>
+        <distributed-execution>false</distributed-execution>
+        <alerts/>
+    </schedule>
+    <ns4:log-output>2013-03-25 17:23:57 - Identified transformation: name=Row generator test, id=bdbb6452-e7c0-47cb-9047-b4f8238e1d85
+2013-03-25 17:23:57 - Transformation [Row generator test] was started.
+2013-03-25 17:23:57 - Job execution BEGIN
+2013-03-25 17:24:08 - Step 'A' progress: status='Running', linesWritten=27879369
+2013-03-25 17:24:08 - Step 'dummy' progress: status='Running', linesRead=27877489, linesWritten=27877491
+2013-03-25 17:24:18 - Step 'A' progress: status='Running', linesWritten=57652306
+2013-03-25 17:24:18 - Step 'dummy' progress: status='Running', linesRead=57651305, linesWritten=57651306
+2013-03-25 17:24:29 - Step 'A' progress: status='Running', linesWritten=87514848
+2013-03-25 17:24:29 - Step 'dummy' progress: status='Running', linesRead=87512448, linesWritten=87512449
+2013-03-25 17:24:34 - Step 'A' finished: status='Finished', linesWritten=100000000
+2013-03-25 17:24:34 - Step 'dummy' finished: status='Finished', linesRead=100000000, linesWritten=100000000
+2013-03-25 17:24:34 - Job execution SUCCESS</ns4:log-output>
+</ns4:execution-log>

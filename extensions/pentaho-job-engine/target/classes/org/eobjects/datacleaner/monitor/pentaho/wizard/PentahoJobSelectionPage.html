@@ -1,0 +1,24 @@
+<div style="width: 500px; min-height: 300px; background-repeat: no-repeat; background-position: bottom right; background-image: url('util/img/org/eobjects/datacleaner/monitor/pentaho/wizard/pentaho-logo.png');">
+	<p>Please select the Pentaho Data Integration transformation that
+		this job should trigger.</p>
+
+	<div style="margin-left: auto; margin-right: auto; text-align: center; width: 100%;">
+	<select name="transformation" style="width: 80%">
+		<#list transformations as transformation>
+			<option value="${transformation.id}">${transformation.name}</option>
+		</#list>
+	</select>
+	</div>
+	
+	<p>
+		<i>
+			This list of transformations was fetched from the Carte server dynamically. 
+			Add more contents to the server to have it appear here also.
+		</i>
+	</p>
+	
+	<p>
+		For your overview, jobs are placed in groups/categories. Please fill in a group name for this job here:
+	</p>
+	<p><input type="text" value="${groupName}" name="groupName" size="30" /></p>
+</div>

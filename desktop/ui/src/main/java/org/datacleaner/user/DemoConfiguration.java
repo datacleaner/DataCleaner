@@ -39,6 +39,7 @@ public class DemoConfiguration {
     public static final String DATASTORE_FILE_CUSTOMERS = addFile("datastores/customers.csv");
 
     public static final String JOB_CUSTOMER_PROFILING = addFile("jobs/Customer profiling.analysis.xml");
+    public static final String JOB_CUSTOMER_AGE_ANALYSIS = addFile("jobs/Customer age analysis.analysis.xml");
     public static final String JOB_SFDC_DUPLICATE_DETECTION = addFile("jobs/Salesforce duplicate detection.analysis.xml");
     public static final String JOB_SFDC_DUPLICATE_TRAINING = addFile("jobs/Salesforce dedup training.analysis.xml");
     public static final String JOB_EXPORT_ORDERS_DATA = addFile("jobs/Export of Orders data mart.analysis.xml");

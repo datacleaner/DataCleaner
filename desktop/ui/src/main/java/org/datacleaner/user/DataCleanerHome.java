@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -154,20 +155,11 @@ public final class DataCleanerHome {
         if (!isUsable(candidate)) {
             logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
             copyIfNonExisting(candidate, manager, "conf.xml");
-            copyIfNonExisting(candidate, manager, DemoConfiguration.DATASTORE_FILE_CUSTOMERS);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_EXPORT_ORDERS_DATA);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_CUSTOMER_PROFILING);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ADDRESS_CLEANSING);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_PHONE_CLEANSING);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_DETECTION);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_SFDC_DUPLICATE_TRAINING);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_SFDC_USERS);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_DETECTION);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_ORDERDB_DUPLICATE_TRAINING);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_COPY_EMPLOYEES_TO_CUSTOMERS);
-            copyIfNonExisting(candidate, manager, DemoConfiguration.JOB_US_CUSTOMER_STATE_ANALYSIS);
+
+            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+            for (String filePath : allFilePaths) {
+                copyIfNonExisting(candidate, manager, filePath);
+            }
         }
         return candidate;
     }

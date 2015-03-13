@@ -22,7 +22,9 @@ package org.datacleaner.widgets.visualization;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
@@ -148,9 +150,14 @@ class JobGraphNodeBuilder {
             graph.removeEdge(link);
         }
     }
-
+    
     private boolean isEdgeShortcutFor(DirectedGraph<Object, JobGraphLink> graph, JobGraphLink potentialShortcut,
             JobGraphLink otherEdge) {
+        return isEdgeShortcutFor(graph, potentialShortcut, otherEdge, new HashSet<JobGraphLink>());
+    }
+
+    private boolean isEdgeShortcutFor(DirectedGraph<Object, JobGraphLink> graph, JobGraphLink potentialShortcut,
+            JobGraphLink otherEdge, Set<JobGraphLink> checkedEdges) {
         if (otherEdge == null) {
             return false;
         }
@@ -169,8 +176,14 @@ class JobGraphNodeBuilder {
         }
         
         for (JobGraphLink inEdge : inEdges) {
-            if (!isEdgeShortcutFor(graph, potentialShortcut, inEdge)) {
-                return false;
+            if (checkedEdges.contains(inEdge)) {
+                // skip
+            } else {
+                // prevent recursive nightmares - see issue #326
+                checkedEdges.add(inEdge);
+                if (!isEdgeShortcutFor(graph, potentialShortcut, inEdge)) {
+                    return false;
+                }
             }
         }
         

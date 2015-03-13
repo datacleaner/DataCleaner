@@ -19,6 +19,12 @@
  */
 package org.datacleaner.user;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.SalesforceDatastore;
 
@@ -28,23 +34,28 @@ import org.datacleaner.connection.SalesforceDatastore;
  */
 public class DemoConfiguration {
 
-    public static final String DATASTORE_FILE_CUSTOMERS = "datastores/customers.csv";
+    private static final List<String> ALL_FILES = new ArrayList<>();
 
-    public static final String JOB_CUSTOMER_PROFILING = "jobs/Customer profiling.analysis.xml";
-    public static final String JOB_SFDC_DUPLICATE_DETECTION = "jobs/Salesforce duplicate detection.analysis.xml";
-    public static final String JOB_SFDC_DUPLICATE_TRAINING = "jobs/Salesforce dedup training.analysis.xml";
-    public static final String JOB_ADDRESS_CLEANSING = "jobs/Address cleansing with EasyDQ.analysis.xml";
-    public static final String JOB_PHONE_CLEANSING = "jobs/Phone number analysis with EasyDQ.analysis.xml";
-    public static final String JOB_EXPORT_ORDERS_DATA = "jobs/Export of Orders data mart.analysis.xml";
-    public static final String JOB_COPY_EMPLOYEES_TO_CUSTOMERS = "jobs/Copy employees to customer table.analysis.xml";
-    public static final String JOB_ORDERDB_DUPLICATE_DETECTION = "jobs/OrderDB Customers Duplicate detection.analysis.xml";
-    public static final String JOB_ORDERDB_DUPLICATE_TRAINING = "jobs/OrderDB Customers dedup Training.analysis.xml";
-    public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = "jobs/US Customer STATE check.analysis.xml";
+    public static final String DATASTORE_FILE_CUSTOMERS = addFile("datastores/customers.csv");
 
-    public static final String OTHER_DEDUP_MODEL_SFDC_USERS = "jobs/sfdc_dupe_model_users.dedupmodel.xml";
-    public static final String OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS = "jobs/orderdb_customers_dupe_model.dedupmodel.xml";
-    public static final String OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS = "jobs/orderdb_customers_dupe_reference.txt";
-    
+    public static final String JOB_CUSTOMER_PROFILING = addFile("jobs/Customer profiling.analysis.xml");
+    public static final String JOB_CUSTOMER_AGE_ANALYSIS = addFile("jobs/Customer age analysis.analysis.xml");
+    public static final String JOB_CUSTOMER_DEDUP_TRAINING = addFile("jobs/dedup_customers_training.analysis.xml");
+    public static final String JOB_CUSTOMER_DEDUP_DETECTION = addFile("jobs/dedup_customers_detection.analysis.xml");
+    public static final String JOB_SFDC_DUPLICATE_DETECTION = addFile("jobs/Salesforce duplicate detection.analysis.xml");
+    public static final String JOB_SFDC_DUPLICATE_TRAINING = addFile("jobs/Salesforce dedup training.analysis.xml");
+    public static final String JOB_EXPORT_ORDERS_DATA = addFile("jobs/Export of Orders data mart.analysis.xml");
+    public static final String JOB_COPY_EMPLOYEES_TO_CUSTOMERS = addFile("jobs/Copy employees to customer table.analysis.xml");
+    public static final String JOB_ORDERDB_DUPLICATE_DETECTION = addFile("jobs/OrderDB Customers Duplicate detection.analysis.xml");
+    public static final String JOB_ORDERDB_DUPLICATE_TRAINING = addFile("jobs/OrderDB Customers dedup Training.analysis.xml");
+    public static final String JOB_US_CUSTOMER_STATE_ANALYSIS = addFile("jobs/US Customer STATE check.analysis.xml");
+
+    public static final String OTHER_DEDUP_MODEL_SFDC_USERS = addFile("jobs/sfdc_dupe_model_users.dedupmodel.xml");
+    public static final String OTHER_DEDUP_MODEL_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_model.dedupmodel.xml");
+    public static final String OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_reference.txt");
+    public static final String OTHER_DEDUP_MODEL_CUSTOMERS = addFile("jobs/dedup_customers.dedupmodel.xml");
+    public static final String OTHER_RESULT_DEDUP_CUSTOMERS = addFile("jobs/dedup_customers.analysis.result.dat");
+
     public static boolean isUnconfiguredDemoDatastore(Datastore ds) {
         if (ds instanceof SalesforceDatastore) {
             final SalesforceDatastore sfdcDatastore = (SalesforceDatastore) ds;
@@ -53,5 +64,23 @@ public class DemoConfiguration {
             }
         }
         return false;
+    }
+
+    private static String addFile(String filePath) {
+        ALL_FILES.add(filePath);
+        return filePath;
+    }
+
+    public static List<String> getAllFilePaths() {
+        return Collections.unmodifiableList(ALL_FILES);
+    }
+
+    public static List<String> getAllJobFilePaths() {
+        return CollectionUtils.filter(ALL_FILES, new Predicate<String>() {
+            @Override
+            public Boolean eval(String path) {
+                return path.startsWith("jobs/") && path.endsWith(".analysis.xml");
+            }
+        });
     }
 }

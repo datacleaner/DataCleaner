@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<deduplication-model threshold="0.001" version="1">
+	<columns>
+		<column index="0" name="id" />
+		<column index="1" name="given_name" />
+		<column index="2" name="family_name" />
+		<column index="3" name="company" />
+		<column index="4" name="address_line" />
+		<column index="5" name="post_code" />
+		<column index="6" name="city" />
+		<column index="7" name="country" />
+		<column index="8" name="email" />
+		<column index="9" name="job_title" />
+		<column index="10" name="income_amount" />
+		<column index="11" name="income_currency" />
+		<column index="12" name="gender" />
+		<column index="13" name="country (standardized)" />
+		<column index="14" name="Age in years" />
+	</columns>
+	<preselection-model>
+		<subset>
+			<item column-index="0" />
+		</subset>
+		<subset>
+			<item column-index="8" />
+		</subset>
+		<subset>
+			<item column-index="10" />
+		</subset>
+		<subset>
+			<item column-index="9" />
+		</subset>
+		<subset>
+			<item column-index="4" />
+		</subset>
+		<subset>
+			<item column-index="2" />
+		</subset>
+		<subset>
+			<item column-index="5" />
+		</subset>
+		<subset>
+			<item column-index="1" />
+		</subset>
+		<subset>
+			<item column-index="3" />
+			<item column-index="6" />
+		</subset>
+		<subset>
+			<item column-index="6" />
+			<item column-index="14" />
+		</subset>
+		<subset>
+			<item column-index="3" />
+			<item column-index="14" />
+		</subset>
+		<subset>
+			<item column-index="3" />
+			<item column-index="7" />
+		</subset>
+		<subset>
+			<item column-index="3" />
+			<item column-index="13" />
+		</subset>
+		<subset>
+			<item column-index="3" />
+			<item column-index="11" />
+		</subset>
+	</preselection-model>
+	<matching-model>
+		<rule fixed-score="false">
+			<condition feature="exact" feature-modifier="empty-high"
+				column-index="8" operator="greater-than" threshold="0.5" />
+		</rule>
+	</matching-model>
+	<scoring-model bias="-0.7884927058238047">
+		<term feature="exact" feature-modifier="unmodified" column-index="8"
+			weight="1.8853513957762922" />
+		<term feature="exact" feature-modifier="empty-high" column-index="8"
+			weight="1.556901093628979" />
+		<term feature="exact" feature-modifier="empty-low" column-index="8"
+			weight="2.176970605155154" />
+		<term feature="exact" feature-modifier="multiple-parts"
+			column-index="8" weight="-2.224392568966855" />
+		<term feature="edit-distance" feature-modifier="unmodified"
+			column-index="8" weight="-0.454498477175316" />
+		<term feature="edit-distance" feature-modifier="empty-high"
+			column-index="8" weight="-0.3522414602123294" />
+		<term feature="edit-distance" feature-modifier="empty-low"
+			column-index="8" weight="-0.646329358356097" />
+		<term feature="edit-distance" feature-modifier="multiple-parts"
+			column-index="8" weight="-1.2100583075880567" />
+		<term feature="phonetic" feature-modifier="unmodified"
+			column-index="8" weight="1.1626381533361585" />
+		<term feature="phonetic" feature-modifier="empty-high"
+			column-index="8" weight="1.2907130137310352" />
+		<term feature="phonetic" feature-modifier="empty-low"
+			column-index="8" weight="1.8875750007756968" />
+		<term feature="phonetic" feature-modifier="multiple-parts"
+			column-index="8" weight="-0.3522628800579861" />
+	</scoring-model>
+</deduplication-model>

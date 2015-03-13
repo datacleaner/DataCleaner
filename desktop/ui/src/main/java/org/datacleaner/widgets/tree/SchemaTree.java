@@ -521,11 +521,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         panel.setLayout(new VerticalLayout());
         DCToolTip toolTip = new DCToolTip(this, panel);
         toolTip.addPropertyChangeListener("tiptext", new PropertyChangeListener() {
-            String oldToolText = "";
+            private String oldToolText = "";
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getNewValue().equals(oldToolText)) {
+                if (oldToolText.equals(evt.getNewValue())) {
                     return;
                 }
 

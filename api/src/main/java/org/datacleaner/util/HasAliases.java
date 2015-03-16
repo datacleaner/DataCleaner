@@ -26,8 +26,6 @@ import org.apache.metamodel.util.HasName;
  * aliases also. Aliases are typically used either to provide fault tolerance or
  * to support renaming components or properties and retaining backwards
  * compatibility.
- * 
- * 
  */
 public interface HasAliases {
 

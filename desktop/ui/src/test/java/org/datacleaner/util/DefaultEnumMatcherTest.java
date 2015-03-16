@@ -22,7 +22,7 @@ package org.datacleaner.util;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.HasName;
-import org.datacleaner.util.HasAliases;
+import org.datacleaner.metadata.ColumnMeaning;
 
 public class DefaultEnumMatcherTest extends TestCase {
 
@@ -72,14 +72,27 @@ public class DefaultEnumMatcherTest extends TestCase {
         assertEquals(TestEnum.FOO, matcher.suggestMatch("ber3"));
         assertEquals(null, matcher.suggestMatch("bor"));
     }
-    
+
     public void testSuggestBasedOnSecondaryMatch() throws Exception {
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("cleaner"));
-        assertEquals(TestEnum.FOO, matcher.suggestMatch("data"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("data_cleaner"));
+        assertEquals(TestEnum.FOO, matcher.suggestMatch("data1234cleaner"));
     }
 
     public void testDontSuggest() throws Exception {
         assertEquals(null, matcher.suggestMatch("fubiebar"));
     }
 
+    public void testDontMatchTooEager() throws Exception {
+        final EnumMatcher<ColumnMeaning> matcher = new DefaultEnumMatcher<>(ColumnMeaning.class);
+
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone no"));
+        assertEquals(ColumnMeaning.PHONE_PHONENUMBER, matcher.suggestMatch("Phone ID"));
+
+        assertEquals(null, matcher.suggestMatch("Customer"));
+
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Order ID"));
+        assertEquals(ColumnMeaning.PRODUCT_CODE, matcher.suggestMatch("Product ID"));
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Person ID"));
+        assertEquals(ColumnMeaning.KEY_PRIMARY, matcher.suggestMatch("Customer ID"));
+    }
 }

@@ -35,7 +35,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     OTHER("Disregard", "Other", "Nothing"),
 
-    KEY_PRIMARY("Primary Key", "Record ID", "ID", "Identifier", "key", "PKID", "Record key"),
+    KEY_PRIMARY("Primary Key", "ID", "Record ID", "Identifier", "key", "PKID", "Record key"),
 
     KEY_FOREIGN("Foreign Key", "FK"),
 
@@ -63,8 +63,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     COMPANY_REGISTRATION_NUMBER("Company registration number", "Reg number"),
 
-    COMPANY_NAME("Company name", "Company", "Organization", "Business", "Organisation", "Employer", "Firm",
-            "Workplace", "Works at", "Vendor", "Supplier", "Customer", "Customer name"),
+    COMPANY_NAME("Company name", "Company", "Organization", "Business", "Organisation name", "Employer", "Firm",
+            "Workplace", "Works at", "Vendor", "Vendor name", "Supplier", "Supplier name", "Customer name"),
 
     // PRODUCT oriented items
 
@@ -74,7 +74,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     PRODUCT_LINE("Product line", "Product type", "Product area"),
 
-    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount", "Quantity in stock", "Quantity ordered", "Quantity bought"),
+    PRODUCT_QUANTITY("Product quantity", "Quantity", "Product amount", "Quantity in stock", "Quantity ordered",
+            "Quantity bought"),
 
     // MONEY oriented items
 
@@ -105,7 +106,8 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // PHONE oriented items
 
-    PHONE_PHONENUMBER("Phone number", "Phone", "Mobile", "Mobile phone", "Cellphone", "Telefon", "Mobil", "Tel", "Mob"),
+    PHONE_PHONENUMBER("Phone number", "Phone", "Phone no", "Mobile", "Mobile phone", "Cellphone", "Telefon", "Mobil",
+            "Tel", "Tele", "Mob"),
 
     PHONE_FAX("Fax number", "Fax", "Faxnummer"),
 

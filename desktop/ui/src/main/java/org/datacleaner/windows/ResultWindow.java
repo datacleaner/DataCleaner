@@ -39,6 +39,7 @@ import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.schema.Table;
@@ -537,14 +538,20 @@ public final class ResultWindow extends AbstractWindow {
         };
     }
 
-    protected void updateButtonVisibility(boolean running) {
-        _cancelButton.setVisible(running);
+    protected void updateButtonVisibility(final boolean running) {
+        SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {
+                _cancelButton.setVisible(running);
 
-        for (JComponent pluggableButton : _pluggableButtons) {
-            pluggableButton.setVisible(!running);
-        }
-        _saveButton.setVisible(!running);
-        _publishButton.setVisible(!running);
-        _exportButton.setVisible(!running);
+                for (JComponent pluggableButton : _pluggableButtons) {
+                    pluggableButton.setVisible(!running);
+                }
+                _saveButton.setVisible(!running);
+                _publishButton.setVisible(!running);
+                _exportButton.setVisible(!running);
+            }
+        });
     }
 }

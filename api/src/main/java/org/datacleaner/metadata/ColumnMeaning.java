@@ -64,7 +64,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
     COMPANY_REGISTRATION_NUMBER("Company registration number", "Reg number"),
 
     COMPANY_NAME("Company name", "Company", "Organization", "Business", "Organisation name", "Employer", "Firm",
-            "Workplace", "Works at", "Vendor name", "Supplier name", "Customer name"),
+            "Workplace", "Works at", "Vendor", "Vendor name", "Supplier", "Supplier name", "Customer name"),
 
     // PRODUCT oriented items
 

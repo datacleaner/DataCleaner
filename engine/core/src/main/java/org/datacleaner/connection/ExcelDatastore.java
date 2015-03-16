@@ -79,7 +79,7 @@ public final class ExcelDatastore extends UsageAwareDatastore<UpdateableDataCont
 
     @Override
     public UpdateableDatastoreConnection openConnection() {
-        DatastoreConnection connection = super.openConnection();
+        final DatastoreConnection connection = super.openConnection();
         return (UpdateableDatastoreConnection) connection;
     }
 

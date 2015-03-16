@@ -19,6 +19,8 @@
  */
 package org.datacleaner.connection;
 
+import java.util.List;
+
 import org.apache.metamodel.elasticsearch.ElasticSearchDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.elasticsearch.client.transport.TransportClient;
@@ -30,7 +32,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 /**
  * Datastore providing access to an ElasticSearch index.
  */
-public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDataContext> {
+public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDataContext> implements
+        UpdateableDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,7 +80,13 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         } else {
             dataContext = new ElasticSearchDataContext(client, _indexName, _tableDefs);
         }
-        return new DatastoreConnectionImpl<ElasticSearchDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<ElasticSearchDataContext>(dataContext, this);
+    }
+
+    @Override
+    public UpdateableDatastoreConnection openConnection() {
+        final DatastoreConnection connection = super.openConnection();
+        return (UpdateableDatastoreConnection) connection;
     }
 
     public SimpleTableDef[] getTableDefs() {
@@ -99,10 +108,18 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public String getIndexName() {
         return _indexName;
     }
-    
 
     @Override
     public String toString() {
         return "ElasticSearchDatastore[name=" + getName() + "]";
+    }
+
+    @Override
+    protected void decorateIdentity(List<Object> identifiers) {
+        super.decorateIdentity(identifiers);
+        identifiers.add(_clusterName);
+        identifiers.add(_hostname);
+        identifiers.add(_indexName);
+        identifiers.add(_tableDefs);
     }
 }

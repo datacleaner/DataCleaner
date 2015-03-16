@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 
-public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore, UsernameDatastore {
+public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext> implements UpdateableDatastore,
+        UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
 
@@ -97,10 +98,10 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
     @Override
     protected UsageAwareDatastoreConnection<UpdateableDataContext> createDatastoreConnection() {
         try {
-            Mongo mongo = new Mongo(_hostname, _port);
-            DB mongoDb = mongo.getDB(_databaseName);
+            final Mongo mongo = new Mongo(_hostname, _port);
+            final DB mongoDb = mongo.getDB(_databaseName);
             if (_username != null && _password != null) {
-                boolean authenticated = mongoDb.authenticate(_username, _password);
+                final boolean authenticated = mongoDb.authenticate(_username, _password);
                 if (!authenticated) {
                     logger.warn("Autheticate returned false!");
                 }
@@ -123,7 +124,7 @@ public class MongoDbDatastore extends UsageAwareDatastore<UpdateableDataContext>
 
     @Override
     public UpdateableDatastoreConnection openConnection() {
-        DatastoreConnection connection = super.openConnection();
+        final DatastoreConnection connection = super.openConnection();
         return (UpdateableDatastoreConnection) connection;
     }
 

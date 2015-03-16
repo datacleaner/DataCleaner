@@ -140,7 +140,8 @@ public class ClusterTestHelper {
                 .addTransformer(MockTransformerThatWillFail.class);
         transformer.addInputColumns(jobBuilder.getSourceColumns());
 
-        final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        final AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = jobBuilder
+                .addAnalyzer(CompletenessAnalyzer.class);
         analyzer.addInputColumns(transformer.getOutputColumns());
         analyzer.setConfiguredProperty("Conditions",
                 new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL });
@@ -198,11 +199,11 @@ public class ClusterTestHelper {
         // run the job in a distributed fashion
         final DistributedAnalysisRunner runner = new DistributedAnalysisRunner(configuration, clusterManager);
         final AnalysisResultFuture resultFuture = runner.run(job);
+        jobBuilder.close();
 
         Assert.assertTrue(resultFuture.getStatus() == JobStatus.NOT_FINISHED
                 || resultFuture.getStatus() == JobStatus.SUCCESSFUL);
 
-        jobBuilder.close();
         resultFuture.await();
 
         if (resultFuture.isErrornous()) {
@@ -267,7 +268,8 @@ public class ClusterTestHelper {
                 "CUSTOMERS.CONTACTLASTNAME", "CUSTOMERS.COUNTRY", "CUSTOMERS.ADDRESSLINE2");
 
         List<MetaModelInputColumn> cols = jobBuilder.getSourceColumns();
-        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder
+                .addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(cols);
         Condition[] conditions = new CompletenessAnalyzer.Condition[cols.size()];
         for (int i = 0; i < conditions.length; i++) {
@@ -286,14 +288,15 @@ public class ClusterTestHelper {
         final DistributedAnalysisRunner runner = new DistributedAnalysisRunner(configuration, clusterManager);
         final AnalysisResultFuture resultFuture = runner.run(job);
 
-        Assert.assertEquals(JobStatus.NOT_FINISHED, resultFuture.getStatus());
-
         jobBuilder.close();
-        resultFuture.await();
 
-        if (resultFuture.isErrornous()) {
-            List<Throwable> errors = resultFuture.getErrors();
-            throw errors.get(0);
+        if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
+            resultFuture.await();
+
+            if (resultFuture.isErrornous()) {
+                List<Throwable> errors = resultFuture.getErrors();
+                throw errors.get(0);
+            }
         }
 
         Assert.assertEquals(JobStatus.SUCCESSFUL, resultFuture.getStatus());
@@ -431,13 +434,13 @@ public class ClusterTestHelper {
             final DistributedAnalysisRunner runner = new DistributedAnalysisRunner(configuration, clusterManager);
             final AnalysisResultFuture resultFuture = runner.run(job);
 
-            Assert.assertEquals(JobStatus.NOT_FINISHED, resultFuture.getStatus());
+            if (resultFuture.getStatus() == JobStatus.NOT_FINISHED) {
+                resultFuture.await();
 
-            resultFuture.await();
-
-            if (resultFuture.isErrornous()) {
-                List<Throwable> errors = resultFuture.getErrors();
-                throw errors.get(0);
+                if (resultFuture.isErrornous()) {
+                    List<Throwable> errors = resultFuture.getErrors();
+                    throw errors.get(0);
+                }
             }
 
             Assert.assertEquals(JobStatus.SUCCESSFUL, resultFuture.getStatus());
@@ -490,7 +493,8 @@ public class ClusterTestHelper {
                 equalsFilter.addInputColumn(jobBuilder.getSourceColumnByName("CUSTOMERNUMBER"));
                 equalsFilter.getComponentInstance().setValues(new String[] { "-1000000" });
 
-                final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder.addAnalyzer(StringAnalyzer.class);
+                final AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzer = jobBuilder
+                        .addAnalyzer(StringAnalyzer.class);
                 stringAnalyzer.addInputColumns(jobBuilder.getAvailableInputColumns(String.class));
                 stringAnalyzer.setRequirement(equalsFilter, ValidationCategory.VALID);
 

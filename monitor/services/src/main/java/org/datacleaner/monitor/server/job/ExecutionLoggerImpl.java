@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.util.StringUtils;
+import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.monitor.events.JobExecutedEvent;
 import org.datacleaner.monitor.events.JobFailedEvent;
 import org.datacleaner.monitor.job.ExecutionLogger;
@@ -102,13 +103,16 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
     @Override
     public void setStatusFailed(Object component, Object data, Throwable throwable) {
-        boolean erronuousBefore = _erronuous.getAndSet(true);
+        final boolean erronuousBefore = _erronuous.getAndSet(true);
         if (erronuousBefore) {
-            // don't report another error
-            if (throwable != null) {
+            if (throwable instanceof PreviousErrorsExistException) {
+                // don't report PreviousErrorsExistExceptions
                 logger.error(
                         "More than one error was reported, but only the first will be put into the user-log. This error was also reported: "
                                 + throwable.getMessage(), throwable);
+            } else {
+                log("\n - Additional exception stacktrace:", throwable);
+                flushLog();
             }
         } else {
             _execution.setJobEndDate(new Date());

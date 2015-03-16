@@ -1,0 +1,15 @@
+Data warehouse developer,ETL developer,Data warehouse architect,DW architect,Data specialist,BI Architect,BI developer,SQL developer,Senior Data architect,Data architect,Data scientist,DQ consultant,BI consultant,ETL,statistician,BI specialist
+Software developer,developer,software engineer,senior software developer,junior software developer,web developer,programmer,engineer,Systems engineer,Computer engineer,Application developer,Senior software engineer,dev,eng,staff engineer,enginer,SE,ing,ing.,Sr. Software engineer,Senior Developer,Systems engineer,ING sistemas,Software architect
+Consultant,Senior consultant,Junior consultant,Principal consultant,IT Specialist,IT,Architect,IT Architect,Enterprise Architect,Chief architect,Sr. Consultant,Sr consultant,Solution architect,Technical architect,Consultor
+Analyst,data analyst,business analyst,BI analyst,system analyst,market analyst,IT analyst,Senior Analyst,Analist,Director informatics,tester,Programmer/Analyst,Information Architect,Sr Business Analyst
+Marketeer,Marketing officer,marketing specialist,marketing director,marketing manager,head of marketing,digital marketing manager,digital marketing assistant,community builder,marketing
+Database administrator,db,database manager,database architect,database designer,database specialist,database analyst,DBA,Network Administrator
+Graphical designer,Designer,Artist,Graphical artist,UI designer,UX designer
+Sales,sales manager,account manager,key account manager,partner manager
+Executive,director,vp,ceo,cto,cfo,coo,cdo,cio,cmo,president,vice-president,owner,founder,senior director,Partner,Managing director,VP Technology,Principal,SVP
+Manager,Product Manager,Product Architect,Project Manager,CRM manager,General manager,Development manager,BI manager,Data manager,Data quality manager,IT manager,Sr Manager,IT Director,Head of Data Management
+Academic,Teacher,Training assitant,Trainer,Instructor,Professor,research,researcher
+Student/Intern,Intern,student,internship,student assistant,stud,study,estudiante
+Independent,Self,Self-employed,Independent consultant,employer
+(honorific),mr,ms,mrs,mister,miss,dr,phd,dr.,BA,MD,ms.,Dhr,mr.
+(dirt),n/a,xxx,aa,ab,-,.,non,none,title,m,tp,hola,private,datacleaner,data cleaner,Sr.,tp,PM,NA,Test,a,tt,sr,PE,de,name,other,SA,DA,ss,am,mss,123123,DQ,ss,AM,BI,abc,home,computer,staff,asd,cc,s,exe,as,fancy,data,yes,no,xx,mc

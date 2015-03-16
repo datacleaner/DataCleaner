@@ -4,39 +4,53 @@
 
 	<configuration-metadata>
 		<configuration-name>DataCleaner configuration</configuration-name>
-		<configuration-description>Configures DataCleaner's initial environment.
-			This includes example datastores and example reference data.</configuration-description>
+		<configuration-description>Configures DataCleaner's initial
+			environment.
+			This includes example datastores and example reference
+			data.
+		</configuration-description>
 		<configuration-version>4.0</configuration-version>
 		<author>DataCleaner.org</author>
 	</configuration-metadata>
 
 	<datastore-catalog>
-		<jdbc-datastore name="orderdb" description="Example database for use with DataCleaner">
+		<jdbc-datastore name="orderdb"
+			description="Example database for use with DataCleaner">
 			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
-		
-		<salesforce-datastore name="Salesforce.com" description="Example connection to SFDC - credentials not provided">
+
+		<salesforce-datastore name="Salesforce.com"
+			description="Example connection to SFDC - credentials not provided">
 			<username>username</username>
 			<password>password</password>
 			<security-token>token</security-token>
 		</salesforce-datastore>
-		
-		<csv-datastore name="Customers" description="Example CSV-file with representing customers' details">
+
+		<csv-datastore name="Customers"
+			description="Example CSV-file with representing customers' details">
 			<filename>datastores/customers.csv</filename>
 			<encoding>UTF8</encoding>
 			<quote-char>"</quote-char>
 			<separator-char>,</separator-char>
 		</csv-datastore>
-		
+
 	</datastore-catalog>
 
 	<reference-data-catalog>
 		<dictionaries>
 		</dictionaries>
 		<synonym-catalogs>
+			<synonym-catalogs>
+				<text-file-synonym-catalog name="Job titles"
+					description="Example synonym catalog used for standardizing job titles">
+					<filename>datastores/job_title_synonyms.txt</filename>
+					<encoding>UTF8</encoding>
+					<case-sensitive>false</case-sensitive>
+				</text-file-synonym-catalog>
+			</synonym-catalogs>
 		</synonym-catalogs>
 	</reference-data-catalog>
 

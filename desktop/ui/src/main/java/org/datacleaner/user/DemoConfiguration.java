@@ -40,6 +40,7 @@ public class DemoConfiguration {
 
     public static final String JOB_CUSTOMER_PROFILING = addFile("jobs/Customer profiling.analysis.xml");
     public static final String JOB_CUSTOMER_AGE_ANALYSIS = addFile("jobs/Customer age analysis.analysis.xml");
+    public static final String JOB_CUSTOMER_JOB_TITLE_ANALYTICS = addFile("jobs/Job title analytics.analysis.xml");
     public static final String JOB_CUSTOMER_DEDUP_TRAINING = addFile("jobs/dedup_customers_training.analysis.xml");
     public static final String JOB_CUSTOMER_DEDUP_DETECTION = addFile("jobs/dedup_customers_detection.analysis.xml");
     public static final String JOB_SFDC_DUPLICATE_DETECTION = addFile("jobs/Salesforce duplicate detection.analysis.xml");

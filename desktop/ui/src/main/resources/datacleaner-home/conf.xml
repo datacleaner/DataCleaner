@@ -43,14 +43,12 @@
 		<dictionaries>
 		</dictionaries>
 		<synonym-catalogs>
-			<synonym-catalogs>
-				<text-file-synonym-catalog name="Job titles"
-					description="Example synonym catalog used for standardizing job titles">
-					<filename>datastores/job_title_synonyms.txt</filename>
-					<encoding>UTF8</encoding>
-					<case-sensitive>false</case-sensitive>
-				</text-file-synonym-catalog>
-			</synonym-catalogs>
+			<text-file-synonym-catalog name="Job titles"
+				description="Example synonym catalog used for standardizing job titles">
+				<filename>datastores/job_title_synonyms.txt</filename>
+				<encoding>UTF8</encoding>
+				<case-sensitive>false</case-sensitive>
+			</text-file-synonym-catalog>
 		</synonym-catalogs>
 	</reference-data-catalog>
 

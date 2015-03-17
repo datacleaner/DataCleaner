@@ -213,7 +213,7 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         Point point = _points.get(vertex);
         if (point == null) {
             logger.warn("Vertex {} has no assigned coordinate!", vertex);
-            return new Point(0, 0);
+            point = new Point(0, 0);
         }
         _transformed = true;
         return point;

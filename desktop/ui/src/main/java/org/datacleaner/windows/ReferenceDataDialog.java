@@ -121,11 +121,11 @@ public final class ReferenceDataDialog extends AbstractDialog {
         final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
                 .getInstance(StringPatternListPanel.class);
 
-        _tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
+        _tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage(IconUtils.DICTIONARY_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(dictionaryListPanel));
-        _tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
+        _tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage(IconUtils.SYNONYM_CATALOG_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(synonymCatalogListPanel));
-        _tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
+        _tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage(IconUtils.STRING_PATTERN_IMAGEPATH, IconUtils.ICON_SIZE_TAB)),
                 scrolleable(stringPatternListPanel));
 
         _tabbedPane.setUnclosableTab(0);

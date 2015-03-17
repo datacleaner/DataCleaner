@@ -37,7 +37,7 @@
 				<property name="CoordinatesX">253</property>
 			</metadata-properties>
 			<properties>
-                <property name="Model" value="jobs/orderdb_dupe_model.dedupmodel.xml"/>
+                <property name="Model" value="jobs/orderdb_customers_dupe_model.dedupmodel.xml"/>
 				<property name="Output groups" value="true" />
 				<property name="Keep and show all columns" value="true" />
 				<property name="Server hostname" value="&lt;null&gt;" />

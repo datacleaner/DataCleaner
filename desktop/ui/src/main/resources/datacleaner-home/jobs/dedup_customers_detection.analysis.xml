@@ -75,7 +75,7 @@
 			</metadata-properties>
 			<properties>
 				<property name="Model"
-					value="C:\Users\kaspers\Desktop\dedup_customers.dedupmodel.xml" />
+					value="jobs/dedup_customers.dedupmodel.xml" />
 				<property name="Output groups" value="true" />
 				<property name="Keep and show all columns" value="true" />
 				<property name="Server hostname" value="&lt;null&gt;" />

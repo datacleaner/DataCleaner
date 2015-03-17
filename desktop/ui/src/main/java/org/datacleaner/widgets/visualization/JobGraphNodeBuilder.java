@@ -181,7 +181,7 @@ class JobGraphNodeBuilder {
             } else {
                 // prevent recursive nightmares - see issue #326
                 checkedEdges.add(inEdge);
-                if (!isEdgeShortcutFor(graph, potentialShortcut, inEdge)) {
+                if (!isEdgeShortcutFor(graph, potentialShortcut, inEdge, checkedEdges)) {
                     return false;
                 }
             }

@@ -53,7 +53,7 @@ public class RunAnalysisActionListener implements ActionListener {
         }
 
         final ResultWindow window = _resultWindowProvider.get();
-        window.setVisible(true);
+        window.open();
         window.startAnalysis();
     }
 

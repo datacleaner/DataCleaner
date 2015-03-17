@@ -42,6 +42,12 @@ public class SystemProperties {
     public static final String UI_DESKTOP_WELCOME_PANEL = "datacleaner.ui.desktop.panel";
 
     /**
+     * Property which defines the text of the "new job" button on the welcome
+     * panel
+     */
+    public static final String UI_DESKTOP_TEXT_NEW_JOB_BUTTON = "datacleaner.ui.desktop.text.button.newjob";
+
+    /**
      * Identifies the name of a client that is embedding datacleaner.
      */
     public static final String EMBED_CLIENT = "datacleaner.embed.client";

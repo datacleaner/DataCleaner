@@ -22,9 +22,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.datacleaner.extensions.ClassLoaderUtils;
-import org.datacleaner.extensions.CompoundClassLoader;
-import org.datacleaner.extensions.ExtensionClassLoader;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -47,12 +44,10 @@ public class CompoundClassloaderTest {
         final ClassLoader globalParent = ClassLoaderUtils.getParentClassLoader();
         final File[] jarFiles = new File[] { new File("src/test/resources/FooBarPlugin.jar") };
 
-        final ClassLoader parent1 = ClassLoaderUtils.createClassLoader(jarFiles, null);
-        final ClassLoader c1 = new ExtensionClassLoader(parent1, globalParent, "Extension1");
+        final ClassLoader c1 = ClassLoaderUtils.createClassLoader(jarFiles, globalParent);
 
         final File[] classFiles = new File[] { new File("target/test-classes") };
-        final ClassLoader parent2 = ClassLoaderUtils.createClassLoader(classFiles, null);
-        final ClassLoader c2 = new ExtensionClassLoader(parent2, globalParent, "Extension2");
+        final ClassLoader c2 = ClassLoaderUtils.createClassLoader(classFiles, globalParent);
 
         final Collection<ClassLoader> loaders = new ArrayList<ClassLoader>();
         loaders.add(c1);

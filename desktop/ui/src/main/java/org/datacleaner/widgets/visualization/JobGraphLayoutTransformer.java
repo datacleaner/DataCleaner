@@ -98,8 +98,10 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
             }
         }
         for (Object vertex : vertices) {
-            final Point point = createPoint(vertex, x, false);
-            _points.put(vertex, point);
+            if (!_points.containsKey(vertex)) {
+                final Point point = createPoint(vertex, x, false);
+                _points.put(vertex, point);
+            }
 
             createPrerequisitePoints(vertex, x);
         }

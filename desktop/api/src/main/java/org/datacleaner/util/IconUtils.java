@@ -117,6 +117,7 @@ public final class IconUtils {
 
     public static final String ACTION_CLOSE_BRIGHT = "images/actions/close_bright.png";
     public static final String ACTION_CLOSE_DARK = "images/actions/close_dark.png";
+    public static final String ACTION_COPY = "images/actions/copy.png";
     public static final String ACTION_CANCEL = "images/actions/cancel.png";
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";

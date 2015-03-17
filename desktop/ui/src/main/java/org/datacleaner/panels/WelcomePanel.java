@@ -149,14 +149,14 @@ public class WelcomePanel extends DCSplashPanel {
                 final JButton readMoreButton = WidgetFactory.createDefaultButton("Compare the editions",
                         IconUtils.WEBSITE);
                 readMoreButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/editions"));
-                
+
                 final JButton discussionForumButton = WidgetFactory.createDefaultButton("Visit the discussion forum",
                         "images/menu/forum.png");
                 final OpenBrowserAction forumActionListener = new OpenBrowserAction("http://datacleaner.org/forum");
-                discussionForumButton
-                        .addActionListener(forumActionListener);
-                
-                final JLabel loveFeedbackAnimation = new JLabel(ImageManager.get().getImageIcon("images/window/we_love_community_and_feedback.gif"), JLabel.LEFT);
+                discussionForumButton.addActionListener(forumActionListener);
+
+                final JLabel loveFeedbackAnimation = new JLabel(ImageManager.get().getImageIcon(
+                        "images/window/we_love_community_and_feedback.gif"), JLabel.LEFT);
                 loveFeedbackAnimation.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 loveFeedbackAnimation.addMouseListener(new MouseAdapter() {
                     @Override
@@ -187,7 +187,9 @@ public class WelcomePanel extends DCSplashPanel {
     }
 
     private JComponent createButtonPanel() {
-        final JButton newJobButton = WidgetFactory.createPrimaryButton("New job from scratch", IconUtils.MODEL_JOB);
+        final String newJobText = SystemProperties.getString(SystemProperties.UI_DESKTOP_TEXT_NEW_JOB_BUTTON,
+                "Build new job");
+        final JButton newJobButton = WidgetFactory.createPrimaryButton(newJobText, IconUtils.MODEL_JOB);
         newJobButton.addActionListener(new ActionListener() {
 
             @Override

@@ -21,6 +21,8 @@ package org.datacleaner.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.WidgetUtils;
@@ -41,21 +43,34 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 		setBackgroundPainter(null);
 	}
 
-	public void add(JXTaskPane group) {
-		DCPanel panel = createTaskPanePanel(group);
+	public void add(JXTaskPane taskPane) {
+		DCPanel panel = createTaskPanePanel(taskPane);
 		super.add(panel);
 	}
 
-	public void add(JXTaskPane group, int index) {
-		DCPanel panel = createTaskPanePanel(group);
+	public void add(JXTaskPane taskPane, int index) {
+		DCPanel panel = createTaskPanePanel(taskPane);
 		super.add(panel, index);
 	}
 
-	private DCPanel createTaskPanePanel(JXTaskPane group) {
-		DCPanel panel = new DCPanel();
+	private DCPanel createTaskPanePanel(JXTaskPane taskPane) {
+		final DCPanel panel = new DCPanel();
 		panel.setBorder(WidgetUtils.BORDER_SHADOW);
 		panel.setLayout(new BorderLayout());
-		panel.add(group, BorderLayout.CENTER);
+		panel.add(taskPane, BorderLayout.CENTER);
+
+		taskPane.addComponentListener(new ComponentAdapter() {
+		    @Override
+		    public void componentHidden(ComponentEvent e) {
+		        panel.setVisible(false);
+		    }
+		    
+		    @Override
+		    public void componentShown(ComponentEvent e) {
+		        panel.setVisible(true);
+		    }
+		});
+		
 		return panel;
 	}
 

@@ -233,6 +233,16 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         logger.debug("Graph released");
 
         if (isLeftClick(me)) {
+            if(v instanceof ComponentBuilder){
+                final ComponentBuilder componentBuilder = (ComponentBuilder) v;
+
+                final boolean ended = _linkPainter.endLink(componentBuilder, me);
+                if (ended) {
+                    me.consume();
+                    return;
+                }
+            }
+
             if (_pressedPoint != null && _pressedPoint.equals(me.getPoint())) {
                 // avoid updating any coordinates when nothing has been moved
                 return;
@@ -260,6 +270,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             if (selectedObjects.length > 0) {
                 _graphContext.getJobGraph().refresh();
             }
+            
         } else if (isRightClick(me)) {
             if (v instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) v;
@@ -282,11 +293,6 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                 if (me.getClickCount() == 2) {
                     _clickCaught = true;
                     onComponentDoubleClicked(componentBuilder, me);
-                } else {
-                    final boolean ended = _linkPainter.endLink(componentBuilder, me);
-                    if (ended) {
-                        me.consume();
-                    }
                 }
             } else if (v instanceof Table) {
                 final Table table = (Table) v;

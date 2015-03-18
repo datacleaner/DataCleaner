@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -32,8 +33,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.IconUtils;
@@ -118,13 +121,28 @@ public class ComboButton extends JPanel {
 
     /**
      * Adds a button to this {@link ComboButton}. Beware that this method does
-     * change the styling (colors, borders etc.) of the button to make it fit the {@link ComboButton}.
+     * change the styling (colors, borders etc.) of the button to make it fit
+     * the {@link ComboButton}.
      * 
      * @param button
      */
     public void addButton(AbstractButton button) {
         WidgetUtils.setDefaultButtonStyle(button);
-        button.setBorder(new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9, WidgetUtils.BORDER_WIDE_WIDTH - 1, 9));
+        final EmptyBorder baseBorder = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH - 1, 9,
+                WidgetUtils.BORDER_WIDE_WIDTH - 1, 9);
+        if (getComponentCount() == 0) {
+            button.setBorder(baseBorder);
+        } else {
+            final Component lastComponent = getComponent(getComponentCount() - 1);
+            if (lastComponent instanceof AbstractButton) {
+                // previous component was also a button - add a line on the left
+                // side
+                final Border outsideBorder = new MatteBorder(0, 1, 0, 0, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+                button.setBorder(new CompoundBorder(outsideBorder, baseBorder));
+            } else {
+                button.setBorder(baseBorder);
+            }
+        }
         button.setOpaque(false);
         _buttons.add(button);
 

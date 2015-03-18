@@ -31,9 +31,9 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.panels.DCPanel;
@@ -75,17 +75,17 @@ public class ReorderColumnsActionListener implements ActionListener {
 
         final DCTable table = new DCTable();
         table.setRowHeight(22);
+        table.setColumnControlVisible(false);
 
         updateTableModel(table, list);
 
         final Image image = ImageManager.get().getImage(IconUtils.ACTION_REORDER_COLUMNS);
 
         final DCPanel tablePanel = table.toPanel();
-        tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
 
         final JDialog dialog = new JDialog();
 
-        final JButton saveButton = WidgetFactory.createPrimaryButton("Save order", IconUtils.ACTION_REORDER_COLUMNS);
+        final JButton saveButton = WidgetFactory.createPrimaryButton("Save order", IconUtils.ACTION_SAVE_BRIGHT);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,7 +93,7 @@ public class ReorderColumnsActionListener implements ActionListener {
                 dialog.dispose();
             }
         });
-        
+
         final JButton cancelButton = WidgetFactory.createDefaultButton("Cancel", IconUtils.ACTION_CANCEL);
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -101,22 +101,22 @@ public class ReorderColumnsActionListener implements ActionListener {
                 dialog.dispose();
             }
         });
-        
+
         final DCPanel buttonPanel = DCPanel.flow(Alignment.CENTER, saveButton, cancelButton);
 
         final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.setLayout(new BorderLayout());
-        panel.add(tablePanel, BorderLayout.CENTER);
+        panel.add(WidgetUtils.decorateWithShadow(tablePanel), BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
         dialog.setModal(true);
         dialog.setTitle("Reorder columns");
         dialog.setIconImage(image);
         dialog.getContentPane().add(panel);
-        Dimension size = panel.getPreferredSize();
+        final Dimension size = panel.getPreferredSize();
         size.width = Math.max(size.width, 300);
-        size.height = Math.max(size.height, 400);
+        size.height = Math.max(size.height, 600);
         dialog.setSize(size);
         WidgetUtils.centerOnScreen(dialog);
         dialog.setVisible(true);
@@ -158,6 +158,7 @@ public class ReorderColumnsActionListener implements ActionListener {
 
             final DCPanel buttonPanel = new DCPanel();
             buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+            buttonPanel.add(Box.createHorizontalStrut(5));
             if (i == list.size() - 1) {
                 buttonPanel.add(Box.createHorizontalStrut(moveDownButton.getPreferredSize().width));
             } else {
@@ -175,6 +176,10 @@ public class ReorderColumnsActionListener implements ActionListener {
         }
 
         table.setModel(tableModel);
+
+        final TableColumn moveColumn = table.getColumns().get(1);
+        moveColumn.setMaxWidth(70);
+        moveColumn.setMinWidth(70);
     }
 
     public void saveReorderedValue(List<InputColumn<?>> list) {

@@ -41,6 +41,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
@@ -159,7 +160,7 @@ public class DCTable extends JXTable implements MouseListener {
     }
 
     protected List<JMenuItem> getCopyMenuItems() {
-        Icon icon = ImageManager.get().getImageIcon("images/actions/copy.png");
+        Icon icon = ImageManager.get().getImageIcon(IconUtils.ACTION_COPY, IconUtils.ICON_SIZE_MENU_ITEM);
         List<JMenuItem> result = new ArrayList<JMenuItem>();
 
         // JMenuItem for "Copy selected cells to clipboard"

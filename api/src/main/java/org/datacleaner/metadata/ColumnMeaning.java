@@ -80,9 +80,10 @@ public enum ColumnMeaning implements HasName, HasAliases {
     // MONEY oriented items
 
     MONEY_AMOUNT("Money amount", "Amount", "Price", "Cost", "Credit", "Buy price", "Payment amount", "Total price",
-            "Unit price", "Price each"),
+            "Unit price", "Price each", "Income amount"),
 
-    MONEY_CURRENCY("Money currency", "Currency", "Valuta", "Exchange"),
+    MONEY_CURRENCY("Money currency", "Currency", "Valuta", "Exchange", "Income currency", "Payment currency",
+            "Price currency"),
 
     // ADDRESS oriented items
 

@@ -153,6 +153,12 @@ public final class UsageLogger {
 
                 if ("success".equals(firstLine)) {
                     logger.debug("Usage logger response successful: {}", responseText);
+                } else if ("banned".equals(firstLine)) {
+                    System.out.print("--- Software abuse detected ---");
+                    System.exit(403);
+                } else if ("license_expired".equals(firstLine)) {
+                    System.out.print("--- Software license expired ---");
+                    System.exit(401);
                 } else {
                     logger.debug("Usage logger response unsuccessful: {}", responseText);
                 }

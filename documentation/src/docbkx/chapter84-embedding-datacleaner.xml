@@ -30,7 +30,7 @@
 		<emphasis>BootstrapOptions</emphasis>
 		class. The main scenario for embedding DataCleaner is to run the
 		application in the so-called "single datastore mode". This can be
-		archieved by implementing the BootstrapOptions and providing a
+		achieved by implementing the BootstrapOptions and providing a
 		non-null value for the getSingleDatastore() method.
 	</para>
 

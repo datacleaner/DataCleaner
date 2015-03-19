@@ -213,7 +213,7 @@
 		
 		<tip>
 			<para>Duplicate detection does work fine with raw data. But if you have dirty data and the way data is registered has a lot of variance, we suggest you first do your best to standardize the data before finding duplicates.</para>
-			<para>Standardization can be by trimming, tokenizing, removing unwanted characters, replace synonyms and things like that. Explore the transformations available in DataCleaner in order to get your data cleansed before trying to deduplicate it.</para>
+			<para>Standardization can be made by trimming, tokenizing, removing unwanted characters, replace synonyms and things like that. Explore the transformations available in DataCleaner in order to get your data cleansed before trying to deduplicate it.</para>
 		</tip>
 
 		<para>In the following sections we will walk through how to use the

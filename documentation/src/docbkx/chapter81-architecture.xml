@@ -81,18 +81,18 @@
 			the framework
 			<emphasis>infers</emphasis>
 			it. If a step (aka. a component) in the flow requires input from
-			another step, then the flow is automatically layed out so that the
+			another step, then the flow is automatically laid out so that the
 			dependent step is executed before the other. Please refer to the
 			section on
 			<link linkend="wiring_components">wiring components together</link>
-			for an walkthrough on how this works in practice.
+			for an walk-through on how this works in practice.
 		</para>
 
 		<para>
 			One of the key characteristics of AnalyzerBeans is that it is
 			built
 			for massively parallel processing. Whereas most data processing
-			frameworks archieve parallelism by the use of parallel execution of
+			frameworks achieve parallelism by the use of parallel execution of
 			<emphasis>each step</emphasis>
 			in a flow, the AnalyzerBeans framework
 			executes the processing of

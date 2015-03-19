@@ -168,7 +168,7 @@
 
 		<para>Let's see an example of building a job programmatically. And to
 			ensure that we don't miss important insights, we'll make it a fairly
-			non-trivial job with both fiters, transformers and analyzers. The job
+			non-trivial job with both filters, transformers and analyzers. The job
 			will encompass:
 		</para>
 		<orderedlist>

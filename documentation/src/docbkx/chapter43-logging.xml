@@ -143,7 +143,7 @@
 		</para>
 		<para>
 			Modifying the logging levels can be done either globally or in a
-			hierarical manner:
+			hierarchical manner:
 		</para>
 		<orderedlist>
 			<listitem>
@@ -155,7 +155,7 @@
 				<para>If you change the &lt;logger&gt; element's level,
 					you change
 					the logging priority logging messages that pertain to a particular
-					hierachy of loggers.
+					hierarchy of loggers.
 				</para>
 			</listitem>
 		</orderedlist>

@@ -193,7 +193,7 @@
 				<para>
 					<emphasis>Transformers</emphasis>
 					are components used to modify the data before analyzing it.
-					Sometimes it's nescesary to extract parts of a value or combine two
+					Sometimes it's neccessary to extract parts of a value or combine two
 					values to correctly get an idea about a particular measure. In
 					other scenarios, transformers can be used to perform reference data
 					lookups or other similar tasks and place the results of an
@@ -201,8 +201,8 @@
 				</para>
 				<para>
 					The result of a transformer is a set of output columns. These
-					columns work excactly like regular columns in your job, except that
-					they have a preceeding step in the flow before they become
+					columns work exactly like regular columns in your job, except that
+					they have a preceding step in the flow before they become
 					materialized.
 				</para>
 			</listitem>

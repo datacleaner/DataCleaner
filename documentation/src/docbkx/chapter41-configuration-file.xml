@@ -410,7 +410,7 @@
 			with the same category then additional records will not be saved (and
 			thus is not viewable by the user). Most user scenarios will not
 			require more than max. 1000 annotated records for inspection, but if
-			this is really nescesary a different strategy can be pursued:
+			this is really neccessary a different strategy can be pursued:
 		</para>
 
 		<sect2>

@@ -47,7 +47,7 @@ public class CountryStandardizationTransformer implements Transformer {
     InputColumn<String> countryColumn;
 
     @Configured(PROPERTY_OUTPUT_FORMAT)
-    OutputFormat outputFormat;
+    OutputFormat outputFormat = OutputFormat.ISO2;
 
     @Configured(value = PROPERTY_DEFAULT_COUNTRY, required = false)
     Country defaultCountry = null;

@@ -31,6 +31,7 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.reference.Dictionary;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
@@ -48,7 +49,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Configured(value = PROPERTY_COLUMN)
     InputColumn<String> _column;
 
-    private final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings();
+    private final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
 
     public RemoveDictionaryMatchesTransformer() {
     }

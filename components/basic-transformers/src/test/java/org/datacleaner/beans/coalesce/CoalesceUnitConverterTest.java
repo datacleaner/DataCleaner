@@ -37,6 +37,8 @@ public class CoalesceUnitConverterTest extends TestCase {
     private final MockInputColumn<?> integerCol2 = new MockInputColumn<Integer>("int2", Integer.class);
     private final MockInputColumn<?> stringCol1 = new MockInputColumn<String>("str1", String.class);
     private final MockInputColumn<?> stringCol2 = new MockInputColumn<String>("str2", String.class);
+    private final MockInputColumn<?> stringCommaCol1 = new MockInputColumn<String>("str1,a", String.class);
+    private final MockInputColumn<?> stringCommaCol2 = new MockInputColumn<String>("str2,b", String.class);
     private final MockInputColumn<?> objCol1 = new MockInputColumn<Object>("obj1", Object.class);
 
     public void testGetOutputDataType() throws Exception {
@@ -60,15 +62,27 @@ public class CoalesceUnitConverterTest extends TestCase {
 
         CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
         String str = stringConverter.serialize(unit1);
-        assertEquals("[str1,str2]", str);
+        assertEquals("&#91;str1&#44;str2&#93;", str);
 
         CoalesceUnit[] array = new CoalesceUnit[] { unit1, unit1 };
         str = stringConverter.serialize(array);
-        assertEquals("[[str1,str2],[str1,str2]]", str);
+        assertEquals("[&#91;str1&#44;str2&#93;,&#91;str1&#44;str2&#93;]", str);
         
         CoalesceUnit[] units = stringConverter.deserialize(str, CoalesceUnit[].class);
         assertEquals(2, units.length);
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[0].toString());
         assertEquals("CoalesceUnit[inputColumnNames=[str1, str2]]", units[1].toString());
+    }
+    
+    public void testConvertCommaNames() throws Exception {
+        StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
+                new AnalyzerBeansConfigurationImpl()));
+
+        CoalesceUnit unitIn = new CoalesceUnit(stringCommaCol1, stringCommaCol2);
+        String str = stringConverter.serialize(unitIn);
+        assertEquals("&#91;str1&amp;#44;a&#44;str2&amp;#44;b&#93;", str);
+        
+        CoalesceUnit unitOut = stringConverter.deserialize(str, CoalesceUnit.class);
+        assertEquals("CoalesceUnit[inputColumnNames=[str1,a, str2,b]]", unitOut.toString());
     }
 }

@@ -21,6 +21,7 @@ package org.datacleaner.beans.coalesce;
 
 import org.datacleaner.api.Converter;
 import org.datacleaner.util.convert.ArrayConverter;
+import org.datacleaner.util.convert.SerializationStringEscaper;
 import org.datacleaner.util.convert.StandardTypeConverter;
 
 /**
@@ -33,12 +34,19 @@ public class CoalesceUnitConverter implements Converter<CoalesceUnit> {
     @Override
     public CoalesceUnit fromString(Class<?> type, String serializedForm) {
         String[] columnNames = (String[]) delegate.fromString(String[].class, serializedForm);
+        for(int i=0;i<columnNames.length; i++){
+            columnNames[i] = SerializationStringEscaper.unescape(columnNames[i]);
+        }
+        
         return new CoalesceUnit(columnNames);
     }
 
     @Override
     public String toString(CoalesceUnit instance) {
         String[] inputColumnNames = instance.getInputColumnNames();
+        for(int i=0;i<inputColumnNames.length; i++){
+            inputColumnNames[i] = SerializationStringEscaper.escape(inputColumnNames[i]);
+        }
         return delegate.toString(inputColumnNames);
     }
 
@@ -46,5 +54,4 @@ public class CoalesceUnitConverter implements Converter<CoalesceUnit> {
     public boolean isConvertable(Class<?> type) {
         return type == CoalesceUnit.class;
     }
-
 }

@@ -33,7 +33,7 @@ public enum ColumnMeaning implements HasName, HasAliases {
 
     // generic items
 
-    OTHER("Disregard", "Other", "Nothing"),
+    OTHER("Other", "Disregard", "Nothing"),
 
     KEY_PRIMARY("Primary Key", "ID", "Record ID", "Identifier", "key", "PKID", "Record key"),
 

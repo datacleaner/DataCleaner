@@ -45,10 +45,6 @@ public class DelegatingConverter implements Converter<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(DelegatingConverter.class);
 
-    private static final String[][] ESCAPE_MAPPING = { { "&amp;", "&" }, { "&#91;", "[" }, { "&#93;", "]" },
-            { "&#44;", "," }, { "&lt;", "<" }, { "&gt;", ">" }, { "&quot;", "\"" }, { "&copy;", "\u00a9" },
-            { "&reg;", "\u00ae" }, { "&euro;", "\u20a0" } };
-
     private final List<Converter<?>> _converters;
     private final NullConverter _nullConverter;
     private final ArrayConverter _arrayConverter;
@@ -85,7 +81,7 @@ public class DelegatingConverter implements Converter<Object> {
             return _arrayConverter.fromString(type, serializedForm);
         }
 
-        serializedForm = unescape(serializedForm);
+        serializedForm = SerializationStringEscaper.unescape(serializedForm);
 
         for (Converter<?> converter : _converters) {
             if (converter.isConvertable(type)) {
@@ -132,9 +128,7 @@ public class DelegatingConverter implements Converter<Object> {
                 Converter<Object> castedConverter = (Converter<Object>) converter;
                 String serializedForm = castedConverter.toString(instance);
 
-                serializedForm = escape(serializedForm);
-
-                return serializedForm;
+                return SerializationStringEscaper.escape(serializedForm);
             }
         }
 
@@ -144,7 +138,7 @@ public class DelegatingConverter implements Converter<Object> {
                 Class<? extends Converter<?>> converterClass = convertable.value();
                 @SuppressWarnings("unchecked")
                 Converter<Object> converter = (Converter<Object>) ReflectionUtils.newInstance(converterClass);
-                return converter.toString(instance);
+                return SerializationStringEscaper.escape(converter.toString(instance));
             } catch (Exception e) {
                 logger.warn("Failed to convert toString(" + instance + ") using Convertable annotated converter class",
                         e);
@@ -190,23 +184,4 @@ public class DelegatingConverter implements Converter<Object> {
         }
     }
 
-    private static final String escape(String str) {
-        for (String[] mapping : ESCAPE_MAPPING) {
-            String escapedValue = mapping[1];
-            if (str.contains(escapedValue)) {
-                str = str.replace(escapedValue, mapping[0]);
-            }
-        }
-        return str;
-    }
-
-    private static final String unescape(String str) {
-        for (String[] mapping : ESCAPE_MAPPING) {
-            String unescapedValue = mapping[0];
-            if (str.contains(unescapedValue)) {
-                str = str.replaceAll(unescapedValue, mapping[1]);
-            }
-        }
-        return str;
-    }
 }

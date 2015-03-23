@@ -238,19 +238,19 @@ public class AboutDialog extends AbstractDialog {
         final ImageManager imageManager = ImageManager.get();
 
         final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
+        WidgetUtils.setDefaultButtonStyle(datacleanerButton);
         datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
         datacleanerButton.setToolTipText("Visit the DataCleaner website");
-        datacleanerButton.setBorder(null);
 
         final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));
         bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
         bloggerButton.setToolTipText("Follow along at our blog");
-        bloggerButton.setBorder(null);
+        WidgetUtils.setDefaultButtonStyle(bloggerButton);
 
         final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
         linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
         linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
-        linkedInButton.setBorder(null);
+        WidgetUtils.setDefaultButtonStyle(linkedInButton);
 
         final DCPanel buttonPanel = new DCPanel();
         buttonPanel.setLayout(new HorizontalLayout());

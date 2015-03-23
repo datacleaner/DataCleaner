@@ -43,7 +43,6 @@ public class Version {
     }
 
     public static final String EDITION_COMMUNITY = "Community edition";
-    public static final String EDITION_PROFESSIONAL = "Professional edition";
 
     /**
      * @return
@@ -86,27 +85,11 @@ public class Version {
     }
 
     private static String determineEdition() {
-        String systemProperty = System.getProperty(SystemProperties.EDITION_NAME);
+        final String systemProperty = System.getProperty(SystemProperties.EDITION_NAME);
         if (!Strings.isNullOrEmpty(systemProperty)) {
             return systemProperty;
         }
-
-        final Properties properties = new Properties();
-        final InputStream inputStream = Version.class
-                .getResourceAsStream("/META-INF/maven/com.hi.datacleaner/DataCleaner-enterprise-edition-core-components/pom.properties");
-        try {
-            properties.load(inputStream);
-        } catch (Exception e) {
-            // not a commercial edition
-            return EDITION_COMMUNITY;
-        }
-
-        final String version = properties.getProperty("version");
-        if (Strings.isNullOrEmpty(version)) {
-            return EDITION_COMMUNITY;
-        }
-
-        return EDITION_PROFESSIONAL;
+        return EDITION_COMMUNITY;
     }
 
     public static boolean isCommunityEdition() {

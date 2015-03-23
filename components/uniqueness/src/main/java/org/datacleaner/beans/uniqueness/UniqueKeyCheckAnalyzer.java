@@ -50,21 +50,21 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Concurrent(true)
 public class UniqueKeyCheckAnalyzer implements Analyzer<UniqueKeyCheckAnalyzerResult> {
 
-    private static final int BUFFER_SIZE = 20000;
-
     private static final CsvConfiguration CSV_CONFIGURATION = new CsvConfiguration();
 
     @Configured
     InputColumn<?> column;
+    
+    @Configured
+    @Description("How many values to buffer before loading them to disk. For high volume data, consider increasing the buffer to minimize the amount of open disk handles.")
+    int _bufferSize = 20000;
 
-    private final int _bufferSize;
     private WriteBuffer _writeBuffer;
     private SortMergeWriter<String, Writer> _sorter;
     private AtomicInteger _rowCount;
     private AtomicInteger _nullCount;
 
     public UniqueKeyCheckAnalyzer() {
-        this(BUFFER_SIZE);
     }
 
     public UniqueKeyCheckAnalyzer(int bufferSize) {

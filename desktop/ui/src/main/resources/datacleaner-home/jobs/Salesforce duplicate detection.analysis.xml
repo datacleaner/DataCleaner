@@ -31,79 +31,8 @@
             <descriptor ref="Duplicate Detection"/>
             <properties>
                 <property name="Output groups" value="true"/>
-                <property name="Model">&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;yes&amp;quot;?&amp;gt;
-&amp;lt;deduplication-model threshold=&amp;quot;0.001&amp;quot;&amp;gt;
-    &amp;lt;columns&amp;gt;
-        &amp;lt;column index=&amp;quot;0&amp;quot; name=&amp;quot;LastName&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;1&amp;quot; name=&amp;quot;FirstName&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;2&amp;quot; name=&amp;quot;Name&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;3&amp;quot; name=&amp;quot;CompanyName&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;4&amp;quot; name=&amp;quot;Division&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;5&amp;quot; name=&amp;quot;Department&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;6&amp;quot; name=&amp;quot;Title&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;7&amp;quot; name=&amp;quot;City&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;8&amp;quot; name=&amp;quot;PostalCode&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;9&amp;quot; name=&amp;quot;Country&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;10&amp;quot; name=&amp;quot;Email&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;11&amp;quot; name=&amp;quot;Phone&amp;quot;/&amp;gt;
-        &amp;lt;column index=&amp;quot;12&amp;quot; name=&amp;quot;MobilePhone&amp;quot;/&amp;gt;
-    &amp;lt;/columns&amp;gt;
-    &amp;lt;preselection-model&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;11&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;0&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;6&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;1&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;5&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;4&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;8&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;10&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;9&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;7&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-        &amp;lt;subset&amp;gt;
-            &amp;lt;item column-index=&amp;quot;3&amp;quot;/&amp;gt;
-        &amp;lt;/subset&amp;gt;
-    &amp;lt;/preselection-model&amp;gt;
-    &amp;lt;matching-model&amp;gt;
-        &amp;lt;rule fixed-score=&amp;quot;false&amp;quot;&amp;gt;
-            &amp;lt;condition feature=&amp;quot;edit-distance&amp;quot; feature-modifier=&amp;quot;unmodified&amp;quot; column-index=&amp;quot;2&amp;quot; operator=&amp;quot;greater-than&amp;quot; threshold=&amp;quot;0.9375&amp;quot;/&amp;gt;
-        &amp;lt;/rule&amp;gt;
-    &amp;lt;/matching-model&amp;gt;
-    &amp;lt;scoring-model bias=&amp;quot;-5.831741290687532&amp;quot;&amp;gt;
-        &amp;lt;term feature=&amp;quot;exact&amp;quot; feature-modifier=&amp;quot;unmodified&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;0.2650967329243037&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;exact&amp;quot; feature-modifier=&amp;quot;empty-high&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;0.5466765597905967&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;exact&amp;quot; feature-modifier=&amp;quot;empty-low&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;-0.8367740901908414&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;exact&amp;quot; feature-modifier=&amp;quot;multiple-parts&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;1.9126274806525165&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;edit-distance&amp;quot; feature-modifier=&amp;quot;unmodified&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;1.9764582271745206&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;edit-distance&amp;quot; feature-modifier=&amp;quot;empty-high&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;0.38649844189199123&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;edit-distance&amp;quot; feature-modifier=&amp;quot;empty-low&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;1.0047544168844884&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;edit-distance&amp;quot; feature-modifier=&amp;quot;multiple-parts&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;-1.120563066752085&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;phonetic&amp;quot; feature-modifier=&amp;quot;unmodified&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;9.707818792043566&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;phonetic&amp;quot; feature-modifier=&amp;quot;empty-high&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;9.425341103396514&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;phonetic&amp;quot; feature-modifier=&amp;quot;empty-low&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;8.898908891064037&amp;quot;/&amp;gt;
-        &amp;lt;term feature=&amp;quot;phonetic&amp;quot; feature-modifier=&amp;quot;multiple-parts&amp;quot; column-index=&amp;quot;2&amp;quot; weight=&amp;quot;1.6067880200225426&amp;quot;/&amp;gt;
-    &amp;lt;/scoring-model&amp;gt;
-&amp;lt;/deduplication-model&amp;gt;
-</property>
+                <property name="Mode" value="DETECTION_USING_MODEL" />
+                <property name="Matching model" value="jobs/sfdc_dupe_model_users.dedupmodel.xml"/>
                 <property name="Server hostname" value="&lt;null&gt;"/>
                 <property name="Server port" value="&lt;null&gt;"/>
                 <property name="Output file" value="&lt;null&gt;"/>

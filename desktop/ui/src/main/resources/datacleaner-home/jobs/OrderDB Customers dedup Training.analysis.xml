@@ -28,8 +28,9 @@
     <transformation/>
     <analysis>
         <analyzer>
-            <descriptor ref="Training Tool"/>
+            <descriptor ref="Duplicate Detection"/>
             <properties>
+            	<property name="Mode" value="TRAINING" />
                 <property name="Max records for training" value="10000"/>
                 <property name="Reference file" value="jobs/orderdb_customers_dupe_reference.txt"/>
             </properties>

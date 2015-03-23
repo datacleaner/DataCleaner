@@ -579,7 +579,35 @@ public final class ReflectionUtils {
 
     public static <A extends Annotation> A getAnnotation(AnnotatedElement element, Class<A> annotationClass) {
         synchronized (ANNOTATION_REFLECTION_LOCK) {
-            A annotation = element.getAnnotation(annotationClass);
+            final A annotation = element.getAnnotation(annotationClass);
+            if (annotation == null && !isGetMethodsLegacyApproach() && element instanceof Method) {
+                // check for annotations on overridden methods. Since Java 8
+                // those are not returned by .getAnnotation(...)
+                final Method m = (Method) element;
+                final Class<?> declaringClass = m.getDeclaringClass();
+                final Class<?> superClass = declaringClass.getSuperclass();
+                final String methodName = m.getName();
+                final Class<?>[] methodParameterTypes = m.getParameterTypes();
+                if (superClass != null) {
+                    try {
+                        final Method overriddenMethod = superClass.getMethod(methodName, methodParameterTypes);
+                        return getAnnotation(overriddenMethod, annotationClass);
+                    } catch (NoSuchMethodException e) {
+                        logger.debug("Failed to get overridden method '{}' from {}", methodName, superClass);
+                    }
+                }
+
+                // check for annotations on interface methods too.
+                final Class<?>[] interfaces = declaringClass.getInterfaces();
+                for (Class<?> interfaceClass : interfaces) {
+                    try {
+                        final Method overriddenMethod = interfaceClass.getMethod(methodName, methodParameterTypes);
+                        return getAnnotation(overriddenMethod, annotationClass);
+                    } catch (NoSuchMethodException e) {
+                        logger.debug("Failed to get overridden method '{}' from {}", methodName, interfaceClass);
+                    }
+                }
+            }
             return annotation;
         }
     }
@@ -594,8 +622,6 @@ public final class ReflectionUtils {
     }
 
     public static boolean isAnnotationPresent(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
-        synchronized (ANNOTATION_REFLECTION_LOCK) {
-            return element.isAnnotationPresent(annotationClass);
-        }
+        return getAnnotation(element, annotationClass) != null;
     }
 }

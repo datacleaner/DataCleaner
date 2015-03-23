@@ -151,7 +151,7 @@ public class DashboardServiceImplTest extends TestCase {
 
         List<TimelineDataRow> rows = data.getRows();
         assertEquals(6, rows.size());
-
+        
         assertEquals("[11, 0, 20, 22, 110]", rows.get(0).getMetricValues().toString());
     }
 }

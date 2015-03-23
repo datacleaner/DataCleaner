@@ -30,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.csv.CsvWriter;
@@ -133,6 +134,9 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
         }
+        if (!FilenameUtils.isExtension(file.getName(), "csv")){
+            throw new IllegalStateException("Please add the '.csv' extension to the filename"); 
+         }
     }
 
     @Override

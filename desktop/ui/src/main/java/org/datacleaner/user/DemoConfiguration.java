@@ -56,6 +56,7 @@ public class DemoConfiguration {
     public static final String OTHER_DEDUP_REFERENCE_ORDERDB_CUSTOMERS = addFile("jobs/orderdb_customers_dupe_reference.txt");
     public static final String OTHER_DEDUP_MODEL_CUSTOMERS = addFile("jobs/dedup_customers.dedupmodel.xml");
     public static final String OTHER_RESULT_DEDUP_CUSTOMERS = addFile("jobs/dedup_customers.analysis.result.dat");
+    public static final String OTHER_SYNONYM_CATALOG_JOB_TITLES = addFile("datastores/job_title_synonyms.txt");
 
     public static boolean isUnconfiguredDemoDatastore(Datastore ds) {
         if (ds instanceof SalesforceDatastore) {

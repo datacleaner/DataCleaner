@@ -166,7 +166,11 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
 
         // duplicate detection analyzer changed
         addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
-                "com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer");
+                "com.hi.hiqmr.datacleaner.deduplication.DuplicateDetectionAnalyzer");
+        addRenamedClass("com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer",
+                "com.hi.hiqmr.datacleaner.deduplication.DuplicateDetectionAnalyzer");
+        
+        addRenamedPackage("com.hi.contacts.security", "com.hi.common.client.security");
 
         // Classes moved in DC 4.0
         addRenamedClass("org.datacleaner.data.InputRow", InputRow.class);

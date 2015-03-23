@@ -68,12 +68,13 @@
 	</transformation>
 	<analysis>
 		<analyzer>
-			<descriptor ref="Training Tool" />
+			<descriptor ref="Duplicate Detection" />
 			<metadata-properties>
 				<property name="CoordinatesY">223</property>
 				<property name="CoordinatesX">472</property>
 			</metadata-properties>
 			<properties>
+				<property name="Mode" value="TRAINING" />
 				<property name="Max records for training" value="30000" />
 				<property name="Reference file" value="&lt;null&gt;" />
 			</properties>

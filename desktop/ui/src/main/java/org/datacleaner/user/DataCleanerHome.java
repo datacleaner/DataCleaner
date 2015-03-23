@@ -169,20 +169,23 @@ public final class DataCleanerHome {
 
         FileObject candidate;
 
-        // Fallback to working directory
-        candidate = manager.resolveFile(".");
-        if (isWriteable(candidate)) {
-            logger.info("Attempting to build DATACLEANER_HOME in the working directory: {}", candidate);
-        } else {
-            // Fallback to user home directory
-            final String path = getUserHomeCandidatePath();
-            candidate = manager.resolveFile(path);
-            logger.info(
-                    "Current working directory is not writeable. Attempting to build DATACLEANER_HOME in user.home: {} -> {}",
-                    path, candidate);
-            if (!isWriteable(candidate)) {
-                throw new IllegalStateException("User home directory (" + candidate
-                        + ") is not writable. DataCleaner requires write access to its home directory.");
+        // Fallback to user home directory
+        final String path = getUserHomeCandidatePath();
+        candidate = manager.resolveFile(path);
+        logger.info("Attempting to build DATACLEANER_HOME in user.home: {} -> {}", path, candidate);
+        if (!isWriteable(candidate)) {
+            // Workaround: isWritable is not reliable for a non-existent
+            // directory. Trying to create it, if it does not exist.
+            if ((candidate != null) && (!candidate.exists())) {
+                logger.info("Folder {} does not exist. Trying to create it.", candidate);
+                try {
+                    candidate.createFolder();
+                    logger.info("Folder {} created successfully. Attempting to build DATACLEANER_HOME here.", candidate);
+                } catch (FileSystemException e) {
+                    logger.info("Unable to create folder {}. No write permission in that location.", candidate);
+                    throw new IllegalStateException("User home directory (" + candidate
+                            + ") is not writable. DataCleaner requires write access to its home directory.");
+                }
             }
         }
         return candidate;

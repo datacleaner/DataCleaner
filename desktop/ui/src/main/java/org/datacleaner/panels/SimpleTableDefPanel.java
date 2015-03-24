@@ -56,6 +56,7 @@ public class SimpleTableDefPanel extends DCPanel {
 
 		_table = new DCTable(_tableModel);
 		_table.setSortable(false);
+		_table.setColumnControlVisible(false);
 		_table.setRowHeight(DCTable.EDITABLE_TABLE_ROW_HEIGHT);
 
 		setLayout(new BorderLayout());

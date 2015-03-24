@@ -59,6 +59,8 @@ public class SimpleTableDefsPanel extends DCPanel {
     private final SchemaFactory _schemaFactory;
     private final DCLabel _instructionsLabel;
 
+    private DCPanel _tabbedPaneContainer;
+
     public SimpleTableDefsPanel() {
         this(null);
     }
@@ -75,23 +77,22 @@ public class SimpleTableDefsPanel extends DCPanel {
         _instructionsLabel.setFont(WidgetUtils.FONT_HEADER1);
         _instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _instructionsLabel.setVerticalAlignment(SwingConstants.CENTER);
+        
+        _tabbedPaneContainer = new DCPanel(CloseableTabbedPane.COLOR_BACKGROUND);
+        _tabbedPaneContainer.setLayout(new BorderLayout());
 
-        setTabbedPaneVisible(false);
 
-        if (tableDefs != null) {
+        setLayout(new BorderLayout());
+        
+        if (tableDefs == null || tableDefs.length == 0) {
+            setTabbedPaneVisible(false);
+        } else {
             for (SimpleTableDef tableDef : tableDefs) {
                 addTableDef(tableDef);
             }
         }
 
-        setLayout(new BorderLayout());
-
-        final DCPanel tabbedPaneContainer = new DCPanel(CloseableTabbedPane.COLOR_BACKGROUND);
-        tabbedPaneContainer.setLayout(new BorderLayout());
-        tabbedPaneContainer.add(_tabbedPane, BorderLayout.CENTER);
-        tabbedPaneContainer.add(_instructionsLabel, BorderLayout.CENTER);
-
-        add(WidgetUtils.decorateWithShadow(tabbedPaneContainer), BorderLayout.CENTER);
+        add(WidgetUtils.decorateWithShadow(_tabbedPaneContainer), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.NORTH);
         setMinimumSize(new Dimension(400, 300));
 
@@ -105,9 +106,14 @@ public class SimpleTableDefsPanel extends DCPanel {
         });
     }
 
-    private void setTabbedPaneVisible(boolean b) {
-        _tabbedPane.setVisible(b);
-        _instructionsLabel.setVisible(!b);
+    private void setTabbedPaneVisible(boolean showTabbedPane) {
+        _tabbedPaneContainer.removeAll();
+        if (showTabbedPane) {
+            _tabbedPaneContainer.add(_tabbedPane, BorderLayout.CENTER);
+        } else {
+            _tabbedPaneContainer.add(_instructionsLabel, BorderLayout.CENTER);
+        }
+        _tabbedPaneContainer.updateUI();
     }
 
     private DCPanel createButtonPanel() {

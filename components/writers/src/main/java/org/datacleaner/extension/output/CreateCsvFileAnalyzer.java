@@ -134,9 +134,6 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
         }
-        if (!FilenameUtils.isExtension(file.getName(), "csv")) {
-            throw new IllegalStateException("Please add the '.csv' extension to the filename");
-        }
     }
 
     @Override

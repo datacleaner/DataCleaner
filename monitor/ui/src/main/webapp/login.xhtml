@@ -56,7 +56,7 @@
 						</div>
 						<c:if test="#{not empty param.debug}">
 							<div class="warning">
-								#{SPRING_SECURITY_LAST_EXCEPTION.class.simpleName}:
+ 								#{SPRING_SECURITY_LAST_EXCEPTION.getClass().simpleName}:
 								#{SPRING_SECURITY_LAST_EXCEPTION.message}
 							</div>
 						</c:if>

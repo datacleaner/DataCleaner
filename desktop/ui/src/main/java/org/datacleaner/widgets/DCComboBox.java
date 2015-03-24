@@ -91,8 +91,6 @@ public class DCComboBox<E> extends JComboBox<E> implements ItemListener {
         // super.setSelectedItem(...) will notify all listeners (through of the
         // item listener)
         super.setSelectedItem(item);
-        
-        updateUI();
     }
 
     public void addListener(Listener<E> listener) {

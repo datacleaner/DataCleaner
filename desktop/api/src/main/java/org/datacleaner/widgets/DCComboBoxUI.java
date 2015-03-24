@@ -42,7 +42,8 @@ public class DCComboBoxUI extends BasicComboBoxUI {
      * @return
      */
     public static ComponentUI createUI(JComponent c) {
-        return new DCComboBoxUI();
+        final DCComboBoxUI ui = new DCComboBoxUI();
+        return ui;
     }
 
     @Override

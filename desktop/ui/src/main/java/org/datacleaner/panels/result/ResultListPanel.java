@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentJob;
@@ -138,7 +139,12 @@ public class ResultListPanel extends DCPanel {
                 try {
                     component = get();
                     taskPanePanel.add(component);
-                    _progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+                    if (result instanceof AnalyzerResultFuture) {
+                        _progressInformationPanel.addUserLog(resultLabel + " is still in progress - see the '"
+                                + componentJob.getDescriptor().getDisplayName() + "' tab");
+                    } else {
+                        _progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+                    }
                 } catch (Exception e) {
                     logger.error("Error occurred while rendering result", e);
                     _progressInformationPanel.addUserLog("Error occurred while rendering result", e, false);

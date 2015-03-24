@@ -48,19 +48,25 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
     private final UserPreferences _userPreferences;
 
     @Inject
-    public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-            ComponentBuilder componentBuilder, UserPreferences userPreferences) {
+    public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor, ComponentBuilder componentBuilder,
+            UserPreferences userPreferences) {
         super(componentBuilder, propertyDescriptor);
         _userPreferences = userPreferences;
 
         boolean openFileDialog = true;
-        String[] extensions = null;
+
+        final String[] extensions;
+        final FileAccessMode accessMode;
 
         FileProperty fileProperty = propertyDescriptor.getAnnotation(FileProperty.class);
         if (fileProperty != null) {
-            openFileDialog = fileProperty.accessMode() == FileAccessMode.OPEN;
-
+            accessMode = fileProperty.accessMode();
             extensions = fileProperty.extension();
+
+            openFileDialog = (accessMode == FileAccessMode.OPEN);
+        } else {
+            extensions = null;
+            accessMode = FileAccessMode.OPEN;
         }
 
         _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
@@ -99,7 +105,13 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
-                File dir = file.getParentFile();
+                final File dir = file.getParentFile();
+                if (accessMode == FileAccessMode.SAVE && extensions != null && extensions.length > 0) {
+                    if (file.getName().indexOf('.') == -1) {
+                        final String newFilename = file.getName() + '.' + extensions[0];
+                        _filenameField.setFile(new File(dir, newFilename));
+                    }
+                }
                 _userPreferences.setConfiguredFileDirectory(dir);
                 fireValueChanged();
             }

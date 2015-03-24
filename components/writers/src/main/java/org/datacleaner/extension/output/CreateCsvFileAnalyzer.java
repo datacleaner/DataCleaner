@@ -75,6 +75,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
+    private static final String[] extensions  = {"csv", "txt", "tsv"}; 
 
     @Configured(value = PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
@@ -132,6 +133,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         if (file.exists() && !overwriteFileIfExists) {
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
+        }
+        if (!FilenameUtils.isExtension(file.getName(), extensions)) {
+            throw new IllegalStateException(
+                    "Please add an extension to the filename. The possibilities are:'.csv','.txt','.tsv'");
         }
     }
 

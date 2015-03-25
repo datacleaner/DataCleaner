@@ -14,12 +14,19 @@
 				<emphasis>conf.xml</emphasis>
 				, making it possible (although optional) to change the
 				static
-				configuration and configure the environment of DataCleaner.
+				configuration and configure the environment of DataCleaner. The
+				configuration file and related files are stored by convention in a
+				folder called
+				<emphasis>.datacleaner</emphasis>
+				within your user's home directory.
 			</para>
 			<para>
-				In the DataCleaner monitoring web application, the conf.xml file
-				is the only point of configuration. The file is located in the root
-				of each tenant's repository folder. For more information, refer to
+				In the DataCleaner monitoring web application, the conf.xml
+				file
+				is the only point of configuration. The file is located in the
+				root
+				of each tenant's repository folder. For more information, refer
+				to
 				the repository chapter.
 			</para>
 			<para>
@@ -144,7 +151,8 @@
 			individual value-widths.
 		</para>
 		<para>Here's an example with a fixed width specification for all
-			columns:</para>
+			columns:
+		</para>
 		<programlisting>
 			&lt;fixed-width-datastore&#160;name="My&#160;file"&gt;
 			&#160;&lt;filename&gt;foobar.txt&lt;/filename&gt;
@@ -155,7 +163,8 @@
 			&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
 			&lt;/fixed-width-datastore&gt; </programlisting>
 		<para>Here's an example with individual (3 columns) width
-			specifications:</para>
+			specifications:
+		</para>
 		<programlisting>
 			&lt;fixed-width-datastore&#160;name="My&#160;file"&gt;
 			&#160;&lt;filename&gt;foobar.txt&lt;/filename&gt;

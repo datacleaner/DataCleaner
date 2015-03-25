@@ -67,9 +67,9 @@
 			format:
 		</para>
 		<programlisting lang="xml">
-			&lt;?xml version="1.0"
-			encoding="UTF-8" ?&gt;
-			&lt;!DOCTYPE log4j:configuration SYSTEM
+			&lt;?xml&#160;version="1.0"
+			encoding="UTF-8"&#160;?&gt;
+			&lt;!DOCTYPE&#160;log4j:configuration&#160;SYSTEM
 			"log4j.dtd"&gt;
 			&lt;log4j:configuration&#160;xmlns:log4j="http://jakarta.apache.org/log4j/"&gt;
 
@@ -78,10 +78,13 @@
 			&#160;&#160;&lt;layout&#160;class="org.apache.log4j.PatternLayout"&gt;
 			&#160;&#160;&#160;&lt;param&#160;name="ConversionPattern"&#160;value="%-5p&#160;%d{HH:mm:ss}&#160;%c{1}&#160;-&#160;%m%n"/&gt;
 			&#160;&#160;&lt;/layout&gt;
+			&#160;&#160;&lt;filter&#160;class="org.apache.log4j.varia.LevelRangeFilter"&gt;
+			&#160;&#160;&#160;&lt;param&#160;name="levelMin"&#160;value="WARN"/&gt;
+			&#160;&#160;&lt;/filter&gt;
 			&#160;&lt;/appender&gt;
 
 			&#160;&lt;appender&#160;name="fileAppender"&#160;class="org.apache.log4j.DailyRollingFileAppender"&gt;
-			&#160;&#160;&lt;param&#160;name="File"&#160;value="log/datacleaner.log"/&gt;
+			&#160;&#160;&lt;param&#160;name="File"&#160;value="${user.home}/.datacleaner/log/datacleaner.log"/&gt;
 			&#160;&#160;&lt;param&#160;name="DatePattern"&#160;value="'.'yyyy-MM-dd'.log'"/&gt;
 			&#160;&#160;&lt;layout&#160;class="org.apache.log4j.PatternLayout"&gt;
 			&#160;&#160;&#160;&lt;param&#160;name="ConversionPattern"&#160;value="%-5p&#160;%d{HH:mm:ss.SSS}&#160;%c{1}&#160;-&#160;%m%n"/&gt;
@@ -89,25 +92,24 @@
 			&#160;&lt;/appender&gt;
 
 			&#160;&lt;logger&#160;name="org.apache.metamodel"&gt;
-			&#160;&#160;&lt;level value="info" /&gt;
+			&#160;&#160;&lt;level&#160;value="info"/&gt;
 			&#160;&lt;/logger&gt;
 
 			&#160;&lt;logger&#160;name="org.datacleaner"&gt;
-			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&#160;&lt;level&#160;value="info"/&gt;
 			&#160;&lt;/logger&gt;
 
 			&#160;&lt;root&gt;
-			&#160;&#160;&lt;priority&#160;value="warn" /&gt;
-			&#160;&#160;&lt;appender-ref&#160;ref="consoleAppender" /&gt;
-			&#160;&#160;&lt;appender-ref&#160;ref="fileAppender" /&gt;
+			&#160;&#160;&lt;priority&#160;value="warn"/&gt;
+			&#160;&#160;&lt;appender-ref&#160;ref="consoleAppender"/&gt;
+			&#160;&#160;&lt;appender-ref&#160;ref="fileAppender"/&gt;
 			&#160;&lt;/root&gt;
 
-			&lt;/log4j:configuration&gt; </programlisting>
+			&lt;/log4j:configuration&gt;</programlisting>
 		<para>This logging configuration specifies the INFO level as the
 			default level of logging. It appends (outputs) log messages to the
-			console (if
-			available) and to a file with the path:
-			log/datacleaner.log
+			console (if available) and to a file with the path:
+			${user.home}.datacleaner/log/datacleaner.log
 		</para>
 		<para>We recommend using this default configuration as a template for
 			custom log configurations. Next we will explore how to modify the

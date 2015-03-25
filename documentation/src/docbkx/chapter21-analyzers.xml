@@ -152,10 +152,11 @@
 			</inlinemediaobject>
 		</title>
 
-		<para>The 'Duplicate detection' analyzers is a package of related
-			analyzers that all has to do with fuzzy matching of duplicate
+		<para>The 'Duplicate detection' function allows you to do fuzzy
+			matching of duplicate
 			records
-			- records that represent the same person, organization, product or
+			- records that represent the same person,
+			organization, product or
 			other entity.
 		</para>
 
@@ -167,7 +168,7 @@
 		</mediaobject>
 
 		<para>The main characteristics of the Duplicate detection
-			functionality are:
+			function is:
 		</para>
 
 		<orderedlist>
@@ -210,19 +211,28 @@
 				</para>
 			</listitem>
 		</orderedlist>
-		
+
 		<tip>
-			<para>Duplicate detection does work fine with raw data. But if you have dirty data and the way data is registered has a lot of variance, we suggest you first do your best to standardize the data before finding duplicates.</para>
-			<para>Standardization can be made by trimming, tokenizing, removing unwanted characters, replace synonyms and things like that. Explore the transformations available in DataCleaner in order to get your data cleansed before trying to deduplicate it.</para>
+			<para>Duplicate detection does work fine with raw data. But if you
+				have dirty data and the way data is registered has a lot of
+				variance, we suggest you first do your best to standardize the data
+				before finding duplicates.
+			</para>
+			<para>Standardization can be made by trimming, tokenizing, removing
+				unwanted characters, replace synonyms and things like that. Explore
+				the transformations available in DataCleaner in order to get your
+				data cleansed before trying to deduplicate it.
+			</para>
 		</tip>
 
 		<para>In the following sections we will walk through how to use the
-			analyzers in the 'Duplicate detection' package.
+			'Duplicate detection' function. The function has three modes: Model
+			training, Detection and Untrained detection.
 		</para>
 
 		<section>
 			<title>
-				Training tool
+				'Model training' mode
 				<inlinemediaobject>
 					<imageobject>
 						<imagedata fileref="notice_commercial_editions_only.png"
@@ -232,22 +242,25 @@
 			</title>
 
 			<para>
-				The training tool is used by the user of Duplicate detection to
+				In the Model training mode the user of Duplicate detection is
+				looking to
 				<emphasis>train</emphasis>
-				the Machine Learning engine. With this tool you will be shown a
-				number of potential duplicate record pairs, and determine if they
+				the Machine Learning engine. When running your job in Model training
+				mode you will be shown a
+				number of potential duplicate record pairs,
+				and determine if they
 				are duplicate or not.
 			</para>
 
-			<para>To start the Training tool, simply add the
-				analyzer and select
+			<para>To start the Training mode, simply add the
+				function and select
 				the columns that you wish to use for matching.
 				Additionally you might
 				wish to configure:
 			</para>
 
 			<table>
-				<title>Training tool properties</title>
+				<title>Model training properties</title>
 				<tgroup cols="2">
 					<thead>
 						<row>
@@ -283,7 +296,7 @@
 			</table>
 
 			<para>In contrast to most other analyzers in DataCleaner which shows
-				a result screen after execution, the Training tool opens a new
+				a result screen after execution, the Training mode opens a new
 				dialog when started. The training tool dialog allows users to train
 				matching models. The top of the dialog contains a button bar. Below
 				the button bar, the training tool shows some tab buttons. By default
@@ -328,7 +341,7 @@
 				you ask a computer to do a complex task like matching, it may come
 				up with a model that has slight differences from your
 				classifications. You can inspect the current model's differences
-				from your classifications in the tab 'Differences'.
+				from your classifications in the tab 'Discrepancies'.
 			</para>
 
 			<para>
@@ -336,23 +349,25 @@
 				<emphasis>reference</emphasis>
 				of the Training session. You can inspect your complete
 				reference in
-				the tab 'Reference'.
+				the tab 'Duplicates reference'.
 			</para>
 
 			<para>If you're looking for particular types of duplicate pairs, you
-				may want to go to the 'Search' tab. In this tab you will find
+				may want to go to the 'Search pairs' tab. In this tab you will find
 				options to search for records with matching or non-matching values
 				for particular fields. This may be a very useful shortcut for
 				finding proper duplicate examples.
 			</para>
 
-			<para>Finally, the tab 'Parameters' presents buttons and sliders for
-				you to influence the Machine Learning approach. It presents the
+			<para>Finally, the tab 'Training parameters' presents buttons and
+				sliders for
+				you to influence the Machine Learning approach. It
+				presents the
 				following options:
 			</para>
 
 			<table>
-				<title>Training tool 'Parameters' options</title>
+				<title>'Training parameters' options</title>
 				<tgroup cols="2">
 					<thead>
 						<row>
@@ -455,7 +470,7 @@
 					</para>
 				</listitem>
 				<listitem>
-					<para>You can view the differences (false positives, false
+					<para>You can view the discrepancies (false positives, false
 						negatives) of the trained model against the records in the new
 						sample.
 					</para>
@@ -479,7 +494,7 @@
 
 		<section>
 			<title>
-				Finding duplicates
+				'Detection' mode
 				<inlinemediaobject>
 					<imageobject>
 						<imagedata fileref="notice_commercial_editions_only.png"
@@ -525,6 +540,25 @@
 				only.
 			</para>
 
+		</section>
+
+		<section>
+			<title>
+				'Untrained detection' mode
+				<inlinemediaobject>
+					<imageobject>
+						<imagedata fileref="notice_commercial_editions_only.png"
+							format="PNG" />
+					</imageobject>
+				</inlinemediaobject>
+			</title>
+			<para>Finally, there's also a 'Untrained detection' mode. This allows
+				you to skip 'Model training' and just ask the application to do it's
+				best effort without any proper model. This mode is not recommended
+				for production use and is considered 'experimental', but may provide
+				a great quick impression of some of the duplicates you have in your
+				dataset.
+			</para>
 		</section>
 
 	</section>

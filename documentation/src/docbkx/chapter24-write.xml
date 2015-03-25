@@ -3,29 +3,17 @@
 	xmlns="http://www.oasis-open.org/docbook/4.5" id="writers"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
-	<title>Writers</title>
+	<title>Write</title>
 	<chapterinfo>
 		<abstract>
 			<para>Although the primary focus of DataCleaner is analysis, often
-				during such analysis you will find yourself actually improving data
-				by
-				means of applying transformers and filters on it. When this is the
-				case, obviously you will want to export the improved/cleansed data so
-				you can utilize it in other situations than the analysis.
-			</para>
-			<para>
-				Writing cleansed data is archieved by wiring the job together
-				with an
-				<emphasis>output writer</emphasis>
-				instead of (or in addition to) an analyzer. Adding an output writer
-				is
-				done by selecting it from the "Write data" menu item.
-				Alternatively by
-				clicking either your filter's outcome buttons or
-				your transformer's
-				"Save transformed data" button. When writing data
-				there's a couple of
-				available output formats:
+				during such analysis you will find yourself actually improving data.
+				When this is the
+				case, obviously you will want to export the
+				improved/cleansed data so
+				you can utilize it in other situations than
+				the analysis. In this chapter we will look at the various writing
+				options that DataCleaner provide.
 			</para>
 			<mediaobject>
 				<imageobject>
@@ -38,7 +26,7 @@
 			</para>
 		</abstract>
 	</chapterinfo>
-	
+
 	<section id="writers_create_csv">
 		<title>Create CSV file</title>
 		<para>Writes a data set to an Comma Separated Values file.

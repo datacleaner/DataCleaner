@@ -96,8 +96,12 @@ public class DatastoreCreationUtil {
 
     public static Datastore createDatastoreFromEnum(FileDatastoreEnum fileDatastore, File file, String datastoreName) {
         final String filename = file.getAbsolutePath();
+        if (fileDatastore == null) {
+            throw new IllegalArgumentException("Illegal file type for: " + filename);
+        }
         final FileResource resource = new FileResource(file);
 
+        
         switch (fileDatastore) {
         case CSV:
             final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);

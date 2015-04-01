@@ -57,7 +57,7 @@ public class DatastoreCreationUtil {
             final String extension = FilenameUtils.getExtension(file.getName());
 
             for (FileDatastoreEnum datastoreType : EnumSet.allOf(FileDatastoreEnum.class)) {
-                if (datastoreType._extensions.contains(extension)) {
+                if (datastoreType._extensions.contains(extension.toLowerCase())) {
                     return datastoreType;
                 }
             }

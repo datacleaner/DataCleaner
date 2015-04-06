@@ -29,29 +29,29 @@ import java.util.Set;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
-import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.descriptors.SimpleDescriptorProvider;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.reference.ReferenceDataCatalogImpl;
-import org.datacleaner.storage.InMemoryStorageProvider;
-import org.datacleaner.extensions.ExtensionPackage;
-import org.datacleaner.extensions.ExtensionReader;
-import org.datacleaner.util.FileFilters;
-import org.datacleaner.util.ResourceManager;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.JaxbConfigurationReader;
+import org.datacleaner.connection.DatastoreCatalogImpl;
+import org.datacleaner.descriptors.SimpleDescriptorProvider;
+import org.datacleaner.extensions.ExtensionPackage;
+import org.datacleaner.extensions.ExtensionReader;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
+import org.datacleaner.reference.ReferenceDataCatalogImpl;
+import org.datacleaner.storage.InMemoryStorageProvider;
+import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reads {@link AnalyzerBeansConfiguration} from conf.xml and decorates it with
+ * Reads {@link DataCleanerConfiguration} from conf.xml and decorates it with
  * additional configuration from {@link UserPreferences}.
  */
-public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfiguration> {
+public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReader.class);
 
@@ -78,7 +78,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
     }
 
     @Override
-    protected AnalyzerBeansConfiguration fetch() {
+    protected DataCleanerConfiguration fetch() {
         // load user preferences first, since we need it while reading
         // the configuration (some custom elements may refer to classes
         // within the extensions)
@@ -98,7 +98,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
             exists = false;
         }
 
-        final AnalyzerBeansConfiguration c;
+        final DataCleanerConfiguration c;
         if (exists) {
             InputStream inputStream = null;
             try {
@@ -210,7 +210,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         }
     }
 
-    private AnalyzerBeansConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
+    private DataCleanerConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
         logger.info("Reading conf.xml from classpath");
         try {
             return configurationReader.create(ResourceManager.get().getUrl("datacleaner-home/conf.xml").openStream());

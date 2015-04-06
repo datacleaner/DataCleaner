@@ -35,8 +35,8 @@ import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.SchemaNavigator;
@@ -100,7 +100,7 @@ public class ErrorInRowProcessingConsumerTest extends TestCase {
         ActivityAwareMultiThreadedTaskRunner taskRunner = new ActivityAwareMultiThreadedTaskRunner();
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(taskRunner).replace(
+        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(taskRunner).replace(
                 new DatastoreCatalogImpl(datastore));
 
         AnalysisJob job;

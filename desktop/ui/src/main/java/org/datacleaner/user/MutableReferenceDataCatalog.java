@@ -37,9 +37,6 @@ import org.datacleaner.util.StringUtils;
  * This is used to enable runtime changes by the user. This reference data
  * catalog wraps an immutable instance, which typically represents what is
  * configured in datacleaner's xml file.
- * 
- * @author Kasper Sørensen
- * 
  */
 public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
@@ -59,7 +56,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	 */
 	public MutableReferenceDataCatalog() {
 		_immutableDelegate = new ReferenceDataCatalogImpl();
-		_lifeCycleHelper = new LifeCycleHelper(null, null, true);
+		_lifeCycleHelper = new LifeCycleHelper(null, true);
 		_dictionaries = new ArrayList<Dictionary>();
 		_synonymCatalogs = new ArrayList<SynonymCatalog>();
 		_stringPatterns = new ArrayList<StringPattern>();

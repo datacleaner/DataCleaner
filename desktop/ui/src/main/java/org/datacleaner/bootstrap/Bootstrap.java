@@ -45,7 +45,7 @@ import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.cli.CliArguments;
 import org.datacleaner.cli.CliRunner;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -161,7 +161,7 @@ public final class Bootstrap {
         Injector injector = Guice.createInjector(new DCModuleImpl(DataCleanerHome.get(), configurationFile));
 
         // configuration loading can be multithreaded, so begin early
-        final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+        final DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
         // log usage
         final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
@@ -399,11 +399,11 @@ public final class Bootstrap {
         }
     }
 
-    private void exitCommandLine(AnalyzerBeansConfiguration configuration, int statusCode) {
+    private void exitCommandLine(DataCleanerConfiguration configuration, int statusCode) {
         if (configuration != null) {
             logger.debug("Shutting down task runner");
             try {
-                configuration.getTaskRunner().shutdown();
+                configuration.getEnvironment().getTaskRunner().shutdown();
             } catch (Exception e) {
                 logger.warn("Shutting down TaskRunner threw unexpected exception", e);
             }
@@ -415,7 +415,7 @@ public final class Bootstrap {
     }
 
     private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
-            AnalyzerBeansConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
+            DataCleanerConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
         String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
         if (StringUtils.isNullOrEmpty(websiteHostname)) {
             websiteHostname = System.getProperty("extensionswap.hostname");

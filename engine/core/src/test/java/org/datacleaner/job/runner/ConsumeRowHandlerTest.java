@@ -22,10 +22,15 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -37,15 +42,10 @@ import org.datacleaner.job.runner.ConsumeRowHandler.Configuration;
 import org.datacleaner.job.tasks.MockMultiRowTransformer;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.util.SimpleTableDef;
-
-import junit.framework.TestCase;
 
 public class ConsumeRowHandlerTest extends TestCase {
 
-    final AnalyzerBeansConfiguration analyzerBeansConfiguration = new AnalyzerBeansConfigurationImpl();
+    final DataCleanerConfiguration _configuration = new AnalyzerBeansConfigurationImpl();
     private AnalysisJobBuilder ajb;
     private MetaModelInputColumn nameColumn;
     private MetaModelInputColumn ageColumn;
@@ -60,7 +60,7 @@ public class ConsumeRowHandlerTest extends TestCase {
         tableDataProviders.add(new ArrayTableDataProvider(new SimpleTableDef("table", new String[] { "name", "age",
                 "country" }), new ArrayList<Object[]>()));
 
-        ajb = new AnalysisJobBuilder(analyzerBeansConfiguration);
+        ajb = new AnalysisJobBuilder(_configuration);
         ajb.setDatastore(new PojoDatastore("ds", "sch", tableDataProviders));
         ajb.addSourceColumns("name", "age", "country");
         sourceColumns = ajb.getSourceColumns();
@@ -91,7 +91,7 @@ public class ConsumeRowHandlerTest extends TestCase {
         final Configuration configuration = new Configuration();
         configuration.includeAnalyzers = false;
 
-        final ConsumeRowHandler handler = new ConsumeRowHandler(job, analyzerBeansConfiguration, configuration);
+        final ConsumeRowHandler handler = new ConsumeRowHandler(job, _configuration, configuration);
 
         List<InputRow> result;
 
@@ -128,7 +128,7 @@ public class ConsumeRowHandlerTest extends TestCase {
         final Configuration configuration = new Configuration();
         configuration.includeAnalyzers = true;
 
-        final ConsumeRowHandler handler = new ConsumeRowHandler(job, analyzerBeansConfiguration, configuration);
+        final ConsumeRowHandler handler = new ConsumeRowHandler(job, _configuration, configuration);
 
         List<InputRow> result;
 

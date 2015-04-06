@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
@@ -42,8 +44,6 @@ import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 
-import junit.framework.TestCase;
-
 public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
 
     public void testScenario() throws Exception {
@@ -51,7 +51,7 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         final AtomicInteger expectedRows = new AtomicInteger();
 
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new DatastoreCatalogImpl(datastore));
         final AnalysisListener analysisListener = new AnalysisListenerAdaptor() {
             @Override

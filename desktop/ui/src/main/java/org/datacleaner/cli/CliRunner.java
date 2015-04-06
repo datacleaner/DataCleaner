@@ -42,7 +42,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -151,7 +151,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    public void run(AnalyzerBeansConfiguration configuration) throws Throwable {
+    public void run(DataCleanerConfiguration configuration) throws Throwable {
         final String jobFilePath = _arguments.getJobFile();
         final CliListType listType = _arguments.getListType();
         try {
@@ -192,11 +192,11 @@ public final class CliRunner implements Closeable {
             System.err.println("Error:");
             e.printStackTrace(System.err);
         } finally {
-            configuration.getTaskRunner().shutdown();
+            configuration.getEnvironment().getTaskRunner().shutdown();
         }
     }
 
-    private void printColumns(AnalyzerBeansConfiguration configuration) {
+    private void printColumns(DataCleanerConfiguration configuration) {
         String datastoreName = _arguments.getDatastoreName();
         String tableName = _arguments.getTableName();
         String schemaName = _arguments.getSchemaName();
@@ -238,7 +238,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printTables(AnalyzerBeansConfiguration configuration) {
+    private void printTables(DataCleanerConfiguration configuration) {
         String datastoreName = _arguments.getDatastoreName();
         String schemaName = _arguments.getSchemaName();
 
@@ -276,7 +276,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printSchemas(AnalyzerBeansConfiguration configuration) {
+    private void printSchemas(DataCleanerConfiguration configuration) {
         String datastoreName = _arguments.getDatastoreName();
 
         if (datastoreName == null) {
@@ -302,7 +302,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printDatastores(AnalyzerBeansConfiguration configuration) {
+    private void printDatastores(DataCleanerConfiguration configuration) {
         String[] datastoreNames = configuration.getDatastoreCatalog().getDatastoreNames();
         if (datastoreNames == null || datastoreNames.length == 0) {
             write("No datastores configured!");
@@ -315,7 +315,7 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    protected void runJob(AnalyzerBeansConfiguration configuration) throws Throwable {
+    protected void runJob(DataCleanerConfiguration configuration) throws Throwable {
         final JaxbJobReader jobReader = new JaxbJobReader(configuration);
 
         final String jobFilePath = _arguments.getJobFile();
@@ -358,8 +358,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    protected void printAnalyzers(AnalyzerBeansConfiguration configuration) {
-        Collection<AnalyzerDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+    protected void printAnalyzers(DataCleanerConfiguration configuration) {
+        Collection<AnalyzerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getAnalyzerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No analyzers configured!");
@@ -370,8 +370,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printTransformers(AnalyzerBeansConfiguration configuration) {
-        Collection<TransformerDescriptor<?>> descriptors = configuration.getDescriptorProvider()
+    private void printTransformers(DataCleanerConfiguration configuration) {
+        Collection<TransformerDescriptor<?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getTransformerDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No transformers configured!");
@@ -382,8 +382,8 @@ public final class CliRunner implements Closeable {
         }
     }
 
-    private void printFilters(AnalyzerBeansConfiguration configuration) {
-        Collection<FilterDescriptor<?, ?>> descriptors = configuration.getDescriptorProvider()
+    private void printFilters(DataCleanerConfiguration configuration) {
+        Collection<FilterDescriptor<?, ?>> descriptors = configuration.getEnvironment().getDescriptorProvider()
                 .getFilterDescriptors();
         if (descriptors == null || descriptors.isEmpty()) {
             write("No filters configured!");

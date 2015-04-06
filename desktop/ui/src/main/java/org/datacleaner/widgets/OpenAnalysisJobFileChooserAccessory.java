@@ -37,12 +37,12 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.vfs2.FileObject;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobReader;
-import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
@@ -69,7 +69,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
     private static final ImageIcon ICON_APP = ImageManager.get().getImageIcon(IconUtils.APPLICATION_ICON);
     private static final int WIDTH = 220;
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final DCFileChooser _fileChooser;
     private final DCPanel _centerPanel;
     private final JButton _openJobButton;
@@ -79,7 +79,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
     private volatile FileObject _file;
     private volatile AnalysisJobMetadata _metadata;
 
-    public OpenAnalysisJobFileChooserAccessory(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
+    public OpenAnalysisJobFileChooserAccessory(WindowContext windowContext, DataCleanerConfiguration configuration,
             DCFileChooser fileChooser, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
         super();
         _windowContext = windowContext;

@@ -63,7 +63,7 @@ public class StringConverterTest extends TestCase {
 
         AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl().replace(referenceDataCatalog);
 
-        stringConverter = new StringConverter(conf.getInjectionManager(null));
+        stringConverter = new StringConverter(conf, null);
     }
 
     public void testConvertConvertableType() throws Exception {

@@ -17,25 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.storage;
+package org.datacleaner.reference;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
 
 /**
- * Configurable component which provides cached/persistent storage for
- * collections and other types that are needed during execution.
+ * Represents a collection of values where lookup using containsValue(...) is
+ * the preferred way of access. Typically the implementation will use some
+ * caching mechanism for the contained values because getting all values would
+ * mean loading a lot of objects into memory.
  * 
- * 
+ * @param <E>
  */
-public interface StorageProvider {
+public interface ReferenceValues<E> {
 
-	public <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
+	public Collection<E> getValues();
 
-	public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
-
-	public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
-
-	public RowAnnotationFactory createRowAnnotationFactory();
+	public boolean containsValue(E value);
 }

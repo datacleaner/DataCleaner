@@ -21,6 +21,7 @@ package org.datacleaner.monitor.configuration;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.InjectionManagerFactoryImpl;
@@ -42,9 +43,10 @@ public class TenantContextFactoryImplTest extends TestCase {
             parentInjectionManagerFactory, jobEngineManager);
 
     public void testUseTenantSpecificInjectionManager() throws Exception {
-        TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
+        final TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
 
-        InjectionManager injectionManager = tenantContext.getConfiguration().getInjectionManager(null);
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory().getInjectionManager(configuration);
         assertTrue(injectionManager instanceof TenantInjectionManager);
 
         TenantInjectionManager tenantInjectionManager = (TenantInjectionManager) injectionManager;

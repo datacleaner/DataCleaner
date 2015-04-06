@@ -17,23 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.storage;
-
-import java.io.Serializable;
+package org.datacleaner.job.tasks;
 
 /**
- * Represents an annotation (aka a mark, a label or a categorization) of a row.
- * RowAnnotations are used typically by analyzers in order to label rows for
- * later use, typically drill-to-detail functionality.
- * 
- * RowAnnotations are created through the RowAnnotationFactory, which is
- * injectable using the @Provided annotation.
- * 
- * @see RowAnnotationFactory
- * 
- * 
+ * Represents a (sub)task that can run in parallel when running an analysis job.
  */
-public interface RowAnnotation extends Serializable {
+public interface Task {
 
-	public int getRowCount();
+	public void execute() throws Exception;
 }

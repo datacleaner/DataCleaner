@@ -19,23 +19,18 @@
  */
 package org.datacleaner.configuration;
 
+import java.io.Serializable;
+
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalog;
-import org.datacleaner.storage.StorageProvider;
+import org.datacleaner.repository.RepositoryFolder;
 
 /**
- * Represents the configuration of the application. The configuration can
- * provide all the needed providers and catalogs used by DataCleaner to
- * configure and execute jobs.
- * 
- * @deprecated use {@link DataCleanerConfiguration} and/or
- *             {@link DataCleanerEnvironment} instead.
+ * Represents the configuration of a DataCleaner instance. Usually there is just
+ * one configuration active but it is possible to have multiple configurations,
+ * for instance within the same {@link DataCleanerEnvironment}.
  */
-@Deprecated
-public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, DataCleanerEnvironment {
+public interface DataCleanerConfiguration extends Serializable {
 
     /**
      * @see DatastoreCatalog
@@ -50,26 +45,17 @@ public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, Da
     public ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
-     * @see DescriptorProvider
-     * @return the descriptor provider defined in this configuration
+     * Gets the home folder of this configuration.
+     * 
+     * @return
      */
-    public DescriptorProvider getDescriptorProvider();
+    public RepositoryFolder getHomeFolder();
 
     /**
-     * @see StorageProvider
-     * @return the storage provider defined in this configuration
+     * Gets the {@link DataCleanerEnvironment} that this configuration refers
+     * to.
+     * 
+     * @return
      */
-    public StorageProvider getStorageProvider();
-
-    /**
-     * @see InjectionManager
-     * @return an injection manager for the job
-     */
-    public InjectionManager getInjectionManager(AnalysisJob job);
-
-    /**
-     * @see TaskRunner
-     * @return the task runner defined in this configuration
-     */
-    public TaskRunner getTaskRunner();
+    public DataCleanerEnvironment getEnvironment();
 }

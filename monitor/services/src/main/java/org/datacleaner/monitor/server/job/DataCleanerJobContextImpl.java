@@ -29,6 +29,7 @@ import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobReader;
@@ -97,7 +98,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
                     lastModified = Math.max(_file.getLastModified(), configurationLastModified);
                     if (_job == null || lastModified != _lastModifiedCache) {
                         _lastModifiedCache = lastModified;
-                        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
+                        final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
                         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
                         _job = reader.readJob();
                         _sourceDatastoreName = _job.getDatastore().getName();

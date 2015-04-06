@@ -33,8 +33,8 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.PojoDatastore;
@@ -56,7 +56,7 @@ import org.datacleaner.test.MockTransformer;
 
 public class FilterRequirementMergingTest extends TestCase {
 
-    private AnalyzerBeansConfiguration configuration;
+    private DataCleanerConfiguration configuration;
     private PojoDatastore datastore;
     private AnalysisJobBuilder jobBuilder;
 

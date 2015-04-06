@@ -42,8 +42,8 @@ import org.apache.metamodel.util.MutableRef;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -60,6 +60,8 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.StorageProvider;
@@ -104,7 +106,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     private final DataCleanerConfigurationReader _undecoratedConfigurationRef;
     private final Ref<UserPreferences> _userPreferencesRef;
     private final Ref<AnalysisJobBuilder> _analysisJobBuilderRef;
-    private AnalyzerBeansConfiguration _configuration;
+    private DataCleanerConfiguration _configuration;
     private WindowContext _windowContext;
 
     /**
@@ -189,6 +191,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
     }
 
+    @Deprecated
+    @Provides
+    public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
+        return (org.datacleaner.configuration.AnalyzerBeansConfiguration) _configuration;
+    }
+
     @Override
     protected void configure() {
         bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
@@ -197,7 +205,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final WindowContext getWindowContext(AnalyzerBeansConfiguration configuration,
+    public final WindowContext getWindowContext(DataCleanerConfiguration configuration,
             UserPreferences userPreferences, UsageLogger usageLogger) {
         if (_windowContext == null) {
             synchronized (DCModuleImpl.class) {
@@ -210,23 +218,23 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final TaskRunner getTaskRunner(AnalyzerBeansConfiguration conf) {
-        return conf.getTaskRunner();
+    public final TaskRunner getTaskRunner(DataCleanerConfiguration conf) {
+        return conf.getEnvironment().getTaskRunner();
     }
 
     @Provides
-    public final DescriptorProvider getDescriptorProvider(AnalyzerBeansConfiguration conf) {
-        return conf.getDescriptorProvider();
+    public final DescriptorProvider getDescriptorProvider(DataCleanerConfiguration conf) {
+        return conf.getEnvironment().getDescriptorProvider();
     }
 
     @Provides
-    public final ReferenceDataCatalog getReferenceDataCatalog(AnalyzerBeansConfiguration conf) {
+    public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
 
     @Provides
     public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
-            AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job) {
+            DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
         return injectionManagerFactory.getInjectionManager(configuration, job);
     }
 
@@ -237,7 +245,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final DatastoreCatalog getDatastoreCatalog(AnalyzerBeansConfiguration conf) {
+    public final DatastoreCatalog getDatastoreCatalog(DataCleanerConfiguration conf) {
         return conf.getDatastoreCatalog();
     }
 
@@ -253,12 +261,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
     @Provides
     @Undecorated
-    public final AnalyzerBeansConfiguration getUndecoratedAnalyzerBeansConfiguration() {
+    public final DataCleanerConfiguration getUndecoratedAnalyzerBeansConfiguration() {
         return _undecoratedConfigurationRef.get();
     }
 
     @Provides
-    public final AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(@Undecorated AnalyzerBeansConfiguration c,
+    public final DataCleanerConfiguration getAnalyzerBeansConfiguration(@Undecorated DataCleanerConfiguration c,
             UserPreferences userPreferences, InjectionManagerFactory injectionManagerFactory) {
         if (_configuration == null) {
             synchronized (DCModuleImpl.class) {
@@ -269,7 +277,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), null, true));
-                    final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
+                    final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
                     final List<ExtensionPackage> internalExtensions = extensionReader.getInternalExtensions();
@@ -282,10 +290,15 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                         extensionPackage.loadDescriptors(descriptorProvider);
                     }
 
-                    final StorageProvider storageProvider = c.getStorageProvider();
+                    final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
+
+                    final FileObject homeFileObject = DataCleanerHome.get();
+                    final File homeDirectory = VFSUtils.toFile(homeFileObject);
+                    final RepositoryFolder homeRepositoryFolder = new FileRepositoryFolder(null, homeDirectory);
 
                     _configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog,
-                            descriptorProvider, c.getTaskRunner(), storageProvider, injectionManagerFactory);
+                            descriptorProvider, c.getEnvironment().getTaskRunner(), storageProvider,
+                            injectionManagerFactory, homeRepositoryFolder);
                 }
             }
         }
@@ -334,12 +347,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final RendererFactory getRendererFactory(AnalyzerBeansConfiguration configuration) {
+    public final RendererFactory getRendererFactory(DataCleanerConfiguration configuration) {
         return new RendererFactory(configuration);
     }
 
     @Provides
-    public AnalysisJobBuilder getAnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
+    public AnalysisJobBuilder getAnalysisJobBuilder(DataCleanerConfiguration configuration) {
         AnalysisJobBuilder ajb = _analysisJobBuilderRef.get();
         if (ajb == null && _analysisJobBuilderRef instanceof MutableRef) {
             ajb = new AnalysisJobBuilder(configuration);

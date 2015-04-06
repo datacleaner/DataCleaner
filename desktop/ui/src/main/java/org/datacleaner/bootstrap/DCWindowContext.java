@@ -27,7 +27,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.user.UsageLogger;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.windows.AbstractDialog;
@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * @see DCWindow
  * @see AbstractWindow
  * @see AbstractDialog
- * 
- * @author Kasper Sørensen
  */
 public final class DCWindowContext extends SimpleWindowContext implements WindowContext {
 
@@ -53,7 +51,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 
 	private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
 	private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
-	private final AnalyzerBeansConfiguration _configuration;
+	private final DataCleanerConfiguration _configuration;
 	private final UserPreferences _userPreferences;
 	private boolean _exiting;
 
@@ -81,7 +79,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 		return null;
 	}
 
-	public DCWindowContext(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, UsageLogger usageLogger) {
+	public DCWindowContext(DataCleanerConfiguration configuration, UserPreferences userPreferences, UsageLogger usageLogger) {
 		_configuration = configuration;
 		_userPreferences = userPreferences;
 		_usageLogger = usageLogger;
@@ -152,7 +150,7 @@ public final class DCWindowContext extends SimpleWindowContext implements Window
 		    _usageLogger.logApplicationShutdown();
 		}
 		if (_configuration != null) {
-			_configuration.getTaskRunner().shutdown();
+			_configuration.getEnvironment().getTaskRunner().shutdown();
 		}
 		for (ExitActionListener actionListener : _exitActionListeners) {
 			actionListener.exit(0);

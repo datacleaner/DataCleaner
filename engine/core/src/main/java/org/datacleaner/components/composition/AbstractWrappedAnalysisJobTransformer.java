@@ -34,7 +34,7 @@ import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.ConsumeRowHandler;
@@ -51,7 +51,7 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
 
     @Inject
     @Provided
-    AnalyzerBeansConfiguration _analyzerBeansConfiguration;
+    DataCleanerConfiguration _configuration;
 
     @Inject
     @Provided
@@ -94,7 +94,7 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
         final ConsumeRowHandler.Configuration configuration = new ConsumeRowHandler.Configuration();
         configuration.includeAnalyzers = false;
 
-        _consumeRowHandler = new ConsumeRowHandler(_wrappedAnalysisJob, _analyzerBeansConfiguration, configuration);
+        _consumeRowHandler = new ConsumeRowHandler(_wrappedAnalysisJob, _configuration, configuration);
         _inputColumnConversion = getInputColumnConversion(_wrappedAnalysisJob);
         _outputColumns = _consumeRowHandler.getOutputColumns();
     }
@@ -169,8 +169,8 @@ public abstract class AbstractWrappedAnalysisJobTransformer implements Transform
         return result;
     }
     
-    public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
-        return _analyzerBeansConfiguration;
+    public DataCleanerConfiguration getDataCleanerConfiguration() {
+        return _configuration;
     }
     
     public OutputRowCollector getOutputRowCollector() {

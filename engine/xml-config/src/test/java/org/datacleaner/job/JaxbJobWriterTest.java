@@ -45,8 +45,8 @@ import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -94,7 +94,7 @@ public class JaxbJobWriterTest extends TestCase {
 
         final DatastoreCatalogImpl datastoreCatalog = new DatastoreCatalogImpl(ds);
 
-        final AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(
+        final DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(
                 descriptorProvider);
 
         final AnalysisJob builtJob;
@@ -134,7 +134,7 @@ public class JaxbJobWriterTest extends TestCase {
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(NullCheckFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
+        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
                 .replace(descriptorProvider);
 
         JaxbJobReader reader = new JaxbJobReader(conf);
@@ -156,7 +156,7 @@ public class JaxbJobWriterTest extends TestCase {
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(NullCheckFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
+        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
                 .replace(descriptorProvider);
 
         JaxbJobReader reader = new JaxbJobReader(conf);
@@ -175,7 +175,7 @@ public class JaxbJobWriterTest extends TestCase {
     @SuppressWarnings("unchecked")
     public void testNullColumnProperty() throws Exception {
         Datastore ds = TestHelper.createSampleDatabaseDatastore("db");
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds));
+        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds));
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
             ajb.setDatastore(ds);
 

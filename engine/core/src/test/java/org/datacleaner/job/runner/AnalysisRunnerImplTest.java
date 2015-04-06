@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MutableInputColumn;
@@ -47,7 +47,7 @@ public class AnalysisRunnerImplTest extends TestCase {
     private static final AtomicBoolean MY_BOOL1 = new AtomicBoolean(false);
     private static final AtomicBoolean MY_BOOL2 = new AtomicBoolean(false);
     private static final AtomicBoolean MY_BOOL3 = new AtomicBoolean(false);
-    private AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+    private DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
     private AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
     private Datastore datastore = new CsvDatastore("ds", "src/test/resources/employees.csv");
 

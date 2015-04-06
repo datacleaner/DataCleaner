@@ -54,7 +54,7 @@ import org.datacleaner.test.MockTransformer;
 
 public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
-    private AnalyzerBeansConfigurationImpl analyzerBeansConfiguration;
+    private AnalyzerBeansConfigurationImpl _configuration;
 
     @Override
     protected void setUp() throws Exception {
@@ -76,12 +76,12 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
         Datastore actualInput = new PojoDatastore("actual_input", actualTableDataProvider);
 
         DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(origInput, actualInput);
-        analyzerBeansConfiguration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog);
+        _configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog);
     }
 
     public void testGetOutputColumns() throws Exception {
         MockWrappedAnalysisJobTransformer transformer = new MockWrappedAnalysisJobTransformer();
-        transformer._analyzerBeansConfiguration = analyzerBeansConfiguration;
+        transformer._configuration = _configuration;
         transformer.input = new InputColumn[] { new MockInputColumn<String>("foo"), new MockInputColumn<String>("bar"),
                 new MockInputColumn<String>("baz") };
         OutputColumns outputColumns = transformer.getOutputColumns();
@@ -90,7 +90,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
     public void testWrappedExecution() throws Throwable {
         final AnalysisJob job;
-        try (AnalysisJobBuilder builder = new AnalysisJobBuilder(analyzerBeansConfiguration)) {
+        try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
             builder.setDatastore("actual_input");
             builder.addSourceColumns("table.name");
             builder.addTransformer(MockWrappedAnalysisJobTransformer.class).addInputColumn(
@@ -100,7 +100,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
             job = builder.toAnalysisJob();
         }
 
-        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(analyzerBeansConfiguration).run(job);
+        AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(_configuration).run(job);
         resultFuture.await();
 
         if (resultFuture.isErrornous()) {
@@ -132,7 +132,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
         @Override
         protected AnalysisJob createWrappedAnalysisJob() {
-            try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_analyzerBeansConfiguration)) {
+            try (AnalysisJobBuilder builder = new AnalysisJobBuilder(_configuration)) {
                 builder.setDatastore("orig_input");
                 builder.addSourceColumns("table.foo");
                 builder.addTransformer(MockTransformer.class).addInputColumns(builder.getSourceColumns());

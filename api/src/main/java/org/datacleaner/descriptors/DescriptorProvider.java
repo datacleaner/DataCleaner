@@ -171,7 +171,8 @@ public interface DescriptorProvider {
             Class<? extends RenderingFormat<?>> renderingFormat);
 
     /**
-     * Add a {@link ComponentDescriptorsUpdatedListener} that will be notified if the list of descriptors change.
+     * Add a {@link ComponentDescriptorsUpdatedListener} that will be notified
+     * if the list of descriptors change.
      * 
      * @param listener
      */
@@ -179,6 +180,7 @@ public interface DescriptorProvider {
 
     /**
      * Remove a {@link ComponentDescriptorsUpdatedListener}
+     * 
      * @param listener
      */
     public void removeComponentDescriptorsUpdatedListener(ComponentDescriptorsUpdatedListener listener);

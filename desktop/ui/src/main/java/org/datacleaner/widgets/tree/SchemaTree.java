@@ -117,7 +117,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         _injectorBuilder = injectorBuilder;
         _datastoreConnection = datastore.openConnection();
         _rendererDelegate = new DefaultTreeRenderer();
-        _analysisJobBuilder.getConfiguration().getDescriptorProvider().addComponentDescriptorsUpdatedListener(this);
+        _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider()
+                .addComponentDescriptorsUpdatedListener(this);
 
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -184,7 +185,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final TreeNode root = (TreeNode) getModel().getRoot();
         final DefaultMutableTreeNode schemaNode = (DefaultMutableTreeNode) root.getChildAt(0);
         final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
-        
+
         expandPath(new TreePath(schemaNode.getPath()));
         expandPath(new TreePath(libraryNode.getPath()));
     }
@@ -262,14 +263,15 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private DefaultMutableTreeNode createLibrary(final DefaultMutableTreeNode libraryRoot) {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getEnvironment()
+                .getDescriptorProvider();
 
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
             libraryRoot.add(schemaNode);
-            final Collection<? extends ComponentDescriptor<?>> componentDescriptors = _analysisJobBuilder
-                    .getConfiguration().getDescriptorProvider().getComponentDescriptorsOfSuperCategory(superCategory);
+            final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
+                    .getComponentDescriptorsOfSuperCategory(superCategory);
 
             final Map<ComponentCategory, DefaultMutableTreeNode> categoryTreeNodes = new HashMap<>();
 

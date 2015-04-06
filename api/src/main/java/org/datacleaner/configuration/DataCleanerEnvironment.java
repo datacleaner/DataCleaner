@@ -19,35 +19,25 @@
  */
 package org.datacleaner.configuration;
 
-import org.datacleaner.connection.DatastoreCatalog;
+import java.io.Serializable;
+
 import org.datacleaner.descriptors.DescriptorProvider;
-import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.storage.StorageProvider;
 
 /**
- * Represents the configuration of the application. The configuration can
- * provide all the needed providers and catalogs used by DataCleaner to
- * configure and execute jobs.
+ * Represents the environment of one or more DataCleaner instances.
  * 
- * @deprecated use {@link DataCleanerConfiguration} and/or
- *             {@link DataCleanerEnvironment} instead.
+ * @see DataCleanerConfiguration
  */
-@Deprecated
-public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, DataCleanerEnvironment {
+public interface DataCleanerEnvironment extends Serializable {
 
     /**
-     * @see DatastoreCatalog
-     * @return the datastore catalog defined in this configuration
+     * Gets the {@link TaskRunner} defined in this environment
+     * 
+     * @return the task runner defined in this environment
      */
-    public DatastoreCatalog getDatastoreCatalog();
-
-    /**
-     * @see ReferenceDataCatalog
-     * @return the reference data catalog defined in this configuration
-     */
-    public ReferenceDataCatalog getReferenceDataCatalog();
+    public TaskRunner getTaskRunner();
 
     /**
      * @see DescriptorProvider
@@ -62,14 +52,9 @@ public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, Da
     public StorageProvider getStorageProvider();
 
     /**
-     * @see InjectionManager
-     * @return an injection manager for the job
+     * @see InjectionManagerFactory
+     * @return the injection manager factory defined in this configuration
      */
-    public InjectionManager getInjectionManager(AnalysisJob job);
+    public InjectionManagerFactory getInjectionManagerFactory();
 
-    /**
-     * @see TaskRunner
-     * @return the task runner defined in this configuration
-     */
-    public TaskRunner getTaskRunner();
 }

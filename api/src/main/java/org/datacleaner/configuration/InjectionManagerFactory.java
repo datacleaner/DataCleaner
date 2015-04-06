@@ -19,23 +19,31 @@
  */
 package org.datacleaner.configuration;
 
-import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.Filter;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.job.AnalysisJob;
 
 /**
- * Component that manages injections made into components such as
- * {@link Analyzer}s, {@link Transformer}, {@link Filter}s, custom components
- * and more.
+ * Factory for {@link InjectionManager} instances. Since such instances
+ * represent job-level context, they much be created individually for each job
+ * execution.
  */
-public interface InjectionManager {
+public interface InjectionManagerFactory {
 
     /**
-     * Gets the value/object/instance to be injected at a particular injection
-     * point.
+     * Gets an {@link InjectionManager} (typically new) for the execution of an
+     * {@link AnalysisJob}
      * 
-     * @param injectionPoint
+     * @param configuration
+     * @param job
      * @return
      */
-    public <E> E getInstance(InjectionPoint<E> injectionPoint);
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job);
+
+    /**
+     * Gets a general purpose {@link InjectionManager} for the
+     * {@link DataCleanerConfiguration}.
+     * 
+     * @param configuration
+     * @return
+     */
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration);
 }

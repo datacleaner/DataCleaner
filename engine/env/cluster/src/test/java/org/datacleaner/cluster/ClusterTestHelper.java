@@ -46,8 +46,8 @@ import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.beans.writers.WriteBufferSizeOption;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -81,7 +81,7 @@ public class ClusterTestHelper {
      * @param multiThreaded
      * @return
      */
-    public static AnalyzerBeansConfiguration createConfiguration(String testName, boolean multiThreaded) {
+    public static DataCleanerConfiguration createConfiguration(String testName, boolean multiThreaded) {
         final JdbcDatastore csvDatastore = new JdbcDatastore("csv", "jdbc:h2:mem:" + testName, "org.h2.Driver", "SA",
                 "", true);
         final UpdateableDatastoreConnection con = csvDatastore.openConnection();
@@ -116,7 +116,7 @@ public class ClusterTestHelper {
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(ValueMatchAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(MockAnalyzerWithBadReducer.class));
 
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner)
+        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner)
                 .replace(datastoreCatalog).replace(descriptorProvider);
         return configuration;
     }
@@ -130,7 +130,7 @@ public class ClusterTestHelper {
      * @param virtualClusterManager
      * @return the list of errors returned, to perform further assertions
      */
-    public static List<Throwable> runErrorHandlingJob(AnalyzerBeansConfiguration configuration,
+    public static List<Throwable> runErrorHandlingJob(DataCleanerConfiguration configuration,
             ClusterManager clusterManager) {
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore("orderdb");
@@ -179,7 +179,7 @@ public class ClusterTestHelper {
         return errors;
     }
 
-    public static void runBasicAnalyzersJob(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager)
+    public static void runBasicAnalyzersJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
             throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
@@ -258,7 +258,7 @@ public class ClusterTestHelper {
         }
     }
 
-    public static void runCompletenessAndValueMatcherAnalyzerJob(AnalyzerBeansConfiguration configuration,
+    public static void runCompletenessAndValueMatcherAnalyzerJob(DataCleanerConfiguration configuration,
             ClusterManager clusterManager) throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
@@ -346,7 +346,7 @@ public class ClusterTestHelper {
         }
     }
 
-    public static void runExistingMaxRowsJob(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager)
+    public static void runExistingMaxRowsJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
             throws Throwable {
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore("orderdb");
@@ -390,7 +390,7 @@ public class ClusterTestHelper {
      * @param clusterManager
      * @throws Throwable
      */
-    public static void runConcatAndInsertJob(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager)
+    public static void runConcatAndInsertJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
             throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file
@@ -476,7 +476,7 @@ public class ClusterTestHelper {
         }
     }
 
-    public static void runNoExpectedRecordsJob(AnalyzerBeansConfiguration configuration) throws Throwable {
+    public static void runNoExpectedRecordsJob(DataCleanerConfiguration configuration) throws Throwable {
         final AnalysisJob job;
         {
             final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
@@ -533,7 +533,7 @@ public class ClusterTestHelper {
         Assert.assertTrue(analyzerResult instanceof StringAnalyzerResult);
     }
 
-    public static void runCancelJobJob(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager)
+    public static void runCancelJobJob(DataCleanerConfiguration configuration, ClusterManager clusterManager)
             throws Throwable {
         // build a job that concats names and inserts the concatenated names
         // into a file

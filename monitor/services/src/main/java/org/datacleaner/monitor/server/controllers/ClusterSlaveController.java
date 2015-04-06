@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.datacleaner.cluster.SlaveJobInterceptor;
 import org.datacleaner.cluster.http.SlaveServletHelper;
 import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -66,7 +67,7 @@ public class ClusterSlaveController {
     public void executeJob(@PathVariable("tenant") final String tenant, final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
 
         logger.info("Accepting slave job request for tenant: {}. Running slave jobs: {}", tenant,
                 _runningJobsMap.size());

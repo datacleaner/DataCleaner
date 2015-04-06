@@ -22,7 +22,6 @@ package org.datacleaner.result.renderer;
 import java.util.Set;
 
 import org.datacleaner.api.Renderer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
@@ -36,10 +35,6 @@ import org.datacleaner.lifecycle.PropertyInjectionPoint;
 public class DefaultRendererInitializer implements RendererInitializer {
 
     private final InjectionManager _injectionManager;
-
-    public DefaultRendererInitializer(AnalyzerBeansConfiguration configuration) {
-        this(configuration.getInjectionManager(null));
-    }
 
     public DefaultRendererInitializer(InjectionManager injectionManager) {
         _injectionManager = injectionManager;

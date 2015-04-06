@@ -27,7 +27,7 @@ import java.util.Queue;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
@@ -57,7 +57,7 @@ final class AnalysisRunnerJobDelegate {
     private static final Logger logger = LoggerFactory.getLogger(AnalysisRunnerJobDelegate.class);
 
     private final AnalysisJob _job;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final TaskRunner _taskRunner;
     private final AnalysisListener _analysisListener;
     private final Queue<JobAndResult> _resultQueue;
@@ -83,7 +83,7 @@ final class AnalysisRunnerJobDelegate {
      *            typically be true, on slave nodes in a cluster, this will
      *            typically be false.
      */
-    public AnalysisRunnerJobDelegate(AnalysisJob job, AnalyzerBeansConfiguration configuration, TaskRunner taskRunner,
+    public AnalysisRunnerJobDelegate(AnalysisJob job, DataCleanerConfiguration configuration, TaskRunner taskRunner,
             AnalysisListener analysisListener, Queue<JobAndResult> resultQueue, ErrorAware errorAware,
             boolean includeNonDistributedTasks) {
         _job = job;
@@ -112,7 +112,8 @@ final class AnalysisRunnerJobDelegate {
     public AnalysisResultFuture run() {
         try {
             // the injection manager is job scoped
-            final InjectionManager injectionManager = _configuration.getInjectionManager(_job);
+            final InjectionManager injectionManager = _configuration.getEnvironment().getInjectionManagerFactory()
+                    .getInjectionManager(_configuration, _job);
 
             final LifeCycleHelper rowProcessingLifeCycleHelper = new LifeCycleHelper(injectionManager,
                     new ReferenceDataActivationManager(), _includeNonDistributedTasks);

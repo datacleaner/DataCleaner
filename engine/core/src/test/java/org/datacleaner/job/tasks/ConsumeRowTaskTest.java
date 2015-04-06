@@ -29,8 +29,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -47,7 +47,7 @@ public class ConsumeRowTaskTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testMultiRowTransformer() throws Throwable {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
 
         final InputColumn<?> countingColumn;
         final AnalysisJob job;
@@ -122,7 +122,7 @@ public class ConsumeRowTaskTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testConsumeRowTaskForComplexJob() throws Throwable {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
         final AnalysisJob job;
         // build example job
         try (AnalysisJobBuilder builder = new AnalysisJobBuilder(configuration)) {

@@ -81,7 +81,8 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
         this(analysisJobBuilder, null);
     }
 
-    public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder, FilterComponentBuilder<?, ?> filterJobBuilder) {
+    public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder,
+            FilterComponentBuilder<?, ?> filterJobBuilder) {
         super();
         _analysisJobBuilder = analysisJobBuilder;
         _checkBox = new DCCheckBox<Object>("", false);
@@ -126,7 +127,8 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 
                 if (selected) {
                     _analysisJobBuilder.addFilter(maxRowsFilterComponentBuilder);
-                    _analysisJobBuilder.setDefaultRequirement(maxRowsFilterComponentBuilder, MaxRowsFilter.Category.VALID);
+                    _analysisJobBuilder.setDefaultRequirement(maxRowsFilterComponentBuilder,
+                            MaxRowsFilter.Category.VALID);
                 } else {
                     _analysisJobBuilder.removeFilter(maxRowsFilterComponentBuilder);
                     _maxRowsFilterComponentBuilder = null;
@@ -171,9 +173,9 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
         if (_maxRowsFilterComponentBuilder == null) {
             // Lazy initializing getter (to postpone the call to
             // DCConfiguration.
-            _maxRowsFilterComponentBuilder = new FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category>(_analysisJobBuilder,
-                    _analysisJobBuilder.getConfiguration().getDescriptorProvider()
-                            .getFilterDescriptorForClass(MaxRowsFilter.class));
+            _maxRowsFilterComponentBuilder = new FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category>(
+                    _analysisJobBuilder, _analysisJobBuilder.getConfiguration().getEnvironment()
+                            .getDescriptorProvider().getFilterDescriptorForClass(MaxRowsFilter.class));
             _maxRowsFilterComponentBuilder.setName(FILTER_NAME);
         }
         return _maxRowsFilterComponentBuilder;

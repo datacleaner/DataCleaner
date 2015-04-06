@@ -24,15 +24,15 @@ import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.FileDownloadListener;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.http.HttpXmlUtils;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
 import org.datacleaner.util.http.WebServiceHttpClient;
@@ -48,20 +48,20 @@ public final class ExtensionSwapClient {
     private final WindowContext _windowContext;
     private final String _baseUrl;
     private final UserPreferences _userPreferences;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
     public ExtensionSwapClient(HttpClient httpClient, WindowContext windowContext, UserPreferences userPreferences,
-            AnalyzerBeansConfiguration configuration) {
+            DataCleanerConfiguration configuration) {
         this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration, httpClient);
     }
 
     public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences,
-            AnalyzerBeansConfiguration configuration, HttpClient httpClient) {
+            DataCleanerConfiguration configuration, HttpClient httpClient) {
         this(httpClient, websiteHostname, windowContext, userPreferences, configuration);
     }
 
     public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext,
-            UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
+            UserPreferences userPreferences, DataCleanerConfiguration configuration) {
         _httpClient = httpClient;
         _windowContext = windowContext;
         _baseUrl = "http://" + websiteHostname + "/ws/extension/";
@@ -75,7 +75,7 @@ public final class ExtensionSwapClient {
 
         extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
         extensionPackage.getAdditionalProperties().put("version", Integer.toString(extensionSwapPackage.getVersion()));
-        extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
+        extensionPackage.loadDescriptors(_configuration.getEnvironment().getDescriptorProvider());
         _userPreferences.getExtensionPackages().add(extensionPackage);
         return extensionPackage;
     }

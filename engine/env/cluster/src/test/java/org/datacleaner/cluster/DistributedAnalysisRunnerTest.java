@@ -24,8 +24,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
@@ -37,37 +37,37 @@ import org.datacleaner.test.TestHelper;
 public class DistributedAnalysisRunnerTest extends TestCase {
     
     public void testNoRecords() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
         
         ClusterTestHelper.runNoExpectedRecordsJob(configuration);
     }
     
     public void testCancel() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
         
         ClusterTestHelper.runCancelJobJob(configuration, new VirtualClusterManager(configuration, 2));
     }
     
     public void testExistingMaxRowsScenario() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         ClusterTestHelper.runExistingMaxRowsJob(configuration, new VirtualClusterManager(configuration, 2));
     }
 
     public void testVanillaScenarioSingleSlave() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         ClusterTestHelper.runConcatAndInsertJob(configuration, new VirtualClusterManager(configuration, 1));
     }
 
     public void testVanillaScenarioFourSlaves() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         ClusterTestHelper.runConcatAndInsertJob(configuration, new VirtualClusterManager(configuration, 4));
     }
     
     public void testRunCompletenessAnalyzer() throws Throwable {
-    	final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+    	final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
     	
     	// run with only a single node to verify a baseline scenario
     	ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 1));
@@ -77,7 +77,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 	}
     
     public void testRunBasicAnalyzers() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         // run with only a single node to verify a baseline scenario
         ClusterTestHelper.runBasicAnalyzersJob(configuration, new VirtualClusterManager(configuration, 1));
@@ -87,7 +87,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
     }
 
     public void testErrorHandlingSingleSlave() throws Exception {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), false);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), false);
 
         List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(
                 configuration, 1));
@@ -98,7 +98,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
     }
 
     public void testErrorHandlingFourSlaves() throws Exception {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
         List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, new VirtualClusterManager(
                 configuration, 4));
@@ -118,7 +118,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 
     public void testUndistributableAnalyzer() throws Exception {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new DatastoreCatalogImpl(datastore));
 
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
@@ -147,7 +147,7 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 
     public void testErrorHandlingInReductionPhase() throws Exception {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new DatastoreCatalogImpl(datastore));
 
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);

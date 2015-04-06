@@ -50,8 +50,7 @@ import org.datacleaner.api.Converter;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -105,9 +104,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobReader.class);
 
     private final JAXBContext _jaxbContext;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
-    public JaxbJobReader(AnalyzerBeansConfiguration configuration) {
+    public JaxbJobReader(DataCleanerConfiguration configuration) {
         _configuration = configuration;
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
@@ -498,7 +497,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (StringUtils.isNullOrEmpty(ref)) {
                         throw new IllegalStateException("Transformer descriptor ref cannot be null");
                     }
-                    final TransformerDescriptor<?> transformerBeanDescriptor = _configuration
+                    final TransformerDescriptor<?> transformerBeanDescriptor = _configuration.getEnvironment()
                             .getDescriptorProvider().getTransformerDescriptorByDisplayName(ref);
                     if (transformerBeanDescriptor == null) {
                         throw new NoSuchComponentException(Transformer.class, ref);
@@ -627,8 +626,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
                     if (StringUtils.isNullOrEmpty(ref)) {
                         throw new IllegalStateException("Filter descriptor ref cannot be null");
                     }
-                    FilterDescriptor<?, ?> filterBeanDescriptor = _configuration.getDescriptorProvider()
-                            .getFilterDescriptorByDisplayName(ref);
+                    FilterDescriptor<?, ?> filterBeanDescriptor = _configuration.getEnvironment()
+                            .getDescriptorProvider().getFilterDescriptorByDisplayName(ref);
                     if (filterBeanDescriptor == null) {
                         throw new NoSuchComponentException(Filter.class, ref);
                     }
@@ -695,7 +694,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 throw new IllegalStateException("Analyzer descriptor ref cannot be null");
             }
 
-            AnalyzerDescriptor<?> descriptor = _configuration.getDescriptorProvider()
+            AnalyzerDescriptor<?> descriptor = _configuration.getEnvironment().getDescriptorProvider()
                     .getAnalyzerDescriptorByDisplayName(ref);
 
             if (descriptor == null) {
@@ -799,9 +798,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
     }
 
     private StringConverter createStringConverter(final AnalysisJobBuilder analysisJobBuilder) {
-        AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob(false);
-        InjectionManager injectionManager = _configuration.getInjectionManager(analysisJob);
-        return new StringConverter(injectionManager);
+        final AnalysisJob job = analysisJobBuilder.toAnalysisJob(false);
+        return new StringConverter(_configuration, job);
     }
 
     private InputColumn<?> createExpressionBasedInputColumn(InputType inputType) {

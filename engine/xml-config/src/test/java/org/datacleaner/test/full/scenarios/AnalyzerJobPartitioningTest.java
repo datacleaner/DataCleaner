@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
@@ -52,7 +52,7 @@ public class AnalyzerJobPartitioningTest extends TestCase {
 				TestHelper.createSampleDatabaseDatastore("my database"));
 		DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider()
 				.scanPackage("org.datacleaner.beans", true);
-		AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl()
+		DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl()
 				.replace(datastoreCatalog).replace(descriptorProvider);
 
 		AnalysisRunner runner = new AnalysisRunnerImpl(conf);

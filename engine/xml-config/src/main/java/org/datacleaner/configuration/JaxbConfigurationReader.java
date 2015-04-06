@@ -42,6 +42,15 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.apache.metamodel.schema.TableType;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
+import org.apache.metamodel.util.SimpleTableDef;
+import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.AccessDatastoreType;
@@ -67,6 +76,7 @@ import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
 import org.datacleaner.configuration.jaxb.H2StorageProviderType;
+import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
 import org.datacleaner.configuration.jaxb.HsqldbStorageProviderType;
 import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
@@ -82,7 +92,6 @@ import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.Dictionaries;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.StringPatterns;
 import org.datacleaner.configuration.jaxb.ReferenceDataCatalogType.SynonymCatalogs;
-import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.RegexPatternType;
 import org.datacleaner.configuration.jaxb.SalesforceDatastoreType;
 import org.datacleaner.configuration.jaxb.SasDatastoreType;
@@ -151,15 +160,6 @@ import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.fixedwidth.FixedWidthConfiguration;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ColumnTypeImpl;
-import org.apache.metamodel.schema.TableType;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.SimpleTableDef;
-import org.apache.metamodel.xml.XmlSaxTableDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,11 +196,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     @Override
-    public AnalyzerBeansConfiguration read(InputStream input) {
+    public DataCleanerConfiguration read(InputStream input) {
         return create(input);
     }
 
-    public AnalyzerBeansConfiguration create(FileObject file) {
+    public DataCleanerConfiguration create(FileObject file) {
         InputStream inputStream = null;
         try {
             inputStream = file.getContent().getInputStream();
@@ -212,7 +212,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    public AnalyzerBeansConfiguration create(File file) {
+    public DataCleanerConfiguration create(File file) {
         InputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
@@ -224,7 +224,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    public AnalyzerBeansConfiguration create(InputStream inputStream) {
+    public DataCleanerConfiguration create(InputStream inputStream) {
         Configuration configuration = unmarshall(inputStream);
         return create(configuration);
     }
@@ -266,7 +266,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    public AnalyzerBeansConfiguration create(Configuration configuration) {
+    public DataCleanerConfiguration create(Configuration configuration) {
         final ConfigurationMetadataType metadata = configuration.getConfigurationMetadata();
         if (metadata != null) {
             logger.info("Configuration name: {}", metadata.getConfigurationName());

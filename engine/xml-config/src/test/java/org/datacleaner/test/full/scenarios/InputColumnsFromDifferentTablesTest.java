@@ -23,8 +23,8 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -37,15 +37,13 @@ import org.datacleaner.test.TestHelper;
 /**
  * Ticket #383: Error handling when a job has been errornously configured - the
  * input columns of a transformer originate from different tables
- * 
- * 
  */
 public class InputColumnsFromDifferentTablesTest extends TestCase {
 
 	public void testScenario() throws Exception {
 		DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider()
 				.scanPackage("org.datacleaner.beans", true);
-		AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl()
+		DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl()
 				.replace(
 						new DatastoreCatalogImpl(TestHelper
 								.createSampleDatabaseDatastore("my database")))

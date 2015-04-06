@@ -19,7 +19,7 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.job.AnalysisJob;
@@ -41,9 +41,14 @@ public class TenantInjectionManagerFactory implements InjectionManagerFactory {
         _repository = repository;
         _tenantContext = tenantContext;
     }
+    
+    @Override
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+        return getInjectionManager(configuration, null);
+    }
 
     @Override
-    public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
         final InjectionManager delegateInjectionManager = _delegate.getInjectionManager(configuration, job);
         return new TenantInjectionManager(delegateInjectionManager, _repository, _tenantContext);
     }

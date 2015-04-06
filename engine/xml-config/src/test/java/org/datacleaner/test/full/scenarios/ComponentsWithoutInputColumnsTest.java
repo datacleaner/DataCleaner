@@ -25,8 +25,8 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
@@ -42,7 +42,7 @@ public class ComponentsWithoutInputColumnsTest extends TestCase {
 		CsvDatastore datastore = new CsvDatastore("my database",
 				"../core/src/test/resources/example-name-lengths.csv");
 		ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner", true);
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+		DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
 				.replace(new DatastoreCatalogImpl(datastore)).replace(descriptorProvider);
 		AnalysisJob job = new JaxbJobReader(configuration)
 				.read(new FileInputStream(

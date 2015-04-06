@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.Func;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
@@ -32,8 +34,6 @@ import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.datacleaner.repository.RepositoryFile;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.util.Func;
 
 /**
  * A component that reads jobs for the monitor web app without starting a live
@@ -43,10 +43,10 @@ import org.apache.metamodel.util.Func;
  */
 public class MonitorJobReader {
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final RepositoryFile _jobFile;
 
-    public MonitorJobReader(AnalyzerBeansConfiguration configuration, RepositoryFile jobFile) {
+    public MonitorJobReader(DataCleanerConfiguration configuration, RepositoryFile jobFile) {
         _configuration = configuration;
         _jobFile = jobFile;
     }

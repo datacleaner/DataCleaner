@@ -17,14 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.configuration;
+
+import org.datacleaner.api.Component;
 
 /**
- * Represents a (sub)task that can run in parallel when running an analysis job.
- * 
- * 
+ * Component that manages injections made into {@link Component}s.
  */
-public interface Task {
+public interface InjectionManager {
 
-	public void execute() throws Exception;
+    /**
+     * Gets the value/object/instance to be injected at a particular injection
+     * point.
+     * 
+     * @param injectionPoint
+     * @return
+     */
+    public <E> E getInstance(InjectionPoint<E> injectionPoint);
 }

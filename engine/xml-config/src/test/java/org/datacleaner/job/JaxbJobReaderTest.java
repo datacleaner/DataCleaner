@@ -38,8 +38,8 @@ import org.datacleaner.beans.dategap.DateGapTextRenderer;
 import org.datacleaner.beans.transform.DateMaskMatcherTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -66,7 +66,7 @@ public class JaxbJobReaderTest extends TestCase {
             "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
-    private final AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog)
+    private final DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog)
             .replace(descriptorProvider);
 
     public void testReadComponentNames() throws Exception {
@@ -335,7 +335,7 @@ public class JaxbJobReaderTest extends TestCase {
 
     public void testReadVariables() throws Exception {
         CsvDatastore datastore = new CsvDatastore("date-datastore", "src/test/resources/example-dates.csv");
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
                 new DatastoreCatalogImpl(datastore)).replace(descriptorProvider);
         JaxbJobReader reader = new JaxbJobReader(configuration);
         File file = new File("src/test/resources/example-job-variables.xml");

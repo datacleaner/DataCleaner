@@ -32,7 +32,12 @@ public class AnalyzerBeansConfigurationImplTest extends TestCase {
     public void testReplaceRetainsInjectionManagerFactory() throws Exception {
         InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactory() {
             @Override
-            public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+            public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+                throw new UnsupportedOperationException("I'm just a mock");
+            }
+
+            @Override
+            public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
                 throw new UnsupportedOperationException("I'm just a mock");
             }
         };

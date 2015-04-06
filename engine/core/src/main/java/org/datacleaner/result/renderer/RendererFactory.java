@@ -25,7 +25,8 @@ import org.datacleaner.api.Renderable;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
 import org.datacleaner.util.ReflectionUtils;
@@ -81,12 +82,19 @@ public final class RendererFactory {
      * @param job
      *            optionally a job which the instantiated renderers pertain to.
      */
-    public RendererFactory(AnalyzerBeansConfiguration configuration) {
-        this(configuration, new DefaultRendererInitializer(configuration));
+    public RendererFactory(DataCleanerConfiguration configuration) {
+        this(configuration, defaultRendererInitializer(configuration));
     }
-    
-    public RendererFactory(AnalyzerBeansConfiguration configuration, RendererInitializer rendererInitializer) {
-        this(configuration.getDescriptorProvider(), rendererInitializer);
+
+    private static RendererInitializer defaultRendererInitializer(DataCleanerConfiguration configuration) {
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+
+        return new DefaultRendererInitializer(injectionManager);
+    }
+
+    public RendererFactory(DataCleanerConfiguration configuration, RendererInitializer rendererInitializer) {
+        this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
     }
 
     /**
@@ -95,8 +103,7 @@ public final class RendererFactory {
      * @param descriptorProvider
      * @param rendererInitializer
      * 
-     * @deprecated use
-     *             {@link #RendererFactory(AnalyzerBeansConfiguration)}
+     * @deprecated use {@link #RendererFactory(AnalyzerBeansConfiguration)}
      *             instead.
      */
     @Deprecated
@@ -206,7 +213,8 @@ public final class RendererFactory {
             if (bestMatch != null) {
                 final RendererPrecedence bestPrecedence = bestMatch.getPrecedence();
                 if (precedence.ordinal() < bestPrecedence.ordinal()) {
-                    logger.info("Precedence {} did not match or supersede best matching precedence ({}).", precedence, bestPrecedence);
+                    logger.info("Precedence {} did not match or supersede best matching precedence ({}).", precedence,
+                            bestPrecedence);
                     return null;
                 }
             }

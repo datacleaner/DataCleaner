@@ -31,7 +31,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -65,14 +65,14 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
     private static final Logger logger = LoggerFactory.getLogger(DistributedAnalysisRunner.class);
 
     private final ClusterManager _clusterManager;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final CompositeAnalysisListener _analysisListener;
 
-    public DistributedAnalysisRunner(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager) {
+    public DistributedAnalysisRunner(DataCleanerConfiguration configuration, ClusterManager clusterManager) {
         this(configuration, clusterManager, new AnalysisListener[0]);
     }
 
-    public DistributedAnalysisRunner(AnalyzerBeansConfiguration configuration, ClusterManager clusterManager,
+    public DistributedAnalysisRunner(DataCleanerConfiguration configuration, ClusterManager clusterManager,
             AnalysisListener... listeners) {
         _configuration = configuration;
         _clusterManager = clusterManager;
@@ -110,7 +110,8 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
 
         failIfJobIsUnsupported(job);
 
-        final InjectionManager injectionManager = _configuration.getInjectionManager(job);
+        final InjectionManager injectionManager = _configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(_configuration, job);
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
         final RowProcessingPublishers publishers = getRowProcessingPublishers(job, lifeCycleHelper);
         final RowProcessingPublisher publisher = getRowProcessingPublisher(publishers);

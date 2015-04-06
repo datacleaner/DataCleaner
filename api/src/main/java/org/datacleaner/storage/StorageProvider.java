@@ -17,24 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.storage;
 
-import org.datacleaner.job.AnalysisJob;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Factory for {@link InjectionManager} instances. Since such instances
- * represent job-level context, they much be created individually for each job
+ * Configurable component which provides storage (for instance cached/persistent
+ * or in-memory based) for collections and other types that are needed during
  * execution.
  */
-public interface InjectionManagerFactory {
+public interface StorageProvider {
 
-	/**
-	 * Gets an {@link InjectionManager} (typically new) for the execution of an
-	 * {@link AnalysisJob}
-	 * 
-	 * @param configuration
-	 * @param job
-	 * @return
-	 */
-	public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job);
+    public <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
+
+    public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
+
+    public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
+
+    public RowAnnotationFactory createRowAnnotationFactory();
 }

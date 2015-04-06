@@ -212,7 +212,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         }
 
         try {
-            LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, null, false);
+            LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_analysisJobBuilder.getConfiguration(), null, false);
             lifeCycleHelper.validate(getDescriptor(), getConfigurableBean());
         } catch (RuntimeException e) {
             if (throwException) {

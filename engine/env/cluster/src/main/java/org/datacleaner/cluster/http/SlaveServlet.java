@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 
@@ -46,7 +46,7 @@ public class SlaveServlet extends HttpServlet {
     public static final String SERVLET_CONTEXT_ATTRIBUTE_ANALYSIS_LISTENER = "org.datacleaner.analysislistener";
 
     @Inject
-    AnalyzerBeansConfiguration _configuration;
+    DataCleanerConfiguration _configuration;
 
     @Inject
     AnalysisListener _analysisListener;
@@ -57,11 +57,11 @@ public class SlaveServlet extends HttpServlet {
         this(null);
     }
 
-    public SlaveServlet(AnalyzerBeansConfiguration configuration) {
+    public SlaveServlet(DataCleanerConfiguration configuration) {
         this(configuration, null);
     }
 
-    public SlaveServlet(AnalyzerBeansConfiguration configuration, AnalysisListener analysisListener) {
+    public SlaveServlet(DataCleanerConfiguration configuration, AnalysisListener analysisListener) {
         super();
         _configuration = configuration;
         _analysisListener = analysisListener;
@@ -74,8 +74,8 @@ public class SlaveServlet extends HttpServlet {
         final ServletContext servletContext = config.getServletContext();
         if (_configuration == null) {
             final Object configurationAttribute = servletContext.getAttribute(SERVLET_CONTEXT_ATTRIBUTE_CONFIGURATION);
-            if (configurationAttribute != null && configurationAttribute instanceof AnalyzerBeansConfiguration) {
-                _configuration = (AnalyzerBeansConfiguration) configurationAttribute;
+            if (configurationAttribute != null && configurationAttribute instanceof DataCleanerConfiguration) {
+                _configuration = (DataCleanerConfiguration) configurationAttribute;
             }
         }
         if (_analysisListener == null) {

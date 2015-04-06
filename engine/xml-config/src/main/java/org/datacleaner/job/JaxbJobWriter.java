@@ -38,7 +38,7 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.api.ExpressionBasedInputColumn;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
@@ -80,11 +80,11 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbJobWriter.class);
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final JAXBContext _jaxbContext;
     private final JaxbJobMetadataFactory _jobMetadataFactory;
 
-    public JaxbJobWriter(AnalyzerBeansConfiguration configuration, JaxbJobMetadataFactory jobMetadataFactory) {
+    public JaxbJobWriter(DataCleanerConfiguration configuration, JaxbJobMetadataFactory jobMetadataFactory) {
         _configuration = configuration;
         _jobMetadataFactory = jobMetadataFactory;
         try {
@@ -95,7 +95,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         }
     }
 
-    public JaxbJobWriter(AnalyzerBeansConfiguration configuration) {
+    public JaxbJobWriter(DataCleanerConfiguration configuration) {
         this(configuration, new JaxbJobMetadataFactoryImpl());
     }
 
@@ -221,7 +221,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings,
             final Map<InputColumn<?>, String> columnMappings) {
 
-        final StringConverter stringConverter = new StringConverter(_configuration.getInjectionManager(analysisJob));
+        final StringConverter stringConverter = new StringConverter(_configuration, analysisJob);
 
         // configure transformers
         for (Entry<TransformerJob, TransformerType> entry : transformerMappings.entrySet()) {

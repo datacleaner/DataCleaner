@@ -19,7 +19,7 @@
  */
 package org.datacleaner.spring;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.job.AnalysisJob;
@@ -50,8 +50,13 @@ public class SpringInjectionManagerFactory implements InjectionManagerFactory, A
     }
 
     @Override
-    public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
         return new SpringInjectionManager(configuration, job, _applicationContext);
+    }
+    
+    @Override
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+        return getInjectionManager(configuration, null);
     }
 
 }

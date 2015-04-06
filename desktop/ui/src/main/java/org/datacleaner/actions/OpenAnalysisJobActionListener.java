@@ -31,7 +31,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
@@ -71,7 +71,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobActionListener.class);
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final AnalysisJobBuilderWindow _parentWindow;
     private final WindowContext _windowContext;
     private final DCModule _parentModule;
@@ -79,7 +79,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
     @Inject
     public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
-            AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
+            DataCleanerConfiguration configuration, WindowContext windowContext, DCModule parentModule,
             UserPreferences userPreferences) {
         _parentWindow = parentWindow;
         _configuration = configuration;
@@ -108,7 +108,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         }
     }
 
-    public static Injector open(FileObject file, AnalyzerBeansConfiguration configuration, Injector injector) {
+    public static Injector open(FileObject file, DataCleanerConfiguration configuration, Injector injector) {
         final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
         final OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
                 configuration, null, injector.getInstance(DCModule.class), userPreferences);
@@ -166,7 +166,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             }
 
             @Override
-            public AnalysisJobBuilder getAnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
+            public AnalysisJobBuilder getAnalysisJobBuilder(DataCleanerConfiguration configuration) {
                 return null;
             }
         });

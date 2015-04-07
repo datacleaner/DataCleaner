@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.Serializable;
-
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.storage.StorageProvider;
@@ -30,7 +28,7 @@ import org.datacleaner.storage.StorageProvider;
  * 
  * @see DataCleanerConfiguration
  */
-public interface DataCleanerEnvironment extends Serializable {
+public interface DataCleanerEnvironment {
 
     /**
      * Gets the {@link TaskRunner} defined in this environment

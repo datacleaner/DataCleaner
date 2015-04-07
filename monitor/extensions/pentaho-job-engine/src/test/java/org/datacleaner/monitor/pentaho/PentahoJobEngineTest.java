@@ -26,8 +26,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -53,9 +52,8 @@ public class PentahoJobEngineTest extends TestCase {
         super.setUp();
         jobEngine = new PentahoJobEngine();
         Repository repository = new FileRepository("src/test/resources/repo");
-        InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl();
         JobEngineManager jobEngineManager = new SimpleJobEngineManager(jobEngine);
-        tenantContextFactory = new TenantContextFactoryImpl(repository, injectionManagerFactory, jobEngineManager);
+        tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
         tenantContext = tenantContextFactory.getContext("dc");
     }
 

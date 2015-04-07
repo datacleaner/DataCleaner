@@ -26,8 +26,9 @@ import junit.framework.TestCase;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.components.mock.AnalyzerMock;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalysisJob;
@@ -64,7 +65,8 @@ public class CancellationAndMultiThreadingTest extends TestCase {
         assertEquals(30, executorService.getMaximumPoolSize());
         assertEquals(0, executorService.getActiveCount());
 
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+                .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner));
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 

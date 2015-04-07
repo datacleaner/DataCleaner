@@ -26,7 +26,7 @@ import javax.inject.Provider;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -41,7 +41,7 @@ import org.datacleaner.windows.ReferenceDataDialog;
 
 public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 
-	private DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+	private DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 	private AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
 	private AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(

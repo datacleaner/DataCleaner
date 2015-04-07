@@ -32,7 +32,6 @@ import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -83,16 +82,16 @@ public class InjectionManagerFactoryTest extends TestCase {
             public InjectionManager getInjectionManager(DataCleanerConfiguration conf, AnalysisJob job) {
                 return injectionManager;
             }
-            
+
             @Override
             public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
                 return injectionManager;
             }
         };
 
-        final AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl().replace(
-                new DatastoreCatalogImpl(TestHelper.createSampleDatabaseDatastore("orderdb"))).replace(
-                injectionManagerFactory);
+        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastores(
+                TestHelper.createSampleDatabaseDatastore("orderdb")).withEnvironment(
+                new DataCleanerEnvironmentImpl().withInjectionManagerFactory(injectionManagerFactory));
 
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 

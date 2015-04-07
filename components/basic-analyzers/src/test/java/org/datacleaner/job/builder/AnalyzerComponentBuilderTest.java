@@ -26,7 +26,7 @@ import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.AnalyzerJob;
@@ -38,7 +38,7 @@ public class AnalyzerComponentBuilderTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
     }
 
     public void testNoOriginatingTableBecauseOfMockColumns() throws Exception {

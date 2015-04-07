@@ -32,7 +32,6 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -89,8 +88,8 @@ public class InjectionManagerImplTest extends TestCase {
         final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(FancyTransformer.class));
 
-        final AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(TestHelper.createSampleDatabaseDatastore("orderdb")));
+        final DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl().withDatastores(TestHelper
+                .createSampleDatabaseDatastore("orderdb"));
 
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
 

@@ -25,7 +25,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.datacleaner.beans.filter.ValidationCategory;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -36,7 +36,7 @@ public class MultipleEnumPropertyWidgetTest extends TestCase {
 
 	public void testSelection() throws Exception {
 
-	    DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+	    DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 		try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
 		    AnalyzerComponentBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 		    ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(

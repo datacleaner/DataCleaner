@@ -28,8 +28,8 @@ import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.ComponentMessage;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.job.AnalysisJob;
@@ -52,8 +52,8 @@ public class ComponentContextImplTest extends TestCase {
                 new String[] { "id", "name" }), rows);
         final PojoDatastore datastore = new PojoDatastore("foo", tableDataProvider);
 
-        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
 
         // build a job with the MockTransformer (publishes MockTransformerMessages)
         final AnalysisJob job;

@@ -34,7 +34,7 @@ import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.beans.coalesce.CoalesceUnit;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -64,7 +64,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     }
 
     public void testCreateProcessOrderedConsumerListWithMergedOutcomes() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastoreConnection(new MockDatastoreConnection());
         ajb.addSourceColumn(physicalColumn);
         MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
@@ -119,7 +119,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     }
 
     public void testCreateProcessOrderedConsumerListWithFilterDependencies() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastoreConnection(new MockDatastoreConnection());
         ajb.addSourceColumn(physicalColumn);
         MetaModelInputColumn inputColumn = ajb.getSourceColumns().get(0);
@@ -172,7 +172,7 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     }
 
     public void testCreateProcessOrderedConsumerListChainedTransformers() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.addSourceColumn(physicalColumn);
 
         TransformerComponentBuilder<TransformerMock> tjb1 = ajb.addTransformer(TransformerMock.class).addInputColumn(

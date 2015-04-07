@@ -24,7 +24,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.util.convert.StringConverter;
@@ -58,7 +58,7 @@ public class CoalesceUnitConverterTest extends TestCase {
 
     public void testDiscoverAndResolveConverter() throws Exception {
         StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
-                new AnalyzerBeansConfigurationImpl()));
+                new DataCleanerConfigurationImpl()));
 
         CoalesceUnit unit1 = new CoalesceUnit(stringCol1, stringCol2);
         String str = stringConverter.serialize(unit1);
@@ -76,7 +76,7 @@ public class CoalesceUnitConverterTest extends TestCase {
     
     public void testConvertCommaNames() throws Exception {
         StringConverter stringConverter = new StringConverter(new InjectionManagerImpl(
-                new AnalyzerBeansConfigurationImpl()));
+                new DataCleanerConfigurationImpl()));
 
         CoalesceUnit unitIn = new CoalesceUnit(stringCommaCol1, stringCommaCol2);
         String str = stringConverter.serialize(unitIn);

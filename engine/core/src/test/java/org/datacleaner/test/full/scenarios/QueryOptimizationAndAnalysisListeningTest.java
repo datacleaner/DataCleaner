@@ -27,10 +27,9 @@ import junit.framework.TestCase;
 
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -51,8 +50,8 @@ public class QueryOptimizationAndAnalysisListeningTest extends TestCase {
         final AtomicInteger expectedRows = new AtomicInteger();
 
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+                .withDatastores(datastore);
         final AnalysisListener analysisListener = new AnalysisListenerAdaptor() {
             @Override
             public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {

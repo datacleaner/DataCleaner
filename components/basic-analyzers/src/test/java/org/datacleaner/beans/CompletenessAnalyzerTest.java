@@ -29,7 +29,7 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CompletenessAnalyzer.Condition;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -73,7 +73,7 @@ public class CompletenessAnalyzerTest extends TestCase {
     }
 
     public void testConfigurableBeanConfiguration() throws Exception {
-        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         try {
             List<TableDataProvider<?>> tableDataProviders = Collections.emptyList();
             ajb.setDatastore(new PojoDatastore("ds", tableDataProviders));

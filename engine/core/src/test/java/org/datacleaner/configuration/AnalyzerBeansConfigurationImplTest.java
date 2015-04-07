@@ -27,6 +27,7 @@ import org.datacleaner.reference.ReferenceDataCatalogImpl;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("deprecation")
 public class AnalyzerBeansConfigurationImplTest extends TestCase {
 
     public void testReplaceRetainsInjectionManagerFactory() throws Exception {

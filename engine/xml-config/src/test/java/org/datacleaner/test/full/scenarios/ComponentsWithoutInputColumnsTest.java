@@ -25,10 +25,10 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
@@ -38,31 +38,28 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 
 public class ComponentsWithoutInputColumnsTest extends TestCase {
 
-	public void testScenario() throws Throwable {
-		CsvDatastore datastore = new CsvDatastore("my database",
-				"../core/src/test/resources/example-name-lengths.csv");
-		ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner", true);
-		DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-				.replace(new DatastoreCatalogImpl(datastore)).replace(descriptorProvider);
-		AnalysisJob job = new JaxbJobReader(configuration)
-				.read(new FileInputStream(
-						"src/test/resources/example-job-components-without-inputcolumns.xml"));
+    public void testScenario() throws Throwable {
+        CsvDatastore datastore = new CsvDatastore("my database", "../core/src/test/resources/example-name-lengths.csv");
+        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner", true);
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+        AnalysisJob job = new JaxbJobReader(configuration).read(new FileInputStream(
+                "src/test/resources/example-job-components-without-inputcolumns.xml"));
 
-		AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
-		AnalysisResultFuture resultFuture = runner.run(job);
+        AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+        AnalysisResultFuture resultFuture = runner.run(job);
 
-		if (!resultFuture.isSuccessful()) {
-			throw resultFuture.getErrors().get(0);
-		}
+        if (!resultFuture.isSuccessful()) {
+            throw resultFuture.getErrors().get(0);
+        }
 
-		InputColumn<?>[] input = job.getAnalyzerJobs().iterator().next()
-				.getInput();
-		assertEquals(4, input.length);
+        InputColumn<?>[] input = job.getAnalyzerJobs().iterator().next().getInput();
+        assertEquals(4, input.length);
 
-		StringAnalyzerResult result = (StringAnalyzerResult) resultFuture
-				.getResults().get(0);
-		for (int i = 0; i < input.length; i++) {
-			assertEquals(5, result.getRowCount(input[i]));
-		}
-	}
+        StringAnalyzerResult result = (StringAnalyzerResult) resultFuture.getResults().get(0);
+        for (int i = 0; i < input.length; i++) {
+            assertEquals(5, result.getRowCount(input[i]));
+        }
+    }
 }

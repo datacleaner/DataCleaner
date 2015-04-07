@@ -21,7 +21,7 @@ package org.datacleaner.beans.dategap;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -33,7 +33,7 @@ public class AnalyzerComponentBuilderTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+		ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
 	}
 
 	public void testAddUnnamedColumnToMultiColumnAnalyzer() throws Exception {

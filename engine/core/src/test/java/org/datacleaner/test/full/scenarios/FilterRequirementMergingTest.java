@@ -33,8 +33,8 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.PojoDatastore;
@@ -47,7 +47,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
@@ -73,8 +72,7 @@ public class FilterRequirementMergingTest extends TestCase {
         datastore = new PojoDatastore("ds", "sch", new ArrayTableDataProvider(tableDef, rowData));
 
         DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
-        configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(
-                new SingleThreadedTaskRunner());
+        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
 
         jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore(datastore);

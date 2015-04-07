@@ -66,7 +66,7 @@ public class DictionaryMatcherTransformerTest extends TestCase {
 		ReferenceDataCatalogImpl ref = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
 
 		Datastore datastore = new CsvDatastore("my database", "src/test/resources/projects.csv");
-		AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl();
+		DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl();
 		AnalysisJobBuilder job = new AnalysisJobBuilder(conf);
 		job.setDatastore(datastore);
 		job.addSourceColumns("product", "version");

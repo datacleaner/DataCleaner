@@ -29,8 +29,8 @@ import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputRow;
@@ -45,7 +45,7 @@ import org.datacleaner.test.MockTransformer;
 
 public class ConsumeRowHandlerTest extends TestCase {
 
-    final DataCleanerConfiguration _configuration = new AnalyzerBeansConfigurationImpl();
+    final DataCleanerConfiguration _configuration = new DataCleanerConfigurationImpl();
     private AnalysisJobBuilder ajb;
     private MetaModelInputColumn nameColumn;
     private MetaModelInputColumn ageColumn;

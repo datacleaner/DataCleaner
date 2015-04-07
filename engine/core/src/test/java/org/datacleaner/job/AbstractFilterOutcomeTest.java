@@ -22,7 +22,7 @@ package org.datacleaner.job;
 import java.io.File;
 import java.util.Collection;
 
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
@@ -38,7 +38,7 @@ public class AbstractFilterOutcomeTest extends TestCase {
         FilterOutcome fo1;
         FilterOutcome fo2;
 
-        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl())) {
+        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             FilterComponentBuilder<MockFilter, Category> filterJobBuilder = ajb.addFilter(MockFilter.class);
             filterJobBuilder.addInputColumn(new MockInputColumn<String>("foo"));
             filterJobBuilder.getComponentInstance().setSomeEnum(Category.INVALID);

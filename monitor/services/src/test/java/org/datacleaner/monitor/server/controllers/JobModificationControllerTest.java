@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.datacleaner.monitor.dashboard.model.TimelineIdentifier;
@@ -60,7 +60,7 @@ public class JobModificationControllerTest extends TestCase {
         repository = new FileRepository(targetDir);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
         timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);

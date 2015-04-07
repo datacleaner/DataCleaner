@@ -21,16 +21,16 @@ package org.datacleaner.monitor.server.dao;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.io.FileUtils;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
-
-import junit.framework.TestCase;
 
 public class DatastoreDaoImplTest extends TestCase {
 
@@ -40,19 +40,19 @@ public class DatastoreDaoImplTest extends TestCase {
         FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
 
         final Repository repository = new FileRepository(targetDir);
-        
+
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
-        
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
+
         DatastoreDao dao = new DatastoreDaoImpl();
-        
+
         TenantContext tenantContext = tenantContextFactory.getContext("tenant1");
-        
+
         Datastore orderdb = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
         assertNotNull(orderdb);
-        
+
         dao.removeDatastore(tenantContext, "orderdb");
-        
+
         orderdb = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
         assertNull(orderdb);
     }

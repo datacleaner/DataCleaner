@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.JobCopyEvent;
@@ -47,7 +48,7 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
         FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
         repository = new FileRepository(targetDir);
 
-        tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
     }
 
     public void testRenameJobAndResult() throws Exception {

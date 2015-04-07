@@ -30,8 +30,10 @@ import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HasNameMapper;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
@@ -183,13 +185,15 @@ public class JobInvocationController {
     }
 
     private DataCleanerConfiguration getRunnerConfiguration(TenantContext tenantContext) {
-        DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerEnvironment environment = configuration.getEnvironment();
 
         // replace task runner with single threaded taskrunner to ensure order
         // of output records.
-        AnalyzerBeansConfigurationImpl conf = (AnalyzerBeansConfigurationImpl) configuration;
-        conf = conf.replace(new SingleThreadedTaskRunner());
-        return conf;
+        final DataCleanerEnvironmentImpl replacementEnvironment = new DataCleanerEnvironmentImpl(environment)
+                .withTaskRunner(new SingleThreadedTaskRunner());
+
+        return new DataCleanerConfigurationImpl(configuration).withEnvironment(replacementEnvironment);
     }
 
     private String getTablePath(List<String> columnPaths) {

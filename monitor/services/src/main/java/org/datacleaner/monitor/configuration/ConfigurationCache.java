@@ -24,8 +24,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.metamodel.util.Func;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.repository.Repository;
@@ -47,15 +48,15 @@ final class ConfigurationCache {
 
     private final RepositoryFile _file;
     private final TenantContext _tenantContext;
-    private final TenantInjectionManagerFactory _injectionManagerFactory;
+    private final DataCleanerEnvironment _environment;
     private final Repository _repository;
 
     private volatile DataCleanerConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(TenantInjectionManagerFactory injectionManagerFactory, TenantContext tenantContext,
+    public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext,
             Repository repository) {
-        _injectionManagerFactory = injectionManagerFactory;
+        _environment = environment;
         _tenantContext = tenantContext;
         _repository = repository;
 
@@ -141,8 +142,13 @@ final class ConfigurationCache {
             }
 
             @Override
-            public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
-                return new AnalyzerBeansConfigurationImpl(_injectionManagerFactory);
+            public DataCleanerEnvironment createBaseEnvironment() {
+                return _environment;
+            }
+            
+            @Override
+            public RepositoryFolder getHomeFolder() {
+                return _tenantContext.getTenantRootFolder();
             }
         });
 
@@ -152,7 +158,7 @@ final class ConfigurationCache {
             logger.warn(
                     "Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.",
                     _lastModifiedCache);
-            return new AnalyzerBeansConfigurationImpl();
+            return new DataCleanerConfigurationImpl(_environment, _tenantContext.getTenantRootFolder());
         }
 
         logger.info("Reading configuration from file: {}", configurationFile);

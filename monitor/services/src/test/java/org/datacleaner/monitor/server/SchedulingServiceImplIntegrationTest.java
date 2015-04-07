@@ -28,7 +28,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -69,7 +69,7 @@ public class SchedulingServiceImplIntegrationTest extends TestCase {
                     "context/application-context.xml");
 
             final Repository repository = new FileRepository(targetDir);
-            tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+            tenantContextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
                     new DefaultJobEngineManager(applicationContext));
 
             service = new SchedulingServiceImpl(repository, tenantContextFactory);

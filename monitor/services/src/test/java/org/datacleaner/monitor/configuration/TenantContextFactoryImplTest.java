@@ -21,26 +21,24 @@ package org.datacleaner.monitor.configuration;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManager;
-import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.configuration.SimpleInjectionPoint;
-import org.datacleaner.util.convert.StringConverter;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.file.FileRepository;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.util.convert.StringConverter;
 
 public class TenantContextFactoryImplTest extends TestCase {
 
     private Repository repository = new FileRepository("src/test/resources/example_repo");
-    private InjectionManagerFactory parentInjectionManagerFactory = new InjectionManagerFactoryImpl();
     private JobEngineManager jobEngineManager = new MockJobEngineManager();
     private TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-            parentInjectionManagerFactory, jobEngineManager);
+            new DataCleanerEnvironmentImpl(), jobEngineManager);
 
     public void testUseTenantSpecificInjectionManager() throws Exception {
         final TenantContext tenantContext = tenantContextFactory.getContext("tenant1");

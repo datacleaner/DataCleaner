@@ -21,8 +21,8 @@ package org.datacleaner.monitor.configuration;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
@@ -33,10 +33,10 @@ public class TenantContextImplTest extends TestCase {
 
     public void testJobNameWithSignificantSpace() throws Exception {
         Repository repository = new FileRepository("src/test/resources/example_repo");
-        InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl();
+        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl();
         JobEngineManager jobEngineManager = new MockJobEngineManager();
 
-        TenantContext tenantContext = new TenantContextImpl("tenant4", repository, injectionManagerFactory,
+        TenantContext tenantContext = new TenantContextImpl("tenant4", repository, environment,
                 jobEngineManager);
 
         JobContext job1 = tenantContext.getJob("my job");

@@ -48,6 +48,10 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
     public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, RepositoryFolder homeFolder) {
         this(environment, homeFolder, defaultDatastoreCatalog(), defaultReferenceDataCatalog());
     }
+    
+    public DataCleanerConfigurationImpl(DataCleanerConfiguration c) {
+        this(c.getEnvironment(), c.getHomeFolder(), c.getDatastoreCatalog(), c.getReferenceDataCatalog());
+    }
 
     public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, RepositoryFolder homeFolder,
             DatastoreCatalog datastoreCatalog, ReferenceDataCatalog referenceDataCatalog) {

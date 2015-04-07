@@ -29,12 +29,12 @@ import javax.servlet.http.HttpServletResponse;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.easymock.EasyMock;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
+import org.easymock.EasyMock;
 
 public class ExecutionLogControllerTest extends TestCase {
 
@@ -48,7 +48,7 @@ public class ExecutionLogControllerTest extends TestCase {
         repository = new FileRepository(targetDir);
 
         TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         executionLogController = new ExecutionLogController();
         executionLogController._contextFactory = tenantContextFactory;

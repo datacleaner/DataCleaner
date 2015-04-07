@@ -27,8 +27,9 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.metamodel.util.Action;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.ResultModificationEvent;
 import org.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -42,7 +43,6 @@ import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.repository.file.FileRepository;
-import org.apache.metamodel.util.Action;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -59,7 +59,7 @@ public class ResultModificationControllerTest extends TestCase {
         repository = new FileRepository(targetDir);
 
         TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         resultModificationController = new ResultModificationController();
         resultModificationListener = new ResultModificationEventExecutionLogListener(tenantContextFactory);

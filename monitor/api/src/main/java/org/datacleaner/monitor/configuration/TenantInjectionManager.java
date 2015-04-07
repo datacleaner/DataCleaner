@@ -32,10 +32,16 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
 import org.datacleaner.util.convert.VfsResourceTypeHandler;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.RepositoryFileResourceTypeHandler;
+import org.datacleaner.repository.RepositoryFolder;
 
 /**
  * A {@link InjectionManager} wrapper that is tenant-aware.
+ * 
+ * TODO: This class only services to fix issues with resource loading of
+ * {@link RepositoryFileResource}s. That stuff should be generalized since
+ * {@link RepositoryFolder} is now a generally used thing.
  */
 public class TenantInjectionManager implements InjectionManager {
 
@@ -48,7 +54,7 @@ public class TenantInjectionManager implements InjectionManager {
         _repository = repository;
         _tenantContext = tenantContext;
     }
-    
+
     public String getTenantId() {
         return _tenantContext.getTenantId();
     }

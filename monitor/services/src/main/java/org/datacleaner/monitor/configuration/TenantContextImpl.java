@@ -26,6 +26,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngine;
@@ -67,7 +69,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      *            provide tenant-specific injection options.
      * @param jobEngineManager
      */
-    public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory,
+    public TenantContextImpl(String tenantId, Repository repository, DataCleanerEnvironment environment,
             JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
@@ -76,10 +78,14 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
             throw new IllegalArgumentException("JobEngineManager cannot be null");
         }
 
+        final InjectionManagerFactory injectionManagerFactory = environment.getInjectionManagerFactory();
         final TenantInjectionManagerFactory tenantInjectionManagerFactory = new TenantInjectionManagerFactory(
                 injectionManagerFactory, repository, this);
 
-        _configurationCache = new ConfigurationCache(tenantInjectionManagerFactory, this, repository);
+        final DataCleanerEnvironmentImpl tenantEnvironment = new DataCleanerEnvironmentImpl(environment)
+                .withInjectionManagerFactory(tenantInjectionManagerFactory);
+
+        _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
         _jobCache = buildJobCache();
     }
 
@@ -161,7 +167,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     public String getTenantId() {
         return _tenantId;
     }
-    
+
     @Override
     protected ResultContext getResult(RepositoryFile resultFile) {
         if (resultFile == null) {

@@ -278,7 +278,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             logger.info("Updated date: {}", metadata.getUpdatedDate());
         }
 
-        final RepositoryFolder homeFolder = DataCleanerConfigurationImpl.defaultHomeFolder(); // TODO
+        final RepositoryFolder homeFolder = _interceptor.getHomeFolder();
 
         // create temporary environment and configuration objects - they will be
         // passed along during building of the final ones.

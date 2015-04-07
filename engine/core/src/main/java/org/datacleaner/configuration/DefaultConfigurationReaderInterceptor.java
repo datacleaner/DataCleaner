@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -105,6 +106,11 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     public String getPropertyOverride(String variablePath) {
         String result = System.getProperty(variablePath);
         return result;
+    }
+    
+    @Override
+    public RepositoryFolder getHomeFolder() {
+        return DataCleanerConfigurationImpl.defaultHomeFolder();
     }
 
     @Override

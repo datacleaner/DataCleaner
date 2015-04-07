@@ -28,8 +28,7 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import org.easymock.EasyMock;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
 import org.datacleaner.monitor.server.dao.WizardDaoImpl;
@@ -44,6 +43,7 @@ import org.datacleaner.monitor.wizard.job.JobWizard;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.util.FileFilters;
+import org.easymock.EasyMock;
 import org.springframework.context.ApplicationContext;
 
 public class WizardServiceImplTest extends TestCase {
@@ -68,7 +68,7 @@ public class WizardServiceImplTest extends TestCase {
         wizardDao = new WizardDaoImpl(applicationContextMock);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         service = new WizardServiceImpl();
         service._tenantContextFactory = tenantContextFactory;
         service._wizardDao = wizardDao;

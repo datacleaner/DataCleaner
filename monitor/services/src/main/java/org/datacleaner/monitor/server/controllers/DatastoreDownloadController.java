@@ -29,14 +29,14 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.ResourceDatastore;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class DatastoreDownloadController {
             throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (ds == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);

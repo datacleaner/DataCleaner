@@ -41,7 +41,7 @@ import org.apache.http.client.HttpClient;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.FileDownloadListener;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.JdbcDatastore;
@@ -80,7 +80,7 @@ public class DatabaseDriversPanel extends DCPanel {
     private final HttpClient _httpClient;
 
     @Inject
-    protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
+    protected DatabaseDriversPanel(DataCleanerConfiguration configuration, WindowContext windowContext,
             UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;

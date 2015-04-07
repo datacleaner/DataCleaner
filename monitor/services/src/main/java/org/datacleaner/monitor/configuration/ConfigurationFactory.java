@@ -28,7 +28,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;

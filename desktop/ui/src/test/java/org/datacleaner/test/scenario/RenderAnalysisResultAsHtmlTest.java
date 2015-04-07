@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import org.apache.metamodel.util.ImmutableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.result.AnalysisResult;
@@ -55,7 +55,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
     public void testOpenJobWithAllAnalyzers() throws Exception {
         DCModule module = new DCModuleImpl();
         Injector injector = Guice.createInjector(module);
-        AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
         AnalysisResult analysisResult;

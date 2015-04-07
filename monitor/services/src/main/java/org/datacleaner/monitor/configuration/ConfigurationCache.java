@@ -23,17 +23,17 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.Func;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFileResourceTypeHandler;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepositoryFolder;
-import org.apache.metamodel.util.Func;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +50,11 @@ final class ConfigurationCache {
     private final TenantInjectionManagerFactory _injectionManagerFactory;
     private final Repository _repository;
 
-    private volatile AnalyzerBeansConfiguration _configuration;
+    private volatile DataCleanerConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(TenantInjectionManagerFactory injectionManagerFactory, TenantContext tenantContext, Repository repository) {
+    public ConfigurationCache(TenantInjectionManagerFactory injectionManagerFactory, TenantContext tenantContext,
+            Repository repository) {
         _injectionManagerFactory = injectionManagerFactory;
         _tenantContext = tenantContext;
         _repository = repository;
@@ -71,14 +72,14 @@ final class ConfigurationCache {
         return _file;
     }
 
-    public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
+    public DataCleanerConfiguration getAnalyzerBeansConfiguration() {
         long lastModified = getConfigurationFile().getLastModified();
         if (_configuration == null || lastModified != _lastModifiedCache) {
             synchronized (this) {
                 lastModified = _file.getLastModified();
                 if (_configuration == null || lastModified != _lastModifiedCache) {
-                    AnalyzerBeansConfiguration readConfiguration = readConfiguration();
-                    AnalyzerBeansConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
+                    DataCleanerConfiguration readConfiguration = readConfiguration();
+                    DataCleanerConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
                     _configuration = decoratedConfiguration;
                 }
             }
@@ -86,12 +87,12 @@ final class ConfigurationCache {
         return _configuration;
     }
 
-    protected AnalyzerBeansConfiguration decorateConfiguration(AnalyzerBeansConfiguration conf) {
+    protected DataCleanerConfiguration decorateConfiguration(DataCleanerConfiguration conf) {
         // set the injection manager factory on the configuration
         return conf;
     }
 
-    protected AnalyzerBeansConfiguration readConfiguration() {
+    protected DataCleanerConfiguration readConfiguration() {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
 
             @Override
@@ -101,10 +102,11 @@ final class ConfigurationCache {
                     File file = tenantFolder.getFile();
                     return file;
                 }
-                
+
                 final String userHome = System.getProperty("user.home");
-                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId();
-                
+                final String result = userHome + File.separator + ".datacleaner/repository/"
+                        + _tenantContext.getTenantId();
+
                 return new File(result);
             }
 
@@ -122,8 +124,8 @@ final class ConfigurationCache {
                 }
 
                 final String userHome = System.getProperty("user.home");
-                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId()
-                        + File.separator + filename;
+                final String result = userHome + File.separator + ".datacleaner/repository/"
+                        + _tenantContext.getTenantId() + File.separator + filename;
 
                 logger.warn("File path is relative, but repository is not file-based: {}. Returning: {}", filename,
                         result);
@@ -155,11 +157,11 @@ final class ConfigurationCache {
 
         logger.info("Reading configuration from file: {}", configurationFile);
 
-        final AnalyzerBeansConfiguration readConfiguration = configurationFile
-                .readFile(new Func<InputStream, AnalyzerBeansConfiguration>() {
+        final DataCleanerConfiguration readConfiguration = configurationFile
+                .readFile(new Func<InputStream, DataCleanerConfiguration>() {
                     @Override
-                    public AnalyzerBeansConfiguration eval(InputStream inputStream) {
-                        final AnalyzerBeansConfiguration readConfiguration = reader.read(inputStream);
+                    public DataCleanerConfiguration eval(InputStream inputStream) {
+                        final DataCleanerConfiguration readConfiguration = reader.read(inputStream);
                         return readConfiguration;
                     }
                 });

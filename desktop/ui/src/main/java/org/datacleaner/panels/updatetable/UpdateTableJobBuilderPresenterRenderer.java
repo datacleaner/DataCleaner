@@ -26,7 +26,7 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.writers.UpdateTableAnalyzer;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -48,7 +48,7 @@ public class UpdateTableJobBuilderPresenterRenderer implements
     WindowContext windowContext;
 
     @Inject
-    AnalyzerBeansConfiguration configuration;
+    DataCleanerConfiguration configuration;
 
     @Inject
     DCModule dcModule;

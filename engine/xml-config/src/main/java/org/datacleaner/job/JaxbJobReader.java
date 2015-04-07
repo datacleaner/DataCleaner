@@ -107,6 +107,9 @@ public class JaxbJobReader implements JobReader<InputStream> {
     private final DataCleanerConfiguration _configuration;
 
     public JaxbJobReader(DataCleanerConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("Configuration cannot be null");
+        }
         _configuration = configuration;
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),

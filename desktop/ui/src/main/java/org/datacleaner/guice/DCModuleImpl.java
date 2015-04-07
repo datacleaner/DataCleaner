@@ -44,6 +44,7 @@ import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -191,12 +192,6 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
     }
 
-    @Deprecated
-    @Provides
-    public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
-        return (org.datacleaner.configuration.AnalyzerBeansConfiguration) _configuration;
-    }
-
     @Override
     protected void configure() {
         bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
@@ -216,15 +211,20 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
         return _windowContext;
     }
-
+    
     @Provides
-    public final TaskRunner getTaskRunner(DataCleanerConfiguration conf) {
-        return conf.getEnvironment().getTaskRunner();
+    public final DataCleanerEnvironment getDataCleanerEnvironment(DataCleanerConfiguration conf) {
+        return conf.getEnvironment();
     }
 
     @Provides
-    public final DescriptorProvider getDescriptorProvider(DataCleanerConfiguration conf) {
-        return conf.getEnvironment().getDescriptorProvider();
+    public final TaskRunner getTaskRunner(DataCleanerEnvironment environment) {
+        return environment.getTaskRunner();
+    }
+
+    @Provides
+    public final DescriptorProvider getDescriptorProvider(DataCleanerEnvironment environment) {
+        return environment.getDescriptorProvider();
     }
 
     @Provides
@@ -265,8 +265,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         return _undecoratedConfigurationRef.get();
     }
 
+    @Deprecated
     @Provides
-    public final DataCleanerConfiguration getAnalyzerBeansConfiguration(@Undecorated DataCleanerConfiguration c,
+    public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
+            @Undecorated DataCleanerConfiguration c, UserPreferences userPreferences,
+            InjectionManagerFactory injectionManagerFactory) {
+        return (org.datacleaner.configuration.AnalyzerBeansConfiguration) getDataCleanerConfiguration(c,
+                userPreferences, injectionManagerFactory);
+    }
+
+    @Provides
+    public final DataCleanerConfiguration getDataCleanerConfiguration(@Undecorated DataCleanerConfiguration c,
             UserPreferences userPreferences, InjectionManagerFactory injectionManagerFactory) {
         if (_configuration == null) {
             synchronized (DCModuleImpl.class) {

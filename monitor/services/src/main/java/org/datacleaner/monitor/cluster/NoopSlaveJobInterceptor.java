@@ -20,7 +20,7 @@
 package org.datacleaner.monitor.cluster;
 
 import org.datacleaner.cluster.SlaveJobInterceptor;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 
 /**
@@ -29,7 +29,7 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 public class NoopSlaveJobInterceptor implements SlaveJobInterceptor {
 
     @Override
-    public void intercept(AnalysisJobBuilder jobBuilder, AnalyzerBeansConfiguration configuration) {
+    public void intercept(AnalysisJobBuilder jobBuilder, DataCleanerConfiguration configuration) {
     }
 
 }

@@ -42,7 +42,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.util.Func;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.panels.DCBannerPanel;
@@ -77,11 +77,11 @@ public class OptionsDialog extends AbstractWindow {
     private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
     private final CloseableTabbedPane _tabbedPane;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private Timer _updateMemoryTimer;
 
     @Inject
-    protected OptionsDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
+    protected OptionsDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
             UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
             ExtensionPackagesPanel extensionPackagesPanel) {
         super(windowContext);
@@ -294,7 +294,7 @@ public class OptionsDialog extends AbstractWindow {
 
         int row = 0;
 
-        TaskRunner taskRunner = _configuration.getTaskRunner();
+        TaskRunner taskRunner = _configuration.getEnvironment().getTaskRunner();
         WidgetUtils.addToGridBag(new JLabel("Task runner type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(taskRunner.getClass().getSimpleName()), panel, 1, row);
         WidgetUtils
@@ -314,7 +314,7 @@ public class OptionsDialog extends AbstractWindow {
         }
 
         row++;
-        StorageProvider storageProvider = _configuration.getStorageProvider();
+        StorageProvider storageProvider = _configuration.getEnvironment().getStorageProvider();
         WidgetUtils.addToGridBag(new JLabel("Storage provider type:"), panel, 0, row);
         WidgetUtils.addToGridBag(new JLabel(storageProvider.getClass().getSimpleName()), panel, 1, row);
         WidgetUtils
@@ -444,7 +444,7 @@ public class OptionsDialog extends AbstractWindow {
         return imageManager.getImage(IconUtils.MENU_OPTIONS);
     }
 
-    public AnalyzerBeansConfiguration getConfiguration() {
+    public DataCleanerConfiguration getConfiguration() {
         return _configuration;
     }
 

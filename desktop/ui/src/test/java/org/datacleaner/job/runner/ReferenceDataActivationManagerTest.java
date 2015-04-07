@@ -29,8 +29,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.BooleanAnalyzer;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.DictionaryMatcherTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MutableInputColumn;
@@ -60,7 +60,7 @@ public class ReferenceDataActivationManagerTest extends TestCase {
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("db");
 
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new DatastoreCatalogImpl(datastore));
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);

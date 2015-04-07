@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
@@ -108,7 +107,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
             return _job;
         }
 
-        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
         final AnalysisJob job = reader.readJob(variableOverrides);
         _sourceDatastoreName = _job.getDatastore().getName();
@@ -156,7 +155,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
             synchronized (this) {
                 lastModified = _file.getLastModified();
                 if (_sourceDatastoreName == null || lastModified != _lastModifiedCache) {
-                    final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
+                    final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
                     final AnalysisJobMetadata metadata = _file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
                         @Override
                         public AnalysisJobMetadata eval(InputStream in) {
@@ -205,7 +204,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     public Map<String, String> getMetadataProperties() {
         final RepositoryFile file = getJobFile();
 
-        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = _tenantContext.getConfiguration();
         final AnalysisJobMetadata jobMetadata = file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
             @Override
             public AnalysisJobMetadata eval(InputStream in) {

@@ -28,7 +28,7 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultHtmlRenderer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.FileDatastore;
@@ -51,7 +51,7 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
     private static final Logger logger = LoggerFactory.getLogger(InteractiveWriteDataResultHtmlRenderer.class);
 
     @Inject
-    AnalyzerBeansConfiguration _configuration;
+    DataCleanerConfiguration _configuration;
 
     @Inject
     TenantResolver _tenantResolver;

@@ -25,13 +25,16 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
@@ -45,16 +48,13 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 public class TokenizerAndValueDistributionTest extends TestCase {
 
     public void testScenario() throws Throwable {
         TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
 
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 

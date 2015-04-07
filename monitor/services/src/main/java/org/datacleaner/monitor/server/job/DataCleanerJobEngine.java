@@ -35,7 +35,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.cluster.ClusterManager;
 import org.datacleaner.cluster.DistributedAnalysisRunner;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.ResourceDatastore;
@@ -151,7 +151,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
         preLoadJob(tenantContext, job);
 
-        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
 
         final AnalysisJob analysisJob = job.getAnalysisJob(variables);
 

@@ -24,22 +24,23 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
-import org.apache.metamodel.schema.ColumnType;
 
 public class MonitorJobReaderTest extends TestCase {
 
     public void testMapPlaceholderColumnsQualified() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true));
 
-        RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job").getFile("employees.analysis.xml");
+        RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job")
+                .getFile("employees.analysis.xml");
 
         MonitorJobReader reader = new MonitorJobReader(configuration, jobFile);
 
@@ -51,17 +52,18 @@ public class MonitorJobReaderTest extends TestCase {
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.EMAIL], MetaModelInputColumn[PUBLIC.EMPLOYEES.OFFICECODE], "
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.REPORTSTO], MetaModelInputColumn[PUBLIC.EMPLOYEES.JOBTITLE]]",
                 sourceColumns.toString());
-        
+
         Iterator<InputColumn<?>> it = sourceColumns.iterator();
         assertEquals(ColumnType.INTEGER, it.next().getPhysicalColumn().getType());
         assertEquals(ColumnType.VARCHAR, it.next().getPhysicalColumn().getType());
     }
 
     public void testMapPlaceholderColumnsNonQualified() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
                 .replace(new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true));
 
-        RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job").getFile("alt_employees.analysis.xml");
+        RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job")
+                .getFile("alt_employees.analysis.xml");
 
         MonitorJobReader reader = new MonitorJobReader(configuration, jobFile);
 

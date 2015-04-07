@@ -28,8 +28,8 @@ import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.TableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.PojoDatastore;
@@ -51,7 +51,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final ConfiguredPropertyDescriptor tableProperty = descriptor.getConfiguredProperty("Table name");
         final ConfiguredPropertyDescriptor schemaProperty = descriptor.getConfiguredProperty("Schema name");
 
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl();
         final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
 
         final TransformerComponentBuilder<TableLookupTransformer> tjb = analysisJobBuilder

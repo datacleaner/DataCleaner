@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.html.SimpleHtmlFragment;
@@ -34,14 +34,14 @@ import org.datacleaner.result.renderer.HtmlRenderingFormat;
 public class WriteDataResultHtmlRenderer implements Renderer<WriteDataResult, HtmlFragment> {
 
     @Inject
-    AnalyzerBeansConfiguration _configuration;
+    DataCleanerConfiguration _configuration;
 
     @Override
     public RendererPrecedence getPrecedence(WriteDataResult renderable) {
         return RendererPrecedence.MEDIUM;
     }
 
-    public void setConfiguration(AnalyzerBeansConfiguration configuration) {
+    public void setConfiguration(DataCleanerConfiguration configuration) {
         _configuration = configuration;
     }
 

@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
@@ -60,11 +60,11 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
     private final WindowContext _windowContext;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
-    private AnalyzerBeansConfiguration _configuration;
+    private DataCleanerConfiguration _configuration;
 
     @Inject
     protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-            DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration,
+            DCModule parentModule, UserPreferences userPreferences, DataCleanerConfiguration configuration,
             InjectorBuilder injectorBuilder) {
         _datastore = datastore;
         _table = table;

@@ -26,7 +26,7 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
@@ -34,8 +34,8 @@ import org.datacleaner.panels.FilterComponentBuilderPresenter;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
- * Specialized {@link Renderer} for a {@link FilterComponentBuilderPresenter} for
- * {@link MaxRowsFilter} when toggled using the
+ * Specialized {@link Renderer} for a {@link FilterComponentBuilderPresenter}
+ * for {@link MaxRowsFilter} when toggled using the
  * {@link MaxRowsFilterShortcutPanel}.
  */
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
@@ -46,7 +46,7 @@ public class MaxRowsFilterComponentBuilderPresenterRenderer implements
     WindowContext windowContext;
 
     @Inject
-    AnalyzerBeansConfiguration configuration;
+    DataCleanerConfiguration configuration;
 
     @Inject
     DCModule dcModule;
@@ -61,7 +61,8 @@ public class MaxRowsFilterComponentBuilderPresenterRenderer implements
 
     @Override
     public FilterComponentBuilderPresenter render(FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
-        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb).getInstance(PropertyWidgetFactory.class);
+        final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(fjb).getInstance(
+                PropertyWidgetFactory.class);
 
         return new MaxRowsFilterShortcutJobBuilderPanel(fjb, windowContext, propertyWidgetFactory);
     }

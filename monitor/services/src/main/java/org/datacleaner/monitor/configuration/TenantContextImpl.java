@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
@@ -35,6 +34,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +140,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    public AnalyzerBeansConfiguration getConfiguration() {
+    public DataCleanerConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
     }
 

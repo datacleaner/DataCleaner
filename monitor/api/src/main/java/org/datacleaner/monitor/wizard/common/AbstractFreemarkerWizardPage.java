@@ -31,6 +31,7 @@ import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
+import freemarker.template.Version;
 
 /**
  * Abstract {@link WizardPageController} which uses Freemarker to render the
@@ -42,8 +43,9 @@ public abstract class AbstractFreemarkerWizardPage extends AbstractWizardPage im
 
     @Override
     public final String getFormInnerHtml() {
-        final Configuration configuration = new Configuration();
-        configuration.setObjectWrapper(new DefaultObjectWrapper());
+        final Version freeMarkerVersion = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+        final Configuration configuration = new Configuration(freeMarkerVersion);
+        configuration.setObjectWrapper(new DefaultObjectWrapper(freeMarkerVersion));
 
         // load templates from the package of the (concrete) class.
         final Class<?> templateFriendlyClass = getTemplateFriendlyClass();

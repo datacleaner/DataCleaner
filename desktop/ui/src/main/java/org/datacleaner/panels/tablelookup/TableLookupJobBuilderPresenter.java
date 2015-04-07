@@ -27,14 +27,14 @@ import java.util.Map;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
@@ -70,7 +70,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
     public TableLookupJobBuilderPresenter(TransformerComponentBuilder<TableLookupTransformer> transformerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            AnalyzerBeansConfiguration configuration) {
+            DataCleanerConfiguration configuration) {
         super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 

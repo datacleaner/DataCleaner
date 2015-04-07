@@ -34,9 +34,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.job.JobContext;
@@ -44,7 +44,7 @@ import org.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.datacleaner.monitor.server.SecurityConfiguration;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,7 +80,7 @@ public class LaunchDataCleanerController {
             throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final AnalyzerBeansConfiguration configuration = _contextFactory.getContext(tenant).getConfiguration();
+        final DataCleanerConfiguration configuration = _contextFactory.getContext(tenant).getConfiguration();
         final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (ds == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);

@@ -21,16 +21,16 @@ package org.datacleaner.monitor.wizard.job;
 
 import java.io.OutputStream;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.Action;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
+import org.datacleaner.util.StringUtils;
 
 /**
  * Represents a typically used abstract class of {@link JobWizardSession}, which
@@ -67,7 +67,7 @@ public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSessi
                 final AnalysisJobBuilder jobBuilder = createJob();
                 final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-                final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+                final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
                 final JaxbJobWriter writer = new JaxbJobWriter(configuration);
                 writer.write(analysisJob, out);
             }

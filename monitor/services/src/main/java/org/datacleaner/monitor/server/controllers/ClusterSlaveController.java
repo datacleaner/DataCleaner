@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.datacleaner.cluster.SlaveJobInterceptor;
 import org.datacleaner.cluster.http.SlaveServletHelper;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.monitor.configuration.TenantContext;

@@ -23,6 +23,9 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -31,8 +34,8 @@ import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderResult;
 import org.datacleaner.beans.stringpattern.PatternFinderResultTextRenderer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -48,16 +51,13 @@ import org.datacleaner.result.DefaultResultProducer;
 import org.datacleaner.result.ResultProducer;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.test.TestHelper;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
 
 public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
     public void testScenario() throws Throwable {
         TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
 
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
         DatastoreConnection con = datastore.openConnection();

@@ -25,9 +25,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import junit.framework.TestCase;
 
 public class UsageAwareCloseableTest extends TestCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsageAwareCloseableTest.class);
 
     private UsageAwareCloseable _closeable;
     private AtomicInteger _closedCounter;
@@ -113,12 +118,12 @@ public class UsageAwareCloseableTest extends TestCase {
                         String action = "Thread" + threadNumber + "_" + numInternalUsages + "_"
                                 + _actionCounter.incrementAndGet();
 
-                        System.out.println("Usage (B" + action + "): " + _closeable.getUsageCount() + ", Creates: "
+                        logger.debug("Usage (B" + action + "): " + _closeable.getUsageCount() + ", Creates: "
                                 + _createdCounter.get() + ", Closes: " + _closedCounter.get());
 
                         try (UsageAwareCloseable closeable = giveMeUsage(action)) {
                             // do something
-                            System.out.println("Usage (A" + action + "): " + _closeable.getUsageCount() + ", Creates: "
+                            logger.debug("Usage (A" + action + "): " + _closeable.getUsageCount() + ", Creates: "
                                     + _createdCounter.get() + ", Closes: " + _closedCounter.get());
                         }
                     }

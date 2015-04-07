@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -89,6 +90,10 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * @return
      */
     protected File getRelativeParentDirectory() {
+        RepositoryFolder homeFolder = getHomeFolder();
+        if (homeFolder instanceof FileRepositoryFolder) {
+            return ((FileRepositoryFolder) homeFolder).getFile();
+        }
         return null;
     }
 

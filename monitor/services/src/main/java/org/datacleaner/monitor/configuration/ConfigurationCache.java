@@ -19,22 +19,17 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.io.File;
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.metamodel.util.Func;
+import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
-import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.RepositoryFileResourceTypeHandler;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,63 +89,8 @@ final class ConfigurationCache {
     }
 
     protected DataCleanerConfiguration readConfiguration() {
-        final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
-
-            @Override
-            protected File getRelativeParentDirectory() {
-                if (_tenantContext.getTenantRootFolder() instanceof FileRepositoryFolder) {
-                    FileRepositoryFolder tenantFolder = (FileRepositoryFolder) _tenantContext.getTenantRootFolder();
-                    File file = tenantFolder.getFile();
-                    return file;
-                }
-
-                final String userHome = System.getProperty("user.home");
-                final String result = userHome + File.separator + ".datacleaner/repository/"
-                        + _tenantContext.getTenantId();
-
-                return new File(result);
-            }
-
-            @Override
-            public String createFilename(String filename) {
-                if (isAbsolute(filename)) {
-                    return super.createFilename(filename);
-                }
-
-                if (_tenantContext.getTenantRootFolder() instanceof FileRepositoryFolder) {
-                    // for FileRepository implementations, the super
-                    // implementation will also "just work" because of the above
-                    // getRelativeParentDirectory method.
-                    return super.createFilename(filename);
-                }
-
-                final String userHome = System.getProperty("user.home");
-                final String result = userHome + File.separator + ".datacleaner/repository/"
-                        + _tenantContext.getTenantId() + File.separator + filename;
-
-                logger.warn("File path is relative, but repository is not file-based: {}. Returning: {}", filename,
-                        result);
-
-                return result;
-            }
-
-            @Override
-            protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
-                List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
-                handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
-                return handlers;
-            }
-
-            @Override
-            public DataCleanerEnvironment createBaseEnvironment() {
-                return _environment;
-            }
-            
-            @Override
-            public RepositoryFolder getHomeFolder() {
-                return _tenantContext.getTenantRootFolder();
-            }
-        });
+        final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository, _tenantContext, _environment);
+        final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
@@ -173,13 +113,6 @@ final class ConfigurationCache {
                 });
 
         return readConfiguration;
-    }
-
-    private boolean isAbsolute(String filename) {
-        assert filename != null;
-
-        File file = new File(filename);
-        return file.isAbsolute();
     }
 
     public void clearCache() {

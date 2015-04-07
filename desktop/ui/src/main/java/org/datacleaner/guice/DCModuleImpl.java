@@ -42,9 +42,10 @@ import org.apache.metamodel.util.MutableRef;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -62,13 +63,12 @@ import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.repository.vfs.VfsRepository;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.user.DataCleanerConfigurationReader;
 import org.datacleaner.user.DataCleanerHome;
-import org.datacleaner.user.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.MutableReferenceDataCatalog;
 import org.datacleaner.user.UsageLogger;
@@ -78,6 +78,7 @@ import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
+import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
@@ -211,7 +212,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         }
         return _windowContext;
     }
-    
+
     @Provides
     public final DataCleanerEnvironment getDataCleanerEnvironment(DataCleanerConfiguration conf) {
         return conf.getEnvironment();
@@ -302,20 +303,26 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
                     final FileObject homeFileObject = DataCleanerHome.get();
-                    final File homeDirectory = VFSUtils.toFile(homeFileObject);
-                    final RepositoryFolder homeRepositoryFolder = new FileRepositoryFolder(null, homeDirectory);
+                    final RepositoryFolder homeRepositoryFolder = new VfsRepository(homeFileObject);
 
-                    _configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog,
-                            descriptorProvider, c.getEnvironment().getTaskRunner(), storageProvider,
-                            injectionManagerFactory, homeRepositoryFolder);
+                    final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
+                    final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
+                            descriptorProvider, storageProvider, injectionManagerFactory);
+
+                    _configuration = new DataCleanerConfigurationImpl(environment, homeRepositoryFolder,
+                            datastoreCatalog, referenceDataCatalog);
                 }
             }
         }
 
-        if (_configuration instanceof AnalyzerBeansConfigurationImpl) {
-            // Ticket #905 and #925: Always replace the injection manager
-            // factory to ensure correct scope when doing injections.
-            return ((AnalyzerBeansConfigurationImpl) _configuration).replace(injectionManagerFactory);
+        if (_configuration instanceof DataCleanerConfigurationImpl) {
+            final DataCleanerEnvironment environment = _configuration.getEnvironment();
+            if (environment.getInjectionManagerFactory() != injectionManagerFactory) {
+                // Ticket #905 and #925: Always replace the injection manager
+                // factory to ensure correct scope when doing injections.
+                final DataCleanerEnvironment replacementEnvironment = new DataCleanerEnvironmentImpl(environment).withInjectionManagerFactory(injectionManagerFactory);
+                return ((DataCleanerConfigurationImpl) _configuration).withEnvironment(replacementEnvironment);
+            }
         }
 
         return _configuration;

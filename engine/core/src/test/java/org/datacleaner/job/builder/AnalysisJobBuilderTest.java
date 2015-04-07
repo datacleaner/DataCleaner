@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.test.MockFilter;
 import org.datacleaner.test.MockFilter.Category;
@@ -42,7 +42,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         final MutableColumn column = new MutableColumn("foo").setTable(table);
         table.addColumn(column);
 
-        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             final MockDatastore datastore = new MockDatastore();
             ajb.setDatastore(datastore);
             ajb.addSourceColumn(new MetaModelInputColumn(column));
@@ -108,7 +108,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         table.addColumn(column);
 
         // set up
-        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
             MockDatastore datastore = new MockDatastore();
             ajb.setDatastore(datastore);
             ajb.addSourceColumn(new MetaModelInputColumn(column));

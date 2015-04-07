@@ -32,16 +32,11 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbConfigurationReader;
-import org.datacleaner.connection.DatastoreCatalogImpl;
-import org.datacleaner.descriptors.SimpleDescriptorProvider;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.reference.ReferenceDataCatalogImpl;
-import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
@@ -88,7 +83,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
 
         // load the configuration file
         final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
-                new DataCleanerConfigurationReaderInterceptor(_dataCleanerHome));
+                new DesktopConfigurationReaderInterceptor(_dataCleanerHome));
 
         boolean exists;
         try {
@@ -217,8 +212,7 @@ public class DataCleanerConfigurationReader extends LazyRef<DataCleanerConfigura
         } catch (Exception ex2) {
             logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
             logger.warn("Creating a bare-minimum configuration because of previous errors!");
-            return new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
-                    new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
+            return new DataCleanerConfigurationImpl();
         }
     }
 

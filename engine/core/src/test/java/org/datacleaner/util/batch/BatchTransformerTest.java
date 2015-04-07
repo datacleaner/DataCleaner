@@ -24,7 +24,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -43,7 +45,7 @@ import org.datacleaner.test.MockAnalyzer;
 public class BatchTransformerTest extends TestCase {
 
     private AnalysisJob job;
-    private AnalyzerBeansConfigurationImpl configuration;
+    private DataCleanerConfiguration configuration;
     private MetaModelInputColumn sourceColumn;
     private MutableInputColumn<?> sortedColumn;
 
@@ -52,8 +54,8 @@ public class BatchTransformerTest extends TestCase {
         super.setUp();
         DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(new CsvDatastore("foo",
                 "src/test/resources/employees.csv"));
-        configuration = new AnalyzerBeansConfigurationImpl().replace(new MultiThreadedTaskRunner(10)).replace(
-                datastoreCatalog);
+        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(10)));
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore("foo");

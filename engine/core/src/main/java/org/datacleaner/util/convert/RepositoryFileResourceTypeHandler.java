@@ -17,11 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.repository;
+package org.datacleaner.util.convert;
 
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFileResource;
+import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.apache.metamodel.util.Resource;
 
 /**
  * {@link ResourceTypeHandler} for {@link RepositoryFileResource}s.
@@ -32,16 +35,17 @@ import org.apache.metamodel.util.Resource;
  */
 public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<RepositoryFileResource> {
 
-    private final String _tenantId;
     private final Repository _repository;
+    private final RepositoryFolder _homeFolder;
+
+    public RepositoryFileResourceTypeHandler(Repository repository, RepositoryFolder homeFolder) {
+        _repository = repository;
+        _homeFolder = homeFolder;
+    }
 
     public RepositoryFileResourceTypeHandler(Repository repository, String tenantId) {
-        _tenantId = tenantId;
         _repository = repository;
-    }
-    
-    public String getTenantId() {
-        return _tenantId;
+        _homeFolder = repository.getFolder(tenantId);
     }
 
     @Override
@@ -53,16 +57,24 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
     public String createPath(Resource resource) {
         final RepositoryFileResource repositoryFileResource = (RepositoryFileResource) resource;
         final String qualifiedPath = repositoryFileResource.getQualifiedPath();
-        final String tenantPart = "/" + _tenantId + "/";
-        if (!qualifiedPath.startsWith(tenantPart)) {
+        final String prefix = getHomeFolderPrefix();
+        if (!qualifiedPath.startsWith(prefix)) {
             throw new IllegalArgumentException(
-                    "This RepositoryFileResourceTypeHandler can only handle repository file from tenant '" + _tenantId
+                    "This RepositoryFileResourceTypeHandler can only handle repository file from home '" + prefix
                             + "'. Got: " + qualifiedPath);
         }
 
-        final String relativePath = qualifiedPath.substring(tenantPart.length());
+        final String relativePath = qualifiedPath.substring(prefix.length());
 
         return relativePath;
+    }
+
+    private String getHomeFolderPrefix() {
+        final String homeFolderPath = _homeFolder.getQualifiedPath();
+        if ("/".equals(homeFolderPath)) {
+            return homeFolderPath;
+        }
+        return homeFolderPath + "/";
     }
 
     @Override
@@ -72,7 +84,7 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
 
     @Override
     public RepositoryFileResource parsePath(String path) {
-        final String qualifiedPath = "/" + _tenantId + "/" + path;
+        final String qualifiedPath = getHomeFolderPrefix() + path;
         return new RepositoryFileResource(_repository, qualifiedPath);
     }
 

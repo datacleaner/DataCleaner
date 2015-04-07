@@ -37,9 +37,9 @@ import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
@@ -57,7 +57,7 @@ import org.easymock.IArgumentMatcher;
 public class AnalysisJobBuilderTest extends TestCase {
 
     private AnalysisJobBuilder analysisJobBuilder;
-    private AnalyzerBeansConfigurationImpl configuration;
+    private DataCleanerConfiguration configuration;
     private Datastore datastore;
 
     @Override
@@ -69,7 +69,7 @@ public class AnalysisJobBuilderTest extends TestCase {
         datastore = TestHelper.createSampleDatabaseDatastore("my db");
         datastores.add(datastore);
 
-        configuration = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(datastores));
+        configuration = new DataCleanerConfigurationImpl().withDatastores(datastores);
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("my db");
@@ -274,7 +274,7 @@ public class AnalysisJobBuilderTest extends TestCase {
 
     public void testSourceColumnListeners() throws Exception {
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("mydb");
-        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl())) {
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
 
             ajb.setDatastore(datastore);
 

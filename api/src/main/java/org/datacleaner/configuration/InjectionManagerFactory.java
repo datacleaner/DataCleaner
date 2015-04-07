@@ -39,8 +39,8 @@ public interface InjectionManagerFactory {
     public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job);
 
     /**
-     * Gets a general purpose {@link InjectionManager} for the
-     * {@link DataCleanerConfiguration}.
+     * Gets an {@link InjectionManager} for a {@link DataCleanerConfiguration}.
+     * Since no job is in scope, certain injections may not be possible .
      * 
      * @param configuration
      * @return

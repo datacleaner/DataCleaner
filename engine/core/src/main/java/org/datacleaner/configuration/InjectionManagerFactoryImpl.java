@@ -30,7 +30,7 @@ public class InjectionManagerFactoryImpl implements InjectionManagerFactory {
     public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
         return new InjectionManagerImpl(configuration, job);
     }
-    
+
     @Override
     public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
         return getInjectionManager(configuration, null);

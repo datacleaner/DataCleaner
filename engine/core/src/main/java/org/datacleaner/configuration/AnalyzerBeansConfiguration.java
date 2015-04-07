@@ -41,24 +41,28 @@ public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, Da
      * @see DatastoreCatalog
      * @return the datastore catalog defined in this configuration
      */
+    @Override
     public DatastoreCatalog getDatastoreCatalog();
 
     /**
      * @see ReferenceDataCatalog
      * @return the reference data catalog defined in this configuration
      */
+    @Override
     public ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
      * @see DescriptorProvider
      * @return the descriptor provider defined in this configuration
      */
+    @Override
     public DescriptorProvider getDescriptorProvider();
 
     /**
      * @see StorageProvider
      * @return the storage provider defined in this configuration
      */
+    @Override
     public StorageProvider getStorageProvider();
 
     /**
@@ -71,5 +75,6 @@ public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, Da
      * @see TaskRunner
      * @return the task runner defined in this configuration
      */
+    @Override
     public TaskRunner getTaskRunner();
 }

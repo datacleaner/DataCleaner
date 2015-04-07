@@ -23,8 +23,10 @@ import java.util.LinkedList;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.data.Row;
 import org.datacleaner.api.Renderer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.result.CrosstabResult;
 import org.datacleaner.result.DataSetResult;
@@ -33,15 +35,16 @@ import org.datacleaner.test.mock.MockRenderers.BarPrecedenceRenderer;
 import org.datacleaner.test.mock.MockRenderers.ConditionalPrecedenceRenderer;
 import org.datacleaner.test.mock.MockRenderers.FooPrecedenceRenderer;
 import org.datacleaner.test.mock.MockRenderers.RenderableString;
-import org.apache.metamodel.data.Row;
 
 public class RendererFactoryTest extends TestCase {
 
     public void testGetRendererByHierarchyDistance() throws Exception {
         ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
                 "org.datacleaner.result.renderer", true);
+
+        @SuppressWarnings("deprecation")
         RendererFactory rendererFactory = new RendererFactory(
-                new AnalyzerBeansConfigurationImpl().replace(descriptorProvider));
+                new org.datacleaner.configuration.AnalyzerBeansConfigurationImpl().replace(descriptorProvider));
         Renderer<?, ? extends CharSequence> r;
 
         r = rendererFactory.getRenderer(new NumberResult(1), TextRenderingFormat.class);
@@ -59,7 +62,8 @@ public class RendererFactoryTest extends TestCase {
         descriptorProvider.addRendererClass(FooPrecedenceRenderer.class);
         descriptorProvider.addRendererClass(BarPrecedenceRenderer.class);
 
-        AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+        DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl()
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         RendererFactory factory = new RendererFactory(conf);
         assertEquals(FooPrecedenceRenderer.class,

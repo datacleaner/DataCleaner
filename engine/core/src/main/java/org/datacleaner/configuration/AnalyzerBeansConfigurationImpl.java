@@ -32,7 +32,12 @@ import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.storage.StorageProvider;
 
-@SuppressWarnings("deprecation")
+/**
+ * 
+ *
+ * @deprecated use {@link DataCleanerConfigurationImpl} instead
+ */
+@Deprecated
 public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfiguration {
 
     private static final long serialVersionUID = 1L;

@@ -149,6 +149,7 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
+import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.H2StorageProvider;
@@ -266,8 +267,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    public DataCleanerConfiguration create(Configuration configuration) {
-        final ConfigurationMetadataType metadata = configuration.getConfigurationMetadata();
+    public DataCleanerConfiguration create(Configuration jaxbConfiguration) {
+        final ConfigurationMetadataType metadata = jaxbConfiguration.getConfigurationMetadata();
         if (metadata != null) {
             logger.info("Configuration name: {}", metadata.getConfigurationName());
             logger.info("Configuration version: {}", metadata.getConfigurationVersion());
@@ -277,54 +278,65 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             logger.info("Updated date: {}", metadata.getUpdatedDate());
         }
 
-        AnalyzerBeansConfigurationImpl analyzerBeansConfiguration = _interceptor.createBaseConfiguration();
+        final RepositoryFolder homeFolder = DataCleanerConfigurationImpl.defaultHomeFolder(); // TODO
 
-        // injection manager will be used throughout building the configuration.
-        // It will be used to host dependencies as they appear
-        InjectionManager injectionManager = analyzerBeansConfiguration.getInjectionManager(null);
+        // create temporary environment and configuration objects - they will be
+        // passed along during building of the final ones.
+        final TemporaryMutableDataCleanerEnvironment temporaryEnvironment = new TemporaryMutableDataCleanerEnvironment(
+                _interceptor.createBaseEnvironment());
+        DataCleanerConfigurationImpl temporaryConfiguration = new DataCleanerConfigurationImpl(temporaryEnvironment,
+                homeFolder);
 
-        final TaskRunner taskRunner = createTaskRunner(configuration, injectionManager);
+        // update the temporary environment if overrides are specified in
+        // configuration file.
+        updateTaskRunnerIfSpecified(jaxbConfiguration, temporaryEnvironment, temporaryConfiguration);
+        updateStorageProviderIfSpecified(jaxbConfiguration, temporaryEnvironment, temporaryConfiguration);
+        updateDescriptorProviderIfSpecified(jaxbConfiguration, temporaryEnvironment, temporaryConfiguration);
 
-        analyzerBeansConfiguration = analyzerBeansConfiguration.replace(taskRunner);
-        injectionManager = analyzerBeansConfiguration.getInjectionManager(null);
+        // add datastore catalog
+        final DatastoreCatalog datastoreCatalog;
+        {
+            addVariablePath("datastoreCatalog");
+            datastoreCatalog = createDatastoreCatalog(jaxbConfiguration.getDatastoreCatalog(), temporaryConfiguration,
+                    temporaryEnvironment);
+            removeVariablePath();
 
-        final DescriptorProvider descriptorProvider = createDescriptorProvider(configuration, taskRunner,
-                injectionManager);
+            temporaryConfiguration = temporaryConfiguration.withDatastoreCatalog(datastoreCatalog);
+        }
 
-        analyzerBeansConfiguration = analyzerBeansConfiguration.replace(descriptorProvider);
-        injectionManager = analyzerBeansConfiguration.getInjectionManager(null);
+        // add reference data catalog
+        final ReferenceDataCatalog referenceDataCatalog;
+        {
+            addVariablePath("referenceDataCatalog");
+            referenceDataCatalog = createReferenceDataCatalog(jaxbConfiguration.getReferenceDataCatalog(),
+                    temporaryEnvironment, temporaryConfiguration);
+            removeVariablePath();
+        }
 
-        addVariablePath("datastoreCatalog");
-        final DatastoreCatalog datastoreCatalog = createDatastoreCatalog(configuration.getDatastoreCatalog(),
-                injectionManager);
-        removeVariablePath();
+        final DataCleanerEnvironmentImpl finalEnvironment = new DataCleanerEnvironmentImpl(temporaryEnvironment);
+        final DataCleanerConfigurationImpl dataCleanerConfiguration = new DataCleanerConfigurationImpl(
+                finalEnvironment, homeFolder, datastoreCatalog, referenceDataCatalog);
 
-        analyzerBeansConfiguration = analyzerBeansConfiguration.replace(datastoreCatalog);
-        injectionManager = analyzerBeansConfiguration.getInjectionManager(null);
-
-        addVariablePath("referenceDataCatalog");
-        final ReferenceDataCatalog referenceDataCatalog = createReferenceDataCatalog(
-                configuration.getReferenceDataCatalog(), injectionManager);
-        removeVariablePath();
-
-        analyzerBeansConfiguration = analyzerBeansConfiguration.replace(referenceDataCatalog);
-        injectionManager = analyzerBeansConfiguration.getInjectionManager(null);
-
-        final StorageProvider storageProvider = createStorageProvider(configuration.getStorageProvider(),
-                injectionManager);
-        analyzerBeansConfiguration = analyzerBeansConfiguration.replace(storageProvider);
-
-        return analyzerBeansConfiguration;
+        return dataCleanerConfiguration;
     }
 
-    private DescriptorProvider createDescriptorProvider(Configuration configuration, TaskRunner taskRunner,
-            InjectionManager injectionManager) {
+    private void updateDescriptorProviderIfSpecified(Configuration jaxbConfiguration,
+            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        final DescriptorProvider descriptorProvider = createDescriptorProvider(jaxbConfiguration, environment,
+                temporaryConfiguration);
+        if (descriptorProvider != null) {
+            environment.setDescriptorProvider(descriptorProvider);
+        }
+    }
+
+    private DescriptorProvider createDescriptorProvider(Configuration configuration,
+            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
         final DescriptorProvider descriptorProvider;
         final CustomElementType customDescriptorProviderElement = configuration.getCustomDescriptorProvider();
         final ClasspathScannerType classpathScannerElement = configuration.getClasspathScanner();
         if (customDescriptorProviderElement != null) {
             descriptorProvider = createCustomElement(customDescriptorProviderElement, DescriptorProvider.class,
-                    injectionManager, true);
+                    temporaryConfiguration, true);
         } else {
             final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
             if (classpathScannerElement != null) {
@@ -341,8 +353,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                 }
             }
 
-            final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(taskRunner,
-                    excludedRenderingFormats);
+            final ClasspathScanDescriptorProvider classpathScanner = new ClasspathScanDescriptorProvider(
+                    environment.getTaskRunner(), excludedRenderingFormats);
             if (classpathScannerElement != null) {
                 final List<Package> packages = classpathScannerElement.getPackage();
                 for (Package pkg : packages) {
@@ -363,22 +375,31 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return descriptorProvider;
     }
 
-    private StorageProvider createStorageProvider(StorageProviderType storageProviderType,
-            InjectionManager injectionManager) {
+    private void updateStorageProviderIfSpecified(Configuration configuration,
+            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        final StorageProviderType storageProviderType = configuration.getStorageProvider();
+
         if (storageProviderType == null) {
-            // In-memory is the default storage provider
-            return new InMemoryStorageProvider();
+            return;
         }
+
+        final StorageProvider storageProvider = createStorageProvider(storageProviderType, environment,
+                temporaryConfiguration);
+        environment.setStorageProvider(storageProvider);
+    }
+
+    private StorageProvider createStorageProvider(StorageProviderType storageProviderType,
+            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
 
         final CombinedStorageProviderType combinedStorageProvider = storageProviderType.getCombined();
         if (combinedStorageProvider != null) {
             final StorageProviderType collectionsStorage = combinedStorageProvider.getCollectionsStorage();
             final StorageProviderType rowAnnotationStorage = combinedStorageProvider.getRowAnnotationStorage();
 
-            final StorageProvider collectionsStorageProvider = createStorageProvider(collectionsStorage,
-                    injectionManager);
+            final StorageProvider collectionsStorageProvider = createStorageProvider(collectionsStorage, environment,
+                    temporaryConfiguration);
             final StorageProvider rowAnnotationStorageProvider = createStorageProvider(rowAnnotationStorage,
-                    injectionManager);
+                    environment, temporaryConfiguration);
 
             return new CombinedStorageProvider(collectionsStorageProvider, rowAnnotationStorageProvider);
         }
@@ -391,7 +412,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final CustomElementType customStorageProvider = storageProviderType.getCustomStorageProvider();
         if (customStorageProvider != null) {
-            return createCustomElement(customStorageProvider, StorageProvider.class, injectionManager, true);
+            return createCustomElement(customStorageProvider, StorageProvider.class, temporaryConfiguration, true);
         }
 
         final BerkeleyDbStorageProviderType berkeleyDbStorageProvider = storageProviderType.getBerkeleyDb();
@@ -446,7 +467,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private ReferenceDataCatalog createReferenceDataCatalog(ReferenceDataCatalogType referenceDataCatalog,
-            InjectionManager injectionManager) {
+            DataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
         final List<Dictionary> dictionaryList = new ArrayList<Dictionary>();
         final List<SynonymCatalog> synonymCatalogList = new ArrayList<SynonymCatalog>();
 
@@ -508,7 +529,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
                         dictionaryList.add(dict);
                     } else if (dictionaryType instanceof CustomElementType) {
                         final Dictionary customDictionary = createCustomElement((CustomElementType) dictionaryType,
-                                Dictionary.class, injectionManager, false);
+                                Dictionary.class, temporaryConfiguration, false);
                         checkName(customDictionary.getName(), Dictionary.class, dictionaryList);
                         dictionaryList.add(customDictionary);
                     } else {
@@ -545,7 +566,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
                     } else if (synonymCatalogType instanceof CustomElementType) {
                         final SynonymCatalog customSynonymCatalog = createCustomElement(
-                                (CustomElementType) synonymCatalogType, SynonymCatalog.class, injectionManager, false);
+                                (CustomElementType) synonymCatalogType, SynonymCatalog.class, temporaryConfiguration,
+                                false);
                         checkName(customSynonymCatalog.getName(), SynonymCatalog.class, synonymCatalogList);
                         synonymCatalogList.add(customSynonymCatalog);
                     } else if (synonymCatalogType instanceof DatastoreSynonymCatalogType) {
@@ -619,7 +641,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     }
 
     private DatastoreCatalog createDatastoreCatalog(DatastoreCatalogType datastoreCatalogType,
-            InjectionManager injectionManager) {
+            DataCleanerConfigurationImpl temporaryConfiguration, DataCleanerEnvironment environment) {
         final Map<String, Datastore> datastores = new HashMap<String, Datastore>();
 
         // read all single, non-custom datastores
@@ -684,7 +706,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         // create custom datastores
         final List<CustomElementType> customDatastores = datastoreCatalogType.getCustomDatastore();
         for (CustomElementType customElementType : customDatastores) {
-            Datastore ds = createCustomElement(customElementType, Datastore.class, injectionManager, true);
+            Datastore ds = createCustomElement(customElementType, Datastore.class, temporaryConfiguration, true);
             String name = ds.getName();
             checkName(name, Datastore.class, datastores);
             datastores.put(name, ds);
@@ -737,8 +759,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else {
             tableDefs = new SimpleTableDef[tableDefList.size()];
             for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef tableDef = tableDefList
-                        .get(i);
+                final org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String tableName = tableDef.getTableName();
                 final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef.Column> columnList = tableDef
                         .getColumn();
@@ -832,8 +853,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else {
             tableDefs = new SimpleTableDef[tableDefList.size()];
             for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef tableDef = tableDefList
-                        .get(i);
+                final org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String tableName = tableDef.getName();
                 final List<org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column> columnList = tableDef
                         .getColumn();
@@ -894,8 +914,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         } else {
             tableDefs = new SimpleTableDef[tableDefList.size()];
             for (int i = 0; i < tableDefs.length; i++) {
-                final org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef tableDef = tableDefList
-                        .get(i);
+                final org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef tableDef = tableDefList.get(i);
                 final String collectionName = tableDef.getCollection();
                 final List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef.Property> propertyList = tableDef
                         .getProperty();
@@ -1259,29 +1278,29 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
     }
 
-    private TaskRunner createTaskRunner(Configuration configuration, InjectionManager injectionManager) {
-        SinglethreadedTaskrunnerType singlethreadedTaskrunner = configuration.getSinglethreadedTaskrunner();
-        MultithreadedTaskrunnerType multithreadedTaskrunner = configuration.getMultithreadedTaskrunner();
-        CustomElementType customTaskrunner = configuration.getCustomTaskrunner();
+    private void updateTaskRunnerIfSpecified(Configuration configuration,
+            TemporaryMutableDataCleanerEnvironment environment, DataCleanerConfiguration temporaryConfiguration) {
+        final SinglethreadedTaskrunnerType singlethreadedTaskrunner = configuration.getSinglethreadedTaskrunner();
+        final MultithreadedTaskrunnerType multithreadedTaskrunner = configuration.getMultithreadedTaskrunner();
+        final CustomElementType customTaskrunner = configuration.getCustomTaskrunner();
 
-        TaskRunner taskRunner;
         if (singlethreadedTaskrunner != null) {
-            taskRunner = new SingleThreadedTaskRunner();
+            final TaskRunner taskRunner = new SingleThreadedTaskRunner();
+            environment.setTaskRunner(taskRunner);
         } else if (multithreadedTaskrunner != null) {
             Short maxThreads = multithreadedTaskrunner.getMaxThreads();
+            final TaskRunner taskRunner;
             if (maxThreads != null) {
                 taskRunner = new MultiThreadedTaskRunner(maxThreads.intValue());
             } else {
                 taskRunner = new MultiThreadedTaskRunner();
             }
+            environment.setTaskRunner(taskRunner);
         } else if (customTaskrunner != null) {
-            taskRunner = createCustomElement(customTaskrunner, TaskRunner.class, injectionManager, true);
-        } else {
-            // default task runner type is multithreaded
-            taskRunner = new MultiThreadedTaskRunner();
+            final TaskRunner taskRunner = createCustomElement(customTaskrunner, TaskRunner.class,
+                    temporaryConfiguration, true);
+            environment.setTaskRunner(taskRunner);
         }
-
-        return taskRunner;
     }
 
     /**
@@ -1293,18 +1312,22 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
      *            the JAXB custom element type
      * @param expectedClazz
      *            an expected class or interface that the component should honor
-     * @param datastoreCatalog
-     *            the datastore catalog (for lookups/injections)
-     * @param referenceDataCatalog
-     *            the reference data catalog (for lookups/injections)
+     * @param configuration
+     *            the DataCleaner configuration (may be temporary) in use
      * @param initialize
      *            whether or not to call any initialize methods on the component
      *            (reference data should not be initialized, while eg. custom
      *            task runners support this.
      * @return the custom component
      */
-    @SuppressWarnings("unchecked")
     private <E> E createCustomElement(CustomElementType customElementType, Class<E> expectedClazz,
+            DataCleanerConfiguration configuration, boolean initialize) {
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+        return createCustomElementInternal(customElementType, expectedClazz, injectionManager, initialize);
+    }
+
+    private <E> E createCustomElementInternal(CustomElementType customElementType, Class<E> expectedClazz,
             InjectionManager injectionManager, boolean initialize) {
         Class<?> foundClass;
         String className = customElementType.getClassName();
@@ -1320,6 +1343,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             throw new IllegalStateException(className + " is not a valid " + expectedClazz);
         }
 
+        @SuppressWarnings("unchecked")
         E result = (E) ReflectionUtils.newInstance(foundClass);
 
         ComponentDescriptor<?> descriptor = Descriptors.ofComponent(foundClass);

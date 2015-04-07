@@ -36,6 +36,14 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
     private final StorageProvider _storageProvider;
     private final InjectionManagerFactory _injectionManagerFactory;
 
+    /**
+     * Creates a {@link DataCleanerEnvironment}
+     * 
+     * @param taskRunner
+     * @param descriptorProvider
+     * @param storageProvider
+     * @param injectionManagerFactory
+     */
     public DataCleanerEnvironmentImpl(TaskRunner taskRunner, DescriptorProvider descriptorProvider,
             StorageProvider storageProvider, InjectionManagerFactory injectionManagerFactory) {
         if (taskRunner == null) {
@@ -60,9 +68,41 @@ public class DataCleanerEnvironmentImpl implements DataCleanerEnvironment {
         }
     }
 
+    /**
+     * Creates a {@link DataCleanerEnvironment} based on defaults
+     */
     public DataCleanerEnvironmentImpl() {
         this(defaultTaskRunner(), defaultDescriptorProvider(), defaultStorageProvider(),
                 defaultInjectionManagerFactory());
+    }
+
+    /**
+     * Creates a copy of another {@link DataCleanerEnvironment}
+     * 
+     * @param e
+     */
+    public DataCleanerEnvironmentImpl(DataCleanerEnvironment e) {
+        this(e.getTaskRunner(), e.getDescriptorProvider(), e.getStorageProvider(), e.getInjectionManagerFactory());
+    }
+
+    public DataCleanerEnvironmentImpl withTaskRunner(TaskRunner taskRunner) {
+        return new DataCleanerEnvironmentImpl(taskRunner, getDescriptorProvider(), getStorageProvider(),
+                getInjectionManagerFactory());
+    }
+
+    public DataCleanerEnvironmentImpl withDescriptorProvider(DescriptorProvider descriptorProvider) {
+        return new DataCleanerEnvironmentImpl(getTaskRunner(), descriptorProvider, getStorageProvider(),
+                getInjectionManagerFactory());
+    }
+
+    public DataCleanerEnvironmentImpl withStorageProvider(StorageProvider storageProvider) {
+        return new DataCleanerEnvironmentImpl(getTaskRunner(), getDescriptorProvider(), storageProvider,
+                getInjectionManagerFactory());
+    }
+
+    public DataCleanerEnvironmentImpl withInjectionManagerFactory(InjectionManagerFactory injectionManagerFactory) {
+        return new DataCleanerEnvironmentImpl(getTaskRunner(), getDescriptorProvider(), getStorageProvider(),
+                injectionManagerFactory);
     }
 
     @Override

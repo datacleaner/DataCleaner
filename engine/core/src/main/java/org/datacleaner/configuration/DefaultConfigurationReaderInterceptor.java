@@ -23,14 +23,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
 import org.datacleaner.util.convert.VfsResourceTypeHandler;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
 
 /**
  * Defines a default implementation of the
@@ -44,17 +44,17 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         if (filename == null) {
             return null;
         }
-        
+
         final File file = new File(filename);
         if (file.isAbsolute()) {
             return filename;
         }
-        
+
         final File relativeParentDirectory = getRelativeParentDirectory();
         if (relativeParentDirectory == null) {
             return filename;
         }
-        
+
         return new File(relativeParentDirectory, filename).getPath();
     }
 
@@ -108,7 +108,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     }
 
     @Override
-    public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
-        return new AnalyzerBeansConfigurationImpl();
+    public DataCleanerEnvironment createBaseEnvironment() {
+        return new DataCleanerEnvironmentImpl();
     }
 }

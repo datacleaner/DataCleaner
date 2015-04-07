@@ -28,7 +28,7 @@
 						</documentation>
 					</annotation>
 				</element>
-				<choice minOccurs="0" maxOccurs="1">
+				<choice minOccurs="0" maxOccurs="0">
 					<element name="multithreaded-taskrunner" type="ab:multithreadedTaskrunnerType"
 						minOccurs="1" maxOccurs="1">
 						<annotation>

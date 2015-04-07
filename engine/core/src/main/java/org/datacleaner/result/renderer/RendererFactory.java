@@ -26,6 +26,7 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.api.RenderingFormat;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
@@ -95,6 +96,10 @@ public final class RendererFactory {
 
     public RendererFactory(DataCleanerConfiguration configuration, RendererInitializer rendererInitializer) {
         this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
+    }
+    
+    public RendererFactory(DataCleanerEnvironment environment, RendererInitializer rendererInitializer) {
+        this(environment.getDescriptorProvider(), rendererInitializer);
     }
 
     /**

@@ -52,7 +52,7 @@ import com.google.inject.Injector;
 
 /**
  * Represents a factory and a catalog of widgets used for @Configured
- * properties. A widget wanting to represent an AnalyzerBeans component with @Configured
+ * properties. A widget wanting to represent a component with @Configured
  * properties should keep it's reference to the property widget factory and use
  * it to retrieve the properties in case of listener callbacks.
  */
@@ -248,7 +248,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         if (propertyWidget != null) {
             return propertyWidget;
         }
-        
+
         if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
             return null;
         }
@@ -257,7 +257,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
             AnalyzerComponentBuilder<?> analyzer = (AnalyzerComponentBuilder<?>) getComponentBuilder();
             if (analyzer.isMultipleJobsSupported()) {
                 if (analyzer.isMultipleJobsDeterminedBy(propertyDescriptor)) {
-                    final MultipleInputColumnsPropertyWidget result = new MultipleInputColumnsPropertyWidget(analyzer, propertyDescriptor);
+                    final MultipleInputColumnsPropertyWidget result = new MultipleInputColumnsPropertyWidget(analyzer,
+                            propertyDescriptor);
                     return result;
                 }
             }

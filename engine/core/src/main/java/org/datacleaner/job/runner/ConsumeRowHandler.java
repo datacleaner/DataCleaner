@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Object that can handle the task of consuming a number of rows. The
  * {@link ConsumeRowHandler} is internally used to execute all necesary
  * components for every record, but it can also be used as a utility if
- * AnalyzerBeans jobs are being embedded or applied in externally.
+ * DataCleaner jobs are being embedded or applied in externally.
  */
 public class ConsumeRowHandler {
 
@@ -150,8 +150,10 @@ public class ConsumeRowHandler {
 
     private List<RowProcessingConsumer> extractConsumers(AnalysisJob analysisJob,
             DataCleanerConfiguration configuration, Configuration rowConsumeConfiguration) {
-        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment().getInjectionManagerFactory();
-        final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration, analysisJob);
+        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
+                .getInjectionManagerFactory();
+        final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
+                analysisJob);
         final ReferenceDataActivationManager referenceDataActivationManager = new ReferenceDataActivationManager();
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
@@ -174,7 +176,8 @@ public class ConsumeRowHandler {
         if (rowConsumeConfiguration.table != null) {
             publisher = rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
             if (publisher == null) {
-                throw new IllegalArgumentException("Job does not consume records from table: " + rowConsumeConfiguration.table);
+                throw new IllegalArgumentException("Job does not consume records from table: "
+                        + rowConsumeConfiguration.table);
             }
         } else {
             final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers

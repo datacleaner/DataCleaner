@@ -218,7 +218,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * 
      * @param bottomFrequentValues
      * @deprecated use of this property is no longer adviced. It will be phased
-     *             out in later versions of AnalyzerBeans
+     *             out in later versions of DataCleaner
      */
     @Deprecated
     public void setBottomFrequentValues(Integer bottomFrequentValues) {
@@ -246,7 +246,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
      * @param topFrequentValues
      * 
      * @deprecated use of this property is no longer adviced. It will be phased
-     *             out in later versions of AnalyzerBeans
+     *             out in later versions of DataCleaner
      */
     @Deprecated
     public void setTopFrequentValues(Integer topFrequentValues) {

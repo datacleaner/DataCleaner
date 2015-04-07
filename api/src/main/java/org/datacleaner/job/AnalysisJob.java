@@ -26,7 +26,7 @@ import org.datacleaner.connection.Datastore;
 import org.apache.metamodel.schema.Column;
 
 /**
- * Defines a job to be executed by AnalyzerBeans.
+ * Defines a job to be executed by DataCleaner.
  * 
  * A {@link AnalysisJob} contains a set of components.
  * 

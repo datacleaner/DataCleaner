@@ -74,7 +74,7 @@ import org.junit.Assert;
 public class ClusterTestHelper {
 
     /**
-     * Creates a {@link AnalyzerBeansConfiguration} object (based on a few
+     * Creates a {@link DataCleanerConfiguration} object (based on a few
      * parameters), typically to use in test methods of this class.
      * 
      * @param testName

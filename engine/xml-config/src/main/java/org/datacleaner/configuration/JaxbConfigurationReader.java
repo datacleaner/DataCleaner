@@ -167,7 +167,7 @@ import com.google.common.base.Strings;
 
 /**
  * Configuration reader that uses the JAXB model to read XML file based
- * configurations for AnalyzerBeans.
+ * configurations for DataCleaner.
  */
 public final class JaxbConfigurationReader implements ConfigurationReader<InputStream> {
 

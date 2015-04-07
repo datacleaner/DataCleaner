@@ -24,32 +24,30 @@ import java.io.Serializable;
 import org.apache.metamodel.util.HasName;
 
 /**
- * Abstraction over all reference data types in AnalyzerBeans
- * 
- * 
+ * Abstraction over all reference data types in DataCleaner
  */
 public interface ReferenceData extends Serializable, HasName {
 
-	/**
-	 * Gets the name of the reference data item.
-	 * 
-	 * @return a String containing the name of this reference data item.
-	 */
-	@Override
-	public String getName();
+    /**
+     * Gets the name of the reference data item.
+     * 
+     * @return a String containing the name of this reference data item.
+     */
+    @Override
+    public String getName();
 
-	/**
-	 * Gets an optional description of the reference data item.
-	 * 
-	 * @return a String description, or null if no description is available.
-	 */
-	public String getDescription();
+    /**
+     * Gets an optional description of the reference data item.
+     * 
+     * @return a String description, or null if no description is available.
+     */
+    public String getDescription();
 
-	/**
-	 * Sets the description of the reference data item.
-	 * 
-	 * @param description
-	 *            the new description of the reference data item.
-	 */
-	public void setDescription(String description);
+    /**
+     * Sets the description of the reference data item.
+     * 
+     * @param description
+     *            the new description of the reference data item.
+     */
+    public void setDescription(String description);
 }

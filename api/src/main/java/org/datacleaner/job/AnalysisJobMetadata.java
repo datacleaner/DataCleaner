@@ -30,10 +30,8 @@ import org.apache.metamodel.schema.ColumnType;
  * basic information about a job to the user before he/she decides to open the
  * job. Because opening a job may fail the metadata can also be used to do
  * various verifications. In particular it is needed that the datastore name is
- * matched in the current AnalyzerBeansConfiguration and that the source column
- * paths are present in that particular datastore.
- * 
- * 
+ * matched in the current configuration and that the source column paths are
+ * present in that particular datastore.
  */
 public interface AnalysisJobMetadata {
 

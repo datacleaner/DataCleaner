@@ -23,53 +23,52 @@ import java.lang.annotation.Annotation;
 
 import javax.inject.Inject;
 
-
 /**
- * Defines an injection point in an AnalyzerBeans component. An injection point
- * is typically derived from the {@link Inject} annotation
+ * Defines an injection point in a component. An injection point is typically
+ * derived from the {@link Inject} annotation
  * 
  * @param <E>
  */
 public interface InjectionPoint<E> {
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+    public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
-	/**
-	 * Gets the instance that requests the injection
-	 * 
-	 * @return
-	 */
-	public Object getInstance();
+    /**
+     * Gets the instance that requests the injection
+     * 
+     * @return
+     */
+    public Object getInstance();
 
-	/**
-	 * Gets the base type to inject. This will be the class of the injected
-	 * variable, eg. List, Map, {@link AnalyzerBeansConfiguration} etc.
-	 * 
-	 * @return
-	 */
-	public Class<E> getBaseType();
+    /**
+     * Gets the base type to inject. This will be the class of the injected
+     * variable, eg. String, InputColumn, Number etc.
+     * 
+     * @return
+     */
+    public Class<E> getBaseType();
 
-	/**
-	 * Gets whether the injected type has generic arguments in addition to the
-	 * base type
-	 * 
-	 * @return
-	 */
-	public boolean isGenericType();
+    /**
+     * Gets whether the injected type has generic arguments in addition to the
+     * base type
+     * 
+     * @return
+     */
+    public boolean isGenericType();
 
-	/**
-	 * Gets the amount of generic arguments in the injected type
-	 * 
-	 * @return
-	 */
-	public int getGenericTypeArgumentCount();
+    /**
+     * Gets the amount of generic arguments in the injected type
+     * 
+     * @return
+     */
+    public int getGenericTypeArgumentCount();
 
-	/**
-	 * Gets a generic argument by index
-	 * 
-	 * @param i
-	 * @return
-	 * @throws IndexOutOfBoundsException
-	 */
-	public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException;
+    /**
+     * Gets a generic argument by index
+     * 
+     * @param i
+     * @return
+     * @throws IndexOutOfBoundsException
+     */
+    public Class<?> getGenericTypeArgument(int i) throws IndexOutOfBoundsException;
 }

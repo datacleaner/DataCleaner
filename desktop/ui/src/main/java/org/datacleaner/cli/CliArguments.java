@@ -77,7 +77,7 @@ public class CliArguments {
         parser.printUsage(out, null);
     }
 
-    @Option(name = "-conf", aliases = { "-configuration", "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of AnalyzerBeans")
+    @Option(name = "-conf", aliases = { "-configuration", "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of DataCleaner")
     private String configurationFile;
 
     @Option(name = "-job", aliases = { "--job-file" }, metaVar = "PATH", usage = "Path to an analysis job XML file to execute")

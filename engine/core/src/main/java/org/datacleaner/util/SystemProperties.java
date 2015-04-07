@@ -118,8 +118,8 @@ public class SystemProperties {
     public static final String MONITOR_LOG_ROWCOUNT = "datacleaner.userlog.rowcount";
 
     /**
-     * Determines if the select clause of queries in AnalyzerBeans should be
-     * optimized. If set to "true", AnalyzerBeans may disregard columns set in a
+     * Determines if the select clause of queries in DataCleaner should be
+     * optimized. If set to "true", DataCleaner may disregard columns set in a
      * {@link AnalysisJob} that are not consumed by any component in the job.
      */
     public static final String QUERY_SELECTCLAUSE_OPTIMIZE = "datacleaner.query.selectclause.optimize";

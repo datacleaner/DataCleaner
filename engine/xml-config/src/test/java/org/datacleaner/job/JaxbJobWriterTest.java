@@ -45,8 +45,9 @@ import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -82,7 +83,7 @@ public class JaxbJobWriterTest extends TestCase {
             }
 
         };
-        _writer = new JaxbJobWriter(new AnalyzerBeansConfigurationImpl(), _metadataFactory);
+        _writer = new JaxbJobWriter(new DataCleanerConfigurationImpl(), _metadataFactory);
     };
 
     public void testColumnPathWhenColumnNameIsBlank() throws Exception {
@@ -94,8 +95,8 @@ public class JaxbJobWriterTest extends TestCase {
 
         final DatastoreCatalogImpl datastoreCatalog = new DatastoreCatalogImpl(ds);
 
-        final DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(
-                descriptorProvider);
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         final AnalysisJob builtJob;
         try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(conf)) {
@@ -134,8 +135,9 @@ public class JaxbJobWriterTest extends TestCase {
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(NullCheckFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
-        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
-                .replace(descriptorProvider);
+
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         JaxbJobReader reader = new JaxbJobReader(conf);
         AnalysisJob job;
@@ -156,8 +158,8 @@ public class JaxbJobWriterTest extends TestCase {
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(NullCheckFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
-        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds))
-                .replace(descriptorProvider);
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         JaxbJobReader reader = new JaxbJobReader(conf);
         AnalysisJob job;
@@ -175,7 +177,7 @@ public class JaxbJobWriterTest extends TestCase {
     @SuppressWarnings("unchecked")
     public void testNullColumnProperty() throws Exception {
         Datastore ds = TestHelper.createSampleDatabaseDatastore("db");
-        DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds));
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds);
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf)) {
             ajb.setDatastore(ds);
 
@@ -279,8 +281,8 @@ public class JaxbJobWriterTest extends TestCase {
 
     public void testCompareWithBenchmarkFiles() throws Exception {
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("my db");
-        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(
-                new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(datastore)))) {
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+        try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
 
             ajb.setDatastore("my db");
 
@@ -309,7 +311,8 @@ public class JaxbJobWriterTest extends TestCase {
 
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file3.xml");
 
-            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder1 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder1 = ajb
+                    .addAnalyzer(PatternFinderAnalyzer.class);
             makeCrossPlatformCompatible(patternFinder1);
             MutableInputColumn<?> usernameColumn = tjb.getOutputColumnByName("Username");
             patternFinder1.addInputColumn(fnCol).addInputColumn(usernameColumn).getComponentInstance()
@@ -320,7 +323,8 @@ public class JaxbJobWriterTest extends TestCase {
             FilterComponentBuilder<SingleWordFilter, ValidationCategory> fjb2 = ajb.addFilter(SingleWordFilter.class);
             fjb2.addInputColumn(usernameColumn);
 
-            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder2 = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+            AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinder2 = ajb
+                    .addAnalyzer(PatternFinderAnalyzer.class);
             patternFinder2.addInputColumn(tjb.getOutputColumns().get(1));
             patternFinder2.setRequirement(fjb2, ValidationCategory.INVALID);
             makeCrossPlatformCompatible(patternFinder2);

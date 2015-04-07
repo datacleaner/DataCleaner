@@ -38,8 +38,9 @@ import org.datacleaner.beans.dategap.DateGapTextRenderer;
 import org.datacleaner.beans.transform.DateMaskMatcherTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -66,8 +67,9 @@ public class JaxbJobReaderTest extends TestCase {
             "org.datacleaner", true);
     private final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
             TestHelper.createSampleDatabaseDatastore("my database"));
-    private final DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog)
-            .replace(descriptorProvider);
+    private final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(
+            datastoreCatalog).withEnvironment(
+            new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
     public void testReadComponentNames() throws Exception {
         JobReader<InputStream> reader = new JaxbJobReader(conf);
@@ -114,7 +116,7 @@ public class JaxbJobReaderTest extends TestCase {
     }
 
     public void testReadMetadataNone() throws Exception {
-        JobReader<InputStream> reader = new JaxbJobReader(new AnalyzerBeansConfigurationImpl());
+        JobReader<InputStream> reader = new JaxbJobReader(new DataCleanerConfigurationImpl());
         AnalysisJobMetadata metadata = reader.readMetadata(new FileInputStream(new File(
                 "src/test/resources/example-job-valid.xml")));
 
@@ -213,7 +215,7 @@ public class JaxbJobReaderTest extends TestCase {
     }
 
     public void testInvalidRead() throws Exception {
-        JaxbJobReader factory = new JaxbJobReader(new AnalyzerBeansConfigurationImpl());
+        JaxbJobReader factory = new JaxbJobReader(new DataCleanerConfigurationImpl());
         try {
             factory.create(new File("src/test/resources/example-job-invalid.xml"));
             fail("Exception expected");
@@ -227,7 +229,7 @@ public class JaxbJobReaderTest extends TestCase {
     }
 
     public void testMissingDatastore() throws Exception {
-        JaxbJobReader factory = new JaxbJobReader(new AnalyzerBeansConfigurationImpl());
+        JaxbJobReader factory = new JaxbJobReader(new DataCleanerConfigurationImpl());
         try {
             factory.create(new File("src/test/resources/example-job-valid.xml"));
             fail("Exception expected");
@@ -335,8 +337,8 @@ public class JaxbJobReaderTest extends TestCase {
 
     public void testReadVariables() throws Exception {
         CsvDatastore datastore = new CsvDatastore("date-datastore", "src/test/resources/example-dates.csv");
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
-                new DatastoreCatalogImpl(datastore)).replace(descriptorProvider);
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
         JaxbJobReader reader = new JaxbJobReader(configuration);
         File file = new File("src/test/resources/example-job-variables.xml");
         assertTrue(file.exists());

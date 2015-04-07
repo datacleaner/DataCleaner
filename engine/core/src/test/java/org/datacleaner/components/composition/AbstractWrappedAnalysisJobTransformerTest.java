@@ -37,8 +37,8 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.components.composition.AbstractWrappedAnalysisJobTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -54,7 +54,7 @@ import org.datacleaner.test.MockTransformer;
 
 public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
 
-    private AnalyzerBeansConfigurationImpl _configuration;
+    private DataCleanerConfiguration _configuration;
 
     @Override
     protected void setUp() throws Exception {
@@ -76,7 +76,7 @@ public class AbstractWrappedAnalysisJobTransformerTest extends TestCase {
         Datastore actualInput = new PojoDatastore("actual_input", actualTableDataProvider);
 
         DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(origInput, actualInput);
-        _configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog);
+        _configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
     }
 
     public void testGetOutputColumns() throws Exception {

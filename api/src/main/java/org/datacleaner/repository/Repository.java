@@ -20,7 +20,7 @@
 package org.datacleaner.repository;
 
 /**
- * Defines a repository interface for the DataCleaner monitor web app.
+ * Defines a repository of nodes (files or folders) in DataCleaner.
  */
 public interface Repository extends RepositoryFolder {
 

@@ -31,7 +31,7 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 
@@ -79,7 +79,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
 
     /**
      * Creates a minimalistic configuration object with a specific
-     * {@link InjectionManagerFactory}, mostly suitable for stubbing and testing.
+     * {@link InjectionManagerFactory}, mostly suitable for stubbing and
+     * testing.
      * 
      * @param injectionManagerFactory
      */
@@ -89,7 +90,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     private static RepositoryFolder defaultHomeFolder() {
-        return new FileRepositoryFolder(null, new File("."));
+        return new FileRepository(new File("."));
     }
 
     /**
@@ -104,7 +105,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      */
     public AnalyzerBeansConfigurationImpl(DatastoreCatalog datastoreCatalog, ReferenceDataCatalog referenceDataCatalog,
             DescriptorProvider descriptorProvider, TaskRunner taskRunner, StorageProvider storageProvider) {
-        this(datastoreCatalog, referenceDataCatalog, descriptorProvider, taskRunner, storageProvider, null, defaultHomeFolder());
+        this(datastoreCatalog, referenceDataCatalog, descriptorProvider, taskRunner, storageProvider, null,
+                defaultHomeFolder());
     }
 
     /**
@@ -219,7 +221,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     public InjectionManager getInjectionManager(AnalysisJob job) {
         return _injectionManagerFactory.getInjectionManager(this, job);
     }
-    
+
     @Override
     public InjectionManagerFactory getInjectionManagerFactory() {
         return _injectionManagerFactory;
@@ -229,7 +231,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     public DataCleanerEnvironment getEnvironment() {
         return this;
     }
-    
+
     @Override
     public RepositoryFolder getHomeFolder() {
         return _homeFolder;

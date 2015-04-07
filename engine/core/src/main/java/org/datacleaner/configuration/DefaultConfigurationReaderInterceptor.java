@@ -27,6 +27,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -47,17 +48,29 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
             return null;
         }
 
-        final File file = new File(filename);
-        if (file.isAbsolute()) {
-            return filename;
+        final File file;
+        {
+            final File nonParentCandidate = new File(filename);
+            if (nonParentCandidate.isAbsolute()) {
+                file = nonParentCandidate;
+            } else {
+                final File relativeParentDirectory = getRelativeParentDirectory();
+                if (relativeParentDirectory == null) {
+                    file = nonParentCandidate;
+                } else {
+                    file = new File(relativeParentDirectory, filename);
+                }
+            }
         }
 
-        final File relativeParentDirectory = getRelativeParentDirectory();
-        if (relativeParentDirectory == null) {
-            return filename;
+        // some normalization (because filenames are often used to compare
+        // datastores)
+        String path = file.getPath();
+        path = StringUtils.replaceAll(path, "\\", "/");
+        if (path.startsWith("./")) {
+            path = path.substring(2);
         }
-
-        return new File(relativeParentDirectory, filename).getPath();
+        return path;
     }
 
     @Override
@@ -90,9 +103,10 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * @return
      */
     protected File getRelativeParentDirectory() {
-        RepositoryFolder homeFolder = getHomeFolder();
+        final RepositoryFolder homeFolder = getHomeFolder();
         if (homeFolder instanceof FileRepositoryFolder) {
-            return ((FileRepositoryFolder) homeFolder).getFile();
+            final File relativeParentDirectory = ((FileRepositoryFolder) homeFolder).getFile();
+            return relativeParentDirectory;
         }
         return null;
     }
@@ -112,7 +126,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         String result = System.getProperty(variablePath);
         return result;
     }
-    
+
     @Override
     public RepositoryFolder getHomeFolder() {
         return DataCleanerConfigurationImpl.defaultHomeFolder();

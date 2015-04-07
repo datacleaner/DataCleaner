@@ -49,11 +49,10 @@
 		<title>Building DataCleaner</title>
 
 		<para>
-			Get the source code for AnalyzerBeans and DataCleaner from
+			Get the source code for DataCleaner from
 			GitHub:
 		</para>
 		<programlisting>
-			&gt;&#160;git&#160;clone&#160;https://github.com/datacleaner/AnalyzerBeans.git&#160;AnalyzerBeans
 			&gt;&#160;git&#160;clone&#160;https://github.com/datacleaner/DataCleaner.git&#160;DataCleaner
 		</programlisting>
 
@@ -61,16 +60,14 @@
 			Build the projects:
 		</para>
 		<programlisting>
-			&gt;&#160;cd&#160;AnalyzerBeans
-			&gt;&#160;mvn&#160;clean&#160;install
-			&gt;&#160;cd&#160;../DataCleaner
+			&gt;&#160;cd&#160;DataCleaner
 			&gt;&#160;mvn&#160;clean&#160;install
 		</programlisting>
 
 		<para>Run DataCleaner</para>
 		<programlisting>
-			&gt;&#160;cd&#160;../DataCleaner/desktop/target
-			&gt;&#160;java&#160;-jar&#160;DataCleaner-desktop-[version].jar
+			&gt;&#160;cd&#160;desktop/ui/target
+			&gt;&#160;java&#160;-jar&#160;DataCleaner-desktop-ui-[version].jar
 		</programlisting>
 	</section>
 

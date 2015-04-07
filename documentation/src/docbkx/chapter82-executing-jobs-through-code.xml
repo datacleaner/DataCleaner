@@ -47,15 +47,16 @@
 		<title>Step 1: Configuration</title>
 		<para>
 			The configuration for DataCleaner is represented in the class
-			<emphasis>AnalyzerBeansConfiguration,</emphasis>
-			named after the underlying processing framework called
-			<emphasis>AnalyzerBeans.</emphasis>
-			You need a AnalyzerBeansConfiguration as a prerequisite for most of
-			the coming operations.
+			<emphasis>DataCleanerConfiguration</emphasis>
+			(previously 'AnalyzerBeansConfiguration').
+			You need a
+			DataCleanerConfiguration as a prerequisite for most of
+			the coming
+			operations.
 		</para>
 		<para>
 			The easiest and probably most convenient option for acquiring an
-			AnalyzerBeansConfiguration instance is to load it from a file,
+			DataCleanerConfiguration instance is to load it from a file,
 			typically named conf.xml (See the
 			<link linkend="chapter_configuration_file">Configuration file</link>
 			chapter for more details on this file format). To load the file, use
@@ -64,7 +65,7 @@
 		<programlisting language="java">
 			InputStream&#160;inputStream&#160;=&#160;new&#160;FileInputStream("conf.xml");
 			JaxbConfigurationReader&#160;configurationReader&#160;=&#160;new&#160;JaxbConfigurationReader();
-			AnalyzerBeansConfiguration&#160;configuration&#160;=&#160;configurationReader.read(inputStream);
+			DataCleanerConfiguration&#160;configuration&#160;=&#160;configurationReader.read(inputStream);
 		</programlisting>
 		<para>Alternatively, you can build the configuration programmatically,
 			through code. This is typically more cumbersome, but in some cases
@@ -72,7 +73,7 @@
 			something like that.
 		</para>
 		<para>Here's an example where we configure
-			AnalyzerBeans with 2 example
+			DataCleaner with 2 example
 			datastores and a threadpool of 10
 			threads:
 		</para>
@@ -83,13 +84,13 @@
 			&#160;&#160;&#160;&#160;"jdbc:vendor://localhost/database",&#160;"com.database.Driver",
 			&#160;&#160;&#160;&#160;"username",&#160;"password",&#160;multipleConnections);
 
-			AnalyzerBeansConfigurationImpl&#160;configuration&#160;=&#160;new&#160;AnalyzerBeansConfigurationImpl();
+			DataCleanerConfigurationImpl&#160;configuration&#160;=&#160;new&#160;DataCleanerConfigurationImpl();
 			configuration&#160;=&#160;configuration.replace(new&#160;MultiThreadedTaskRunner(10));
 			configuration&#160;=&#160;configuration.replace(new&#160;DatastoreCatalogImpl(datastore1,&#160;datastore2));
 		</programlisting>
 		<para>
 			Either way we do it, we now have an
-			<emphasis>AnalyzerBeansConfiguration</emphasis>
+			<emphasis>DataCleanerConfiguration</emphasis>
 			with the variable name 'configuration'. Then we can proceed to
 			defining the job to run.
 		</para>
@@ -98,8 +99,8 @@
 	<section id="section_development_configuration_job">
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="dev_job_execution_job.png"
-					format="PNG" scalefit="1" align="right" />
+				<imagedata fileref="dev_job_execution_job.png" format="PNG"
+					scalefit="1" align="right" />
 			</imageobject>
 		</mediaobject>
 		<title>Step 2: Job</title>
@@ -159,16 +160,20 @@
 
 		<tip>
 			<para>Be aware of the unfortunate similarity between the
-				'AnalyzerComponentBuilder' class name and the 'AnalysisJobBuilder' class
-				name. To rid the confusion, remember that the 'analysis' represents
-				the full scope of the job, whereas an 'analyzer' is just a single
+				'AnalyzerComponentBuilder' class name and the 'AnalysisJobBuilder'
+				class
+				name. To rid the confusion, remember that the 'analysis'
+				represents
+				the full scope of the job, whereas an 'analyzer' is just a
+				single
 				active part ('component') of the job.
 			</para>
 		</tip>
 
 		<para>Let's see an example of building a job programmatically. And to
 			ensure that we don't miss important insights, we'll make it a fairly
-			non-trivial job with both filters, transformers and analyzers. The job
+			non-trivial job with both filters, transformers and analyzers. The
+			job
 			will encompass:
 		</para>
 		<orderedlist>
@@ -408,8 +413,8 @@
 	<section id="section_development_configuration_result">
 		<mediaobject>
 			<imageobject>
-				<imagedata  fileref="dev_job_execution_result.png"
-					format="PNG" scalefit="1" align="right" />
+				<imagedata fileref="dev_job_execution_result.png" format="PNG"
+					scalefit="1" align="right" />
 			</imageobject>
 		</mediaobject>
 		<title>Step 4: Result</title>
@@ -501,7 +506,8 @@
 			ObjectInputStream&#160;ois&#160;=&#160;new&#160;ChangeAwareObjectInputStream(new&#160;FileInputStream("my_result.analysis.result.dat"));
 			AnalysisResult&#160;analysisResult&#160;=&#160;(AnalysisResult)&#160;ois.readObject();
 		</programlisting>
-		<para>Now the result is restored and you can further work with it.</para>
+		<para>Now the result is restored and you can further work with it.
+		</para>
 	</section>
 
 </chapter>

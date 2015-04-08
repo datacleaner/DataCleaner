@@ -41,6 +41,7 @@ import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
+import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,7 +165,8 @@ public class StandardTypeConverter implements Converter<Object> {
             return toDate(str);
         }
         if (ReflectionUtils.is(type, File.class)) {
-            return new File(str.replace('\\', File.separatorChar));
+            final FileResolver fileResolver = new FileResolver(_configuration);
+            return fileResolver.toFile(str);
         }
         if (ReflectionUtils.is(type, Calendar.class)) {
             Date date = toDate(str);
@@ -216,12 +218,9 @@ public class StandardTypeConverter implements Converter<Object> {
         if (o instanceof Boolean || o instanceof Number || o instanceof String || o instanceof Character) {
             result = o.toString();
         } else if (o instanceof File) {
-            File file = (File) o;
-            if (file.isAbsolute()) {
-                result = file.getAbsolutePath().replace('\\', '/');
-            } else {
-                result = file.getPath().replace('\\', '/');
-            }
+            final File file = (File) o;
+            final FileResolver fileResolver = new FileResolver(_configuration);
+            return fileResolver.toPath(file);
         } else if (o instanceof Date) {
             if (o instanceof ExpressionDate) {
                 // preserve the expression if it is an ExpressionDate

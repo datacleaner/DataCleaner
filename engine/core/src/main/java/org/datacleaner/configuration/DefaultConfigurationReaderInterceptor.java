@@ -26,8 +26,7 @@ import java.util.List;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
-import org.datacleaner.util.StringUtils;
+import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -43,34 +42,20 @@ import org.datacleaner.util.convert.VfsResourceTypeHandler;
 public class DefaultConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
 
     @Override
-    public String createFilename(String filename) {
+    public final String createFilename(String filename) {
         if (filename == null) {
             return null;
         }
 
-        final File file;
-        {
-            final File nonParentCandidate = new File(filename);
-            if (nonParentCandidate.isAbsolute()) {
-                file = nonParentCandidate;
-            } else {
-                final File relativeParentDirectory = getRelativeParentDirectory();
-                if (relativeParentDirectory == null) {
-                    file = nonParentCandidate;
-                } else {
-                    file = new File(relativeParentDirectory, filename);
-                }
-            }
-        }
+        // pass it through the file resolver to apply relative resolving of the
+        // file and path normalization
+        final FileResolver resolver = createFileResolver();
+        final File file = resolver.toFile(filename);
+        return resolver.toPath(file);
+    }
 
-        // some normalization (because filenames are often used to compare
-        // datastores)
-        String path = file.getPath();
-        path = StringUtils.replaceAll(path, "\\", "/");
-        if (path.startsWith("./")) {
-            path = path.substring(2);
-        }
-        return path;
+    protected FileResolver createFileResolver() {
+        return new FileResolver(getHomeFolder());
     }
 
     @Override
@@ -104,11 +89,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      */
     protected File getRelativeParentDirectory() {
         final RepositoryFolder homeFolder = getHomeFolder();
-        if (homeFolder instanceof FileRepositoryFolder) {
-            final File relativeParentDirectory = ((FileRepositoryFolder) homeFolder).getFile();
-            return relativeParentDirectory;
-        }
-        return null;
+        return new FileResolver(homeFolder).getBaseDirectory();
     }
 
     @Override

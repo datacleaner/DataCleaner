@@ -32,7 +32,6 @@
             <properties>
             	<property name="Mode" value="TRAINING" />
                 <property name="Max records for training" value="10000"/>
-                <property name="Reference file" value="jobs/orderdb_customers_dupe_reference.txt"/>
             </properties>
             <input ref="col_0" name="Columns"/>
             <input ref="col_1" name="Columns"/>

@@ -674,7 +674,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             } else if (datastoreType instanceof OpenOfficeDatabaseDatastoreType) {
                 ds = createDatastore(name, (OpenOfficeDatabaseDatastoreType) datastoreType);
             } else if (datastoreType instanceof PojoDatastoreType) {
-                ds = createDatastore(name, (PojoDatastoreType) datastoreType);
+                ds = createDatastore(name, (PojoDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof CouchdbDatastoreType) {
                 ds = createDatastore(name, (CouchdbDatastoreType) datastoreType);
             } else if (datastoreType instanceof MongodbDatastoreType) {
@@ -984,8 +984,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return ds;
     }
 
-    private Datastore createDatastore(String name, PojoDatastoreType pojoDatastore) {
-        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+    private Datastore createDatastore(String name, PojoDatastoreType pojoDatastore,
+            DataCleanerConfigurationImpl temporaryConfiguration) {
+        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(temporaryConfiguration);
         final PojoDatastore datastore = adaptor.read(pojoDatastore);
         return datastore;
     }

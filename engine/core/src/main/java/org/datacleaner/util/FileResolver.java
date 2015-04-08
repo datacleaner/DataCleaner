@@ -68,7 +68,7 @@ public class FileResolver {
         if (nonParentCandidate.isAbsolute()) {
             file = nonParentCandidate;
         } else {
-            if (_baseDir == null) {
+            if (_baseDir == null || ".".equals(_baseDir.getPath())) {
                 file = nonParentCandidate;
             } else {
                 file = new File(_baseDir, filename);

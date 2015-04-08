@@ -84,7 +84,7 @@ public class StandardTypeConverter implements Converter<Object> {
     @Inject
     DataCleanerConfiguration _configuration;
 
-    protected StandardTypeConverter() {
+    public StandardTypeConverter() {
         this(null, null);
     }
 

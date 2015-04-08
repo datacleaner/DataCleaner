@@ -17,14 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.storage;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Represents a (sub)task that can run in parallel when running an analysis job.
- * 
- * 
+ * Configurable component which provides storage (for instance cached/persistent
+ * or in-memory based) for collections and other types that are needed during
+ * execution.
  */
-public interface Task {
+public interface StorageProvider {
 
-	public void execute() throws Exception;
+    public <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
+
+    public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
+
+    public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
+
+    public RowAnnotationFactory createRowAnnotationFactory();
 }

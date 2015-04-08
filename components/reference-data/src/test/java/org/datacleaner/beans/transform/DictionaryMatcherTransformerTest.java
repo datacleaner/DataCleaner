@@ -30,7 +30,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MutableInputColumn;
@@ -66,7 +66,7 @@ public class DictionaryMatcherTransformerTest extends TestCase {
 		ReferenceDataCatalogImpl ref = new ReferenceDataCatalogImpl(dictionaries, synonymCatalogs, stringPatterns);
 
 		Datastore datastore = new CsvDatastore("my database", "src/test/resources/projects.csv");
-		AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl();
+		DataCleanerConfigurationImpl conf = new DataCleanerConfigurationImpl();
 		AnalysisJobBuilder job = new AnalysisJobBuilder(conf);
 		job.setDatastore(datastore);
 		job.addSourceColumns("product", "version");

@@ -30,15 +30,15 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCFileChooser;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +51,9 @@ public class ExportResultToHtmlActionListener implements ActionListener {
 
     private final Ref<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
-    public ExportResultToHtmlActionListener(Ref<AnalysisResult> result, AnalyzerBeansConfiguration configuration,
+    public ExportResultToHtmlActionListener(Ref<AnalysisResult> result, DataCleanerConfiguration configuration,
             UserPreferences userPreferences) {
         _result = result;
         _configuration = configuration;

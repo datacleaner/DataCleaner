@@ -25,9 +25,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.job.JobEngine;
 import org.datacleaner.monitor.job.JobEngineManager;
@@ -35,6 +36,7 @@ import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +69,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      *            provide tenant-specific injection options.
      * @param jobEngineManager
      */
-    public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory,
+    public TenantContextImpl(String tenantId, Repository repository, DataCleanerEnvironment environment,
             JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
@@ -76,10 +78,14 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
             throw new IllegalArgumentException("JobEngineManager cannot be null");
         }
 
+        final InjectionManagerFactory injectionManagerFactory = environment.getInjectionManagerFactory();
         final TenantInjectionManagerFactory tenantInjectionManagerFactory = new TenantInjectionManagerFactory(
                 injectionManagerFactory, repository, this);
 
-        _configurationCache = new ConfigurationCache(tenantInjectionManagerFactory, this, repository);
+        final DataCleanerEnvironmentImpl tenantEnvironment = new DataCleanerEnvironmentImpl(environment)
+                .withInjectionManagerFactory(tenantInjectionManagerFactory);
+
+        _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
         _jobCache = buildJobCache();
     }
 
@@ -140,7 +146,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    public AnalyzerBeansConfiguration getConfiguration() {
+    public DataCleanerConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
     }
 
@@ -161,7 +167,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     public String getTenantId() {
         return _tenantId;
     }
-    
+
     @Override
     protected ResultContext getResult(RepositoryFile resultFile) {
         if (resultFile == null) {

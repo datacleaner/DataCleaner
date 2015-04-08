@@ -23,14 +23,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
 import org.datacleaner.util.convert.VfsResourceTypeHandler;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Resource;
 
 /**
  * Defines a default implementation of the
@@ -44,18 +47,30 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         if (filename == null) {
             return null;
         }
-        
-        final File file = new File(filename);
-        if (file.isAbsolute()) {
-            return filename;
+
+        final File file;
+        {
+            final File nonParentCandidate = new File(filename);
+            if (nonParentCandidate.isAbsolute()) {
+                file = nonParentCandidate;
+            } else {
+                final File relativeParentDirectory = getRelativeParentDirectory();
+                if (relativeParentDirectory == null) {
+                    file = nonParentCandidate;
+                } else {
+                    file = new File(relativeParentDirectory, filename);
+                }
+            }
         }
-        
-        final File relativeParentDirectory = getRelativeParentDirectory();
-        if (relativeParentDirectory == null) {
-            return filename;
+
+        // some normalization (because filenames are often used to compare
+        // datastores)
+        String path = file.getPath();
+        path = StringUtils.replaceAll(path, "\\", "/");
+        if (path.startsWith("./")) {
+            path = path.substring(2);
         }
-        
-        return new File(relativeParentDirectory, filename).getPath();
+        return path;
     }
 
     @Override
@@ -88,6 +103,11 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * @return
      */
     protected File getRelativeParentDirectory() {
+        final RepositoryFolder homeFolder = getHomeFolder();
+        if (homeFolder instanceof FileRepositoryFolder) {
+            final File relativeParentDirectory = ((FileRepositoryFolder) homeFolder).getFile();
+            return relativeParentDirectory;
+        }
         return null;
     }
 
@@ -108,7 +128,12 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     }
 
     @Override
-    public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
-        return new AnalyzerBeansConfigurationImpl();
+    public RepositoryFolder getHomeFolder() {
+        return DataCleanerConfigurationImpl.defaultHomeFolder();
+    }
+
+    @Override
+    public DataCleanerEnvironment createBaseEnvironment() {
+        return new DataCleanerEnvironmentImpl();
     }
 }

@@ -27,21 +27,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Methods and fields with the @Provided annotation are used to let
- * AnalyzerBeans, TransformerBeans and FilterBeans retrieve service-objects such
- * as persistent collections, the current SchemaNavigator or DataContext.
+ * Methods and fields with the @Provided annotation are used to let component
+ * retrieve service-objects such as persistent collections, the current
+ * SchemaNavigator or DataContext.
  * 
- * This features ensures separation of concerns: The AnalyzerBeans framework
- * will make sure that persistence is handled and the bean-developer will not
- * have to worry about memory problems related to his/her collection(s).
+ * This features ensures separation of concerns: The framework will make sure
+ * that persistence is handled and the bean-developer will not have to worry
+ * about memory problems related to his/her collection(s).
  * 
  * Additionally Analyzerbeans can use the @Provided annotation to inject a
- * SchemaNavigator in order to perform metadata-based analysis. AnalyzerBeans
- * can also inject a DataContext, but this is generally discouraged for normal
- * use-cases since it will either be provided with the run(...)-method if the
- * AnalyzerBean is an ExploringAnalyzer or be out of scope if the AnalyzerBean
- * is a RowProcessingAnalyzer. For some use-cases it is helpful though, for
- * example initialization that requires some simple querying.
+ * SchemaNavigator in order to perform metadata-based analysis. A DataContext
+ * can also be injected, but this is generally discouraged for normal use-cases
+ * since it will either be provided with the run(...)-method if the AnalyzerBean
+ * is an ExploringAnalyzer or be out of scope if the AnalyzerBean is a
+ * RowProcessingAnalyzer. For some use-cases it is helpful though, for example
+ * initialization that requires some simple querying.
  * 
  * Valid types for @Provided annotated fields and method arguments are:
  * <ul>

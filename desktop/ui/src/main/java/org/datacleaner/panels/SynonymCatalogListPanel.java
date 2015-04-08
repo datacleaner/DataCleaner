@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.reference.DatastoreSynonymCatalog;
 import org.datacleaner.reference.SynonymCatalog;
@@ -58,14 +58,14 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.get();
-	private final AnalyzerBeansConfiguration _configuration;
+	private final DataCleanerConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
 	private final InjectorBuilder _injectorBuilder;
 
 	@Inject
-	protected SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+	protected SynonymCatalogListPanel(DCGlassPane glassPane, DataCleanerConfiguration configuration,
 			InjectorBuilder injectorBuilder) {
 		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;

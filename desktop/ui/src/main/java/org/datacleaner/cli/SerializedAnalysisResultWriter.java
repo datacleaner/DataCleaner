@@ -23,16 +23,16 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.AnalysisResultWriter;
 import org.datacleaner.result.SimpleAnalysisResult;
-import org.apache.metamodel.util.Ref;
 
 public class SerializedAnalysisResultWriter implements AnalysisResultWriter {
 
     @Override
-    public void write(AnalysisResult result, AnalyzerBeansConfiguration configuration, Ref<Writer> writerRef,
+    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
             Ref<OutputStream> outputStreamRef) {
         final SimpleAnalysisResult simpleAnalysisResult;
 

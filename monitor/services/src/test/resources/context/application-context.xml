@@ -7,11 +7,13 @@
 
 	<bean name="injectionManagerFactory" class="org.datacleaner.configuration.InjectionManagerFactoryImpl">
 	</bean>
+	
+	<bean name="dataCleanerEnvironment" class="org.datacleaner.configuration.DataCleanerEnvironmentImpl" />
 
 	<bean name="tenantContextFactory"
 		class="org.datacleaner.monitor.configuration.TenantContextFactoryImpl">
 		<constructor-arg ref="repository" />
-		<constructor-arg ref="injectionManagerFactory" />
+		<constructor-arg ref="dataCleanerEnvironment" />
 		<constructor-arg ref="jobEngineManager" />
 	</bean>
 

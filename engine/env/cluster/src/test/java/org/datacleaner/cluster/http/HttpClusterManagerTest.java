@@ -24,11 +24,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.cluster.ClusterTestHelper;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.datacleaner.cluster.ClusterTestHelper;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 
 public class HttpClusterManagerTest extends TestCase {
 
@@ -63,19 +63,19 @@ public class HttpClusterManagerTest extends TestCase {
     }
 
     public void testConcatAndInsert() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
                 .getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runConcatAndInsertJob(configuration, clusterManager);
     }
 
     public void testCancel() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
                 .getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runCancelJobJob(configuration, clusterManager);
     }
 
     public void testErrorHandling() throws Exception {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
                 .getSimpleName() + "_" + getName(), false);
         final List<Throwable> errors = ClusterTestHelper.runErrorHandlingJob(configuration, clusterManager);
 
@@ -91,14 +91,14 @@ public class HttpClusterManagerTest extends TestCase {
     }
 
     public void testCompletenessAnalyzer() throws Throwable {
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getClass()
                 .getSimpleName() + "_" + getName(), false);
         ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, clusterManager);
     }
 
     private Server createServer(int port, boolean multiThreaded) throws Exception {
         final String testName = getClass().getSimpleName() + "_" + getName();
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration(testName, multiThreaded);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(testName, multiThreaded);
 
         final SelectChannelConnector connector = new SelectChannelConnector();
         connector.setPort(port);

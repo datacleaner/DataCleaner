@@ -19,7 +19,7 @@
  */
 package org.datacleaner.guice;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.configuration.InjectionPoint;
@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
  * Wraps a standard {@link InjectionManager} and adds support for all Guice
  * based injections (only triggered in case the standard
  * {@link InjectionManager} is not useful
- * 
- * @author Kasper Sørensen
  */
 final class GuiceInjectionManager extends InjectionManagerImpl {
 
@@ -40,7 +38,8 @@ final class GuiceInjectionManager extends InjectionManagerImpl {
 
     private final InjectorBuilder _injectorBuilder;
 
-    public GuiceInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job, InjectorBuilder injectorBuilder) {
+    public GuiceInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job,
+            InjectorBuilder injectorBuilder) {
         super(configuration, job);
         _injectorBuilder = injectorBuilder;
     }

@@ -23,8 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.datacleaner.api.Converter;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.SimpleInjectionPoint;
+import org.datacleaner.job.AnalysisJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +65,20 @@ public final class StringConverter {
     private static final Logger logger = LoggerFactory.getLogger(StringConverter.class);
 
     private final InjectionManager _injectionManager;
+
+    public StringConverter(DataCleanerConfiguration configuration, AnalysisJob job) {
+        this(getInjectionManager(configuration, job));
+    }
+
+    private static InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
+        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
+                .getInjectionManagerFactory();
+        if (job == null) {
+            return injectionManagerFactory.getInjectionManager(configuration);
+        } else {
+            return injectionManagerFactory.getInjectionManager(configuration, job);
+        }
+    }
 
     public StringConverter(InjectionManager injectionManager) {
         _injectionManager = injectionManager;

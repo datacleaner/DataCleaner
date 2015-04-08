@@ -48,7 +48,8 @@ public abstract class SelectJobPanel extends FlowPanel {
         _service = service;
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();
-        _listBox = new ListBox(false);
+        _listBox = new ListBox();
+        _listBox.setMultipleSelect(false);
         addStyleName("SelectJobPanel");
 
         add(new HeadingLabel("Select job to build timeline from"));

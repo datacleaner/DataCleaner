@@ -17,25 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.storage;
+package org.datacleaner.configuration;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.datacleaner.api.Component;
 
 /**
- * Configurable component which provides cached/persistent storage for
- * collections and other types that are needed during execution.
- * 
- * 
+ * Component that manages injections made into {@link Component}s.
  */
-public interface StorageProvider {
+public interface InjectionManager {
 
-	public <E> List<E> createList(Class<E> valueType) throws IllegalStateException;
-
-	public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException;
-
-	public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException;
-
-	public RowAnnotationFactory createRowAnnotationFactory();
+    /**
+     * Gets the value/object/instance to be injected at a particular injection
+     * point.
+     * 
+     * @param injectionPoint
+     * @return
+     */
+    public <E> E getInstance(InjectionPoint<E> injectionPoint);
 }

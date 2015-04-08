@@ -22,8 +22,8 @@ package org.datacleaner.result;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * Defines the interface for components that write an {@link AnalysisResult},
@@ -31,6 +31,6 @@ import org.apache.metamodel.util.Ref;
  */
 public interface AnalysisResultWriter {
 
-    public void write(AnalysisResult result, AnalyzerBeansConfiguration configuration, Ref<Writer> writerRef,
+    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
             Ref<OutputStream> outputStreamRef) throws Exception;
 }

@@ -17,8 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.repository;
 
-public interface ComponentDescriptorsUpdatedListener {
-    public void componentDescriptorsUpdated();
+/**
+ * Defines a repository of nodes (files or folders) in DataCleaner.
+ */
+public interface Repository extends RepositoryFolder {
+
+    /**
+     * Gets a {@link RepositoryNode} by it's qualified path.
+     * 
+     * @param qualifiedPath
+     *            the path of the node
+     * @return the {@link RepositoryNode} with the specified qualified path, or
+     *         null if it does not exist.
+     */
+    public RepositoryNode getRepositoryNode(String qualifiedPath);
 }

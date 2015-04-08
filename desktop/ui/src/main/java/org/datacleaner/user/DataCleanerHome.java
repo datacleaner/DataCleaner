@@ -214,6 +214,10 @@ public final class DataCleanerHome {
         return _dataCleanerHome;
     }
 
+    public static File getAsFile() {
+        return VFSUtils.toFile(_dataCleanerHome);
+    }
+
     private static FileObject copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
             throws FileSystemException {
         FileObject file = candidate.resolveFile(filename);

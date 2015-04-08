@@ -44,7 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
@@ -128,7 +128,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private final InjectorBuilder _injectorBuilder;
     private final UserPreferences _userPreferences;
 
-    public DatastoreManagementPanel(AnalyzerBeansConfiguration configuration,
+    public DatastoreManagementPanel(DataCleanerConfiguration configuration,
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
             Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {

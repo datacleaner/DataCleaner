@@ -68,7 +68,7 @@ import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
@@ -140,7 +140,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private final List<PopupButton> _superCategoryButtons = new ArrayList<>();
     private final AnalysisJobBuilder _analysisJobBuilder;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final RendererFactory _presenterRendererFactory;
     private final DCLabel _statusLabel = DCLabel.bright("");
     private final CollapsibleTreePanel _leftPanel;
@@ -177,7 +177,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private AnalysisWindowPanelType _currentPanelType;
 
     @Inject
-    protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
+    protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
             AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder, UserPreferences userPreferences,
             @Nullable @JobFile FileObject jobFilename,

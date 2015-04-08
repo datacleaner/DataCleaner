@@ -24,15 +24,22 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.TableDataProvider;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.HasNameMapper;
+import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.PojoDatastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -40,12 +47,7 @@ import org.datacleaner.monitor.job.JobContext;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.util.PreviewTransformedDataAnalyzer;
-import org.apache.metamodel.pojo.ArrayTableDataProvider;
-import org.apache.metamodel.pojo.TableDataProvider;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.Func;
-import org.apache.metamodel.util.HasNameMapper;
-import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +158,7 @@ public class JobInvocationController {
         final PlaceholderAnalysisJob placeholderAnalysisJob = new PlaceholderAnalysisJob(placeholderDatastore,
                 originalJob);
 
-        final AnalyzerBeansConfiguration configuration = getRunnerConfiguration(tenantContext);
+        final DataCleanerConfiguration configuration = getRunnerConfiguration(tenantContext);
 
         final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 
@@ -182,14 +184,16 @@ public class JobInvocationController {
         return output;
     }
 
-    private AnalyzerBeansConfiguration getRunnerConfiguration(TenantContext tenantContext) {
-        AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+    private DataCleanerConfiguration getRunnerConfiguration(TenantContext tenantContext) {
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerEnvironment environment = configuration.getEnvironment();
 
         // replace task runner with single threaded taskrunner to ensure order
         // of output records.
-        AnalyzerBeansConfigurationImpl conf = (AnalyzerBeansConfigurationImpl) configuration;
-        conf = conf.replace(new SingleThreadedTaskRunner());
-        return conf;
+        final DataCleanerEnvironmentImpl replacementEnvironment = new DataCleanerEnvironmentImpl(environment)
+                .withTaskRunner(new SingleThreadedTaskRunner());
+
+        return new DataCleanerConfigurationImpl(configuration).withEnvironment(replacementEnvironment);
     }
 
     private String getTablePath(List<String> columnPaths) {

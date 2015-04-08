@@ -34,7 +34,7 @@ import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.cluster.ClusterTestHelper;
 import org.datacleaner.cluster.DistributedAnalysisRunner;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -62,7 +62,7 @@ public class SimpleMainAppForManualTesting {
 
         final HttpClusterManager clusterManager = new HttpClusterManager(httpClient, slaveEndpoints);
 
-        final AnalyzerBeansConfiguration configuration = ClusterTestHelper.createConfiguration("manual_test", false);
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration("manual_test", false);
 
         // build a job that concats names and inserts the concatenated names
         // into a file

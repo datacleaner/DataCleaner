@@ -23,6 +23,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystem;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
@@ -48,6 +49,14 @@ public class VFSUtils {
                 ((DefaultFileSystemManager) manager).setBaseFile(new File("."));
             }
             return manager;
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static FileSystem getBaseFileSystem() {
+        try {
+            return getFileSystemManager().getBaseFile().getFileSystem();
         } catch (FileSystemException e) {
             throw new IllegalStateException(e);
         }

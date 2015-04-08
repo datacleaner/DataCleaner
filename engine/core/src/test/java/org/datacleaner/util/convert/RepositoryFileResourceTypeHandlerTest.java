@@ -17,8 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.repository;
+package org.datacleaner.util.convert;
 
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFileResource;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.easymock.EasyMock;
 
 import junit.framework.TestCase;
@@ -27,12 +32,15 @@ public class RepositoryFileResourceTypeHandlerTest extends TestCase {
 
     public void testConvertFromAndToString() throws Exception {
         RepositoryFile mockFile = EasyMock.createMock(RepositoryFile.class);
+        RepositoryFolder mockFolder = EasyMock.createMock(RepositoryFolder.class);
         Repository mockRepo = EasyMock.createMock(Repository.class);
         
+        EasyMock.expect(mockRepo.getFolder("ten1")).andReturn(mockFolder);
+        EasyMock.expect(mockFolder.getQualifiedPath()).andReturn("/ten1").times(2);
         EasyMock.expect(mockFile.getQualifiedPath()).andReturn("/ten1/foo/bar.txt");
         EasyMock.expect(mockRepo.getRepositoryNode("/ten1/foo/bar.txt")).andReturn(mockFile);
         
-        EasyMock.replay(mockFile, mockRepo);
+        EasyMock.replay(mockFile, mockFolder, mockRepo);
         
         RepositoryFileResourceTypeHandler handler = new RepositoryFileResourceTypeHandler(mockRepo, "ten1");
         
@@ -43,6 +51,6 @@ public class RepositoryFileResourceTypeHandlerTest extends TestCase {
         RepositoryFile returnedFile = resource.getRepositoryFile();
         assertSame(mockFile, returnedFile);
         
-        EasyMock.verify(mockFile, mockRepo);
+        EasyMock.verify(mockFile, mockFolder, mockRepo);
     }
 }

@@ -28,13 +28,13 @@ import java.util.Map;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
 import org.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
@@ -51,8 +51,6 @@ import org.datacleaner.widgets.properties.SingleTableNamePropertyWidget;
 /**
  * Specialized {@link TransformerComponentBuilderPresenter} for the
  * {@link InsertIntoTableAnalyzer}.
- * 
- * @author Kasper Sørensen
  */
 class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
@@ -73,7 +71,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
     public InsertIntoTableJobBuilderPresenter(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            AnalyzerBeansConfiguration configuration) {
+            DataCleanerConfiguration configuration) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 

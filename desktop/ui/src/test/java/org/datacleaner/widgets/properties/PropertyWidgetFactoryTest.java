@@ -27,7 +27,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.filter.ValidationCategory;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.data.MockInputColumn;
@@ -68,7 +68,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
         Injector injector;
         
         injector = Guice.createInjector(dcModule);
-        AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
         MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
                 .getReferenceDataCatalog();
         referenceDataCatalog.addDictionary(dict1);
@@ -81,7 +81,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
         referenceDataCatalog.addSynonymCatalog(syn2);
         referenceDataCatalog.addSynonymCatalog(syn3);
 
-        injector = injector.getInstance(InjectorBuilder.class).with(AnalyzerBeansConfiguration.class, configuration)
+        injector = injector.getInstance(InjectorBuilder.class).with(DataCleanerConfiguration.class, configuration)
                 .createInjector();
 
         AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

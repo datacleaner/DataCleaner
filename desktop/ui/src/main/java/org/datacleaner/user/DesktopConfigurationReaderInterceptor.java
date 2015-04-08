@@ -24,30 +24,34 @@ import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
+import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.extensions.ExtensionPackage;
-import org.datacleaner.util.VFSUtils;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.vfs.VfsRepository;
+import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
+import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Configuration reader interceptor that is aware of the DataCleaner
  * environment.
- * 
- * @author Kasper Sørensen
  */
-public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor implements
-        ConfigurationReaderInterceptor {
+public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReaderInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DesktopConfigurationReaderInterceptor.class);
 
     private final FileObject _dataCleanerHome;
 
-    public DataCleanerConfigurationReaderInterceptor(FileObject dataCleanerHome) {
+    public DesktopConfigurationReaderInterceptor(FileObject dataCleanerHome) {
         _dataCleanerHome = dataCleanerHome;
+    }
+
+    @Override
+    public Repository getHomeFolder() {
+        return new VfsRepository(_dataCleanerHome);
     }
 
     @Override
@@ -55,17 +59,17 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
         ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
         return Class.forName(className, true, classLoader);
     }
-    
+
     @Override
     protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
         final List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
-        handlers.add(new DummyRepositoryResourceFileTypeHandler());
+        if (ClassLoaderUtils.IS_WEB_START) {
+            handlers.add(new DummyRepositoryResourceFileTypeHandler());
+        } else {
+            final Repository homeFolder = getHomeFolder();
+            handlers.add(new RepositoryFileResourceTypeHandler(homeFolder, homeFolder));
+        }
         return handlers;
-    }
-    
-    @Override
-    protected File getRelativeParentDirectory() {
-    	return VFSUtils.toFile(_dataCleanerHome);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
         if (filename == null) {
             return null;
         }
-        
+
         final File file = new File(filename);
         if (file.isAbsolute()) {
             return filename;
@@ -87,17 +91,4 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
             return filename;
         }
     }
-
-    @Override
-    public String getTemporaryStorageDirectory() {
-        try {
-            if (_dataCleanerHome.isWriteable()) {
-                return _dataCleanerHome.resolveFile("temp").getName().getPathDecoded();
-            }
-        } catch (FileSystemException e) {
-            logger.warn("Could not resolve temp directory", e);
-        }
-        return FileHelper.getTempDir().getAbsolutePath();
-    }
-
 }

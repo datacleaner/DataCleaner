@@ -23,7 +23,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -110,7 +110,7 @@ public class ExecuteJobTest extends TestCase {
     public void testFileNotFound() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
         JobIdentifier job = new JobIdentifier("some_csv_profiling");
@@ -145,7 +145,7 @@ public class ExecuteJobTest extends TestCase {
     public void testInvalidDatastoreInJob() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
         JobIdentifier job = new JobIdentifier("product_profiling");

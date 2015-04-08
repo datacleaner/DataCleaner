@@ -28,13 +28,22 @@ import org.datacleaner.job.AnalysisJob;
  */
 public interface InjectionManagerFactory {
 
-	/**
-	 * Gets an {@link InjectionManager} (typically new) for the execution of an
-	 * {@link AnalysisJob}
-	 * 
-	 * @param configuration
-	 * @param job
-	 * @return
-	 */
-	public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job);
+    /**
+     * Gets an {@link InjectionManager} (typically new) for the execution of an
+     * {@link AnalysisJob}
+     * 
+     * @param configuration
+     * @param job
+     * @return
+     */
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job);
+
+    /**
+     * Gets an {@link InjectionManager} for a {@link DataCleanerConfiguration}.
+     * Since no job is in scope, certain injections may not be possible .
+     * 
+     * @param configuration
+     * @return
+     */
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration);
 }

@@ -37,8 +37,8 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -311,7 +311,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         {
             DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
 
-            AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
+            DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
                     new MultiThreadedTaskRunner(4)).replace(datastoreCatalog);
 
             AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);

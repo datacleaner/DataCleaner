@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.jobwizard.movedata;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.monitor.configuration.TenantContext;
@@ -27,7 +28,6 @@ import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.apache.metamodel.schema.Table;
 
 final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 
@@ -59,13 +59,13 @@ final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 
     public String[] getDatastoreNames() {
         final TenantContext tenantContext = getWizardContext().getTenantContext();
-        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         return configuration.getDatastoreCatalog().getDatastoreNames();
     }
 
     public Datastore getDatastore(String name) {
         final TenantContext tenantContext = getWizardContext().getTenantContext();
-        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
         return configuration.getDatastoreCatalog().getDatastore(name);
     }
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
@@ -84,7 +85,10 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         final Transformer component = getComponentInstance();
         final TransformerDescriptor<T> descriptor = getDescriptor();
 
-        final InjectionManager injectionManager = getAnalysisJobBuilder().getConfiguration().getInjectionManager(null);
+        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);
 
         // mimic the configuration of a real transformer bean instance

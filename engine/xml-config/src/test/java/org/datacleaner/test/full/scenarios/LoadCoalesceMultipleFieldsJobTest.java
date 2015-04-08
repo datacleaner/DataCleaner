@@ -28,7 +28,9 @@ import junit.framework.TestCase;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -52,8 +54,11 @@ public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors
                 .ofTransformer(CoalesceMultipleFieldsTransformer.class));
-        AnalyzerBeansConfigurationImpl configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog)
-                .replace(descriptorProvider);
+        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
+                .withDescriptorProvider(descriptorProvider);
+
+        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
+                datastoreCatalog).withEnvironment(environment);
 
         JaxbJobReader reader = new JaxbJobReader(configuration);
         AnalysisJobBuilder analysisJobBuilder = reader.create(new File(
@@ -81,13 +86,13 @@ public class LoadCoalesceMultipleFieldsJobTest extends TestCase {
         assertEquals("[TransformedInputColumn[id=trans-0001-0002,name=__state_or_country], "
                 + "TransformedInputColumn[id=trans-0001-0003,name=__salesrep_or_phone]]",
                 Arrays.toString(analyzerJob.getInput()));
-        
+
         AnalysisResultFuture resultFuture = new AnalysisRunnerImpl(configuration).run(job);
         resultFuture.await();
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        
+
         CompletenessAnalyzerResult result = (CompletenessAnalyzerResult) resultFuture.getResult(analyzerJob);
         assertEquals(122, result.getTotalRowCount());
         assertEquals(0, result.getInvalidRowCount());

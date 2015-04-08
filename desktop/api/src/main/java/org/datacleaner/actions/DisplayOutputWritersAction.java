@@ -76,7 +76,7 @@ public class DisplayOutputWritersAction {
     }
 
     protected Collection<? extends ComponentDescriptor<?>> getDescriptors() {
-        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = _analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
         final Collection<? extends ComponentDescriptor<?>> descriptors = descriptorProvider
                 .getComponentDescriptorsOfSuperCategory(new WriteSuperCategory());
         return descriptors;

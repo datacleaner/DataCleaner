@@ -24,14 +24,12 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Qualifier;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 
 /**
  * Qualifier annotation used for specifying that a component is undecorated.
- * Typically this qualifier applies to the {@link AnalyzerBeansConfiguration}
- * and related objects which are decorated by DC.
- * 
- * @author Kasper Sørensen
+ * Typically this qualifier applies to the {@link DataCleanerConfiguration} and
+ * related objects which are decorated by DC.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier

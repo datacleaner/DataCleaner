@@ -78,7 +78,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
     private DatastoreCatalog _datastoreCatalog;
 
     public void testReadCsvFilesWithSpecialCharacters() throws Exception {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-csv-with-special-chars.xml"));
         CsvDatastore csv = (CsvDatastore) configuration.getDatastoreCatalog().getDatastore("csv");
 
@@ -95,10 +95,10 @@ public class JaxbConfigurationReaderTest extends TestCase {
     }
 
     public void testReadClasspathScannerWithExcludedRenderer() throws Exception {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-classpath-scanner-with-exclusions.xml"));
 
-        DescriptorProvider descriptorProvider = configuration.getDescriptorProvider();
+        DescriptorProvider descriptorProvider = configuration.getEnvironment().getDescriptorProvider();
         assertTrue(descriptorProvider instanceof ClasspathScanDescriptorProvider);
 
         ClasspathScanDescriptorProvider scanner = (ClasspathScanDescriptorProvider) descriptorProvider;
@@ -116,7 +116,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
     }
 
     public void testReadComplexDataInPojoDatastore() throws Exception {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-pojo-datastore-with-complex-data.xml"));
         Datastore datastore = configuration.getDatastoreCatalog().getDatastore("pojo");
         assertNotNull(datastore);
@@ -165,7 +165,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
         System.setProperty("datastoreCatalog.persons_csv.filename", "foo/bar.csv");
 
         try {
-            AnalyzerBeansConfiguration configuration = reader.create(new File(
+            DataCleanerConfiguration configuration = reader.create(new File(
                     "src/test/resources/example-configuration-valid.xml"));
             Datastore datastore = configuration.getDatastoreCatalog().getDatastore("my database");
             assertTrue(datastore instanceof JdbcDatastore);
@@ -185,20 +185,20 @@ public class JaxbConfigurationReaderTest extends TestCase {
     }
 
     public void testValidConfiguration() throws Exception {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-valid.xml"));
 
         DatastoreCatalog datastoreCatalog = getDataStoreCatalog(configuration);
         assertEquals("[composite_datastore, my database, mydb_jndi, persons_csv]",
                 Arrays.toString(datastoreCatalog.getDatastoreNames()));
 
-        assertTrue(configuration.getTaskRunner() instanceof SingleThreadedTaskRunner);
+        assertTrue(configuration.getEnvironment().getTaskRunner() instanceof SingleThreadedTaskRunner);
     }
 
     public void testCombinedStorage() throws Exception {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-combined-storage.xml"));
-        StorageProvider storageProvider = configuration.getStorageProvider();
+        StorageProvider storageProvider = configuration.getEnvironment().getStorageProvider();
 
         assertEquals(CombinedStorageProvider.class, storageProvider.getClass());
 
@@ -369,24 +369,24 @@ public class JaxbConfigurationReaderTest extends TestCase {
         }
     }
 
-    private AnalyzerBeansConfiguration getConfiguration() {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+    private DataCleanerConfiguration getConfiguration() {
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-all-datastore-types.xml"));
         return configuration;
     }
 
-    private DatastoreCatalog getDataStoreCatalog(AnalyzerBeansConfiguration configuration) {
+    private DatastoreCatalog getDataStoreCatalog(DataCleanerConfiguration configuration) {
         _datastoreCatalog = configuration.getDatastoreCatalog();
         return _datastoreCatalog;
     }
 
     public void testReferenceDataCatalog() throws Exception {
-        AnalyzerBeansConfiguration conf = getConfigurationFromXMLFile();
+        DataCleanerConfiguration conf = getConfigurationFromXMLFile();
         ReferenceDataCatalog referenceDataCatalog = conf.getReferenceDataCatalog();
         String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
         assertEquals("[custom_dict, datastore_dict, textfile_dict, valuelist_dict]", Arrays.toString(dictionaryNames));
-
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(conf.getInjectionManager(null), null, true);
+        
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(conf, null, null, true);
 
         Dictionary d = referenceDataCatalog.getDictionary("datastore_dict");
         assertEquals("dict_ds", d.getDescription());
@@ -478,15 +478,15 @@ public class JaxbConfigurationReaderTest extends TestCase {
     }
 
     public void testCustomDictionaryWithInjectedDatastore() {
-        AnalyzerBeansConfiguration configuration = getConfigurationFromXMLFile();
+        DataCleanerConfiguration configuration = getConfigurationFromXMLFile();
         ReferenceDataCatalog referenceDataCatalog = configuration.getReferenceDataCatalog();
         SampleCustomDictionary sampleCustomDictionary = (SampleCustomDictionary) referenceDataCatalog
                 .getDictionary("custom_dict");
         Assert.assertEquals("my_jdbc_connection", sampleCustomDictionary.datastore.getName());
     }
 
-    private AnalyzerBeansConfiguration getConfigurationFromXMLFile() {
-        AnalyzerBeansConfiguration configuration = reader.create(new File(
+    private DataCleanerConfiguration getConfigurationFromXMLFile() {
+        DataCleanerConfiguration configuration = reader.create(new File(
                 "src/test/resources/example-configuration-all-reference-data-types.xml"));
         return configuration;
     }

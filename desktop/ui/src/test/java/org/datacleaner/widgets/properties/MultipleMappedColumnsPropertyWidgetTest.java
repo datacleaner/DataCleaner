@@ -29,7 +29,7 @@ import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
@@ -68,7 +68,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
         mappedColumnsProperty = descriptor.getConfiguredProperty("Column names");
         assertNotNull(mappedColumnsProperty);
 
-        ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.addSourceColumns(new MutableColumn("source1").setType(ColumnType.VARCHAR),
                 new MutableColumn("source2").setType(ColumnType.INTEGER),
                 new MutableColumn("source3").setType(ColumnType.VARCHAR),

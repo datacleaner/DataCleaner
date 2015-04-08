@@ -58,7 +58,7 @@ public class InvokeChildAnalysisJobTransformer extends AbstractWrappedAnalysisJo
         AnalysisJob job = analysisJobResource.read(new Func<InputStream, AnalysisJob>() {
             @Override
             public AnalysisJob eval(InputStream in) {
-                JaxbJobReader reader = new JaxbJobReader(getAnalyzerBeansConfiguration());
+                JaxbJobReader reader = new JaxbJobReader(getDataCleanerConfiguration());
                 AnalysisJobBuilder jobBuilder = reader.create(in);
                 AnalysisJob job = jobBuilder.toAnalysisJob(false);
                 return job;

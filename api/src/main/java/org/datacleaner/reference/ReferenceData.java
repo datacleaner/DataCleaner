@@ -17,23 +17,37 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.storage;
+package org.datacleaner.reference;
 
 import java.io.Serializable;
 
-/**
- * Represents an annotation (aka a mark, a label or a categorization) of a row.
- * RowAnnotations are used typically by analyzers in order to label rows for
- * later use, typically drill-to-detail functionality.
- * 
- * RowAnnotations are created through the RowAnnotationFactory, which is
- * injectable using the @Provided annotation.
- * 
- * @see RowAnnotationFactory
- * 
- * 
- */
-public interface RowAnnotation extends Serializable {
+import org.apache.metamodel.util.HasName;
 
-	public int getRowCount();
+/**
+ * Abstraction over all reference data types in DataCleaner
+ */
+public interface ReferenceData extends Serializable, HasName {
+
+    /**
+     * Gets the name of the reference data item.
+     * 
+     * @return a String containing the name of this reference data item.
+     */
+    @Override
+    public String getName();
+
+    /**
+     * Gets an optional description of the reference data item.
+     * 
+     * @return a String description, or null if no description is available.
+     */
+    public String getDescription();
+
+    /**
+     * Sets the description of the reference data item.
+     * 
+     * @param description
+     *            the new description of the reference data item.
+     */
+    public void setDescription(String description);
 }

@@ -36,7 +36,7 @@ import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.TruePredicate;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Renderer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.result.AnalysisResult;
@@ -80,13 +80,13 @@ public class HtmlAnalysisResultWriter implements AnalysisResultWriter {
     }
 
     @Override
-    public void write(AnalysisResult result, AnalyzerBeansConfiguration configuration, Ref<Writer> writerRef,
+    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Ref<Writer> writerRef,
             Ref<OutputStream> outputStreamRef) throws IOException {
         final Writer writer = writerRef.get();
         write(result, configuration, writer);
     }
 
-    public void write(AnalysisResult result, AnalyzerBeansConfiguration configuration, Writer writer)
+    public void write(AnalysisResult result, DataCleanerConfiguration configuration, Writer writer)
             throws IOException {
         final HtmlRenderingContext context = new DefaultHtmlRenderingContext();
 

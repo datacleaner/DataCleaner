@@ -29,8 +29,9 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
@@ -47,72 +48,60 @@ import org.datacleaner.test.TestHelper;
 
 public class AnalyzerJobPartitioningTest extends TestCase {
 
-	public void testScenario() throws Exception {
-		DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
-				TestHelper.createSampleDatabaseDatastore("my database"));
-		DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider()
-				.scanPackage("org.datacleaner.beans", true);
-		AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl()
-				.replace(datastoreCatalog).replace(descriptorProvider);
+    public void testScenario() throws Exception {
+        DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(
+                TestHelper.createSampleDatabaseDatastore("my database"));
+        DescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner.beans", true);
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
-		AnalysisRunner runner = new AnalysisRunnerImpl(conf);
+        AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
-		AnalysisJobBuilder jobBuilder = new JaxbJobReader(conf)
-				.create(new File(
-						"src/test/resources/example-job-partitioning.xml"));
+        AnalysisJobBuilder jobBuilder = new JaxbJobReader(conf).create(new File(
+                "src/test/resources/example-job-partitioning.xml"));
 
-		AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
-		assertEquals(6, analysisJob.getAnalyzerJobs().size());
+        AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+        assertEquals(6, analysisJob.getAnalyzerJobs().size());
 
-		AnalysisResultFuture resultFuture = runner.run(analysisJob);
-		assertTrue(resultFuture.isSuccessful());
+        AnalysisResultFuture resultFuture = runner.run(analysisJob);
+        assertTrue(resultFuture.isSuccessful());
 
-		List<AnalyzerResult> results = resultFuture.getResults();
+        List<AnalyzerResult> results = resultFuture.getResults();
 
-		int vdResults = 0;
-		List<CrosstabResult> saResults = new ArrayList<CrosstabResult>();
+        int vdResults = 0;
+        List<CrosstabResult> saResults = new ArrayList<CrosstabResult>();
 
-		for (AnalyzerResult analyzerResult : results) {
-			if (analyzerResult instanceof ValueDistributionAnalyzerResult) {
-				vdResults++;
-			} else if (analyzerResult instanceof CrosstabResult) {
-				saResults.add((CrosstabResult) analyzerResult);
-			} else {
-				fail("Unexpected result: " + analyzerResult);
-			}
-		}
+        for (AnalyzerResult analyzerResult : results) {
+            if (analyzerResult instanceof ValueDistributionAnalyzerResult) {
+                vdResults++;
+            } else if (analyzerResult instanceof CrosstabResult) {
+                saResults.add((CrosstabResult) analyzerResult);
+            } else {
+                fail("Unexpected result: " + analyzerResult);
+            }
+        }
 
-		assertEquals(4, vdResults);
-		assertEquals(2, saResults.size());
+        assertEquals(4, vdResults);
+        assertEquals(2, saResults.size());
 
-		final int dimensionIndex = saResults.get(0).getCrosstab()
-				.getDimensionIndex("Column");
+        final int dimensionIndex = saResults.get(0).getCrosstab().getDimensionIndex("Column");
 
-		Collections.sort(saResults, new Comparator<CrosstabResult>() {
-			@Override
-			public int compare(CrosstabResult o1, CrosstabResult o2) {
-				int count1 = o1.getCrosstab().getDimension(dimensionIndex)
-						.getCategoryCount();
-				int count2 = o2.getCrosstab().getDimension(dimensionIndex)
-						.getCategoryCount();
-				return count1 - count2;
-			}
-		});
+        Collections.sort(saResults, new Comparator<CrosstabResult>() {
+            @Override
+            public int compare(CrosstabResult o1, CrosstabResult o2) {
+                int count1 = o1.getCrosstab().getDimension(dimensionIndex).getCategoryCount();
+                int count2 = o2.getCrosstab().getDimension(dimensionIndex).getCategoryCount();
+                return count1 - count2;
+            }
+        });
 
-		String[] resultLines1 = new CrosstabTextRenderer().render(
-				saResults.get(0)).split("\n");
-		assertEquals("                                      CUSTOMERNAME ",
-				resultLines1[0]);
-		assertEquals("Row count                                      122 ",
-				resultLines1[1]);
+        String[] resultLines1 = new CrosstabTextRenderer().render(saResults.get(0)).split("\n");
+        assertEquals("                                      CUSTOMERNAME ", resultLines1[0]);
+        assertEquals("Row count                                      122 ", resultLines1[1]);
 
-		String[] resultLines2 = new CrosstabTextRenderer().render(
-				saResults.get(1)).split("\n");
-		assertEquals(
-				"                                      FIRSTNAME  LASTNAME     EMAIL ",
-				resultLines2[0]);
-		assertEquals(
-				"Row count                                    23        23        23 ",
-				resultLines2[1]);
-	}
+        String[] resultLines2 = new CrosstabTextRenderer().render(saResults.get(1)).split("\n");
+        assertEquals("                                      FIRSTNAME  LASTNAME     EMAIL ", resultLines2[0]);
+        assertEquals("Row count                                    23        23        23 ", resultLines2[1]);
+    }
 }

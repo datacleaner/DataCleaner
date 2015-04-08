@@ -23,7 +23,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -58,7 +58,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
         EasyMock.replay(datastore, filterDescriptor);
 
-        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastore(datastore);
 
         final CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();

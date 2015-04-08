@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.Serializable;
-
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
@@ -29,34 +27,42 @@ import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.storage.StorageProvider;
 
 /**
- * Represents the configuration of the AnalyzerBeans application. The
- * configuration can provide all the needed providers and catalogs used by
- * AnalyzerBeans to configure and execute jobs.
+ * Represents the configuration of the application. The configuration can
+ * provide all the needed providers and catalogs used by DataCleaner to
+ * configure and execute jobs.
+ * 
+ * @deprecated use {@link DataCleanerConfiguration} and/or
+ *             {@link DataCleanerEnvironment} instead.
  */
-public interface AnalyzerBeansConfiguration extends Serializable {
+@Deprecated
+public interface AnalyzerBeansConfiguration extends DataCleanerConfiguration, DataCleanerEnvironment {
 
     /**
      * @see DatastoreCatalog
      * @return the datastore catalog defined in this configuration
      */
+    @Override
     public DatastoreCatalog getDatastoreCatalog();
 
     /**
      * @see ReferenceDataCatalog
      * @return the reference data catalog defined in this configuration
      */
+    @Override
     public ReferenceDataCatalog getReferenceDataCatalog();
 
     /**
      * @see DescriptorProvider
      * @return the descriptor provider defined in this configuration
      */
+    @Override
     public DescriptorProvider getDescriptorProvider();
 
     /**
      * @see StorageProvider
      * @return the storage provider defined in this configuration
      */
+    @Override
     public StorageProvider getStorageProvider();
 
     /**
@@ -69,5 +75,6 @@ public interface AnalyzerBeansConfiguration extends Serializable {
      * @see TaskRunner
      * @return the task runner defined in this configuration
      */
+    @Override
     public TaskRunner getTaskRunner();
 }

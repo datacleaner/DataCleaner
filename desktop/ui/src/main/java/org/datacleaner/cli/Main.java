@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import org.apache.metamodel.util.FileHelper;
 
 /**
- * Main class for the AnalyzerBeans Command-line interface (CLI).
+ * Main class for the DataCleaner Command-line interface (CLI).
  */
 public final class Main {
 

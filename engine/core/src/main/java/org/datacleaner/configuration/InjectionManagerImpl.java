@@ -53,7 +53,7 @@ public class InjectionManagerImpl implements InjectionManager {
 
     private static final Logger logger = LoggerFactory.getLogger(InjectionManagerImpl.class);
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final AnalysisJob _job;
     private final Ref<RowAnnotationFactory> _rowAnntationFactoryRef;
 
@@ -64,7 +64,7 @@ public class InjectionManagerImpl implements InjectionManager {
      * @param configuration
      * @param job
      */
-    public InjectionManagerImpl(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+    public InjectionManagerImpl(DataCleanerConfiguration configuration, AnalysisJob job) {
         _configuration = configuration;
         _job = job;
         _rowAnntationFactoryRef = createRowAnnotationFactoryRef();
@@ -77,7 +77,7 @@ public class InjectionManagerImpl implements InjectionManager {
      * 
      * @param configuration
      */
-    public InjectionManagerImpl(AnalyzerBeansConfiguration configuration) {
+    public InjectionManagerImpl(DataCleanerConfiguration configuration) {
         this(configuration, null);
     }
 
@@ -86,7 +86,7 @@ public class InjectionManagerImpl implements InjectionManager {
             @Override
             protected RowAnnotationFactory fetch() {
                 logger.info("Creating RowAnnotationFactory for job: {}", _job);
-                RowAnnotationFactory rowAnnotationFactory = _configuration.getStorageProvider()
+                RowAnnotationFactory rowAnnotationFactory = _configuration.getEnvironment().getStorageProvider()
                         .createRowAnnotationFactory();
                 if (rowAnnotationFactory == null) {
                     throw new IllegalStateException("Storage provider returned null RowAnnotationFactory!");
@@ -106,6 +106,7 @@ public class InjectionManagerImpl implements InjectionManager {
         return (E) instance;
     }
 
+    @SuppressWarnings("deprecation")
     protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
         final Class<?> baseType = injectionPoint.getBaseType();
         if (baseType == ReferenceDataCatalog.class) {
@@ -115,23 +116,32 @@ public class InjectionManagerImpl implements InjectionManager {
         } else if (baseType == DatastoreCatalog.class) {
             return _configuration.getDatastoreCatalog();
         } else if (baseType == CollectionFactory.class) {
-            return new CollectionFactoryImpl(_configuration.getStorageProvider());
+            return new CollectionFactoryImpl(_configuration.getEnvironment().getStorageProvider());
         } else if (baseType == RendererFactory.class) {
             return new RendererFactory(_configuration);
         } else if (baseType == RowAnnotationFactory.class) {
             return _rowAnntationFactoryRef.get();
         } else if (baseType == AnalyzerBeansConfiguration.class) {
+            if (_configuration instanceof AnalyzerBeansConfiguration) {
+                return _configuration;
+            } else {
+                return null;
+            }
+        } else if (baseType == DataCleanerConfiguration.class) {
             return _configuration;
+        } else if (baseType == DataCleanerEnvironment.class) {
+            return _configuration.getEnvironment();
         } else if (baseType == TaskRunner.class) {
-            return _configuration.getTaskRunner();
+            return _configuration.getEnvironment().getTaskRunner();
         } else if (baseType == AnalysisJob.class) {
             return _job;
         } else if (baseType == StringConverter.class) {
             // create a child injection manager (instead of using 'this') to
             // ensure that any wrapping/decoration is preserved
-            final InjectionManager childInjectionManager = (_configuration == null ? this : _configuration
-                    .getInjectionManager(_job));
-            return new StringConverter(childInjectionManager);
+            if (_configuration == null) {
+                return new StringConverter(this);
+            }
+            return new StringConverter(_configuration, _job);
         } else if (baseType == RowAnnotation.class) {
             return _rowAnntationFactoryRef.get().createAnnotation();
         } else if (baseType == Datastore.class && _job != null) {
@@ -150,14 +160,14 @@ public class InjectionManagerImpl implements InjectionManager {
             if (injectionPoint.getAnnotation(Provided.class) != null && injectionPoint.isGenericType()) {
                 final Class<?> clazz1 = injectionPoint.getGenericTypeArgument(0);
                 if (baseType == List.class) {
-                    List<?> list = _configuration.getStorageProvider().createList(clazz1);
+                    List<?> list = _configuration.getEnvironment().getStorageProvider().createList(clazz1);
                     return list;
                 } else if (baseType == Set.class) {
-                    Set<?> set = _configuration.getStorageProvider().createSet(clazz1);
+                    Set<?> set = _configuration.getEnvironment().getStorageProvider().createSet(clazz1);
                     return set;
                 } else if (baseType == Map.class) {
                     Class<?> clazz2 = (Class<?>) injectionPoint.getGenericTypeArgument(1);
-                    Map<?, ?> map = _configuration.getStorageProvider().createMap(clazz1, clazz2);
+                    Map<?, ?> map = _configuration.getEnvironment().getStorageProvider().createMap(clazz1, clazz2);
                     return map;
                 }
             }

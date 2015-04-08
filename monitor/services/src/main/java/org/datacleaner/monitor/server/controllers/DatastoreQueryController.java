@@ -26,18 +26,18 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.datacleaner.components.convert.ConvertToStringTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.query.parser.QueryParserException;
+import org.datacleaner.components.convert.ConvertToStringTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class DatastoreQueryController {
 
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (ds == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);

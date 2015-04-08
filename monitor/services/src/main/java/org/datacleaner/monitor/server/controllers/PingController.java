@@ -22,8 +22,8 @@ package org.datacleaner.monitor.server.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.Version;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.repository.Repository;
@@ -53,7 +53,7 @@ public class PingController {
     @ResponseBody
     public Map<String, Object> ping(@PathVariable("tenant") final String tenant) {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+        final DataCleanerConfiguration configuration = tenantContext.getConfiguration();
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("tenant", tenant);

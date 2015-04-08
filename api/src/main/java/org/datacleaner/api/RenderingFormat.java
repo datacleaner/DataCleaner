@@ -19,9 +19,8 @@
  */
 package org.datacleaner.api;
 
-
 /**
- * Represents a rendering format to be used for rendering. AnalyzerBeans ships
+ * Represents a rendering format to be used for rendering. DataCleaner ships
  * with a couple of built-in rendering formats (eg. HTML and Text), but it is
  * also possible to roll your own. Simply create a class that implements this
  * interface and reference the class in the @RendererBean annotation when
@@ -34,5 +33,5 @@ package org.datacleaner.api;
  */
 public interface RenderingFormat<T> {
 
-	public Class<T> getOutputClass();
+    public Class<T> getOutputClass();
 }

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
@@ -41,8 +41,6 @@ import com.google.inject.Injector;
 
 /**
  * ActionListener for performing a quick analysis based on standard analyzers.
- * 
- * @author Kasper Sørensen
  */
 public class QuickAnalysisActionListener implements ActionListener {
 
@@ -51,11 +49,11 @@ public class QuickAnalysisActionListener implements ActionListener {
     private final Column[] _columns;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
     @Inject
     protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-            DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
+            DCModule parentModule, UserPreferences userPreferences, DataCleanerConfiguration configuration) {
         _datastore = datastore;
         _table = table;
         _columns = columns;
@@ -84,7 +82,8 @@ public class QuickAnalysisActionListener implements ActionListener {
         ajb.setDatastore(_datastore);
         ajb.addSourceColumns(getColumns());
 
-        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy.loadFromUserPreferences(_userPreferences);
+        final QuickAnalysisStrategy quickAnalysisStrategy = QuickAnalysisStrategy
+                .loadFromUserPreferences(_userPreferences);
 
         quickAnalysisStrategy.configureAnalysisJobBuilder(ajb);
 

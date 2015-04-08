@@ -30,9 +30,15 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableSchema;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.reference.SimpleDictionary;
@@ -42,18 +48,13 @@ import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.util.Percentage;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.MyConvertable.SecondaryConverter;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.util.EqualsBuilder;
 
 public class StringConverterTest extends TestCase {
 
     private final Dictionary dictionary = new SimpleDictionary("my dict");
     private final SynonymCatalog synonymCatalog = new SimpleSynonymCatalog("my synonyms");
-    private final ReferenceDataCatalogImpl referenceDataCatalog = new ReferenceDataCatalogImpl(Arrays.asList(dictionary),
-            Arrays.asList(synonymCatalog), new ArrayList<StringPattern>());
+    private final ReferenceDataCatalogImpl referenceDataCatalog = new ReferenceDataCatalogImpl(
+            Arrays.asList(dictionary), Arrays.asList(synonymCatalog), new ArrayList<StringPattern>());
 
     private StringConverter stringConverter;
 
@@ -61,9 +62,10 @@ public class StringConverterTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl().replace(referenceDataCatalog);
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
+                .withReferenceDataCatalog(referenceDataCatalog);
 
-        stringConverter = new StringConverter(conf.getInjectionManager(null));
+        stringConverter = new StringConverter(conf, null);
     }
 
     public void testConvertConvertableType() throws Exception {
@@ -84,7 +86,8 @@ public class StringConverterTest extends TestCase {
         }
 
         {
-            MyConvertable copy2 = stringConverter.deserialize(serializedForm2, MyConvertable.class, SecondaryConverter.class);
+            MyConvertable copy2 = stringConverter.deserialize(serializedForm2, MyConvertable.class,
+                    SecondaryConverter.class);
             assertTrue(convertable != copy2);
             assertEquals("foo", copy2.getName());
             assertEquals("bar", copy2.getDescription());

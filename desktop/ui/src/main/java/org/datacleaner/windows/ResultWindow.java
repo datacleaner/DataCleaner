@@ -54,7 +54,7 @@ import org.datacleaner.api.ExecutionLogMessage;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.guice.JobFile;
@@ -104,7 +104,7 @@ public final class ResultWindow extends AbstractWindow {
     private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane(true);
     private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
     private final AnalysisJob _job;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
     private final RendererFactory _rendererFactory;
     private final FileObject _jobFilename;
@@ -130,7 +130,7 @@ public final class ResultWindow extends AbstractWindow {
      * @param rendererInitializerProvider
      */
     @Inject
-    protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
+    protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job,
             @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
@@ -392,7 +392,7 @@ public final class ResultWindow extends AbstractWindow {
         return _jobFilename;
     }
 
-    public AnalyzerBeansConfiguration getConfiguration() {
+    public DataCleanerConfiguration getConfiguration() {
         return _configuration;
     }
 

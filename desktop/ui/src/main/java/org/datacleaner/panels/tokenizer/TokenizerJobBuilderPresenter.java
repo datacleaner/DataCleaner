@@ -21,11 +21,11 @@ package org.datacleaner.panels.tokenizer;
 
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer.TokenTarget;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.panels.TransformerComponentBuilderPanel;
 import org.datacleaner.panels.TransformerComponentBuilderPresenter;
 import org.datacleaner.widgets.DCComboBox.Listener;
@@ -52,7 +52,7 @@ class TokenizerJobBuilderPresenter extends TransformerComponentBuilderPanel {
 	private SingleEnumPropertyWidget _tokenTargetPropertyWidget;
 
 	public TokenizerJobBuilderPresenter(TransformerComponentBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+			PropertyWidgetFactory propertyWidgetFactory, DataCleanerConfiguration configuration) {
 		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 	}
 

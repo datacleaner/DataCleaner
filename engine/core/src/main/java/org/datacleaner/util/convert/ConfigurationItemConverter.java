@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Converter} implementation for AnalyzerBeans configuration items,
+ * A {@link Converter} implementation for DataCleaner configuration items,
  * specifically:
  * 
  * <ul>

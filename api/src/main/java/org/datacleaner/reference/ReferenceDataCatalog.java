@@ -22,7 +22,6 @@ package org.datacleaner.reference;
 import java.io.Serializable;
 
 import org.datacleaner.api.Configured;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 
 /**
  * Represents a catalog of items that are considered as reference data that a
@@ -30,16 +29,15 @@ import org.datacleaner.configuration.AnalyzerBeansConfiguration;
  * these implement the {@link ReferenceData} interface.
  * 
  * Reference data is typically reusable between jobs which is why it is
- * contained within the configuration of AnalyzerBeans. For example you could
- * have a dictionary of valid values for a particular entity type. This
- * dictionary is then resuable both as input to a Dictionary validation filter
- * and an analyzer that will match values against different dictionaries.
+ * contained within the configuration. For example you could have a dictionary
+ * of valid values for a particular entity type. This dictionary is then
+ * resuable both as input to a Dictionary validation filter and an analyzer that
+ * will match values against different dictionaries.
  * 
  * All reference data types ( {@link Dictionary} , {@link SynonymCatalog},
  * {@link StringPattern} etc.) is injectable into components using the @Configured
  * annotation.
  * 
- * @see AnalyzerBeansConfiguration
  * @see Configured
  */
 public interface ReferenceDataCatalog extends Serializable {

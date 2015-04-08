@@ -83,7 +83,7 @@
 		<programlisting>
 			&gt;&#160;datacleaner-console.exe&#160;-usage
 			-conf&#160;(-configuration, --configuration-file) FILE
-			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;XML&#160;file&#160;describing&#160;the&#160;configuration&#160;of&#160;AnalyzerBeans
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;XML&#160;file&#160;describing&#160;the&#160;configuration&#160;of&#160;DataCleaner
 			-ds (-datastore, --datastore-name) VAL
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;datastore&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;schemas,&#160;tables&#160;or&#160;columns
 			-job (--job-file) FILE

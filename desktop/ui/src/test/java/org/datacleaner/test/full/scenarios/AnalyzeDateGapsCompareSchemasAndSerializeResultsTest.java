@@ -30,8 +30,8 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.Descriptors;
@@ -55,7 +55,7 @@ public class AnalyzeDateGapsCompareSchemasAndSerializeResultsTest extends TestCa
 
 	@SuppressWarnings("unchecked")
 	public void testScenario() throws Throwable {
-		final AnalyzerBeansConfiguration configuration;
+		final DataCleanerConfiguration configuration;
 		{
 			// create configuration
 			SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();

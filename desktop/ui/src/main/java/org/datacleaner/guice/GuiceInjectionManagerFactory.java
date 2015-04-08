@@ -21,7 +21,7 @@ package org.datacleaner.guice;
 
 import javax.inject.Inject;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.job.AnalysisJob;
@@ -39,8 +39,12 @@ public class GuiceInjectionManagerFactory implements InjectionManagerFactory {
     }
 
     @Override
-    public InjectionManager getInjectionManager(AnalyzerBeansConfiguration conf, AnalysisJob job) {
+    public InjectionManager getInjectionManager(DataCleanerConfiguration conf, AnalysisJob job) {
         return new GuiceInjectionManager(conf, job, _injectorBuilder);
     }
 
+    @Override
+    public InjectionManager getInjectionManager(DataCleanerConfiguration configuration) {
+        return getInjectionManager(configuration, null);
+    }
 }

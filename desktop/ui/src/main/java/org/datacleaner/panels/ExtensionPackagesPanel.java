@@ -34,7 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.extensions.ExtensionPackage;
 import org.datacleaner.extensions.ExtensionReader;
 import org.datacleaner.user.UserPreferences;
@@ -68,10 +68,10 @@ public class ExtensionPackagesPanel extends DCPanel {
     private static final ImageIcon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 
     private final UserPreferences _userPreferences;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
     @Inject
-    protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
+    protected ExtensionPackagesPanel(DataCleanerConfiguration configuration, UserPreferences userPreferences) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _configuration = configuration;
         _userPreferences = userPreferences;
@@ -108,7 +108,7 @@ public class ExtensionPackagesPanel extends DCPanel {
                     final ExtensionReader extensionReader = new ExtensionReader();
                     final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
 
-                    extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
+                    extensionPackage.loadDescriptors(_configuration.getEnvironment().getDescriptorProvider());
                     _userPreferences.addExtensionPackage(extensionPackage);
 
                     updateComponents();

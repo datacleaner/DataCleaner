@@ -17,20 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.repository;
+package org.datacleaner.job.tasks;
 
 /**
- * Defines a repository interface for the DataCleaner monitor web app.
+ * Represents a (sub)task that can run in parallel when running an analysis job.
  */
-public interface Repository extends RepositoryFolder {
+public interface Task {
 
-    /**
-     * Gets a {@link RepositoryNode} by it's qualified path.
-     * 
-     * @param qualifiedPath
-     *            the path of the node
-     * @return the {@link RepositoryNode} with the specified qualified path, or
-     *         null if it does not exist.
-     */
-    public RepositoryNode getRepositoryNode(String qualifiedPath);
+	public void execute() throws Exception;
 }

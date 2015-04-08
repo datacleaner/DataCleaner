@@ -44,7 +44,7 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
     private static final long serialVersionUID = 1L;
 
     private transient final CountDownLatch _countDownLatch;
-    private transient List<Listener<? super R>> _listeners;
+    private transient volatile List<Listener<? super R>> _listeners;
 
     private final String _name;
     private R _result;

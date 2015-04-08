@@ -26,8 +26,8 @@ import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
@@ -44,7 +44,7 @@ import org.junit.Assert;
 public class RowProcessingMetricsImplTest extends TestCase {
 
     private Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-    private AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl()
+    private DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
             .replace(new DatastoreCatalogImpl(datastore));
     private AnalysisJob job;
 
@@ -116,9 +116,9 @@ public class RowProcessingMetricsImplTest extends TestCase {
 
     private int getExpectedRowCount() {
         final AnalysisListener analysisListener = new InfoLoggingAnalysisListener();
-        final TaskRunner taskRunner = configuration.getTaskRunner();
+        final TaskRunner taskRunner = configuration.getEnvironment().getTaskRunner();
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration.getInjectionManager(job), null, true);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, job, null, true);
         SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(job);
 

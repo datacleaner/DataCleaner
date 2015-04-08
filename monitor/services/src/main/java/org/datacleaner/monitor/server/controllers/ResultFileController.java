@@ -31,11 +31,13 @@ import java.util.Map.Entry;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Predicate;
+import org.apache.metamodel.util.TruePredicate;
 import org.datacleaner.api.AnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.ComponentJob;
-import org.datacleaner.result.AnalysisResult;
-import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.monitor.configuration.ResultContext;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
@@ -44,11 +46,9 @@ import org.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory;
 import org.datacleaner.monitor.shared.model.SecurityRoles;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.html.HtmlAnalysisResultWriter;
 import org.datacleaner.util.FileFilters;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Predicate;
-import org.apache.metamodel.util.TruePredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,7 +164,7 @@ public class ResultFileController {
                     + resultFile.getName() + ". See server logs for details.");
             return;
         }
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+        final DataCleanerConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
 
         final boolean headers;

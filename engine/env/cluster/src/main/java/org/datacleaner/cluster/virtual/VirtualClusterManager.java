@@ -24,7 +24,7 @@ import org.datacleaner.cluster.DistributedJobContext;
 import org.datacleaner.cluster.FixedDivisionsCountJobDivisionManager;
 import org.datacleaner.cluster.JobDivisionManager;
 import org.datacleaner.cluster.SlaveAnalysisRunner;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
@@ -35,10 +35,10 @@ import org.datacleaner.job.runner.AnalysisRunner;
  */
 public class VirtualClusterManager implements ClusterManager {
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final int _nodeCount;
 
-    public VirtualClusterManager(AnalyzerBeansConfiguration configuration, int nodeCount) {
+    public VirtualClusterManager(DataCleanerConfiguration configuration, int nodeCount) {
         _configuration = configuration;
         _nodeCount = nodeCount;
     }

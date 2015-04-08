@@ -24,7 +24,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
@@ -36,7 +36,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeDatabaseSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -58,7 +58,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeFileWithExtensionNameSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -84,7 +84,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeFileWithoutAnalyzers() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -104,7 +104,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeFileWithShortColumnPaths() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -125,7 +125,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeFileWithoutDatastoreMatch() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 

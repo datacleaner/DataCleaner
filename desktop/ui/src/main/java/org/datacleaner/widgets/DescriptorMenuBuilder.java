@@ -118,7 +118,7 @@ public final class DescriptorMenuBuilder {
         _coordinate = coordinate;
         _buildSubmenus = buildSubmenus;
 
-        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = analysisJobBuilder.getConfiguration().getEnvironment().getDescriptorProvider();
         final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                 .getComponentDescriptorsOfSuperCategory(superCategory);
         _componentDescriptors = Collections.unmodifiableCollection(componentDescriptors);

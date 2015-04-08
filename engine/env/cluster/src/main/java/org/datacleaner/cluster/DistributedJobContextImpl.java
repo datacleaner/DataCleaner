@@ -19,7 +19,7 @@
  */
 package org.datacleaner.cluster;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 
 /**
@@ -27,12 +27,12 @@ import org.datacleaner.job.AnalysisJob;
  */
 final class DistributedJobContextImpl implements DistributedJobContext {
 
-    private final AnalyzerBeansConfiguration _masterConfiguration;
+    private final DataCleanerConfiguration _masterConfiguration;
     private final AnalysisJob _masterJob;
     private final int _chunkIndex;
     private final int _chunkCount;
 
-    public DistributedJobContextImpl(AnalyzerBeansConfiguration masterConfiguration, AnalysisJob masterJob, int chunkIndex, int chunkCount) {
+    public DistributedJobContextImpl(DataCleanerConfiguration masterConfiguration, AnalysisJob masterJob, int chunkIndex, int chunkCount) {
         _masterConfiguration = masterConfiguration;
         _masterJob = masterJob;
         _chunkIndex = chunkIndex;
@@ -40,7 +40,7 @@ final class DistributedJobContextImpl implements DistributedJobContext {
     }
     
     @Override
-    public AnalyzerBeansConfiguration getMasterConfiguration() {
+    public DataCleanerConfiguration getMasterConfiguration() {
         return _masterConfiguration;
     }
 

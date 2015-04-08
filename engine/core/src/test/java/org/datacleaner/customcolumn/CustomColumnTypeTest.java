@@ -24,8 +24,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -40,7 +40,7 @@ public class CustomColumnTypeTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testCustomColumnOutputInJob() throws Throwable {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
         final AnalysisJob job;
         final MutableInputColumn<?> monthObjectColumn;
 

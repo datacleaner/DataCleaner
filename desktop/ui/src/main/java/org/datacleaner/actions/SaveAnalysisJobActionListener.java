@@ -32,22 +32,22 @@ import javax.swing.JOptionPane;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.Version;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobMetadataFactoryImpl;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.Version;
 import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCFileChooser;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.datacleaner.windows.MonitorConnectionDialog;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,11 +67,11 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final AnalysisJobBuilderWindow _window;
     private final UserPreferences _userPreferences;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
 
     @Inject
     protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-            UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
+            UserPreferences userPreferences, DataCleanerConfiguration configuration) {
         _window = window;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;

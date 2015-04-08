@@ -21,7 +21,7 @@ package org.datacleaner.monitor.configuration;
 
 import java.util.List;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.monitor.job.JobContext;
@@ -140,7 +140,7 @@ public interface TenantContext {
      * 
      * @return
      */
-    public AnalyzerBeansConfiguration getConfiguration();
+    public DataCleanerConfiguration getConfiguration();
 
     /**
      * Determines if a particular job exists or not.

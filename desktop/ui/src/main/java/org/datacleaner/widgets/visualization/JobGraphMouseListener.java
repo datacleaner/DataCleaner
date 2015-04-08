@@ -42,7 +42,7 @@ import org.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.ComponentSuperCategory;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.HasFilterOutcomes;
@@ -212,8 +212,8 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final Point point = me.getPoint();
         final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
-        final AnalyzerBeansConfiguration configuration = analysisJobBuilder.getConfiguration();
-        final Set<ComponentSuperCategory> superCategories = configuration.getDescriptorProvider()
+        final DataCleanerConfiguration configuration = analysisJobBuilder.getConfiguration();
+        final Set<ComponentSuperCategory> superCategories = configuration.getEnvironment().getDescriptorProvider()
                 .getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DescriptorMenuBuilder menuBuilder = new DescriptorMenuBuilder(analysisJobBuilder, _usageLogger,

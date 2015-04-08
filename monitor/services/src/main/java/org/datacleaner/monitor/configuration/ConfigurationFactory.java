@@ -28,13 +28,17 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.datacleaner.api.RenderingFormat;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
+import org.datacleaner.storage.InMemoryStorageProvider;
+import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.ExtensionFilter;
 import org.slf4j.Logger;
@@ -114,6 +118,18 @@ public class ConfigurationFactory {
             descriptorProvider.scanPackage(packageName, true, classLoader, false, files);
         }
         return descriptorProvider;
+    }
+
+    @Bean(name = "storageProvider")
+    public StorageProvider createStorageProvider() {
+        return new InMemoryStorageProvider(300);
+    }
+
+    @Bean(name = "dataCleanerEnvironment")
+    public DataCleanerEnvironment createDataCleanerEnvironment(TaskRunner taskRunner,
+            DescriptorProvider descriptorProvider, StorageProvider storageProvider,
+            InjectionManagerFactory injectionManagerFactory) {
+        return new DataCleanerEnvironmentImpl(taskRunner, descriptorProvider, storageProvider, injectionManagerFactory);
     }
 
     private File[] getJarFilesForDescriptorProvider(final ServletContext servletContext) {

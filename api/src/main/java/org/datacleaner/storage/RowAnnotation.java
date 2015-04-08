@@ -17,23 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.reference;
+package org.datacleaner.storage;
 
-import java.util.Collection;
+import java.io.Serializable;
 
 /**
- * Represents a collection of values where lookup using containsValue(...) is
- * the preferred way of access. Typically the implementation will use some
- * caching mechanism for the contained values because getting all values would
- * mean loading a lot of objects into memory.
+ * Represents an annotation (aka a mark, a label or a categorization) of a row.
+ * RowAnnotations are used typically by analyzers in order to label rows for
+ * later use, typically drill-to-detail functionality.
  * 
+ * RowAnnotations are created through the RowAnnotationFactory, which is
+ * injectable using the @Provided annotation.
  * 
- * 
- * @param <E>
+ * @see RowAnnotationFactory
  */
-public interface ReferenceValues<E> {
+public interface RowAnnotation extends Serializable {
 
-	public Collection<E> getValues();
-
-	public boolean containsValue(E value);
+	public int getRowCount();
 }

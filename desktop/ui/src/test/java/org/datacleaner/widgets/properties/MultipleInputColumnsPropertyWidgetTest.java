@@ -25,28 +25,28 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.util.CollectionUtils;
+import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
+import org.datacleaner.actions.ReorderColumnsActionListener;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.ELInputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
-import org.datacleaner.actions.ReorderColumnsActionListener;
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.widgets.DCCheckBox;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.util.CollectionUtils;
 
 public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
     public void testDefaultSelectAll() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
@@ -83,7 +83,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
     }
 
     public void testAddAndRemoveExpressionColumn() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
 
@@ -128,7 +128,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
     }
 
     public void testInitializeReordered() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
@@ -151,7 +151,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
     }
 
     public void testShouldNotReorderColumnsWhenGettingAndSettingValue() throws Exception {
-        final AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
@@ -186,7 +186,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
     }
 
     public void testReorderColumns() throws Exception {
-        AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl();
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         try (AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));

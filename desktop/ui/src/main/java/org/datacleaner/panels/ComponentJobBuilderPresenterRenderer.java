@@ -26,10 +26,10 @@ import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
-import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -47,7 +47,7 @@ public class ComponentJobBuilderPresenterRenderer implements
 
     @Inject
     @Provided
-    AnalyzerBeansConfiguration configuration;
+    DataCleanerConfiguration configuration;
 
     @Inject
     @Provided

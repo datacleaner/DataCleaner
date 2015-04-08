@@ -25,6 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -53,7 +54,7 @@ public class DashboardServiceImplTest extends TestCase {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         MockJobEngineManager jobEngineManager = new MockJobEngineManager();
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), jobEngineManager);
+                new DataCleanerEnvironmentImpl(), jobEngineManager);
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(tenantContextFactory,
                 jobEngineManager);
         final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
@@ -132,7 +133,7 @@ public class DashboardServiceImplTest extends TestCase {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         MockJobEngineManager jobEngineManager = new MockJobEngineManager();
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), jobEngineManager);
+                new DataCleanerEnvironmentImpl(), jobEngineManager);
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory, jobEngineManager);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory, null);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);

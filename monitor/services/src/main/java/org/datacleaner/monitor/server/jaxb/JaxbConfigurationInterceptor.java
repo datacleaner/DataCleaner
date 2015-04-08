@@ -40,7 +40,14 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableSchema;
+import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Schema;
+import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbPojoDatastoreAdaptor;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
@@ -54,20 +61,13 @@ import org.datacleaner.configuration.jaxb.PojoTableType;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.util.JaxbValidationEventHandler;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.datacleaner.monitor.server.job.DataCleanerJobContext;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.MutableSchema;
-import org.apache.metamodel.schema.MutableTable;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.Ref;
+import org.datacleaner.util.JaxbValidationEventHandler;
+import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,7 +188,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      */
     private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
             final DataCleanerJobContext job, String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+        final DataCleanerConfiguration configuration = context.getConfiguration();
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
 

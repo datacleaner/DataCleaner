@@ -20,6 +20,7 @@
 package org.datacleaner.configuration;
 
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.repository.RepositoryFolder;
 
 /**
  * Defines an interface that allows for interception, decoration and other
@@ -75,14 +76,20 @@ public interface ConfigurationReaderInterceptor {
     public String getPropertyOverride(String variablePath);
 
     /**
-     * Creates a base {@link AnalyzerBeansConfigurationImpl} object for initial
-     * building of the resulting configuration. This method allows to bootstrap
-     * the base configuration used, eg. by providing a specific injection
-     * manager.
+     * Creates a base {@link DataCleanerEnvironment} object for initial building
+     * of the resulting configuration. This method allows to bootstrap the base
+     * configuration used, eg. by providing a specific injection manager.
      * 
-     * @return a base {@link AnalyzerBeansConfiguration} for further building of
-     *         the configuration.
+     * @return a base {@link DataCleanerEnvironment} for further building of the
+     *         configuration.
      */
-    public AnalyzerBeansConfigurationImpl createBaseConfiguration();
+    public DataCleanerEnvironment createBaseEnvironment();
 
+    /**
+     * Gets the home folder to use as per
+     * {@link DataCleanerConfiguration#getHomeFolder()}.
+     * 
+     * @return
+     */
+    public RepositoryFolder getHomeFolder();
 }

@@ -36,8 +36,8 @@ import org.datacleaner.beans.filter.NullCheckFilter.NullCheckCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -59,10 +59,10 @@ import org.datacleaner.util.SourceColumnFinder;
 
 public class RowProcessingQueryOptimizerTest extends TestCase {
 
-    private final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, null, true);
+    private final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, true);
 
     private Datastore datastore;
-    private AnalyzerBeansConfiguration conf;
+    private DataCleanerConfiguration conf;
     private AnalysisJobBuilder ajb;
     private FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsBuilder;
     private AnalyzerComponentBuilder<StringAnalyzer> stringAnalyzerBuilder;

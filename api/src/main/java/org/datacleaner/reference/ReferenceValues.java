@@ -19,37 +19,19 @@
  */
 package org.datacleaner.reference;
 
-import java.io.Serializable;
-
-import org.apache.metamodel.util.HasName;
+import java.util.Collection;
 
 /**
- * Abstraction over all reference data types in AnalyzerBeans
+ * Represents a collection of values where lookup using containsValue(...) is
+ * the preferred way of access. Typically the implementation will use some
+ * caching mechanism for the contained values because getting all values would
+ * mean loading a lot of objects into memory.
  * 
- * 
+ * @param <E>
  */
-public interface ReferenceData extends Serializable, HasName {
+public interface ReferenceValues<E> {
 
-	/**
-	 * Gets the name of the reference data item.
-	 * 
-	 * @return a String containing the name of this reference data item.
-	 */
-	@Override
-	public String getName();
+	public Collection<E> getValues();
 
-	/**
-	 * Gets an optional description of the reference data item.
-	 * 
-	 * @return a String description, or null if no description is available.
-	 */
-	public String getDescription();
-
-	/**
-	 * Sets the description of the reference data item.
-	 * 
-	 * @param description
-	 *            the new description of the reference data item.
-	 */
-	public void setDescription(String description);
+	public boolean containsValue(E value);
 }

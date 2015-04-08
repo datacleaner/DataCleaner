@@ -29,7 +29,10 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Ref;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.monitor.configuration.ConfigurationFactory;
@@ -42,9 +45,6 @@ import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.Ref;
 
 public class JaxbConfigurationInterceptorTest extends TestCase {
 
@@ -61,7 +61,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
-        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+        _contextFactory = new TenantContextFactoryImpl(repository, new DataCleanerEnvironmentImpl(),
                 new MockJobEngineManager());
     }
 

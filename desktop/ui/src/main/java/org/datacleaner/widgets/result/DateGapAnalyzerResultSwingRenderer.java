@@ -48,7 +48,7 @@ import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
 import org.datacleaner.beans.dategap.TimeInterval;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -293,7 +293,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
         final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
         ajb.setDatastore(ds);
 
-        final AnalyzerBeansConfiguration conf = injector.getInstance(AnalyzerBeansConfiguration.class);
+        final DataCleanerConfiguration conf = injector.getInstance(DataCleanerConfiguration.class);
         final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
         DatastoreConnection con = ds.openConnection();

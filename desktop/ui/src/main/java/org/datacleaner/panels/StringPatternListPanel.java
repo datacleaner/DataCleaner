@@ -33,7 +33,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.SimpleStringPattern;
 import org.datacleaner.reference.StringPattern;
@@ -59,7 +59,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.get();
-	private final AnalyzerBeansConfiguration _configuration;
+	private final DataCleanerConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
@@ -67,7 +67,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final UserPreferences _userPreferences;
 
 	@Inject
-	protected StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+	protected StringPatternListPanel(DCGlassPane glassPane, DataCleanerConfiguration configuration,
 			WindowContext windowContext, UserPreferences userPreferences) {
 		super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 		_glassPane = glassPane;

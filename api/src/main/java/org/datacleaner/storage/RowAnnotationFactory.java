@@ -35,8 +35,6 @@ import org.datacleaner.api.InputRow;
  * (analyzer, transformer, filter) using the @Provided annotation.
  * 
  * @see Provided
- * 
- * 
  */
 public interface RowAnnotationFactory {
 

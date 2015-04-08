@@ -22,8 +22,8 @@ package org.datacleaner.job.concurrent;
 import org.datacleaner.job.tasks.Task;
 
 /**
- * Interface for the execution engine in AnalyzerBeans. The {@link TaskRunner}
- * is responsible for executing tasks, typically of rather small sizes. A task
+ * Interface for the work executor in DataCleaner. The {@link TaskRunner} is
+ * responsible for executing tasks, typically of rather small sizes. A task
  * runner is an abstraction over such execution details as thread pools, timer
  * services and clustering environments.
  */

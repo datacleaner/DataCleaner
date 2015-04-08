@@ -22,12 +22,10 @@ package org.datacleaner.monitor.scheduling.quartz;
 import java.util.Date;
 import java.util.Map;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.lifecycle.LifeCycleHelper;
-import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.events.JobExecutedEvent;
@@ -45,6 +43,7 @@ import org.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.util.ReflectionUtils;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -161,7 +160,7 @@ public class ExecuteJob extends AbstractQuartzJob {
                 throw new UnsupportedOperationException("No Job engine available for job: " + job);
             }
 
-            final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+            final DataCleanerConfiguration configuration = context.getConfiguration();
 
             final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
             final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
@@ -178,7 +177,7 @@ public class ExecuteJob extends AbstractQuartzJob {
     }
 
     private Map<String, String> overrideVariables(VariableProviderDefinition variableProviderDef, JobContext job,
-            ExecutionLog execution, AnalyzerBeansConfiguration configuration) throws ClassNotFoundException {
+            ExecutionLog execution, DataCleanerConfiguration configuration) throws ClassNotFoundException {
         if (variableProviderDef == null) {
             return null;
         }
@@ -188,8 +187,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             return null;
         }
 
-        final InjectionManager injectionManager = configuration.getInjectionManager(null);
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, true);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration, null, true);
 
         @SuppressWarnings("unchecked")
         final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);

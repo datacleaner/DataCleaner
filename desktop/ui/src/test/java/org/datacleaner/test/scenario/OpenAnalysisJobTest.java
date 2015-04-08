@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.vfs2.FileObject;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.util.VFSUtils;
@@ -58,7 +58,7 @@ public class OpenAnalysisJobTest extends TestCase {
 
         DCModule module = new DCModuleImpl();
         Injector injector = Guice.createInjector(module);
-        AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+        DataCleanerConfiguration configuration = injector.getInstance(DataCleanerConfiguration.class);
 
         FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
         assertTrue(file.exists());

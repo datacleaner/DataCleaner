@@ -25,15 +25,15 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.dao.DatastoreDaoImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -45,7 +45,7 @@ public class DatastoresFolderControllerTest extends TestCase {
 
         final FileRepository repository = new FileRepository("target/repo_datastore_registration");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+                new DataCleanerEnvironmentImpl(), new MockJobEngineManager());
 
         DatastoresFolderController controller = new DatastoresFolderController();
         controller._contextFactory = contextFactory;

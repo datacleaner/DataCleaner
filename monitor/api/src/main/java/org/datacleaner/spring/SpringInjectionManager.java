@@ -21,7 +21,7 @@ package org.datacleaner.spring;
 
 import java.util.Map;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.configuration.InjectionPoint;
@@ -40,7 +40,7 @@ final class SpringInjectionManager extends InjectionManagerImpl {
 
     private final ApplicationContext _applicationContext;
 
-    public SpringInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job,
+    public SpringInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job,
             ApplicationContext applicationContext) {
         super(configuration, job);
         _applicationContext = applicationContext;

@@ -87,7 +87,7 @@ public class MainTest extends TestCase {
         assertEquals(
                 "-conf (-configuration, --configuration-file) PATH          : Path to an XML file describing the configuration of",
                 lines[0].trim());
-        assertEquals("AnalyzerBeans", lines[1].trim());
+        assertEquals("DataCleaner", lines[1].trim());
         assertEquals(
                 "-ds (-datastore, --datastore-name) VAL                     : Name of datastore when printing a list of schemas, tables",
                 lines[2].trim());

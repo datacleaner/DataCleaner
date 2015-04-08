@@ -22,8 +22,9 @@ package org.datacleaner.monitor.configuration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.Repository;
@@ -48,8 +49,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private final LoadingCache<String, TenantContext> _contexts;
     private final Repository _repository;
-    private final InjectionManagerFactory _parentInjectionManagerFactory;
     private final JobEngineManager _jobEngineManager;
+    private final DataCleanerEnvironment _environment;
 
     /**
      * Constructs a {@link TenantContextFactoryImpl}.
@@ -61,7 +62,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      */
     @Deprecated
     public TenantContextFactoryImpl(Repository repository) {
-        this(repository, new InjectionManagerFactoryImpl(), null);
+        this(repository, new DataCleanerEnvironmentImpl(), null);
     }
 
     /**
@@ -71,10 +72,10 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * @param parentInjectionManagerFactory
      */
     @Autowired
-    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory parentInjectionManagerFactory,
+    public TenantContextFactoryImpl(Repository repository, DataCleanerEnvironment environment,
             JobEngineManager jobEngineManager) {
         _repository = repository;
-        _parentInjectionManagerFactory = parentInjectionManagerFactory;
+        _environment = environment;
         _jobEngineManager = jobEngineManager;
         _contexts = buildTenantContextCache();
     }
@@ -85,8 +86,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
                     @Override
                     public TenantContext load(String tenantId) throws Exception {
                         logger.info("Initializing tenant context: {}", tenantId);
-                        final TenantContext context = new TenantContextImpl(tenantId, _repository,
-                                _parentInjectionManagerFactory, _jobEngineManager);
+                        final TenantContext context = new TenantContextImpl(tenantId, _repository, _environment,
+                                _jobEngineManager);
                         return context;
                     }
                 });
@@ -135,7 +136,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
                 logger.debug("Tenant ID '{}' standardized into '{}'", tenantId, standardizedTenantId);
             }
         }
-        
+
         return standardizedTenantId;
     }
 }

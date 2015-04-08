@@ -20,8 +20,8 @@
 package org.datacleaner.configuration;
 
 /**
- * An object that is capable of reading an AnalyzerBeansConfiguration from a
- * source.
+ * An object that is capable of reading an {@link DataCleanerConfiguration} from
+ * a source.
  * 
  * @param <E>
  *            The source type, typically an InputStream, but could be another
@@ -29,5 +29,5 @@ package org.datacleaner.configuration;
  */
 public interface ConfigurationReader<T> {
 
-	public AnalyzerBeansConfiguration read(T input);
+    public DataCleanerConfiguration read(T input);
 }

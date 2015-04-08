@@ -22,6 +22,7 @@ package org.datacleaner.monitor.server.job;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
@@ -53,7 +54,9 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
 
     @Override
     protected CustomJobContext getJobContext(TenantContext context, RepositoryFile file) {
-        final InjectionManager injectionManager = context.getConfiguration().getInjectionManager(null);
+        final DataCleanerConfiguration configuration = context.getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
 
         return new CustomJobContext(context, this, file, injectionManager);
     }
@@ -81,7 +84,9 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
         try {
             final ComponentConfiguration beanConfiguration = jobContext.getComponentConfiguration(customJob);
 
-            final InjectionManager injectionManager = context.getConfiguration().getInjectionManager(null);
+            final DataCleanerConfiguration configuration = context.getConfiguration();
+            final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                    .getInjectionManager(configuration);
             final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
 
             lifeCycleHelper.assignProvidedProperties(descriptor, customJob);

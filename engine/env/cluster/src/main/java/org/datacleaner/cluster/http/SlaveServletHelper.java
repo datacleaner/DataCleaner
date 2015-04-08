@@ -33,9 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.cluster.SlaveAnalysisRunner;
 import org.datacleaner.cluster.SlaveJobInterceptor;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -43,7 +44,6 @@ import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.result.SimpleAnalysisResult;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class SlaveServletHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(SlaveServletHelper.class);
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final SlaveJobInterceptor _jobInterceptor;
     private final ConcurrentMap<String, AnalysisResultFuture> _runningJobs;
 
@@ -63,11 +63,11 @@ public class SlaveServletHelper {
      * 
      * @param configuration
      * @deprecated Use
-     *             {@link #SlaveServletHelper(AnalyzerBeansConfiguration, Map)}
+     *             {@link #SlaveServletHelper(DataCleanerConfiguration, Map)}
      *             instead.
      */
     @Deprecated
-    public SlaveServletHelper(AnalyzerBeansConfiguration configuration) {
+    public SlaveServletHelper(DataCleanerConfiguration configuration) {
         this(configuration, new ConcurrentHashMap<String, AnalysisResultFuture>());
     }
 
@@ -81,7 +81,7 @@ public class SlaveServletHelper {
      *            {@link SlaveServletHelper}s can share the same running jobs
      *            state.
      */
-    public SlaveServletHelper(AnalyzerBeansConfiguration configuration,
+    public SlaveServletHelper(DataCleanerConfiguration configuration,
             ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
         this(configuration, null, runningJobsMap);
     }
@@ -92,11 +92,11 @@ public class SlaveServletHelper {
      * @param jobInterceptor
      * 
      * @deprecated use
-     *             {@link #SlaveServletHelper(AnalyzerBeansConfiguration, SlaveJobInterceptor, ConcurrentMap)}
+     *             {@link #SlaveServletHelper(DataCleanerConfiguration, SlaveJobInterceptor, ConcurrentMap)}
      *             instead
      */
     @Deprecated
-    public SlaveServletHelper(AnalyzerBeansConfiguration configuration, SlaveJobInterceptor jobInterceptor) {
+    public SlaveServletHelper(DataCleanerConfiguration configuration, SlaveJobInterceptor jobInterceptor) {
         this(configuration, jobInterceptor, new ConcurrentHashMap<String, AnalysisResultFuture>());
     }
 
@@ -104,7 +104,7 @@ public class SlaveServletHelper {
      * Creates a {@link SlaveServletHelper}.
      * 
      * @param configuration
-     *            the slave's {@link AnalyzerBeansConfiguration}.
+     *            the slave's {@link DataCleanerConfiguration}.
      * @param jobInterceptor
      *            an optional interceptor
      * @param runningJobsMap
@@ -113,10 +113,10 @@ public class SlaveServletHelper {
      *            {@link SlaveServletHelper}s can share the same running jobs
      *            state.
      */
-    public SlaveServletHelper(AnalyzerBeansConfiguration configuration, SlaveJobInterceptor jobInterceptor,
+    public SlaveServletHelper(DataCleanerConfiguration configuration, SlaveJobInterceptor jobInterceptor,
             ConcurrentMap<String, AnalysisResultFuture> runningJobsMap) {
         if (configuration == null) {
-            throw new IllegalArgumentException("AnalyzerBeansConfiguration cannot be null");
+            throw new IllegalArgumentException("DataCleanerConfiguration cannot be null");
         }
         _configuration = configuration;
         _jobInterceptor = jobInterceptor;

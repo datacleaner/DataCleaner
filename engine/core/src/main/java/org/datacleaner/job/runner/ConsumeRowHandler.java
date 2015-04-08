@@ -28,8 +28,9 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Object that can handle the task of consuming a number of rows. The
  * {@link ConsumeRowHandler} is internally used to execute all necesary
  * components for every record, but it can also be used as a utility if
- * AnalyzerBeans jobs are being embedded or applied in externally.
+ * DataCleaner jobs are being embedded or applied in externally.
  */
 public class ConsumeRowHandler {
 
@@ -67,13 +68,13 @@ public class ConsumeRowHandler {
      * to read the job's consumers
      * 
      * @param job
-     * @param analyzerBeansConfiguration
      * @param configuration
+     * @param rowConsumerConfiguration
      */
-    public ConsumeRowHandler(AnalysisJob job, AnalyzerBeansConfiguration analyzerBeansConfiguration,
-            Configuration configuration) {
-        _consumers = extractConsumers(job, analyzerBeansConfiguration, configuration);
-        _alwaysSatisfiedOutcomes = configuration.alwaysSatisfiedOutcomes;
+    public ConsumeRowHandler(AnalysisJob job, DataCleanerConfiguration configuration,
+            Configuration rowConsumerConfiguration) {
+        _consumers = extractConsumers(job, configuration, rowConsumerConfiguration);
+        _alwaysSatisfiedOutcomes = rowConsumerConfiguration.alwaysSatisfiedOutcomes;
     }
 
     /**
@@ -148,12 +149,15 @@ public class ConsumeRowHandler {
     }
 
     private List<RowProcessingConsumer> extractConsumers(AnalysisJob analysisJob,
-            AnalyzerBeansConfiguration analyzerBeansConfiguration, Configuration configuration) {
-        final InjectionManager injectionManager = analyzerBeansConfiguration.getInjectionManager(analysisJob);
+            DataCleanerConfiguration configuration, Configuration rowConsumeConfiguration) {
+        final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
+                .getInjectionManagerFactory();
+        final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
+                analysisJob);
         final ReferenceDataActivationManager referenceDataActivationManager = new ReferenceDataActivationManager();
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
-                configuration.includeNonDistributedTasks);
+                rowConsumeConfiguration.includeNonDistributedTasks);
         SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(analysisJob);
 
@@ -164,15 +168,16 @@ public class ConsumeRowHandler {
          */
         final SingleThreadedTaskRunner taskRunner = new SingleThreadedTaskRunner();
 
-        final AnalysisListener analysisListener = configuration.analysisListener;
+        final AnalysisListener analysisListener = rowConsumeConfiguration.analysisListener;
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
                 analysisListener, taskRunner, lifeCycleHelper, sourceColumnFinder);
 
         final RowProcessingPublisher publisher;
-        if (configuration.table != null) {
-            publisher = rowProcessingPublishers.getRowProcessingPublisher(configuration.table);
+        if (rowConsumeConfiguration.table != null) {
+            publisher = rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
             if (publisher == null) {
-                throw new IllegalArgumentException("Job does not consume records from table: " + configuration.table);
+                throw new IllegalArgumentException("Job does not consume records from table: "
+                        + rowConsumeConfiguration.table);
             }
         } else {
             final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
@@ -212,7 +217,7 @@ public class ConsumeRowHandler {
         }
 
         List<RowProcessingConsumer> consumers = publisher.getConfigurableConsumers();
-        if (!configuration.includeAnalyzers) {
+        if (!rowConsumeConfiguration.includeAnalyzers) {
             consumers = removeAnalyzers(consumers);
         }
 

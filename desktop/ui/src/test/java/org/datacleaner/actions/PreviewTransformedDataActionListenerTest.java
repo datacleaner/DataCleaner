@@ -28,8 +28,8 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
 import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.JdbcDatastore;
@@ -42,7 +42,7 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 
-    private AnalyzerBeansConfiguration configuration;
+    private DataCleanerConfiguration configuration;
     private TransformerComponentBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
     private AnalysisJobBuilder analysisJobBuilder;
 

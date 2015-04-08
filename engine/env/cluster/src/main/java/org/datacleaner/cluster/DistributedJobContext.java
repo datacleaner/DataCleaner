@@ -19,7 +19,7 @@
  */
 package org.datacleaner.cluster;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 
 /**
@@ -27,7 +27,7 @@ import org.datacleaner.job.AnalysisJob;
  */
 public interface DistributedJobContext {
     
-    public AnalyzerBeansConfiguration getMasterConfiguration();
+    public DataCleanerConfiguration getMasterConfiguration();
 
     public AnalysisJob getMasterJob();
     

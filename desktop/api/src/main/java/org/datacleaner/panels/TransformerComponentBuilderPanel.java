@@ -33,7 +33,7 @@ import org.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -63,14 +63,14 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
 
     public TransformerComponentBuilderPanel(TransformerComponentBuilder<?> transformerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            AnalyzerBeansConfiguration configuration) {
+            DataCleanerConfiguration configuration) {
         this(null, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
     }
 
     protected TransformerComponentBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
             int watermarkVerticalPosition, TransformerComponentBuilder<?> transformerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            AnalyzerBeansConfiguration configuration) {
+            DataCleanerConfiguration configuration) {
         super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
                 propertyWidgetFactory);
         _componentBuilder = transformerJobBuilder;

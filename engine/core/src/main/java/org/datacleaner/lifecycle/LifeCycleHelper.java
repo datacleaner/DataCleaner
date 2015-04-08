@@ -25,9 +25,12 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.Provided;
 import org.datacleaner.api.Validate;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 
@@ -98,15 +101,59 @@ public final class LifeCycleHelper {
         _referenceDataActivationManager = referenceDataActivationManager;
         _includeNonDistributedTasks = includeNonDistributedTasks;
     }
-    
+
+    /**
+     * 
+     * @param configuration
+     * @param job
+     * @param includeNonDistributedTasks
+     *            whether or not non-distributed methods (such as
+     *            {@link Initialize} or {@link Cloneable} methods that are
+     *            marked with distributed=false) should be included or not. On
+     *            single-node executions, this will typically be true, on slave
+     *            nodes in a cluster, this will typically be false.
+     */
+    public LifeCycleHelper(DataCleanerConfiguration configuration, AnalysisJob job, boolean includeNonDistributedTasks) {
+        this(configuration, job, null, includeNonDistributedTasks);
+    }
+
+    /**
+     * 
+     * @param configuration
+     * @param job
+     * @param referenceDataActivationManager
+     * @param includeNonDistributedTasks
+     *            whether or not non-distributed methods (such as
+     *            {@link Initialize} or {@link Cloneable} methods that are
+     *            marked with distributed=false) should be included or not. On
+     *            single-node executions, this will typically be true, on slave
+     *            nodes in a cluster, this will typically be false.
+     */
+    public LifeCycleHelper(DataCleanerConfiguration configuration, AnalysisJob job,
+            ReferenceDataActivationManager referenceDataActivationManager, boolean includeNonDistributedTasks) {
+        if (configuration == null) {
+            _injectionManager = null;
+        } else {
+            final InjectionManagerFactory injectionManagerFactory = configuration.getEnvironment()
+                    .getInjectionManagerFactory();
+            if (job == null) {
+                _injectionManager = injectionManagerFactory.getInjectionManager(configuration);
+            } else {
+                _injectionManager = injectionManagerFactory.getInjectionManager(configuration, job);
+            }
+        }
+        _referenceDataActivationManager = referenceDataActivationManager;
+        _includeNonDistributedTasks = includeNonDistributedTasks;
+    }
+
     public boolean isIncludeNonDistributedTasks() {
         return _includeNonDistributedTasks;
     }
-    
+
     public InjectionManager getInjectionManager() {
         return _injectionManager;
     }
-    
+
     public ReferenceDataActivationManager getReferenceDataActivationManager() {
         return _referenceDataActivationManager;
     }

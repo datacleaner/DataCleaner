@@ -38,7 +38,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
@@ -82,7 +82,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final IdGenerator _transformedColumnIdGenerator;
 
     // the configurable components
@@ -103,7 +103,7 @@ public final class AnalysisJobBuilder implements Closeable {
     private final List<FilterChangeListener> _filterChangeListeners = new ArrayList<>();
     private ComponentRequirement _defaultRequirement;
 
-    public AnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
+    public AnalysisJobBuilder(DataCleanerConfiguration configuration) {
         _configuration = configuration;
         _transformedColumnIdGenerator = new PrefixedIdGenerator("");
         _sourceColumns = new ArrayList<>();
@@ -115,7 +115,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Private constructor for {@link #withoutListeners()} method
      */
-    private AnalysisJobBuilder(AnalyzerBeansConfiguration configuration, Datastore datastore,
+    private AnalysisJobBuilder(DataCleanerConfiguration configuration, Datastore datastore,
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
             List<TransformerComponentBuilder<?>> transformerJobBuilders,
@@ -132,7 +132,7 @@ public final class AnalysisJobBuilder implements Closeable {
         _analyzerComponentBuilders = analyzerJobBuilders;
     }
 
-    public AnalysisJobBuilder(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+    public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job) {
         this(configuration);
         importJob(job);
     }
@@ -199,7 +199,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return _datastoreConnection;
     }
 
-    public AnalyzerBeansConfiguration getConfiguration() {
+    public DataCleanerConfiguration getConfiguration() {
         return _configuration;
     }
 
@@ -327,7 +327,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(Class<T> transformerClass) {
-        TransformerDescriptor<T> descriptor = _configuration.getDescriptorProvider().getTransformerDescriptorForClass(
+        TransformerDescriptor<T> descriptor = _configuration.getEnvironment().getDescriptorProvider().getTransformerDescriptorForClass(
                 transformerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + transformerClass);
@@ -442,7 +442,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(Class<F> filterClass) {
-        FilterDescriptor<F, C> descriptor = _configuration.getDescriptorProvider().getFilterDescriptorForClass(
+        FilterDescriptor<F, C> descriptor = _configuration.getEnvironment().getDescriptorProvider().getFilterDescriptorForClass(
                 filterClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + filterClass);
@@ -570,7 +570,7 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <A extends Analyzer<?>> AnalyzerComponentBuilder<A> addAnalyzer(Class<A> analyzerClass) {
-        final DescriptorProvider descriptorProvider = _configuration.getDescriptorProvider();
+        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
         final AnalyzerDescriptor<A> descriptor = descriptorProvider.getAnalyzerDescriptorForClass(analyzerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + analyzerClass);

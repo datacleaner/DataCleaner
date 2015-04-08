@@ -17,25 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.configuration;
+package org.datacleaner.descriptors;
 
-import org.datacleaner.api.Analyzer;
-import org.datacleaner.api.Filter;
-import org.datacleaner.api.Transformer;
-
-/**
- * Component that manages injections made into components such as
- * {@link Analyzer}s, {@link Transformer}, {@link Filter}s, custom components
- * and more.
- */
-public interface InjectionManager {
-
-    /**
-     * Gets the value/object/instance to be injected at a particular injection
-     * point.
-     * 
-     * @param injectionPoint
-     * @return
-     */
-    public <E> E getInstance(InjectionPoint<E> injectionPoint);
+public interface ComponentDescriptorsUpdatedListener {
+    
+    public void componentDescriptorsUpdated();
+    
 }

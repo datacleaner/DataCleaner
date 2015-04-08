@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
@@ -59,13 +59,13 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
     private final Datastore _datastore;
     private final Table _table;
     private final WindowContext _windowContext;
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final DCModule _parentModule;
     private final UserPreferences _userPreferences;
 
     @Inject
     protected SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
-            AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, DCModule parentModule) {
+            DataCleanerConfiguration configuration, UserPreferences userPreferences, DCModule parentModule) {
         _datastore = datastore;
         _table = table;
         _windowContext = windowContext;

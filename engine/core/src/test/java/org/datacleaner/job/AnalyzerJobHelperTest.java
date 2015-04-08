@@ -22,7 +22,7 @@ package org.datacleaner.job;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MockInputColumn;
@@ -37,7 +37,7 @@ public class AnalyzerJobHelperTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+        ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
         ajb.setDatastore(datastore);
         ajb.addSourceColumns("name", "email");
     }
@@ -52,7 +52,7 @@ public class AnalyzerJobHelperTest extends TestCase {
         // create a copy
         final AnalysisJob job2;
         final Datastore datastore2 = new CsvDatastore("ds", "src/test/resources/employees.csv");
-        try (final AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl())) {
+        try (final AnalysisJobBuilder ajb2 = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
 
             ajb2.setDatastore(datastore2);
             ajb2.addSourceColumns("name", "email");

@@ -24,7 +24,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.customcolumn.MockConvertToMonthObjectTransformer;
 import org.datacleaner.customcolumn.Month;
 import org.datacleaner.data.MockInputColumn;
@@ -35,7 +35,7 @@ public class SourceColumnFinderTest extends TestCase {
 	public void testFindInputColumns() throws Exception {
 		SourceColumnFinder columnFinder = new SourceColumnFinder();
 		
-		AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
+		AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(new DataCleanerConfigurationImpl());
 		analysisJobBuilder.addTransformer(MockConvertToMonthObjectTransformer.class).addInputColumn(new MockInputColumn<String>("month", String.class));
 		columnFinder.addSources(analysisJobBuilder);
 		List<InputColumn<?>> findInputColumns = columnFinder.findInputColumns(Month.class);

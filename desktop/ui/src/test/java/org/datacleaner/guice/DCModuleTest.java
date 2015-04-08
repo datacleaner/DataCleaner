@@ -23,7 +23,7 @@ import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.lifecycle.MemberInjectionPoint;
 
@@ -40,22 +40,22 @@ public class DCModuleTest extends TestCase {
         final DCModule module1 = new DCModuleImpl();
         final Injector injector1 = Guice.createInjector(module1);
         final AnalysisJobBuilder ajb1 = injector1.getInstance(AnalysisJobBuilder.class);
-        final AnalyzerBeansConfiguration conf1 = injector1.getInstance(AnalyzerBeansConfiguration.class);
-        final AnalysisJobBuilder ajb2 = conf1.getInjectionManager(null).getInstance(
-                new MemberInjectionPoint<AnalysisJobBuilder>(field, this));
-        
+        final DataCleanerConfiguration conf1 = injector1.getInstance(DataCleanerConfiguration.class);
+        final AnalysisJobBuilder ajb2 = conf1.getEnvironment().getInjectionManagerFactory().getInjectionManager(conf1)
+                .getInstance(new MemberInjectionPoint<AnalysisJobBuilder>(field, this));
+
         assertSame(ajb1, ajb2);
 
         final DCModule module2 = new DCModuleImpl(module1, new AnalysisJobBuilder(conf1));
         final Injector injector2 = Guice.createInjector(module2);
-        final AnalyzerBeansConfiguration conf2 = injector2.getInstance(AnalyzerBeansConfiguration.class);
+        final DataCleanerConfiguration conf2 = injector2.getInstance(DataCleanerConfiguration.class);
         final AnalysisJobBuilder ajb3 = injector2.getInstance(AnalysisJobBuilder.class);
         assertNotSame(ajb1, ajb3);
 
-        final AnalysisJobBuilder ajb4 = conf2.getInjectionManager(null).getInstance(
-                new MemberInjectionPoint<AnalysisJobBuilder>(field, this));
+        final AnalysisJobBuilder ajb4 = conf2.getEnvironment().getInjectionManagerFactory().getInjectionManager(conf2)
+                .getInstance(new MemberInjectionPoint<AnalysisJobBuilder>(field, this));
         assertNotSame(ajb1, ajb4);
-        
+
         assertSame(ajb3, ajb4);
     }
 }

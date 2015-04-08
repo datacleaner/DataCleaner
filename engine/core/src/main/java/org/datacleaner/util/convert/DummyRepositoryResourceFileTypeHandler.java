@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.user;
+package org.datacleaner.util.convert;
 
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
@@ -29,7 +29,7 @@ import org.apache.metamodel.util.Resource;
  * produced by the DataCleaner monitor. Since the desktop client is not
  * connected to the monitor repository, we will only serve empty
  * {@link InMemoryResource}s for these requests. While this may cause data to be
- * missing from these resources, it does cover the basic scenarios os being able
+ * missing from these resources, it does cover the basic scenarios of being able
  * to load jobs etc.
  */
 public class DummyRepositoryResourceFileTypeHandler implements ResourceTypeHandler<InMemoryResource> {

@@ -28,12 +28,16 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.HasNameMapper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.components.mock.TransformerMock;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.ConstantInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MutableInputColumn;
@@ -43,20 +47,16 @@ import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.IdGenerator;
 import org.datacleaner.job.PrefixedIdGenerator;
 import org.datacleaner.util.InputColumnComparator;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.util.CollectionUtils;
-import org.apache.metamodel.util.HasNameMapper;
 
 public class TransformerComponentBuilderTest extends TestCase {
 
-    private AnalyzerBeansConfiguration configuration;
+    private DataCleanerConfiguration configuration;
     private AnalysisJobBuilder ajb;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        configuration = new AnalyzerBeansConfigurationImpl();
+        configuration = new DataCleanerConfigurationImpl();
 
         ajb = new AnalysisJobBuilder(configuration);
 
@@ -156,7 +156,8 @@ public class TransformerComponentBuilderTest extends TestCase {
     }
 
     public void testAddNonRequiredColumn() throws Exception {
-        final TransformerComponentBuilder<TableLookupTransformer> tjb = ajb.addTransformer(TableLookupTransformer.class);
+        final TransformerComponentBuilder<TableLookupTransformer> tjb = ajb
+                .addTransformer(TableLookupTransformer.class);
 
         final Set<ConfiguredPropertyDescriptor> inputProperties = tjb.getDescriptor().getConfiguredPropertiesForInput(
                 true);
@@ -235,7 +236,7 @@ public class TransformerComponentBuilderTest extends TestCase {
         InputColumn<String> input = new MockInputColumn<String>("foo", String.class);
         configurableBean.setInput(input);
 
-        assertTrue(builder.isConfigured());
+        assertTrue(builder.isConfigured(true));
         ConfiguredPropertyDescriptor propertyDescriptor = descriptor.getConfiguredPropertiesForInput().iterator()
                 .next();
         InputColumn<?>[] value = (InputColumn<?>[]) builder.getConfiguredProperties().get(propertyDescriptor);
@@ -248,7 +249,7 @@ public class TransformerComponentBuilderTest extends TestCase {
         TransformerDescriptor<TransformerMock> descriptor = Descriptors.ofTransformer(TransformerMock.class);
 
         TransformerComponentBuilder<TransformerMock> builder = new TransformerComponentBuilder<TransformerMock>(
-                new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl()), descriptor, IdGenerator);
+                new AnalysisJobBuilder(new DataCleanerConfigurationImpl()), descriptor, IdGenerator);
 
         MockInputColumn<String> colA = new MockInputColumn<String>("A", String.class);
         MockInputColumn<String> colB = new MockInputColumn<String>("B", String.class);

@@ -43,7 +43,7 @@ import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -74,7 +74,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final FileObject _file;
     private final AnalysisJobMetadata _metadata;
     private final SourceColumnMapping _sourceColumnMapping;
@@ -88,7 +88,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
     private volatile Datastore _datastore;
 
-    public OpenAnalysisJobAsTemplateDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
+    public OpenAnalysisJobAsTemplateDialog(WindowContext windowContext, DataCleanerConfiguration configuration,
             FileObject file, AnalysisJobMetadata metadata,
             Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
         super(windowContext, imageManager.getImage("images/window/banner-logo.png"));

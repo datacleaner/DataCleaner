@@ -23,7 +23,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.datacleaner.api.Initialize;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 
@@ -34,7 +34,7 @@ import org.datacleaner.job.concurrent.TaskRunner;
  */
 public class AnalysisRunnerImpl implements AnalysisRunner {
 
-    private final AnalyzerBeansConfiguration _configuration;
+    private final DataCleanerConfiguration _configuration;
     private final AnalysisListener[] _sharedAnalysisListeners;
 
     /**
@@ -42,7 +42,7 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
      * 
      * @param configuration
      */
-    public AnalysisRunnerImpl(AnalyzerBeansConfiguration configuration) {
+    public AnalysisRunnerImpl(DataCleanerConfiguration configuration) {
         this(configuration, new AnalysisListener[0]);
     }
 
@@ -53,7 +53,7 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
      * @param configuration
      * @param sharedAnalysisListeners
      */
-    public AnalysisRunnerImpl(AnalyzerBeansConfiguration configuration, AnalysisListener... sharedAnalysisListeners) {
+    public AnalysisRunnerImpl(DataCleanerConfiguration configuration, AnalysisListener... sharedAnalysisListeners) {
         if (configuration == null) {
             throw new IllegalArgumentException("configuration cannot be null");
         }
@@ -80,7 +80,7 @@ public class AnalysisRunnerImpl implements AnalysisRunner {
         }
 
         // set up the task runner that is aware of errors
-        final TaskRunner taskRunner = new ErrorAwareTaskRunnerWrapper(errorListener, _configuration.getTaskRunner());
+        final TaskRunner taskRunner = new ErrorAwareTaskRunnerWrapper(errorListener, _configuration.getEnvironment().getTaskRunner());
 
         boolean includedNonDistributed = isNonDistributedTasksIncluded();
 

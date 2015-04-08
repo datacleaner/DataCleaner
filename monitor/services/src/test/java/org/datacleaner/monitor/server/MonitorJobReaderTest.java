@@ -26,8 +26,9 @@ import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.repository.RepositoryFile;
@@ -36,8 +37,8 @@ import org.datacleaner.repository.file.FileRepository;
 public class MonitorJobReaderTest extends TestCase {
 
     public void testMapPlaceholderColumnsQualified() throws Exception {
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true));
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true)));
 
         RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job")
                 .getFile("employees.analysis.xml");
@@ -59,8 +60,10 @@ public class MonitorJobReaderTest extends TestCase {
     }
 
     public void testMapPlaceholderColumnsNonQualified() throws Exception {
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true));
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage(
+                "org.datacleaner.beans", true);
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         RepositoryFile jobFile = new FileRepository("src/test/resources/example_employee_job")
                 .getFile("alt_employees.analysis.xml");

@@ -89,7 +89,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      */
     protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
         final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
-        handlers.add(new FileResourceTypeHandler(getRelativeParentDirectory()));
+        handlers.add(new FileResourceTypeHandler(getHomeFolder()));
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());

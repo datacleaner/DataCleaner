@@ -28,6 +28,7 @@ import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.repository.file.FileRepositoryFolder;
 
 /**
  * Default (immutable) implementation of {@link DataCleanerConfiguration}
@@ -133,7 +134,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
         return new DatastoreCatalogImpl();
     }
 
-    public static RepositoryFolder defaultHomeFolder() {
+    public static FileRepositoryFolder defaultHomeFolder() {
         return new FileRepository(".");
     }
 

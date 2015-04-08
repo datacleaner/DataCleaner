@@ -36,11 +36,10 @@ import org.datacleaner.beans.filter.NullCheckFilter.NullCheckCategory;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
@@ -80,7 +79,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         // analyzer on the LASTNAME
         // column
         datastore = TestHelper.createSampleDatabaseDatastore("mydb");
-        conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(datastore));
+        conf = new DataCleanerConfigurationImpl().withDatastores(datastore);
         ajb = new AnalysisJobBuilder(conf);
         ajb.setDatastore(datastore);
         maxRowsBuilder = ajb.addFilter(MaxRowsFilter.class);
@@ -175,7 +174,8 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testDontOptimizeWhenComponentsHaveNoRequirements() throws Exception {
-        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb
+                .addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
         consumers.add(createConsumer(patternFinderBuilder));
 
@@ -211,7 +211,8 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
     }
 
     public void testMultipleOutcomesUsed() throws Exception {
-        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb.addAnalyzer(PatternFinderAnalyzer.class);
+        AnalyzerComponentBuilder<PatternFinderAnalyzer> patternFinderBuilder = ajb
+                .addAnalyzer(PatternFinderAnalyzer.class);
         patternFinderBuilder.addInputColumn(lastNameInputColumn);
         patternFinderBuilder.setRequirement(maxRowsBuilder, MaxRowsFilter.Category.INVALID);
         consumers.add(createConsumer(patternFinderBuilder));

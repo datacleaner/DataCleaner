@@ -34,13 +34,14 @@ import java.util.regex.PatternSyntaxException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Converter;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,14 +78,18 @@ public class StandardTypeConverter implements Converter<Object> {
     private static final String dateFormatString = "yyyy-MM-dd'T'HH:mm:ss S";
 
     @Inject
-    Converter<Object> parentConverter;
-    
-    public StandardTypeConverter() {
-        this(null);
+    Converter<Object> _parentConverter;
+
+    @Inject
+    DataCleanerConfiguration _configuration;
+
+    protected StandardTypeConverter() {
+        this(null, null);
     }
-    
-    public StandardTypeConverter(Converter<Object> parentConverter) {
-        this.parentConverter = parentConverter;
+
+    public StandardTypeConverter(DataCleanerConfiguration configuration, Converter<Object> parentConverter) {
+        _configuration = configuration;
+        _parentConverter = parentConverter;
     }
 
     @Override
@@ -126,7 +131,7 @@ public class StandardTypeConverter implements Converter<Object> {
         if (type.isEnum()) {
             try {
                 Object[] enumConstants = type.getEnumConstants();
-                
+
                 // first look for enum constant matches
                 Method nameMethod = Enum.class.getMethod("name");
                 for (Object e : enumConstants) {
@@ -135,7 +140,7 @@ public class StandardTypeConverter implements Converter<Object> {
                         return e;
                     }
                 }
-                
+
                 // check for aliased enums
                 for (Object e : enumConstants) {
                     String name = (String) nameMethod.invoke(e);
@@ -183,7 +188,7 @@ public class StandardTypeConverter implements Converter<Object> {
         }
         if (ReflectionUtils.is(type, Serializable.class)) {
             logger.warn("fromString(...): No built-in handling of type: {}, using deserialization", type.getName());
-            byte[] bytes = (byte[]) parentConverter.fromString(byte[].class, str);
+            byte[] bytes = (byte[]) _parentConverter.fromString(byte[].class, str);
             ChangeAwareObjectInputStream objectInputStream = null;
             try {
                 objectInputStream = new ChangeAwareObjectInputStream(new ByteArrayInputStream(bytes));
@@ -213,9 +218,9 @@ public class StandardTypeConverter implements Converter<Object> {
         } else if (o instanceof File) {
             File file = (File) o;
             if (file.isAbsolute()) {
-                result = file.getAbsolutePath().replace('\\','/');
+                result = file.getAbsolutePath().replace('\\', '/');
             } else {
-                result = file.getPath().replace('\\','/');
+                result = file.getPath().replace('\\', '/');
             }
         } else if (o instanceof Date) {
             if (o instanceof ExpressionDate) {
@@ -233,7 +238,7 @@ public class StandardTypeConverter implements Converter<Object> {
         } else if (o instanceof Serializable) {
             logger.info("toString(...): No built-in handling of type: {}, using serialization.", o.getClass().getName());
             byte[] bytes = SerializationUtils.serialize((Serializable) o);
-            result = parentConverter.toString(bytes);
+            result = _parentConverter.toString(bytes);
         } else {
             logger.warn("toString(...): Could not convert type: {}", o.getClass().getName());
             result = o.toString();

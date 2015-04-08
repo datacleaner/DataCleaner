@@ -32,7 +32,7 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
 import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
@@ -197,7 +197,7 @@ public class ExecuteJobWithoutAnalyzersDialog extends AbstractDialog {
     public static void main(String[] args) {
         LookAndFeelManager.get().init();
 
-        DCWindowContext windowContext = new DCWindowContext(new AnalyzerBeansConfigurationImpl(),
+        DCWindowContext windowContext = new DCWindowContext(new DataCleanerConfigurationImpl(),
                 new UserPreferencesImpl(null), null);
         InjectorBuilder injectorBuilder = Guice.createInjector(new DCModuleImpl()).getInstance(InjectorBuilder.class);
 

@@ -30,15 +30,35 @@ public class FileResolverTest extends TestCase {
 
         File file = fileResolver.toFile("pom.xml");
         assertNotNull(file);
+        assertTrue(file.exists());
         assertFalse(file.isAbsolute());
-        assertEquals("./pom.xml", normalizeSeparators(file.getPath()));
+        assertEquals("pom.xml", normalizeSeparators(file.getPath()));
         assertEquals("pom.xml", fileResolver.toPath(file));
 
         File directory = fileResolver.toFile("src/main");
         assertNotNull(directory);
+        assertTrue(directory.exists());
         assertFalse(directory.isAbsolute());
-        assertEquals("./src/main", normalizeSeparators(directory.getPath()));
+        assertEquals("src/main", normalizeSeparators(directory.getPath()));
         assertEquals("src/main", fileResolver.toPath(directory));
+    }
+
+    public void testUsingRelativeBaseDir() throws Exception {
+        FileResolver fileResolver = new FileResolver(new File(".."));
+
+        File file = fileResolver.toFile("pom.xml");
+        assertNotNull(file);
+        assertTrue(file.exists());
+        assertFalse(file.isAbsolute());
+        assertEquals("../pom.xml", normalizeSeparators(file.getPath()));
+        assertEquals("pom.xml", fileResolver.toPath(file));
+
+        File directory = fileResolver.toFile("core");
+        assertNotNull(directory);
+        assertTrue(directory.exists());
+        assertFalse(directory.isAbsolute());
+        assertEquals("../core", normalizeSeparators(directory.getPath()));
+        assertEquals("core", fileResolver.toPath(directory));
     }
 
     public void testUsingCustomBaseDir() throws Exception {
@@ -46,12 +66,14 @@ public class FileResolverTest extends TestCase {
 
         File file = fileResolver.toFile("employees.csv");
         assertNotNull(file);
+        assertTrue(file.exists());
         assertFalse(file.isAbsolute());
         assertEquals("src/test/resources/employees.csv", normalizeSeparators(file.getPath()));
         assertEquals("employees.csv", fileResolver.toPath(file));
 
         File directory = fileResolver.toFile("example_folders/folder1");
         assertNotNull(directory);
+        assertTrue(directory.exists());
         assertFalse(directory.isAbsolute());
         assertEquals("src/test/resources/example_folders/folder1", normalizeSeparators(directory.getPath()));
         assertEquals("example_folders/folder1", fileResolver.toPath(directory));

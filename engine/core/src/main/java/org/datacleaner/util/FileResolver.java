@@ -63,6 +63,10 @@ public class FileResolver {
     }
 
     public File toFile(String filename) {
+        if (filename == null) {
+            return null;
+        }
+
         final File file;
         final File nonParentCandidate = new File(filename);
         if (nonParentCandidate.isAbsolute()) {
@@ -78,23 +82,34 @@ public class FileResolver {
     }
 
     public String toPath(File file) {
+        if (file == null) {
+            return null;
+        }
+
         String path = file.getPath();
 
         // Make relative if possible
         final String basePath = FilenameUtils.normalize(_baseDir.getAbsolutePath(), true);
         final String filePath = FilenameUtils.normalize(file.getAbsolutePath(), true);
+
+        final boolean absolute;
         if (filePath.startsWith(basePath)) {
             path = filePath.substring(basePath.length());
+            absolute = false;
+        } else {
+            absolute = file.isAbsolute();
         }
 
-        // some normalization (because filenames are often used to compare
-        // datastores)
         path = StringUtils.replaceAll(path, "\\", "/");
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-        if (path.startsWith("./")) {
-            path = path.substring(2);
+        if (!absolute) {
+            // some normalization (because filenames are often used to compare
+            // datastores)
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            if (path.startsWith("./")) {
+                path = path.substring(2);
+            }
         }
         return path;
     }

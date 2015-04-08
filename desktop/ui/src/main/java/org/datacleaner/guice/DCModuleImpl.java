@@ -42,6 +42,7 @@ import org.apache.metamodel.util.MutableRef;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -269,10 +270,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     @Deprecated
     @Provides
     public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
-            @Undecorated DataCleanerConfiguration c, UserPreferences userPreferences,
+            @Undecorated DataCleanerConfiguration undecoratedConfiguration, UserPreferences userPreferences,
             InjectionManagerFactory injectionManagerFactory) {
-        return (org.datacleaner.configuration.AnalyzerBeansConfiguration) getDataCleanerConfiguration(c,
-                userPreferences, injectionManagerFactory);
+        final DataCleanerConfiguration c = getDataCleanerConfiguration(undecoratedConfiguration,
+                        userPreferences, injectionManagerFactory);
+        DatastoreCatalog datastoreCatalog = c.getDatastoreCatalog();
+        ReferenceDataCatalog referenceDataCatalog = c.getReferenceDataCatalog();
+        DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
+        TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
+        StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
+        RepositoryFolder homeFolder = c.getHomeFolder();
+        return new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, descriptorProvider, taskRunner, storageProvider, injectionManagerFactory, homeFolder);
     }
 
     @Provides

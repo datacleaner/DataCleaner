@@ -63,7 +63,7 @@ import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.vfs.VfsRepository;
+import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.StorageProvider;
@@ -302,8 +302,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
-                    final FileObject homeFileObject = DataCleanerHome.get();
-                    final RepositoryFolder homeRepositoryFolder = new VfsRepository(homeFileObject);
+                    final File homeFolder = DataCleanerHome.getAsFile();
+                    final RepositoryFolder homeRepositoryFolder = new FileRepository(homeFolder);
 
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,

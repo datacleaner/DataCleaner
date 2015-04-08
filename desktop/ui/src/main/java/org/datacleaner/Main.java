@@ -19,15 +19,14 @@
  */
 package org.datacleaner;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileType;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.datacleaner.bootstrap.Bootstrap;
@@ -107,28 +106,28 @@ public final class Main {
                 return true;
             }
 
-            final FileObject dataCleanerHome = DataCleanerHome.get();
+            final File dataCleanerHome = DataCleanerHome.getAsFile();
 
             try {
-                final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
-                if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
+                final File xmlConfigurationFile = new File(dataCleanerHome, "log4j.xml");
+                if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
                     println("Using custom log configuration: " + xmlConfigurationFile);
-                    DOMConfigurator.configure(xmlConfigurationFile.getURL());
+                    DOMConfigurator.configure(xmlConfigurationFile.toURI().toURL());
                     return true;
                 }
-            } catch (FileSystemException e) {
+            } catch (MalformedURLException e) {
                 // no xml logging found, ignore
             }
 
             try {
-                final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
-                if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
+                final File propertiesConfigurationFile = new File(dataCleanerHome, "log4j.properties");
+                if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
                     println("Using custom log configuration: " + propertiesConfigurationFile);
-                    PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
+                    PropertyConfigurator.configure(propertiesConfigurationFile.toURI().toURL());
                     return true;
                 }
-            } catch (FileSystemException e) {
-                // no xml logging found, ignore
+            } catch (MalformedURLException e) {
+                // no properties logging found, ignore
             }
 
             // fall back to default log4j.xml file in classpath

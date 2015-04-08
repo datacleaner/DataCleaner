@@ -23,6 +23,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -269,9 +270,10 @@ public final class Bootstrap {
      */
     private FileObject resolveFile(final String userRequestedFilename, final String localFilename,
             UserPreferences userPreferences) throws FileSystemException {
-        final FileObject dataCleanerHome = DataCleanerHome.get();
+        final File dataCleanerHome = DataCleanerHome.getAsFile();
         if (userRequestedFilename == null) {
-            return dataCleanerHome.resolveFile(localFilename);
+            File file = new File(dataCleanerHome, localFilename);
+            return VFSUtils.toFileObject(file);
         } else {
             String lowerCaseFilename = userRequestedFilename.toLowerCase();
             if (lowerCaseFilename.startsWith("http://") || lowerCaseFilename.startsWith("https://")) {
@@ -343,8 +345,8 @@ public final class Bootstrap {
 
                         final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
                                 null, null, uri.getPath(), FileType.FILE, uri.getQuery());
-
-                        AbstractFileSystem fileSystem = (AbstractFileSystem) dataCleanerHome.getFileSystem();
+                        
+                        AbstractFileSystem fileSystem = (AbstractFileSystem) VFSUtils.getBaseFileSystem();
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
                     } finally {
                         userPreferences.setMonitorConnection(monitorConnection);

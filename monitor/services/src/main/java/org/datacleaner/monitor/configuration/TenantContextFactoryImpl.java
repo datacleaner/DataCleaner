@@ -57,12 +57,28 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * 
      * @param repository
      * @deprecated use
-     *             {@link #TenantContextFactoryImpl(Repository, InjectionManagerFactory)}
+     *             {@link #TenantContextFactoryImpl(Repository, DataCleanerEnvironment, JobEngineManager)}
      *             instead.
      */
     @Deprecated
     public TenantContextFactoryImpl(Repository repository) {
         this(repository, new DataCleanerEnvironmentImpl(), null);
+    }
+
+    /**
+     * 
+     * @param repository
+     * @param injectionManagerFactory
+     * @param jobEngineManager
+     * 
+     * @deprecated use
+     *             {@link #TenantContextFactoryImpl(Repository, DataCleanerEnvironment, JobEngineManager)}
+     *             instead
+     */
+    @Deprecated
+    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory,
+            JobEngineManager jobEngineManager) {
+        this(repository, new DataCleanerEnvironmentImpl(), jobEngineManager);
     }
 
     /**

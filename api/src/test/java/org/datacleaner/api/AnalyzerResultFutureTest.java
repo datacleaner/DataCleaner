@@ -107,7 +107,7 @@ public class AnalyzerResultFutureTest extends TestCase {
         final Ref<NumberResult> resultRef = new LazyRef<NumberResult>() {
             @Override
             protected NumberResult fetch() throws Throwable {
-                long randomSleepTime = (long) (1000 * Math.random());
+                final long randomSleepTime = (long) (1000 * Math.random());
                 Thread.sleep(randomSleepTime);
                 return new NumberResult(43);
             }

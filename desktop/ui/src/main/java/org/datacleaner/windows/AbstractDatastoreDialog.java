@@ -200,7 +200,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
 
     @Override
     protected int getDialogWidth() {
-        return 500;
+        return 600;
     }
 
     public UserPreferences getUserPreferences() {

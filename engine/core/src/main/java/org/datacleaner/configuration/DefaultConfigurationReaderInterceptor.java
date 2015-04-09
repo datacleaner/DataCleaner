@@ -25,8 +25,6 @@ import java.util.List;
 
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Resource;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
@@ -103,12 +101,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
      * @return
      */
     protected File getRelativeParentDirectory() {
-        final RepositoryFolder homeFolder = getHomeFolder();
-        if (homeFolder instanceof FileRepositoryFolder) {
-            final File relativeParentDirectory = ((FileRepositoryFolder) homeFolder).getFile();
-            return relativeParentDirectory;
-        }
-        return null;
+        return getHomeFolder().toFile();
     }
 
     @Override
@@ -128,7 +121,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
     }
 
     @Override
-    public RepositoryFolder getHomeFolder() {
+    public DataCleanerHomeFolder getHomeFolder() {
         return DataCleanerConfigurationImpl.defaultHomeFolder();
     }
 

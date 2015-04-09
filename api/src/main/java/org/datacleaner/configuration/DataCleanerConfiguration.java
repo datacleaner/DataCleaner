@@ -23,7 +23,6 @@ import java.io.Serializable;
 
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.reference.ReferenceDataCatalog;
-import org.datacleaner.repository.RepositoryFolder;
 
 /**
  * Represents the configuration of a DataCleaner instance. Usually there is just
@@ -49,7 +48,7 @@ public interface DataCleanerConfiguration extends Serializable {
      * 
      * @return
      */
-    public RepositoryFolder getHomeFolder();
+    public DataCleanerHomeFolder getHomeFolder();
 
     /**
      * Gets the {@link DataCleanerEnvironment} that this configuration refers

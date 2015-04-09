@@ -26,6 +26,8 @@ import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
@@ -49,8 +51,7 @@ final class ConfigurationCache {
     private volatile DataCleanerConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext,
-            Repository repository) {
+    public ConfigurationCache(DataCleanerEnvironment environment, TenantContext tenantContext, Repository repository) {
         _environment = environment;
         _tenantContext = tenantContext;
         _repository = repository;
@@ -89,7 +90,8 @@ final class ConfigurationCache {
     }
 
     protected DataCleanerConfiguration readConfiguration() {
-        final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository, _tenantContext, _environment);
+        final ConfigurationReaderInterceptor interceptor = new MonitorConfigurationReaderInterceptor(_repository,
+                _tenantContext, _environment);
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(interceptor);
 
         final RepositoryFile configurationFile = getConfigurationFile();
@@ -98,7 +100,9 @@ final class ConfigurationCache {
             logger.warn(
                     "Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.",
                     _lastModifiedCache);
-            return new DataCleanerConfigurationImpl(_environment, _tenantContext.getTenantRootFolder());
+            final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
+            final DataCleanerHomeFolder homeFolder = new DataCleanerHomeFolderImpl(tenantRootFolder);
+            return new DataCleanerConfigurationImpl(_environment, homeFolder);
         }
 
         logger.info("Reading configuration from file: {}", configurationFile);

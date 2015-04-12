@@ -24,10 +24,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.datacleaner.cluster.virtual.VirtualClusterManager;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -35,19 +34,19 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.test.TestHelper;
 
 public class DistributedAnalysisRunnerTest extends TestCase {
-    
+
     public void testNoRecords() throws Throwable {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
-        
+
         ClusterTestHelper.runNoExpectedRecordsJob(configuration);
     }
-    
+
     public void testCancel() throws Throwable {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
-        
+
         ClusterTestHelper.runCancelJobJob(configuration, new VirtualClusterManager(configuration, 2));
     }
-    
+
     public void testExistingMaxRowsScenario() throws Throwable {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
@@ -65,17 +64,20 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 
         ClusterTestHelper.runConcatAndInsertJob(configuration, new VirtualClusterManager(configuration, 4));
     }
-    
-    public void testRunCompletenessAnalyzer() throws Throwable {
-    	final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
-    	
-    	// run with only a single node to verify a baseline scenario
-    	ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 1));
 
-    	ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 10));
-        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(configuration, 3));
-	}
-    
+    public void testRunCompletenessAnalyzer() throws Throwable {
+        final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
+
+        // run with only a single node to verify a baseline scenario
+        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
+                configuration, 1));
+
+        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
+                configuration, 10));
+        ClusterTestHelper.runCompletenessAndValueMatcherAnalyzerJob(configuration, new VirtualClusterManager(
+                configuration, 3));
+    }
+
     public void testRunBasicAnalyzers() throws Throwable {
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration(getName(), true);
 
@@ -118,15 +120,15 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 
     public void testUndistributableAnalyzer() throws Exception {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore(datastore);
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNAME");
 
         // The String Analyzer is (currently) not distributable
-        final AnalyzerComponentBuilder<MockAnalyzerWithoutReducer> analyzer = jobBuilder.addAnalyzer(MockAnalyzerWithoutReducer.class);
+        final AnalyzerComponentBuilder<MockAnalyzerWithoutReducer> analyzer = jobBuilder
+                .addAnalyzer(MockAnalyzerWithoutReducer.class);
         analyzer.addInputColumns(jobBuilder.getSourceColumns());
 
         AnalysisJob job = jobBuilder.toAnalysisJob();
@@ -141,14 +143,13 @@ public class DistributedAnalysisRunnerTest extends TestCase {
             assertEquals("Component is not distributable: "
                     + "ImmutableAnalyzerJob[name=null,analyzer=Analyzer without reducer]", e.getMessage());
         } finally {
-        	jobBuilder.close();
+            jobBuilder.close();
         }
     }
 
     public void testErrorHandlingInReductionPhase() throws Exception {
         final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(datastore));
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
         final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
         jobBuilder.setDatastore(datastore);
@@ -173,7 +174,9 @@ public class DistributedAnalysisRunnerTest extends TestCase {
 
         List<Throwable> errors = result.getErrors();
 
-        assertEquals("Failed to reduce results for ImmutableAnalyzerJob[name=null,analyzer=Analyzer with bad reducer]: Damn, I failed during reduction phase", errors.get(0).getMessage());
+        assertEquals(
+                "Failed to reduce results for ImmutableAnalyzerJob[name=null,analyzer=Analyzer with bad reducer]: Damn, I failed during reduction phase",
+                errors.get(0).getMessage());
 
         assertEquals(1, errors.size());
     }

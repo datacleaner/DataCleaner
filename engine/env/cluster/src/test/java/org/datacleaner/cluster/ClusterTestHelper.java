@@ -46,8 +46,10 @@ import org.datacleaner.beans.writers.InsertIntoTableAnalyzer;
 import org.datacleaner.beans.writers.WriteBufferSizeOption;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -116,8 +118,11 @@ public class ClusterTestHelper {
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(ValueMatchAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(MockAnalyzerWithBadReducer.class));
 
-        final DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner)
-                .replace(datastoreCatalog).replace(descriptorProvider);
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner)
+                .withDescriptorProvider(descriptorProvider);
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
+                datastoreCatalog).withEnvironment(environment);
+
         return configuration;
     }
 

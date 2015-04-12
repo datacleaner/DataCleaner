@@ -41,6 +41,6 @@ public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 	public void drillToDetails(String title, ResultProducer resultProducer) {
 		final AnalyzerResult result = resultProducer.getResult();
 		final DetailsResultWindow window = new DetailsResultWindow(title, Arrays.asList(result), _windowContext, _rendererFactory);
-		window.setVisible(true);
+		window.open();
 	}
 }

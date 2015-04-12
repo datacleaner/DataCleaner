@@ -19,11 +19,26 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 
-public interface AnalyzerMetrics {
-	
-	public AnalyzerJob getAnalyzerJob();
+final class ComponentMetricsImpl implements ComponentMetrics {
 
-	public RowProcessingMetrics getRowProcessingMetrics();
+	private final RowProcessingMetrics _rowProcessingMetrics;
+	private final ComponentJob _componentJob;
+
+	public ComponentMetricsImpl(RowProcessingMetrics rowProcessingMetrics, ComponentJob componentJob) {
+		_rowProcessingMetrics = rowProcessingMetrics;
+		_componentJob = componentJob;
+	}
+
+	@Override
+	public ComponentJob getComponentJob() {
+		return _componentJob;
+	}
+
+	@Override
+	public RowProcessingMetrics getRowProcessingMetrics() {
+		return _rowProcessingMetrics;
+	}
+
 }

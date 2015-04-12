@@ -24,7 +24,6 @@ import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 
 /**
@@ -88,9 +87,24 @@ public interface AnalysisListener {
      */
     public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics);
 
-    public void analyzerBegin(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerMetrics metrics);
+    /**
+     * Notifies the listener that a component has begun processing
+     * 
+     * @param job
+     * @param componentJob
+     * @param metrics
+     */
+    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics);
 
-    public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result);
+    /**
+     * Notifies the listener that a component has finished processing
+     * 
+     * @param job
+     * @param componentJob
+     * @param result
+     *            the result of the component, if any
+     */
+    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result);
 
     public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable);
 

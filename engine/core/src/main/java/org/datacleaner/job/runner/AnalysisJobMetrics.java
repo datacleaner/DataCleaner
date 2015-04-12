@@ -19,9 +19,9 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentJob;
 
 /**
  * Provides useful metrics and information about an analysis job.
@@ -35,9 +35,9 @@ public interface AnalysisJobMetrics {
 	 */
 	public AnalysisJob getAnalysisJob();
 
-	public AnalyzerMetrics getAnalyzerMetrics(AnalyzerJob analyzerJob);
+	public ComponentMetrics getComponentMetrics(ComponentJob componentJob);
 
-	public Table getRowProcessingTable(AnalyzerJob analyzerJob);
+	public Table getRowProcessingTable(ComponentJob componentJob);
 
 	public Table[] getRowProcessingTables();
 

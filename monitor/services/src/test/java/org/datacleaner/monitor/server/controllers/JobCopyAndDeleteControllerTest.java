@@ -27,7 +27,6 @@ import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
-import org.datacleaner.configuration.InjectionManagerFactoryImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.events.JobCopyEvent;
 import org.datacleaner.monitor.events.JobDeletionEvent;

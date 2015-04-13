@@ -21,6 +21,7 @@ package org.datacleaner.widgets.database;
 
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.panels.DCPanel;
@@ -36,87 +37,94 @@ import org.jdesktop.swingx.JXTextField;
  */
 public abstract class AbstractDatabaseConnectionPresenter implements DatabaseConnectionPresenter {
 
-	private final JXTextField _usernameTextField;
-	private final JPasswordField _passwordField;
+    private final JXTextField _usernameTextField;
+    private final JPasswordField _passwordField;
 
-	public AbstractDatabaseConnectionPresenter() {
-		_usernameTextField = createTextField("Username");
-		_passwordField = WidgetFactory.createPasswordField(JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
-	}
+    public AbstractDatabaseConnectionPresenter() {
+        _usernameTextField = createTextField("Username");
+        _passwordField = WidgetFactory.createPasswordField(JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
+    }
 
-	/**
-	 * Creates a text field as per the default design of a
-	 * {@link DatabaseConnectionPresenter}.
-	 * 
-	 * @param promptText
-	 * @return
-	 */
-	protected static JXTextField createTextField(String promptText) {
-		return WidgetFactory.createTextField(promptText, JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
-	}
+    /**
+     * Creates a text field as per the default design of a
+     * {@link DatabaseConnectionPresenter}.
+     * 
+     * @param promptText
+     * @return
+     */
+    protected static JXTextField createTextField(String promptText) {
+        return WidgetFactory.createTextField(promptText, JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
+    }
 
-	@Override
-	public boolean initialize(JdbcDatastore datastore) {
-		_usernameTextField.setText(datastore.getUsername());
-		_passwordField.setText(datastore.getPassword());
-		return true;
-	}
+    @Override
+    public boolean initialize(JdbcDatastore datastore) {
+        _usernameTextField.setText(datastore.getUsername());
+        _passwordField.setText(datastore.getPassword());
+        return true;
+    }
 
-	@Override
-	public final JComponent getWidget() {
-		DCPanel panel = new DCPanel();
+    @Override
+    public final JComponent getWidget() {
+        DCPanel panel = new DCPanel();
 
-		int row = layoutGridBagAboveCredentials(panel);
+        int row = layoutGridBagAboveCredentials(panel);
 
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.dark("Username:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row, 1.0, 0.0);
+        row = layoutGridBagCredentials(panel, row);
 
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.dark("Password:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, panel, 1, row, 1.0, 0.0);
+        layoutGridBagBelowCredentials(panel, row);
 
-		layoutGridBagBelowCredentials(panel, row);
+        JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
+        return scrolleable;
+    }
 
-		return panel;
-	}
+    protected int layoutGridBagCredentials(DCPanel panel, int row) {
+        row++;
+        WidgetUtils.addToGridBag(DCLabel.dark("Username:"), panel, 0, row);
+        WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row, 1.0, 0.0);
 
-	/**
-	 * Lays out components in a panel with a gridbag layout.
-	 * 
-	 * @param panel
-	 * @return the latest row number in the grid bag
-	 */
-	protected int layoutGridBagAboveCredentials(DCPanel panel) {
-		return -1;
-	};
+        row++;
+        WidgetUtils.addToGridBag(DCLabel.dark("Password:"), panel, 0, row);
+        WidgetUtils.addToGridBag(_passwordField, panel, 1, row, 1.0, 0.0);
 
-	/**
-	 * Lays out components in a panel with a gridbag layout.
-	 * 
-	 * @param panel
-	 * @param row
-	 *            the latest row number in the grid bag
-	 */
-	protected void layoutGridBagBelowCredentials(DCPanel panel, int row) {
-	};
+        return row;
+    }
 
-	public JXTextField getUsernameTextField() {
-		return _usernameTextField;
-	}
+    /**
+     * Lays out components in a panel with a gridbag layout.
+     * 
+     * @param panel
+     * @return the latest row number in the grid bag
+     */
+    protected int layoutGridBagAboveCredentials(DCPanel panel) {
+        return -1;
+    };
 
-	public JPasswordField getPasswordField() {
-		return _passwordField;
-	}
+    /**
+     * Lays out components in a panel with a gridbag layout.
+     * 
+     * @param panel
+     * @param row
+     *            the latest row number in the grid bag
+     */
+    protected void layoutGridBagBelowCredentials(DCPanel panel, int row) {
+    };
 
-	@Override
-	public final String getUsername() {
-		return _usernameTextField.getText();
-	}
+    public JXTextField getUsernameTextField() {
+        return _usernameTextField;
+    }
 
-	@Override
-	public final String getPassword() {
-		return new String(_passwordField.getPassword());
-	}
+    public JPasswordField getPasswordField() {
+        return _passwordField;
+    }
+
+    @Override
+    public final String getUsername() {
+        return _usernameTextField.getText();
+    }
+
+    @Override
+    public final String getPassword() {
+        return new String(_passwordField.getPassword());
+    }
 
 }

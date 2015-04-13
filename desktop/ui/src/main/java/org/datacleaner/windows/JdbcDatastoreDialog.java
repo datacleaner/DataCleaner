@@ -86,7 +86,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
      * Number of connections to try to create (in case of non-multiple
      * connections, this is just the number of handles to the same connection).
      */
-    private static final int TEST_CONNECTION_COUNT = 20;
+    private static final int TEST_CONNECTION_COUNT = 4;
 
     private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
     private static final ImageManager imageManager = ImageManager.get();
@@ -442,7 +442,7 @@ public class JdbcDatastoreDialog extends AbstractDatastoreDialog<JdbcDatastore> 
     protected JdbcDatastore createDatastore() {
         final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
-            throw new IllegalStateException("No datastore name");
+            throw new IllegalStateException("Please enter a datastore name");
         }
 
         final int connectionPresenterIndex = _tabbedPane.getSelectedIndex();

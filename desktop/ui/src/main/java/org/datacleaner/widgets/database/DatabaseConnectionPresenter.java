@@ -28,9 +28,6 @@ import org.datacleaner.database.DatabaseDriverDescriptor;
  * Describes an interface for presenters/views of a database connection. The
  * responsibility of this presenter is to allow the user to fill in JDBC URL,
  * username and password
- * 
- * @author kasper
- * 
  */
 public interface DatabaseConnectionPresenter {
 

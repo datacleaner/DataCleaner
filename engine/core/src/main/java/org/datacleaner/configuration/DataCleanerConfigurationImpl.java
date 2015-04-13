@@ -27,7 +27,6 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
 import org.datacleaner.repository.file.FileRepository;
-import org.datacleaner.repository.file.FileRepositoryFolder;
 
 /**
  * Default (immutable) implementation of {@link DataCleanerConfiguration}

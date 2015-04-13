@@ -24,10 +24,7 @@ import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 
 /**
  * Helper class for resolving {@link File}s based on their path and a
@@ -35,19 +32,17 @@ import org.slf4j.LoggerFactory;
  */
 public class FileResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileResolver.class);
     private final File _baseDir;
 
     public FileResolver(DataCleanerConfiguration configuration) {
         this(configuration == null ? null : configuration.getHomeFolder());
     }
 
-    public FileResolver(RepositoryFolder homeFolder) {
-        if (homeFolder instanceof FileRepositoryFolder) {
-            _baseDir = ((FileRepositoryFolder) homeFolder).getFile();
+    public FileResolver(DataCleanerHomeFolder homeFolder) {
+        if (homeFolder == null) {
+            _baseDir = DataCleanerConfigurationImpl.defaultHomeFolder().toFile();
         } else {
-            logger.info("Home folder '{}' is not file-based, using default home folder (.)", homeFolder);
-            _baseDir = DataCleanerConfigurationImpl.defaultHomeFolder().getFile();
+            _baseDir = homeFolder.toFile();
         }
     }
 

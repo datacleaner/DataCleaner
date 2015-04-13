@@ -25,8 +25,7 @@ import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
@@ -42,7 +41,7 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
     public static final String DEFAULT_SCHEME = "file";
 
     private final String _scheme;
-    private final RepositoryFolder _homeFolder;
+    private final File _homeFolder;
 
     /**
      * Construct a {@link FileResourceTypeHandler} using defaults.
@@ -57,6 +56,10 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
     public FileResourceTypeHandler(DataCleanerConfiguration configuration) {
         this(configuration.getHomeFolder());
     }
+    
+    public FileResourceTypeHandler(DataCleanerHomeFolder homeFolder) {
+        this(homeFolder.toFile());
+    }
 
     /**
      * Constructs a {@link FileResourceTypeHandler} using a specified parent
@@ -66,15 +69,6 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
      */
     public FileResourceTypeHandler(File relativeParentDirectory) {
         this(DEFAULT_SCHEME, relativeParentDirectory);
-    }
-
-    public FileResourceTypeHandler(RepositoryFolder homeFolder) {
-        this(DEFAULT_SCHEME, homeFolder);
-    }
-
-    public FileResourceTypeHandler(String scheme, RepositoryFolder homeFolder) {
-        _scheme = scheme;
-        _homeFolder = homeFolder;
     }
 
     /**
@@ -87,7 +81,7 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
      */
     public FileResourceTypeHandler(String scheme, File relativeParentDirectory) {
         _scheme = scheme;
-        _homeFolder = new FileRepository(relativeParentDirectory);
+        _homeFolder = relativeParentDirectory;
     }
 
     @Override

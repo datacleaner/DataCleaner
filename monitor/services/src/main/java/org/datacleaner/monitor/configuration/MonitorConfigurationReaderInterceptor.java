@@ -28,6 +28,7 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.datacleaner.util.FileResolver;

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -129,6 +130,6 @@ It can be used for a lot of purposes but is excellent for verifying or getting i
 
 
 	</table>
-	<img src=BufferedImage@455b6df1: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 color space = java.awt.color.ICC_ColorSpace@4ddbbdf8 transparency = 3 has alpha = true isAlphaPre = false ByteInterleavedRaster: width = 32 height = 32 #numDataElements 4 dataOff[0] = 3>
+	<img src="jar:file:/C:/Users/claudiap/.m2/repository/org/eobjects/datacleaner/DataCleaner-pattern-finder/4.1-SNAPSHOT/DataCleaner-pattern-finder-4.1-SNAPSHOT.jar!/org/datacleaner/beans/stringpattern/PatternFinderAnalyzer.png">
 </body>
 </html>

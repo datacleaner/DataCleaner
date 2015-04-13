@@ -20,11 +20,11 @@
 
 package org.datacleaner.documentation.template;
 
-import java.awt.Image;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +43,7 @@ import freemarker.template.TemplateException;
 
 public class DocumentationLoader {
 
-    private static final String FILENAME_TEMPLATE = "/src/main/resources/documentation_template.html";
+    private static final String FILENAME_TEMPLATE = "documentation_template.html";
     static final String OUTPUT_FILENAME = "documentLoaderOutput.txt";
 
     private Template _template;
@@ -52,12 +52,12 @@ public class DocumentationLoader {
 
     DocumentationLoader() {
 
-        final Configuration cfg = new Configuration();
+        @SuppressWarnings("deprecation")
+        final Configuration freemarkerConfiguration = new Configuration();
+        freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/");
         try {
-           /* final FileResource fileResource = new FileResource(new File(
-                    "/src/main/resources/documentation_template.html").getCanonicalPath()); */
             // Load the template
-            _template = cfg.getTemplate(FILENAME_TEMPLATE);
+            _template = freemarkerConfiguration.getTemplate(FILENAME_TEMPLATE);
             _data = new HashMap<String, Object>();
         } catch (Exception exception) {
             logger.debug("Exception while trying to initialize the template:", exception);
@@ -65,17 +65,18 @@ public class DocumentationLoader {
     }
 
     public void createDocumentation(ComponentDescriptor<?> componentdescriptor) {
-        
-        
+
         try {
             _data.put("component", componentdescriptor);
-            final Image image = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
-            _data.put("icon", image); 
+            final URL descriptorIconPath = IconUtils.getDescriptorIconPath(componentdescriptor);
+            _data.put("icon",  descriptorIconPath);
+            
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();
-            
-            if (configuredProperties !=null){
-                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(configuredProperties);    
+
+            if (configuredProperties != null) {
+                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
+                        configuredProperties);
                 _data.put("properties", properties);
             }
 

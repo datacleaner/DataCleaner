@@ -365,6 +365,15 @@ public final class IconUtils {
         return iconPath;
     }
 
+    public static URL getDescriptorIconPath(ComponentDescriptor<?> descriptor) {
+
+        final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
+        final String iconPath = getDescriptorImagePath(descriptor, classLoader, true);
+        final URL URL = ResourceManager.get().getUrl(iconPath, classLoader);
+
+        return URL;
+    }
+
     protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader,
             boolean allowGeneric) {
         final Class<?> componentClass = descriptor.getComponentClass();

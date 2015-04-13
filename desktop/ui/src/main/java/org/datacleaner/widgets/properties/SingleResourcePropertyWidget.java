@@ -181,7 +181,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
      * @return
      */
     protected ResourceConverter getResourceConverter() {
-        DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
+        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
         return new ResourceConverter(configuration);
     }
 

@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
@@ -38,8 +38,8 @@ public class ReferentialIntegrityAnalyzerTest extends TestCase {
     public void testSimpleScenario() throws Throwable {
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
 
-        AnalyzerBeansConfigurationImpl configuration = new AnalyzerBeansConfigurationImpl()
-                .replace(new DatastoreCatalogImpl(datastore));
+        DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl()
+                .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
         AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration);
 
         jobBuilder.setDatastore(datastore);

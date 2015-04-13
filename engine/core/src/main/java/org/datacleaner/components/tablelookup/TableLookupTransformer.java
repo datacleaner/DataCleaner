@@ -61,6 +61,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.result.CategorizationResult;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.DummyRowAnnotationFactory;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,6 +212,10 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasA
         this.cacheLookups = cacheLookups;
         this.outputColumns = outputColumns;
         this.joinSemantic = JoinSemantic.LEFT_JOIN_MAX_ONE;
+        _annotationFactory = new DummyRowAnnotationFactory();
+        _matches = _annotationFactory.createAnnotation();
+        _cached = _annotationFactory.createAnnotation();
+        _misses = _annotationFactory.createAnnotation();
     }
 
     @Override

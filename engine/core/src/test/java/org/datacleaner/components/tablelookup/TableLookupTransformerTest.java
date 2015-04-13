@@ -33,11 +33,15 @@ import org.datacleaner.components.tablelookup.TableLookupTransformer.JoinSemanti
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotationFactory;
 
 public class TableLookupTransformerTest extends TestCase {
-    
+
+    private final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+
     public void testScenario() throws Exception {
-        TableLookupTransformer trans = new TableLookupTransformer();
+        TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.conditionColumns = new String[] { "email" };
@@ -58,8 +62,17 @@ public class TableLookupTransformerTest extends TestCase {
         trans.close();
     }
 
+    private TableLookupTransformer createTransformer() {
+        TableLookupTransformer t = new TableLookupTransformer();
+        t._annotationFactory = annotationFactory;
+        t._cached = annotationFactory.createAnnotation();
+        t._matches = annotationFactory.createAnnotation();
+        t._misses = annotationFactory.createAnnotation();
+        return t;
+    }
+
     public void testGetOutputColumnsClearCache() throws Exception {
-        TableLookupTransformer trans = new TableLookupTransformer();
+        TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name", "email" };
         trans.conditionColumns = new String[] { "email" };
@@ -89,7 +102,7 @@ public class TableLookupTransformerTest extends TestCase {
     public void testInnerJoinMinOneRecordSemantics() throws Exception {
         final List<Object[]> result = new ArrayList<Object[]>();
 
-        final TableLookupTransformer trans = new TableLookupTransformer();
+        final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new OutputRowCollector() {
@@ -124,7 +137,7 @@ public class TableLookupTransformerTest extends TestCase {
     public void testInnerJoinSemantics() throws Exception {
         final List<Object[]> result = new ArrayList<Object[]>();
 
-        final TableLookupTransformer trans = new TableLookupTransformer();
+        final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new OutputRowCollector() {
@@ -159,7 +172,7 @@ public class TableLookupTransformerTest extends TestCase {
     public void testCarthesianJoin() throws Exception {
         final List<Object[]> result = new ArrayList<Object[]>();
 
-        final TableLookupTransformer trans = new TableLookupTransformer();
+        final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
         trans.outputRowCollector = new OutputRowCollector() {

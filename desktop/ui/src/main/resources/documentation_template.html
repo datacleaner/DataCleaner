@@ -7,19 +7,18 @@
 
 	<h1>${component.displayName}</h1>
 
-	<h4>Description : ${component.description}</h4>
+	<h4>${component.description}</h4>
 
-	<h3>Execution details:</h3>
-	<br> Can it be distributed ?
-	<td>${component.distributable?string("yes", "no")}</td>
-	<br>
-	<br> The properties are:
+	<h3>Execution details</h3>
+	Can it be distributed ?
+	<br /> ${component.distributable?string("Yes", "No")}
+	<h3>Properties</h3>
 	<table>
 		<tr>
 			<th>Name</th>
 			<th>Type</th>
-			<th>What does it do ? </th>
-			<th>Do you have to set it ? </th>
+			<th>What does it do ?</th>
+			<th>Optional ?</th>
 		</tr>
 		<#list properties as property>
 		<tr>
@@ -27,14 +26,9 @@
 			<td>${property.type.simpleName}</td>
 			<td><#if property.description??> ${property.description} <#else>
 				- </#if></td>
-			<td>${property.required?string("yes", "no")}</td>
+			<td>${property.required?string("No", "Yes")}</td>
 		</tr>
-
 		</#list>
-
-
-
 	</table>
-	<img src="${icon}">
 </body>
 </html>

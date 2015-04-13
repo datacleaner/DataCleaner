@@ -24,11 +24,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.database.DatabaseDriverDescriptor;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
-import org.datacleaner.database.DatabaseDriverDescriptor;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
@@ -100,6 +100,26 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         _param3TextField = createTextField(getLabelForParam3());
         _param4TextField = createTextField(getLabelForParam4());
     }
+    
+    protected JXTextField getDatabaseTextField() {
+        return _databaseTextField;
+    }
+
+    protected JXTextField getParam1TextField() {
+        return _param1TextField;
+    }
+
+    protected JXTextField getParam2TextField() {
+        return _param2TextField;
+    }
+
+    protected JXTextField getParam3TextField() {
+        return _param3TextField;
+    }
+
+    protected JXTextField getParam4TextField() {
+        return _param4TextField;
+    }
 
     protected String getLabelForDatabase() {
         return "Database";
@@ -146,7 +166,9 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         final String url = datastore.getJdbcUrl();
 
         NamedPatternMatch<UrlPart> match = null;
+        NamedPattern<UrlPart> matchingUrlTemplate = null;
         for (NamedPattern<UrlPart> urlTemplate : _urlTemplates) {
+            matchingUrlTemplate = urlTemplate;
             match = urlTemplate.match(url);
             if (match != null) {
                 logger.info("URL '{}' matched with template: {}", url, urlTemplate);
@@ -159,6 +181,11 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
             return false;
         }
 
+        return initializeFromMatch(datastore, matchingUrlTemplate, match);
+    }
+
+    protected boolean initializeFromMatch(JdbcDatastore datastore, NamedPattern<UrlPart> matchingUrlTemplate,
+            NamedPatternMatch<UrlPart> match) {
         _hostnameTextField.setText(match.get(UrlPart.HOSTNAME));
         _portTextField.setText(match.get(UrlPart.PORT));
         _databaseTextField.setText(match.get(UrlPart.DATABASE));
@@ -189,6 +216,24 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
 
         int row = -1;
 
+        row = layoutGridBagHostnameAndPort(panel, row);
+
+        if (showDatabaseAboveCredentials() && urlParts.contains(UrlPart.DATABASE)) {
+            row = layoutGridBagDatabase(panel, row);
+        }
+
+        return row;
+    }
+
+    protected int layoutGridBagDatabase(DCPanel panel, int row) {
+        row++;
+        WidgetUtils.addToGridBag(DCLabel.dark(getLabelForDatabase() + ":"), panel, 0, row);
+        WidgetUtils.addToGridBag(_databaseTextField, panel, 1, row);
+        return row;
+    }
+
+    protected int layoutGridBagHostnameAndPort(DCPanel panel, int row) {
+        final EnumSet<UrlPart> urlParts = getUrlParts();
         if (urlParts.contains(UrlPart.HOSTNAME)) {
             row++;
             WidgetUtils.addToGridBag(DCLabel.dark("Hostname:"), panel, 0, row);
@@ -200,13 +245,6 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
             WidgetUtils.addToGridBag(DCLabel.dark("Port:"), panel, 0, row);
             WidgetUtils.addToGridBag(_portTextField, panel, 1, row);
         }
-
-        if (showDatabaseAboveCredentials() && urlParts.contains(UrlPart.DATABASE)) {
-            row++;
-            WidgetUtils.addToGridBag(DCLabel.dark(getLabelForDatabase() + ":"), panel, 0, row);
-            WidgetUtils.addToGridBag(_databaseTextField, panel, 1, row);
-        }
-
         return row;
     }
 
@@ -215,10 +253,14 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
         final EnumSet<UrlPart> urlParts = getUrlParts();
 
         if (!showDatabaseAboveCredentials() && urlParts.contains(UrlPart.DATABASE)) {
-            row++;
-            WidgetUtils.addToGridBag(DCLabel.dark(getLabelForDatabase() + ":"), panel, 0, row);
-            WidgetUtils.addToGridBag(_databaseTextField, panel, 1, row);
+            row = layoutGridBagDatabase(panel, row);
         }
+
+        layoutGridBagParams(panel, row);
+    }
+
+    protected int layoutGridBagParams(DCPanel panel, int row) {
+        final EnumSet<UrlPart> urlParts = getUrlParts();
 
         if (urlParts.contains(UrlPart.PARAM1)) {
             row++;
@@ -243,6 +285,8 @@ public abstract class UrlTemplateDatabaseConnectionPresenter extends AbstractDat
             WidgetUtils.addToGridBag(DCLabel.dark(getLabelForParam4() + ":"), panel, 0, row);
             WidgetUtils.addToGridBag(_param4TextField, panel, 1, row);
         }
+
+        return row;
     }
 
     @Override

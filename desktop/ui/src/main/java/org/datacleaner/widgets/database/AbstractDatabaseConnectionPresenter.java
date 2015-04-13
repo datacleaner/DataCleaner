@@ -69,6 +69,15 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
         int row = layoutGridBagAboveCredentials(panel);
 
+        row = layoutGridBagCredentials(panel, row);
+
+        layoutGridBagBelowCredentials(panel, row);
+
+        JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
+        return scrolleable;
+    }
+
+    protected int layoutGridBagCredentials(DCPanel panel, int row) {
         row++;
         WidgetUtils.addToGridBag(DCLabel.dark("Username:"), panel, 0, row);
         WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row, 1.0, 0.0);
@@ -77,10 +86,7 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
         WidgetUtils.addToGridBag(DCLabel.dark("Password:"), panel, 0, row);
         WidgetUtils.addToGridBag(_passwordField, panel, 1, row, 1.0, 0.0);
 
-        layoutGridBagBelowCredentials(panel, row);
-
-        JScrollPane scrolleable = WidgetUtils.scrolleable(panel);
-        return scrolleable;
+        return row;
     }
 
     /**

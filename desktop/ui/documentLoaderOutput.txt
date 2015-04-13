@@ -3,100 +3,132 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-	
-	<h1>Pattern finder</h1> 
+
+	<h1>Pattern finder</h1>
 
 	<h4>Description : The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.
-It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column. </h4>
-	
+It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</h4>
+
 	<h3>Execution details:</h3>
-	<br> Can it be distributed ? 
-	<td> Yes </td>
+	<br> Can it be distributed ?
+	<td>yes</td>
 	<br>
 	<br> The properties are:
 	<table>
 		<tr>
-			<th>Name:</th>
+			<th>Name</th>
 			<th>Type</th>
-			<th>Description</th>
+			<th>What does it do ? </th>
+			<th>Do you have to set it ? </th>
 		</tr>
 		<tr>
 			<td>Column</td>
 			<td>InputColumn</td>
 			<td>
 				- </td>
+			<td>yes</td>
 		</tr>
+
 		<tr>
 			<td>Group column</td>
 			<td>InputColumn</td>
 			<td> Optional column to group patterns by </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Discriminate text case</td>
 			<td>Boolean</td>
 			<td> Separate text tokens based on case </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Discriminate negative numbers</td>
 			<td>Boolean</td>
 			<td> Separate number tokens based on negativity </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Discriminate decimals</td>
 			<td>Boolean</td>
 			<td> Separate number tokens for decimals </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Enable mixed tokens</td>
 			<td>Boolean</td>
 			<td> Use '?'-tokens for mixed text and numbers </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Ignore repeated spaces</td>
 			<td>Boolean</td>
 			<td> Ignore whitespace differences </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Upper case patterns expand in size</td>
 			<td>boolean</td>
 			<td> Auto-adjust/expand uppercase text tokens </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Lower case patterns expand in size</td>
 			<td>boolean</td>
 			<td> Auto-adjust/expand lowercase text tokens </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Predefined token name</td>
 			<td>String</td>
 			<td>
 				- </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Predefined token regexes</td>
 			<td>String[]</td>
 			<td>
 				- </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Decimal separator</td>
 			<td>Character</td>
 			<td>
 				- </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Thousands separator</td>
 			<td>Character</td>
 			<td>
 				- </td>
+			<td>no</td>
 		</tr>
+
 		<tr>
 			<td>Minus sign</td>
 			<td>Character</td>
 			<td>
 				- </td>
+			<td>no</td>
 		</tr>
+
+
+
+
 	</table>
-	<img  src=BufferedImage@1b266842: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 color space = java.awt.color.ICC_ColorSpace@7a3793c7 transparency = 3 has alpha = true isAlphaPre = false ByteInterleavedRaster: width = 32 height = 32 #numDataElements 4 dataOff[0] = 3>
+	<img src=BufferedImage@455b6df1: type = 6 ColorModel: #pixelBits = 32 numComponents = 4 color space = java.awt.color.ICC_ColorSpace@4ddbbdf8 transparency = 3 has alpha = true isAlphaPre = false ByteInterleavedRaster: width = 32 height = 32 #numDataElements 4 dataOff[0] = 3>
 </body>
 </html>

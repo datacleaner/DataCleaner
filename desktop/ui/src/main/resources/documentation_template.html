@@ -3,22 +3,22 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-	
-	<h1>${component.displayName}</h1> 
 
-	<h4>Description : ${component.description} </h4>
-	
+	<h1>${component.displayName}</h1>
+
+	<h4>Description : ${component.description}</h4>
+
 	<h3>Execution details:</h3>
-	<br> Can it be distributed ? 
-	<td><#if component.isDistributable()??> Yes <#else>
-				No </#if></td>
+	<br> Can it be distributed ?
+	<td>${component.distributable?string("yes", "no")}</td>
 	<br>
 	<br> The properties are:
 	<table>
 		<tr>
-			<th>Name:</th>
+			<th>Name</th>
 			<th>Type</th>
-			<th>Description</th>
+			<th>What does it do ? </th>
+			<th>Do you have to set it ? </th>
 		</tr>
 		<#list properties as property>
 		<tr>
@@ -26,9 +26,14 @@
 			<td>${property.type.simpleName}</td>
 			<td><#if property.description??> ${property.description} <#else>
 				- </#if></td>
+			<td>${property.required?string("yes", "no")}</td>
 		</tr>
+
 		</#list>
+
+
+
 	</table>
-	<img  src=${icon}>
+	<img src=${icon}>
 </body>
 </html>

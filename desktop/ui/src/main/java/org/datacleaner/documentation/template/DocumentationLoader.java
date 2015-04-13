@@ -65,16 +65,19 @@ public class DocumentationLoader {
     }
 
     public void createDocumentation(ComponentDescriptor<?> componentdescriptor) {
-
+        
+        
         try {
             _data.put("component", componentdescriptor);
             final Image image = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
             _data.put("icon", image); 
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();
-            List<ConfiguredPropertyDescriptor> propertiesList = new ArrayList<ConfiguredPropertyDescriptor>(
-                    configuredProperties);
-            _data.put("properties", propertiesList);
+            
+            if (configuredProperties !=null){
+                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(configuredProperties);    
+                _data.put("properties", properties);
+            }
 
             Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUT_FILENAME));
             _template.process(_data, out);

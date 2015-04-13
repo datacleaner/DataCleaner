@@ -46,6 +46,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -62,8 +63,6 @@ import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.StorageProvider;
@@ -159,7 +158,6 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
      * @param dataCleanerHome
      * @param configurationFile
      *            a configuration file override, or null if not requested
-     * 
      */
     public DCModuleImpl(final FileObject dataCleanerHome, FileObject configurationFile) {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
@@ -269,10 +267,18 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     @Deprecated
     @Provides
     public final org.datacleaner.configuration.AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(
-            @Undecorated DataCleanerConfiguration c, UserPreferences userPreferences,
+            @Undecorated DataCleanerConfiguration undecoratedConfiguration, UserPreferences userPreferences,
             InjectionManagerFactory injectionManagerFactory) {
-        return (org.datacleaner.configuration.AnalyzerBeansConfiguration) getDataCleanerConfiguration(c,
-                userPreferences, injectionManagerFactory);
+        final DataCleanerConfiguration c = getDataCleanerConfiguration(undecoratedConfiguration, userPreferences,
+                injectionManagerFactory);
+        final DatastoreCatalog datastoreCatalog = c.getDatastoreCatalog();
+        final ReferenceDataCatalog referenceDataCatalog = c.getReferenceDataCatalog();
+        final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
+        final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
+        final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
+        final DataCleanerHomeFolder homeFolder = c.getHomeFolder();
+        return new org.datacleaner.configuration.AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog,
+                descriptorProvider, taskRunner, storageProvider, injectionManagerFactory, homeFolder);
     }
 
     @Provides
@@ -302,15 +308,12 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
 
                     final StorageProvider storageProvider = c.getEnvironment().getStorageProvider();
 
-                    final File homeFolder = DataCleanerHome.getAsFile();
-                    final RepositoryFolder homeRepositoryFolder = new FileRepository(homeFolder);
-
                     final TaskRunner taskRunner = c.getEnvironment().getTaskRunner();
                     final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl(taskRunner,
                             descriptorProvider, storageProvider, injectionManagerFactory);
 
-                    _configuration = new DataCleanerConfigurationImpl(environment, homeRepositoryFolder,
-                            datastoreCatalog, referenceDataCatalog);
+                    _configuration = new DataCleanerConfigurationImpl(environment,
+                            DataCleanerHome.getAsDataCleanerHomeFolder(), datastoreCatalog, referenceDataCatalog);
                 }
             }
         }
@@ -320,7 +323,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
             if (environment.getInjectionManagerFactory() != injectionManagerFactory) {
                 // Ticket #905 and #925: Always replace the injection manager
                 // factory to ensure correct scope when doing injections.
-                final DataCleanerEnvironment replacementEnvironment = new DataCleanerEnvironmentImpl(environment).withInjectionManagerFactory(injectionManagerFactory);
+                final DataCleanerEnvironment replacementEnvironment = new DataCleanerEnvironmentImpl(environment)
+                        .withInjectionManagerFactory(injectionManagerFactory);
                 return ((DataCleanerConfigurationImpl) _configuration).withEnvironment(replacementEnvironment);
             }
         }

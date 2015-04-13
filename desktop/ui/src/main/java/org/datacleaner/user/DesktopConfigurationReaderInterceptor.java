@@ -22,6 +22,9 @@ package org.datacleaner.user;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -44,7 +47,11 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    public Repository getHomeFolder() {
+    public DataCleanerHomeFolder getHomeFolder() {
+        return new DataCleanerHomeFolderImpl(getHomeRepository());
+    }
+
+    private Repository getHomeRepository() {
         return new VfsRepository(_dataCleanerHome);
     }
 
@@ -60,7 +67,7 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
         if (ClassLoaderUtils.IS_WEB_START) {
             handlers.add(new DummyRepositoryResourceFileTypeHandler());
         } else {
-            final Repository homeFolder = getHomeFolder();
+            final Repository homeFolder = getHomeRepository();
             handlers.add(new RepositoryFileResourceTypeHandler(homeFolder, homeFolder));
         }
         return handlers;

@@ -24,9 +24,11 @@ import java.util.List;
 
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.repository.Repository;
-import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
@@ -55,13 +57,15 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
 
     @Override
     protected File getRelativeParentDirectory() {
-        final File relativeParentDirectory = super.getRelativeParentDirectory();
-        if (relativeParentDirectory == null) {
-            final String userHome = System.getProperty("user.home");
-            final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId();
-            return new File(result);
+        if (_repository instanceof FileRepository) {
+            return super.getRelativeParentDirectory();
         }
-        return relativeParentDirectory;
+
+        // repository is not file based - we suggest to use a tenant-specific
+        // folder inside user home.
+        final String userHome = System.getProperty("user.home");
+        final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId();
+        return new File(result);
     }
 
     @Override
@@ -93,7 +97,7 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    public RepositoryFolder getHomeFolder() {
-        return _tenantContext.getTenantRootFolder();
+    public DataCleanerHomeFolder getHomeFolder() {
+        return new DataCleanerHomeFolderImpl(_tenantContext.getTenantRootFolder());
     }
 }

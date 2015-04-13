@@ -1,20 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
 	
-	<h1>${componentname}</h1> 
+	<h1>${component.displayName}</h1> 
 
-	<h4>Description : ${description} </h4>
+	<h4>Description : ${component.description} </h4>
 	
 	<h3>Execution details:</h3>
 	<br> Can it be distributed ? 
-	<td><#if isDistributable??> Yes <#else>
+	<td><#if component.isDistributable()??> Yes <#else>
 				No </#if></td>
-	
 	<br>
 	<br> The properties are:
 	<table>
@@ -26,11 +23,12 @@
 		<#list properties as property>
 		<tr>
 			<td>${property.name}</td>
-			<td>${property.type}</td>
+			<td>${property.type.simpleName}</td>
 			<td><#if property.description??> ${property.description} <#else>
 				- </#if></td>
 		</tr>
 		</#list>
 	</table>
+	<img  src=${icon}>
 </body>
 </html>

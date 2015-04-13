@@ -20,6 +20,7 @@
 
 package org.datacleaner.documentation.template;
 
+import java.awt.Image;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +52,14 @@ public class DocumentationLoader {
 
     DocumentationLoader() {
 
-        Configuration cfg = new Configuration();
+        final Configuration cfg = new Configuration();
         try {
+           /* final FileResource fileResource = new FileResource(new File(
+                    "/src/main/resources/documentation_template.html").getCanonicalPath()); */
             // Load the template
             _template = cfg.getTemplate(FILENAME_TEMPLATE);
             _data = new HashMap<String, Object>();
-        }
-
-        catch (Exception exception) {
+        } catch (Exception exception) {
             logger.debug("Exception while trying to initialize the template:", exception);
         }
     }
@@ -65,21 +67,19 @@ public class DocumentationLoader {
     public void createDocumentation(ComponentDescriptor<?> componentdescriptor) {
 
         try {
-            _data.put("componentname", componentdescriptor.getDisplayName());
-            _data.put("description", componentdescriptor.getDescription());
-            _data.put("icon", "loading icon"); // TODO - add an icon
-            _data.put("isDistributable", "" + componentdescriptor.isDistributable());
+            _data.put("component", componentdescriptor);
+            final Image image = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
+            _data.put("icon", image); 
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();
             List<ConfiguredPropertyDescriptor> propertiesList = new ArrayList<ConfiguredPropertyDescriptor>(
                     configuredProperties);
-
-            logger.info("properties are: {}", propertiesList.toString());
             _data.put("properties", propertiesList);
 
             Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUT_FILENAME));
             _template.process(_data, out);
             out.flush();
+            out.close();
 
         } catch (IOException exception) {
             logger.debug("Exception while writing to the file:", exception);

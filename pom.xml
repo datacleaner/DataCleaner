@@ -703,6 +703,11 @@
 				<artifactId>guice</artifactId>
 				<version>3.0</version>
 			</dependency>
+			<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+		</dependency>
 
 			<!-- logging dependencies -->
 			<dependency>

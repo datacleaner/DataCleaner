@@ -322,8 +322,8 @@ public class StringConverterTest extends TestCase {
         o.add("bar");
         o.add(Arrays.asList("baz", "foobar"));
 
-        StringConverter converter = new StringConverter(null);
-        String result = converter.serialize(o);
+        final StringConverter converter = StringConverter.simpleInstance();
+        final String result = converter.serialize(o);
         assertEquals("[foo,bar,[baz,foobar]]", result);
     }
 }

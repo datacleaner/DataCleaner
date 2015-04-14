@@ -34,8 +34,10 @@ import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.stringpattern.PatternFinderResult;
 import org.datacleaner.beans.stringpattern.PatternFinderResultTextRenderer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
@@ -55,9 +57,10 @@ import org.datacleaner.test.TestHelper;
 public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
     public void testScenario() throws Throwable {
-        TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
-
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
+        
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
         DatastoreConnection con = datastore.openConnection();

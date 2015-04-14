@@ -33,8 +33,10 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.transform.TokenizerTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
@@ -52,32 +54,34 @@ import org.datacleaner.test.TestHelper;
 public class TokenizerAndValueDistributionTest extends TestCase {
 
     public void testScenario() throws Throwable {
-        TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
+        final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
 
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
-        AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 
-        Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
-        DatastoreConnection con = datastore.openConnection();
-        DataContext dc = con.getDataContext();
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
+        final DatastoreConnection con = datastore.openConnection();
+        final DataContext dc = con.getDataContext();
 
-        AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
+        final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastoreConnection(con);
 
-        Table table = dc.getDefaultSchema().getTableByName("EMPLOYEES");
+        final Table table = dc.getDefaultSchema().getTableByName("EMPLOYEES");
         assertNotNull(table);
 
-        Column jobTitleColumn = table.getColumnByName("JOBTITLE");
+        final Column jobTitleColumn = table.getColumnByName("JOBTITLE");
         assertNotNull(jobTitleColumn);
 
         analysisJobBuilder.addSourceColumns(jobTitleColumn);
 
-        TransformerComponentBuilder<TokenizerTransformer> transformerJobBuilder = analysisJobBuilder
+        final TransformerComponentBuilder<TokenizerTransformer> transformerJobBuilder = analysisJobBuilder
                 .addTransformer(TokenizerTransformer.class);
         transformerJobBuilder.addInputColumn(analysisJobBuilder.getSourceColumns().get(0));
         transformerJobBuilder.setConfiguredProperty("Number of tokens", 4);
-        List<MutableInputColumn<?>> transformerOutput = transformerJobBuilder.getOutputColumns();
+
+        final List<MutableInputColumn<?>> transformerOutput = transformerJobBuilder.getOutputColumns();
         assertEquals(4, transformerOutput.size());
 
         transformerOutput.get(0).setName("first word");
@@ -85,8 +89,8 @@ public class TokenizerAndValueDistributionTest extends TestCase {
         transformerOutput.get(2).setName("third words");
         transformerOutput.get(3).setName("fourth words");
 
-        for (InputColumn<?> inputColumn : transformerOutput) {
-            AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
+        for (final InputColumn<?> inputColumn : transformerOutput) {
+            final AnalyzerComponentBuilder<ValueDistributionAnalyzer> valueDistribuitionJobBuilder = analysisJobBuilder
                     .addAnalyzer(ValueDistributionAnalyzer.class);
             valueDistribuitionJobBuilder.addInputColumn(inputColumn);
             valueDistribuitionJobBuilder.setConfiguredProperty("Record unique values", true);
@@ -94,34 +98,35 @@ public class TokenizerAndValueDistributionTest extends TestCase {
             valueDistribuitionJobBuilder.setConfiguredProperty("Bottom n most frequent values", null);
         }
 
-        AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
+        final AnalysisJob analysisJob = analysisJobBuilder.toAnalysisJob();
         analysisJobBuilder.close();
 
-        AnalysisResultFuture resultFuture = runner.run(analysisJob);
+        final AnalysisResultFuture resultFuture = runner.run(analysisJob);
 
         assertFalse(resultFuture.isDone());
 
-        List<AnalyzerResult> results = resultFuture.getResults();
+        final List<AnalyzerResult> results = resultFuture.getResults();
 
         assertTrue(resultFuture.isDone());
 
         if (!resultFuture.isSuccessful()) {
-            List<Throwable> errors = resultFuture.getErrors();
+            final List<Throwable> errors = resultFuture.getErrors();
             throw errors.get(0);
         }
 
         // expect 1 result for each token
         assertEquals(4, results.size());
 
-        for (AnalyzerResult analyzerResult : results) {
-            ValueDistributionAnalyzerResult result = (ValueDistributionAnalyzerResult) analyzerResult;
-            Collection<String> uniqueValues = new TreeSet<String>(result.getUniqueValues());
+        for (final AnalyzerResult analyzerResult : results) {
+            final ValueDistributionAnalyzerResult result = (ValueDistributionAnalyzerResult) analyzerResult;
+            final Collection<String> uniqueValues = new TreeSet<String>(result.getUniqueValues());
             if ("first word".equals(result.getName())) {
                 assertEquals("[[Sales->19], [VP->2], [<unique>->2]]", result.getValueCounts().toString());
                 assertEquals(0, result.getNullCount());
                 assertEquals(2, result.getUniqueCount().intValue());
             } else if ("second word".equals(result.getName())) {
-                assertEquals("[[Rep->17], [Manager->3], [<unique>->2], [<null>->1]]", result.getValueCounts().toString());
+                assertEquals("[[Rep->17], [Manager->3], [<unique>->2], [<null>->1]]", result.getValueCounts()
+                        .toString());
                 assertEquals(1, result.getNullCount());
                 assertEquals(2, result.getUniqueCount().intValue());
             } else if ("third words".equals(result.getName())) {

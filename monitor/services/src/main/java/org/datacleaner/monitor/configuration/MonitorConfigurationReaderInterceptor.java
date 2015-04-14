@@ -28,8 +28,10 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.slf4j.Logger;
@@ -68,25 +70,19 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    public String createFilename(String filename) {
-        if (isAbsolute(filename)) {
-            return super.createFilename(filename);
-        }
-
-        if (_tenantContext.getTenantRootFolder() instanceof FileRepositoryFolder) {
-            // for FileRepository implementations, the super
-            // implementation will also "just work" because of the above
-            // getRelativeParentDirectory method.
-            return super.createFilename(filename);
+    protected FileResolver createFileResolver() {
+        final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
+        if (tenantRootFolder instanceof FileRepositoryFolder) {
+            return super.createFileResolver();
         }
 
         final String userHome = System.getProperty("user.home");
-        final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId()
-                + File.separator + filename;
+        final String directoryName = userHome + File.separator + ".datacleaner/repository/"
+                + _tenantContext.getTenantId();
 
-        logger.warn("File path is relative, but repository is not file-based: {}. Returning: {}", filename, result);
+        logger.warn("Repository is not file-based. Using directory: {}", directoryName);
 
-        return result;
+        return new FileResolver(new File(directoryName));
     }
 
     @Override
@@ -104,12 +100,5 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     @Override
     public DataCleanerHomeFolder getHomeFolder() {
         return new DataCleanerHomeFolderImpl(_tenantContext.getTenantRootFolder());
-    }
-
-    private boolean isAbsolute(String filename) {
-        assert filename != null;
-
-        File file = new File(filename);
-        return file.isAbsolute();
     }
 }

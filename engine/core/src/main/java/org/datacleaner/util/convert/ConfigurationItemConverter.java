@@ -27,6 +27,7 @@ import static org.datacleaner.util.ReflectionUtils.isTable;
 import javax.inject.Inject;
 
 import org.datacleaner.api.Converter;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
@@ -67,6 +68,15 @@ public class ConfigurationItemConverter implements Converter<Object> {
 
     @Inject
     Datastore datastore;
+
+    protected ConfigurationItemConverter() {
+    }
+    
+    public ConfigurationItemConverter(DataCleanerConfiguration configuration, Datastore datastore) {
+        this.datastoreCatalog = configuration.getDatastoreCatalog();
+        this.referenceDataCatalog = configuration.getReferenceDataCatalog();
+        this.datastore = datastore;
+    }
 
     @Override
     public Object fromString(Class<?> type, String str) {

@@ -23,12 +23,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFileResource;
 import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
@@ -85,10 +86,7 @@ public class TenantInjectionManager implements InjectionManager {
     }
 
     private File getRelativeParentDirectory() {
-        final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
-        if (tenantRootFolder instanceof FileRepositoryFolder) {
-            return ((FileRepositoryFolder) tenantRootFolder).getFile();
-        }
-        return null;
+        final DataCleanerHomeFolder homeFolder = _tenantContext.getConfiguration().getHomeFolder();
+        return new FileResolver(homeFolder).getBaseDirectory();
     }
 }

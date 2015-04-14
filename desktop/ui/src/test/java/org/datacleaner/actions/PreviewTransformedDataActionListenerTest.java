@@ -28,8 +28,9 @@ import org.datacleaner.beans.filter.StringLengthRangeFilter;
 import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.beans.transform.TokenizerTransformer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.JdbcDatastore;
@@ -58,7 +59,8 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
         descriptorProvider.addFilterBeanDescriptor(Descriptors.ofFilter(StringLengthRangeFilter.class));
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(TokenizerTransformer.class));
-        configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog).replace(descriptorProvider);
+        configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
         analysisJobBuilder = new AnalysisJobBuilder(configuration);
         analysisJobBuilder.setDatastore("orderdb");

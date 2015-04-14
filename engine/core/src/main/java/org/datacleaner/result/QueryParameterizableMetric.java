@@ -45,9 +45,9 @@ public abstract class QueryParameterizableMetric implements ParameterizableMetri
         final String trimmedParameter = parameter.trim();
         final Matcher matcher = _pattern.matcher(trimmedParameter);
         if (matcher.matches()) {
-            String group = matcher.group(2);
-            StringConverter conv = new StringConverter(null);
-            String[] values = conv.deserialize(group, String[].class);
+            final String group = matcher.group(2);
+            final StringConverter conv = StringConverter.simpleInstance();
+            final String[] values = conv.deserialize(group, String[].class);
             int sum = 0;
             for (String value : values) {
                 sum += getInstanceCount(value);

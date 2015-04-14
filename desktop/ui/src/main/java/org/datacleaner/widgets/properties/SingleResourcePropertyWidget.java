@@ -29,6 +29,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.StringUtils;
@@ -180,7 +181,8 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
      * @return
      */
     protected ResourceConverter getResourceConverter() {
-        return new ResourceConverter();
+        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
+        return new ResourceConverter(configuration);
     }
 
     @Override

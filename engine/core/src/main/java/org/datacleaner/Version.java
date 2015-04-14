@@ -22,8 +22,8 @@ package org.datacleaner;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.datacleaner.util.SystemProperties;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.util.SystemProperties;
 
 import com.google.common.base.Strings;
 
@@ -33,13 +33,13 @@ import com.google.common.base.Strings;
 public class Version {
 
     private static final String VERSION;
+    private static final String DISTRIBUTION_VERSION;
     private static final String EDITION;
 
     static {
         VERSION = determineVersion();
         EDITION = determineEdition();
-
-        System.out.println("DataCleaner " + EDITION + " version: " + VERSION);
+        DISTRIBUTION_VERSION = determineDistributionVersion();
     }
 
     public static final String EDITION_COMMUNITY = "Community edition";
@@ -61,26 +61,55 @@ public class Version {
     public static String getEdition() {
         return EDITION;
     }
+    
+    public static String getDistributionVersion() {
+        return DISTRIBUTION_VERSION;
+    }
 
     public static String getLicenseKey() {
         return System.getProperty(SystemProperties.LICENSE_KEY);
     }
 
+    private static String determineDistributionVersion() {
+        String version = null;
+
+        // try commercial editions packaging
+        if (version == null) {
+            version = determineVersionFromMavenProperties("com.hi.datacleaner",
+                    "DataCleaner-enterprise-edition-core-components", null);
+        }
+
+        // try community edition packaging
+        if (version == null) {
+            version = determineVersionFromMavenProperties("com.hi.datacleaner", "DataCleaner-desktop-app", null);
+        }
+
+        // fallback to core version
+        if (version == null) {
+            version = determineVersion();
+        }
+        return version;
+    }
+
     private static String determineVersion() {
+        return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", "UNKNOWN");
+    }
+
+    private static String determineVersionFromMavenProperties(String groupId, String artifactId, String valueIfNull) {
         final Properties properties = new Properties();
-        final InputStream inputStream = Version.class
-                .getResourceAsStream("/META-INF/maven/org.eobjects.datacleaner/DataCleaner-api/pom.properties");
+        final String resourcePath = "/META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
+        final InputStream inputStream = Version.class.getResourceAsStream(resourcePath);
         try {
             properties.load(inputStream);
         } catch (Exception e) {
             // do nothing
             System.err.println("Failed to load DataCleaner version from manifest: " + e.getMessage());
-            return "UNKNOWN";
+            return valueIfNull;
         } finally {
             FileHelper.safeClose(inputStream);
         }
 
-        final String version = properties.getProperty("version");
+        final String version = properties.getProperty("version", valueIfNull);
         return version;
     }
 

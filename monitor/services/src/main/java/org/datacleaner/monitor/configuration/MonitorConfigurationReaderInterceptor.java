@@ -25,25 +25,17 @@ import java.util.List;
 import org.datacleaner.configuration.ConfigurationReaderInterceptor;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerHomeFolder;
-import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.repository.Repository;
-import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
-import org.datacleaner.repository.file.FileRepositoryFolder;
-import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link ConfigurationReaderInterceptor} with overrides suitable for the
  * DataCleaner monitor webapp.
  */
 public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
-
-    private static final Logger logger = LoggerFactory.getLogger(MonitorConfigurationReaderInterceptor.class);
 
     private final TenantContext _tenantContext;
     private final DataCleanerEnvironment _environment;
@@ -70,22 +62,6 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    protected FileResolver createFileResolver() {
-        final RepositoryFolder tenantRootFolder = _tenantContext.getTenantRootFolder();
-        if (tenantRootFolder instanceof FileRepositoryFolder) {
-            return super.createFileResolver();
-        }
-
-        final String userHome = System.getProperty("user.home");
-        final String directoryName = userHome + File.separator + ".datacleaner/repository/"
-                + _tenantContext.getTenantId();
-
-        logger.warn("Repository is not file-based. Using directory: {}", directoryName);
-
-        return new FileResolver(new File(directoryName));
-    }
-
-    @Override
     protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
         List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
         handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
@@ -99,6 +75,6 @@ public class MonitorConfigurationReaderInterceptor extends DefaultConfigurationR
 
     @Override
     public DataCleanerHomeFolder getHomeFolder() {
-        return new DataCleanerHomeFolderImpl(_tenantContext.getTenantRootFolder());
+        return new TenantHomeFolder(_tenantContext.getTenantRootFolder());
     }
 }

@@ -7,7 +7,8 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.datacleaner" level="info" />
+	<logger name="org.datacleaner.monitor" level="info" />
+	<logger name="org.datacleaner" level="warn" />
 	<logger name="org.datacleaner.descriptors.DCClassVisitor" level="error" />
 
 	<root level="warn">

@@ -105,11 +105,13 @@ public class ResourceConverter implements Converter<Resource> {
     /**
      * Constructs a {@link ResourceConverter} using a default set of handlers
      * 
-     * @deprecated use another constructor instead
+     * @deprecated use {@link #ResourceConverter(DataCleanerConfiguration)},
+     *             {@link #ResourceConverter(Collection)} or
+     *             {@link #ResourceConverter(ResourceTypeHandler...)} instead.
      */
     @Deprecated
     public ResourceConverter() {
-        this(new DataCleanerConfigurationImpl(), DEFAULT_DEFAULT_SCHEME);
+        this(new DataCleanerConfigurationImpl());
     }
 
     public ResourceConverter(DataCleanerConfiguration configuration) {

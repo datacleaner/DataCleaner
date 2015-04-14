@@ -5,13 +5,14 @@
 </head>
 <body>
 
-	<h1>${component.displayName}</h1>
+	<h1><image src=${icon} alt="Image">
+	${component.displayName}</h1>
 
 	<h4>${component.description}</h4>
 
 	<h3>Execution details</h3>
-	Can it be distributed ?
-	<br /> ${component.distributable?string("Yes", "No")}
+	- Can it be distributed ? <br />
+	- ${component.distributable?string("Yes", "No")}
 	<h3>Properties</h3>
 	<table>
 		<tr>

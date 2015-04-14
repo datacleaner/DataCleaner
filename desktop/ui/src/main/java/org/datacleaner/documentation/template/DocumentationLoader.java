@@ -20,16 +20,21 @@
 
 package org.datacleaner.documentation.template;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -44,10 +49,11 @@ import freemarker.template.TemplateException;
 public class DocumentationLoader {
 
     private static final String FILENAME_TEMPLATE = "documentation_template.html";
-    static final String OUTPUT_FILENAME = "documentLoaderOutput.txt";
+    protected static final String OUTPUT_FILENAME = "documentLoaderOutput.txt";
+    private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
 
     private Template _template;
-    private Map<String, Object> _data;
+    private final Map<String, Object> _data = new HashMap<String, Object>();;
     private static Logger logger = LoggerFactory.getLogger(DocumentationLoader.class);
 
     DocumentationLoader() {
@@ -58,9 +64,10 @@ public class DocumentationLoader {
         try {
             // Load the template
             _template = freemarkerConfiguration.getTemplate(FILENAME_TEMPLATE);
-            _data = new HashMap<String, Object>();
+
         } catch (Exception exception) {
             logger.debug("Exception while trying to initialize the template:", exception);
+
         }
     }
 
@@ -68,9 +75,6 @@ public class DocumentationLoader {
 
         try {
             _data.put("component", componentdescriptor);
-            final URL descriptorIconPath = IconUtils.getDescriptorIconPath(componentdescriptor);
-            _data.put("icon",  descriptorIconPath);
-            
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();
 
@@ -80,6 +84,26 @@ public class DocumentationLoader {
                 _data.put("properties", properties);
             }
 
+            final Image descriptorIcon = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
+
+            /*We need a buffered image type in order to obtain the */
+            final BufferedImage bufferedImage = toBufferedImage(descriptorIcon);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", baos);
+            byte[] imageInByte = baos.toByteArray();
+            baos.flush();
+            baos.close();
+
+            /*Encode the image    */
+            final byte[] bytesEncoded = java.util.Base64.getEncoder().encode(imageInByte);
+            final String encodedImage = new String(bytesEncoded);
+
+            /* Atach the prefix that will make html <img> know how to decode the image */
+            final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
+
+            _data.put("icon", iconHtmlRepresentation);
+            
+            /* Write data to a file */
             Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUT_FILENAME));
             _template.process(_data, out);
             out.flush();
@@ -91,5 +115,28 @@ public class DocumentationLoader {
         } catch (TemplateException exception) {
             logger.debug("Exception while loading the template:", exception);
         }
+    }
+
+    /**
+     * Used to convert an image object to buffered image.
+     * 
+     * @param image
+     * @return buffered image
+     */
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null),
+                BufferedImage.TYPE_INT_ARGB);
+
+        final Graphics2D bufferedGraphics = bufferedImage.createGraphics();
+        bufferedGraphics.drawImage(image, 0, 0, null);
+        bufferedGraphics.dispose();
+
+        // Return the buffered image
+        return bufferedImage;
     }
 }

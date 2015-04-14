@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-desktop</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.0.1</version>
 	</parent>
 	<artifactId>DataCleaner-desktop-api</artifactId>
 	<packaging>jar</packaging>

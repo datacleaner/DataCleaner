@@ -15,13 +15,39 @@
 	</chapterinfo>
 
 	<section id="multi_tenant_layout">
-		<title>Multi-tenant layout</title>
+		<title>
+			Multi-tenant layout
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
 		<para>The DataCleaner repository layout, used by the monitoring web
 			application, is built to support multi-tenant deployments. Therefore,
 			on the root level of the repository, folders are located which each
 			represent a tenant's separate home folder. Users from one tenant are
 			not able to access files or folders from other tenant's home folders.
 		</para>
+		<para>By default the server is configured as a single-tenant instance.
+			In the Enterprise Edition of DataCleaner this can be reconfigured in
+			the following ways:</para>
+		<orderedlist>
+			<listitem>
+				<para>Tenant per user: This provides a completely separated
+					workspace for each user of the monitor server.</para>
+			</listitem>
+			<listitem>
+				<para>Manual user groups: A configuration where the tenants are
+					manually configured using a list of usernames.</para>
+			</listitem>
+			<listitem>
+				<para>Dynamic tenant management: For customers we can provide
+					dynamic tenant management modules that advice with e.g. LDAP
+					systems to determine the tenant of any particular user.</para>
+			</listitem>
+		</orderedlist>
 	</section>
 
 	<section id="tenant_home_layout">

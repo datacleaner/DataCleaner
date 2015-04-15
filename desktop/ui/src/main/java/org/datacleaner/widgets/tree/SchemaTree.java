@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -103,6 +104,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
+
+    private String _searchTerm = "";
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
@@ -273,6 +276,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                     .getComponentDescriptorsOfSuperCategory(superCategory);
 
+            final List<ComponentDescriptor<?>> filteredComponentDescriptors = new ArrayList<>();
+
+            for (ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
+                if (componentDescriptor.getDisplayName().contains(_searchTerm)) {
+                    filteredComponentDescriptors.add(componentDescriptor);
+                }
+            }
+
             final Map<ComponentCategory, DefaultMutableTreeNode> categoryTreeNodes = new HashMap<>();
 
             MenuCallback menuCallback = new MenuCallback() {
@@ -300,7 +311,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 }
             };
 
-            DescriptorMenuBuilder.createMenuStructure(menuCallback, componentDescriptors, true);
+            DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, true);
 
         }
         return libraryRoot;
@@ -585,5 +596,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         DefaultTreeModel model = (DefaultTreeModel) getModel();
         model.reload(libraryNode);
         expandStandardPaths();
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        _searchTerm = searchTerm;
+        updateTree();
     }
 }

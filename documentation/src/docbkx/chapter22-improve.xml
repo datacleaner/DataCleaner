@@ -106,12 +106,6 @@
 		<section>
 			<title>
 				'Model training' mode
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="notice_commercial_editions_only.png"
-							format="PNG" />
-					</imageobject>
-				</inlinemediaobject>
 			</title>
 
 			<para>
@@ -368,12 +362,6 @@
 		<section>
 			<title>
 				'Detection' mode
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="notice_commercial_editions_only.png"
-							format="PNG" />
-					</imageobject>
-				</inlinemediaobject>
 			</title>
 			<para>When the matching model is complete you are ready to find all
 				the duplicates in the dataset, usie the Duplicate Detection
@@ -418,12 +406,6 @@
 		<section>
 			<title>
 				'Untrained detection' mode
-				<inlinemediaobject>
-					<imageobject>
-						<imagedata fileref="notice_commercial_editions_only.png"
-							format="PNG" />
-					</imageobject>
-				</inlinemediaobject>
 			</title>
 			<para>Finally, there's also a 'Untrained detection' mode. This allows
 				you to skip 'Model training' and just ask the application to do it's
@@ -483,6 +465,383 @@
 		</para>
 	</section>
 
+	<section id="DE_suppression">
+		<title>
+			DE Address Correction/Suppression
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<para>This component provides Address Correction and Suppression
+			services for Germany. Use it to check that the name and address data
+			you have about people is up to date and correct. The following
+			Address suppression checks currently exist:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>Change of Address (with new address) check</para>
+			</listitem>
+			<listitem>
+				<para>Moved Away (without new address) check</para>
+			</listitem>
+			<listitem>
+				<para>Deceased check</para>
+			</listitem>
+		</orderedlist>
+		<tip>
+			<para>Customers need a set of credentials to access the service.
+			</para>
+		</tip>
+		<section>
+			<title>
+				Address and suppression data sources
+			</title>
+			<para>The service combines data of several sources, including
+				Deutsche
+				Post.
+			</para>
+		</section>
+		<section>
+			<title>
+				Output
+			</title>
+			<para>This component outputs name and address fields, in addition to
+				the following indicators:
+			</para>
+
+			<table>
+				<title>DE Address Correction/Suppression output</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Output column</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>Address validation status</entry>
+							<entry>
+								The status code of the record. Following values are possible:
+								<orderedlist>
+									<listitem>
+										Valid
+									</listitem>
+									<listitem>
+										Corrected to valid
+									</listitem>
+									<listitem>
+										Ambigiuous
+									</listitem>
+									<listitem>
+										Invalid
+									</listitem>
+									<listitem>
+										Not processed
+									</listitem>
+									<listitem>
+										Failure
+									</listitem>
+									<listitem>
+										Unknown
+									</listitem>
+								</orderedlist>
+							</entry>
+						</row>
+						<row>
+							<entry>Is moved?</entry>
+							<entry>A boolean flag indicating if the person has moved to a
+								new
+								address.
+							</entry>
+						</row>
+						<row>
+							<entry>Is moved to unknown address?</entry>
+							<entry>A boolean flag indicating if the person has moved away
+								(with no known new address).
+							</entry>
+						</row>
+						<row>
+							<entry>Is deceased?</entry>
+							<entry>A boolean flag indicating if the person is deceased.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</section>
+	</section>
+
+	<section id="UK_suppression">
+		<title>
+			UK Address Correction/Suppression
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<para>This component provides Address Correction and Suppression
+			services for the United Kingdom / Great Britain. Use it to check that
+			the name and address data you have about people is up to date and
+			correct. The following Address suppression checks currently exist:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>Change of Address (with new address) check</para>
+			</listitem>
+			<listitem>
+				<para>Moved Away (without new address) check</para>
+			</listitem>
+			<listitem>
+				<para>Deceased check</para>
+			</listitem>
+			<listitem>
+				<para>Mailing Preference Service (MPS) check</para>
+			</listitem>
+		</orderedlist>
+		<tip>
+			<para>Customers need a set of credentials to access the service.
+			</para>
+		</tip>
+		<section>
+			<title>
+				Address and suppression data sources
+			</title>
+			<para>The service combines data of several sources, including
+				Royal
+				Mail, MPS and the Bereavement registry.
+			</para>
+			<para>The service allows you to get a Price Quotation including
+				summary statistics about the expected results before accepting it:
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="analyzer_reference_uksuppression_report.jpg"
+						format="JPG" scalefit="1" />
+				</imageobject>
+			</mediaobject>
+
+		</section>
+		<section>
+			<title>
+				Output
+			</title>
+			<para>This component outputs name and address fields, in addition to
+				the following indicators:
+			</para>
+
+			<table>
+				<title>DE Address Correction/Suppression output</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Output column</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>Address validation status</entry>
+							<entry>
+								A numeric status code of the record. Following value ranges are
+								possible:
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>0 - 10</emphasis>
+											: The address is valid.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>11 - 100</emphasis>
+											: The address was corrected.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>101 - 500</emphasis>
+											: The address is invalid.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>700</emphasis>
+											: The address was not processed / skipped.
+										</para>
+									</listitem>
+								</orderedlist>
+							</entry>
+						</row>
+						<row>
+							<entry>AddressCorrectionMessage</entry>
+							<entry>A humanly readable message about the address correction
+								outcome.
+							</entry>
+						</row>
+						<row>
+							<entry>IsNCOATracked</entry>
+							<entry>A boolean flag indicating if the person has moved to a
+								new
+								address.
+							</entry>
+						</row>
+						<row>
+							<entry>IsNCOAFlagged</entry>
+							<entry>A boolean flag indicating if the person has moved away
+								(with no known new address).
+							</entry>
+						</row>
+						<row>
+							<entry>IsDeceased</entry>
+							<entry>A boolean flag indicating if the person is deceased.
+							</entry>
+						</row>
+						<row>
+							<entry>IsDoNotMail</entry>
+							<entry>A boolean flag indicating if the person does not want to
+								receive unsolicited mail.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</section>
+	</section>
+	
+		<section id="US_suppression">
+		<title>
+			US Address Correction/Suppression
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<para>This component provides CASS Certified(tm) Address Correction and Suppression
+			services for the United States of America. Use it to check that
+			the name and address data you have about people is up to date and
+			correct. The following Address suppression checks currently exist:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>Change of Address check</para>
+			</listitem>
+			<listitem>
+				<para>Deceased check</para>
+			</listitem>
+			<listitem>
+				<para>Do-Not-Mail check</para>
+			</listitem>
+		</orderedlist>
+		<tip>
+			<para>Customers need a set of credentials to access the service.
+			</para>
+		</tip>
+		<section>
+			<title>
+				Address and suppression data sources
+			</title>
+			<para>The service combines data of several sources, including
+				the US Postal Service.
+			</para>
+		</section>
+		<section>
+			<title>
+				Output
+			</title>
+			<para>This component outputs name and address fields, in addition to
+				the following indicators:
+			</para>
+
+			<table>
+				<title>DE Address Correction/Suppression output</title>
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>Output column</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					<tbody>
+						<row>
+							<entry>Address validation status</entry>
+							<entry>
+								A numeric status code of the record. Following value ranges are
+								possible:
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>0 - 10</emphasis>
+											: The address is valid.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>11 - 100</emphasis>
+											: The address was corrected.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>101 - 500</emphasis>
+											: The address is invalid.
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>700</emphasis>
+											: The address was not processed / skipped.
+										</para>
+									</listitem>
+								</orderedlist>
+							</entry>
+						</row>
+						<row>
+							<entry>AddressCorrectionMessage</entry>
+							<entry>A humanly readable message about the address correction
+								outcome.
+							</entry>
+						</row>
+						<row>
+							<entry>EcoaFootnote</entry>
+							<entry>An indicator value telling what the outcome of the 'Change of Address' check was. The following tokens can occur:
+							<orderedlist>
+								<listitem><para><emphasis>N</emphasis> - No change</para></listitem>
+								<listitem><para><emphasis>M</emphasis> - The party has a new address</para></listitem>
+								<listitem><para><emphasis>K</emphasis> - The party has moved away without a new address</para></listitem>
+							</orderedlist>
+							<para>Furthermore the field may have a token representing the type of party that was identified:</para>
+							<orderedlist>
+								<listitem><para><emphasis>I</emphasis> - Individual</para></listitem>
+								<listitem><para><emphasis>F</emphasis> - Family</para></listitem>
+								<listitem><para><emphasis>B</emphasis> - Business</para></listitem>
+							</orderedlist>
+							</entry>
+						</row>
+						<row>
+							<entry>IsDeceased</entry>
+							<entry>A boolean flag indicating if the person is deceased.
+							</entry>
+						</row>
+						<row>
+							<entry>IsDoNotMail</entry>
+							<entry>A boolean flag indicating if the person does not want to
+								receive unsolicited mail.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</section>
+	</section>
+
 	<section id="easydq_transformers">
 		<title>Name and Address correction</title>
 		<para>
@@ -497,7 +856,8 @@
 		<para>
 			Please refer to the
 			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
-			for detailed information about the services provided through EasyDQ.
+			for detailed information about the services provided through
+			EasyDQ.
 		</para>
 
 		<mediaobject>

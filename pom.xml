@@ -510,6 +510,12 @@
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-hbase</artifactId>
 				<version>${metamodel.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>jdk.tools</groupId>
+						<artifactId>jdk.tools</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.eobjects.metamodel-extras</groupId>

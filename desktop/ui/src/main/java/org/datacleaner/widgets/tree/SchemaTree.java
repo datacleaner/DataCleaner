@@ -28,6 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -598,8 +599,19 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         expandStandardPaths();
     }
 
-    public void setSearchTerm(String searchTerm) {
+    public void filter(String searchTerm) {
         _searchTerm = searchTerm;
         updateTree();
+        expandStandardPaths();
+
+        final TreeNode root = (TreeNode) getModel().getRoot();
+        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
+        Enumeration<?> depthFirstEnumeration = libraryNode
+                .depthFirstEnumeration();
+        while (depthFirstEnumeration.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
+            TreePath treePath = new TreePath(node.getPath());
+            expandPath(treePath);
+        }
     }
 }

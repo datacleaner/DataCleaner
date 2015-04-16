@@ -57,7 +57,7 @@ public class SchemaTreePanel extends DCPanel {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(4, 4, 4, 4));
         setDatastore(null, false);
-        _searchTextField = new JTextField("Search...");
+        _searchTextField = new JTextField("Search component library...");
     }
 
     public void setDatastore(final Datastore datastore, final boolean expandTree) {
@@ -97,14 +97,12 @@ public class SchemaTreePanel extends DCPanel {
 
                         @Override
                         public void keyTyped(KeyEvent e) {
-                            // TODO Auto-generated method stub
-
+                            JTextField source = (JTextField) e.getSource();
+                            schemaTree.filter(source.getText());
                         }
 
                         @Override
                         public void keyReleased(KeyEvent e) {
-                            JTextField source = (JTextField) e.getSource();
-                            schemaTree.setSearchTerm(source.getText());
                         }
 
                         @Override

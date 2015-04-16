@@ -605,14 +605,16 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         updateTree();
         expandStandardPaths();
 
-        final TreeNode root = (TreeNode) getModel().getRoot();
-        final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
-        Enumeration<?> depthFirstEnumeration = libraryNode
-                .depthFirstEnumeration();
-        while (depthFirstEnumeration.hasMoreElements()) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
-            TreePath treePath = new TreePath(node.getPath());
-            expandPath(treePath);
+        // Expand only when search is active
+        if (!searchTerm.equals("")) {
+            final TreeNode root = (TreeNode) getModel().getRoot();
+            final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
+            Enumeration<?> depthFirstEnumeration = libraryNode.depthFirstEnumeration();
+            while (depthFirstEnumeration.hasMoreElements()) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
+                TreePath treePath = new TreePath(node.getPath());
+                expandPath(treePath);
+            }
         }
     }
 }

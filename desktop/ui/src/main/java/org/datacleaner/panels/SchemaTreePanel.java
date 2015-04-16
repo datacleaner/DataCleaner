@@ -20,15 +20,20 @@
 package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.inject.Inject;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
@@ -45,7 +50,7 @@ import com.google.inject.Injector;
 public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
     private final InjectorBuilder _injectorBuilder;
@@ -130,7 +135,42 @@ public class SchemaTreePanel extends DCPanel {
                             }
                         }
                     });
-                    add(_searchTextField, BorderLayout.SOUTH);
+                    DCPanel searchPanel = new DCPanel(Color.WHITE);
+                    FlowLayout layout = (FlowLayout) searchPanel.getLayout();
+                    layout.setVgap(0);
+                    layout.setHgap(0);
+                    JLabel resetSearchFieldIcon = new JLabel("X");
+                    resetSearchFieldIcon.setToolTipText("Reset search field...");
+                    resetSearchFieldIcon.setBorder(WidgetUtils.BORDER_EMPTY);
+                    resetSearchFieldIcon.addMouseListener(new MouseListener() {
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            _searchTextField.setText(DEFAULT_SEARCH_FIELD_TEXT);
+                            schemaTree.filter("");
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                        }
+
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                        }
+                    });
+                    _searchTextField.setBorder(WidgetUtils.BORDER_EMPTY);
+                    searchPanel.add(_searchTextField);
+                    searchPanel.add(resetSearchFieldIcon);
+
+                    add(searchPanel, BorderLayout.SOUTH);
                     updateParentPanel();
                     schemaTree.expandStandardPaths();
                     if (expandTree) {

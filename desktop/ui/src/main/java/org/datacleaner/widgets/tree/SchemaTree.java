@@ -273,7 +273,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
-            libraryRoot.add(schemaNode);
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                     .getComponentDescriptorsOfSuperCategory(superCategory);
 
@@ -284,6 +283,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 if (displayName.toLowerCase().contains(_searchTerm.toLowerCase())) {
                     filteredComponentDescriptors.add(componentDescriptor);
                 }
+            }
+
+            if (filteredComponentDescriptors.size() > 0) {
+                libraryRoot.add(schemaNode);
             }
 
             final Map<ComponentCategory, DefaultMutableTreeNode> categoryTreeNodes = new HashMap<>();

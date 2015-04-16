@@ -54,7 +54,8 @@ import java.lang.annotation.Target;
  * consulted to determine if the initialization methods should be executed on
  * all nodes or just on a single (typically master) node, before distribution.
  * 
- * @Initialize is often used in conjunction with the @Close annotation.
+ * {@link Initialize} is often used in conjunction with the {@link Close}
+ * annotation.
  * 
  * @see Close
  */

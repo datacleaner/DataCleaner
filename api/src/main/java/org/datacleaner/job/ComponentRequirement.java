@@ -48,7 +48,7 @@ public interface ComponentRequirement extends Serializable {
      * Gets the {@link FilterOutcome}s that this requirement depends on at
      * processing time. During processing, each {@link FilterOutcome} returned
      * from this method will have been evaluated before calling
-     * {@link #isSatisfied(FilterOutcomes)}.
+     * {@link #isSatisfied(InputRow, FilterOutcomes)}.
      * 
      * @return
      */
@@ -62,4 +62,13 @@ public interface ComponentRequirement extends Serializable {
      * @return
      */
     public String getSimpleName();
+
+    /**
+     * Provides textual representation of context and technical information
+     * about the {@link ComponentRequirement}
+     * 
+     * @return
+     */
+    @Override
+    public String toString();
 }

@@ -30,7 +30,7 @@ import org.datacleaner.api.Initialize;
  * <li>The pattern "Aaaaaa Aaaaaaaaaa" which is a typical firstname and lastname
  * pattern.</li>
  * <li>The pattern ".*@.*" which is a simple way to identify strings with an
- * @-sign in them (potential email).</li>
+ * '@'-sign in them (potential email).</li>
  * </ul>
  * 
  * A string pattern can have methods annotated with @Initialize and @Close.

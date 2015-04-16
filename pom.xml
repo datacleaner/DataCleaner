@@ -10,7 +10,7 @@
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>18.0</guava.version>
-		<metamodel.version>4.3.2</metamodel.version>
+		<metamodel.version>4.3.3</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>3.2.12.RELEASE</spring.core.version>

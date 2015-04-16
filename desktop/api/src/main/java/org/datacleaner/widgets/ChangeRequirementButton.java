@@ -31,11 +31,7 @@ import javax.swing.SwingUtilities;
 
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.FilterJob;
-import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.job.builder.FilterComponentBuilder;
-import org.datacleaner.job.builder.LazyFilterOutcome;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
@@ -96,28 +92,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
                 } else if (AnyComponentRequirement.get().equals(requirement)) {
                     setText(ChangeRequirementMenuBuilder.ANY_REQUIREMENT_TEXT);
                 } else {
-                    if (requirement instanceof FilterOutcome) {
-                        final FilterOutcome filterOutcome = (FilterOutcome) requirement;
-                        final Enum<?> category = filterOutcome.getCategory();
-                        if (filterOutcome instanceof LazyFilterOutcome) {
-                            // if possible, use the builder in stead of the job
-                            // (getting the job may cause an exception if the
-                            // builder is
-                            // not correctly configured yet)
-                            final FilterComponentBuilder<?, ?> fjb = ((LazyFilterOutcome) filterOutcome)
-                                    .getFilterJobBuilder();
-
-                            final String filterLabel = LabelUtils.getLabel(fjb);
-
-                            setText(filterLabel + ": " + category);
-                        } else {
-                            final FilterJob filterJob = filterOutcome.getFilterJob();
-                            setText(LabelUtils.getLabel(filterJob) + ": " + category);
-                        }
-                    } else {
-                        // Other requirement types not yet supported
-                        setText(requirement.toString());
-                    }
+                    setText(requirement.getSimpleName());
                 }
             }
         };

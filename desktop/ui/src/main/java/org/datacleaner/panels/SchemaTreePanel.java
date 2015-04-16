@@ -94,7 +94,7 @@ public class SchemaTreePanel extends DCPanel {
 
                     });
                     removeAll();
-                    add(schemaTreeScroll, BorderLayout.NORTH);
+                    add(schemaTreeScroll, BorderLayout.CENTER);
                     _searchTextField.addKeyListener(new KeyListener() {
 
                         @Override

@@ -280,7 +280,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             final List<ComponentDescriptor<?>> filteredComponentDescriptors = new ArrayList<>();
 
             for (ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
-                if (componentDescriptor.getDisplayName().contains(_searchTerm)) {
+                final String displayName = componentDescriptor.getDisplayName();
+                if (displayName.contains(_searchTerm)) {
                     filteredComponentDescriptors.add(componentDescriptor);
                 }
             }

@@ -45,6 +45,8 @@ import com.google.inject.Injector;
 public class SchemaTreePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final String DEFAULT_SEARCH_FIELD_TEXT = "Search component library...";
 
     private final InjectorBuilder _injectorBuilder;
     private JComponent _updatePanel;
@@ -57,7 +59,7 @@ public class SchemaTreePanel extends DCPanel {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(4, 4, 4, 4));
         setDatastore(null, false);
-        _searchTextField = new JTextField("Search component library...");
+        _searchTextField = new JTextField(DEFAULT_SEARCH_FIELD_TEXT);
     }
 
     public void setDatastore(final Datastore datastore, final boolean expandTree) {
@@ -97,12 +99,12 @@ public class SchemaTreePanel extends DCPanel {
 
                         @Override
                         public void keyTyped(KeyEvent e) {
-                            JTextField source = (JTextField) e.getSource();
-                            schemaTree.filter(source.getText());
                         }
 
                         @Override
                         public void keyReleased(KeyEvent e) {
+                            JTextField source = (JTextField) e.getSource();
+                            schemaTree.filter(source.getText());
                         }
 
                         @Override
@@ -115,7 +117,7 @@ public class SchemaTreePanel extends DCPanel {
                         public void focusLost(FocusEvent e) {
                             JTextField source = (JTextField) e.getSource();
                             if (source.getText().equals("")) {
-                                source.setText("Search...");
+                                source.setText(DEFAULT_SEARCH_FIELD_TEXT);
                             }
 
                         }
@@ -123,7 +125,7 @@ public class SchemaTreePanel extends DCPanel {
                         @Override
                         public void focusGained(FocusEvent e) {
                             JTextField source = (JTextField) e.getSource();
-                            if (source.getText().equals("Search...")) {
+                            if (source.getText().equals(DEFAULT_SEARCH_FIELD_TEXT)) {
                                 source.setText("");
                             }
                         }

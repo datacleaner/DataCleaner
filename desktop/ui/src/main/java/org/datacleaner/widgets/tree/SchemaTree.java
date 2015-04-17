@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
@@ -88,7 +89,7 @@ import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
         ComponentDescriptorsUpdatedListener {
-
+    
     private static final long serialVersionUID = 7763827443642264329L;
 
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
@@ -98,6 +99,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
     public static final String LIBRARY_STRING = "Library";
     public static final String ROOT_NODE_STRING = "Schemas";
+
+    private static final String NO_COMPONENTS_FOUND_SEARCH_RESULT = "No components found matching search criteria.";
 
     private final Datastore _datastore;
     private final DatastoreConnection _datastoreConnection;
@@ -319,6 +322,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, true);
 
         }
+        if (libraryRoot.getChildCount() == 0) {
+            libraryRoot.add(new DefaultMutableTreeNode(NO_COMPONENTS_FOUND_SEARCH_RESULT));
+        }
         return libraryRoot;
     }
 
@@ -502,6 +508,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         } else if (value instanceof String) {
             if (LIBRARY_STRING.equals(value)) {
                 icon = imageManager.getImageIcon(IconUtils.MODEL_COMPONENT_LIBRARY, IconUtils.ICON_SIZE_MENU_ITEM);
+            } else if (NO_COMPONENTS_FOUND_SEARCH_RESULT.equals(value)) {
+                // "empty" icon -> no icon
+                icon = new ImageIcon();
             }
             component = _rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
                     hasFocus);

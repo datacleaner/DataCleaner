@@ -21,7 +21,6 @@ package org.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -100,6 +99,7 @@ public class SchemaTreePanel extends DCPanel {
                     });
                     removeAll();
                     add(schemaTreeScroll, BorderLayout.CENTER);
+                    _searchTextField.setText(DEFAULT_SEARCH_FIELD_TEXT);
                     _searchTextField.addKeyListener(new KeyListener() {
 
                         @Override
@@ -136,9 +136,7 @@ public class SchemaTreePanel extends DCPanel {
                         }
                     });
                     DCPanel searchPanel = new DCPanel(Color.WHITE);
-                    FlowLayout layout = (FlowLayout) searchPanel.getLayout();
-                    layout.setVgap(0);
-                    layout.setHgap(0);
+                    searchPanel.setLayout(new BorderLayout());
                     JLabel resetSearchFieldIcon = new JLabel("X");
                     resetSearchFieldIcon.setToolTipText("Reset search field...");
                     resetSearchFieldIcon.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -167,8 +165,8 @@ public class SchemaTreePanel extends DCPanel {
                         }
                     });
                     _searchTextField.setBorder(WidgetUtils.BORDER_EMPTY);
-                    searchPanel.add(_searchTextField);
-                    searchPanel.add(resetSearchFieldIcon);
+                    searchPanel.add(_searchTextField, BorderLayout.CENTER);
+                    searchPanel.add(resetSearchFieldIcon, BorderLayout.EAST);
 
                     add(searchPanel, BorderLayout.SOUTH);
                     updateParentPanel();

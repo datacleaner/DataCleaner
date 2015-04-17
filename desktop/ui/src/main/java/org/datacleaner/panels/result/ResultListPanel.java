@@ -133,6 +133,7 @@ public class ResultListPanel extends DCPanel {
                 return component;
             }
 
+            @SuppressWarnings("unchecked")
             protected void done() {
                 taskPanePanel.removeAll();
                 JComponent component;
@@ -140,37 +141,53 @@ public class ResultListPanel extends DCPanel {
                     component = get();
                     taskPanePanel.add(component);
                     if (result instanceof AnalyzerResultFuture) {
-                        _progressInformationPanel.addUserLog(resultLabel + " is still in progress - see the '"
-                                + componentJob.getDescriptor().getDisplayName() + "' tab");
-                    } else {
-                        _progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+                        ((AnalyzerResultFuture<AnalyzerResult>) result)
+                                .addListener(new AnalyzerResultFuture.Listener<AnalyzerResult>() {
+                                    public void onSuccess(AnalyzerResult result) {
+                                        _progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+                                    }
+
+                                    @Override
+                                    public void onError(RuntimeException error) {
+                                        writeErrorMessage(componentJob, result, taskPanePanel, error);
+                                    }
+                                });
+                        if (!((AnalyzerResultFuture<AnalyzerResult>) result).isReady()) {
+                            _progressInformationPanel.addUserLog(resultLabel + " is still in progress - see the '"
+                                    + componentJob.getDescriptor().getDisplayName() + "' tab");
+                        }
                     }
                 } catch (Exception e) {
-                    logger.error("Error occurred while rendering result", e);
-                    _progressInformationPanel.addUserLog("Error occurred while rendering result", e, false);
 
-                    final DCPanel panel = new DCPanel();
-                    panel.setLayout(new VerticalLayout(4));
-
-                    final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.STATUS_ERROR);
-                    panel.add(new JLabel(
-                            "An error occurred while rendering result, check the 'Progress information' tab.", icon,
-                            SwingConstants.LEFT));
-
-                    final String resultAsString = getResultAsString(componentJob, result);
-                    if (resultAsString != null) {
-                        final DCLabel label = DCLabel.darkMultiLine(resultAsString);
-                        label.setBorder(WidgetUtils.BORDER_EMPTY);
-                        panel.add(label);
-                    }
-
-                    taskPanePanel.add(panel);
+                    writeErrorMessage(componentJob, result, taskPanePanel, e);
                 }
-
                 taskPanePanel.updateUI();
             };
 
         }.execute();
+    }
+
+    private void writeErrorMessage(final ComponentJob componentJob, final AnalyzerResult result,
+            final DCPanel taskPanePanel, Exception exception) {
+
+        _progressInformationPanel.addUserLog("Error occurred while rendering result", exception, false);
+        logger.error("Error occurred while rendering result", exception);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new VerticalLayout(4));
+
+        final ImageIcon icon = ImageManager.get().getImageIcon(IconUtils.STATUS_ERROR);
+        panel.add(new JLabel("An error occurred while rendering result, check the 'Progress information' tab.", icon,
+                SwingConstants.LEFT));
+
+        final String resultAsString = getResultAsString(componentJob, result);
+        if (resultAsString != null) {
+            final DCLabel label = DCLabel.darkMultiLine(resultAsString);
+            label.setBorder(WidgetUtils.BORDER_EMPTY);
+            panel.add(label);
+        }
+
+        taskPanePanel.add(panel);
     }
 
     protected String getResultAsString(ComponentJob componentJob, AnalyzerResult result) {

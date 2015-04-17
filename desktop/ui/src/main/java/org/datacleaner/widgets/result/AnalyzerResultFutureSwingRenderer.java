@@ -36,13 +36,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RendererBean(SwingRenderingFormat.class)
-public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResultFuture<? extends AnalyzerResult>, JComponent> {
-    
+public class AnalyzerResultFutureSwingRenderer implements
+        Renderer<AnalyzerResultFuture<? extends AnalyzerResult>, JComponent> {
+
     private static final Logger logger = LoggerFactory.getLogger(AnalyzerResultFutureSwingRenderer.class);
 
     @Inject
     RendererFactory _rendererFactory;
-    
+
     @Override
     public RendererPrecedence getPrecedence(AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
         return RendererPrecedence.LOW;
@@ -51,17 +52,18 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
     @Override
     public JComponent render(AnalyzerResultFuture<? extends AnalyzerResult> renderable) {
         final LoadingIcon loadingIcon = new LoadingIcon();
-        
+
         final DCPanel resultPanel = new DCPanel();
         resultPanel.add(loadingIcon);
         resultPanel.updateUI();
-        
+
         renderable.addListener(new AnalyzerResultFuture.Listener<AnalyzerResult>() {
 
             @Override
             public void onSuccess(AnalyzerResult result) {
                 try {
-                    Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result, SwingRenderingFormat.class);
+                    Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
+                            result, SwingRenderingFormat.class);
                     if (renderer != null) {
                         logger.debug("renderer.render({})", result);
                         final JComponent component = renderer.render(result);
@@ -81,10 +83,10 @@ public class AnalyzerResultFutureSwingRenderer implements Renderer<AnalyzerResul
             public void onError(RuntimeException error) {
                 WidgetUtils.showErrorMessage("Unable to fetch result", error);
             }
-            
+
         });
-        
+
         return resultPanel;
     }
-    
+
 }

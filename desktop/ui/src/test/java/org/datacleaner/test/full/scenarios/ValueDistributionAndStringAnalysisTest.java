@@ -34,8 +34,10 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalysisJob;
@@ -58,9 +60,10 @@ import org.datacleaner.test.TestHelper;
 public class ValueDistributionAndStringAnalysisTest extends TestCase {
 
     public void testScenario() throws Exception {
-        TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
-
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
+        
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 

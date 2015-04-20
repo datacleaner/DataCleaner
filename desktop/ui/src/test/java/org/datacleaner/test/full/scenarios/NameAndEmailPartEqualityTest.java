@@ -35,8 +35,8 @@ import org.datacleaner.beans.standardize.EmailStandardizerTransformer;
 import org.datacleaner.beans.standardize.NameStandardizerTransformer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzer;
 import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
@@ -44,8 +44,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
-import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
@@ -53,8 +51,7 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 public class NameAndEmailPartEqualityTest extends TestCase {
 
     public void testScenario() throws Throwable {
-        TaskRunner taskRunner = new SingleThreadedTaskRunner();
-        DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(taskRunner);
+        DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
         AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
 
@@ -76,7 +73,8 @@ public class NameAndEmailPartEqualityTest extends TestCase {
         TransformerComponentBuilder<NameStandardizerTransformer> nameTransformerComponentBuilder = analysisJobBuilder
                 .addTransformer(NameStandardizerTransformer.class);
         nameTransformerComponentBuilder.addInputColumn(analysisJobBuilder.getSourceColumnByName("name"));
-        nameTransformerComponentBuilder.setConfiguredProperty("Name patterns", NameStandardizerTransformer.DEFAULT_PATTERNS);
+        nameTransformerComponentBuilder.setConfiguredProperty("Name patterns",
+                NameStandardizerTransformer.DEFAULT_PATTERNS);
 
         assertTrue(nameTransformerComponentBuilder.isConfigured());
 
@@ -156,8 +154,7 @@ public class NameAndEmailPartEqualityTest extends TestCase {
         assertEquals("Middlename", vdResult.getName());
         assertEquals(4, vdResult.getNullCount());
         assertEquals(0, vdResult.getUniqueCount().intValue());
-        assertEquals("[[<null>->4], [hussein->2]]", vdResult.getValueCounts()
-                .toString());
+        assertEquals("[[<null>->4], [hussein->2]]", vdResult.getValueCounts().toString());
 
         vdResult = (ValueDistributionAnalyzerResult) results.get(4);
         assertEquals("Titulation", vdResult.getName());

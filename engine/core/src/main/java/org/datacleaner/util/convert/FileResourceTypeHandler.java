@@ -21,10 +21,14 @@ package org.datacleaner.util.convert;
 
 import java.io.File;
 
-import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.util.FileResolver;
+import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 /**
  * {@link ResourceTypeHandler} for {@link FileResource}s.
@@ -37,13 +41,24 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
     public static final String DEFAULT_SCHEME = "file";
 
     private final String _scheme;
-    private final File _relativeParentDirectory;
+    private final File _homeFolder;
 
     /**
      * Construct a {@link FileResourceTypeHandler} using defaults.
+     * 
+     * @deprecated use another constructor instead
      */
+    @Deprecated
     public FileResourceTypeHandler() {
-        this(null);
+        this(DataCleanerConfigurationImpl.defaultHomeFolder());
+    }
+
+    public FileResourceTypeHandler(DataCleanerConfiguration configuration) {
+        this(configuration.getHomeFolder());
+    }
+    
+    public FileResourceTypeHandler(DataCleanerHomeFolder homeFolder) {
+        this(homeFolder.toFile());
     }
 
     /**
@@ -66,7 +81,7 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
      */
     public FileResourceTypeHandler(String scheme, File relativeParentDirectory) {
         _scheme = scheme;
-        _relativeParentDirectory = relativeParentDirectory;
+        _homeFolder = relativeParentDirectory;
     }
 
     @Override
@@ -81,25 +96,16 @@ public class FileResourceTypeHandler implements ResourceTypeHandler<FileResource
 
     @Override
     public FileResource parsePath(String path) {
-        final File file;
-        if (_relativeParentDirectory != null && !isAbsolute(path)) {
-            file = new File(_relativeParentDirectory, path);
-        } else {
-            file = new File(path);
-        }
-
+        final FileResolver fileResolver = new FileResolver(_homeFolder);
+        final File file = fileResolver.toFile(path);
         return new FileResource(file);
-    }
-
-    private boolean isAbsolute(String path) {
-        return new File(path).isAbsolute();
     }
 
     @Override
     public String createPath(Resource resource) {
-        String path = ((FileResource) resource).getFile().getPath();
-        path = path.replaceAll("\\\\", "/");
-        return path;
+        final File file = ((FileResource) resource).getFile();
+        final FileResolver fileResolver = new FileResolver(_homeFolder);
+        return fileResolver.toPath(file);
     }
 
 }

@@ -20,7 +20,6 @@
 package org.datacleaner.configuration;
 
 import org.apache.metamodel.util.Resource;
-import org.datacleaner.repository.RepositoryFolder;
 
 /**
  * Defines an interface that allows for interception, decoration and other
@@ -91,5 +90,5 @@ public interface ConfigurationReaderInterceptor {
      * 
      * @return
      */
-    public RepositoryFolder getHomeFolder();
+    public DataCleanerHomeFolder getHomeFolder();
 }

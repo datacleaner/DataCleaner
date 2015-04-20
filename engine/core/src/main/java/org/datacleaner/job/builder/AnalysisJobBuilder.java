@@ -319,10 +319,13 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public List<MetaModelInputColumn> getSourceColumnsOfTable(Table table) {
+        if (table == null) {
+            return Collections.emptyList();
+        }
         final List<MetaModelInputColumn> result = new ArrayList<>();
         for (MetaModelInputColumn column : _sourceColumns) {
             final Column physicalColumn = column.getPhysicalColumn();
-            if (physicalColumn != null && physicalColumn.getTable() == table) {
+            if (physicalColumn != null && table.equals(physicalColumn.getTable())) {
                 result.add(column);
             }
         }

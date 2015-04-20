@@ -24,41 +24,50 @@ import java.util.TreeMap;
 import junit.framework.TestCase;
 
 public class CliArgumentsTest extends TestCase {
-    
+
     public void testSlashUsage() throws Exception {
         CliArguments args = CliArguments.parse("/?".split(" "));
         assertTrue(args.isUsageMode());
+        assertFalse(args.isVersionMode());
+        assertTrue(args.isSet());
     }
 
-	public void testIsSetFalse() throws Exception {
-		CliArguments args;
-		args = CliArguments.parse(new String[0]);
-		assertFalse(args.isSet());
+    public void testVersionMode() throws Exception {
+        CliArguments args = CliArguments.parse("--version".split(" "));
+        assertFalse(args.isUsageMode());
+        assertTrue(args.isVersionMode());
+        assertTrue(args.isSet());
+    }
 
-		args = CliArguments.parse(null);
-		assertFalse(args.isSet());
+    public void testIsSetFalse() throws Exception {
+        CliArguments args;
+        args = CliArguments.parse(new String[0]);
+        assertFalse(args.isSet());
 
-		args = CliArguments.parse(new String[] { "-hello", "world" });
-		assertFalse(args.isSet());
-	}
+        args = CliArguments.parse(null);
+        assertFalse(args.isSet());
 
-	public void testIsSetTrue() throws Exception {
-		CliArguments args;
-		args = CliArguments.parse(new String[] { "-list", "TABLES", "-ds", "mrrh" });
-		assertTrue(args.isSet());
+        args = CliArguments.parse(new String[] { "-hello", "world" });
+        assertFalse(args.isSet());
+    }
 
-		args = CliArguments.parse(new String[] { "-usage" });
-		assertTrue(args.isSet());
+    public void testIsSetTrue() throws Exception {
+        CliArguments args;
+        args = CliArguments.parse(new String[] { "-list", "TABLES", "-ds", "mrrh" });
+        assertTrue(args.isSet());
 
-		args = CliArguments.parse(new String[] { "-ds", "foo" });
-		assertFalse(args.isSet());
-		assertEquals("foo", args.getDatastoreName());
-	}
+        args = CliArguments.parse(new String[] { "-usage" });
+        assertTrue(args.isSet());
 
-	public void testVariableOverrides() throws Exception {
-		CliArguments args;
-		args = CliArguments.parse("-job myjob.xml -conf conf.xml -var foo=bar -v bar=c:\\foo\bar\baz.csv".split(" "));
-		assertEquals("{bar=c:\\foo\bar\baz.csv, foo=bar}",
-				new TreeMap<String, String>(args.getVariableOverrides()).toString());
-	}
+        args = CliArguments.parse(new String[] { "-ds", "foo" });
+        assertFalse(args.isSet());
+        assertEquals("foo", args.getDatastoreName());
+    }
+
+    public void testVariableOverrides() throws Exception {
+        CliArguments args;
+        args = CliArguments.parse("-job myjob.xml -conf conf.xml -var foo=bar -v bar=c:\\foo\bar\baz.csv".split(" "));
+        assertEquals("{bar=c:\\foo\bar\baz.csv, foo=bar}",
+                new TreeMap<String, String>(args.getVariableOverrides()).toString());
+    }
 }

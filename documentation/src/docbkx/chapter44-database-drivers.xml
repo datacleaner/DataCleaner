@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Database drivers</title>
+
+	<chapterinfo>
+		<abstract>
+			<para>
+				DataCleaner ships with a set of standard database drivers,
+				enabling you to connect to common databases such as PostgreSQL,
+				MySQL, Microsoft SQL Server or Oracle.
+			</para>
+			<para>It's also not uncommon to wish to install additional drivers
+				for other database brands. DataCleaner uses the JDBC standard for
+				managing database drivers and connection. In this chapter we cover
+				the process of installing additional database drivers.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section id="database_drivers_desktop">
+		<title>Installing Database drivers in DataCleaner desktop</title>
+
+		<para>Installing database drivers in DataCleaner desktop is done in
+			the application itself while it is running.
+		</para>
+		<para>First, go to the Options menu:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="database_drivers_desktop_menu.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Then select the 'Database drivers' tab. In this tab you will see
+			a listing of your currently installed database drivers (that we know
+			of):
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="database_drivers_desktop_listing.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>If you click the 'Add database driver' button and then select
+			the 'Local JAR file(s)' option, you will see this dialog:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="database_drivers_desktop_dialog.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>In this dialog, select driver class name and the files
+			containing the database driver. If you don't know what this is please
+			refer to your database vendor's documentation on JDBC database
+			drivers.
+		</para>
+
+		<para>In the example above we see the IBM
+			DB2 driver which involves
+			installing two files since the software
+			license also has to be
+			included.
+		</para>
+
+	</section>
+
+	<section id="database_drivers_server">
+		<title>Installing Database drivers in DataCleaner monitor</title>
+		<para>If you want to install database drivers in the DataCleaner
+			monitor web application, you should first consider if you want the
+			driver installed only as part of the single web application or if it
+			should be globally registered within your web server/container.
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>Installing database driver in Container</emphasis>
+					: Refer to your container's documentation. Usually the process is a
+					simple matter of copying the driver JAR files to a folder in the
+					web container's workspace. For instance, if you're using Apache
+					Tomcat, copy the driver JAR file(s) to the 'lib' folder of Tomcat.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Installing database driver in the web application
+					</emphasis>
+					: First, locate where the DataCleaner monitor .war file is deployed
+					and 'exploded' into a directory. Within this directory you will
+					find the folder 'WEB-INF/lib'. Copy the database driver file(s) into
+					this directory.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<para>We recommend installing drivers in the container. This makes your web application easier to upgrade and manage.</para>
+	</section>
+
+</chapter>

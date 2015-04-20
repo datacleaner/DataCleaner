@@ -65,7 +65,7 @@ public class JaxbPojoDatastoreAdaptorTest extends TestCase {
         PojoDatastore datastore;
         datastore = new PojoDatastore("foo", tableProviders);
 
-        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(new DataCleanerConfigurationImpl());
         AbstractDatastoreType serializedDatastore = adaptor.createPojoDatastore(datastore, null, 20);
 
         DatastoreCatalogType serializedDatastoreCatalogType = new DatastoreCatalogType();

@@ -19,11 +19,11 @@
  */
 package org.datacleaner.user;
 
-import java.io.File;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSystemException;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.configuration.DefaultConfigurationReaderInterceptor;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.extensions.ExtensionPackage;
@@ -32,16 +32,12 @@ import org.datacleaner.repository.vfs.VfsRepository;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.RepositoryFileResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Configuration reader interceptor that is aware of the DataCleaner
  * environment.
  */
 public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor {
-
-    private static final Logger logger = LoggerFactory.getLogger(DesktopConfigurationReaderInterceptor.class);
 
     private final FileObject _dataCleanerHome;
 
@@ -50,7 +46,11 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
     }
 
     @Override
-    public Repository getHomeFolder() {
+    public DataCleanerHomeFolder getHomeFolder() {
+        return new DataCleanerHomeFolderImpl(getHomeRepository());
+    }
+
+    private Repository getHomeRepository() {
         return new VfsRepository(_dataCleanerHome);
     }
 
@@ -66,29 +66,9 @@ public class DesktopConfigurationReaderInterceptor extends DefaultConfigurationR
         if (ClassLoaderUtils.IS_WEB_START) {
             handlers.add(new DummyRepositoryResourceFileTypeHandler());
         } else {
-            final Repository homeFolder = getHomeFolder();
+            final Repository homeFolder = getHomeRepository();
             handlers.add(new RepositoryFileResourceTypeHandler(homeFolder, homeFolder));
         }
         return handlers;
-    }
-
-    @Override
-    public String createFilename(String filename) {
-        if (filename == null) {
-            return null;
-        }
-
-        final File file = new File(filename);
-        if (file.isAbsolute()) {
-            return filename;
-        }
-
-        try {
-            FileObject fileObject = _dataCleanerHome.resolveFile(filename);
-            return fileObject.getName().getPathDecoded();
-        } catch (FileSystemException e) {
-            logger.warn("Could not resolve absolute path using VFS: " + filename, e);
-            return filename;
-        }
     }
 }

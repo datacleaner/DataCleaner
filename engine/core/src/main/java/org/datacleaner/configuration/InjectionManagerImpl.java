@@ -131,6 +131,8 @@ public class InjectionManagerImpl implements InjectionManager {
             return _configuration;
         } else if (baseType == DataCleanerEnvironment.class) {
             return _configuration.getEnvironment();
+        } else if (baseType == DataCleanerHomeFolder.class) {
+            return _configuration.getHomeFolder();
         } else if (baseType == TaskRunner.class) {
             return _configuration.getEnvironment().getTaskRunner();
         } else if (baseType == AnalysisJob.class) {

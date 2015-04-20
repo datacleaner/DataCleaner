@@ -33,12 +33,16 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.extensions.ClassLoaderUtils;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.VFSUtils;
 import org.datacleaner.Version;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
+import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
+import org.datacleaner.extensions.ClassLoaderUtils;
+import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.util.ResourceManager;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
+import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,6 +216,15 @@ public final class DataCleanerHome {
      */
     public static FileObject get() {
         return _dataCleanerHome;
+    }
+
+    public static DataCleanerHomeFolder getAsDataCleanerHomeFolder() {
+        final File file = getAsFile();
+        if (file == null) {
+            return DataCleanerConfigurationImpl.defaultHomeFolder();
+        }
+        final FileRepository fileRepository = new FileRepository(file);
+        return new DataCleanerHomeFolderImpl(fileRepository);
     }
 
     public static File getAsFile() {

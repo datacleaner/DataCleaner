@@ -266,6 +266,7 @@ public class AboutDialog extends AbstractDialog {
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
+        contentPanel.add(DCLabel.dark("Distribution version " + Version.getDistributionVersion()));
         contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)
                 + " Neopost - Customer Information Management"));
         contentPanel.add(Box.createVerticalStrut(20));

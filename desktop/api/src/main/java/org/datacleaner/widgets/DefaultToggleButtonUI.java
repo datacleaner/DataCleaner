@@ -23,12 +23,15 @@ import java.awt.Color;
 import java.awt.Cursor;
 
 import javax.swing.AbstractButton;
+import javax.swing.JToggleButton;
+import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 import org.datacleaner.util.WidgetUtils;
 
 /***
- * A {@link ToggleButtonUI} for default buttons in the DataCleaner user interface.
+ * A {@link ButtonUI} for default {@link JToggleButton}s in the DataCleaner user
+ * interface.
  */
 public class DefaultToggleButtonUI extends MetalToggleButtonUI {
 

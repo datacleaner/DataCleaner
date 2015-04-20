@@ -13,7 +13,8 @@ import java.awt.Color
 import org.jfree.chart.axis.NumberAxis
 import org.datacleaner.util.WidgetUtils
 import org.datacleaner.test.TestHelper
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl
 import org.datacleaner.descriptors.SimpleDescriptorProvider
 import org.datacleaner.descriptors.Descriptors
 import org.datacleaner.job.runner.AnalysisRunnerImpl
@@ -24,7 +25,7 @@ object DensityAnalyzerResultSwingRendererTestApp {
   def main(args: Array[String]) {
     val descriptorProvider = new SimpleDescriptorProvider()
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultSwingRenderer]));
-    val configuration = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+    val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
     val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");
     

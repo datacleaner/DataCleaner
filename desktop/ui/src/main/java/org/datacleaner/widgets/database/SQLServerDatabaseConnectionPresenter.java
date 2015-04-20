@@ -19,35 +19,37 @@
  */
 package org.datacleaner.widgets.database;
 
+import org.datacleaner.util.StringUtils;
+
 /**
  * {@link DatabaseConnectionPresenter} for MS SQL Server database connections
  */
 public class SQLServerDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-	public SQLServerDatabaseConnectionPresenter() {
-		super("jdbc:jtds:sqlserver://HOSTNAME:PORT/DATABASE;instance=PARAM1;useUnicode=true;characterEncoding=UTF-8",
-				"jdbc:jtds:sqlserver://HOSTNAME:PORT/DATABASE;useUnicode=true;characterEncoding=UTF-8");
-	}
+    public SQLServerDatabaseConnectionPresenter() {
+        super("jdbc:jtds:sqlserver://HOSTNAME:PORT/DATABASE;instance=PARAM1;useUnicode=true;characterEncoding=UTF-8",
+                "jdbc:jtds:sqlserver://HOSTNAME:PORT/DATABASE;useUnicode=true;characterEncoding=UTF-8");
+    }
 
-	@Override
-	protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-			String param3, String param4) {
-		if (param1 == null || param1.trim().length() == 0) {
-			return "jdbc:jtds:sqlserver://" + hostname + ":" + port + "/" + database
-					+ ";useUnicode=true;characterEncoding=UTF-8";
-		}
-		return "jdbc:jtds:sqlserver://" + hostname + ":" + port + "/" + database + ";instance=" + param1
-				+ ";useUnicode=true;characterEncoding=UTF-8";
-	}
+    @Override
+    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
+            String param3, String param4) {
+        if (StringUtils.isNullOrEmpty(param1)) {
+            return "jdbc:jtds:sqlserver://" + hostname + ":" + port + "/" + database
+                    + ";useUnicode=true;characterEncoding=UTF-8";
+        }
+        return "jdbc:jtds:sqlserver://" + hostname + ":" + port + "/" + database + ";instance=" + param1
+                + ";useUnicode=true;characterEncoding=UTF-8";
+    }
 
-	@Override
-	protected int getDefaultPort() {
-		return 1433;
-	}
+    @Override
+    protected int getDefaultPort() {
+        return 1433;
+    }
 
-	@Override
-	protected String getLabelForParam1() {
-		return "Instance (optional)";
-	}
+    @Override
+    protected String getLabelForParam1() {
+        return "Instance (optional)";
+    }
 
 }

@@ -261,7 +261,7 @@ public class DCTable extends JXTable implements MouseListener {
      * Copies content from the table to the clipboard. Algorithm is a slight
      * rewrite of the article below.
      * 
-     * @see http://www.copy--paste.org/copy-paste-jtables-excel.htm
+     * @see <a href="http://www.copy--paste.org/copy-paste-jtables-excel.htm">http://www.copy--paste.org/copy-paste-jtables-excel.htm</a>
      */
     public void copyToClipboard(int rowIndex, int colIndex, int width, int height) {
         StringBuilder sb = new StringBuilder();

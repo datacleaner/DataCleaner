@@ -149,7 +149,6 @@ import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.SynonymCatalog;
 import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
-import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
 import org.datacleaner.storage.H2StorageProvider;
@@ -278,7 +277,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             logger.info("Updated date: {}", metadata.getUpdatedDate());
         }
 
-        final RepositoryFolder homeFolder = _interceptor.getHomeFolder();
+        final DataCleanerHomeFolder homeFolder = _interceptor.getHomeFolder();
 
         // create temporary environment and configuration objects - they will be
         // passed along during building of the final ones.
@@ -674,7 +673,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             } else if (datastoreType instanceof OpenOfficeDatabaseDatastoreType) {
                 ds = createDatastore(name, (OpenOfficeDatabaseDatastoreType) datastoreType);
             } else if (datastoreType instanceof PojoDatastoreType) {
-                ds = createDatastore(name, (PojoDatastoreType) datastoreType);
+                ds = createDatastore(name, (PojoDatastoreType) datastoreType, temporaryConfiguration);
             } else if (datastoreType instanceof CouchdbDatastoreType) {
                 ds = createDatastore(name, (CouchdbDatastoreType) datastoreType);
             } else if (datastoreType instanceof MongodbDatastoreType) {
@@ -984,8 +983,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         return ds;
     }
 
-    private Datastore createDatastore(String name, PojoDatastoreType pojoDatastore) {
-        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+    private Datastore createDatastore(String name, PojoDatastoreType pojoDatastore,
+            DataCleanerConfigurationImpl temporaryConfiguration) {
+        final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(temporaryConfiguration);
         final PojoDatastore datastore = adaptor.read(pojoDatastore);
         return datastore;
     }

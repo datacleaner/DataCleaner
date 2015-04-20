@@ -21,6 +21,7 @@ package org.datacleaner.monitor.configuration;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.job.JobContext;
@@ -31,13 +32,18 @@ import org.datacleaner.repository.file.FileRepository;
 
 public class TenantContextImplTest extends TestCase {
 
-    public void testJobNameWithSignificantSpace() throws Exception {
-        Repository repository = new FileRepository("src/test/resources/example_repo");
-        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl();
-        JobEngineManager jobEngineManager = new MockJobEngineManager();
+    private final Repository repository = new FileRepository("src/test/resources/example_repo");
+    private final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl();
+    private final JobEngineManager jobEngineManager = new MockJobEngineManager();
+    private TenantContext tenantContext;
 
-        TenantContext tenantContext = new TenantContextImpl("tenant4", repository, environment,
-                jobEngineManager);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        tenantContext = new TenantContextImpl("tenant4", repository, environment, jobEngineManager);
+    }
+
+    public void testJobNameWithSignificantSpace() throws Exception {
 
         JobContext job1 = tenantContext.getJob("my job");
         JobContext job2 = tenantContext.getJob("my job ");
@@ -56,5 +62,10 @@ public class TenantContextImplTest extends TestCase {
 
         assertEquals("my job.analysis.xml", job1.getJobFile().getName());
         assertEquals("my job .analysis.xml", job2.getJobFile().getName());
+    }
+
+    public void testGetConfiguration() throws Exception {
+        DataCleanerConfiguration configuration = tenantContext.getConfiguration();
+        assertNotNull(configuration);
     }
 }

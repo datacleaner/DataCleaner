@@ -26,8 +26,8 @@ import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.filter.NullCheckFilter;
 import org.datacleaner.beans.filter.ValidationCategory;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
@@ -44,8 +44,8 @@ import org.junit.Assert;
 public class RowProcessingMetricsImplTest extends TestCase {
 
     private Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-    private DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl()
-            .replace(new DatastoreCatalogImpl(datastore));
+    private DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
+            .withDatastoreCatalog(new DatastoreCatalogImpl(datastore));
     private AnalysisJob job;
 
     public void testGetExpectedRowCountNoFilter() throws Exception {
@@ -130,11 +130,11 @@ public class RowProcessingMetricsImplTest extends TestCase {
             public void onError(Task arg0, Throwable t) {
                 Assert.fail(t.getMessage());
             }
-            
+
             @Override
             public void onComplete(Task arg0) {
             }
-            
+
             @Override
             public void onBegin(Task arg0) {
             }

@@ -26,7 +26,6 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
-import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 
 /**
@@ -37,7 +36,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
     private static final long serialVersionUID = 1L;
 
     private final transient DataCleanerEnvironment _environment;
-    private final transient RepositoryFolder _homeFolder;
+    private final transient DataCleanerHomeFolder _homeFolder;
     private final DatastoreCatalog _datastoreCatalog;
     private final ReferenceDataCatalog _referenceDataCatalog;
 
@@ -45,7 +44,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
         this(defaultEnvironment(), defaultHomeFolder(), defaultDatastoreCatalog(), defaultReferenceDataCatalog());
     }
 
-    public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, RepositoryFolder homeFolder) {
+    public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, DataCleanerHomeFolder homeFolder) {
         this(environment, homeFolder, defaultDatastoreCatalog(), defaultReferenceDataCatalog());
     }
     
@@ -53,7 +52,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
         this(c.getEnvironment(), c.getHomeFolder(), c.getDatastoreCatalog(), c.getReferenceDataCatalog());
     }
 
-    public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, RepositoryFolder homeFolder,
+    public DataCleanerConfigurationImpl(DataCleanerEnvironment environment, DataCleanerHomeFolder homeFolder,
             DatastoreCatalog datastoreCatalog, ReferenceDataCatalog referenceDataCatalog) {
         if (environment == null) {
             _environment = defaultEnvironment();
@@ -95,7 +94,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
                 referenceDataCatalog);
     }
 
-    public DataCleanerConfigurationImpl withHomeFolder(RepositoryFolder homeFolder) {
+    public DataCleanerConfigurationImpl withHomeFolder(DataCleanerHomeFolder homeFolder) {
         return new DataCleanerConfigurationImpl(getEnvironment(), homeFolder, getDatastoreCatalog(),
                 getReferenceDataCatalog());
     }
@@ -116,7 +115,7 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
     }
 
     @Override
-    public RepositoryFolder getHomeFolder() {
+    public DataCleanerHomeFolder getHomeFolder() {
         return _homeFolder;
     }
 
@@ -133,8 +132,8 @@ public class DataCleanerConfigurationImpl implements DataCleanerConfiguration {
         return new DatastoreCatalogImpl();
     }
 
-    public static RepositoryFolder defaultHomeFolder() {
-        return new FileRepository(".");
+    public static DataCleanerHomeFolder defaultHomeFolder() {
+        return new DataCleanerHomeFolderImpl(new FileRepository("."));
     }
 
     public static DataCleanerEnvironment defaultEnvironment() {

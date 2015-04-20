@@ -28,7 +28,10 @@ import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+<<<<<<< HEAD
 import org.datacleaner.configuration.DataCleanerEnvironment;
+=======
+>>>>>>> refs/heads/master
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.job.AnalysisJob;

@@ -22,7 +22,6 @@ package org.datacleaner.job.runner;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,13 +70,13 @@ public class DebugLoggingAnalysisListener extends AnalysisListenerAdaptor {
     }
 
     @Override
-    public void analyzerBegin(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
-        logger.debug("analyzerBegin({}, {})", new Object[] { job, analyzerJob });
+    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
+        logger.debug("componentBegin({}, {})", new Object[] { job, componentJob });
     }
 
     @Override
-    public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
-        logger.debug("analyzerSuccess({}, {})", new Object[] { job, analyzerJob, result });
+    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
+        logger.debug("componentSuccess({}, {})", new Object[] { job, componentJob, result });
     }
 
     @Override

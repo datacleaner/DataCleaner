@@ -22,7 +22,9 @@ package org.datacleaner.components.tablelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +43,7 @@ import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -55,6 +58,10 @@ import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.result.CategorizationResult;
+import org.datacleaner.storage.RowAnnotation;
+import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.DummyRowAnnotationFactory;
 import org.datacleaner.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +76,7 @@ import com.google.common.cache.Cache;
 @Alias("Datastore lookup")
 @Description("Perform a lookup based on a table in any of your registered datastore (like a LEFT join).")
 @Concurrent(true)
-public class TableLookupTransformer implements Transformer, HasLabelAdvice {
+public class TableLookupTransformer implements Transformer, HasLabelAdvice, HasAnalyzerResult<CategorizationResult> {
 
     private static final Logger logger = LoggerFactory.getLogger(TableLookupTransformer.class);
 
@@ -153,6 +160,22 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
     @Provided
     OutputRowCollector outputRowCollector;
 
+    @Inject
+    @Provided
+    RowAnnotationFactory _annotationFactory;
+
+    @Inject
+    @Provided
+    RowAnnotation _matches;
+
+    @Inject
+    @Provided
+    RowAnnotation _misses;
+
+    @Inject
+    @Provided
+    RowAnnotation _cached;
+
     private final Cache<List<Object>, Object[]> cache = CollectionUtils2.<List<Object>, Object[]> createCache(10000,
             5 * 60);
     private Column[] queryOutputColumns;
@@ -189,8 +212,12 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
         this.cacheLookups = cacheLookups;
         this.outputColumns = outputColumns;
         this.joinSemantic = JoinSemantic.LEFT_JOIN_MAX_ONE;
+        _annotationFactory = new DummyRowAnnotationFactory();
+        _matches = _annotationFactory.createAnnotation();
+        _cached = _annotationFactory.createAnnotation();
+        _misses = _annotationFactory.createAnnotation();
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         if (tableName == null) {
@@ -357,21 +384,25 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
         if (cacheLookups && joinSemantic.isCacheable()) {
             result = cache.getIfPresent(queryInput);
             if (result == null) {
-                result = performQuery(queryInput);
+                result = performQuery(inputRow, queryInput);
                 cache.put(queryInput, result);
             } else {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Returning cached lookup result: {}", Arrays.toString(result));
                 }
+                // normally performQuery(...) handles row annotation, but this
+                // if-else branch does not call performQuery(...) so we manually
+                // do it here too.
+                _annotationFactory.annotate(inputRow, 1, _cached);
             }
         } else {
-            result = performQuery(queryInput);
+            result = performQuery(inputRow, queryInput);
         }
 
         return result;
     }
 
-    private Object[] performQuery(List<Object> queryInput) {
+    private Object[] performQuery(InputRow row, List<Object> queryInput) {
         try {
             final Column[] queryConditionColumns = getQueryConditionColumns();
 
@@ -382,7 +413,7 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
 
             try (final DataSet dataSet = datastoreConnection.getDataContext()
                     .executeQuery(lookupQuery, parameterValues)) {
-                return handleDataSet(dataSet);
+                return handleDataSet(row, dataSet);
             }
         } catch (RuntimeException e) {
             logger.error("Error occurred while looking up based on conditions: " + queryInput, e);
@@ -390,9 +421,12 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
         }
     }
 
-    private Object[] handleDataSet(DataSet dataSet) {
+    private Object[] handleDataSet(InputRow row, DataSet dataSet) {
         if (!dataSet.next()) {
+
             logger.info("Result of lookup: None!");
+            _annotationFactory.annotate(row, 1, _misses);
+
             switch (joinSemantic) {
             case LEFT_JOIN_MAX_ONE:
             case LEFT_JOIN:
@@ -401,6 +435,8 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
                 return null;
             }
         }
+
+        _annotationFactory.annotate(row, 1, _matches);
 
         do {
             final Object[] result = dataSet.getRow().getValues();
@@ -432,5 +468,16 @@ public class TableLookupTransformer implements Transformer, HasLabelAdvice {
         cache.invalidateAll();
         queryOutputColumns = null;
         queryConditionColumns = null;
+    }
+
+    @Override
+    public CategorizationResult getResult() {
+        final Map<String, RowAnnotation> categories = new LinkedHashMap<>();
+        categories.put("Match", _matches);
+        categories.put("Miss", _misses);
+        if (cacheLookups) {
+            categories.put("Cached", _cached);
+        }
+        return new CategorizationResult(_annotationFactory, categories);
     }
 }

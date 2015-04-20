@@ -20,12 +20,14 @@
 package org.datacleaner.job.runner;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Named;
 
 import junit.framework.TestCase;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.InputRow;
@@ -35,12 +37,14 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
+import org.datacleaner.test.mock.MockTransformerWithAnalyzerResult;
 
 public class AnalysisRunnerImplTest extends TestCase {
 
@@ -50,6 +54,34 @@ public class AnalysisRunnerImplTest extends TestCase {
     private DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
     private AnalysisRunner runner = new AnalysisRunnerImpl(configuration);
     private Datastore datastore = new CsvDatastore("ds", "src/test/resources/employees.csv");
+    
+    public void testCreateResultFromNonAnalyzer() throws Throwable {
+        final AnalysisJob job;
+        
+        try (final AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
+            jobBuilder.setDatastore(datastore);
+            jobBuilder.addSourceColumns("name");
+            
+            TransformerComponentBuilder<MockTransformerWithAnalyzerResult> t = jobBuilder.addTransformer(MockTransformerWithAnalyzerResult.class);
+            t.setName("Example");
+            t.addInputColumn(jobBuilder.getSourceColumns().get(0));
+            
+            job = jobBuilder.toAnalysisJob();
+        }
+        
+       final AnalysisResultFuture analysisResultFuture = runner.run(job);
+        analysisResultFuture.await();
+        
+        if (analysisResultFuture.isErrornous()) {
+            throw analysisResultFuture.getErrors().get(0);
+        }
+        
+        final Map<ComponentJob, AnalyzerResult> resultMap = analysisResultFuture.getResultMap();
+        assertEquals(1, resultMap.size());
+        
+        assertEquals("ImmutableTransformerJob[name=Example,transformer=MockTransformerWithAnalyzerResult]", resultMap.keySet().iterator().next().toString());
+        assertEquals("7", resultMap.values().iterator().next().toString());
+    }
 
     public void testCloseMethodOnFailure() throws Exception {
 

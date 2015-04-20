@@ -35,7 +35,9 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;
 import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -65,6 +67,7 @@ import org.datacleaner.job.InputColumnSourceJob;
 import org.datacleaner.job.PrefixedIdGenerator;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.TransformerJob;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -330,8 +333,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <T extends Transformer> TransformerComponentBuilder<T> addTransformer(Class<T> transformerClass) {
-        TransformerDescriptor<T> descriptor = _configuration.getEnvironment().getDescriptorProvider().getTransformerDescriptorForClass(
-                transformerClass);
+        TransformerDescriptor<T> descriptor = _configuration.getEnvironment().getDescriptorProvider()
+                .getTransformerDescriptorForClass(transformerClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + transformerClass);
         }
@@ -445,8 +448,8 @@ public final class AnalysisJobBuilder implements Closeable {
     }
 
     public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(Class<F> filterClass) {
-        FilterDescriptor<F, C> descriptor = _configuration.getEnvironment().getDescriptorProvider().getFilterDescriptorForClass(
-                filterClass);
+        FilterDescriptor<F, C> descriptor = _configuration.getEnvironment().getDescriptorProvider()
+                .getFilterDescriptorForClass(filterClass);
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor found for: " + filterClass);
         }
@@ -631,9 +634,9 @@ public final class AnalysisJobBuilder implements Closeable {
             return false;
         }
 
-        if (_analyzerComponentBuilders.isEmpty()) {
+        if (getResultProducingComponentBuilders().isEmpty()) {
             if (throwException) {
-                throw new IllegalStateException("No Analyzers in job");
+                throw new IllegalStateException("No result producing components in job");
             }
             return false;
         }
@@ -1065,11 +1068,29 @@ public final class AnalysisJobBuilder implements Closeable {
      * @return
      */
     public Collection<ComponentBuilder> getComponentBuilders() {
-        Collection<ComponentBuilder> result = new ArrayList<>();
+        final Collection<ComponentBuilder> result = new ArrayList<>();
         result.addAll(_filterComponentBuilders);
         result.addAll(_transformerComponentBuilders);
         result.addAll(_analyzerComponentBuilders);
         return result;
+    }
+
+    /**
+     * Gets all component builders that are expected to generate an
+     * {@link AnalyzerResult}.
+     * 
+     * @return
+     */
+    public Collection<ComponentBuilder> getResultProducingComponentBuilders() {
+        final Collection<ComponentBuilder> componentBuilders = getComponentBuilders();
+
+        return CollectionUtils.filter(componentBuilders, new Predicate<ComponentBuilder>() {
+            @Override
+            public Boolean eval(ComponentBuilder componentBuilder) {
+                final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+                return ReflectionUtils.is(descriptor.getComponentClass(), HasAnalyzerResult.class);
+            }
+        });
     }
 
     /**

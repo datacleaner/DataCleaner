@@ -22,6 +22,8 @@ package org.datacleaner.monitor.scheduling.quartz;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.ExecutionLogMessage;
@@ -34,17 +36,15 @@ import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
-import org.datacleaner.job.runner.AnalyzerMetrics;
+import org.datacleaner.job.runner.ComponentMetrics;
 import org.datacleaner.job.runner.RowProcessingMetrics;
+import org.datacleaner.monitor.job.ExecutionLogger;
+import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.SimpleAnalysisResult;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.monitor.job.ExecutionLogger;
-import org.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.datacleaner.util.ProgressCounter;
 import org.datacleaner.util.SystemProperties;
-import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.Table;
 
 /**
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
@@ -152,14 +152,16 @@ public class MonitorAnalysisListener extends AnalysisListenerAdaptor implements 
     }
 
     @Override
-    public void analyzerBegin(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
+    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
     }
 
     @Override
-    public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
-        _results.put(analyzerJob, result);
-        _executionLogger.log("Result gathered from analyzer: " + analyzerJob);
-        _executionLogger.flushLog();
+    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
+        if (result != null) {
+            _results.put(componentJob, result);
+            _executionLogger.log("Result gathered from analyzer: " + componentJob);
+            _executionLogger.flushLog();
+        }
     }
 
     @Override

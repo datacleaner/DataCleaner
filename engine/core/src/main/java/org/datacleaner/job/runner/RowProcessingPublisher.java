@@ -41,6 +41,7 @@ import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.LazyRef;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.ContextAwareInjectionManager;
@@ -266,17 +267,14 @@ public final class RowProcessingPublisher {
         final AnalysisListener analysisListener = _publishers.getAnalysisListener();
         final TaskRunner taskRunner = _publishers.getTaskRunner();
 
-        for (RowProcessingConsumer rowProcessingConsumer : _consumers) {
-            if (rowProcessingConsumer instanceof AnalyzerConsumer) {
-                final AnalyzerConsumer analyzerConsumer = (AnalyzerConsumer) rowProcessingConsumer;
-                final AnalyzerJob analyzerJob = analyzerConsumer.getComponentJob();
-                final AnalyzerMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics().getAnalyzerMetrics(
-                        analyzerJob);
-                analysisListener.analyzerBegin(analysisJob, analyzerJob, metrics);
-            }
+        for (RowProcessingConsumer consumer : _consumers) {
+            final ComponentJob componentJob = consumer.getComponentJob();
+            final ComponentMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics().getComponentMetrics(
+                    componentJob);
+            analysisListener.componentBegin(analysisJob, componentJob, metrics);
 
-            if (rowProcessingConsumer instanceof TransformerConsumer) {
-                ((TransformerConsumer) rowProcessingConsumer).setRowIdGenerator(idGenerator);
+            if (consumer instanceof TransformerConsumer) {
+                ((TransformerConsumer) consumer).setRowIdGenerator(idGenerator);
             }
         }
         final List<RowProcessingConsumer> consumers = queryOptimizer.getOptimizedConsumers();
@@ -342,8 +340,7 @@ public final class RowProcessingPublisher {
         addConsumer(new AnalyzerConsumer(analyzer, analyzerJob, inputColumns, _publishers));
     }
 
-    public void addTransformerBean(Transformer transformer, TransformerJob transformerJob,
-            InputColumn<?>[] inputColumns) {
+    public void addTransformerBean(Transformer transformer, TransformerJob transformerJob, InputColumn<?>[] inputColumns) {
         addConsumer(new TransformerConsumer(transformer, transformerJob, inputColumns, _publishers));
     }
 
@@ -467,18 +464,15 @@ public final class RowProcessingPublisher {
     }
 
     private Task createCollectResultTask(RowProcessingConsumer consumer, Queue<JobAndResult> resultQueue) {
-        if (consumer instanceof TransformerConsumer || consumer instanceof FilterConsumer) {
-            return null;
-        } else if (consumer instanceof AnalyzerConsumer) {
-            final AnalyzerConsumer analyzerConsumer = (AnalyzerConsumer) consumer;
-            final Analyzer<?> analyzer = analyzerConsumer.getComponent();
+        final Object component = consumer.getComponent();
+        if (component instanceof HasAnalyzerResult) {
+            final HasAnalyzerResult<?> hasAnalyzerResult = (HasAnalyzerResult<?>) component;
             final AnalysisJob analysisJob = _publishers.getAnalysisJob();
             final AnalysisListener analysisListener = _publishers.getAnalysisListener();
-            return new CollectResultsTask(analyzer, analysisJob, consumer.getComponentJob(), resultQueue,
+            return new CollectResultsTask(hasAnalyzerResult, analysisJob, consumer.getComponentJob(), resultQueue,
                     analysisListener);
-        } else {
-            throw new IllegalStateException("Unknown consumer type: " + consumer);
         }
+        return null;
     }
 
     private TaskRunnable createCloseTask(RowProcessingConsumer consumer, TaskListener closeTaskListener) {

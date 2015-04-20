@@ -76,7 +76,14 @@ public class CompoundComponentRequirement implements ComponentRequirement {
     
     @Override
     public String getSimpleName() {
-        return toString();
+        final StringBuilder sb = new StringBuilder();
+        for (FilterOutcome outcome : _outcomes) {
+            if (sb.length() != 0) {
+                sb.append(" OR ");
+            }
+            sb.append(outcome.getSimpleName());
+        }
+        return sb.toString();
     }
 
     @Override

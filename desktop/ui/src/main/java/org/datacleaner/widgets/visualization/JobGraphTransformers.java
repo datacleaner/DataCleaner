@@ -38,7 +38,6 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.UserPreferences;
@@ -107,11 +106,7 @@ public class JobGraphTransformers {
     public static final Transformer<JobGraphLink, String> EDGE_LABEL_TRANSFORMER = new Transformer<JobGraphLink, String>() {
         @Override
         public String transform(JobGraphLink link) {
-            final ComponentRequirement req = link.getRequirement();
-            if (req == null) {
-                return null;
-            }
-            return req.getSimpleName();
+            return link.getLinkLabel();
         }
     };
 

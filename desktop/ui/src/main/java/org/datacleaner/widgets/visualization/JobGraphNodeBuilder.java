@@ -150,7 +150,7 @@ class JobGraphNodeBuilder {
             graph.removeEdge(link);
         }
     }
-    
+
     private boolean isEdgeShortcutFor(DirectedGraph<Object, JobGraphLink> graph, JobGraphLink potentialShortcut,
             JobGraphLink otherEdge) {
         return isEdgeShortcutFor(graph, potentialShortcut, otherEdge, new HashSet<JobGraphLink>());
@@ -174,7 +174,7 @@ class JobGraphNodeBuilder {
             // could be analyzed
             return false;
         }
-        
+
         for (JobGraphLink inEdge : inEdges) {
             if (checkedEdges.contains(inEdge)) {
                 // skip
@@ -186,7 +186,7 @@ class JobGraphNodeBuilder {
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -219,7 +219,7 @@ class JobGraphNodeBuilder {
                         InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                         if (source != null) {
                             addNodes(graph, scf, source, recurseCount);
-                            addEdge(graph, source, item, null);
+                            addEdge(graph, source, item, null, null);
                         }
                     }
 
@@ -227,7 +227,7 @@ class JobGraphNodeBuilder {
                         Table table = inputColumn.getPhysicalColumn().getTable();
                         if (table != null) {
                             addNodes(graph, scf, table, recurseCount);
-                            addEdge(graph, table, item, null);
+                            addEdge(graph, table, item, null, null);
                         }
                     }
                 }
@@ -237,7 +237,7 @@ class JobGraphNodeBuilder {
                 final HasFilterOutcomes source = scf.findOutcomeSource((FilterOutcome) item);
                 if (source != null) {
                     addNodes(graph, scf, source, recurseCount);
-                    addEdge(graph, source, item, null);
+                    addEdge(graph, source, item, null, null);
                 }
             }
 
@@ -249,7 +249,7 @@ class JobGraphNodeBuilder {
                     final HasFilterOutcomes source = scf.findOutcomeSource(filterOutcome);
                     if (source != null) {
                         addNodes(graph, scf, source, recurseCount);
-                        addEdge(graph, source, item, hasComponentRequirement.getComponentRequirement());
+                        addEdge(graph, source, item, hasComponentRequirement.getComponentRequirement(), filterOutcome);
                     }
                 }
             }
@@ -260,7 +260,7 @@ class JobGraphNodeBuilder {
                     InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
                     if (source != null) {
                         addNodes(graph, scf, source, recurseCount);
-                        addEdge(graph, source, item, null);
+                        addEdge(graph, source, item, null, null);
                     }
                 }
 
@@ -268,7 +268,7 @@ class JobGraphNodeBuilder {
                     final Table table = inputColumn.getPhysicalColumn().getTable();
                     if (table != null) {
                         addNodes(graph, scf, table, recurseCount);
-                        addEdge(graph, table, item, null);
+                        addEdge(graph, table, item, null, null);
                     }
                 }
             }
@@ -284,8 +284,8 @@ class JobGraphNodeBuilder {
     }
 
     private void addEdge(DirectedGraph<Object, JobGraphLink> graph, Object from, Object to,
-            ComponentRequirement requirement) {
-        JobGraphLink link = new JobGraphLink(from, to, requirement);
+            ComponentRequirement requirement, FilterOutcome filterOutcome) {
+        final JobGraphLink link = new JobGraphLink(from, to, requirement, filterOutcome);
         if (!graph.containsEdge(link)) {
             graph.addEdge(link, from, to, EdgeType.DIRECTED);
         }

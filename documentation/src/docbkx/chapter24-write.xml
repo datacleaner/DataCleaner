@@ -118,6 +118,29 @@
 					. In this case data will be inserted into the CouchDB database.
 				</para>
 			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Salesforce.com</emphasis>
+					. In this case data will be uploaded/inserted into Salesforce.com
+					using the SOQL web services.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>ElasticSearch index</emphasis>
+					. In this case data will be indexed into ElasticSearch.
+				</para>
+			</listitem>
 		</orderedlist>
+	</section>
+	<section id="writers_update_table">
+		<title>Update table</title>
+		<para>
+			The 'Update table' writer works like the '
+			<link linkend="writers_insert_into_table">Insert into table</link>
+			' writer except that it issues UPDATE statements instead of INSERT
+			statements. This obviously means that it has an additional property,
+			used to specify the condition (the WHERE part) of the update.
+		</para>
 	</section>
 </chapter>

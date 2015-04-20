@@ -25,20 +25,39 @@ import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RenderingFormat;
 
 /**
- * Defines an abstract descriptor for renderer beans.
+ * Defines an abstract {@link ComponentDescriptor} for {@link Renderer}s.
  * 
  * @see RendererBean
- * 
- * 
- * 
- * @param <B>
- *            the Bean type
+ *
+ * @param <R>
+ *            the type of {@link Renderer}
  */
 public interface RendererBeanDescriptor<R extends Renderer<?, ?>> extends ComponentDescriptor<R> {
 
+    /**
+     * Gets the {@link RenderingFormat} that this renderer pertains to. The type
+     * returned by {@link RenderingFormat#getOutputClass()} will typically
+     * correspond to accepted types of {@link #isOutputApplicableFor(Class)}.
+     * 
+     * @return
+     */
     public Class<? extends RenderingFormat<?>> getRenderingFormat();
 
+    /**
+     * Gets the type of {@link Renderable} that this renderer can render.
+     * 
+     * @return
+     */
     public Class<? extends Renderable> getRenderableType();
 
+    /**
+     * Determines if an object of the provided class argument can be provided
+     * using this renderer.
+     * 
+     * @see #getRenderingFormat()
+     * 
+     * @param requiredClass
+     * @return
+     */
     boolean isOutputApplicableFor(Class<?> requiredClass);
 }

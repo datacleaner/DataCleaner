@@ -43,7 +43,7 @@ public interface HasColumnMetadata {
     /**
      * Gets {@link ColumnMetadata} for a particular {@link Column}.
      * 
-     * @param columnName
+     * @param column
      * @return a {@link ColumnMetadata} object, or null if no metadata about the
      *         column is available.
      */

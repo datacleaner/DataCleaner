@@ -9,8 +9,8 @@
 		<abstract>
 			<para>
 				DataCleaner extensions are packages of added functionality,
-				written in Java. To correctly package an extension, this chapter will
-				walk through the details.
+				written in Java. To correctly package an extension, this chapter
+				will walk through the details.
 			</para>
 		</abstract>
 	</chapterinfo>
@@ -18,30 +18,31 @@
 	<section id="extensions_annotated_components">
 		<title>Annotated components</title>
 		<para>The main principle behind extension discovery in DataCleaner is
-			annotated classes. These are the annotations that will work to
-			activate components within your extension:
+			annotated classes. Any component that should be discovered should
+			have either of these annotations:
 		</para>
 
 		<orderedlist>
 			<listitem>
-				@AnalyzerBean
+				<para>
+					<emphasis>@java.inject.Named</emphasis>
+					- for classes that implement the Transformer, Filter or Analyzer
+					interface.
+				</para>
 			</listitem>
 			<listitem>
-				@TransformerBean
-			</listitem>
-			<listitem>
-				@FilterBean
-			</listitem>
-			<listitem>
-				@RendererBean
+				<para>
+					<emphasis>@org.datacleaner.api.RendererBean</emphasis>
+					- for classes that implement the Renderer interface.
+				</para>
 			</listitem>
 		</orderedlist>
 
-		<para>Please refer to the javadoc documentation of these
-			annotations/classes for details on usage.
+		<para>Please refer to the javadoc documentation of the interfaces for
+			details on usage.
 		</para>
 	</section>
-	
+
 	<section id="extensions_single_jar_file">
 		<title>Single JAR file</title>
 		<para>The extension must consist of a single JAR file. If you have
@@ -66,11 +67,21 @@
 			&#160;&lt;/plugins&gt;
 			&lt;/build&gt; </programlisting>
 	</section>
-	
+
 	<section id="extensions_metadata_xml">
 		<title>Extension metadata XML</title>
-		<para>To improve the experience, you can optionally include metadata about the extension in an XML file, bundled <emphasis>within</emphasis> the JAR file itself.</para>
-		<para>The name of the extension metadata file has to be <emphasis>datacleaner-extension.xml</emphasis> and be placed in the root directory of the JAR file. Here's an example of how the file looks like:</para>
+		<para>
+			To improve the experience, you can optionally include metadata about
+			the extension in an XML file, bundled
+			<emphasis>within</emphasis>
+			the JAR file itself.
+		</para>
+		<para>
+			The name of the extension metadata file has to be
+			<emphasis>datacleaner-extension.xml</emphasis>
+			and be placed in the root directory of the JAR file. Here's an
+			example of how the file looks like:
+		</para>
 		<programlisting lang="xml">
 			&lt;extension&#160;xmlns="http://eobjects.org/datacleaner/extension/1.0"&gt;
 			&#160;&#160;&lt;name&gt;My&#160;extension&lt;/name&gt;
@@ -82,7 +93,10 @@
 			&#160;&#160;&lt;version&gt;1.0&lt;/version&gt;
 			&lt;/extension&gt;
 		</programlisting>
-		<para>The added value of this metadata is that DataCleaner can expose this information to the user and also use it to manage updates of the the extension etc. The metadata file is however, completely optional.</para>
+		<para>The added value of this metadata is that DataCleaner can expose
+			this information to the user and also use it to manage updates of the
+			the extension etc. The metadata file is however, completely optional.
+		</para>
 	</section>
 
 	<section id="extensions_component_icons">

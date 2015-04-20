@@ -25,11 +25,6 @@ import java.util.Arrays;
 /**
  * Represents the output columns yielded by a Transformer given a certain
  * configuration.
- * 
- * By default the output columns of a transformer will have the type specified
- * by the generic argument (E) in {@link Transformer}<E>. The column type can
- * however be overridden using the output columns, by setting specific column
- * types per column index using the {@link #setColumnType(int, Class)} method.
  */
 public class OutputColumns implements Serializable {
 

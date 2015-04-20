@@ -107,7 +107,8 @@
 		<para>Below is a screenshot of the initial screen that
 			will be
 			presented when launching DataCleaner (desktop community edition).
-			A new datastore can be added in the "New job from scratch" or in
+			A
+			new datastore can be added in the "New job from scratch" or in
 			"Manage datastores" screens available by clicking the buttons in the
 			bottom of the screen.
 		</para>
@@ -193,7 +194,8 @@
 				<para>
 					<emphasis>Transformers</emphasis>
 					are components used to modify the data before analyzing it.
-					Sometimes it's neccessary to extract parts of a value or combine two
+					Sometimes it's neccessary to extract parts of a value or combine
+					two
 					values to correctly get an idea about a particular measure. In
 					other scenarios, transformers can be used to perform reference data
 					lookups or other similar tasks and place the results of an
@@ -303,9 +305,9 @@
 				</para>
 			</listitem>
 			<listitem>
-				<para>Additional tabs for each table that is being processed in the
-					job. Results for the individual analyzers will be shown in these
-					tabs.
+				<para>Additional tabs for each component type that produces a
+					result/report. For instance 'Value distribution' if such a
+					component was added to the job.
 				</para>
 			</listitem>
 		</orderedlist>

@@ -363,7 +363,7 @@ public final class WidgetUtils {
      * 
      * @param comp
      * @param panel
-     * @param gridxs
+     * @param gridx
      * @param gridy
      */
     public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy) {

@@ -17,44 +17,87 @@
 	</chapterinfo>
 
 	<section id="repository_location_configuration">
-		<title>Configure repository location</title>
+		<title>
+			Configure repository location
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
 		<para>
 			By default DataCleaner monitor web application uses a file-based
 			repository location which is relative to the deployed web archive.
 			This makes it easy to deploy and test-drive, but it might not be the
 			best production deployment choice.
 		</para>
-		<para>
-			To change the repository location, find the file
-			<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
-			within the deployed web archive folder. Find the &lt;bean&gt;
-			element
-			which initially looks like this:
-		</para>
-		<programlisting lang="xml">
-			&lt;bean&#160;name="repository"&#160;class="org.datacleaner.repository.file.FileRepository"&gt;
-			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
-			&lt;/bean&gt; </programlisting>
-		<para>You can modify the value attribute of the inner
-			&lt;constructor-arg&gt; element to point to a directory location of
-			choice. The location can be absolute or relative to the web archive
-			folder. For instance you might want to use a configuration like this
-			in a unix environment:
-		</para>
-		<programlisting lang="xml">
-			&lt;bean&#160;name="repository"&#160;class="org.datacleaner.repository.file.FileRepository"&gt;
-			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
-			&lt;/bean&gt; </programlisting>
-
-		<tip>
+		<section>
+			<title>Directory-based repository</title>
 			<para>
-				The
-				<emphasis>enterprise edition</emphasis>
-				of DataCleaner also includes a database backed repository - this
-				makes larger deployments both faster, easier to administer and
-				scalable to multiple machines.
+				To change the repository location, create of find the file
+				<emphasis>${user.home}/.datacleaner/datacleaner-monitor.properties
+				</emphasis>
+				. Make sure that it contains a key 'repository.file.location' and
+				set it's value to the location you wish. For instance:
 			</para>
-		</tip>
+			<programlisting>
+				repository.file.location=/var/datacleaner/repository
+			</programlisting>
+			<para>The repository directory approach is recommended for
+				single-machine instances of DataCleaner monitor. If you have a
+				cluster of DataCleaner servers please refer to the database-backed
+				repository configuration below.
+			</para>
+		</section>
+
+		<section>
+			<title>Database-backed repository</title>
+			<para>The database-backed repository approach makes it possible for
+				multiple server instances to share the same repository. To enable
+				it, follow these instructions.
+			</para>
+			<para>
+				In the configuration file
+				<emphasis>${user.home}/.datacleaner/datacleaner-monitor.properties
+				</emphasis>
+				you should first configure the following keys with the database's
+				JDBC connection details (url, driver, username and password
+				respectively):
+			</para>
+			<programlisting>
+				backend.datastore.jdbc.url=
+				backend.datastore.jdbc.driver=
+				backend.datastore.username=
+				backend.datastore.password=
+			</programlisting>
+			<para>
+				Now go to the location where DataCleaner-monitor is installed
+				and
+				it's .war file is exploded (in Apache Tomcat this would be the
+				'webapps' folder of Tomcat). Locate the file:
+				<emphasis>DataCleaner-monitor/WEB-INF/classes/context/repository-context.xml
+				</emphasis>
+				. In this file you will see two bean definitions with
+				id="repository". One of them is active (the file based) by default,
+				and on is commented (the database variant).
+			</para>
+			<para>Change it so that the file-based repository bean is commented
+				and the database-backed repository is active. Also consider the two
+				values "PUBLIC" and "BLOB". These should be changed if necesary to
+				the schema name of your database and the data type name of
+				BLOBs/bytes of your particular database (usually “BLOB” or “bytea”).
+				You should end up with an element similar to this:
+			</para>
+			<programlisting lang="xml">
+				&lt;bean&#160;id="repository"&#160;class="com.hi.datacleaner.repository.DatastoreRepository"&#160;init-method="createTables"&gt;
+				&#160;&#160;&lt;constructor-arg&#160;name="datastore"&#160;ref="backendDatastore"/&gt;
+				&#160;&#160;&lt;constructor-arg&#160;name="schemaName"&#160;value="PUBLIC"/&gt;
+				&#160;&#160;&lt;constructor-arg&#160;name="blobNativeType"&#160;value="BLOB"/&gt;
+				&lt;/bean&gt; </programlisting>
+
+		</section>
+
 	</section>
 
 	<section id="signed_jar_files_folder">
@@ -80,7 +123,8 @@
 		</para>
 		<programlisting lang="xml">
 			&lt;bean&#160;name="launchArtifactProvider"&#160;lazy-init="true"
-			&#160;&#160;&#160;class="org.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt; </programlisting>
+			&#160;&#160;&#160;class="org.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt;
+		</programlisting>
 		<para>It needs to be replaced with a new &lt;bean&gt; element which
 			will look like this:
 		</para>

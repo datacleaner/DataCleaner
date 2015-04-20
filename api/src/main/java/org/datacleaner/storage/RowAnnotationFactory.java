@@ -21,8 +21,10 @@ package org.datacleaner.storage;
 
 import java.util.Map;
 
+import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 
 /**
  * The RowAnnotationFactory represents a mechanism used to annotate/label rows
@@ -31,10 +33,8 @@ import org.datacleaner.api.InputRow;
  * component needs to manage a set of labels but where storing them in
  * collections would be too complicated and would fill up memory.
  * 
- * The RowAnnotationFactory is injectable into any row processing component
- * (analyzer, transformer, filter) using the @Provided annotation.
- * 
- * @see Provided
+ * The RowAnnotationFactory is injectable into any {@link Component} (analyzer,
+ * transformer, filter) using the {@link Provided} annotation.
  */
 public interface RowAnnotationFactory {
 
@@ -44,7 +44,7 @@ public interface RowAnnotationFactory {
      * @return a new annotation
      */
     public RowAnnotation createAnnotation();
-    
+
     /**
      * Annotates an array of rows (all assumed to have distinct count = 1).
      * 

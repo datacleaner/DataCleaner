@@ -26,8 +26,9 @@
 
 		<para>
 			DataCleaner uses the
-			<link xl:href="http://metamodel.incubator.apache.org">Apache MetaModel framework</link>
-			for data access. From DataCleaner's perspective, MetaModel provides a
+			<link xl:href="http://metamodel.apache.org">Apache MetaModel framework</link>
+			for data access. From DataCleaner's perspective, Apache MetaModel
+			provides a
 			number of features:
 		</para>
 		<orderedlist>
@@ -67,56 +68,71 @@
 	<section id="architecture_processing_framework">
 		<title>Processing framework</title>
 
-		<para>
-			For processing data, DataCleaner builds upon the
-			<link xl:href="http://analyzerbeans.eobjects.org">AnalyzerBeans framework</link>
-			framework, which is a closely related, but independent project. The
-			goal of AnalyzerBeans is to provide a performant and extensible
-			framework for batch-analyzing data.
+		<para>The way DataCleaner processes data is
+			slightly different compared
+			to most similar (ETL-like) tools. Firstly in the way multithreading
+			is applied, secondly in the way DataCleaner may sometimes optimize
+			the graph at execution time.
 		</para>
 
 		<para>
-			AnalyzerBeans is different from most conventional data processing
-			frameworks in that you do not specify a specific order of events, but
-			the framework
-			<emphasis>infers</emphasis>
-			it. If a step (aka. a component) in the flow requires input from
-			another step, then the flow is automatically laid out so that the
-			dependent step is executed before the other. Please refer to the
-			section on
+			<emphasis>Multithreading:</emphasis>
+			The multithreading strategy in DataCleaner enables the tool to have
+			the minimum amount of blocking and buffering and the maximum amount
+			of parallelism and potentially also distribution. Most ETL-like tools
+			apply a threading strategy where each component in a job has it's own
+			thread-management as well as an input- and an output-buffer. In
+			DataCleaner the thread management is made such that every record is
+			processed in parallel - each unit of work is stepping through the
+			complete job graph in one single pass. This has a number of
+			interesting traits:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>There's is a high degree of automatic 'load balancing' among
+					the components - less constraints and bottlenecks around the
+					slowest components in the job.
+				</para>
+			</listitem>
+			<listitem>
+				<para>The system lends itself to highly distributed processing
+					because statefulness is the exception instead of the
+					rule.
+				</para>
+			</listitem>
+			<listitem>
+				<para>There is less waste in the form of buffers inbetween the
+					components of a job.
+				</para>
+			</listitem>
+			<listitem>
+				<para>One downside to this approach is that the order of the
+					processed records cannot be guaranteed. This is only very rarely
+					required in the domain of data profiling and analysis, and if it is
+					required there are technical workarounds to apply.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<para>
+			<emphasis>Graph optimization:</emphasis>
+			While a job graph (see
 			<link linkend="wiring_components">wiring components together</link>
-			for an walk-through on how this works in practice.
+			) may show a particular following order, the engine may at runtime do
+			certain optimizations to it. Some components may provide optimization
+			strategies that involves changing the source query so that the number
+			of (or content of) processed records is changed. Obviously this is a
+			side-effect of using a component that will only be applied in cases
+			where it does not impact other components in a job. The principle is
+			sometimes also referred to as 'Push down optimization'.
 		</para>
-
 		<para>
-			One of the key characteristics of AnalyzerBeans is that it is
-			built
-			for massively parallel processing. Whereas most data processing
-			frameworks achieve parallelism by the use of parallel execution of
-			<emphasis>each step</emphasis>
-			in a flow, the AnalyzerBeans framework
-			executes the processing of
-			<emphasis>each record</emphasis>
-			in parallel. This means that any CPU utilization is drastically
-			improved since unequal processing time of the steps in a processing
-			chain does not cause in bottlenecks! The downside to this approach is
-			that the order of the processed records cannot be guaranteed, but
-			this is only very rarely required in the domain of data profiling and
-			analysis, and if it is required there are technical workarounds to
-			apply.
-		</para>
-
-		<para>
-			To further optimize performance, the AnalyzerBeans framework
-			also
-			allows certain components to modify the source query of the
-			processing chain! This is a mechanism known as "push down query
-			optimization", and is only applicable in scenarios where all
-			succeeding components depend on a specific condition. But in those
-			cases (for instance a filter specifying that a field is NOT NULL),
-			then it can drastically improve the time needed to process all
-			records. For more information on this principle, please read the blog
-			entry '
+			An example of this is a 'Null check' filter: If a Null check is
+			applied on a source column and all other components require either a
+			NULL or a NOT_NULL outcome (either explicitly or implicitly), then
+			the 'Null check' filter may add a predicate to the source query to
+			filter out all irrelevant records. For more information on this
+			principle, please read the blog entry '
 			<link
 				xl:href="http://kasper.eobjects.org/2011/12/push-down-query-optimization-in.html">Push down query optimization in DataCleaner</link>
 			' by Kasper Sørensen.

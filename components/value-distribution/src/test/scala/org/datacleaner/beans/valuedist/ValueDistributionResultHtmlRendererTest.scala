@@ -1,5 +1,6 @@
 package org.datacleaner.beans.valuedist
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider
@@ -45,12 +46,12 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     analyzer.run(new MockInputRow().put(col1, "baz"), 1);
     
     val analyzerResult = analyzer.getResult()
-    val conf = new AnalyzerBeansConfigurationImpl()
-    val descriptorProvider = conf.getDescriptorProvider().asInstanceOf[SimpleDescriptorProvider];
+    val conf = new DataCleanerConfigurationImpl()
+    val descriptorProvider = conf.getEnvironment().getDescriptorProvider().asInstanceOf[SimpleDescriptorProvider];
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ValueDistributionResultHtmlRenderer]))
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[ListResultHtmlRenderer]))
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[AnnotatedRowsHtmlRenderer]))
-    val descriptor = conf.getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
+    val descriptor = conf.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
     val map = new java.util.HashMap[ComponentJob, AnalyzerResult]()
     val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null);
     map.put(componentJob, analyzerResult);
@@ -239,7 +240,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
 
   def createRendererFactory(): RendererFactory = {
     val descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", true).scanPackage("org.datacleaner.result.renderer", false);
-    val conf = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+    val conf = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
     return new RendererFactory(conf);
   }
 }

@@ -33,11 +33,9 @@ import org.apache.metamodel.schema.Column;
  * A {@link AnalysisJob} references a source {@link Datastore} and some
  * {@link Column}s (represented via {@link InputColumn}s) of this datastore.
  * 
- * Building jobs is usually done using the
- * {@link org.datacleaner.job.builder.AnalysisJobBuilder} class.
+ * Building jobs is usually done using the <b>AnalysisJobBuilder</b> class.
  * 
- * Executing jobs is usually done using the
- * {@link org.datacleaner.job.runner.AnalysisRunner} interface.
+ * Executing jobs is usually done using the <b>AnalysisRunner</b> interface.
  */
 public interface AnalysisJob {
 

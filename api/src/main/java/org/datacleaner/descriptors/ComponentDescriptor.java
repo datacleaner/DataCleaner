@@ -90,7 +90,7 @@ public interface ComponentDescriptor<B> extends Comparable<ComponentDescriptor<?
     /**
      * Gets the configured properties that have {@link InputColumn} type.
      * 
-     * @param onlyRequired
+     * @param includeOptional
      *            a boolean indicating if optional properties should be
      *            returned. If false, only required properties will be included.
      * @return a set containing all configured property descriptors of

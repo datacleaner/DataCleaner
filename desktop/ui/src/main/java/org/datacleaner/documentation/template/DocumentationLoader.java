@@ -24,6 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -50,8 +51,9 @@ import freemarker.template.TemplateException;
 public class DocumentationLoader {
 
     private static final String FILENAME_TEMPLATE = "documentation_template.html";
-    protected static final String OUTPUT_FILENAME = "documentLoaderOutput.txt";
+    protected static final String OUTPUT_FILENAME = "documentLoaderOutput.html";
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
+    private static final File cssFile= new File("src/main/resources/documentation.css"); 
 
     private Template _template;
     private final Map<String, Object> _data = new HashMap<String, Object>();;
@@ -62,6 +64,8 @@ public class DocumentationLoader {
         @SuppressWarnings("deprecation")
         final Configuration freemarkerConfiguration = new Configuration();
         freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/");
+    
+        
         try {
             // Load the template
             _template = freemarkerConfiguration.getTemplate(FILENAME_TEMPLATE);
@@ -75,6 +79,7 @@ public class DocumentationLoader {
     public void createDocumentation(ComponentDescriptor<?> componentdescriptor) {
 
         try {
+            _data.put("cssPath", cssFile.getAbsolutePath()); 
             _data.put("component", componentdescriptor);
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();

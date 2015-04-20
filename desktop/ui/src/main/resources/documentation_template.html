@@ -2,34 +2,49 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href=${cssPath} />
 </head>
-<body>
+<body class="body">
+	<div class="navbar">
+		<a class="navbar-brand"> DataCleaner </a>
+	</div>
+	<div class="documentationBody">
+		<h1 class="title">
+			<image src=${icon} alt="Image"> ${component.displayName} 
+		</h1>
 
-	<h1><image src=${icon} alt="Image">
-	${component.displayName}</h1>
+		<h4>${component.description}</h4>
 
-	<h4>${component.description}</h4>
+		<ul class="details">
+			<li><h3>Execution details</h3></li>
+			<ul>
+				<li>
+					<dl>
+						<dt>Can it be distributed ?</dt>
+						<dd>${component.distributable?string("Yes", "No")}</dd>
+					</dl>
+				</li>
+			</ul>
 
-	<h3>Execution details</h3>
-	- Can it be distributed ? <br />
-	- ${component.distributable?string("Yes", "No")}
-	<h3>Properties</h3>
-	<table>
-		<tr>
-			<th>Name</th>
-			<th>Type</th>
-			<th>What does it do ?</th>
-			<th>Optional ?</th>
-		</tr>
-		<#list properties as property>
-		<tr>
-			<td>${property.name}</td>
-			<td>${property.type.simpleName}</td>
-			<td><#if property.description??> ${property.description} <#else>
-				- </#if></td>
-			<td>${property.required?string("No", "Yes")}</td>
-		</tr>
-		</#list>
-	</table>
+			<li><h3>Properties</h3></li>
+			<table class="propertiesdetails">
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>What does it do ?</th>
+					<th>Optional ?</th>
+				</tr>
+				<#list properties as property>
+				<tr>
+					<td>${property.name}</td>
+					<td>${property.type.simpleName}</td>
+					<td><#if property.description??> ${property.description}
+						<#else> - </#if></td>
+					<td>${property.required?string("No", "Yes")}</td>
+				</tr>
+				</#list>
+			</table>
+		</ul>
+	</div>
 </body>
 </html>

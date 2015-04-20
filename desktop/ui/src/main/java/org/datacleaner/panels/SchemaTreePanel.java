@@ -169,11 +169,11 @@ public class SchemaTreePanel extends DCPanel {
                     searchPanel.add(resetSearchFieldIcon, BorderLayout.EAST);
 
                     add(searchPanel, BorderLayout.SOUTH);
-                    updateParentPanel();
                     schemaTree.expandStandardPaths();
                     if (expandTree) {
                         schemaTree.expandSelectedData();
                     }
+                    updateParentPanel();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

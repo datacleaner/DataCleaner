@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class DocumentationLoader {
             baos.close();
 
             /*Encode the image    */
-            final byte[] bytesEncoded = java.util.Base64.getEncoder().encode(imageInByte);
+            final byte[] bytesEncoded = Base64.getEncoder().encode(imageInByte);
             final String encodedImage = new String(bytesEncoded);
 
             /* Atach the prefix that will make html <img> know how to decode the image */

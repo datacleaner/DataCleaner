@@ -452,7 +452,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             final Timer timer = new Timer(500, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    _leftPanel.setVisible(false);
+                    if (_leftPanel.isCollapsed()) {
+                        _leftPanel.setVisible(false);
+                    }
                 }
             });
             timer.setRepeats(false);

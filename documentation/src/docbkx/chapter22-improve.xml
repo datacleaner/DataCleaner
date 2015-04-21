@@ -493,9 +493,17 @@
 					</mediaobject>
 				</listitem>
 				<listitem>
-					Save the output of the filter to a datastore of your choice (CSV
-					file, Excel file, database table etc.). The whole job should look
-					like:
+					Save the output of the filter to a a new staging table.
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_create_staging_table_properties.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+				</listitem>
+				<listitem>
+					The whole job should look
+					like this:
 					<mediaobject>
 						<imageobject>
 							<imagedata fileref="merge_duplicates_unique_job.png"
@@ -565,9 +573,11 @@
 					</mediaobject>
 				</listitem>
 				<listitem>
-					Save the output of the filter to a file of your choice (choose the
-					same type as for the unique records file in previous section). The
-					whole job graph should look similar to this:
+					Save the output of the filter to a the staging table create in the
+					previous section (where the unique records had been written).
+				</listitem>
+				<listitem>
+					The whole job graph should look similar to this:
 					<mediaobject>
 						<imageobject>
 							<imagedata fileref="merge_duplicates_merge_job.png"
@@ -580,8 +590,8 @@
 		</section>
 
 		Following above sections, we obtained a datastore with unique values
-		and a datastore with duplicates merged into a single record. The final
-		step is to merge these two files together.
+		and merged duplicate inside, ready to be exported to the format of user's
+		preference.
 
 	</section>
 

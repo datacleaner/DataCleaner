@@ -418,6 +418,200 @@
 
 	</section>
 
+	<section id="merge_duplicates">
+
+		<title>
+			Merge duplicates
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+
+		<para>Merging duplicates is the next step after detecting them in a
+			dataset. It helps to restore a single version of truth by combining
+			information from all the duplicate records representing the same
+			physical entity.
+		</para>
+
+		<para>
+			In this section, we assume that the steps from previous section
+			"Duplicate detection" are completed and the duplicates are available
+			in a staging datastore "Duplicates export".
+		</para>
+
+		<section>
+			<title>
+				Copy the unique records
+			</title>
+
+			<para>
+				Before we get into merging the duplicates, let's make sure all
+				the unique entries in our datasets are propagated to the new
+				(cleansed) dataset.
+			</para>
+
+			<para>
+				Open the original dataset.
+				Apply "Table lookup" transformer to
+				it and configure "Table lookup" to
+				check if a record is present in
+				the
+				results of duplicate detection
+				staging table (lookup in RECORDS
+				table). Choose a unique identifier
+				column as condition value (in
+				this
+				case: CUSTOMERNUMBER). As an
+				output column choose GROUPID, which is
+				an additional
+				information in
+				RECORDS table.
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_table_lookup_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Table lookup will output the value of GROUPID or NULL. We are
+				interested in NULL values as it means the record has not been
+				found
+				in duplicates table, so this is the unique record we would
+				like to
+				transfer to the final dataset. Therefore, we add Null check
+				filter to
+				save only the unique records (GROUPID is equal to NULL).
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_null_check.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Save the output of the filter to a a new staging table.
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="merge_duplicates_create_staging_table_properties.png"
+							format="PNG" />
+					</imageobject>
+				</mediaobject>
+			</para>
+
+			<para>
+				The whole job should look
+				like this:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_unique_job.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+		</section>
+
+		<section>
+			<title>
+				Merge duplicates
+			</title>
+
+			<para>Now it is time to merge the duplicates into one record in our
+				final dataset.
+			</para>
+
+			<para>In the Improve menu, in the
+				Deduplication submenu, there are two
+				components that are useful for
+				this task - Merge duplicates (simple)
+				and Merge duplicates (advanced).
+				The simple version just picks one
+				record from the group of duplicates
+				while the advanced one enables
+				the
+				user to combine records, taking
+				some values from one record, some
+				from another. In this example we
+				will use the simple version.
+			</para>
+
+			<para>
+				Open the duplicates staging datastore as the job source datastore.
+				Apply
+				"Merge duplicates (Simple)" transformer to the RECORDS table
+				from the duplicates datastore. Select all the relevant columns as
+				input (in our case all of them) and select GROUPID column in "Group
+				id" dropdown menu and GROUPSIZE column in "Group count".
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_merge_simple_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Merge duplicates (Simple) transformer will output all the input
+				columns as output + additional colums carrying metadata about the
+				record. One of them is "Merge status" that can have two possible
+				values: SURVIVOR and NON_SURVIVOR. SURVIVOR indicates the record
+				that has been chosen as the final one. Let's add an Equals filter
+				to
+				the job in order to
+				write only these SURVIVOR records into our
+				final
+				dataset.
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_equals_filter_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Save the output of the filter to a the staging table created in
+				the
+				previous section (where the unique records had been written).
+			</para>
+			<para>
+				The whole job graph should look similar to this:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_merge_job.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+		</section>
+
+		<section>
+			<title>
+				Conclusion
+			</title>
+
+			Following above sections, we obtained a datastore with unique values
+			and merged duplicate inside, ready to be exported to the format of
+			user's
+			preference.
+
+		</section>
+
+	</section>
+
 	<section id="synonym_lookup_transformer">
 		<title>Synonym lookup</title>
 		<para>
@@ -713,8 +907,8 @@
 			</table>
 		</section>
 	</section>
-	
-		<section id="US_suppression">
+
+	<section id="US_suppression">
 		<title>
 			US Address Correction/Suppression
 			<inlinemediaobject>
@@ -724,10 +918,14 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<para>This component provides CASS Certified(tm) Address Correction and Suppression
-			services for the United States of America. Use it to check that
-			the name and address data you have about people is up to date and
-			correct. The following Address suppression checks currently exist:
+		<para>This component provides CASS Certified(tm) Address Correction
+			and Suppression
+			services for the United States of America. Use it to
+			check that
+			the name and address data you have about people is up to
+			date and
+			correct. The following Address suppression checks currently
+			exist:
 		</para>
 		<orderedlist>
 			<listitem>
@@ -749,7 +947,8 @@
 				Address and suppression data sources
 			</title>
 			<para>The service combines data of several sources, including
-				the US Postal Service.
+				the US
+				Postal Service.
 			</para>
 		</section>
 		<section>
@@ -811,18 +1010,52 @@
 						</row>
 						<row>
 							<entry>EcoaFootnote</entry>
-							<entry>An indicator value telling what the outcome of the 'Change of Address' check was. The following tokens can occur:
-							<orderedlist>
-								<listitem><para><emphasis>N</emphasis> - No change</para></listitem>
-								<listitem><para><emphasis>M</emphasis> - The party has a new address</para></listitem>
-								<listitem><para><emphasis>K</emphasis> - The party has moved away without a new address</para></listitem>
-							</orderedlist>
-							<para>Furthermore the field may have a token representing the type of party that was identified:</para>
-							<orderedlist>
-								<listitem><para><emphasis>I</emphasis> - Individual</para></listitem>
-								<listitem><para><emphasis>F</emphasis> - Family</para></listitem>
-								<listitem><para><emphasis>B</emphasis> - Business</para></listitem>
-							</orderedlist>
+							<entry>
+								An indicator value telling what the outcome of the 'Change of
+								Address' check was. The following tokens can occur:
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>N</emphasis>
+											- No change
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>M</emphasis>
+											- The party has a new address
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>K</emphasis>
+											- The party has moved away without a new address
+										</para>
+									</listitem>
+								</orderedlist>
+								<para>Furthermore the field may have a token representing the
+									type of party that was identified:
+								</para>
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>I</emphasis>
+											- Individual
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>F</emphasis>
+											- Family
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>B</emphasis>
+											- Business
+										</para>
+									</listitem>
+								</orderedlist>
 							</entry>
 						</row>
 						<row>

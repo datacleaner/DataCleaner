@@ -44,6 +44,7 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
@@ -199,7 +200,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
-    public final boolean isConfigured(boolean throwException) throws IllegalStateException,
+    public final boolean isConfigured(boolean throwException) throws ComponentValidationException,
             UnconfiguredConfiguredPropertyException {
         for (ConfiguredPropertyDescriptor configuredProperty : _descriptor.getConfiguredProperties()) {
             if (!isConfigured(configuredProperty, throwException)) {
@@ -213,7 +214,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
         try {
             LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(_analysisJobBuilder.getConfiguration(), null, false);
-            lifeCycleHelper.validate(getDescriptor(), getConfigurableBean());
+            lifeCycleHelper.validate(getDescriptor(), getComponentInstance());
         } catch (RuntimeException e) {
             if (throwException) {
                 throw e;

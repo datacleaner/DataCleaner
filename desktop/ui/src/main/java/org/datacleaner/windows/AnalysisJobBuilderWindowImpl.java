@@ -77,6 +77,7 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
@@ -517,12 +518,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 final String errorMessage;
                 if (ex instanceof UnconfiguredConfiguredPropertyException) {
                     executeable = false;
-                    UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
-                    ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
+                    final UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
+                    final ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
                             .getConfiguredProperty();
-                    ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException.getComponentBuilder();
+                    final ComponentBuilder componentBuilder = unconfiguredConfiguredPropertyException
+                            .getComponentBuilder();
                     errorMessage = "Property '" + configuredProperty.getName() + "' in "
                             + LabelUtils.getLabel(componentBuilder) + " is not set!";
+                } else if (ex instanceof ComponentValidationException) {
+                    executeable = false;
+                    final ComponentValidationException componentValidationException = (ComponentValidationException) ex;
+                    errorMessage = componentValidationException.getComponentDescriptor().getDisplayName()
+                            + " validation failed: " + ex.getMessage();
                 } else {
                     errorMessage = ex.getMessage();
                 }

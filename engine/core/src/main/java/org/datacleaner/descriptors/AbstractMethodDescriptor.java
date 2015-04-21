@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.util.ReflectionUtils;
 
 /**
  * Abstract descriptor for things that are represented by a method on a
@@ -57,6 +57,10 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
         _name = method.getName();
         _componentDescriptor = componentDescriptor;
     }
+    
+    public ComponentDescriptor<?> getComponentDescriptor() {
+        return _componentDescriptor;
+    }
 
     public final Method getMethod() {
         if (_method == null) {
@@ -70,20 +74,27 @@ class AbstractMethodDescriptor extends BaseObject implements Serializable {
         return getClass().getSimpleName() + "[method=" + _name + "]";
     }
 
-    protected final void invoke(Object component) {
+    protected final void invoke(Object component) throws RuntimeException, IllegalStateException {
         try {
             _method.invoke(component);
         } catch (RuntimeException e) {
             throw e;
         } catch (InvocationTargetException e) {
-            Throwable targetException = e.getTargetException();
-            if (targetException instanceof RuntimeException) {
-                throw (RuntimeException) targetException;
-            }
-            throw new IllegalStateException("Invoked method threw exception", targetException);
+            throw convertThrownException(component, e);
         } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
             throw new IllegalStateException("Could not invoke method " + getMethod(), e);
         }
+    }
+
+    protected RuntimeException convertThrownException(Object component, InvocationTargetException e) {
+        final Throwable targetException = e.getTargetException();
+        if (targetException instanceof RuntimeException) {
+            throw (RuntimeException) targetException;
+        }
+        throw new RuntimeException(targetException);
     }
 
     public final Set<Annotation> getAnnotations() {

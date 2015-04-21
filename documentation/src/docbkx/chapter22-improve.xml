@@ -455,7 +455,7 @@
 
 			<orderedlist numeration="arabic">
 				<listitem>
-					Open the original dataset
+					Open the original dataset.
 				</listitem>
 				<listitem>
 					Apply "Table lookup" transformer to
@@ -541,7 +541,7 @@
 
 			<orderedlist>
 				<listitem>
-					Open the duplicates staging table as the job source datastore
+					Open the duplicates staging table as the job source datastore.
 				</listitem>
 				<listitem>
 					Apply "Merge duplicates (Simple)" transformer to the RECORDS table
@@ -589,9 +589,17 @@
 
 		</section>
 
-		Following above sections, we obtained a datastore with unique values
-		and merged duplicate inside, ready to be exported to the format of user's
-		preference.
+		<section>
+			<title>
+				Conclusion
+			</title>
+
+			Following above sections, we obtained a datastore with unique values
+			and merged duplicate inside, ready to be exported to the format of
+			user's
+			preference.
+
+		</section>
 
 	</section>
 

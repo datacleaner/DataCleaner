@@ -28,21 +28,25 @@
 				<li><h3>Configured Properties</h3></li>
 				<div class="propertiesdetails">
 					<#list properties as property>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">${property.name}</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">${property.type.simpleName}</dd>
-						<#if property.description??>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">${property.description}</dd>
-						</#if> <#if property.required??>
-						<dt class="required">Required</dt>
-						</#if> <#if mappedProperties??>
-						<dt><#if mappedProperties.get(property.name)??>
-							${mappedProperties.get(property.name).value} </#if></dt>
-						</#if>
-					</dl>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								${property.name} <#if property.required??> <span
+									class="required">Required</span> </#if>
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">${property.type.simpleName}</dd>
+							<#if property.description??>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">${property.description}</dd>
+							</#if> <#if mappedProperties??>
+							<dt><#if mappedProperties.get(property.name)??>
+								${mappedProperties.get(property.name).value} </#if></dt>
+							</#if>
+						</dl>
+					</section>
+					<hr>
 					</#list>
 				</div>
 			</ol>

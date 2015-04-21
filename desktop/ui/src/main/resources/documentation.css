@@ -40,3 +40,26 @@
 	margin: 10px;
 }
 
+.propertiesdetails .property {
+
+}
+
+.propertiesdetails .col {
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.propertiesdetails .colvalue {
+	
+}
+
+.propertiesdetails .name {
+	color: #5591e2;
+}
+
+.propertiesdetails .required {
+	background-color: #f59b06;
+	color: white;
+	padding: 3px;
+	margin-left: 10px;
+}

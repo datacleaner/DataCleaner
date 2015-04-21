@@ -28,134 +28,190 @@ It can be used for a lot of purposes but is excellent for verifying or getting i
 				</ul>
 				<li><h3>Configured Properties</h3></li>
 				<div class="propertiesdetails">
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Column</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">InputColumn</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Group column</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">InputColumn</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Optional column to group patterns by</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Discriminate text case</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Separate text tokens based on case</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Discriminate negative numbers</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Separate number tokens based on negativity</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Discriminate decimals</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Separate number tokens for decimals</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Enable mixed tokens</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Use '?'-tokens for mixed text and numbers</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Ignore repeated spaces</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Ignore whitespace differences</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Upper case patterns expand in size</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Auto-adjust/expand uppercase text tokens</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Lower case patterns expand in size</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">boolean</dd>
-						<dt class="col">Description</dt>
-						<dd class="colvalue">Auto-adjust/expand lowercase text tokens</dd>
-						 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Predefined token name</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">String</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Predefined token regexes</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">String[]</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Decimal separator</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Character</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Thousands separator</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Character</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
-					<dl>
-						<dt class="col">Property</dt>
-						<dd class="colvalue">Minus sign</dd>
-						<dt class="colvalue">Type</dt>
-						<dd class="proper">Character</dd>
- 
-						<dt class="required">Required</dt>
-						 					</dl>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Column  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">InputColumn</dd>
+ 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Group column  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">InputColumn</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Optional column to group patterns by</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Discriminate text case  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Separate text tokens based on case</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Discriminate negative numbers  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Separate number tokens based on negativity</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Discriminate decimals  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Separate number tokens for decimals</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Enable mixed tokens  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Use '?'-tokens for mixed text and numbers</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Ignore repeated spaces  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Ignore whitespace differences</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Upper case patterns expand in size  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Auto-adjust/expand uppercase text tokens</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Lower case patterns expand in size  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">boolean</dd>
+							<dt class="col">Description</dt>
+							<dd class="colvalue">Auto-adjust/expand lowercase text tokens</dd>
+							 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Predefined token name  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">String</dd>
+ 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Predefined token regexes  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">String[]</dd>
+ 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Decimal separator  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Character</dd>
+ 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Thousands separator  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Character</dd>
+ 						</dl>
+					</section>
+					<hr>
+					<section>
+						<dl class="property">
+							<dt class="col">Property</dt>
+							<dd class="name">
+								Minus sign  <span
+									class="required">Required</span> 
+							</dd>
+							<dt class="col">Type</dt>
+							<dd class="colvalue">Character</dd>
+ 						</dl>
+					</section>
+					<hr>
 				</div>
 			</ol>
 		</div>

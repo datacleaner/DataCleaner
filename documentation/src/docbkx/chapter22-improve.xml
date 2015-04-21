@@ -439,7 +439,7 @@
 		<para>
 			In this section, we assume that the steps from previous section
 			"Duplicate detection" are completed and the duplicates are available
-			in a staging table "Duplicates export".
+			in a staging datastore "Duplicates export".
 		</para>
 
 		<section>
@@ -545,7 +545,7 @@
 			</para>
 
 			<para>
-				Open the duplicates staging table as the job source datastore.
+				Open the duplicates staging datastore as the job source datastore.
 				Apply
 				"Merge duplicates (Simple)" transformer to the RECORDS table
 				from the duplicates datastore. Select all the relevant columns as
@@ -581,7 +581,7 @@
 			</mediaobject>
 
 			<para>
-				Save the output of the filter to a the staging table create in
+				Save the output of the filter to a the staging table created in
 				the
 				previous section (where the unique records had been written).
 			</para>

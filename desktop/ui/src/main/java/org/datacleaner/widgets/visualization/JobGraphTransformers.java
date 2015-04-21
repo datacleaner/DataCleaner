@@ -38,7 +38,10 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.GraphUtils;
@@ -119,6 +122,38 @@ public class JobGraphTransformers {
 
     public Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getEdgeShapeTransformer() {
         final String edgeStyle = _userPreferences.getAdditionalProperties().get(USER_PREFERENCES_PROPERTY_EDGE_STYLE);
+        final Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> baseTransformer = getBaseEdgeShapeTransformer(edgeStyle);
+
+        return new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape>() {
+            @Override
+            public Shape transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
+                final Shape result = baseTransformer.transform(input);
+                final JobGraphLink link = input.element;
+                if (isCompoundRequirementLink(link)) {
+                    // make a double link (actually a wedge, but close
+                    // enough) to show that there are more than one filter
+                    // outcome coming from this source
+                    return new EdgeShape.Wedge<Object, JobGraphLink>(10).transform(input);
+                }
+                return result;
+            }
+        };
+
+    }
+
+    protected boolean isCompoundRequirementLink(JobGraphLink link) {
+        final ComponentRequirement req = link.getRequirement();
+        final Object from = link.getFrom();
+        if (req instanceof CompoundComponentRequirement && from instanceof HasFilterOutcomes) {
+            if (((CompoundComponentRequirement) req).hasMultipleRequirementsFrom((HasFilterOutcomes) from)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getBaseEdgeShapeTransformer(
+            String edgeStyle) {
         if (edgeStyle == null) {
             return new EdgeShape.QuadCurve<>();
         }
@@ -154,8 +189,24 @@ public class JobGraphTransformers {
             @Override
             public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
                     boolean isSelected, T edge) {
+                final String labelText;
+
+                if (edge instanceof JobGraphLink) {
+                    final JobGraphLink link = (JobGraphLink) edge;
+                    if (isCompoundRequirementLink(link)) {
+                        final HasFilterOutcomes from = (HasFilterOutcomes) link.getFrom();
+                        final CompoundComponentRequirement req = (CompoundComponentRequirement) link.getRequirement();
+                        final Set<FilterOutcome> outcomesFrom = req.getOutcomesFrom(from);
+                        labelText = new CompoundComponentRequirement(outcomesFrom).getSimpleName();
+                    } else {
+                        labelText = value + "";
+                    }
+                } else {
+                    labelText = value + "";
+                }
+
                 final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_SMALL);
-                final JLabel label = new JLabel(value + "", icon, JLabel.LEFT);
+                final JLabel label = new JLabel(labelText, icon, JLabel.LEFT);
                 label.setFont(_normalFont);
                 return label;
             }

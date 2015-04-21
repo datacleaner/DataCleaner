@@ -418,6 +418,94 @@
 
 	</section>
 
+	<section id="merge_duplicates">
+
+		<title>
+			Merge duplicates
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="notice_commercial_editions_only.png"
+						format="PNG" />
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+
+		<para>Merging duplicates is the next step after detecting them in a
+			dataset. It helps to restore a single version of truth by combining
+			information from all the duplicate records representing the same
+			physical entity.
+		</para>
+
+		<para>
+			In this section, we assume that the steps from previous section
+			"Duplicate detection" are completed and the duplicates are available
+			in a staging table.
+		</para>
+
+		<section>
+			<title>
+				Copy the unique records
+			</title>
+
+			<para>
+				Before we get into merging the duplicates, let's make sure all
+				the unique entries in our datasets are propagated to the new
+				(cleansed) dataset.
+			</para>
+
+			<orderedlist numeration="arabic">
+				<listitem>
+					Open the original dataset
+				</listitem>
+				<listitem>
+					Apply "Table lookup" transformer to
+					it.
+				</listitem>
+				<listitem>
+					Configure "Table lookup" to check if a record is present in the
+					results of duplicate detection staging table (lookup in RECORDS
+					table). Choose a unique identifier column as condition value (in
+					this case: CUSTOMERNUMBER).
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_table_lookup_properties.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+					As an output column choose GROUPID, which is an additional
+					information in RECORDS table.
+				</listitem>
+				<listitem>
+					Table lookup will output the value of GROUPID or NULL. We are
+					interested in NULL values as it means the records has not been
+					found
+					in duplicates table, so this is the unique record we would like to
+					transfer to the final file. Therefore, we add Null check filter to
+					save only the unique file (GROUPID is equal to NULL).
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_null_check.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+				</listitem>
+				<listitem>
+					Save the output of the filter to a datastore of your choice (CSV
+					file, Excel file, database table etc.). The whole job should look
+					like:
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_unique_job.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+				</listitem>
+			</orderedlist>
+
+		</section>
+
+	</section>
+
 	<section id="synonym_lookup_transformer">
 		<title>Synonym lookup</title>
 		<para>
@@ -713,8 +801,8 @@
 			</table>
 		</section>
 	</section>
-	
-		<section id="US_suppression">
+
+	<section id="US_suppression">
 		<title>
 			US Address Correction/Suppression
 			<inlinemediaobject>
@@ -724,10 +812,14 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<para>This component provides CASS Certified(tm) Address Correction and Suppression
-			services for the United States of America. Use it to check that
-			the name and address data you have about people is up to date and
-			correct. The following Address suppression checks currently exist:
+		<para>This component provides CASS Certified(tm) Address Correction
+			and Suppression
+			services for the United States of America. Use it to
+			check that
+			the name and address data you have about people is up to
+			date and
+			correct. The following Address suppression checks currently
+			exist:
 		</para>
 		<orderedlist>
 			<listitem>
@@ -749,7 +841,8 @@
 				Address and suppression data sources
 			</title>
 			<para>The service combines data of several sources, including
-				the US Postal Service.
+				the US
+				Postal Service.
 			</para>
 		</section>
 		<section>
@@ -811,18 +904,52 @@
 						</row>
 						<row>
 							<entry>EcoaFootnote</entry>
-							<entry>An indicator value telling what the outcome of the 'Change of Address' check was. The following tokens can occur:
-							<orderedlist>
-								<listitem><para><emphasis>N</emphasis> - No change</para></listitem>
-								<listitem><para><emphasis>M</emphasis> - The party has a new address</para></listitem>
-								<listitem><para><emphasis>K</emphasis> - The party has moved away without a new address</para></listitem>
-							</orderedlist>
-							<para>Furthermore the field may have a token representing the type of party that was identified:</para>
-							<orderedlist>
-								<listitem><para><emphasis>I</emphasis> - Individual</para></listitem>
-								<listitem><para><emphasis>F</emphasis> - Family</para></listitem>
-								<listitem><para><emphasis>B</emphasis> - Business</para></listitem>
-							</orderedlist>
+							<entry>
+								An indicator value telling what the outcome of the 'Change of
+								Address' check was. The following tokens can occur:
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>N</emphasis>
+											- No change
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>M</emphasis>
+											- The party has a new address
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>K</emphasis>
+											- The party has moved away without a new address
+										</para>
+									</listitem>
+								</orderedlist>
+								<para>Furthermore the field may have a token representing the
+									type of party that was identified:
+								</para>
+								<orderedlist>
+									<listitem>
+										<para>
+											<emphasis>I</emphasis>
+											- Individual
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>F</emphasis>
+											- Family
+										</para>
+									</listitem>
+									<listitem>
+										<para>
+											<emphasis>B</emphasis>
+											- Business
+										</para>
+									</listitem>
+								</orderedlist>
 							</entry>
 						</row>
 						<row>

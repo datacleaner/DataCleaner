@@ -59,6 +59,17 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         return _outcomes;
     }
 
+    public Set<FilterOutcome> getOutcomesFrom(HasFilterOutcomes producingComponent) {
+        Set<FilterOutcome> result = new LinkedHashSet<>();
+        for (FilterOutcome outcome : _outcomes) {
+            final HasFilterOutcomes source = outcome.getSource();
+            if (producingComponent.equals(source)) {
+                result.add(outcome);
+            }
+        }
+        return result;
+    }
+
     public boolean hasMultipleRequirementsFrom(HasFilterOutcomes producingComponent) {
         int count = 0;
         for (FilterOutcome outcome : _outcomes) {

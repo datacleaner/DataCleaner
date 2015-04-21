@@ -479,8 +479,10 @@
 					Table lookup will output the value of GROUPID or NULL. We are
 					interested in NULL values as it means the records has not been
 					found
-					in duplicates table, so this is the unique record we would like to
-					transfer to the final file. Therefore, we add Null check filter to
+					in duplicates table, so this is the unique record we would
+					like to
+					transfer to the final file. Therefore, we add Null check
+					filter to
 					save only the unique file (GROUPID is equal to NULL).
 					<mediaobject>
 						<imageobject>
@@ -499,6 +501,59 @@
 								format="PNG" />
 						</imageobject>
 					</mediaobject>
+				</listitem>
+			</orderedlist>
+
+		</section>
+
+		<section>
+			<title>
+				Merge duplicates
+			</title>
+
+			Now it is time to merge the duplicates that have been detected into
+			one record in our final file.
+
+			<orderedlist>
+				<listitem>
+					Open the duplicates staging table as the job source datastore
+				</listitem>
+				<listitem>
+					Apply "Merge duplicates (Simple)" transformer to the RECORDS table
+					from the duplicates datastore. Select all the relevant columns as
+					input (in our case all of them) and select GROUPID column in "Group
+					id" dropdown menu and GROUPSIZE column in "Group count".
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_merge_simple_properties.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+				</listitem>
+				<listitem>
+					Merge duplicates (Simple) transformer will output all the input
+					columns as output + additional colums carrying metadata about the
+					record. One of them is "Merge status" that can have two possible
+					values: SURVIVOR and NON_SURVIVOR. SURVIVOR indicates the record
+					that has been chose as the final one. Let's add an Equals filter to
+					write only these SURVIVOR records into our final file.
+
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="merge_duplicates_equals_filter_properties.png"
+								format="PNG" />
+						</imageobject>
+					</mediaobject>
+				</listitem>
+				<listitem>
+					Save the output of the filter to a file of your choice (choose the
+					same type as for the unique records file in previous section). The whole job graph should look similar to this:
+					<mediaobject>
+					<imageobject>
+						<imagedata fileref="merge_duplicates_merge_job.png"
+							format="PNG" />
+					</imageobject>
+				</mediaobject>
 				</listitem>
 			</orderedlist>
 

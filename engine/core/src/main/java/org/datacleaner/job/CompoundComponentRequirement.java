@@ -59,6 +59,17 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         return _outcomes;
     }
 
+    public boolean hasMultipleRequirementsFrom(HasFilterOutcomes producingComponent) {
+        int count = 0;
+        for (FilterOutcome outcome : _outcomes) {
+            final HasFilterOutcomes source = outcome.getSource();
+            if (producingComponent.equals(source)) {
+                count++;
+            }
+        }
+        return count > 1;
+    }
+
     @Override
     public Collection<FilterOutcome> getProcessingDependencies() {
         return getOutcomes();
@@ -73,7 +84,7 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         }
         return false;
     }
-    
+
     @Override
     public String getSimpleName() {
         final StringBuilder sb = new StringBuilder();

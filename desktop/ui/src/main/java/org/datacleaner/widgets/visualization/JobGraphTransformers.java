@@ -38,7 +38,10 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.GraphUtils;
@@ -119,6 +122,31 @@ public class JobGraphTransformers {
 
     public Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getEdgeShapeTransformer() {
         final String edgeStyle = _userPreferences.getAdditionalProperties().get(USER_PREFERENCES_PROPERTY_EDGE_STYLE);
+        final Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> baseTransformer = getBaseEdgeShapeTransformer(edgeStyle);
+
+        return new Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape>() {
+            @Override
+            public Shape transform(Context<Graph<Object, JobGraphLink>, JobGraphLink> input) {
+                final Shape result = baseTransformer.transform(input);
+                final JobGraphLink link = input.element;
+                final ComponentRequirement req = link.getRequirement();
+                final Object from = link.getFrom();
+                if (req instanceof CompoundComponentRequirement && from instanceof HasFilterOutcomes) {
+                    if (((CompoundComponentRequirement) req).hasMultipleRequirementsFrom((HasFilterOutcomes) from)) {
+                        // make a double link (actually a wedge, but close
+                        // enough) to show that there are more than one filter
+                        // outcome coming from this source
+                        return new EdgeShape.Wedge<Object, JobGraphLink>(10).transform(input);
+                    }
+                }
+                return result;
+            }
+        };
+
+    }
+
+    private Transformer<Context<Graph<Object, JobGraphLink>, JobGraphLink>, Shape> getBaseEdgeShapeTransformer(
+            String edgeStyle) {
         if (edgeStyle == null) {
             return new EdgeShape.QuadCurve<>();
         }

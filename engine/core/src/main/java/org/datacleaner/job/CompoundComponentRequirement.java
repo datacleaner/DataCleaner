@@ -49,6 +49,13 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         }
     }
 
+    public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
+        _outcomes = new LinkedHashSet<FilterOutcome>();
+
+        _outcomes.addAll(existingRequirement.getProcessingDependencies());
+        _outcomes.add(filterOutcome);
+    }
+
     /**
      * Gets the {@link FilterOutcome} that this
      * {@link CompoundComponentRequirement} represents.

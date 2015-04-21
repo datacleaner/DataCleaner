@@ -42,6 +42,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.CompoundComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSourceJob;
@@ -227,8 +228,7 @@ public class JobGraphLinkPainter {
                     menuItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
-                            componentBuilder.setComponentRequirement(requirement);
+                            addOrSetFilterOutcomeAsRequirement(componentBuilder, filterOutcome);
                         }
                     });
                     popup.add(menuItem);
@@ -242,6 +242,30 @@ public class JobGraphLinkPainter {
         }
         logger.debug("createLink(...) returning false - no applicable action");
         return false;
+    }
+
+    protected void addOrSetFilterOutcomeAsRequirement(ComponentBuilder componentBuilder, FilterOutcome filterOutcome) {
+        final ComponentRequirement existingRequirement = componentBuilder.getComponentRequirement();
+        if (existingRequirement == null) {
+            // set a new requirement
+            final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
+            componentBuilder.setComponentRequirement(requirement);
+            return;
+        }
+
+        final ComponentRequirement defaultRequirement = componentBuilder.getAnalysisJobBuilder()
+                .getDefaultRequirement();
+        if (existingRequirement.equals(defaultRequirement)) {
+            // override the default requirement
+            final ComponentRequirement requirement = new SimpleComponentRequirement(filterOutcome);
+            componentBuilder.setComponentRequirement(requirement);
+            return;
+        }
+
+        // add outcome to a compound requirement
+        final CompoundComponentRequirement requirement = new CompoundComponentRequirement(existingRequirement,
+                filterOutcome);
+        componentBuilder.setComponentRequirement(requirement);
     }
 
     private Collection<? extends InputColumn<?>> getRelevantSourceColumn(List<? extends InputColumn<?>> sourceColumns,

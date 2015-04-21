@@ -453,65 +453,70 @@
 				(cleansed) dataset.
 			</para>
 
-			<orderedlist numeration="arabic">
-				<listitem>
-					Open the original dataset.
-				</listitem>
-				<listitem>
-					Apply "Table lookup" transformer to
-					it. Configure "Table lookup" to
-					check if a record is present in the
-					results of duplicate detection
-					staging table (lookup in RECORDS
-					table). Choose a unique identifier
-					column as condition value (in
-					this case: CUSTOMERNUMBER). As an
-					output column choose GROUPID, which is an additional
-					information in
-					RECORDS table.
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_table_lookup_properties.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-				<listitem>
-					Table lookup will output the value of GROUPID or NULL. We are
-					interested in NULL values as it means the records has not been
-					found
-					in duplicates table, so this is the unique record we would
-					like to
-					transfer to the final file. Therefore, we add Null check
-					filter to
-					save only the unique file (GROUPID is equal to NULL).
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_null_check.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-				<listitem>
-					Save the output of the filter to a a new staging table.
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_create_staging_table_properties.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-				<listitem>
-					The whole job should look
-					like this:
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_unique_job.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-			</orderedlist>
+			<para>
+				Open the original dataset.
+				Apply "Table lookup" transformer to
+				it and configure "Table lookup" to
+				check if a record is present in
+				the
+				results of duplicate detection
+				staging table (lookup in RECORDS
+				table). Choose a unique identifier
+				column as condition value (in
+				this
+				case: CUSTOMERNUMBER). As an
+				output column choose GROUPID, which is
+				an additional
+				information in
+				RECORDS table.
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_table_lookup_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Table lookup will output the value of GROUPID or NULL. We are
+				interested in NULL values as it means the record has not been
+				found
+				in duplicates table, so this is the unique record we would
+				like to
+				transfer to the final dataset. Therefore, we add Null check
+				filter to
+				save only the unique records (GROUPID is equal to NULL).
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_null_check.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Save the output of the filter to a a new staging table.
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="merge_duplicates_create_staging_table_properties.png"
+							format="PNG" />
+					</imageobject>
+				</mediaobject>
+			</para>
+
+			<para>
+				The whole job should look
+				like this:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_unique_job.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
 
 		</section>
 
@@ -521,7 +526,7 @@
 			</title>
 
 			<para>Now it is time to merge the duplicates into one record in our
-				final file.
+				final dataset.
 			</para>
 
 			<para>In the Improve menu, in the
@@ -535,57 +540,61 @@
 				the
 				user to combine records, taking
 				some values from one record, some
-				from another. In this example, we
+				from another. In this example we
 				will use the simple version.
 			</para>
 
-			<orderedlist>
-				<listitem>
-					Open the duplicates staging table as the job source datastore.
-				</listitem>
-				<listitem>
-					Apply "Merge duplicates (Simple)" transformer to the RECORDS table
-					from the duplicates datastore. Select all the relevant columns as
-					input (in our case all of them) and select GROUPID column in "Group
-					id" dropdown menu and GROUPSIZE column in "Group count".
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_merge_simple_properties.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-				<listitem>
-					Merge duplicates (Simple) transformer will output all the input
-					columns as output + additional colums carrying metadata about the
-					record. One of them is "Merge status" that can have two possible
-					values: SURVIVOR and NON_SURVIVOR. SURVIVOR indicates the record
-					that has been chosen as the final one. Let's add an Equals filter
-					to the job in order to
-					write only these SURVIVOR records into our
-					final file.
+			<para>
+				Open the duplicates staging table as the job source datastore.
+				Apply
+				"Merge duplicates (Simple)" transformer to the RECORDS table
+				from the duplicates datastore. Select all the relevant columns as
+				input (in our case all of them) and select GROUPID column in "Group
+				id" dropdown menu and GROUPSIZE column in "Group count".
+			</para>
 
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_equals_filter_properties.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-				<listitem>
-					Save the output of the filter to a the staging table create in the
-					previous section (where the unique records had been written).
-				</listitem>
-				<listitem>
-					The whole job graph should look similar to this:
-					<mediaobject>
-						<imageobject>
-							<imagedata fileref="merge_duplicates_merge_job.png"
-								format="PNG" />
-						</imageobject>
-					</mediaobject>
-				</listitem>
-			</orderedlist>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_merge_simple_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Merge duplicates (Simple) transformer will output all the input
+				columns as output + additional colums carrying metadata about the
+				record. One of them is "Merge status" that can have two possible
+				values: SURVIVOR and NON_SURVIVOR. SURVIVOR indicates the record
+				that has been chosen as the final one. Let's add an Equals filter
+				to
+				the job in order to
+				write only these SURVIVOR records into our
+				final
+				dataset.
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_equals_filter_properties.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+
+			<para>
+				Save the output of the filter to a the staging table create in
+				the
+				previous section (where the unique records had been written).
+			</para>
+			<para>
+				The whole job graph should look similar to this:
+			</para>
+
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="merge_duplicates_merge_job.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
 
 		</section>
 

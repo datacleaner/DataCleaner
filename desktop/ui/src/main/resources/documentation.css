@@ -1,6 +1,7 @@
 .body {
 	width: 900px;
 	margin: 0 auto;
+	font-family: 'Ubuntu';
 }
 
 .navbar {
@@ -34,20 +35,8 @@
 	padding-top: 3px;
 }
 
-.details ol {
-	list-style-type:disc;
-}
-
 .propertiesdetails {
-	width: 100%;
 	text-align: left;
 	margin: 10px;
-	border-bottom: 1px solid #5591e2;
-	border-collapse: separate;
-	border-spacing: 0px 6px;
 }
 
-.propertiesdetails th {
-	border-bottom: 2px solid #5591e2;
-	padding: 10px 8px;
-}

@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -38,8 +39,10 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +56,7 @@ public class DocumentationLoader {
     private static final String FILENAME_TEMPLATE = "documentation_template.html";
     protected static final String OUTPUT_FILENAME = "documentLoaderOutput.html";
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
-    private static final File cssFile= new File("src/main/resources/documentation.css"); 
+    private static final File cssFile = new File("src/main/resources/documentation.css");
 
     private Template _template;
     private final Map<String, Object> _data = new HashMap<String, Object>();;
@@ -64,8 +67,7 @@ public class DocumentationLoader {
         @SuppressWarnings("deprecation")
         final Configuration freemarkerConfiguration = new Configuration();
         freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/");
-    
-        
+
         try {
             // Load the template
             _template = freemarkerConfiguration.getTemplate(FILENAME_TEMPLATE);
@@ -79,8 +81,13 @@ public class DocumentationLoader {
     public void createDocumentation(ComponentDescriptor<?> componentdescriptor) {
 
         try {
-            _data.put("cssPath", cssFile.getAbsolutePath()); 
+            _data.put("cssPath", cssFile.getAbsolutePath());
             _data.put("component", componentdescriptor);
+            final Set<Annotation> annotations = componentdescriptor.getAnnotations();
+            _data.put("annotations", annotations);
+            final Set<ProvidedPropertyDescriptor> providedProperties = componentdescriptor.getProvidedProperties();
+            _data.put("providedproperties", providedProperties);
+
             final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                     .getConfiguredProperties();
 
@@ -88,11 +95,19 @@ public class DocumentationLoader {
                 final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
                         configuredProperties);
                 _data.put("properties", properties);
+                Map<String, MappedProperty> mappedProperties = new HashMap<String, MappedProperty>();
+                for (ConfiguredPropertyDescriptor property : properties) {
+                    final MappedProperty mappedProperty = property.getAnnotation(MappedProperty.class);
+                    if (mappedProperty != null) {
+                        mappedProperties.put(property.getName(), mappedProperty);
+                    }
+                }
+                _data.put("mappedproperties", mappedProperties);
             }
 
             final Image descriptorIcon = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
 
-            /*We need a buffered image type in order to obtain the */
+            /* We need a buffered image type in order to obtain the */
             final BufferedImage bufferedImage = toBufferedImage(descriptorIcon);
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "png", baos);
@@ -100,15 +115,18 @@ public class DocumentationLoader {
             baos.flush();
             baos.close();
 
-            /*Encode the image    */
+            /* Encode the image */
             final byte[] bytesEncoded = Base64.getEncoder().encode(imageInByte);
             final String encodedImage = new String(bytesEncoded);
 
-            /* Atach the prefix that will make html <img> know how to decode the image */
+            /*
+             * Atach the prefix that will make html <img> know how to decode the
+             * image
+             */
             final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
 
             _data.put("icon", iconHtmlRepresentation);
-            
+
             /* Write data to a file */
             Writer out = new OutputStreamWriter(new FileOutputStream(OUTPUT_FILENAME));
             _template.process(_data, out);

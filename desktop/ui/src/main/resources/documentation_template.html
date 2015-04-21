@@ -20,29 +20,31 @@
 				<ul>
 					<li>
 						<dl>
-							<dt>Can it be distributed ?</dt>
+							<dt>Distributed execution possible</dt>
 							<dd>${component.distributable?string("Yes", "No")}</dd>
 						</dl>
 					</li>
 				</ul>
-				<li><h3>Properties</h3></li>
-				<table class="propertiesdetails">
-					<tr>
-						<th>Name</th>
-						<th>Type</th>
-						<th>What does it do ?</th>
-						<th>Optional ?</th>
-					</tr>
+				<li><h3>Configured Properties</h3></li>
+				<div class="propertiesdetails">
 					<#list properties as property>
-					<tr>
-						<td>${property.name}</td>
-						<td>${property.type.simpleName}</td>
-						<td><#if property.description??> ${property.description}
-							<#else> - </#if></td>
-						<td>${property.required?string("No", "Yes")}</td>
-					</tr>
+					<dl>
+						<dt class="col">Property</dt>
+						<dd class="colvalue">${property.name}</dd>
+						<dt class="colvalue">Type</dt>
+						<dd class="proper">${property.type.simpleName}</dd>
+						<#if property.description??>
+						<dt class="col">Description</dt>
+						<dd class="colvalue">${property.description}</dd>
+						</#if> <#if property.required??>
+						<dt class="required">Required</dt>
+						</#if> <#if mappedProperties??>
+						<dt><#if mappedProperties.get(property.name)??>
+							${mappedProperties.get(property.name).value} </#if></dt>
+						</#if>
+					</dl>
 					</#list>
-				</table>
+				</div>
 			</ol>
 		</div>
 	</div>

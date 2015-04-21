@@ -26,37 +26,28 @@
 	position: absolute;
 }
 
-.documentationBody {
-	/* 	padding-top: 5px; */
-	
-}
-
 .documentationBody .title {
 	padding-bottom: 25px;
 }
 
 .documentationBody .details {
-	padding-top: 5px;
+	padding-top: 3px;
 }
 
-.documentationBody .details ol {
-	list-style-type: upper-roman;
+.details ol {
+	list-style-type:disc;
 }
 
-table .propertiesdetails {
+.propertiesdetails {
 	width: 100%;
 	text-align: left;
-	background: #fff;
- 	border-collapse: collapse; 
-	margin: 20px;
-	
+	margin: 10px;
+	border-bottom: 1px solid #5591e2;
+	border-collapse: separate;
+	border-spacing: 0px 6px;
 }
 
 .propertiesdetails th {
-	font-size: 14px;
-	font-weight: normal;
-	color: #039;
-	border-bottom: 2px solid #6678b1;
+	border-bottom: 2px solid #5591e2;
 	padding: 10px 8px;
 }
-.

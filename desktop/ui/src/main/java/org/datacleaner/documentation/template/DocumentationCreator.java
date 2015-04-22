@@ -56,7 +56,7 @@ import freemarker.template.TemplateNotFoundException;
 public class DocumentationCreator {
 
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
-    private static final File cssFile = new File("src/main/resources/documentationReference.css");
+    private static final File cssFile = new File("documentationReference.css");
     private static final String FILENAME_TEMPLATE = "documentationTemplate.html";
 
     @SuppressWarnings("deprecation")

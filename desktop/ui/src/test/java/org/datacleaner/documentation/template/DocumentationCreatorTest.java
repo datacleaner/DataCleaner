@@ -40,7 +40,7 @@ public class DocumentationCreatorTest {
     @Test
     public void test() throws MalformedTemplateNameException, ParseException, IOException {
 
-        final String benchmarkFilename = "src/test/resources/documentCreatorBenchmarkTest.txt";
+        final String benchmarkFilename = "src/test/resources/documentCreatorBenchmarkTest.html";
         final DocumentationCreator documentationCreator = new DocumentationCreator();
         final AnalyzerDescriptor<PatternFinderAnalyzer> patternFinderDescriptor = Descriptors
                 .ofAnalyzer(PatternFinderAnalyzer.class);

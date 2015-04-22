@@ -86,7 +86,7 @@ public class DocumentationCreator {
 
         try {
             {
-                _data.put("cssPath", cssFile.getAbsolutePath());
+                _data.put("cssPath",cssFile.getPath());
             }
             {
                 _data.put("component", componentdescriptor);

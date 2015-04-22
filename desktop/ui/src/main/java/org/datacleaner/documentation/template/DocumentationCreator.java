@@ -56,8 +56,8 @@ import freemarker.template.TemplateNotFoundException;
 public class DocumentationCreator {
 
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
-    private static final File cssFile = new File("src/main/resources/documentation.css");
-    private static final String FILENAME_TEMPLATE = "documentation_template.html";
+    private static final File cssFile = new File("src/main/resources/documentationReference.css");
+    private static final String FILENAME_TEMPLATE = "documentationTemplate.html";
 
     @SuppressWarnings("deprecation")
     private static final Configuration freemarkerConfiguration = new Configuration();
@@ -70,7 +70,7 @@ public class DocumentationCreator {
     }
 
     /**
-     * Creates the documentation reference
+     * Creates the documentation reference.
      * 
      * @param componentdescriptor
      * @param outputStream
@@ -151,10 +151,18 @@ public class DocumentationCreator {
         }
     }
 
+    /**
+     * Gets the freemarker configuration.
+     * @return
+     */
     public static Configuration getFreemarkerconfiguration() {
         return freemarkerConfiguration;
     }
-
+ 
+    /**
+     * Gets the template filename.
+     * @return
+     */
     public static String getFilenameTemplate() {
         return FILENAME_TEMPLATE;
     }
@@ -162,7 +170,7 @@ public class DocumentationCreator {
     /**
      * Gets the template.
      * 
-     * @return
+     * @return Template
      * @throws TemplateNotFoundException
      * @throws MalformedTemplateNameException
      * @throws ParseException
@@ -180,7 +188,7 @@ public class DocumentationCreator {
     }
 
     /**
-     * Used to convert an image object to buffered image.
+     * Used to convert an image object to buffered image. Used in {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
      * 
      * @param image
      * @return buffered image

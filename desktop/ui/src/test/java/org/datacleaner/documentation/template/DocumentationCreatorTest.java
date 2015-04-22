@@ -39,12 +39,12 @@ public class DocumentationCreatorTest {
     @Test
     public void test() throws MalformedTemplateNameException, ParseException, IOException {
 
-        final String benchmarkFilename = "src/test/resources/documentLoaderTest.txt";
+        final String benchmarkFilename = "src/test/resources/documentCreatorBenchmarkTest.txt";
         final DocumentationCreator documentationCreator = new DocumentationCreator();
         final AnalyzerDescriptor<PatternFinderAnalyzer> patternFinderDescriptor = Descriptors
                 .ofAnalyzer(PatternFinderAnalyzer.class);
 
-        final File outputFile = new File("src/test/resources/documentationReferenceFile.html");
+        final File outputFile = new File("src/test/resources/documentationReferenceOutputFile.html");
         documentationCreator.createDocumentation(patternFinderDescriptor, new FileOutputStream(outputFile));
         final File benchmarkFile = new File(benchmarkFilename);
         final String benchmark = FileHelper.readFileAsString(benchmarkFile);

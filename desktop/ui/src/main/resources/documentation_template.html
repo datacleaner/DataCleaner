@@ -12,41 +12,49 @@
 		<h1 class="title">
 			<image src=${icon} alt="Image"> ${component.displayName} 
 		</h1>
-
-		<h4>${component.description}</h4>
+		<div>
+			<h3>${component.description}</h3>
+		</div>
 		<div class="details">
 			<ol>
 				<li><h3>Execution details</h3></li>
 				<ul>
+					<#if component.distributable??>
 					<li>
 						<dl>
 							<dt>Distributed execution possible</dt>
-							<dd>${component.distributable?string("Yes", "No")}</dd>
 						</dl>
-					</li>
+					</li> <#else> No execution details available </#if>
 				</ul>
 				<li><h3>Configured Properties</h3></li>
 				<div class="propertiesdetails">
 					<#list properties as property>
-					<section>
-						<dl class="property">
-							<dt class="col">Property</dt>
-							<dd class="name">
-								${property.name} <#if property.required??> <span
-									class="required">Required</span> </#if>
-							</dd>
-							<dt class="col">Type</dt>
-							<dd class="colvalue">${property.type.simpleName}</dd>
-							<#if property.description??>
-							<dt class="col">Description</dt>
-							<dd class="colvalue">${property.description}</dd>
-							</#if> <#if mappedProperties??>
-							<dt><#if mappedProperties.get(property.name)??>
-								${mappedProperties.get(property.name).value} </#if></dt>
-							</#if>
-						</dl>
-					</section>
-					<hr>
+					<dl class="property">
+						<dt>
+							<h4>Property</h4>
+						</dt>
+						<dd class="name">
+							${property.name} ${property.required?string("<span
+								class='required'>Required</span>",'')}
+						</dd>
+						<dt>
+							<h4>Type</h4>
+						</dt>
+						<dd>${property.type.simpleName}</dd>
+						<#if property.description??>
+						<dt>
+							<h4>Description</h4>
+						</dt>
+						<dd>${property.description}</dd>
+						</#if> <#if mappedProperties??> <#if
+						mappedProperties.get(property.name)??>
+						<dt>
+							<h4>Mapped to</h4>
+						</dt>
+						<dd>${mappedProperties.get(property.name).value}</dd>
+						</#if> </#if>
+						<hr>
+					</dl>
 					</#list>
 				</div>
 			</ol>

@@ -22,6 +22,8 @@ package org.datacleaner.documentation.template;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
@@ -29,28 +31,26 @@ import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.junit.Test;
 
-public class DocumentationLoaderTest {
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+
+public class DocumentationCreatorTest {
 
     @Test
-    public void test() {
-        
-        String benchmarkFilename = "src/test/resources/documentLoaderTest.txt";
-        DocumentationLoader documentationLoader = new DocumentationLoader();
+    public void test() throws MalformedTemplateNameException, ParseException, IOException {
 
+        final String benchmarkFilename = "src/test/resources/documentLoaderTest.txt";
+        final DocumentationCreator documentationCreator = new DocumentationCreator();
         final AnalyzerDescriptor<PatternFinderAnalyzer> patternFinderDescriptor = Descriptors
                 .ofAnalyzer(PatternFinderAnalyzer.class);
 
-        documentationLoader.createDocumentation(patternFinderDescriptor);
-        
+        final File outputFile = new File("src/test/resources/documentationReferenceFile.html");
+        documentationCreator.createDocumentation(patternFinderDescriptor, new FileOutputStream(outputFile));
         final File benchmarkFile = new File(benchmarkFilename);
-        final File outputFile= new File(DocumentationLoader.OUTPUT_FILENAME); 
-
         final String benchmark = FileHelper.readFileAsString(benchmarkFile);
         final String output = FileHelper.readFileAsString(outputFile);
-        
+
         assertEquals(benchmark, output);
 
     }
-    
-   
 }

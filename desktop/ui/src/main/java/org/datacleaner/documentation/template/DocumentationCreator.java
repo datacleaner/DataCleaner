@@ -30,7 +30,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.Base64;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -125,8 +125,7 @@ public class DocumentationCreator {
                 baos.close();
 
                 /* Encode the image */
-                final byte[] bytesEncoded = Base64.getEncoder().encode(imageInByte);
-                final String encodedImage = new String(bytesEncoded);
+                final String encodedImage =Base64.encodeBase64String(imageInByte);
 
                 /*
                  * Atach the prefix that will make html <img> know how to decode

@@ -375,11 +375,13 @@ public final class ReflectionUtils {
 
         if (!subtype.isInterface()) {
             final Class<?> subSuperclass = subtype.getSuperclass();
-            try {
-                final int candidate = 1 + getInterfaceHierarchyDistance(subSuperclass, supertype);
-                bestCandidate = Math.min(bestCandidate, candidate);
-            } catch (IllegalArgumentException e) {
-                // do nothing
+            if (subSuperclass != null) {
+                try {
+                    final int candidate = 1 + getInterfaceHierarchyDistance(subSuperclass, supertype);
+                    bestCandidate = Math.min(bestCandidate, candidate);
+                } catch (IllegalArgumentException e) {
+                    // do nothing
+                }
             }
         }
 

@@ -20,6 +20,7 @@
 package org.datacleaner.documentation.template;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,8 +50,10 @@ public class DocumentationCreatorTest {
         final File benchmarkFile = new File(benchmarkFilename);
         final String benchmark = FileHelper.readFileAsString(benchmarkFile);
         final String output = FileHelper.readFileAsString(outputFile);
-
+  
         assertEquals(benchmark, output);
 
+        outputFile.delete();
+        assertFalse(outputFile.exists()); 
     }
 }

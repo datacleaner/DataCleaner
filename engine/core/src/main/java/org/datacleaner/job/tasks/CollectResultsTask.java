@@ -22,6 +22,7 @@ package org.datacleaner.job.tasks;
 import java.util.Collection;
 
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.api.AnalyzerResultFuture;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
@@ -62,6 +63,12 @@ public final class CollectResultsTask implements Task {
             logger.warn("Result (from {}) was null", _hasResult);
         } else {
             _results.add(new JobAndResult(_componentJob, result));
+
+            if (result instanceof AnalyzerResultFuture) {
+                // block the task from finishing
+                AnalyzerResultFuture<?> analyzerResult = (AnalyzerResultFuture<?>) result;
+                analyzerResult.get();
+            }
         }
     }
 

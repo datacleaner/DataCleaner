@@ -331,54 +331,78 @@ public final class ReflectionUtils {
         throw new UnsupportedOperationException("Parameter type not supported: " + someType);
     }
 
-    public static int getHierarchyDistance(Class<?> subtype, Class<?> supertype) {
+    public static int getHierarchyDistance(Class<?> subtype, Class<?> supertype) throws IllegalArgumentException {
         assert subtype != null;
         assert supertype != null;
-
-        if (subtype == supertype) {
-            return 0;
-        }
 
         if (!ReflectionUtils.is(subtype, supertype)) {
             throw new IllegalArgumentException("Not a valid subtype of " + supertype.getName() + ": "
                     + subtype.getName());
         }
 
-        Class<?> subSuperclass = subtype.getSuperclass();
-        if (subSuperclass != Object.class) {
-            return 1 + getHierarchyDistance(subSuperclass, supertype);
-        }
-
         if (supertype.isInterface()) {
             return getInterfaceHierarchyDistance(subtype, supertype);
         } else {
-            return 1 + getHierarchyDistance(subSuperclass, supertype);
+            return getClassHierarchyDistance(subtype, supertype);
         }
     }
 
-    private static int getInterfaceHierarchyDistance(Class<?> subtype, Class<?> supertype) {
+    private static int getClassHierarchyDistance(final Class<?> subtype, final Class<?> supertype) {
+        if (subtype == supertype) {
+            return 0;
+        }
+        if (subtype == Object.class) {
+            throw new IllegalArgumentException("Finished traversing hierarchy and found Object.class");
+        }
+
+        final Class<?> subSuperclass = subtype.getSuperclass();
+        return 1 + getClassHierarchyDistance(subSuperclass, supertype);
+    }
+
+    private static int getInterfaceHierarchyDistance(final Class<?> subtype, final Class<?> supertype) {
         if (subtype == supertype) {
             return 0;
         }
 
-        Class<?>[] interfaces = subtype.getInterfaces();
+        final Class<?>[] interfaces = subtype.getInterfaces();
         for (Class<?> i : interfaces) {
             if (i == supertype) {
                 return 1;
             }
         }
+
+        int bestCandidate = Integer.MAX_VALUE;
+
+        if (!subtype.isInterface()) {
+            final Class<?> subSuperclass = subtype.getSuperclass();
+            try {
+                final int candidate = 1 + getInterfaceHierarchyDistance(subSuperclass, supertype);
+                bestCandidate = Math.min(bestCandidate, candidate);
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+
         for (Class<?> i : interfaces) {
-            Class<?>[] subInterfaces = i.getInterfaces();
+            final Class<?>[] subInterfaces = i.getInterfaces();
             if (subInterfaces != null && subInterfaces.length > 0) {
                 for (Class<?> subInterface : subInterfaces) {
-                    int result = getInterfaceHierarchyDistance(subInterface, supertype);
-                    if (result != -1) {
-                        return 1 + result;
+                    try {
+                        final int candidate = 1 + getInterfaceHierarchyDistance(subInterface, supertype);
+                        bestCandidate = Math.min(bestCandidate, candidate);
+                    } catch (IllegalArgumentException e) {
+                        // do nothing
                     }
                 }
             }
         }
-        return -1;
+
+        if (bestCandidate != Integer.MAX_VALUE) {
+            return bestCandidate;
+        }
+
+        throw new IllegalArgumentException("Not a valid implementation of " + supertype.getName() + ": "
+                + subtype.getName());
     }
 
     public static boolean isArray(Object o) {

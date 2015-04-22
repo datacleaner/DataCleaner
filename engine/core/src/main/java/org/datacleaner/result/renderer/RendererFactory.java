@@ -97,7 +97,7 @@ public final class RendererFactory {
     public RendererFactory(DataCleanerConfiguration configuration, RendererInitializer rendererInitializer) {
         this(configuration.getEnvironment().getDescriptorProvider(), rendererInitializer);
     }
-    
+
     public RendererFactory(DataCleanerEnvironment environment, RendererInitializer rendererInitializer) {
         this(environment.getDescriptorProvider(), rendererInitializer);
     }
@@ -174,11 +174,21 @@ public final class RendererFactory {
     private RendererSelection isRendererMatch(RendererBeanDescriptor<?> rendererDescriptor, Renderable renderable,
             RendererSelection bestMatch) {
         final Class<? extends Renderable> renderableType = rendererDescriptor.getRenderableType();
-        if (ReflectionUtils.is(renderable.getClass(), renderableType)) {
+        final Class<? extends Renderable> renderableClass = renderable.getClass();
+        if (ReflectionUtils.is(renderableClass, renderableType)) {
             if (bestMatch == null) {
                 return isRendererCapable(rendererDescriptor, renderable, bestMatch);
             } else {
-                int hierarchyDistance = ReflectionUtils.getHierarchyDistance(renderable.getClass(), renderableType);
+
+                final int hierarchyDistance;
+                try {
+                    hierarchyDistance = ReflectionUtils.getHierarchyDistance(renderableClass, renderableType);
+                } catch (IllegalArgumentException e) {
+                    logger.warn(
+                            "Failed to determine hierarchy distance between renderable type '{}' and renderable of class '{}'",
+                            renderableType, renderableClass, e);
+                    return null;
+                }
 
                 if (hierarchyDistance == 0) {
                     // no hierarchy distance

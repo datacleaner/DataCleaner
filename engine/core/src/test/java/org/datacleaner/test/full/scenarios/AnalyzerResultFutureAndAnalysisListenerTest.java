@@ -165,38 +165,52 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
         final List<String> messagesList = new ArrayList<>();
         messages.drainTo(messagesList);
 
-        final String messageFromNormalAnalyzerSuccess = "componentSuccess(normal analyzer,ListResult)";
-        final String messageFromFutureAnalyzerSuccess = "componentSuccess(analyzer with future result,AnalyzerResultFutureImpl)";
+        // export to DS, dup id in RECORDS
 
-        int indexNormalAnalyzerSuccess = messagesList.indexOf(messageFromNormalAnalyzerSuccess);
-        int indexFutureAnalyzerSuccess = messagesList.indexOf(messageFromFutureAnalyzerSuccess);
-        // the difference between the two indexes must be 1 - they should happen
-        // directly after each other (but order is not deterministic)
-        assertEquals(1, Math.abs(indexNormalAnalyzerSuccess - indexFutureAnalyzerSuccess));
+        final String originalMessagesString = messagesList.toString();
 
-        // now remove one of them to make the messages list deterministic
-        assertTrue(messagesList.remove(messageFromNormalAnalyzerSuccess));
+        final int indexRunReturned = getIndexAndVerifyExists(messagesList, "AnalysisRunner.run(job) returned");
+        final int indexRowProcessingSuccess = getIndexAndVerifyExists(messagesList, "rowProcessingSuccess");
 
-        final String allMessages = messagesList.toString();
-        assertEquals(
-        // run method should return before rowProcessingSuccess(...)
-                "[AnalysisRunner.run(job) returned, rowProcessingSuccess, "
+        assertTrue(originalMessagesString, indexRowProcessingSuccess > indexRunReturned);
 
-                // both analyzers should be reported as successful, but
-                // one with
-                // a future result
-                        + messageFromFutureAnalyzerSuccess + ", "
+        final int indexNormalAnalyzerSuccess = getIndexAndVerifyExists(messagesList,
+                "componentSuccess(normal analyzer,ListResult)");
+        final int indexFutureAnalyzerSuccess = getIndexAndVerifyExists(messagesList,
+                "componentSuccess(analyzer with future result,AnalyzerResultFutureImpl)");
 
-                        // Once the result is initially published it will not
-                        // yet be ready
-                        + "AnalyzerResultFuture.isReady() (1) = false, AnalyzerResultFuture.Listener (1).onSuccess(), AnalyzerResultFuture.Listener (2).onSuccess(), "
+        assertTrue(originalMessagesString, indexNormalAnalyzerSuccess > indexRowProcessingSuccess);
+        assertTrue(originalMessagesString, indexFutureAnalyzerSuccess > indexRowProcessingSuccess);
 
-                        // the .await() method should not return before
-                        // jobSuccess()
-                        + "jobSuccess, AnalysisResultFuture.await() returned, "
+        final int indexAnalyzerResultNotReady = getIndexAndVerifyExists(messagesList,
+                "AnalyzerResultFuture.isReady() (1) = false");
+        final int indexListener1Success = getIndexAndVerifyExists(messagesList,
+                "AnalyzerResultFuture.Listener (1).onSuccess()");
+        final int indexListener2Success = getIndexAndVerifyExists(messagesList,
+                "AnalyzerResultFuture.Listener (2).onSuccess()");
 
-                        // the analyzer result future should be ready at this
-                        // point
-                        + "AnalyzerResultFuture.isReady() (2) = true]", allMessages);
+        assertTrue(originalMessagesString, indexListener1Success > indexAnalyzerResultNotReady);
+        assertTrue(originalMessagesString, indexListener2Success > indexAnalyzerResultNotReady);
+
+        final int indexAnalysisResultFutureAwaitReturned = getIndexAndVerifyExists(messagesList,
+                "AnalysisResultFuture.await() returned");
+
+        assertTrue(originalMessagesString, indexAnalysisResultFutureAwaitReturned > indexListener1Success);
+        assertTrue(originalMessagesString, indexAnalysisResultFutureAwaitReturned > indexListener2Success);
+
+        final int indexAnalyzerResultReady = getIndexAndVerifyExists(messagesList,
+                "AnalyzerResultFuture.isReady() (2) = true");
+
+        assertTrue(originalMessagesString, indexAnalyzerResultReady > indexAnalyzerResultNotReady);
+
+        final int indexJobSuccess = getIndexAndVerifyExists(messagesList, "jobSuccess");
+
+        assertTrue(originalMessagesString, indexJobSuccess > indexFutureAnalyzerSuccess);
+    }
+
+    private int getIndexAndVerifyExists(List<String> messagesList, String string) {
+        final int index = messagesList.indexOf(string);
+        assertTrue(messagesList.toString(), index != -1);
+        return index;
     }
 }

@@ -104,14 +104,15 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
             correctedCountryName = LabelUtils.UNEXPECTED_LABEL;
         }
         
+        final RowAnnotation annotation;
         // ConcurrentHashMap does not support null keys
         synchronized (this) {
             if (!countryCountMap.containsKey(countryName)) {
                 countryCountMap.put(correctedCountryName, _rowAnnotationFactory.createAnnotation());
             }
-
-            _rowAnnotationFactory.annotate(inputRow, 1, countryCountMap.get(correctedCountryName));
+            annotation = countryCountMap.get(correctedCountryName);
         }
+        _rowAnnotationFactory.annotate(inputRow, 1, annotation);
 
         return new String[] { countryName };
     }

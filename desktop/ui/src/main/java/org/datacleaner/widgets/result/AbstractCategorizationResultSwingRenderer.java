@@ -47,7 +47,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.DetailsResultWindow;
 import org.jfree.data.general.DefaultPieDataset;
 
-public abstract class CategorizationResultAbstractSwingRenderer<R extends CategorizationResult> extends AbstractRenderer<R, JComponent> {
+public abstract class AbstractCategorizationResultSwingRenderer<R extends CategorizationResult> extends AbstractRenderer<R, JComponent> {
 
     @Inject
     @Provided

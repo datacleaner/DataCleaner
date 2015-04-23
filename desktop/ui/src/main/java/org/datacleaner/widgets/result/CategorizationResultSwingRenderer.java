@@ -37,7 +37,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
 @RendererBean(SwingRenderingFormat.class)
-public class CategorizationResultSwingRenderer extends CategorizationResultAbstractSwingRenderer<CategorizationResult> {
+public class CategorizationResultSwingRenderer extends AbstractCategorizationResultSwingRenderer<CategorizationResult> {
 
     public CategorizationResultSwingRenderer() {
     }

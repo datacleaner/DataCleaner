@@ -31,6 +31,7 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.metadata.HasMetadataProperties;
@@ -75,10 +76,10 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * 
      * @param throwException
      * @return
-     * @throws IllegalStateException
+     * @throws ComponentValidationException
      * @throws UnconfiguredConfiguredPropertyException
      */
-    public boolean isConfigured(boolean throwException) throws IllegalStateException,
+    public boolean isConfigured(boolean throwException) throws ComponentValidationException,
             UnconfiguredConfiguredPropertyException;
 
     /**

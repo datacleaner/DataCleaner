@@ -21,12 +21,13 @@ package org.datacleaner.job.builder;
 
 import org.datacleaner.api.Configured;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.job.ComponentConfigurationException;
 
 /**
  * Exception thrown when a required {@link Configured} property of a component
  * is not set.
  */
-public class UnconfiguredConfiguredPropertyException extends IllegalStateException {
+public class UnconfiguredConfiguredPropertyException extends ComponentConfigurationException {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,6 +36,7 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
 
     public UnconfiguredConfiguredPropertyException(ComponentBuilder componentBuilder,
             ConfiguredPropertyDescriptor configuredProperty) {
+        super("Property '" + configuredProperty.getName() + "' is not properly configured (" + componentBuilder + ")");
         _componentBuilder = componentBuilder;
         _configuredProperty = configuredProperty;
     }
@@ -45,11 +47,5 @@ public class UnconfiguredConfiguredPropertyException extends IllegalStateExcepti
 
     public ComponentBuilder getComponentBuilder() {
         return _componentBuilder;
-    }
-
-    @Override
-    public String getMessage() {
-        return "Property '" + getConfiguredProperty().getName() + "' is not properly configured (" + _componentBuilder
-                + ")";
     }
 }

@@ -17,28 +17,34 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.job;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.datacleaner.api.Validate;
+import org.datacleaner.descriptors.ComponentDescriptor;
 
-import org.datacleaner.job.ComponentValidationException;
-
-final class ValidateMethodDescriptorImpl extends AbstractMethodDescriptor implements ValidateMethodDescriptor {
+/**
+ * Exception thrown if validation (typically using {@link Validate} annotated
+ * methods) of a component fails.
+ */
+public class ComponentValidationException extends ComponentConfigurationException {
 
     private static final long serialVersionUID = 1L;
 
-    public ValidateMethodDescriptorImpl(Method method, ComponentDescriptor<?> componentDescriptor) {
-        super(method, componentDescriptor);
+    private final ComponentDescriptor<?> _componentDescriptor;
+    private final Object _componentInstance;
+
+    public ComponentValidationException(ComponentDescriptor<?> componentDescriptor, Object componentInstance,
+            Throwable cause) {
+        super(cause.getMessage(), cause);
+        _componentDescriptor = componentDescriptor;
+        _componentInstance = componentInstance;
     }
 
-    @Override
-    public void validate(Object component) throws ComponentValidationException {
-        invoke(component);
+    public ComponentDescriptor<?> getComponentDescriptor() {
+        return _componentDescriptor;
     }
 
-    @Override
-    protected RuntimeException convertThrownException(Object component, InvocationTargetException e) {
-        return new ComponentValidationException(getComponentDescriptor(), component, e.getCause());
+    public Object getComponentInstance() {
+        return _componentInstance;
     }
 }

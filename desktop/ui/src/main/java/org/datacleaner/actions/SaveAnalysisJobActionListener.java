@@ -40,6 +40,7 @@ import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.JaxbJobMetadataFactoryImpl;
 import org.datacleaner.job.JaxbJobWriter;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.NoResultProducingComponentsException;
 import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.FileFilters;
@@ -90,13 +91,13 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             _window.applyPropertyValues();
             analysisJob = _analysisJobBuilder.toAnalysisJob();
         } catch (Exception e) {
-            if ("No Analyzers in job".equals(e.getMessage())) {
-                // TODO: Have a better way to diagnose this issue
+            if (e instanceof NoResultProducingComponentsException) {
                 int result = JOptionPane
                         .showConfirmDialog(
                                 _window.toComponent(),
-                                "You job does not have any analyzer components in it, and is thus 'incomplete'. Do you want to save it anyway?",
-                                "No analyzers in job", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                                "You job does not have any result-producing components in it, and is thus 'incomplete'. Do you want to save it anyway?",
+                                "No result producing components in job", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
                 if (result == JOptionPane.YES_OPTION) {
                     analysisJob = _analysisJobBuilder.toAnalysisJob(false);
                 } else {

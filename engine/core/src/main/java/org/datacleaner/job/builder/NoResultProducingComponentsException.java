@@ -17,28 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.descriptors;
+package org.datacleaner.job.builder;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.job.AnalysisJob;
 
-import org.datacleaner.job.ComponentValidationException;
-
-final class ValidateMethodDescriptorImpl extends AbstractMethodDescriptor implements ValidateMethodDescriptor {
+/**
+ * Exception thrown if trying to build an {@link AnalysisJob} from an
+ * {@link AnalysisJobBuilder} while it does not yet contain any
+ * {@link HasAnalyzerResult} components.
+ */
+public class NoResultProducingComponentsException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public ValidateMethodDescriptorImpl(Method method, ComponentDescriptor<?> componentDescriptor) {
-        super(method, componentDescriptor);
-    }
-
-    @Override
-    public void validate(Object component) throws ComponentValidationException {
-        invoke(component);
-    }
-
-    @Override
-    protected RuntimeException convertThrownException(Object component, InvocationTargetException e) {
-        return new ComponentValidationException(getComponentDescriptor(), component, e.getCause());
+    public NoResultProducingComponentsException() {
+        super("No result producing components in job");
     }
 }

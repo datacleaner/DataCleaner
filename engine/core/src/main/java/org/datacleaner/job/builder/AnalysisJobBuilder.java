@@ -40,6 +40,7 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
@@ -58,6 +59,7 @@ import org.datacleaner.job.AnalysisJobMetadata;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.IdGenerator;
@@ -616,10 +618,19 @@ public final class AnalysisJobBuilder implements Closeable {
      *            contain more detailed information about the cause of the
      *            validation error, whereas a boolean contains no details.
      * @return true if the analysis job builder is correctly configured
+     * @throws UnconfiguredConfiguredPropertyException
+     *             if a required property is not configured
+     * @throws ComponentValidationException
+     *             if custom validation (using {@link Validate} method or so) of
+     *             a component fails.
+     * @throws NoResultProducingComponentsException
+     *             if no result producing components (see
+     *             {@link HasAnalyzerResult}) exist in the job.
      * @throws IllegalStateException
+     *             if any other (mostly unexpected) configuration issue occurs
      */
-    public boolean isConfigured(final boolean throwException) throws IllegalStateException,
-            UnconfiguredConfiguredPropertyException {
+    public boolean isConfigured(final boolean throwException) throws UnconfiguredConfiguredPropertyException,
+            ComponentValidationException, NoResultProducingComponentsException, IllegalStateException {
         if (_datastoreConnection == null) {
             if (throwException) {
                 throw new IllegalStateException("No Datastore or DatastoreConnection set");
@@ -636,7 +647,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
         if (getResultProducingComponentBuilders().isEmpty()) {
             if (throwException) {
-                throw new IllegalStateException("No result producing components in job");
+                throw new NoResultProducingComponentsException();
             }
             return false;
         }
@@ -774,9 +785,11 @@ public final class AnalysisJobBuilder implements Closeable {
      * 
      * @return
      * @throws IllegalStateException
-     *             if the job is invalidly configured.
+     *             if the job is invalidly configured. See
+     *             {@link #isConfigured(boolean)} for detailed exception
+     *             descriptions.
      */
-    public AnalysisJob toAnalysisJob() throws IllegalStateException {
+    public AnalysisJob toAnalysisJob() throws RuntimeException {
         return toAnalysisJob(true);
     }
 

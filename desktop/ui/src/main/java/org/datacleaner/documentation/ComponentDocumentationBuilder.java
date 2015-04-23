@@ -37,10 +37,9 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
-import org.datacleaner.api.MappedProperty;
+import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.util.IconUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +52,15 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 
 /**
+ * An object capable of building documentation for DataCleaner {@link Component}
+ * s in HTML format.
+ * 
  * TODO list:
  * 
  * Check what is actually output - what about result type, result metrics,
  * output columns, filter outcomes.
  * 
  * Plug in to CLI to generate complete documentation based on configuration
- * 
- * Avoid reference (in CSS) to dc-logo-30.png (in src/main/resources)
  */
 public class ComponentDocumentationBuilder {
 
@@ -77,10 +77,13 @@ public class ComponentDocumentationBuilder {
     }
 
     /**
-     * Creates the documentation reference.
+     * Creates the reference documentation for a {@link Component}.
      * 
      * @param componentdescriptor
+     *            the {@link ComponentDescriptor} of the {@link Component} of
+     *            interest.
      * @param outputStream
+     *            the target {@link OutputStream} to write to
      * @throws IOException
      * @throws ParseException
      * @throws MalformedTemplateNameException
@@ -92,29 +95,21 @@ public class ComponentDocumentationBuilder {
         final Template template = getTemplate();
 
         try {
-            {
-                _data.put("component", componentdescriptor);
-                final Set<ProvidedPropertyDescriptor> providedProperties = componentdescriptor.getProvidedProperties();
-                _data.put("providedproperties", providedProperties);
+            _data.put("component", new ComponentDocumentationWrapper(componentdescriptor));
 
-            }
             {
                 final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
                         .getConfiguredProperties();
-
-                if (configuredProperties != null) {
-                    final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
-                            configuredProperties);
-                    _data.put("properties", properties);
-                    Map<String, MappedProperty> mappedProperties = new HashMap<String, MappedProperty>();
-                    for (ConfiguredPropertyDescriptor property : properties) {
-                        final MappedProperty mappedProperty = property.getAnnotation(MappedProperty.class);
-                        if (mappedProperty != null) {
-                            mappedProperties.put(property.getName(), mappedProperty);
-                        }
-                    }
-                    _data.put("mappedproperties", mappedProperties);
+                final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
+                        configuredProperties);
+                final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
+                for (ConfiguredPropertyDescriptor property : properties) {
+                    ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
+                            property);
+                    propertyList.add(wrapper);
                 }
+
+                _data.put("properties", propertyList);
             }
 
             { // Attach the image

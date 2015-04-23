@@ -2,326 +2,202 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
 <style type="text/css">
-.body {
-	width: 900px;
-	margin: 0 auto;
+body {
 	font-family: 'Ubuntu';
-}
-
-.navbar {
-	position: relative;
-	min-height: 30px;
-	margin-bottom: 20px;
-	border: 1px solid;
-	background-color: #222;
-	border-color: #080808;
-	border-radius: 0;
-	background-image: url("images/menu/dc-logo-30.png");
-	background-repeat: no-repeat;
-}
-
-.navbar a {
-	text-decoration: none;
-}
-
-.navbar-brand {
-	padding: 3px 0px 0px 30px;
-	font-size: 20px;
-	color: white;
-	position: absolute;
-}
-
-.documentationBody .title {
-	padding-bottom: 25px;
-}
-
-.documentationBody .details {
-	padding-top: 3px;
-}
-
-.propertiesdetails {
-	text-align: left;
-	margin: 10px;
-}
-
-.propertiesdetails hr {
-	border-width: 1px;
-	/* 	border-color: #5591e2; */
-}
-
-.propertiesdetails h4 {
-	margin-bottom: 10px;
-}
-
-.propertiesdetails .name {
-	color: #5591e2;
-}
-
-.propertiesdetails .required {
-	background-color: #f59b06;
-	color: white;
-	padding: 3px;
-	margin-left: 10px;
-	font-family: 'Arial';
 }
 </style>
 </head>
-<body class="body">
-	<div class="navbar">
-		<a class="navbar-brand"> DataCleaner </a>
-	</div>
-	<div class="documentationBody">
-		<h1 class="title">
-			<image src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABRUlEQVR42mNgGAyg+rza/4HAow7AcMCK+4X/QQBED4gDLrzd/P/6h31AehOKwkMvZv//8uvt/++/P/8/+2YdQXGyHFBzTuP/519v/ndfcQLSb8F8dA0Trnn+//v3L9HiWC3DlQtm34r+jwxAfJjm+beT/197v/f/ux+PwXKExMlywOEXc/9vfdwGVgyiD72YA9f89feH/8vvFfxf/7AGxSJc4mQ54NX3e/97r7qCFYPoV9/uwjWD4vf7709gRyJbhEucLAfQLcUPSgcYGxv/pwTfuXMHKya6Lhh1AMiQlStX/v/8+fP/T58+/V+wYAHccFziNAuB5ubm/zdu3MCwBJc4VR3Q39////jx4/8dHR1RLMAlTnUHgILZwcEBwwJ0cVwWkmQpJYmQZg4AAWwWoosP3xAYdQAhw6lm4agDRh0w6oDBBAA6bKn5UjgQFgAAAABJRU5ErkJggg== alt="Image"> Pattern finder 
-		</h1>
-		<div>
-			<h3>The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.
-It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</h3>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h1>
+				<image src=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABRUlEQVR42mNgGAyg+rza/4HAow7AcMCK+4X/QQBED4gDLrzd/P/6h31AehOKwkMvZv//8uvt/++/P/8/+2YdQXGyHFBzTuP/519v/ndfcQLSb8F8dA0Trnn+//v3L9HiWC3DlQtm34r+jwxAfJjm+beT/197v/f/ux+PwXKExMlywOEXc/9vfdwGVgyiD72YA9f89feH/8vvFfxf/7AGxSJc4mQ54NX3e/97r7qCFYPoV9/uwjWD4vf7709gRyJbhEucLAfQLcUPSgcYGxv/pwTfuXMHKya6Lhh1AMiQlStX/v/8+fP/T58+/V+wYAHccFziNAuB5ubm/zdu3MCwBJc4VR3Q39////jx4/8dHR1RLMAlTnUHgILZwcEBwwJ0cVwWkmQpJYmQZg4AAWwWoosP3xAYdQAhw6lm4agDRh0w6oDBBAA6bKn5UjgQFgAAAABJRU5ErkJggg== alt=""> <span>Pattern finder</span>
+			</h1>
+			<p>The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.
+It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</p>
 		</div>
-		<div class="details">
-			<ol>
-				<li><h3>Execution details</h3></li>
-				<ul>
-					<li>
-						<dl>
-							<dt>Distributed execution possible</dt>
-						</dl>
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<!-- component type -->
+				<span class="label label-primary">Analyzer</span>
+				
+				
+
+				<!-- categorization -->
+				<span class="label label-default">Analyze</span>
+				
+
+				<!-- execution details -->
+				 <span
+					class="label label-info">Concurrent</span> <span class="label label-info">Distributed
+					execution possible</span>
+
+				<!-- aliases -->
+				
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>Configured properties</h2>
+			</div>
+			<div class="panel-body">
+
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h3>Column</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">InputColumn&lt;String&gt;</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Required</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Group column</h3>
+						<p>Optional column to group patterns by</p> <!-- type --> <span
+						class="label label-primary">InputColumn&lt;String&gt;</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Discriminate text case</h3>
+						<p>Separate text tokens based on case</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Discriminate negative numbers</h3>
+						<p>Separate number tokens based on negativity</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Discriminate decimals</h3>
+						<p>Separate number tokens for decimals</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Enable mixed tokens</h3>
+						<p>Use '?'-tokens for mixed text and numbers</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Ignore repeated spaces</h3>
+						<p>Ignore whitespace differences</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Upper case patterns expand in size</h3>
+						<p>Auto-adjust/expand uppercase text tokens</p> <!-- type --> <span
+						class="label label-primary">boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Lower case patterns expand in size</h3>
+						<p>Auto-adjust/expand lowercase text tokens</p> <!-- type --> <span
+						class="label label-primary">boolean</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Predefined token name</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">String</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Predefined token regexes</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">List of String</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Decimal separator</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">Character</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Thousands separator</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">Character</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>Minus sign</h3>
+						<p></p> <!-- type --> <span
+						class="label label-primary">Character</span>
+						
+						
+
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
 					</li> 
 				</ul>
-				<li><h3>Configured Properties</h3></li>
-				<div class="propertiesdetails">
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Column <span
-								class='required'>Required</span>
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>InputColumn</dd>
- 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Group column 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>InputColumn</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Optional column to group patterns by</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Discriminate text case 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Separate text tokens based on case</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Discriminate negative numbers 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Separate number tokens based on negativity</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Discriminate decimals 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Separate number tokens for decimals</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Enable mixed tokens 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Use '?'-tokens for mixed text and numbers</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Ignore repeated spaces 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Ignore whitespace differences</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Upper case patterns expand in size 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Auto-adjust/expand uppercase text tokens</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Lower case patterns expand in size 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>boolean</dd>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>Auto-adjust/expand lowercase text tokens</dd>
-						 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Predefined token name 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>String</dd>
- 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Predefined token regexes 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>String[]</dd>
- 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Decimal separator 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Character</dd>
- 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Thousands separator 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Character</dd>
- 
-						<hr>
-					</dl>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							Minus sign 
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>Character</dd>
- 
-						<hr>
-					</dl>
-				</div>
-			</ol>
+
+			</div>
 		</div>
 	</div>
 </body>

@@ -2,125 +2,81 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
 <style type="text/css">
-.body {
-	width: 900px;
-	margin: 0 auto;
+body {
 	font-family: 'Ubuntu';
-}
-
-.navbar {
-	position: relative;
-	min-height: 30px;
-	margin-bottom: 20px;
-	border: 1px solid;
-	background-color: #222;
-	border-color: #080808;
-	border-radius: 0;
-	background-image: url("images/menu/dc-logo-30.png");
-	background-repeat: no-repeat;
-}
-
-.navbar a {
-	text-decoration: none;
-}
-
-.navbar-brand {
-	padding: 3px 0px 0px 30px;
-	font-size: 20px;
-	color: white;
-	position: absolute;
-}
-
-.documentationBody .title {
-	padding-bottom: 25px;
-}
-
-.documentationBody .details {
-	padding-top: 3px;
-}
-
-.propertiesdetails {
-	text-align: left;
-	margin: 10px;
-}
-
-.propertiesdetails hr {
-	border-width: 1px;
-	/* 	border-color: #5591e2; */
-}
-
-.propertiesdetails h4 {
-	margin-bottom: 10px;
-}
-
-.propertiesdetails .name {
-	color: #5591e2;
-}
-
-.propertiesdetails .required {
-	background-color: #f59b06;
-	color: white;
-	padding: 3px;
-	margin-left: 10px;
-	font-family: 'Arial';
 }
 </style>
 </head>
-<body class="body">
-	<div class="navbar">
-		<a class="navbar-brand"> DataCleaner </a>
-	</div>
-	<div class="documentationBody">
-		<h1 class="title">
-			<image src=${icon} alt="Image"> ${component.displayName} 
-		</h1>
-		<div>
-			<h3>${component.description}</h3>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<h1>
+				<image src=${icon} alt=""> <span>${component.name}</span>
+			</h1>
+			<p>${component.description}</p>
 		</div>
-		<div class="details">
-			<ol>
-				<li><h3>Execution details</h3></li>
-				<ul>
-					<#if component.distributable??>
-					<li>
-						<dl>
-							<dt>Distributed execution possible</dt>
-						</dl>
-					</li> <#else> No execution details available </#if>
-				</ul>
-				<li><h3>Configured Properties</h3></li>
-				<div class="propertiesdetails">
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<!-- component type -->
+				<#if component.analyzer><span class="label label-primary">Analyzer</span></#if>
+				<#if component.transformer><span class="label label-primary">Transformer</span></#if>
+				<#if component.filter><span class="label label-primary">Filter</span></#if>
+
+				<!-- categorization -->
+				<span class="label label-default">${component.superCategory}</span>
+				<#list component.categories as category> <span
+					class="label label-default">${category}</span> </#list>
+
+				<!-- execution details -->
+				<#if component.queryOptimizable><span class="label label-info">Query
+					optimizer</span></#if> <#if component.concurrent><span
+					class="label label-info">Concurrent</span></#if> <#if
+				component.distributable><span class="label label-info">Distributed
+					execution possible</span></#if>
+
+				<!-- aliases -->
+				<#list component.aliases as alias> <span class="label label-info">Alias:
+					${alias}</span> </#list>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>Configured properties</h2>
+			</div>
+			<div class="panel-body">
+
+				<ul class="list-group">
 					<#list properties as property>
-					<dl class="property">
-						<dt>
-							<h4>Property</h4>
-						</dt>
-						<dd class="name">
-							${property.name} ${property.required?string("<span
-								class='required'>Required</span>",'')}
-						</dd>
-						<dt>
-							<h4>Type</h4>
-						</dt>
-						<dd>${property.type.simpleName}</dd>
-						<#if property.description??>
-						<dt>
-							<h4>Description</h4>
-						</dt>
-						<dd>${property.description}</dd>
-						</#if> <#if mappedProperties??> <#if
-						mappedProperties.get(property.name)??>
-						<dt>
-							<h4>Mapped to</h4>
-						</dt>
-						<dd>${mappedProperties.get(property.name).value}</dd>
-						</#if> </#if>
-						<hr>
-					</dl>
-					</#list>
-				</div>
-			</ol>
+					<li class="list-group-item">
+						<h3>${property.name}</h3>
+						<p>${property.description}</p> <!-- type --> <span
+						class="label label-primary">${property.type}</span>
+						<#list property.enumChoices as choice>
+						<span class="label label-default">${choice}</span>
+						</#list>
+						
+						
+						<#if
+						property.mapped><span class="label label-primary">${property.mappedDescription}</span></#if>
+
+						<!-- required/optional --> <#if property.required> <span
+						class="label label-info">Required</span> <#else> <span
+						class="label label-info">Optional</span> </#if>
+					</li> </#list>
+				</ul>
+
+			</div>
 		</div>
 	</div>
 </body>

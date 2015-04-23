@@ -352,11 +352,15 @@ public final class ReflectionUtils {
             return 0;
         }
         if (subtype == Object.class) {
-            throw new IllegalArgumentException("Finished traversing hierarchy and found Object.class");
+            return Integer.MAX_VALUE;
         }
 
         final Class<?> subSuperclass = subtype.getSuperclass();
-        return 1 + getClassHierarchyDistance(subSuperclass, supertype);
+        final int distance = getClassHierarchyDistance(subSuperclass, supertype);
+        if (distance != Integer.MAX_VALUE) {
+            return 1 + distance;
+        }
+        return Integer.MAX_VALUE;
     }
 
     private static int getInterfaceHierarchyDistance(final Class<?> subtype, final Class<?> supertype) {
@@ -376,11 +380,10 @@ public final class ReflectionUtils {
         if (!subtype.isInterface()) {
             final Class<?> subSuperclass = subtype.getSuperclass();
             if (subSuperclass != null) {
-                try {
-                    final int candidate = 1 + getInterfaceHierarchyDistance(subSuperclass, supertype);
+                final int distance = getInterfaceHierarchyDistance(subSuperclass, supertype);
+                if (distance != Integer.MAX_VALUE) {
+                    final int candidate = 1 + distance;
                     bestCandidate = Math.min(bestCandidate, candidate);
-                } catch (IllegalArgumentException e) {
-                    // do nothing
                 }
             }
         }
@@ -389,22 +392,16 @@ public final class ReflectionUtils {
             final Class<?>[] subInterfaces = i.getInterfaces();
             if (subInterfaces != null && subInterfaces.length > 0) {
                 for (Class<?> subInterface : subInterfaces) {
-                    try {
-                        final int candidate = 1 + getInterfaceHierarchyDistance(subInterface, supertype);
+                    final int distance = getInterfaceHierarchyDistance(subInterface, supertype);
+                    if (distance != Integer.MAX_VALUE) {
+                        final int candidate = 1 + distance;
                         bestCandidate = Math.min(bestCandidate, candidate);
-                    } catch (IllegalArgumentException e) {
-                        // do nothing
                     }
                 }
             }
         }
 
-        if (bestCandidate != Integer.MAX_VALUE) {
-            return bestCandidate;
-        }
-
-        throw new IllegalArgumentException("Not a valid implementation of " + supertype.getName() + ": "
-                + subtype.getName());
+        return bestCandidate;
     }
 
     public static boolean isArray(Object o) {

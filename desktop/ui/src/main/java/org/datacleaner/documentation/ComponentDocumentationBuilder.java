@@ -18,13 +18,12 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.datacleaner.documentation.template;
+package org.datacleaner.documentation;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -53,20 +52,28 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateNotFoundException;
 
-public class DocumentationCreator {
+/**
+ * TODO list:
+ * 
+ * Check what is actually output - what about result type, result metrics,
+ * output columns, filter outcomes.
+ * 
+ * Plug in to CLI to generate complete documentation based on configuration
+ * 
+ * Avoid reference (in CSS) to dc-logo-30.png (in src/main/resources)
+ */
+public class ComponentDocumentationBuilder {
 
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
-    private static final File cssFile = new File("documentationReference.css");
-    private static final String FILENAME_TEMPLATE = "documentationTemplate.html";
 
-    @SuppressWarnings("deprecation")
-    private static final Configuration freemarkerConfiguration = new Configuration();
+    private final Configuration freemarkerConfiguration;
     private final Map<String, Object> _data = new HashMap<String, Object>();;
-    private static final Logger logger = LoggerFactory.getLogger(DocumentationCreator.class);
+    private static final Logger logger = LoggerFactory.getLogger(ComponentDocumentationBuilder.class);
     private Template _template;
 
-    public DocumentationCreator() {
-        freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/");
+    public ComponentDocumentationBuilder() {
+        freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+        freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), ".");
     }
 
     /**
@@ -85,9 +92,6 @@ public class DocumentationCreator {
         final Template template = getTemplate();
 
         try {
-            {
-                _data.put("cssPath",cssFile.getPath());
-            }
             {
                 _data.put("component", componentdescriptor);
                 final Set<ProvidedPropertyDescriptor> providedProperties = componentdescriptor.getProvidedProperties();
@@ -125,7 +129,7 @@ public class DocumentationCreator {
                 baos.close();
 
                 /* Encode the image */
-                final String encodedImage =Base64.encodeBase64String(imageInByte);
+                final String encodedImage = Base64.encodeBase64String(imageInByte);
 
                 /*
                  * Atach the prefix that will make html <img> know how to decode
@@ -152,18 +156,11 @@ public class DocumentationCreator {
 
     /**
      * Gets the freemarker configuration.
+     * 
      * @return
      */
-    public static Configuration getFreemarkerconfiguration() {
+    public Configuration getFreemarkerconfiguration() {
         return freemarkerConfiguration;
-    }
- 
-    /**
-     * Gets the template filename.
-     * @return
-     */
-    public static String getFilenameTemplate() {
-        return FILENAME_TEMPLATE;
     }
 
     /**
@@ -180,14 +177,14 @@ public class DocumentationCreator {
         /* The template needs created only once. */
         if (_template == null) {
             final Configuration freemarkerConfiguration = getFreemarkerconfiguration();
-            final String filenameTemplate = getFilenameTemplate();
-            _template = freemarkerConfiguration.getTemplate(filenameTemplate);
+            _template = freemarkerConfiguration.getTemplate("template.html");
         }
         return _template;
     }
 
     /**
-     * Used to convert an image object to buffered image. Used in {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
+     * Used to convert an image object to buffered image. Used in
+     * {@link #createDocumentation(ComponentDescriptor, OutputStream)()}
      * 
      * @param image
      * @return buffered image

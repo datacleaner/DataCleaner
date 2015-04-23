@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.documentation.template;
+package org.datacleaner.documentation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,30 +30,31 @@ import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.documentation.ComponentDocumentationBuilder;
 import org.junit.Test;
 
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 
-public class DocumentationCreatorTest {
+public class ComponentDocumentationBuilderTest {
 
     @Test
-    public void test() throws MalformedTemplateNameException, ParseException, IOException {
+    public void testBuildPatternFinderDocs() throws MalformedTemplateNameException, ParseException, IOException {
+        final File benchmarkFile = new File("src/test/resources/documentation/pattern_finder.html");
+        final File outputFile = new File("target/documentation_pattern_finder.html");
 
-        final String benchmarkFilename = "src/test/resources/documentCreatorBenchmarkTest.html";
-        final DocumentationCreator documentationCreator = new DocumentationCreator();
         final AnalyzerDescriptor<PatternFinderAnalyzer> patternFinderDescriptor = Descriptors
                 .ofAnalyzer(PatternFinderAnalyzer.class);
 
-        final File outputFile = new File("src/test/resources/documentationReferenceOutputFile.html");
+        final ComponentDocumentationBuilder documentationCreator = new ComponentDocumentationBuilder();
         documentationCreator.createDocumentation(patternFinderDescriptor, new FileOutputStream(outputFile));
-        final File benchmarkFile = new File(benchmarkFilename);
+
         final String benchmark = FileHelper.readFileAsString(benchmarkFile);
         final String output = FileHelper.readFileAsString(outputFile);
-  
+
         assertEquals(benchmark, output);
 
         outputFile.delete();
-        assertFalse(outputFile.exists()); 
+        assertFalse(outputFile.exists());
     }
 }

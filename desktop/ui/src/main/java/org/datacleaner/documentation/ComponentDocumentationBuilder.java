@@ -17,7 +17,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
 package org.datacleaner.documentation;
 
 import java.awt.Graphics2D;

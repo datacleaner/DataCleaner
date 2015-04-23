@@ -1,5 +1,25 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.datacleaner.documentation;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.datacleaner.api.ComponentCategory;
@@ -10,6 +30,7 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Strings;
 
@@ -31,7 +52,11 @@ public class ComponentDocumentationWrapper {
     }
 
     public String getDescription() {
-        return Strings.nullToEmpty(_componentDescriptor.getDescription());
+        String description = Strings.nullToEmpty(_componentDescriptor.getDescription());
+        description = "<p>" + description + "</p>";
+        description = StringUtils.replaceAll(description, "\n\n", "\n");
+        description = StringUtils.replaceAll(description, "\n", "</p><p>");
+        return description;
     }
 
     public String getSuperCategory() {
@@ -82,5 +107,19 @@ public class ComponentDocumentationWrapper {
 
     public boolean isFilter() {
         return _componentDescriptor instanceof FilterDescriptor;
+    }
+
+    public FilterOutcomeDocumentationWrapper[] getFilterOutcomes() {
+        if (_componentDescriptor instanceof FilterDescriptor) {
+            final EnumSet<?> outcomes = ((FilterDescriptor<?, ?>) _componentDescriptor).getOutcomeCategories();
+            final FilterOutcomeDocumentationWrapper[] result = new FilterOutcomeDocumentationWrapper[outcomes.size()];
+            int i = 0;
+            for (Enum<?> outcome : outcomes) {
+                result[i] = new FilterOutcomeDocumentationWrapper(outcome);
+                i++;
+            }
+            return result;
+        }
+        return new FilterOutcomeDocumentationWrapper[0];
     }
 }

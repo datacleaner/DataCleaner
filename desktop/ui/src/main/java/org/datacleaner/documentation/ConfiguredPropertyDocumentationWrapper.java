@@ -3,6 +3,7 @@ package org.datacleaner.documentation;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.html.HtmlEscapers;
@@ -25,7 +26,11 @@ public class ConfiguredPropertyDocumentationWrapper {
     }
 
     public String getDescription() {
-        return Strings.nullToEmpty(_property.getDescription());
+        String description = Strings.nullToEmpty(_property.getDescription());
+        description = "<p>" + description + "</p>";
+        description = StringUtils.replaceAll(description, "\n\n", "\n");
+        description = StringUtils.replaceAll(description, "\n", "</p><p>");
+        return description;
     }
 
     public boolean isRequired() {

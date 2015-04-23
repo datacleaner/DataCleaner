@@ -122,7 +122,7 @@ public class ComponentDocumentationBuilderTest {
             // breaks
             benchmark = "No such file: " + benchmarkFile.getPath();
         }
-
+        
         assertEquals(benchmark, output);
     }
 

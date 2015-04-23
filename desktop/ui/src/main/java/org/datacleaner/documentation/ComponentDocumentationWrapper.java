@@ -22,12 +22,17 @@ package org.datacleaner.documentation;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.HasAnalyzerResultComponentDescriptor;
+import org.datacleaner.descriptors.MetricDescriptor;
+import org.datacleaner.descriptors.SimpleHasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
@@ -107,6 +112,38 @@ public class ComponentDocumentationWrapper {
 
     public boolean isFilter() {
         return _componentDescriptor instanceof FilterDescriptor;
+    }
+
+    public boolean isResultProducer() {
+        return ReflectionUtils.is(_componentDescriptor.getComponentClass(), HasAnalyzerResult.class);
+    }
+
+    public String getResultType() {
+        final HasAnalyzerResultComponentDescriptor<?> descriptor = getHasAnalyzerResultComponentDescriptor();
+        final Class<? extends AnalyzerResult> resultClass = descriptor.getResultClass();
+        return resultClass.getSimpleName();
+    }
+
+    public MetricDocumentationWrapper[] getMetrics() {
+        final HasAnalyzerResultComponentDescriptor<?> descriptor = getHasAnalyzerResultComponentDescriptor();
+        final Set<MetricDescriptor> metrics = descriptor.getResultMetrics();
+        MetricDocumentationWrapper[] result = new MetricDocumentationWrapper[metrics.size()];
+        int i = 0;
+        for (MetricDescriptor metricDescriptor : metrics) {
+            result[i] = new MetricDocumentationWrapper(metricDescriptor);
+            i++;
+        }
+        return result;
+    }
+
+    private HasAnalyzerResultComponentDescriptor<?> getHasAnalyzerResultComponentDescriptor() {
+        if (_componentDescriptor instanceof HasAnalyzerResultComponentDescriptor) {
+            return (HasAnalyzerResultComponentDescriptor<?>) _componentDescriptor;
+        }
+        @SuppressWarnings("unchecked")
+        Class<? extends HasAnalyzerResult<?>> componentClass = (Class<? extends HasAnalyzerResult<?>>) _componentDescriptor
+                .getComponentClass();
+        return new SimpleHasAnalyzerResultComponentDescriptor<>(componentClass);
     }
 
     public FilterOutcomeDocumentationWrapper[] getFilterOutcomes() {

@@ -71,6 +71,34 @@ h3 {
 					${alias}</span> </#list>
 			</div>
 		</div>
+		
+		<#if component.resultProducer>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>
+					<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+					<a data-toggle="collapse" href="#resultPanel"
+						aria-controls="resultPanel">Result <small>(${component.resultType})</small></a>
+				</h2>
+			</div>
+			<div class="panel-body collapse in" id="resultPanel"
+				aria-expanded="true">
+				<ul class="list-group">
+					<#list component.metrics as metric>
+					<li class="list-group-item">
+						<h3>
+							<span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+							<span class="text-info">${metric.name}</span>
+						</h3>
+						${metric.description}
+						<#if metric.parameterizedByInputColumn><span class="label label-primary">Parameterized by column</span></#if>
+						<#if metric.parameterizedByString><span class="label label-primary">Parameterized by value</span></#if>
+						<#if metric.notParameterized><span class="label label-primary">Not parameterized</span></#if>
+					</li> </#list>
+				</ul>
+			</div>
+		</div>
+		</#if>
 
 		<#if component.filter>
 		<div class="panel panel-default">

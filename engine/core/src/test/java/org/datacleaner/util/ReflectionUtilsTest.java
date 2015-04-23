@@ -28,6 +28,7 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabResult;
+import org.datacleaner.result.TableModelResult;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassA;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassB;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassC;
@@ -102,6 +103,15 @@ public class ReflectionUtilsTest extends TestCase {
         assertFalse(ReflectionUtils.isNumber(Double[].class));
     }
 
+    private static class MySubclass extends AnnotatedRowsResult implements AnalyzerResult {
+
+        private static final long serialVersionUID = 1L;
+
+        public MySubclass() {
+            super(null, null);
+        }
+    }
+
     public void testGetHierarchyDistance() throws Exception {
         assertEquals(0, ReflectionUtils.getHierarchyDistance(String.class, String.class));
         assertEquals(1, ReflectionUtils.getHierarchyDistance(String.class, CharSequence.class));
@@ -112,6 +122,20 @@ public class ReflectionUtilsTest extends TestCase {
 
         assertEquals(1, ReflectionUtils.getHierarchyDistance(CrosstabResult.class, AnalyzerResult.class));
         assertEquals(1, ReflectionUtils.getHierarchyDistance(AnnotatedRowsResult.class, AnalyzerResult.class));
+
+        assertEquals(1, ReflectionUtils.getHierarchyDistance(Integer.class, Number.class));
+
+        assertEquals(1, ReflectionUtils.getHierarchyDistance(MySubclass.class, AnnotatedRowsResult.class));
+        assertEquals(1, ReflectionUtils.getHierarchyDistance(MySubclass.class, AnalyzerResult.class));
+        assertEquals(2, ReflectionUtils.getHierarchyDistance(MySubclass.class, TableModelResult.class));
+
+        try {
+            ReflectionUtils.getHierarchyDistance(TableModelResult.class, MySubclass.class);
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                    "Not a valid subtype of org.datacleaner.util.ReflectionUtilsTest$MySubclass: org.datacleaner.result.TableModelResult",
+                    e.getMessage());
+        }
     }
 
     public void testGetFields() throws Exception {

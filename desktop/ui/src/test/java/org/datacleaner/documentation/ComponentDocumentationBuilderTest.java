@@ -111,7 +111,7 @@ public class ComponentDocumentationBuilderTest {
 
     private void runBenchmarkTest(ComponentDescriptor<?> descriptor, File benchmarkFile, File outputFile)
             throws Exception {
-        documentationCreator.createDocumentation(descriptor, new FileOutputStream(outputFile));
+        documentationCreator.write(descriptor, new FileOutputStream(outputFile));
         final String output = normalize(FileHelper.readFileAsString(outputFile));
 
         final String benchmark;
@@ -122,7 +122,7 @@ public class ComponentDocumentationBuilderTest {
             // breaks
             benchmark = "No such file: " + benchmarkFile.getPath();
         }
-        
+
         assertEquals(benchmark, output);
     }
 

@@ -22,15 +22,15 @@ body {
 }
 
 h1 {
-	font-size: 	30px;
+	font-size: 30px;
 }
 
 h2 {
-	font-size: 	24px;
+	font-size: 24px;
 }
 
 h3 {
-	font-size: 	20px;
+	font-size: 20px;
 }
 </style>
 </head>
@@ -40,6 +40,12 @@ h3 {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<div class="container">
+		<#if breadcrumbs>
+		<ol class="breadcrumb">
+			<li><a href="index.html">Component reference</a></li>
+			<li class="active">${component.name}</li>
+		</ol>
+		</#if>
 		<div class="jumbotron">
 			<h1>
 				<img src="${icon}" alt="" /> <span>${component.name}</span>
@@ -71,7 +77,7 @@ h3 {
 					${alias}</span> </#list>
 			</div>
 		</div>
-		
+
 		<#if component.resultProducer>
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -89,18 +95,17 @@ h3 {
 						<h3>
 							<span class="glyphicon glyphicon-record" aria-hidden="true"></span>
 							<span class="text-info">${metric.name}</span>
-						</h3>
-						${metric.description}
-						<#if metric.parameterizedByInputColumn><span class="label label-primary">Parameterized by column</span></#if>
-						<#if metric.parameterizedByString><span class="label label-primary">Parameterized by value</span></#if>
-						<#if metric.notParameterized><span class="label label-primary">Not parameterized</span></#if>
+						</h3> ${metric.description} <#if metric.parameterizedByInputColumn><span
+						class="label label-primary">Parameterized by column</span></#if>
+						<#if metric.parameterizedByString><span
+						class="label label-primary">Parameterized by value</span></#if>
+						<#if metric.notParameterized><span class="label label-primary">Not
+							parameterized</span></#if>
 					</li> </#list>
 				</ul>
 			</div>
 		</div>
-		</#if>
-
-		<#if component.filter>
+		</#if> <#if component.filter>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2>
@@ -117,8 +122,7 @@ h3 {
 						<h3>
 							<span class="glyphicon glyphicon-share" aria-hidden="true"></span>
 							<span class="text-info">${filterOutcome.name}</span>
-						</h3>
-						${filterOutcome.description}
+						</h3> ${filterOutcome.description}
 					</li> </#list>
 				</ul>
 			</div>
@@ -143,8 +147,7 @@ h3 {
 						<h3>
 							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 							${property.name}
-						</h3>
-						${property.description} <!-- type --> <span
+						</h3> ${property.description} <!-- type --> <span
 						class="label label-primary">${property.type}</span> <#list
 						property.enumChoices as choice> <span class="label label-default">${choice}</span>
 						</#list> <#if property.mapped><span class="label label-primary">${property.mappedDescription}</span></#if>

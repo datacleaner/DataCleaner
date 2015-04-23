@@ -40,15 +40,10 @@ import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.IconUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import freemarker.core.ParseException;
 import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
 
 /**
  * An object capable of building documentation for DataCleaner {@link Component}
@@ -65,39 +60,46 @@ public class ComponentDocumentationBuilder {
 
     private static final String HTMLBASE64_PREFIX = "data:image/png;base64,";
 
-    private final Configuration freemarkerConfiguration;
-    private final Map<String, Object> _data = new HashMap<String, Object>();;
-    private static final Logger logger = LoggerFactory.getLogger(ComponentDocumentationBuilder.class);
-    private Template _template;
+    private final Configuration _freemarkerConfiguration;
+    private final Template _template;
+    private final boolean _breadcrumbs;
 
     public ComponentDocumentationBuilder() {
-        freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-        freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), ".");
+        this(false);
+    }
+
+    public ComponentDocumentationBuilder(boolean breadcrumbs) {
+        _breadcrumbs = breadcrumbs;
+        _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+        _freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), ".");
+        try {
+            _template = _freemarkerConfiguration.getTemplate("template.html");
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load template", e);
+        }
     }
 
     /**
      * Creates the reference documentation for a {@link Component}.
      * 
-     * @param componentdescriptor
+     * @param componentDescriptor
      *            the {@link ComponentDescriptor} of the {@link Component} of
      *            interest.
      * @param outputStream
      *            the target {@link OutputStream} to write to
      * @throws IOException
-     * @throws ParseException
-     * @throws MalformedTemplateNameException
-     * @throws TemplateNotFoundException
      */
-    public void createDocumentation(ComponentDescriptor<?> componentdescriptor, OutputStream outputStream)
-            throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException {
+    public void write(ComponentDescriptor<?> componentDescriptor, OutputStream outputStream)
+            throws IOException {
 
-        final Template template = getTemplate();
+        final Map<String, Object> data = new HashMap<>();
 
         try {
-            _data.put("component", new ComponentDocumentationWrapper(componentdescriptor));
+            data.put("breadcrumbs", _breadcrumbs);
+            data.put("component", new ComponentDocumentationWrapper(componentDescriptor));
 
             {
-                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentdescriptor
+                final Set<ConfiguredPropertyDescriptor> configuredProperties = componentDescriptor
                         .getConfiguredProperties();
                 final List<ConfiguredPropertyDescriptor> properties = new ArrayList<ConfiguredPropertyDescriptor>(
                         configuredProperties);
@@ -108,11 +110,11 @@ public class ComponentDocumentationBuilder {
                     propertyList.add(wrapper);
                 }
 
-                _data.put("properties", propertyList);
+                data.put("properties", propertyList);
             }
 
             { // Attach the image
-                final Image descriptorIcon = IconUtils.getDescriptorIcon(componentdescriptor).getImage();
+                final Image descriptorIcon = IconUtils.getDescriptorIcon(componentDescriptor).getImage();
 
                 /* We need a buffered image type in order to obtain the */
                 final BufferedImage bufferedImage = toBufferedImage(descriptorIcon);
@@ -131,20 +133,16 @@ public class ComponentDocumentationBuilder {
                  */
                 final String iconHtmlRepresentation = HTMLBASE64_PREFIX + encodedImage;
 
-                _data.put("icon", iconHtmlRepresentation);
+                data.put("icon", iconHtmlRepresentation);
             }
 
             /* Write data to a file */
             Writer out = new OutputStreamWriter(outputStream);
-            template.process(_data, out);
+            _template.process(data, out);
             out.flush();
             out.close();
-
-        } catch (IOException exception) {
-            logger.debug("Exception while writing to the file:", exception);
-
-        } catch (TemplateException exception) {
-            logger.debug("Exception while loading the template:", exception);
+        } catch (TemplateException e) {
+            throw new IllegalStateException("Unexpected templare exception", e);
         }
     }
 
@@ -154,26 +152,7 @@ public class ComponentDocumentationBuilder {
      * @return
      */
     public Configuration getFreemarkerconfiguration() {
-        return freemarkerConfiguration;
-    }
-
-    /**
-     * Gets the template.
-     * 
-     * @return Template
-     * @throws TemplateNotFoundException
-     * @throws MalformedTemplateNameException
-     * @throws ParseException
-     * @throws IOException
-     */
-    public Template getTemplate() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException,
-            IOException {
-        /* The template needs created only once. */
-        if (_template == null) {
-            final Configuration freemarkerConfiguration = getFreemarkerconfiguration();
-            _template = freemarkerConfiguration.getTemplate("template.html");
-        }
-        return _template;
+        return _freemarkerConfiguration;
     }
 
     /**

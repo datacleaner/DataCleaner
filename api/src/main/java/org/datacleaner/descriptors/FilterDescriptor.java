@@ -29,8 +29,10 @@ import org.datacleaner.api.QueryOptimizedFilter;
 /**
  * {@link ComponentDescriptor} interface for {@link Filter}s.
  * 
- * @param <B>
+ * @param <F>
  *            the type of {@link Filter}
+ * @param <C>
+ *            the {@link Filter}s category type
  */
 public interface FilterDescriptor<F extends Filter<C>, C extends Enum<C>> extends ComponentDescriptor<F> {
 

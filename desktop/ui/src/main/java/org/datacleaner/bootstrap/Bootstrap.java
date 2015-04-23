@@ -140,6 +140,18 @@ public final class Bootstrap {
                 exitCommandLine(null, 1);
                 return;
             }
+            
+            if (arguments.isVersionMode()) {
+                final PrintWriter out = new PrintWriter(System.out);
+                try {
+                    CliArguments.printVersion(out);
+                } finally {
+                    FileHelper.safeClose(out);
+                }
+
+                exitCommandLine(null, 1);
+                return;                
+            }
         }
 
         if (!cliMode) {

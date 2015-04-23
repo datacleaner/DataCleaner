@@ -15,7 +15,7 @@ import org.datacleaner.result.DefaultResultProducer
 import org.datacleaner.result.CrosstabResult
 import org.datacleaner.result.AnnotatedRowsResult
 import org.datacleaner.result.NumberResult
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
 import org.datacleaner.api.InputColumn
 import org.datacleaner.data.MockInputColumn
 
@@ -41,7 +41,7 @@ class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {
 
   @Test
   def testCellValue() = {
-    val rendererFactory = new RendererFactory(new AnalyzerBeansConfigurationImpl());
+    val rendererFactory = new RendererFactory(new DataCleanerConfigurationImpl());
     val callback = new HtmlCrosstabRendererCallback(rendererFactory,renderingContext);
     val rowFactory = new InMemoryRowAnnotationFactory;
     val rowAnnotation = new RowAnnotationImpl;

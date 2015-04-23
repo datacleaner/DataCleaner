@@ -112,7 +112,7 @@ public class DatabaseDriverCatalog implements Serializable {
                 "http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar",
                 "jdbc:derby:<database>");
         add(DATABASE_NAME_ORACLE, "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
-                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>");
+                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>", "jdbc:oracle:thin:@<hostname>:<port>/<service>:<server>/<instance>");
         add(DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL, "images/datastore-types/databases/microsoft.png",
                 "com.microsoft.sqlserver.jdbc.SQLServerDriver", null,
                 "jdbc:sqlserver://<hostname>:3341;databaseName=<database>",

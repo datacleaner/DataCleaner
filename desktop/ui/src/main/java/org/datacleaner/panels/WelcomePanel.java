@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.net.UrlEscapers;
 import com.google.inject.Injector;
 
 /**
@@ -152,8 +153,21 @@ public class WelcomePanel extends DCSplashPanel {
 
                 final JButton discussionForumButton = WidgetFactory.createDefaultButton("Visit the discussion forum",
                         "images/menu/forum.png");
+                discussionForumButton
+                        .setToolTipText("Visit the online discussion forum for questions and answers in the community");
                 final OpenBrowserAction forumActionListener = new OpenBrowserAction("http://datacleaner.org/forum");
                 discussionForumButton.addActionListener(forumActionListener);
+
+                final JButton twitterButton = WidgetFactory.createDefaultButton(null, "images/menu/twitter.png");
+                twitterButton.setToolTipText("Spread the message about #DataCleaner on Twitter");
+                twitterButton.addActionListener(new OpenBrowserAction("https://twitter.com/intent/tweet?text="
+                        + UrlEscapers.urlFormParameterEscaper().escape(
+                                "I'm using @DataCleaner (v. " + Version.getVersion()
+                                        + ") for some really fancy #dataquality stuff!")));
+
+                final JButton linkedInButton = WidgetFactory.createDefaultButton(null, "images/menu/linkedin.png");
+                linkedInButton.setToolTipText("Join our LinkedIn group of users and professionals");
+                linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
 
                 final JLabel loveFeedbackAnimation = new JLabel(ImageManager.get().getImageIcon(
                         "images/window/we_love_community_and_feedback.gif"), JLabel.LEFT);
@@ -174,7 +188,7 @@ public class WelcomePanel extends DCSplashPanel {
                 innerPanel.add(Box.createVerticalStrut(80));
                 innerPanel.add(loveFeedbackAnimation);
                 innerPanel.add(Box.createVerticalStrut(20));
-                innerPanel.add(DCPanel.flow(discussionForumButton));
+                innerPanel.add(DCPanel.flow(discussionForumButton, twitterButton, linkedInButton));
                 innerPanel.add(Box.createVerticalStrut(5));
 
                 result.setLayout(new VerticalLayout());

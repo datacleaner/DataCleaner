@@ -96,7 +96,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
         final List<Datastore> datastores = _userPreferences.getUserDatastores();
         for (Datastore datastore : datastores) {
             if (name.equals(datastore.getName())) {
-                throw new IllegalArgumentException("Datastore name '" + name + "' is not unique!");
+                throw new IllegalArgumentException("A datastore with the name '" + name + "' already exists!");
             }
         }
         datastores.add(ds);

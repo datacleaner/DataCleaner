@@ -26,7 +26,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,7 +50,6 @@ import org.datacleaner.actions.SaveAnalysisResultActionListener;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.ExecutionLogMessage;
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -69,7 +67,7 @@ import org.datacleaner.job.runner.AnalysisJobCancellation;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
 import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.AnalysisListenerAdaptor;
-import org.datacleaner.job.runner.AnalyzerMetrics;
+import org.datacleaner.job.runner.ComponentMetrics;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
@@ -82,7 +80,6 @@ import org.datacleaner.util.AnalysisRunnerSwingWorker;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.SourceColumnFinder;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -482,31 +479,24 @@ public final class ResultWindow extends AbstractWindow {
             }
 
             @Override
-            public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
-                _progressInformationPanel.addUserLog("Starting analyzer '" + LabelUtils.getLabel(analyzerJob) + "'");
+            public void componentBegin(AnalysisJob job, final ComponentJob componentJob, ComponentMetrics metrics) {
+                _progressInformationPanel.addUserLog("Starting component '" + LabelUtils.getLabel(componentJob) + "'");
             }
 
             @Override
-            public void analyzerSuccess(AnalysisJob job, final AnalyzerJob analyzerJob, final AnalyzerResult result) {
-                final List<InputColumn<?>> inputColumns = Arrays.asList(analyzerJob.getInput());
-                final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-                sourceColumnFinder.addSources(job);
-
-                Table table = null;
-                String tableName = null;
-                for (InputColumn<?> inputColumn : inputColumns) {
-                    table = sourceColumnFinder.findOriginatingTable(inputColumn);
-                    if (table != null) {
-                        tableName = table.getName();
-                        break;
-                    }
+            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
+                final StringBuilder sb = new StringBuilder();
+                sb.append("Component ");
+                sb.append(LabelUtils.getLabel(componentJob));
+                sb.append(" finished.");
+                
+                if (result == null) {
+                    _progressInformationPanel.addUserLog(sb.toString());
+                } else {
+                    sb.append(" Adding result...");
+                    _progressInformationPanel.addUserLog(sb.toString());
+                    addResult(componentJob, result);
                 }
-
-                assert table != null;
-
-                _progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob)
-                        + "' finished, adding result to tab of " + tableName);
-                addResult(analyzerJob, result);
             }
 
             @Override
@@ -540,7 +530,7 @@ public final class ResultWindow extends AbstractWindow {
 
     protected void updateButtonVisibility(final boolean running) {
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             @Override
             public void run() {
                 _cancelButton.setVisible(running);

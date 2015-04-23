@@ -2,7 +2,8 @@ package org.datacleaner.visualization
 
 import java.io.File
 import scala.collection.JavaConversions.mapAsJavaMap
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.descriptors.Descriptors
@@ -23,7 +24,7 @@ class DensityAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
   descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[DensityAnalyzerResultHtmlRenderer]));
-  val configuration = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+  val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");
 

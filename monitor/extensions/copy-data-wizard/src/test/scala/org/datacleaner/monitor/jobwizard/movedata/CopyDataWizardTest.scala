@@ -2,7 +2,7 @@ package org.datacleaner.monitor.jobwizard.movedata
 import scala.collection.JavaConversions._
 
 import org.easymock.EasyMock
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
 import org.datacleaner.connection.DatastoreCatalogImpl
 import org.datacleaner.test.TestHelper
 import org.datacleaner.monitor.configuration.TenantContext
@@ -18,7 +18,7 @@ class CopyDataWizardTest extends AssertionsForJUnit {
     val datastore = new MockUpdateableDatastore(TestHelper.createSampleDatabaseDatastore("orderdb"));
 
     val tenantContext = EasyMock.createMock(classOf[TenantContext]);
-    val configuration = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(datastore));
+    val configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
     EasyMock.expect(tenantContext.getConfiguration()).andReturn(configuration).anyTimes();
     EasyMock.expect(tenantContext.containsJob("copy_data_job")).andReturn(false);
     EasyMock.replay(tenantContext);

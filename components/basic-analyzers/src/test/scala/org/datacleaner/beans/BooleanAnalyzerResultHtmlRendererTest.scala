@@ -1,6 +1,7 @@
 package org.datacleaner.beans
 import org.datacleaner.api.RendererBean
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider
 import org.datacleaner.result.html.DefaultHtmlRenderingContext
@@ -16,7 +17,7 @@ class BooleanAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
   @Test
   def testRender = {
     val descriptorProvider = new ClasspathScanDescriptorProvider().scanPackage("org.datacleaner.beans", false)
-    val conf = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+    val conf = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
     val renderer = new BooleanAnalyzerResultHtmlRenderer(new RendererFactory(conf))
 
     val column = new MockInputColumn[java.lang.Boolean]("my bool")

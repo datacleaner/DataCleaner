@@ -45,6 +45,12 @@ public class NamedPatternTest extends TestCase {
                 .getPattern().toString());
     }
 
+    public void testToString() throws Exception {
+        NamedPattern<ExamplePatternGroup> namedPattern = new NamedPattern<ExamplePatternGroup>("FOO-(W00P)",
+                ExamplePatternGroup.class);
+        assertEquals("FOO-(W00P)", namedPattern.toString());
+    }
+
     public void testGroupLiteral() throws Exception {
         String groupLiteral = NamedPattern.DEFAULT_GROUP_LITERAL;
         assertTrue(Pattern.matches(groupLiteral, "hello"));

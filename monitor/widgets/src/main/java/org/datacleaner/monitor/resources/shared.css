@@ -450,7 +450,7 @@ div.center {
 	height: 30px !important;
 }
 
-.ButtonPanel .gwt-Button:disabled, .ButtonPanel .gwt-Button:disabled {
+.ButtonPanel .gwt-Button:disabled, .ButtonPanel .gwt-Button:disabled, .ButtonPanel .gwt-Button:hover:disabled {
 	background-color: #ddd;
 	cursor: default;
 	border: 1px solid #bbb;

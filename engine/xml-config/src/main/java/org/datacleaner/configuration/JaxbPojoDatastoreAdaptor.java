@@ -83,8 +83,18 @@ public class JaxbPojoDatastoreAdaptor {
 
     private final StringConverter _converter;
 
+    /**
+     * @deprecated use the
+     *             {@link #JaxbPojoDatastoreAdaptor(DataCleanerConfiguration)}
+     *             constructor instead
+     */
+    @Deprecated
     public JaxbPojoDatastoreAdaptor() {
-        _converter = new StringConverter(null);
+        _converter = StringConverter.simpleInstance();
+    }
+
+    public JaxbPojoDatastoreAdaptor(DataCleanerConfiguration configuration) {
+        _converter = new StringConverter(configuration);
     }
 
     public PojoDatastore read(PojoDatastoreType pojoDatastore) {

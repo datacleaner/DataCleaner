@@ -25,8 +25,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
@@ -86,7 +89,7 @@ import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
         ComponentDescriptorsUpdatedListener {
-
+    
     private static final long serialVersionUID = 7763827443642264329L;
 
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
@@ -97,12 +100,16 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     public static final String LIBRARY_STRING = "Library";
     public static final String ROOT_NODE_STRING = "Schemas";
 
+    private static final String NO_COMPONENTS_FOUND_SEARCH_RESULT = "No components found matching search criteria.";
+
     private final Datastore _datastore;
     private final DatastoreConnection _datastoreConnection;
     private final TreeCellRenderer _rendererDelegate;
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
+
+    private String _searchTerm = "";
 
     @Inject
     protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
@@ -269,9 +276,21 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
             final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
-            libraryRoot.add(schemaNode);
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                     .getComponentDescriptorsOfSuperCategory(superCategory);
+
+            final List<ComponentDescriptor<?>> filteredComponentDescriptors = new ArrayList<>();
+
+            for (ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
+                final String displayName = componentDescriptor.getDisplayName();
+                if (displayName.toLowerCase().contains(_searchTerm.toLowerCase())) {
+                    filteredComponentDescriptors.add(componentDescriptor);
+                }
+            }
+
+            if (filteredComponentDescriptors.size() > 0) {
+                libraryRoot.add(schemaNode);
+            }
 
             final Map<ComponentCategory, DefaultMutableTreeNode> categoryTreeNodes = new HashMap<>();
 
@@ -300,8 +319,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 }
             };
 
-            DescriptorMenuBuilder.createMenuStructure(menuCallback, componentDescriptors, true);
+            DescriptorMenuBuilder.createMenuStructure(menuCallback, filteredComponentDescriptors, true);
 
+        }
+        if (libraryRoot.getChildCount() == 0) {
+            libraryRoot.add(new DefaultMutableTreeNode(NO_COMPONENTS_FOUND_SEARCH_RESULT));
         }
         return libraryRoot;
     }
@@ -486,6 +508,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         } else if (value instanceof String) {
             if (LIBRARY_STRING.equals(value)) {
                 icon = imageManager.getImageIcon(IconUtils.MODEL_COMPONENT_LIBRARY, IconUtils.ICON_SIZE_MENU_ITEM);
+            } else if (NO_COMPONENTS_FOUND_SEARCH_RESULT.equals(value)) {
+                // "empty" icon -> no icon
+                icon = new ImageIcon();
             }
             component = _rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row,
                     hasFocus);
@@ -585,5 +610,23 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         DefaultTreeModel model = (DefaultTreeModel) getModel();
         model.reload(libraryNode);
         expandStandardPaths();
+    }
+
+    public void filter(String searchTerm) {
+        _searchTerm = searchTerm;
+        updateTree();
+        expandStandardPaths();
+
+        // Expand only when search is active
+        if (!searchTerm.equals("")) {
+            final TreeNode root = (TreeNode) getModel().getRoot();
+            final DefaultMutableTreeNode libraryNode = (DefaultMutableTreeNode) root.getChildAt(1);
+            Enumeration<?> depthFirstEnumeration = libraryNode.depthFirstEnumeration();
+            while (depthFirstEnumeration.hasMoreElements()) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) depthFirstEnumeration.nextElement();
+                TreePath treePath = new TreePath(node.getPath());
+                expandPath(treePath);
+            }
+        }
     }
 }

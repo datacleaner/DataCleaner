@@ -49,6 +49,13 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         }
     }
 
+    public CompoundComponentRequirement(ComponentRequirement existingRequirement, FilterOutcome filterOutcome) {
+        _outcomes = new LinkedHashSet<FilterOutcome>();
+
+        _outcomes.addAll(existingRequirement.getProcessingDependencies());
+        _outcomes.add(filterOutcome);
+    }
+
     /**
      * Gets the {@link FilterOutcome} that this
      * {@link CompoundComponentRequirement} represents.
@@ -57,6 +64,28 @@ public class CompoundComponentRequirement implements ComponentRequirement {
      */
     public Set<FilterOutcome> getOutcomes() {
         return _outcomes;
+    }
+
+    public Set<FilterOutcome> getOutcomesFrom(HasFilterOutcomes producingComponent) {
+        Set<FilterOutcome> result = new LinkedHashSet<>();
+        for (FilterOutcome outcome : _outcomes) {
+            final HasFilterOutcomes source = outcome.getSource();
+            if (producingComponent.equals(source)) {
+                result.add(outcome);
+            }
+        }
+        return result;
+    }
+
+    public boolean hasMultipleRequirementsFrom(HasFilterOutcomes producingComponent) {
+        int count = 0;
+        for (FilterOutcome outcome : _outcomes) {
+            final HasFilterOutcomes source = outcome.getSource();
+            if (producingComponent.equals(source)) {
+                count++;
+            }
+        }
+        return count > 1;
     }
 
     @Override
@@ -73,10 +102,17 @@ public class CompoundComponentRequirement implements ComponentRequirement {
         }
         return false;
     }
-    
+
     @Override
     public String getSimpleName() {
-        return toString();
+        final StringBuilder sb = new StringBuilder();
+        for (FilterOutcome outcome : _outcomes) {
+            if (sb.length() != 0) {
+                sb.append(" OR ");
+            }
+            sb.append(outcome.getSimpleName());
+        }
+        return sb.toString();
     }
 
     @Override

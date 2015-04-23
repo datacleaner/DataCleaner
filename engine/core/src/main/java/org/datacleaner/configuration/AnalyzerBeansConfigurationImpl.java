@@ -19,8 +19,6 @@
  */
 package org.datacleaner.configuration;
 
-import java.io.File;
-
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.descriptors.DescriptorProvider;
@@ -28,8 +26,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.reference.ReferenceDataCatalogImpl;
-import org.datacleaner.repository.RepositoryFolder;
-import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.storage.StorageProvider;
 
 /**
@@ -43,7 +39,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     private static final long serialVersionUID = 1L;
 
     private final transient DataCleanerEnvironment _environment;
-    private final transient RepositoryFolder _homeFolder;
+    private final transient DataCleanerHomeFolder _homeFolder;
     private final DatastoreCatalog _datastoreCatalog;
     private final ReferenceDataCatalog _referenceDataCatalog;
 
@@ -78,8 +74,8 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
                 DataCleanerEnvironmentImpl.defaultStorageProvider(), injectionManagerFactory, defaultHomeFolder());
     }
 
-    private static RepositoryFolder defaultHomeFolder() {
-        return new FileRepository(new File("."));
+    private static DataCleanerHomeFolder defaultHomeFolder() {
+        return DataCleanerConfigurationImpl.defaultHomeFolder();
     }
 
     /**
@@ -110,7 +106,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
      */
     public AnalyzerBeansConfigurationImpl(DatastoreCatalog datastoreCatalog, ReferenceDataCatalog referenceDataCatalog,
             DescriptorProvider descriptorProvider, TaskRunner taskRunner, StorageProvider storageProvider,
-            InjectionManagerFactory injectionManagerFactory, RepositoryFolder homeFolder) {
+            InjectionManagerFactory injectionManagerFactory, DataCleanerHomeFolder homeFolder) {
         if (datastoreCatalog == null) {
             throw new IllegalArgumentException("datastoreCatalog cannot be null");
         }
@@ -143,7 +139,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
                 getTaskRunner(), getStorageProvider(), getInjectionManagerFactory(), _homeFolder);
     }
 
-    public AnalyzerBeansConfigurationImpl replace(RepositoryFolder homeFolder) {
+    public AnalyzerBeansConfigurationImpl replace(DataCleanerHomeFolder homeFolder) {
         return new AnalyzerBeansConfigurationImpl(_datastoreCatalog, _referenceDataCatalog, getDescriptorProvider(),
                 getTaskRunner(), getStorageProvider(), getInjectionManagerFactory(), homeFolder);
     }
@@ -209,7 +205,7 @@ public final class AnalyzerBeansConfigurationImpl implements AnalyzerBeansConfig
     }
 
     @Override
-    public RepositoryFolder getHomeFolder() {
+    public DataCleanerHomeFolder getHomeFolder() {
         return _homeFolder;
     }
 }

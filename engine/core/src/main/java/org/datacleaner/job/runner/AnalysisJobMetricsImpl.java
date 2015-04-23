@@ -19,9 +19,9 @@
  */
 package org.datacleaner.job.runner;
 
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentJob;
 
 final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
 
@@ -39,10 +39,10 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     }
 
     @Override
-    public AnalyzerMetrics getAnalyzerMetrics(AnalyzerJob analyzerJob) {
-        Table table = getRowProcessingTable(analyzerJob);
+    public ComponentMetrics getComponentMetrics(ComponentJob componentJob) {
+        Table table = getRowProcessingTable(componentJob);
         RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics(table);
-        return new AnalyzerMetricsImpl(rowProcessingMetrics, analyzerJob);
+        return new ComponentMetricsImpl(rowProcessingMetrics, componentJob);
     }
 
     @Override
@@ -60,12 +60,12 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
     }
 
     @Override
-    public Table getRowProcessingTable(AnalyzerJob analyzerJob) {
-        Table[] tables = _publishers.getTables(analyzerJob);
+    public Table getRowProcessingTable(ComponentJob componentJob) {
+        Table[] tables = _publishers.getTables(componentJob);
         if (tables == null || tables.length == 0) {
             return null;
         }
-        // this should always work for analyzers, since they only pertain to a
+        // this should always work for component, since they only pertain to a
         // single table
         return tables[0];
     }

@@ -11,7 +11,8 @@ import org.datacleaner.result.html.HtmlAnalysisResultWriter
 import org.datacleaner.test.TestHelper
 import org.datacleaner.descriptors.SimpleDescriptorProvider
 import org.datacleaner.descriptors.Descriptors
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl
+import org.datacleaner.configuration.DataCleanerConfigurationImpl
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl
 import org.datacleaner.components.maxrows.MaxRowsFilter
 import org.apache.metamodel.util.FileHelper
 import org.junit.Assert
@@ -21,7 +22,7 @@ class StackedAreaAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
 
   val descriptorProvider = new SimpleDescriptorProvider()
   descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[StackedAreaAnalyzerResultHtmlRenderer]));
-  val configuration = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+  val configuration = new DataCleanerConfigurationImpl().withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
 
   val orderdb = TestHelper.createSampleDatabaseDatastore("orderdb");
 

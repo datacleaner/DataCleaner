@@ -24,8 +24,10 @@ import java.util.Collection;
 
 import org.datacleaner.api.Converter;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.configuration.SimpleInjectionPoint;
 import org.datacleaner.job.AnalysisJob;
 import org.slf4j.Logger;
@@ -64,10 +66,47 @@ public final class StringConverter {
 
     private static final Logger logger = LoggerFactory.getLogger(StringConverter.class);
 
+    private static final StringConverter SIMPLE_INSTANCE = new StringConverter(new DataCleanerConfigurationImpl());
+
     private final InjectionManager _injectionManager;
+    private final DataCleanerConfiguration _configuration;
+
+    /**
+     * Gets a simple instance of {@link StringConverter}. This instance will not
+     * be able to convert all types as well as an instance that is bound to a
+     * specific {@link DataCleanerConfiguration}, a {@link InjectionManager} or
+     * an {@link AnalysisJob}.
+     * 
+     * In other words: The instance will work for simple use-cases but is
+     * discouraged when it is possible to provide a bounded context object.
+     * 
+     * @return
+     */
+    public static StringConverter simpleInstance() {
+        return SIMPLE_INSTANCE;
+    }
 
     public StringConverter(DataCleanerConfiguration configuration, AnalysisJob job) {
         this(getInjectionManager(configuration, job));
+    }
+
+    public StringConverter(DataCleanerConfiguration configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("DataCleanerConfiguration cannot be null");
+        }
+        _configuration = configuration;
+        _injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+    }
+
+    public StringConverter(InjectionManager injectionManager) {
+        if (injectionManager == null) {
+            throw new IllegalArgumentException("InjectionManager cannot be null");
+        }
+        final InjectionPoint<DataCleanerConfiguration> injectionPoint = SimpleInjectionPoint
+                .of(DataCleanerConfiguration.class);
+        _configuration = injectionManager.getInstance(injectionPoint);
+        _injectionManager = injectionManager;
     }
 
     private static InjectionManager getInjectionManager(DataCleanerConfiguration configuration, AnalysisJob job) {
@@ -78,10 +117,6 @@ public final class StringConverter {
         } else {
             return injectionManagerFactory.getInjectionManager(configuration, job);
         }
-    }
-
-    public StringConverter(InjectionManager injectionManager) {
-        _injectionManager = injectionManager;
     }
 
     /**
@@ -123,7 +158,7 @@ public final class StringConverter {
 
         delegatingConverter.addConverter(new ConfigurationItemConverter());
         delegatingConverter.addConverter(getResourceConverter());
-        delegatingConverter.addConverter(new StandardTypeConverter(delegatingConverter));
+        delegatingConverter.addConverter(new StandardTypeConverter(_configuration, delegatingConverter));
 
         delegatingConverter.initializeAll(_injectionManager);
 
@@ -132,12 +167,12 @@ public final class StringConverter {
 
     private ResourceConverter getResourceConverter() {
         if (_injectionManager == null) {
-            return new ResourceConverter();
+            return new ResourceConverter(_configuration);
         } else {
             ResourceConverter converter = _injectionManager.getInstance(SimpleInjectionPoint
                     .of(ResourceConverter.class));
             if (converter == null) {
-                return new ResourceConverter();
+                return new ResourceConverter(_configuration);
             }
             return converter;
         }
@@ -201,7 +236,7 @@ public final class StringConverter {
 
         delegatingConverter.addConverter(new ConfigurationItemConverter());
         delegatingConverter.addConverter(getResourceConverter());
-        delegatingConverter.addConverter(new StandardTypeConverter(delegatingConverter));
+        delegatingConverter.addConverter(new StandardTypeConverter(_configuration, delegatingConverter));
 
         delegatingConverter.initializeAll(_injectionManager);
 

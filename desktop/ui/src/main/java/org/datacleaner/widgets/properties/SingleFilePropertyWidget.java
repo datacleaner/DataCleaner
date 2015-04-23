@@ -31,11 +31,12 @@ import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.util.StringUtils;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
+import org.datacleaner.util.FileResolver;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 
@@ -46,12 +47,14 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
     private final FilenameTextField _filenameField;
     private final UserPreferences _userPreferences;
+    private final FileResolver _fileResolver;
 
     @Inject
     public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor, ComponentBuilder componentBuilder,
             UserPreferences userPreferences) {
         super(componentBuilder, propertyDescriptor);
         _userPreferences = userPreferences;
+        _fileResolver = new FileResolver(getAnalysisJobBuilder().getConfiguration());
 
         boolean openFileDialog = true;
 
@@ -135,8 +138,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         if (StringUtils.isNullOrEmpty(text)) {
             return null;
         }
-        File file = new File(text);
-        return file;
+        
+        return _fileResolver.toFile(text);
     }
 
     @Override
@@ -150,7 +153,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         if (existingFile != null && existingFile.getAbsoluteFile().equals(value.getAbsoluteFile())) {
             return;
         }
-
-        _filenameField.setFilename(value.getAbsolutePath());
+        
+        final String filename = _fileResolver.toPath(value);
+        _filenameField.setFilename(filename);
     }
 }

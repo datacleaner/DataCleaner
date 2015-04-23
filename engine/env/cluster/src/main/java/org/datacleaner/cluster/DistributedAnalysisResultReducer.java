@@ -155,7 +155,7 @@ final class DistributedAnalysisResultReducer {
             // special case where these was only 1 slave job
             final AnalyzerResult firstResult = slaveResults.iterator().next();
             resultMap.put(analyzerJob, firstResult);
-            _analysisListener.analyzerSuccess(_masterJob, analyzerJob, firstResult);
+            _analysisListener.componentSuccess(_masterJob, analyzerJob, firstResult);
             return;
         }
 
@@ -177,7 +177,7 @@ final class DistributedAnalysisResultReducer {
             resultMap.put(analyzerJob, reducedResult);
             
             success = true;
-            _analysisListener.analyzerSuccess(_masterJob, analyzerJob, reducedResult);
+            _analysisListener.componentSuccess(_masterJob, analyzerJob, reducedResult);
 
         } catch (Exception e) {
             AnalysisResultReductionException reductionError = new AnalysisResultReductionException(analyzerJob,

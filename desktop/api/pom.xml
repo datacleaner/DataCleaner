@@ -8,6 +8,18 @@
 	<artifactId>DataCleaner-desktop-api</artifactId>
 	<packaging>jar</packaging>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<!-- DataCleaner core / environment -->
 		<dependency>

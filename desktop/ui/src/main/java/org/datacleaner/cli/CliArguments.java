@@ -22,16 +22,22 @@ package org.datacleaner.cli;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import org.datacleaner.Version;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+
+import com.google.common.base.Strings;
 
 /**
  * Defines the Command-line arguments. These are populated by the CLI parser.
  */
 public class CliArguments {
 
-    private static final String[] USAGE_TOKENS = new String[] { "-usage", "--usage", "-help", "--help", "-?", "/?", "/help", "/usage" };
+    private static final String[] USAGE_TOKENS = new String[] { "-usage", "--usage", "-help", "--help", "-?", "/?",
+            "/help", "/usage" };
+
+    private static final String[] VERSION_TOKENS = new String[] { "-version", "--version", "/version" };
 
     /**
      * Parses the CLI arguments and creates a CliArguments instance
@@ -52,14 +58,25 @@ public class CliArguments {
             }
 
             arguments.usageMode = false;
+            arguments.versionMode = false;
+
             for (String arg : args) {
                 for (int i = 0; i < USAGE_TOKENS.length; i++) {
-                    String usageToken = USAGE_TOKENS[i];
+                    final String usageToken = USAGE_TOKENS[i];
                     if (usageToken.equalsIgnoreCase(arg)) {
                         arguments.usageMode = true;
                         break;
                     }
                 }
+
+                for (int i = 0; i < VERSION_TOKENS.length; i++) {
+                    final String versionToken = VERSION_TOKENS[i];
+                    if (versionToken.equalsIgnoreCase(arg)) {
+                        arguments.versionMode = true;
+                        break;
+                    }
+                }
+
             }
         }
         return arguments;
@@ -75,6 +92,21 @@ public class CliArguments {
         CmdLineParser parser = new CmdLineParser(arguments);
         parser.setUsageWidth(120);
         parser.printUsage(out, null);
+    }
+
+    public static void printVersion(PrintWriter out) {
+        out.println("DataCleaner " + Version.getEdition());
+        out.println("Version " + Version.getVersion());
+        
+        final String distributionVersion = Version.getDistributionVersion();
+        if (!Strings.isNullOrEmpty(distributionVersion)) {
+            out.println("Distribution version " + distributionVersion);
+        }
+        
+        final String licenseKey = Version.getLicenseKey();
+        if (!Strings.isNullOrEmpty(licenseKey)) {
+            out.println("License no. " + licenseKey);
+        }
     }
 
     @Option(name = "-conf", aliases = { "-configuration", "--configuration-file" }, metaVar = "PATH", usage = "Path to an XML file describing the configuration of DataCleaner")
@@ -105,6 +137,7 @@ public class CliArguments {
     private Map<String, String> variableOverrides;
 
     private boolean usageMode;
+    private boolean versionMode;
 
     private CliArguments() {
         // instantiation only allowed by factory (parse(...)) method.
@@ -146,6 +179,10 @@ public class CliArguments {
         return outputFile;
     }
 
+    public boolean isVersionMode() {
+        return versionMode;
+    }
+
     public CliOutputType getOutputType() {
         if (outputType == null) {
             return CliOutputType.TEXT;
@@ -161,6 +198,9 @@ public class CliArguments {
      */
     public boolean isSet() {
         if (isUsageMode()) {
+            return true;
+        }
+        if (isVersionMode()) {
             return true;
         }
         if (getJobFile() != null) {

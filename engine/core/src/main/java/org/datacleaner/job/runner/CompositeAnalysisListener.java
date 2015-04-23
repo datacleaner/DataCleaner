@@ -26,7 +26,6 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentMessage;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 
 /**
@@ -126,16 +125,16 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void analyzerBegin(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
+    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
         for (AnalysisListener delegate : _delegates) {
-            delegate.analyzerBegin(job, analyzerJob, metrics);
+            delegate.componentBegin(job, componentJob, metrics);
         }
     }
 
     @Override
-    public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
+    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
         for (AnalysisListener delegate : _delegates) {
-            delegate.analyzerSuccess(job, analyzerJob, result);
+            delegate.componentSuccess(job, componentJob, result);
         }
     }
 

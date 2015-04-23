@@ -76,11 +76,11 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     }
 
     @Override
-    public void analyzerBegin(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
+    public void componentBegin(AnalysisJob job, ComponentJob componentJob, ComponentMetrics metrics) {
     }
 
     @Override
-    public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
+    public void componentSuccess(AnalysisJob job, ComponentJob componentJob, AnalyzerResult result) {
     }
 
     @Override

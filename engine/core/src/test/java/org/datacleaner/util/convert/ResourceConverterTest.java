@@ -25,17 +25,21 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.util.VFSUtils;
-import org.datacleaner.util.VfsResource;
-import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.UrlResource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.util.VFSUtils;
+import org.datacleaner.util.VfsResource;
+import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 
 public class ResourceConverterTest extends TestCase {
 
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
+
     public void testParse() throws Exception {
-        ResourceConverter resourceConverter = new ResourceConverter();
+        ResourceConverter resourceConverter = new ResourceConverter(configuration);
         assertEquals("url", resourceConverter.parseStructure("url://foobar").getScheme());
         assertEquals("foobar", resourceConverter.parseStructure("url://foobar").getPath());
         assertEquals("file", resourceConverter.parseStructure("file://c:/blabla").getScheme());
@@ -44,7 +48,7 @@ public class ResourceConverterTest extends TestCase {
     }
 
     public void testConvertFileResource() throws Exception {
-        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new FileResourceTypeHandler());
+        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new FileResourceTypeHandler(configuration));
         ResourceConverter converter = new ResourceConverter(handlers, "foo");
 
         FileResource resource1 = new FileResource("foo/bar.txt");

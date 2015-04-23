@@ -48,9 +48,10 @@ public class NamedPattern<E extends Enum<E>> {
      */
     public static final String DEFAULT_GROUP_LITERAL = "([\\p{Lu}\\p{Ll}]+)";
 
-    private EnumMap<E, Integer> groupIndexes;
-    private Pattern pattern;
-    private Class<E> groupEnum;
+    private final EnumMap<E, Integer> groupIndexes;
+    private final Pattern pattern;
+    private final Class<E> groupEnum;
+    private final String _patternAsString;
 
     public NamedPattern(String pattern, Class<E> groupEnum) {
         if (pattern == null) {
@@ -59,6 +60,8 @@ public class NamedPattern<E extends Enum<E>> {
         if (groupEnum == null) {
             throw new IllegalArgumentException("groupEnum cannot be null");
         }
+
+        _patternAsString = pattern;
 
         pattern = pattern.replaceAll("\\(", "\\\\(");
         pattern = pattern.replaceAll("\\)", "\\\\)");
@@ -172,4 +175,13 @@ public class NamedPattern<E extends Enum<E>> {
     public Set<E> getUsedGroups() {
         return groupIndexes.keySet();
     }
+
+    /**
+     * Gets the String representation of this {@link NamedPattern}.
+     */
+    @Override
+    public String toString() {
+        return _patternAsString;
+    }
+
 }

@@ -21,16 +21,29 @@ body {
 	font-family: 'Ubuntu';
 }
 
-h1 {
+h1, .jumbotron h1 {
 	font-size: 30px;
 }
 
 h2 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 16px;
+}
+
+.jumbotron {
+	padding: 20px 0;
+}
+
+.jumbotron p {
+	font-size: inherit;
+}
+
+.label {
+	font-size: 0.9em;
+	font-weight: normal;
 }
 </style>
 </head>
@@ -40,32 +53,37 @@ h3 {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<div class="container">
-				<div class="jumbotron">
-			<h1>
-				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB1UlEQVR42u2VPUvDYBDH/w7q4svmoIKDjqJDQT+Fg6iTjg6OuunUgrMgvoEUpdK0yeAgdhEd+gmELkXxBXURFFta0Lb21Tu5FBrypBFBO+TgkkDu7v977rk8ATzzzDPPWt0qOhZqBmrslSjm7WLM96ZXdRTI78g3MiH0/gqAilzUCxs4dwNggTlxFJjbufer3uUPMUiiFfIXKvTKzzkNAyoAfg4E0PZ2gK6KgSWBzjtq06WmgqD2r8kqNsm3v7dBx6oTgGkpDd2S+6QSZ20TwBaCkq+5SEmHr6RhUlZ01QyAxatRrAvwokrcCtAAURfUkawDGbgRoAk3M0C5l7kj9KvE7QDY47L6PWvLCcAvhXddD6GBdDGCcRGPW/VsO/AYQicn8tDxIJpChTCGBSB1u4UO1RYkA2gvhDBEcUGJP3PTgXr7yxHMOq2KvaxjxmkI2dL76BGATLMZ8FuGL9YMgGJOmwFw92Qbsk5fQYP4exB9VLxE/sHfszWRTzb+tjmGY+0AeHuKYYxx6wU25voMouN2RZJ0h9PxWAZ02cUQZosaRn9y9CZkj6dUMTQj0wKZUPwLyiT8THftM4oR74/qaD6fr/af3hIAcfIHuf+1+70Z9Ozf7Qs3CrvZsKowsAAAAABJRU5ErkJggg==" alt="" /> <span>Concatenator</span>
-			</h1>
-			<p>Concatenate several column values into one.</p>
-		</div>
-
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<!-- component type -->
-				
-				<span class="label label-primary">Transformer</span>
-				
+								<ol class="breadcrumb">
+					<li><a href="index.html">Library</a></li>
 
-				<!-- categorization -->
-				<span class="label label-default">Transform</span>
-				 <span
-					class="label label-default">String manipulation</span> 
+					<!-- categorization -->
+					<li>Transform</li> 					<li>String manipulation</li>
 
-				<!-- execution details -->
-				 <span
-					class="label label-info">Concurrent</span> <span class="label label-info">Distributed
-					execution possible</span>
+					<li class="active">Concatenator</li>
+				</ol>
+				<div class="jumbotron">
+					<h1>
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB1UlEQVR42u2VPUvDYBDH/w7q4svmoIKDjqJDQT+Fg6iTjg6OuunUgrMgvoEUpdK0yeAgdhEd+gmELkXxBXURFFta0Lb21Tu5FBrypBFBO+TgkkDu7v977rk8ATzzzDPPWt0qOhZqBmrslSjm7WLM96ZXdRTI78g3MiH0/gqAilzUCxs4dwNggTlxFJjbufer3uUPMUiiFfIXKvTKzzkNAyoAfg4E0PZ2gK6KgSWBzjtq06WmgqD2r8kqNsm3v7dBx6oTgGkpDd2S+6QSZ20TwBaCkq+5SEmHr6RhUlZ01QyAxatRrAvwokrcCtAAURfUkawDGbgRoAk3M0C5l7kj9KvE7QDY47L6PWvLCcAvhXddD6GBdDGCcRGPW/VsO/AYQicn8tDxIJpChTCGBSB1u4UO1RYkA2gvhDBEcUGJP3PTgXr7yxHMOq2KvaxjxmkI2dL76BGATLMZ8FuGL9YMgGJOmwFw92Qbsk5fQYP4exB9VLxE/sHfszWRTzb+tjmGY+0AeHuKYYxx6wU25voMouN2RZJ0h9PxWAZ02cUQZosaRn9y9CZkj6dUMTQj0wKZUPwLyiT8THftM4oR74/qaD6fr/af3hIAcfIHuf+1+70Z9Ozf7Qs3CrvZsKowsAAAAABJRU5ErkJggg==" alt="" /> <span>Concatenator</span>
+					</h1>
+					<p>Concatenate several column values into one.</p>
+				</div>
 
-				<!-- aliases -->
-				
+				<div>
+					<!-- component type -->
+					
+					<span class="label label-primary">Transformer</span>
+					
+
+					<!-- execution details -->
+					 <span
+						class="label label-info">Concurrent</span> <span class="label label-info">Distributed
+						execution possible</span>
+
+					<!-- aliases -->
+					
+				</div>
 			</div>
 		</div>
 
@@ -85,8 +103,9 @@ h3 {
 				<ul class="list-group">
 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Columns
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Columns
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">List of InputColumn&lt;Object&gt;</span>  
 
@@ -94,8 +113,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Separator
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Separator
 						</h3> <p>A string to separate the concatenated values</p> <!-- type --> <span
 						class="label label-primary">String</span>  
 

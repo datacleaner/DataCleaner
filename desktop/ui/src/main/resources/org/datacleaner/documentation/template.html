@@ -21,16 +21,29 @@ body {
 	font-family: 'Ubuntu';
 }
 
-h1 {
+h1, .jumbotron h1 {
 	font-size: 30px;
 }
 
 h2 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 16px;
+}
+
+.jumbotron {
+	padding: 20px 0;
+}
+
+.jumbotron p {
+	font-size: inherit;
+}
+
+.label {
+	font-size: 0.9em;
+	font-weight: normal;
 }
 </style>
 </head>
@@ -40,41 +53,44 @@ h3 {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<div class="container">
-		<#if breadcrumbs>
-		<ol class="breadcrumb">
-			<li><a href="index.html">Component reference</a></li>
-			<li class="active">${component.name}</li>
-		</ol>
-		</#if>
-		<div class="jumbotron">
-			<h1>
-				<img src="${icon}" alt="" /> <span>${component.name}</span>
-			</h1>
-			${component.description}
-		</div>
-
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<!-- component type -->
-				<#if component.analyzer><span class="label label-primary">Analyzer</span></#if>
-				<#if component.transformer><span class="label label-primary">Transformer</span></#if>
-				<#if component.filter><span class="label label-primary">Filter</span></#if>
+				<#if breadcrumbs>
+				<ol class="breadcrumb">
+					<li><a href="index.html">Library</a></li>
 
-				<!-- categorization -->
-				<span class="label label-default">${component.superCategory}</span>
-				<#list component.categories as category> <span
-					class="label label-default">${category}</span> </#list>
+					<!-- categorization -->
+					<li>${component.superCategory}</li> <#list component.categories as
+					category>
+					<li>${category}</li></#list>
 
-				<!-- execution details -->
-				<#if component.queryOptimizable><span class="label label-info">Query
-					optimizer</span></#if> <#if component.concurrent><span
-					class="label label-info">Concurrent</span></#if> <#if
-				component.distributable><span class="label label-info">Distributed
-					execution possible</span></#if>
+					<li class="active">${component.name}</li>
+				</ol>
+				</#if>
+				<div class="jumbotron">
+					<h1>
+						<img src="${icon}" alt="" /> <span>${component.name}</span>
+					</h1>
+					${component.description}
+				</div>
 
-				<!-- aliases -->
-				<#list component.aliases as alias> <span class="label label-info">Alias:
-					${alias}</span> </#list>
+				<div>
+					<!-- component type -->
+					<#if component.analyzer><span class="label label-primary">Analyzer</span></#if>
+					<#if component.transformer><span class="label label-primary">Transformer</span></#if>
+					<#if component.filter><span class="label label-primary">Filter</span></#if>
+
+					<!-- execution details -->
+					<#if component.queryOptimizable><span class="label label-info">Query
+						optimizer</span></#if> <#if component.concurrent><span
+						class="label label-info">Concurrent</span></#if> <#if
+					component.distributable><span class="label label-info">Distributed
+						execution possible</span></#if>
+
+					<!-- aliases -->
+					<#list component.aliases as alias> <span class="label label-info">Alias:
+						${alias}</span> </#list>
+				</div>
 			</div>
 		</div>
 
@@ -84,7 +100,7 @@ h3 {
 				<h2>
 					<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 					<a data-toggle="collapse" href="#resultPanel"
-						aria-controls="resultPanel">Result <small>(${component.resultType})</small></a>
+						aria-controls="resultPanel">Result metrics <small>(${component.resultType})</small></a>
 				</h2>
 			</div>
 			<div class="panel-body collapse in" id="resultPanel"
@@ -145,8 +161,10 @@ h3 {
 					<#list properties as property>
 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							${property.name}
+							<#if property.inputColumn> <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							<#else> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</#if> ${property.name}
 						</h3> ${property.description} <!-- type --> <span
 						class="label label-primary">${property.type}</span> <#list
 						property.enumChoices as choice> <span class="label label-default">${choice}</span>

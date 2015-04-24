@@ -21,16 +21,29 @@ body {
 	font-family: 'Ubuntu';
 }
 
-h1 {
+h1, .jumbotron h1 {
 	font-size: 30px;
 }
 
 h2 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 16px;
+}
+
+.jumbotron {
+	padding: 20px 0;
+}
+
+.jumbotron p {
+	font-size: inherit;
+}
+
+.label {
+	font-size: 0.9em;
+	font-weight: normal;
 }
 </style>
 </head>
@@ -40,32 +53,38 @@ h3 {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<div class="container">
-				<div class="jumbotron">
-			<h1>
-				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACG0lEQVR42u2XSU/CQBSA+wP8eyYSE70SD/4Jl8RTE6MxSl1BEZdYqGWTooDGuJ4IatwuxqiRQ7WUVkLGvk4HC1JBKOKBSb7AvA7zvk77Soei2t0WN9mBhcAOM++PuuYChIhrjo24Zv0GW18wbLiEawtjjgHm8fB7fT6drxzz3A7jYQNOaj2WSg56n1A7CKaOYyAgtFEgRK1Fk20UOAKBhCCKIpKkHCaHyZUhY2QZyXIek8fky1AwioKUb6gYVUWq+oEgpy7giyQEFQZoB9LpzJ8AueDEgglDQNHsiUBl+1VslSrDKga5JEnqCHQEqgv8VRV0LsH/FcirRZS6ekej3CPqm75DvVM3+neIwbGWCniFS9Q9cfsjIGK7APyReA5eaiYnjHNXtlRBaP8YC8TT2dLkI4FHlJUK+lnBJ/StVsKWFXAHk3vm5KRBnzQrCXJPNCUw4jtNkwnJmVcKQLzWKjQs4GQyr2RCkrgSqzhUR9MCPZPXhUZXAMrUVgGre+DsPldVAJ4RjVYBvKbpVWC+BNWqIHH5htRCEfmOst8EhtkHJGuvVo0STp2EqLGN84tadQ/Jq0ks7d41JRA9PBWomXXeWc/Dh0hMxp5LMYaNT7i5GE1YCe7S5n7lsRU+Tnu2BZ1lXqBX/Vy/vj3TJnPUIwHJn8UP0nfYukfUJhyq91EMY1uyUa1zJRwt3S1rCboMEV5DNOCNWJfd+T4Bag+Lk1UWi94AAAAASUVORK5CYII=" alt="" /> <span>Table lookup</span>
-			</h1>
-			<p>Perform a lookup based on a table in any of your registered datastore (like a LEFT join).</p>
-		</div>
-
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<!-- component type -->
-				
-				<span class="label label-primary">Transformer</span>
-				
+								<ol class="breadcrumb">
+					<li><a href="index.html">Library</a></li>
 
-				<!-- categorization -->
-				<span class="label label-default">Transform</span>
-				
+					<!-- categorization -->
+					<li>Transform</li> 
 
-				<!-- execution details -->
-				 <span
-					class="label label-info">Concurrent</span> <span class="label label-info">Distributed
-					execution possible</span>
+					<li class="active">Table lookup</li>
+				</ol>
+				<div class="jumbotron">
+					<h1>
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACG0lEQVR42u2XSU/CQBSA+wP8eyYSE70SD/4Jl8RTE6MxSl1BEZdYqGWTooDGuJ4IatwuxqiRQ7WUVkLGvk4HC1JBKOKBSb7AvA7zvk77Soei2t0WN9mBhcAOM++PuuYChIhrjo24Zv0GW18wbLiEawtjjgHm8fB7fT6drxzz3A7jYQNOaj2WSg56n1A7CKaOYyAgtFEgRK1Fk20UOAKBhCCKIpKkHCaHyZUhY2QZyXIek8fky1AwioKUb6gYVUWq+oEgpy7giyQEFQZoB9LpzJ8AueDEgglDQNHsiUBl+1VslSrDKga5JEnqCHQEqgv8VRV0LsH/FcirRZS6ekej3CPqm75DvVM3+neIwbGWCniFS9Q9cfsjIGK7APyReA5eaiYnjHNXtlRBaP8YC8TT2dLkI4FHlJUK+lnBJ/StVsKWFXAHk3vm5KRBnzQrCXJPNCUw4jtNkwnJmVcKQLzWKjQs4GQyr2RCkrgSqzhUR9MCPZPXhUZXAMrUVgGre+DsPldVAJ4RjVYBvKbpVWC+BNWqIHH5htRCEfmOst8EhtkHJGuvVo0STp2EqLGN84tadQ/Jq0ks7d41JRA9PBWomXXeWc/Dh0hMxp5LMYaNT7i5GE1YCe7S5n7lsRU+Tnu2BZ1lXqBX/Vy/vj3TJnPUIwHJn8UP0nfYukfUJhyq91EMY1uyUa1zJRwt3S1rCboMEV5DNOCNWJfd+T4Bag+Lk1UWi94AAAAASUVORK5CYII=" alt="" /> <span>Table lookup</span>
+					</h1>
+					<p>Perform a lookup based on a table in any of your registered datastore (like a LEFT join).</p>
+				</div>
 
-				<!-- aliases -->
-				 <span class="label label-info">Alias:
-					Datastore lookup</span> 
+				<div>
+					<!-- component type -->
+					
+					<span class="label label-primary">Transformer</span>
+					
+
+					<!-- execution details -->
+					 <span
+						class="label label-info">Concurrent</span> <span class="label label-info">Distributed
+						execution possible</span>
+
+					<!-- aliases -->
+					 <span class="label label-info">Alias:
+						Datastore lookup</span> 
+				</div>
 			</div>
 		</div>
 
@@ -74,7 +93,7 @@ h3 {
 				<h2>
 					<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 					<a data-toggle="collapse" href="#resultPanel"
-						aria-controls="resultPanel">Result <small>(CategorizationResult)</small></a>
+						aria-controls="resultPanel">Result metrics <small>(CategorizationResult)</small></a>
 				</h2>
 			</div>
 			<div class="panel-body collapse in" id="resultPanel"
@@ -108,8 +127,8 @@ h3 {
 				<ul class="list-group">
 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Cache lookups
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Cache lookups
 						</h3> <p>Use a client-side cache to avoid looking up multiple times with same inputs.</p> <!-- type --> <span
 						class="label label-primary">boolean</span>  
 
@@ -117,8 +136,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Condition columns
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Condition columns
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">List of String</span>  <span class="label label-primary">Mapped with <i>Table name</i></span>
 
@@ -126,8 +145,9 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Condition values
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Condition values
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">List of InputColumn&lt;Object&gt;</span>  
 
@@ -135,8 +155,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Datastore
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Datastore
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">Datastore</span>  
 
@@ -144,8 +164,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Join semantic
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Join semantic
 						</h3> <p>Which kind of semantic to apply to the lookup, compared to a SQL JOIN.</p> <!-- type --> <span
 						class="label label-primary">Choice:</span>  <span class="label label-default">Left join (max 1 record)</span>
 						 <span class="label label-default">Inner join</span>
@@ -156,8 +176,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Output columns
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Output columns
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">List of String</span>  <span class="label label-primary">Mapped with <i>Table name</i></span>
 
@@ -165,8 +185,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Schema name
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Schema name
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">String</span>  <span class="label label-primary">Mapped with <i>Datastore</i></span>
 
@@ -174,8 +194,8 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Table name
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Table name
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">String</span>  <span class="label label-primary">Mapped with <i>Schema name</i></span>
 

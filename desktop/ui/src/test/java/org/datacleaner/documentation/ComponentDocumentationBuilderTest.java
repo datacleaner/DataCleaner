@@ -37,7 +37,7 @@ import org.junit.Test;
 
 public class ComponentDocumentationBuilderTest {
 
-    private final ComponentDocumentationBuilder documentationCreator = new ComponentDocumentationBuilder();
+    private final ComponentDocumentationBuilder documentationCreator = new ComponentDocumentationBuilder(true);
 
     /**
      * Test of an analyzer
@@ -122,6 +122,10 @@ public class ComponentDocumentationBuilderTest {
             // breaks
             benchmark = "No such file: " + benchmarkFile.getPath();
         }
+
+        // uncomment the following line to bulk-update the benchmark files
+
+        // FileHelper.writeStringAsFile(benchmarkFile, output);
 
         assertEquals(benchmark, output);
     }

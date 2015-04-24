@@ -20,8 +20,10 @@
 package org.datacleaner.documentation;
 
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
 
 import com.google.common.base.Strings;
@@ -77,6 +79,10 @@ public class ConfiguredPropertyDocumentationWrapper {
             result[i] = HtmlEscapers.htmlEscaper().escape(result[i]);
         }
         return result;
+    }
+
+    public boolean isInputColumn() {
+        return ReflectionUtils.is(_property.getBaseType(), InputColumn.class);
     }
 
     public String getType() {

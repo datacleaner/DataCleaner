@@ -21,16 +21,29 @@ body {
 	font-family: 'Ubuntu';
 }
 
-h1 {
+h1, .jumbotron h1 {
 	font-size: 30px;
 }
 
 h2 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 h3 {
-	font-size: 20px;
+	font-size: 16px;
+}
+
+.jumbotron {
+	padding: 20px 0;
+}
+
+.jumbotron p {
+	font-size: inherit;
+}
+
+.label {
+	font-size: 0.9em;
+	font-weight: normal;
 }
 </style>
 </head>
@@ -40,31 +53,37 @@ h3 {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<div class="container">
-				<div class="jumbotron">
-			<h1>
-				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABRUlEQVR42mNgGAyg+rza/4HAow7AcMCK+4X/QQBED4gDLrzd/P/6h31AehOKwkMvZv//8uvt/++/P/8/+2YdQXGyHFBzTuP/519v/ndfcQLSb8F8dA0Trnn+//v3L9HiWC3DlQtm34r+jwxAfJjm+beT/197v/f/ux+PwXKExMlywOEXc/9vfdwGVgyiD72YA9f89feH/8vvFfxf/7AGxSJc4mQ54NX3e/97r7qCFYPoV9/uwjWD4vf7709gRyJbhEucLAfQLcUPSgcYGxv/pwTfuXMHKya6Lhh1AMiQlStX/v/8+fP/T58+/V+wYAHccFziNAuB5ubm/zdu3MCwBJc4VR3Q39////jx4/8dHR1RLMAlTnUHgILZwcEBwwJ0cVwWkmQpJYmQZg4AAWwWoosP3xAYdQAhw6lm4agDRh0w6oDBBAA6bKn5UjgQFgAAAABJRU5ErkJggg==" alt="" /> <span>Pattern finder</span>
-			</h1>
-			<p>The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.</p><p>It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</p>
-		</div>
-
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<!-- component type -->
-				<span class="label label-primary">Analyzer</span>
-				
-				
+								<ol class="breadcrumb">
+					<li><a href="index.html">Library</a></li>
 
-				<!-- categorization -->
-				<span class="label label-default">Analyze</span>
-				
+					<!-- categorization -->
+					<li>Analyze</li> 
 
-				<!-- execution details -->
-				 <span
-					class="label label-info">Concurrent</span> <span class="label label-info">Distributed
-					execution possible</span>
+					<li class="active">Pattern finder</li>
+				</ol>
+				<div class="jumbotron">
+					<h1>
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABRUlEQVR42mNgGAyg+rza/4HAow7AcMCK+4X/QQBED4gDLrzd/P/6h31AehOKwkMvZv//8uvt/++/P/8/+2YdQXGyHFBzTuP/519v/ndfcQLSb8F8dA0Trnn+//v3L9HiWC3DlQtm34r+jwxAfJjm+beT/197v/f/ux+PwXKExMlywOEXc/9vfdwGVgyiD72YA9f89feH/8vvFfxf/7AGxSJc4mQ54NX3e/97r7qCFYPoV9/uwjWD4vf7709gRyJbhEucLAfQLcUPSgcYGxv/pwTfuXMHKya6Lhh1AMiQlStX/v/8+fP/T58+/V+wYAHccFziNAuB5ubm/zdu3MCwBJc4VR3Q39////jx4/8dHR1RLMAlTnUHgILZwcEBwwJ0cVwWkmQpJYmQZg4AAWwWoosP3xAYdQAhw6lm4agDRh0w6oDBBAA6bKn5UjgQFgAAAABJRU5ErkJggg==" alt="" /> <span>Pattern finder</span>
+					</h1>
+					<p>The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.</p><p>It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</p>
+				</div>
 
-				<!-- aliases -->
-				
+				<div>
+					<!-- component type -->
+					<span class="label label-primary">Analyzer</span>
+					
+					
+
+					<!-- execution details -->
+					 <span
+						class="label label-info">Concurrent</span> <span class="label label-info">Distributed
+						execution possible</span>
+
+					<!-- aliases -->
+					
+				</div>
 			</div>
 		</div>
 
@@ -73,7 +92,7 @@ h3 {
 				<h2>
 					<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
 					<a data-toggle="collapse" href="#resultPanel"
-						aria-controls="resultPanel">Result <small>(PatternFinderResult)</small></a>
+						aria-controls="resultPanel">Result metrics <small>(PatternFinderResult)</small></a>
 				</h2>
 			</div>
 			<div class="panel-body collapse in" id="resultPanel"
@@ -115,8 +134,9 @@ h3 {
 				<ul class="list-group">
 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Column
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Column
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">InputColumn&lt;String&gt;</span>  
 
@@ -124,8 +144,9 @@ h3 {
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Group column
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Group column
 						</h3> <p>Optional column to group patterns by</p> <!-- type --> <span
 						class="label label-primary">InputColumn&lt;String&gt;</span>  
 
@@ -133,8 +154,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Discriminate text case
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate text case
 						</h3> <p>Separate text tokens based on case</p> <!-- type --> <span
 						class="label label-primary">Boolean</span>  
 
@@ -142,8 +163,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Discriminate negative numbers
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate negative numbers
 						</h3> <p>Separate number tokens based on negativity</p> <!-- type --> <span
 						class="label label-primary">Boolean</span>  
 
@@ -151,8 +172,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Discriminate decimals
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate decimals
 						</h3> <p>Separate number tokens for decimals</p> <!-- type --> <span
 						class="label label-primary">Boolean</span>  
 
@@ -160,8 +181,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Enable mixed tokens
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Enable mixed tokens
 						</h3> <p>Use '?'-tokens for mixed text and numbers</p> <!-- type --> <span
 						class="label label-primary">Boolean</span>  
 
@@ -169,8 +190,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Ignore repeated spaces
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Ignore repeated spaces
 						</h3> <p>Ignore whitespace differences</p> <!-- type --> <span
 						class="label label-primary">Boolean</span>  
 
@@ -178,8 +199,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Upper case patterns expand in size
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Upper case patterns expand in size
 						</h3> <p>Auto-adjust/expand uppercase text tokens</p> <!-- type --> <span
 						class="label label-primary">boolean</span>  
 
@@ -187,8 +208,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Lower case patterns expand in size
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Lower case patterns expand in size
 						</h3> <p>Auto-adjust/expand lowercase text tokens</p> <!-- type --> <span
 						class="label label-primary">boolean</span>  
 
@@ -196,8 +217,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Predefined token name
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Predefined token name
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">String</span>  
 
@@ -205,8 +226,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Predefined token regexes
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Predefined token regexes
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">List of String</span>  
 
@@ -214,8 +235,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Decimal separator
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Decimal separator
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">Character</span>  
 
@@ -223,8 +244,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Thousands separator
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Thousands separator
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">Character</span>  
 
@@ -232,8 +253,8 @@ h3 {
 						class="label label-info">Optional</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
-							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							Minus sign
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Minus sign
 						</h3> <p></p> <!-- type --> <span
 						class="label label-primary">Character</span>  
 

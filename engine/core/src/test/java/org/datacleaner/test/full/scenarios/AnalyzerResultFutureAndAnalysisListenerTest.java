@@ -210,7 +210,12 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
 
     private int getIndexAndVerifyExists(List<String> messagesList, String string) {
         final int index = messagesList.indexOf(string);
-        assertTrue(messagesList.toString(), index != -1);
+        if (index == -1) {
+            // use a good message because hunting down the cause of this can be
+            // pretty tough.
+            final String message = "Failed to find '" + string + "' in messages: " + messagesList.toString();
+            assertTrue(message, index != -1);
+        }
         return index;
     }
 }

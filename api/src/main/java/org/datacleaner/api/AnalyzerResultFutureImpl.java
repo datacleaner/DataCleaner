@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
@@ -47,8 +48,8 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
     private transient volatile List<Listener<? super R>> _listeners;
 
     private final String _name;
-    private R _result;
-    private RuntimeException _error;
+    private volatile R _result;
+    private volatile RuntimeException _error;
 
     /**
      * Constructs an {@link AnalyzerResultFutureImpl}
@@ -71,6 +72,10 @@ public class AnalyzerResultFutureImpl<R extends AnalyzerResult> implements Analy
             public void run() {
                 try {
                     _result = resultRef.get();
+                    if (_result == null && resultRef instanceof LazyRef) {
+                        // TODO: workaround - reported as MM bug, remove when fixed.
+                        throw new RuntimeException(((LazyRef<?>) resultRef).getError());
+                    }
                     onSuccess();
                 } catch (RuntimeException e) {
                     _error = e;

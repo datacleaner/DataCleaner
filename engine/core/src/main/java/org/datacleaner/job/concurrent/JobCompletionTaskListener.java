@@ -22,6 +22,7 @@ package org.datacleaner.job.concurrent;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.job.runner.AnalysisJobMetrics;
 import org.datacleaner.job.runner.AnalysisListener;
@@ -37,56 +38,65 @@ import org.slf4j.LoggerFactory;
  */
 public final class JobCompletionTaskListener implements StatusAwareTaskListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
 
-	private final CountDownLatch _countDownLatch;
-	private final AnalysisListener _analysisListener;
-	private final AnalysisJobMetrics _analysisJobMetrics;
-	private Date _completionTime;
+    private final CountDownLatch _countDownLatch;
+    private final AtomicInteger _successCountDown;
+    private final AnalysisListener _analysisListener;
+    private final AnalysisJobMetrics _analysisJobMetrics;
+    private Date _completionTime;
 
-	public JobCompletionTaskListener(AnalysisJobMetrics analysisJobMetrics, AnalysisListener analysisListener,
-			int callablesToWaitFor) {
-		_analysisJobMetrics = analysisJobMetrics;
-		_analysisListener = analysisListener;
-		_countDownLatch = new CountDownLatch(callablesToWaitFor);
-	}
+    public JobCompletionTaskListener(final AnalysisJobMetrics analysisJobMetrics,
+            final AnalysisListener analysisListener, final int callablesToWaitFor) {
+        _analysisJobMetrics = analysisJobMetrics;
+        _analysisListener = analysisListener;
+        _countDownLatch = new CountDownLatch(callablesToWaitFor);
+        _successCountDown = new AtomicInteger(callablesToWaitFor);
+    }
 
-	public void await() throws InterruptedException {
-		_countDownLatch.await();
-	}
+    @Override
+    public void await() throws InterruptedException {
+        _countDownLatch.await();
+    }
 
-	public boolean isDone() {
-		return _countDownLatch.getCount() == 0;
-	}
+    @Override
+    public boolean isDone() {
+        return _countDownLatch.getCount() == 0;
+    }
 
-	@Override
-	public void await(long timeout, TimeUnit timeUnit) throws InterruptedException {
-		_countDownLatch.await(timeout, timeUnit);
-	}
+    @Override
+    public void await(long timeout, TimeUnit timeUnit) throws InterruptedException {
+        _countDownLatch.await(timeout, timeUnit);
+    }
 
-	@Override
-	public void onBegin(Task task) {
-	}
+    @Override
+    public void onBegin(Task task) {
+    }
 
-	@Override
-	public void onComplete(Task task) {
-		logger.debug("onComplete(...)");
-		_countDownLatch.countDown();
-		if (_countDownLatch.getCount() == 0) {
-			_completionTime = new Date();
-			_analysisListener.jobSuccess(_analysisJobMetrics.getAnalysisJob(), _analysisJobMetrics);
-		}
-	}
+    @Override
+    public void onComplete(Task task) {
+        logger.debug("onComplete(...)");
 
-	@Override
-	public void onError(Task task, Throwable throwable) {
-		logger.debug("onError(...)");
-		_analysisListener.errorUknown(_analysisJobMetrics.getAnalysisJob(), throwable);
-		_countDownLatch.countDown();
-	}
+        final int successCountDownStatus = _successCountDown.decrementAndGet();
+        if (successCountDownStatus == 0) {
+            _completionTime = new Date();
+            _analysisListener.jobSuccess(_analysisJobMetrics.getAnalysisJob(), _analysisJobMetrics);
+        }
 
-	@Override
-	public Date getCompletionTime() {
-		return _completionTime;
-	}
+        // as the last thing we need to call countDown() to unlock any waiting
+        // threads on await()
+        _countDownLatch.countDown();
+    }
+
+    @Override
+    public void onError(Task task, Throwable throwable) {
+        logger.debug("onError(...)");
+        _analysisListener.errorUknown(_analysisJobMetrics.getAnalysisJob(), throwable);
+        _countDownLatch.countDown();
+    }
+
+    @Override
+    public Date getCompletionTime() {
+        return _completionTime;
+    }
 }

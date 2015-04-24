@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:400,500,700" type="text/css" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css" />
+
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+<style type="text/css">
+body {
+	font-family: 'Ubuntu', sans-serif;
+}
+
+h1, .jumbotron h1 {
+	font-size: 30px;
+}
+
+h2 {
+	font-size: 22px;
+}
+
+h3 {
+	font-size: 16px;
+}
+
+.jumbotron {
+	padding: 20px 0;
+}
+
+.jumbotron p {
+	font-size: inherit;
+}
+
+.label {
+	font-size: 0.9em;
+	font-weight: normal;
+}
+</style>
+</head>
+<body>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-body">
+								<ol class="breadcrumb">
+					<li><a href="index.html">Library</a></li>
+
+					<!-- categorization -->
+					<li>Analyze</li> 
+
+					<li class="active">Pattern finder</li>
+				</ol>
+				<div class="jumbotron">
+					<h1>
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABRUlEQVR42mNgGAyg+rza/4HAow7AcMCK+4X/QQBED4gDLrzd/P/6h31AehOKwkMvZv//8uvt/++/P/8/+2YdQXGyHFBzTuP/519v/ndfcQLSb8F8dA0Trnn+//v3L9HiWC3DlQtm34r+jwxAfJjm+beT/197v/f/ux+PwXKExMlywOEXc/9vfdwGVgyiD72YA9f89feH/8vvFfxf/7AGxSJc4mQ54NX3e/97r7qCFYPoV9/uwjWD4vf7709gRyJbhEucLAfQLcUPSgcYGxv/pwTfuXMHKya6Lhh1AMiQlStX/v/8+fP/T58+/V+wYAHccFziNAuB5ubm/zdu3MCwBJc4VR3Q39////jx4/8dHR1RLMAlTnUHgILZwcEBwwJ0cVwWkmQpJYmQZg4AAWwWoosP3xAYdQAhw6lm4agDRh0w6oDBBAA6bKn5UjgQFgAAAABJRU5ErkJggg==" alt="" /> <span>Pattern finder</span>
+					</h1>
+					<p>The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.</p><p>It can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.</p>
+				</div>
+
+				<div>
+					<!-- component type -->
+					<span class="label label-primary">Analyzer</span>
+					
+					
+
+					<!-- execution details -->
+					 <span
+						class="label label-info">Concurrent</span> <span class="label label-info">Distributed
+						execution possible</span>
+
+					<!-- aliases -->
+					
+				</div>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>
+					<span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+					<a data-toggle="collapse" href="#resultPanel"
+						aria-controls="resultPanel">Result metrics <small>(PatternFinderResult)</small></a>
+				</h2>
+			</div>
+			<div class="panel-body collapse in" id="resultPanel"
+				aria-expanded="true">
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h3>
+							<span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+							<span class="text-info">Match count</span>
+						</h3>  
+						<span
+						class="label label-primary">Parameterized by value</span>
+						
+					</li> 					<li class="list-group-item">
+						<h3>
+							<span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+							<span class="text-info">Pattern count</span>
+						</h3>  
+						
+						<span class="label label-primary">Not
+							parameterized</span>
+					</li> 
+				</ul>
+			</div>
+		</div>
+		 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2>
+					<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+					<a data-toggle="collapse" href="#configuredPropertiesPanel"
+						aria-controls="configuredPropertiesPanel">Configured
+						properties</a>
+				</h2>
+			</div>
+			<div class="panel-body collapse in" id="configuredPropertiesPanel"
+				aria-expanded="true">
+
+				<ul class="list-group">
+					<li class="list-group-item">
+						<h3>
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Column
+						</h3>  <!-- type --> <span
+						class="label label-primary">InputColumn&lt;String&gt;</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Required</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span
+								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
+							 Group column
+						</h3> <p>Optional column to group patterns by</p> <!-- type --> <span
+						class="label label-primary">InputColumn&lt;String&gt;</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate text case
+						</h3> <p>Separate text tokens based on case</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate negative numbers
+						</h3> <p>Separate number tokens based on negativity</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Discriminate decimals
+						</h3> <p>Separate number tokens for decimals</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Enable mixed tokens
+						</h3> <p>Use '?'-tokens for mixed text and numbers</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Ignore repeated spaces
+						</h3> <p>Ignore whitespace differences</p> <!-- type --> <span
+						class="label label-primary">Boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Upper case patterns expand in size
+						</h3> <p>Auto-adjust/expand uppercase text tokens</p> <!-- type --> <span
+						class="label label-primary">boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Lower case patterns expand in size
+						</h3> <p>Auto-adjust/expand lowercase text tokens</p> <!-- type --> <span
+						class="label label-primary">boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Predefined token name
+						</h3>  <!-- type --> <span
+						class="label label-primary">String</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Predefined token regexes
+						</h3>  <!-- type --> <span
+						class="label label-primary">List of String</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Decimal separator
+						</h3>  <!-- type --> <span
+						class="label label-primary">Character</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Thousands separator
+						</h3>  <!-- type --> <span
+						class="label label-primary">Character</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Minus sign
+						</h3>  <!-- type --> <span
+						class="label label-primary">Character</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Optional</span> 
+					</li> 
+				</ul>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

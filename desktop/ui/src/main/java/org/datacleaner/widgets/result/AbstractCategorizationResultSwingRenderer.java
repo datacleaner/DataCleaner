@@ -45,52 +45,63 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.windows.DetailsResultWindow;
-import org.jfree.data.general.DefaultPieDataset;
 
-public abstract class AbstractCategorizationResultSwingRenderer<R extends CategorizationResult> extends AbstractRenderer<R, JComponent> {
-
+public abstract class AbstractCategorizationResultSwingRenderer<R extends CategorizationResult> extends
+        AbstractRenderer<R, JComponent> {
     @Inject
     @Provided
     WindowContext windowContext;
+
     @Inject
     @Provided
     RendererFactory rendererFactory;
 
-    protected int addValue(final int row, final DefaultPieDataset dataset, final DefaultTableModel model, final String desc, final int count, final AnnotatedRowsResult sampleResult) {
-        dataset.setValue(desc, count);
+    private int addValue(final Object extraData, final int row, final DefaultTableModel model, final String desc,
+            final int count, final AnnotatedRowsResult sampleResult) {
         model.setValueAt(desc, row, 0);
         if (sampleResult == null || count == 0) {
             model.setValueAt(count, row, 1);
         } else {
             final DCPanel panel = new DCPanel();
             panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    
+
             final JLabel label = new JLabel(count + "");
             final JButton button = WidgetFactory.createSmallButton(IconUtils.ACTION_DRILL_TO_DETAIL);
             button.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(final ActionEvent e) {
                     drillToGroup(desc, sampleResult);
                 }
-    
+
             });
-    
+
             panel.add(label);
             panel.add(Box.createHorizontalStrut(4));
             panel.add(button);
-    
+
             model.setValueAt(panel, row, 1);
         }
+
+        addExtraValue(extraData, row, model, desc, count, sampleResult);
         return row + 1;
     }
 
-    private void drillToGroup(String title, AnnotatedRowsResult sampleResult) {
+    protected void addExtraValue(Object extraData, int row, DefaultTableModel model, String desc, int count,
+            AnnotatedRowsResult sampleResult) {
+        // Do nothing by default
+    }
+
+    private void drillToGroup(final String title, final AnnotatedRowsResult sampleResult) {
         List<AnalyzerResult> results = Arrays.<AnalyzerResult> asList(sampleResult);
         final DetailsResultWindow window = new DetailsResultWindow(title, results, windowContext, rendererFactory);
         window.open();
     }
 
-    protected DefaultTableModel prepareModel(CategorizationResult analyzerResult, final DefaultPieDataset dataset) {
+    protected DefaultTableModel prepareModel(final CategorizationResult analyzerResult) {
+        return prepareModel(analyzerResult, null);
+    }
+
+    protected DefaultTableModel prepareModel(final CategorizationResult analyzerResult, final Object extraData) {
         final DefaultTableModel model = new DefaultTableModel(new Object[] { "Match outcome", LabelUtils.COUNT_LABEL },
                 analyzerResult.getCategoryNames().size());
         int row = 0;
@@ -98,8 +109,9 @@ public abstract class AbstractCategorizationResultSwingRenderer<R extends Catego
         for (String categoryName : categoryNames) {
             final AnnotatedRowsResult sample = analyzerResult.getCategoryRowSample(categoryName);
             final Number count = analyzerResult.getCategoryCount(categoryName);
-            row = addValue(row, dataset, model, categoryName, count.intValue(), sample);
+            row = addValue(extraData, row, model, categoryName, count.intValue(), sample);
         }
         return model;
     }
+
 }

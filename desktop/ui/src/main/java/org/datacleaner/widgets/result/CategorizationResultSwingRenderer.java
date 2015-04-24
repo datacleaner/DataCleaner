@@ -19,12 +19,15 @@
  */
 package org.datacleaner.widgets.result;
 
+import java.util.Collection;
+
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CategorizationResult;
 import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.ChartUtils;
@@ -43,8 +46,20 @@ public class CategorizationResultSwingRenderer extends AbstractCategorizationRes
     }
 
     @Override
+    protected void addExtraValue(final Object extraData, final int row, final DefaultTableModel model,
+            final String desc, final int count, AnnotatedRowsResult sampleResult) {
+        ((DefaultPieDataset) extraData).setValue(desc, count);
+    }
+
+    @Override
     public JComponent render(CategorizationResult analyzerResult) {
         final DefaultPieDataset dataset = new DefaultPieDataset();
+        final Collection<String> categoryNames = analyzerResult.getCategoryNames();
+        for (String categoryName : categoryNames) {
+            final Number count = analyzerResult.getCategoryCount(categoryName);
+            dataset.setValue(categoryName, count);
+        }
+
         final DefaultTableModel model = prepareModel(analyzerResult, dataset);
 
         final DCTable table = new DCTable(model);

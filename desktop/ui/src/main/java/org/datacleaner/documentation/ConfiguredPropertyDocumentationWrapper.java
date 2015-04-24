@@ -24,9 +24,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 
-import com.google.common.base.Strings;
 import com.google.common.html.HtmlEscapers;
 
 /**
@@ -47,11 +45,7 @@ public class ConfiguredPropertyDocumentationWrapper {
     }
 
     public String getDescription() {
-        String description = Strings.nullToEmpty(_property.getDescription());
-        description = "<p>" + description + "</p>";
-        description = StringUtils.replaceAll(description, "\n\n", "\n");
-        description = StringUtils.replaceAll(description, "\n", "</p><p>");
-        return description;
+        return DocumentationUtils.createHtmlParagraphs(_property.getDescription());
     }
 
     public boolean isRequired() {

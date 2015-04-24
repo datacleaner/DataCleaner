@@ -35,9 +35,6 @@ import org.datacleaner.descriptors.MetricDescriptor;
 import org.datacleaner.descriptors.SimpleHasAnalyzerResultComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
-
-import com.google.common.base.Strings;
 
 /**
  * A wrapper around the {@link ComponentDescriptor} object to make it easier for
@@ -57,11 +54,7 @@ public class ComponentDocumentationWrapper {
     }
 
     public String getDescription() {
-        String description = Strings.nullToEmpty(_componentDescriptor.getDescription());
-        description = "<p>" + description + "</p>";
-        description = StringUtils.replaceAll(description, "\n\n", "\n");
-        description = StringUtils.replaceAll(description, "\n", "</p><p>");
-        return description;
+        return DocumentationUtils.createHtmlParagraphs(_componentDescriptor.getDescription());
     }
 
     public String getSuperCategory() {

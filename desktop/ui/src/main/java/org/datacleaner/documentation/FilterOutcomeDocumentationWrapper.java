@@ -23,7 +23,6 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.StringUtils;
 
 /**
  * A wrapper around a {@link Filter}s outcome object to make it easier for the
@@ -50,10 +49,8 @@ public class FilterOutcomeDocumentationWrapper {
         if (annotation == null) {
             return "";
         }
-        String description = annotation.value();
-        description = "<p>" + description + "</p>";
-        description = StringUtils.replaceAll(description, "\n\n", "\n");
-        description = StringUtils.replaceAll(description, "\n", "</p><p>");
-        return description;
+
+        final String description = annotation.value();
+        return DocumentationUtils.createHtmlParagraphs(description);
     }
 }

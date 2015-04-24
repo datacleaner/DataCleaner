@@ -21,7 +21,6 @@ package org.datacleaner.documentation;
 
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.descriptors.MetricDescriptor;
-import org.datacleaner.util.StringUtils;
 
 /**
  * A wrapper around a {@link HasAnalyzerResult}s result metrics to make it
@@ -41,14 +40,8 @@ public class MetricDocumentationWrapper {
     }
 
     public String getDescription() {
-        String description = _metric.getDescription();
-        if (description == null) {
-            return "";
-        }
-        description = "<p>" + description + "</p>";
-        description = StringUtils.replaceAll(description, "\n\n", "\n");
-        description = StringUtils.replaceAll(description, "\n", "</p><p>");
-        return description;
+        final String description = _metric.getDescription();
+        return DocumentationUtils.createHtmlParagraphs(description);
     }
 
     public boolean isParameterizedByString() {
@@ -58,7 +51,7 @@ public class MetricDocumentationWrapper {
     public boolean isParameterizedByInputColumn() {
         return _metric.isParameterizedByInputColumn();
     }
-    
+
     public boolean isNotParameterized() {
         return !isParameterizedByString() && !isParameterizedByInputColumn();
     }

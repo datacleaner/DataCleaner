@@ -44,19 +44,27 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _hostname;
     private final int _port;
     private final String _clusterName;
+    private final String _username;
+    private final String _password;
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName) {
-        this(name, hostname, port, clusterName, indexName, null);
+        this(name, hostname, port, clusterName, indexName, null, null, null);
+    }
+    
+    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName, String username, String password) {
+        this(name, hostname, port, clusterName, indexName, null, username, password);
     }
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs) {
+            SimpleTableDef[] tableDefs, String username, String password) {
         super(name);
         _hostname = hostname;
         _port = port;
         _clusterName = clusterName;
         _indexName = indexName;
         _tableDefs = tableDefs;
+        _username = username;
+        _password = password;
     }
 
     @Override
@@ -69,6 +77,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         final Builder settingsBuilder = ImmutableSettings.builder();
         settingsBuilder.put("name", "AnalyzerBeans");
         settingsBuilder.put("cluster.name", _clusterName);
+        if (_username != null && _password != null) {
+            settingsBuilder.put("shield.user", _username + ":" + _password);
+        }
 
         final Settings settings = settingsBuilder.build();
         final TransportClient client = new TransportClient(settings);
@@ -107,6 +118,14 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     public String getIndexName() {
         return _indexName;
+    }
+    
+    public String getUsername() {
+        return _username;
+    }
+    
+    public String getPassword() {
+        return _password;
     }
 
     @Override

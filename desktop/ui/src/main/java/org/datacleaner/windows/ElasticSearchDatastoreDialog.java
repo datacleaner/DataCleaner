@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.swing.JComponent;
+import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.metamodel.schema.Schema;
@@ -51,6 +52,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JXTextField _portTextField;
     private final JXTextField _clusterNameTextField;
     private final JXTextField _indexNameTextField;
+    private final JXTextField _usernameTextField;
+    private final JPasswordField _passwordTextField;
 
     @Inject
     public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -58,14 +61,15 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         setSaveButtonEnabled(false);
-        
+
         _hostnameTextField = WidgetFactory.createTextField();
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
         _clusterNameTextField = WidgetFactory.createTextField();
         _indexNameTextField = WidgetFactory.createTextField();
+        _usernameTextField = WidgetFactory.createTextField();
+        _passwordTextField = WidgetFactory.createPasswordField();
 
-        
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -107,9 +111,11 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             _portTextField.setText(originalDatastore.getPort() + "");
             _clusterNameTextField.setText(originalDatastore.getClusterName());
             _indexNameTextField.setText(originalDatastore.getIndexName());
+            _usernameTextField.setText(originalDatastore.getUsername());
+            _passwordTextField.setText(originalDatastore.getPassword());
         }
     }
-    
+
     @Override
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
@@ -117,13 +123,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String hostname = _hostnameTextField.getText();
         if (StringUtils.isNullOrEmpty(hostname)) {
             setStatusError("Please enter hostname");
             return false;
         }
-        
+
         final String port = _portTextField.getText();
         if (StringUtils.isNullOrEmpty(port)) {
             setStatusError("Please enter port number");
@@ -140,13 +146,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 return false;
             }
         }
-        
+
         final String clusterName = _clusterNameTextField.getText();
         if (StringUtils.isNullOrEmpty(clusterName)) {
             setStatusError("Please enter cluster name");
             return false;
         }
-        
+
         final String indexName = _indexNameTextField.getText();
         if (StringUtils.isNullOrEmpty(indexName)) {
             setStatusError("Please enter index name");
@@ -183,7 +189,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final Integer port = Integer.parseInt(_portTextField.getText());
         final String clusterName = _clusterNameTextField.getText();
         final String indexName = _indexNameTextField.getText();
-        return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName);
+        final String username = _usernameTextField.getText();
+        final String password = new String(_passwordTextField.getPassword());
+        if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName);
+        } else {
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password);
+        }
     }
 
     @Override
@@ -199,7 +211,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     protected String getDatastoreIconPath() {
         return IconUtils.ELASTICSEARCH_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
@@ -207,6 +219,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Cluster name", _clusterNameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Index name", _indexNameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
         return result;
     }
 

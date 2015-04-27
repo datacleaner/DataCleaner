@@ -232,7 +232,8 @@ public class AboutDialog extends AbstractDialog {
     }
 
     private JComponent getAboutPanel() {
-        final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " " + Version.getVersion());
+        final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Version.getEdition() + " "
+                + Version.getDistributionVersion());
         headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
         final ImageManager imageManager = ImageManager.get();
@@ -266,9 +267,8 @@ public class AboutDialog extends AbstractDialog {
         final DCPanel contentPanel = new DCPanel();
         contentPanel.setLayout(new VerticalLayout());
         contentPanel.add(headerLabel);
-        contentPanel.add(DCLabel.dark("Distribution version " + Version.getDistributionVersion()));
-        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR)
-                + " Neopost - Customer Information Management"));
+        contentPanel.add(DCLabel.dark("Core version " + Version.getVersion()));
+        contentPanel.add(DCLabel.dark("Copyright (C) " + Calendar.getInstance().get(Calendar.YEAR) + " Neopost"));
         contentPanel.add(Box.createVerticalStrut(20));
         contentPanel.add(DCPanel.around(neopostButton));
 

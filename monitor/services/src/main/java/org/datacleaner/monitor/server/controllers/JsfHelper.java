@@ -44,7 +44,7 @@ public class JsfHelper {
     User user;
 
     public String getVersion() {
-        return Version.getVersion();
+        return Version.getDistributionVersion();
     }
 
     public DatastoreBeanWrapper[] getDatastores() {

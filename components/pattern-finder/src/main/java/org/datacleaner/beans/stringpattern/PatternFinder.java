@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans.stringpattern;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /***
  * A string pattern finder. This component can consume rows and produce string
@@ -79,30 +79,48 @@ public abstract class PatternFinder<R> {
         final String patternCode = getPatternCode(tokens);
         final Collection<TokenPattern> patterns = getOrCreatePatterns(patternCode);
 
-        boolean match = false;
-        for (TokenPattern pattern : patterns) {
-            if (pattern.match(tokens)) {
-                storeMatch(pattern, row, value, distinctCount);
-                match = true;
-                break;
-            }
-        }
-
-        if (!match) {
-            final TokenPattern pattern;
-            try {
-                pattern = new TokenPatternImpl(value, tokens, _configuration);
-            } catch (RuntimeException e) {
-                throw new IllegalStateException("Error occurred while creating pattern for: " + tokens, e);
+        // lock on "patterns" since it is going to be the same collection for
+        // all matching pattern codes.
+        synchronized (patterns) {
+            boolean match = false;
+            for (TokenPattern pattern : patterns) {
+                if (pattern.match(tokens)) {
+                    storeMatch(pattern, row, value, distinctCount);
+                    match = true;
+                    break;
+                }
             }
 
-            storeNewPattern(pattern, row, value, distinctCount);
-            patterns.add(pattern);
+            if (!match) {
+                final TokenPattern pattern;
+                try {
+                    pattern = new TokenPatternImpl(value, tokens, _configuration);
+                } catch (RuntimeException e) {
+                    throw new IllegalStateException("Error occurred while creating pattern for: " + tokens, e);
+                }
+
+                storeNewPattern(pattern, row, value, distinctCount);
+                patterns.add(pattern);
+            }
         }
     }
 
+    /**
+     * Gets a collection of known {@link TokenPattern}s that matches the pattern
+     * code
+     * 
+     * @param patternCode
+     * @return
+     */
     private Collection<TokenPattern> getOrCreatePatterns(String patternCode) {
-        final Collection<TokenPattern> newPatterns = new LinkedBlockingQueue<>();
+        // first try the cheapest get(..) method
+        final Collection<TokenPattern> patterns = _patterns.get(patternCode);
+        if (patterns != null) {
+            return patterns;
+        }
+
+        // then try the concurrent version which requires a collection
+        final Collection<TokenPattern> newPatterns = new ArrayList<>(3);
         final Collection<TokenPattern> existingPatterns = _patterns.putIfAbsent(patternCode, newPatterns);
         if (existingPatterns == null) {
             return newPatterns;

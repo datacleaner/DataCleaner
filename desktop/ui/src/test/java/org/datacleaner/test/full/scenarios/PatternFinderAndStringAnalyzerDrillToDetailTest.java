@@ -59,7 +59,7 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
     public void testScenario() throws Throwable {
         final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
-        
+
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
@@ -101,13 +101,14 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
             // pattern finder result tests
             {
-                PatternFinderResult result = (PatternFinderResult) resultFuture.getResult(pf.toAnalyzerJob());
-                String[] resultLines = new PatternFinderResultTextRenderer().render(result).split("\n");
+                final PatternFinderResult result = (PatternFinderResult) resultFuture.getResult(pf.toAnalyzerJob());
+                final String resultString = new PatternFinderResultTextRenderer().render(result);
+                final String[] resultLines = resultString.split("\n");
 
-                assertEquals(5, resultLines.length);
+                assertEquals(resultString, 5, resultLines.length);
 
-                assertEquals("                            Match count Sample      ", resultLines[0]);
-                assertTrue(resultLines[1].startsWith("aaaaa aaaaaaaaa                      19"));
+                assertEquals(resultString, "                            Match count Sample      ", resultLines[0]);
+                assertTrue(resultString, resultLines[1].startsWith("aaaaa aaaaaaaaa                      19"));
 
                 ResultProducer resultProducer = result.getSingleCrosstab().where("Pattern", "aaaaa aaaaaaaaa")
                         .where("Measures", "Match count").explore();

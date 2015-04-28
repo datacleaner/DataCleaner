@@ -21,16 +21,11 @@ package org.datacleaner.test.full.scenarios;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.inject.Named;
 
 import junit.framework.TestCase;
 
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.util.SimpleTableDef;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -52,6 +47,7 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockTransformer;
+import org.datacleaner.test.mock.EvenOddFilter;
 
 public class FilterRequirementMergingTest extends TestCase {
 
@@ -92,8 +88,8 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testMergeFilterRequirementsWhenAnalyzerConsumesInputColumnsWithMultipleRequirements() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
-                .addInputColumn(sourceColumn);
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
+                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
@@ -151,8 +147,8 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testDontMergeFilterRequirementWhenAnalyzerConsumesInputColumnsWithSingleRequirement() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
-                .addInputColumn(sourceColumn);
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
+                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
@@ -204,8 +200,8 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testConsumeRecordsWhenAnyOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
-                .addInputColumn(sourceColumn);
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
+                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
@@ -266,8 +262,8 @@ public class FilterRequirementMergingTest extends TestCase {
     public void testConsumeRecordsWhenCompoundOutcomeRequirementIsSet() throws Throwable {
         jobBuilder.addSourceColumns("col1");
         InputColumn<?> sourceColumn = jobBuilder.getSourceColumnByName("col1");
-        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder.addFilter(EvenOddFilter.class)
-                .addInputColumn(sourceColumn);
+        FilterComponentBuilder<EvenOddFilter, EvenOddFilter.Category> filter = jobBuilder
+                .addFilter(EvenOddFilter.class).addInputColumn(sourceColumn);
 
         FilterOutcome req1 = filter.getFilterOutcome(EvenOddFilter.Category.EVEN);
         FilterOutcome req2 = filter.getFilterOutcome(EvenOddFilter.Category.ODD);
@@ -306,7 +302,7 @@ public class FilterRequirementMergingTest extends TestCase {
 
         assertFalse("List is empty - this indicates that no records passed through the 'any requirements' rule",
                 list.isEmpty());
-        
+
         assertEquals("[foo, null, mocked: foo]", list.get(0).getValues(sourceColumn, outputColumn1, outputColumn2)
                 .toString());
         assertEquals("[bar, mocked: bar, null]", list.get(1).getValues(sourceColumn, outputColumn1, outputColumn2)
@@ -319,28 +315,5 @@ public class FilterRequirementMergingTest extends TestCase {
                 .toString());
 
         assertEquals(5, list.size());
-    }
-
-    @Named("Even/odd record filter")
-    public static class EvenOddFilter implements Filter<EvenOddFilter.Category> {
-
-        public static enum Category {
-            EVEN, ODD
-        }
-
-        private final AtomicInteger counter = new AtomicInteger();
-
-        @Configured
-        InputColumn<String> column;
-
-        @Override
-        public Category categorize(InputRow inputRow) {
-            int v = counter.incrementAndGet();
-            if (v % 2 == 0) {
-                return Category.EVEN;
-            }
-            return Category.ODD;
-        }
-
     }
 }

@@ -106,8 +106,16 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _passwordTextField.setEnabled(true);
 
                         if (originalDatastore != null) {
-                            _hostnameTextField.setText(originalDatastore.getHostname());
-                            _portTextField.setText("" + originalDatastore.getPort());
+                            if (StringUtils.isNullOrEmpty(originalDatastore.getHostname())) {
+                                _hostnameTextField.setText("localhost");
+                            } else {
+                                _hostnameTextField.setText(originalDatastore.getHostname());
+                            }
+                            if (originalDatastore.getPort() == null) {
+                                _portTextField.setText("9300");
+                            } else {
+                                _portTextField.setText("" + originalDatastore.getPort());
+                            }
                             _usernameTextField.setText(originalDatastore.getUsername());
                             _passwordTextField.setText(originalDatastore.getPassword());
                         } else {

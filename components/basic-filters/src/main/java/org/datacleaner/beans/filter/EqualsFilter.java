@@ -207,9 +207,18 @@ public class EqualsFilter implements QueryOptimizedFilter<ValidationCategory>, H
                         if (equals(n1, n2)) {
                             return ValidationCategory.VALID;
                         }
-                    }
-                    if (operand.equals(v)) {
-                        return ValidationCategory.VALID;
+                    } else {
+                        if (operand.equals(v)) {
+                            return ValidationCategory.VALID;
+                        }
+                        if (operand instanceof String) {
+                            // convert to string to check
+                            String str1 = operand.toString();
+                            String str2 = v.toString();
+                            if (str1.equals(str2)) {
+                                return ValidationCategory.VALID;
+                            }
+                        }
                     }
                 }
             }

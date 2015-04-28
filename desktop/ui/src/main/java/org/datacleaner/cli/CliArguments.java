@@ -95,14 +95,15 @@ public class CliArguments {
     }
 
     public static void printVersion(PrintWriter out) {
-        out.println("DataCleaner " + Version.getEdition());
-        out.println("Version " + Version.getVersion());
-        
         final String distributionVersion = Version.getDistributionVersion();
         if (!Strings.isNullOrEmpty(distributionVersion)) {
-            out.println("Distribution version " + distributionVersion);
+            out.println("DataCleaner " + Version.getEdition() + " " + distributionVersion);
+        } else {
+            out.println("DataCleaner " + Version.getEdition());
         }
-        
+
+        out.println("Core version " + Version.getVersion());
+
         final String licenseKey = Version.getLicenseKey();
         if (!Strings.isNullOrEmpty(licenseKey)) {
             out.println("License no. " + licenseKey);

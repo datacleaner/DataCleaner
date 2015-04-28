@@ -41,6 +41,8 @@ import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.util.IconUtils;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -71,7 +73,9 @@ public class ComponentDocumentationBuilder {
     public ComponentDocumentationBuilder(boolean breadcrumbs) {
         _breadcrumbs = breadcrumbs;
         _freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-        _freemarkerConfiguration.setClassForTemplateLoading(this.getClass(), ".");
+        
+        final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(), "");
+        _freemarkerConfiguration.setTemplateLoader(templateLoader);
         try {
             _template = _freemarkerConfiguration.getTemplate("template.html");
         } catch (Exception e) {

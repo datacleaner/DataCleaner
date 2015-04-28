@@ -54,7 +54,7 @@ public class ComponentReferenceDocumentationBuilder {
 
     public boolean writeDocumentationToRepositoryFolder(RepositoryFolder folder) {
         boolean success = true;
-        final RepositoryFile indexFile = folder.createFile("index.html", new Action<OutputStream>() {
+        final RepositoryFile indexFile = createOrUpdateFile(folder, "index.html", new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
                 IndexDocumentationBuilder index = new IndexDocumentationBuilder(_descriptorProvider);
@@ -69,7 +69,7 @@ public class ComponentReferenceDocumentationBuilder {
         for (final ComponentDescriptor<?> componentDescriptor : componentDescriptors) {
             try {
                 final String filename = IndexDocumentationBuilder.getFilename(componentDescriptor);
-                final RepositoryFile file = folder.createFile(filename, new Action<OutputStream>() {
+                final RepositoryFile file = createOrUpdateFile(folder, filename, new Action<OutputStream>() {
                     @Override
                     public void run(OutputStream out) throws Exception {
                         componentDocumentationBuilder.write(componentDescriptor, out);
@@ -84,5 +84,16 @@ public class ComponentReferenceDocumentationBuilder {
         }
 
         return success;
+    }
+
+    private RepositoryFile createOrUpdateFile(RepositoryFolder folder, String filename, Action<OutputStream> writeAction) {
+        RepositoryFile file = folder.getFile(filename);
+        if (file == null) {
+            file = folder.createFile(filename, writeAction);
+        } else {
+            file.writeFile(writeAction);
+        }
+
+        return file;
     }
 }

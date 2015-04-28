@@ -19,12 +19,12 @@
  */
 package org.datacleaner.beans.stringpattern;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * A string pattern finder. This component can consume rows and produce string
@@ -40,14 +40,14 @@ import java.util.Set;
  */
 public abstract class PatternFinder<R> {
 
-    private final Map<String, Set<TokenPattern>> _patterns;
+    private final ConcurrentHashMap<String, Collection<TokenPattern>> _patterns;
     private final TokenizerConfiguration _configuration;
     private final Tokenizer _tokenizer;
-    
+
     public PatternFinder(Tokenizer tokenizer, TokenizerConfiguration configuration) {
         _configuration = configuration;
         _tokenizer = tokenizer;
-        _patterns = new HashMap<String, Set<TokenPattern>>();
+        _patterns = new ConcurrentHashMap<>();
     }
 
     public PatternFinder(TokenizerConfiguration configuration) {
@@ -70,7 +70,6 @@ public abstract class PatternFinder<R> {
      */
     public void run(R row, String value, int distinctCount) {
         final List<Token> tokens;
-        boolean match = false;
         try {
             tokens = _tokenizer.tokenize(value);
         } catch (RuntimeException e) {
@@ -78,19 +77,17 @@ public abstract class PatternFinder<R> {
         }
 
         final String patternCode = getPatternCode(tokens);
-        Set<TokenPattern> patterns;
+        final Collection<TokenPattern> patterns = getOrCreatePatterns(patternCode);
 
-        synchronized (this) {
-            patterns = _patterns.get(patternCode);
-            if (patterns == null) {
-                patterns = new HashSet<TokenPattern>();
-                _patterns.put(patternCode, patterns);
-            }
-
+        // lock on "patterns" since it is going to be the same collection for
+        // all matching pattern codes.
+        synchronized (patterns) {
+            boolean match = false;
             for (TokenPattern pattern : patterns) {
                 if (pattern.match(tokens)) {
                     storeMatch(pattern, row, value, distinctCount);
                     match = true;
+                    break;
                 }
             }
 
@@ -109,6 +106,29 @@ public abstract class PatternFinder<R> {
     }
 
     /**
+     * Gets a collection of known {@link TokenPattern}s that matches the pattern
+     * code
+     * 
+     * @param patternCode
+     * @return
+     */
+    private Collection<TokenPattern> getOrCreatePatterns(String patternCode) {
+        // first try the cheapest get(..) method
+        final Collection<TokenPattern> patterns = _patterns.get(patternCode);
+        if (patterns != null) {
+            return patterns;
+        }
+
+        // then try the concurrent version which requires a collection
+        final Collection<TokenPattern> newPatterns = new ArrayList<>(3);
+        final Collection<TokenPattern> existingPatterns = _patterns.putIfAbsent(patternCode, newPatterns);
+        if (existingPatterns == null) {
+            return newPatterns;
+        }
+        return existingPatterns;
+    }
+
+    /**
      * Creates an almost unique String code for a list of tokens. This code is
      * used to improve search time when looking for potential matching patterns.
      * 
@@ -124,10 +144,10 @@ public abstract class PatternFinder<R> {
         return sb.toString();
     }
 
-    public Set<TokenPattern> getPatterns() {
+    public Collection<TokenPattern> getPatterns() {
         final Set<TokenPattern> result = new HashSet<TokenPattern>();
-        final Collection<Set<TokenPattern>> values = _patterns.values();
-        for (Set<TokenPattern> set : values) {
+        final Collection<Collection<TokenPattern>> values = _patterns.values();
+        for (Collection<TokenPattern> set : values) {
             result.addAll(set);
         }
         return result;

@@ -499,7 +499,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         boolean executeable = false;
 
         if (_datastore == null) {
-            setStatusLabelText("Welcome to DataCleaner " + Version.getVersion());
+            setStatusLabelText("Welcome to DataCleaner " + Version.getDistributionVersion());
             _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.APPLICATION_ICON, IconUtils.ICON_SIZE_SMALL));
         } else {
             if (!_analysisJobBuilder.getSourceColumns().isEmpty()) {

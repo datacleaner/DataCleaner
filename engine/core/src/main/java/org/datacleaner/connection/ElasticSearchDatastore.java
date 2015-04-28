@@ -19,15 +19,20 @@
  */
 package org.datacleaner.connection;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 import java.util.List;
 
 import org.apache.metamodel.elasticsearch.ElasticSearchDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.util.StringUtils;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
 
 /**
  * Datastore providing access to an ElasticSearch index.
@@ -46,17 +51,20 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _clusterName;
     private final String _username;
     private final String _password;
+    private final boolean _useTransportClient;
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName) {
-        this(name, hostname, port, clusterName, indexName, null, null, null);
-    }
-    
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName, String username, String password) {
-        this(name, hostname, port, clusterName, indexName, null, username, password);
+    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
+            boolean useTransportClient) {
+        this(name, hostname, port, clusterName, indexName, null, null, null, useTransportClient);
     }
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs, String username, String password) {
+            String username, String password, boolean useTransportClient) {
+        this(name, hostname, port, clusterName, indexName, null, username, password, useTransportClient);
+    }
+
+    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
+            SimpleTableDef[] tableDefs, String username, String password, boolean useTransportClient) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -65,6 +73,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         _tableDefs = tableDefs;
         _username = username;
         _password = password;
+        _useTransportClient = useTransportClient;
     }
 
     @Override
@@ -74,16 +83,24 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     @Override
     protected UsageAwareDatastoreConnection<ElasticSearchDataContext> createDatastoreConnection() {
-        final Builder settingsBuilder = ImmutableSettings.builder();
-        settingsBuilder.put("name", "AnalyzerBeans");
-        settingsBuilder.put("cluster.name", _clusterName);
-        if (_username != null && _password != null) {
-            settingsBuilder.put("shield.user", _username + ":" + _password);
-        }
 
-        final Settings settings = settingsBuilder.build();
-        final TransportClient client = new TransportClient(settings);
-        client.addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
+        Client client;
+        if (_useTransportClient) {
+            final Builder settingsBuilder = ImmutableSettings.builder();
+            settingsBuilder.put("name", "AnalyzerBeans");
+            settingsBuilder.put("cluster.name", _clusterName);
+            if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
+                settingsBuilder.put("shield.user", _username + ":" + _password);
+            }
+            final Settings settings = settingsBuilder.build();
+
+            client = new TransportClient(settings);
+            ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
+        } else {
+            // .client(true) means no shards are stored on this node
+            final Node node = nodeBuilder().clusterName(_clusterName).client(true).node();
+            client = node.client();
+        }
 
         final ElasticSearchDataContext dataContext;
         if (_tableDefs == null || _tableDefs.length == 0) {
@@ -119,11 +136,11 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public String getIndexName() {
         return _indexName;
     }
-    
+
     public String getUsername() {
         return _username;
     }
-    
+
     public String getPassword() {
         return _password;
     }

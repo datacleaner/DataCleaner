@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch-shield</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.0</version>
 		</dependency>
 
 		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 

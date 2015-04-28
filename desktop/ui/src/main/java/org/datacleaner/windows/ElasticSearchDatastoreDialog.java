@@ -19,6 +19,8 @@
  */
 package org.datacleaner.windows;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -47,12 +49,12 @@ import org.jdesktop.swingx.JXTextField;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
         SchemaFactory {
-    
-    private static final long serialVersionUID = 1L;
-    
-    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE= ElasticSearchDatastore.ClientType.TRANSPORT;
 
-    private final JComboBox<ClientType> _clientTypeComboBox; 
+    private static final long serialVersionUID = 1L;
+
+    private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.TRANSPORT;
+
+    private final JComboBox<ClientType> _clientTypeComboBox;
     private final JXTextField _hostnameTextField;
     private final JXTextField _portTextField;
     private final JXTextField _clusterNameTextField;
@@ -62,21 +64,61 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
 
     @Inject
     public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
-            @Nullable ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
+            @Nullable final ElasticSearchDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, catalog, windowContext, userPreferences);
 
         setSaveButtonEnabled(false);
 
-        _hostnameTextField = WidgetFactory.createTextField();
-        _portTextField = WidgetFactory.createTextField();
-        _portTextField.setDocument(new NumberDocument(false));
-        _clusterNameTextField = WidgetFactory.createTextField();
-        _indexNameTextField = WidgetFactory.createTextField();
-        _usernameTextField = WidgetFactory.createTextField();
-        _passwordTextField = WidgetFactory.createPasswordField();
         _clientTypeComboBox = new JComboBox<>(ClientType.values());
         _clientTypeComboBox.setSelectedItem(DEFAULT_CLIENT_TYPE);
 
+        // Both NODE and TRANSPORT
+        _clusterNameTextField = WidgetFactory.createTextField();
+        _indexNameTextField = WidgetFactory.createTextField();
+
+        // Only TRANSPORT
+        _hostnameTextField = WidgetFactory.createTextField();
+        _portTextField = WidgetFactory.createTextField();
+        _portTextField.setDocument(new NumberDocument(false));
+        _usernameTextField = WidgetFactory.createTextField();
+        _passwordTextField = WidgetFactory.createPasswordField();
+
+        _clientTypeComboBox.addItemListener(new ItemListener() {
+            
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                final int eventType = e.getStateChange();
+                if (eventType == ItemEvent.SELECTED) {
+                    final ElasticSearchDatastore.ClientType newSelectedItem = (ClientType) e.getItem();
+                    if (newSelectedItem.equals(ElasticSearchDatastore.ClientType.NODE)) {
+                        _hostnameTextField.setEnabled(false);
+                        _hostnameTextField.setText("");
+                        _portTextField.setEnabled(false);
+                        _portTextField.setText("");
+                        _usernameTextField.setEnabled(false);
+                        _usernameTextField.setText("");
+                        _passwordTextField.setEnabled(false);
+                        _passwordTextField.setText("");
+                    } else {
+                        _hostnameTextField.setEnabled(true);
+                        _portTextField.setEnabled(true);
+                        _usernameTextField.setEnabled(true);
+                        _passwordTextField.setEnabled(true);
+                        
+                        if (originalDatastore != null) {
+                            _hostnameTextField.setText(originalDatastore.getHostname());
+                            _portTextField.setText("" + originalDatastore.getPort());
+                            _usernameTextField.setText(originalDatastore.getUsername());
+                            _passwordTextField.setText(originalDatastore.getPassword());
+                        } else {
+                            _hostnameTextField.setText("localhost");
+                            _portTextField.setText("9300");
+                        }
+                    }
+                }
+                
+            }
+        });
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
@@ -132,26 +174,28 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             return false;
         }
 
-        final String hostname = _hostnameTextField.getText();
-        if (StringUtils.isNullOrEmpty(hostname)) {
-            setStatusError("Please enter hostname");
-            return false;
-        }
+        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(_clientTypeComboBox.getSelectedItem())) {
+            final String hostname = _hostnameTextField.getText();
+            if (StringUtils.isNullOrEmpty(hostname)) {
+                setStatusError("Please enter hostname");
+                return false;
+            }
 
-        final String port = _portTextField.getText();
-        if (StringUtils.isNullOrEmpty(port)) {
-            setStatusError("Please enter port number");
-            return false;
-        } else {
-            try {
-                int portInt = Integer.parseInt(port);
-                if (portInt <= 0) {
-                    setStatusError("Please enter a valid (positive port number)");
+            final String port = _portTextField.getText();
+            if (StringUtils.isNullOrEmpty(port)) {
+                setStatusError("Please enter port number");
+                return false;
+            } else {
+                try {
+                    int portInt = Integer.parseInt(port);
+                    if (portInt <= 0) {
+                        setStatusError("Please enter a valid (positive port number)");
+                        return false;
+                    }
+                } catch (NumberFormatException e) {
+                    setStatusError("Please enter a valid port number");
                     return false;
                 }
-            } catch (NumberFormatException e) {
-                setStatusError("Please enter a valid port number");
-                return false;
             }
         }
 
@@ -199,11 +243,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String indexName = _indexNameTextField.getText();
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
-        final ElasticSearchDatastore.ClientType elasticSearchClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
+        final ElasticSearchDatastore.ClientType elasticSearchClientType = (ClientType) _clientTypeComboBox
+                .getSelectedItem();
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
             return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, elasticSearchClientType);
         } else {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password, elasticSearchClientType);
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password,
+                    elasticSearchClientType);
         }
     }
 
@@ -224,13 +270,29 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Client type", _clientTypeComboBox));
-        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Cluster name", _clusterNameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Index name", _indexNameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Client type", _clientTypeComboBox));
+
+        final ElasticSearchDatastore originalDatastore = getOriginalDatastore();
+        if (originalDatastore != null) {
+            ClientType clientType;
+            clientType = originalDatastore.getClientType();
+            if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(clientType)) {
+                result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+            }
+        } else {
+            if (DEFAULT_CLIENT_TYPE.equals(ElasticSearchDatastore.ClientType.TRANSPORT)) {
+                result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
+                result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+            }
+        }
+            
         return result;
     }
 

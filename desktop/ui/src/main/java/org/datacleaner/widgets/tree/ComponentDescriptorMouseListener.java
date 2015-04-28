@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.IconUtils;
@@ -55,27 +56,31 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
         }
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
         final Object userObject = node.getUserObject();
-        
-        
+
         if (userObject instanceof ComponentDescriptor<?>) {
             final ComponentDescriptor<?> componentDescriptor = (ComponentDescriptor<?>) userObject;
 
-            if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1){
-                _analysisJobBuilder.addComponent(componentDescriptor);                
-            } else if(SwingUtilities.isRightMouseButton(e)){
-                JPopupMenu popup = new JPopupMenu();
-    
-                popup.setLabel(componentDescriptor.getDisplayName());
-                JMenuItem addTableItem = WidgetFactory.createMenuItem("Add to source",
+            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
+                _analysisJobBuilder.addComponent(componentDescriptor);
+            } else if (SwingUtilities.isRightMouseButton(e)) {
+
+                final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add component",
                         IconUtils.getDescriptorIcon(componentDescriptor, IconUtils.ICON_SIZE_MENU_ITEM, false));
-    
                 addTableItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         _analysisJobBuilder.addComponent(componentDescriptor);
                     }
                 });
+
+                final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Component description",
+                        IconUtils.ACTION_HELP);
+                referenceDocumentationItem.addActionListener(new ComponentReferenceDocumentationActionListener(
+                        _analysisJobBuilder.getConfiguration(), componentDescriptor));
+
+                final JPopupMenu popup = new JPopupMenu(componentDescriptor.getDisplayName());
                 popup.add(addTableItem);
+                popup.add(referenceDocumentationItem);
                 popup.show((Component) e.getSource(), e.getX(), e.getY());
             }
         }

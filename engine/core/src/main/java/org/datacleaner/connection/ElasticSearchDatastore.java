@@ -40,6 +40,10 @@ import org.elasticsearch.node.Node;
 public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDataContext> implements
         UpdateableDatastore {
 
+    public enum ClientType {
+        NODE, TRANSPORT
+    }
+    
     private static final long serialVersionUID = 1L;
 
     public static final int DEFAULT_PORT = 9300;
@@ -51,20 +55,20 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _clusterName;
     private final String _username;
     private final String _password;
-    private final boolean _useTransportClient;
+    private final ClientType _clientType;
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            boolean useTransportClient) {
-        this(name, hostname, port, clusterName, indexName, null, null, null, useTransportClient);
+            ClientType clientType) {
+        this(name, hostname, port, clusterName, indexName, null, null, null, clientType);
     }
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            String username, String password, boolean useTransportClient) {
-        this(name, hostname, port, clusterName, indexName, null, username, password, useTransportClient);
+            String username, String password, ClientType clientType) {
+        this(name, hostname, port, clusterName, indexName, null, username, password, clientType);
     }
 
     public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs, String username, String password, boolean useTransportClient) {
+            SimpleTableDef[] tableDefs, String username, String password, ClientType clientType) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -73,7 +77,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         _tableDefs = tableDefs;
         _username = username;
         _password = password;
-        _useTransportClient = useTransportClient;
+        _clientType = clientType;
     }
 
     @Override
@@ -85,7 +89,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     protected UsageAwareDatastoreConnection<ElasticSearchDataContext> createDatastoreConnection() {
 
         Client client;
-        if (_useTransportClient) {
+        if (ClientType.TRANSPORT.equals(_clientType)) {
             final Builder settingsBuilder = ImmutableSettings.builder();
             settingsBuilder.put("name", "AnalyzerBeans");
             settingsBuilder.put("cluster.name", _clusterName);

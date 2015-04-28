@@ -45,7 +45,7 @@ import org.jdesktop.swingx.JXTextField;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
         SchemaFactory {
-
+    
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _hostnameTextField;
@@ -192,11 +192,11 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
         // TODO: "Hardcoding detected" alert!
-        final boolean useTransportClient = false;
+        final ElasticSearchDatastore.ClientType elasticSearchClientType = ElasticSearchDatastore.ClientType.NODE;
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, useTransportClient);
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, elasticSearchClientType);
         } else {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password, useTransportClient);
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password, elasticSearchClientType);
         }
     }
 

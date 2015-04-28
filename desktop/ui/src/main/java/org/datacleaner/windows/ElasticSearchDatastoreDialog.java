@@ -84,7 +84,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _passwordTextField = WidgetFactory.createPasswordField();
 
         _clientTypeComboBox.addItemListener(new ItemListener() {
-            
+
             @Override
             public void itemStateChanged(ItemEvent e) {
                 final int eventType = e.getStateChange();
@@ -104,7 +104,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _portTextField.setEnabled(true);
                         _usernameTextField.setEnabled(true);
                         _passwordTextField.setEnabled(true);
-                        
+
                         if (originalDatastore != null) {
                             _hostnameTextField.setText(originalDatastore.getHostname());
                             _portTextField.setText("" + originalDatastore.getPort());
@@ -116,7 +116,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         }
                     }
                 }
-                
+
             }
         });
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -273,26 +273,10 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Cluster name", _clusterNameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Index name", _indexNameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Client type", _clientTypeComboBox));
-
-        final ElasticSearchDatastore originalDatastore = getOriginalDatastore();
-        if (originalDatastore != null) {
-            ClientType clientType;
-            clientType = originalDatastore.getClientType();
-            if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(clientType)) {
-                result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
-            }
-        } else {
-            if (DEFAULT_CLIENT_TYPE.equals(ElasticSearchDatastore.ClientType.TRANSPORT)) {
-                result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-                result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
-            }
-        }
-            
+        result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
         return result;
     }
 

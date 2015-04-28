@@ -91,7 +91,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         Client client;
         if (ClientType.TRANSPORT.equals(_clientType)) {
             final Builder settingsBuilder = ImmutableSettings.builder();
-            settingsBuilder.put("name", "AnalyzerBeans");
+            settingsBuilder.put("name", "DataCleaner");
             settingsBuilder.put("cluster.name", _clusterName);
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
@@ -102,7 +102,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
         } else {
             final Builder settingsBuilder = ImmutableSettings.builder();
-            settingsBuilder.put("name", "AnalyzerBeans");
+            settingsBuilder.put("name", "DataCleaner");
             settingsBuilder.put("shield.enabled", false);
             final Settings settings = settingsBuilder.build();
             

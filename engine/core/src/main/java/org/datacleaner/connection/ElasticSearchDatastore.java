@@ -124,6 +124,10 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public SimpleTableDef[] getTableDefs() {
         return _tableDefs;
     }
+    
+    public ClientType getClientType() {
+        return _clientType;
+    }
 
     public String getHostname() {
         return _hostname;

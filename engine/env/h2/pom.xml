@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-env</artifactId>
-		<version>4.0.3</version>
+		<version>4.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-env-h2</artifactId>
 	<dependencies>

@@ -51,23 +51,23 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final SimpleTableDef[] _tableDefs;
     private final String _indexName;
     private final String _hostname;
-    private final int _port;
+    private final Integer _port;
     private final String _clusterName;
     private final String _username;
     private final String _password;
     private final ClientType _clientType;
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
+    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
             ClientType clientType) {
         this(name, hostname, port, clusterName, indexName, null, null, null, clientType);
     }
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
+    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
             String username, String password, ClientType clientType) {
         this(name, hostname, port, clusterName, indexName, null, username, password, clientType);
     }
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
+    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
             SimpleTableDef[] tableDefs, String username, String password, ClientType clientType) {
         super(name);
         _hostname = hostname;
@@ -101,8 +101,13 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             client = new TransportClient(settings);
             ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
         } else {
+            final Builder settingsBuilder = ImmutableSettings.builder();
+            settingsBuilder.put("name", "AnalyzerBeans");
+            settingsBuilder.put("shield.enabled", false);
+            final Settings settings = settingsBuilder.build();
+            
             // .client(true) means no shards are stored on this node
-            final Node node = nodeBuilder().clusterName(_clusterName).client(true).node();
+            final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
             client = node.client();
         }
 
@@ -133,7 +138,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         return _hostname;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return _port;
     }
 

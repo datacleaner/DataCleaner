@@ -238,18 +238,22 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     protected ElasticSearchDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String hostname = _hostnameTextField.getText();
-        final Integer port = Integer.parseInt(_portTextField.getText());
+        final ElasticSearchDatastore.ClientType selectedClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
+        final Integer port;
+        if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType)) {
+            port = Integer.parseInt(_portTextField.getText());    
+        } else {
+            port = null;
+        }
         final String clusterName = _clusterNameTextField.getText();
         final String indexName = _indexNameTextField.getText();
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordTextField.getPassword());
-        final ElasticSearchDatastore.ClientType elasticSearchClientType = (ClientType) _clientTypeComboBox
-                .getSelectedItem();
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, elasticSearchClientType);
+            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, selectedClientType);
         } else {
             return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password,
-                    elasticSearchClientType);
+                    selectedClientType);
         }
     }
 

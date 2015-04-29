@@ -49,26 +49,26 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public static final int DEFAULT_PORT = 9300;
 
     private final SimpleTableDef[] _tableDefs;
+    private final ClientType _clientType;
     private final String _indexName;
     private final String _hostname;
     private final Integer _port;
     private final String _clusterName;
     private final String _username;
     private final String _password;
-    private final ClientType _clientType;
+    private final boolean _ssl;
 
-    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
-            ClientType clientType) {
-        this(name, hostname, port, clusterName, indexName, null, null, null, clientType);
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName, boolean ssl) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, ssl);
     }
 
-    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
-            String username, String password, ClientType clientType) {
-        this(name, hostname, port, clusterName, indexName, null, username, password, clientType);
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName,
+            String username, String password, boolean ssl) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl);
     }
 
-    public ElasticSearchDatastore(String name, String hostname, Integer port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs, String username, String password, ClientType clientType) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName,
+            SimpleTableDef[] tableDefs, String username, String password, boolean ssl) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -77,6 +77,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         _tableDefs = tableDefs;
         _username = username;
         _password = password;
+        _ssl = ssl;
         _clientType = clientType;
     }
 
@@ -95,6 +96,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             settingsBuilder.put("cluster.name", _clusterName);
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
+                if (_ssl) {
+                    // TODO: All all the necessary properties
+                }
             }
             final Settings settings = settingsBuilder.build();
 
@@ -156,6 +160,10 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     public String getPassword() {
         return _password;
+    }
+    
+    public boolean getSsl() {
+        return _ssl;
     }
 
     @Override

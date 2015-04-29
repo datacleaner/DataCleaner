@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
@@ -45,6 +46,7 @@ import org.datacleaner.util.NumberDocument;
 import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
@@ -53,6 +55,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private static final long serialVersionUID = 1L;
 
     private static final ElasticSearchDatastore.ClientType DEFAULT_CLIENT_TYPE = ElasticSearchDatastore.ClientType.TRANSPORT;
+    private static final boolean DEFAULT_SSL = false;
 
     private final JComboBox<ClientType> _clientTypeComboBox;
     private final JXTextField _hostnameTextField;
@@ -60,7 +63,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JXTextField _clusterNameTextField;
     private final JXTextField _indexNameTextField;
     private final JXTextField _usernameTextField;
-    private final JPasswordField _passwordTextField;
+    private final JPasswordField _passwordField;
+    private final JCheckBox _sslCheckBox;
 
     @Inject
     public ElasticSearchDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -81,8 +85,11 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _portTextField = WidgetFactory.createTextField();
         _portTextField.setDocument(new NumberDocument(false));
         _usernameTextField = WidgetFactory.createTextField();
-        _passwordTextField = WidgetFactory.createPasswordField();
-
+        _passwordField = WidgetFactory.createPasswordField();
+        _sslCheckBox = new JCheckBox("SSL", DEFAULT_SSL);
+        _sslCheckBox.setOpaque(false);
+        _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        
         _clientTypeComboBox.addItemListener(new ItemListener() {
 
             @Override
@@ -97,13 +104,16 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _portTextField.setText("");
                         _usernameTextField.setEnabled(false);
                         _usernameTextField.setText("");
-                        _passwordTextField.setEnabled(false);
-                        _passwordTextField.setText("");
+                        _passwordField.setEnabled(false);
+                        _passwordField.setText("");
+                        _sslCheckBox.setEnabled(false);
+                        _sslCheckBox.setSelected(DEFAULT_SSL);
                     } else {
                         _hostnameTextField.setEnabled(true);
                         _portTextField.setEnabled(true);
                         _usernameTextField.setEnabled(true);
-                        _passwordTextField.setEnabled(true);
+                        _passwordField.setEnabled(true);
+                        _sslCheckBox.setEnabled(true);
 
                         if (originalDatastore != null) {
                             if (StringUtils.isNullOrEmpty(originalDatastore.getHostname())) {
@@ -117,10 +127,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                                 _portTextField.setText("" + originalDatastore.getPort());
                             }
                             _usernameTextField.setText(originalDatastore.getUsername());
-                            _passwordTextField.setText(originalDatastore.getPassword());
+                            _passwordField.setText(originalDatastore.getPassword());
+                            _sslCheckBox.setSelected(originalDatastore.getSsl());
                         } else {
                             _hostnameTextField.setText("localhost");
                             _portTextField.setText("9300");
+                            _sslCheckBox.setSelected(DEFAULT_SSL);
                         }
                     }
                 }
@@ -170,7 +182,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             _clusterNameTextField.setText(originalDatastore.getClusterName());
             _indexNameTextField.setText(originalDatastore.getIndexName());
             _usernameTextField.setText(originalDatastore.getUsername());
-            _passwordTextField.setText(originalDatastore.getPassword());
+            _passwordField.setText(originalDatastore.getPassword());
         }
     }
 
@@ -256,12 +268,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String clusterName = _clusterNameTextField.getText();
         final String indexName = _indexNameTextField.getText();
         final String username = _usernameTextField.getText();
-        final String password = new String(_passwordTextField.getPassword());
+        final String password = new String(_passwordField.getPassword());
+        final boolean ssl = _sslCheckBox.isSelected();
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, selectedClientType);
+            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName, ssl);
         } else {
-            return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, username, password,
-                    selectedClientType);
+            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName, username, password,
+                    ssl);
         }
     }
 
@@ -288,7 +301,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
+        result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
         return result;
     }
 

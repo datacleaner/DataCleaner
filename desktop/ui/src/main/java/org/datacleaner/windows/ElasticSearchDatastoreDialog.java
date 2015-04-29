@@ -300,9 +300,9 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Client type", _clientTypeComboBox));
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
-        result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
         return result;
     }
 

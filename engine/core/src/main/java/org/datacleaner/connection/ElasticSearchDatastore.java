@@ -41,7 +41,19 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         UpdateableDatastore {
 
     public enum ClientType {
-        NODE, TRANSPORT
+        NODE("Join cluster as a node"), 
+        TRANSPORT("Connect via Transport protocol");
+        
+        private String _humanReadableName;
+        
+        private ClientType(String humanReadableName) {
+            _humanReadableName = humanReadableName; 
+        }
+        
+        @Override
+        public String toString() {
+            return _humanReadableName;
+        }
     }
     
     private static final long serialVersionUID = 1L;

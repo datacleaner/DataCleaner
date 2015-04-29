@@ -642,4 +642,16 @@ public final class WidgetUtils {
             b.setUI(DefaultButtonUI.get());
         }
     }
+    
+    public static void disableComponent(JComponent component) {
+        component.setEnabled(false);
+        component.setBackground(BG_COLOR_BRIGHT.darker());
+        component.setBorder(BORDER_BUTTON_DARK);
+    }
+    
+    public static void enableComponent(JComponent component) {
+        component.setEnabled(true);
+        component.setBackground(BG_COLOR_BRIGHTEST);
+        component.setBorder(BORDER_INPUT);
+    }
 }

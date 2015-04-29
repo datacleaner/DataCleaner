@@ -98,21 +98,21 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 if (eventType == ItemEvent.SELECTED) {
                     final ElasticSearchDatastore.ClientType newSelectedItem = (ClientType) e.getItem();
                     if (newSelectedItem.equals(ElasticSearchDatastore.ClientType.NODE)) {
-                        _hostnameTextField.setEnabled(false);
+                        WidgetUtils.disableComponent(_hostnameTextField);
                         _hostnameTextField.setText("");
-                        _portTextField.setEnabled(false);
+                        WidgetUtils.disableComponent(_portTextField);
                         _portTextField.setText("");
-                        _usernameTextField.setEnabled(false);
+                        WidgetUtils.disableComponent(_usernameTextField);
                         _usernameTextField.setText("");
-                        _passwordField.setEnabled(false);
+                        WidgetUtils.disableComponent(_passwordField);
                         _passwordField.setText("");
                         _sslCheckBox.setEnabled(false);
                         _sslCheckBox.setSelected(DEFAULT_SSL);
                     } else {
-                        _hostnameTextField.setEnabled(true);
-                        _portTextField.setEnabled(true);
-                        _usernameTextField.setEnabled(true);
-                        _passwordField.setEnabled(true);
+                        WidgetUtils.enableComponent(_hostnameTextField);
+                        WidgetUtils.enableComponent(_portTextField);
+                        WidgetUtils.enableComponent(_usernameTextField);
+                        WidgetUtils.enableComponent(_passwordField);
                         _sslCheckBox.setEnabled(true);
 
                         if (originalDatastore != null) {

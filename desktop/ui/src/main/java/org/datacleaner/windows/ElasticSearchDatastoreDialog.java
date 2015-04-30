@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
@@ -301,6 +302,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         result.add(new ImmutableEntry<String, JComponent>("Hostname", _hostnameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Port", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _sslCheckBox));
+        result.add(new ImmutableEntry<String, JComponent>("Credentials, if needed", new JLabel()));
         result.add(new ImmutableEntry<String, JComponent>("Username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Password", _passwordField));
         return result;

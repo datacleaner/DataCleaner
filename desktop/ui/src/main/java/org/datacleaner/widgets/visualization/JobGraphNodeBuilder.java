@@ -87,7 +87,15 @@ class JobGraphNodeBuilder {
             addNodes(graph, sourceColumnFinder, fjb, -1);
         }
 
-        removeUnnecesaryEdges(graph, sourceColumnFinder);
+        // This loop is not very pretty but it ensures that we don't prematurely
+        // stop looking for stuff to remove from the graph. The issue is that
+        // with the current design, the removeUnnecesaryEdges method may remove
+        // something which then should call for a re-evaluation of other edges
+        // to be removed.
+        boolean removedSomething = true;
+        while (removedSomething) {
+            removedSomething = removeUnnecesaryEdges(graph, sourceColumnFinder);
+        }
 
         return graph;
     }
@@ -103,8 +111,10 @@ class JobGraphNodeBuilder {
      * 
      * @param graph
      * @param sourceColumnFinder
+     * 
+     * @return whether or not any edges were removed
      */
-    private void removeUnnecesaryEdges(final DirectedGraph<Object, JobGraphLink> graph,
+    private boolean removeUnnecesaryEdges(final DirectedGraph<Object, JobGraphLink> graph,
             final SourceColumnFinder sourceColumnFinder) {
         final Collection<JobGraphLink> allLinks = graph.getEdges();
         final List<JobGraphLink> linksToRemove = new ArrayList<>();
@@ -149,6 +159,8 @@ class JobGraphNodeBuilder {
         for (JobGraphLink link : linksToRemove) {
             graph.removeEdge(link);
         }
+
+        return !linksToRemove.isEmpty();
     }
 
     private boolean isEdgeShortcutFor(DirectedGraph<Object, JobGraphLink> graph, JobGraphLink potentialShortcut,

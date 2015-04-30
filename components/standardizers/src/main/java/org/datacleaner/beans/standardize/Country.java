@@ -159,7 +159,7 @@ public enum Country implements HasName, HasAliases {
 
     CZECH_REPUBLIC("CZ", "CZE", "Czech Republic", "Česká Republika", "Česko", "Czech"),
 
-    DENMARK("DK", "DNK", "Denmark", "Danmark", "Dinamarca"),
+    DENMARK("DK", "DNK", "Denmark", "Danmark", "Dinamarca", "Dänemark"),
 
     DJIBOUTI("DJ", "DJI", "Djibouti"),
 
@@ -181,7 +181,8 @@ public enum Country implements HasName, HasAliases {
 
     ETHIOPIA("ET", "ETH", "Ethiopia"),
 
-    FALKLAND_ISLANDS("FK", "FLK", "Falkland Islands", "Falkland Islands (Malvinas)", "Malvinas", "Falklands", "Islas Malvinas"),
+    FALKLAND_ISLANDS("FK", "FLK", "Falkland Islands", "Falkland Islands (Malvinas)", "Malvinas", "Falklands",
+            "Islas Malvinas"),
 
     FAROE_ISLANDS("FO", "FRO", "Faroe Islands", "Faeroe Islands"),
 
@@ -249,7 +250,7 @@ public enum Country implements HasName, HasAliases {
 
     IRAQ("IQ", "IRQ", "Iraq", "Irak"),
 
-    IRELAND("IE", "IRL", "Ireland"),
+    IRELAND("IE", "IRL", "Ireland", "Eire", "Eir", "Éire", "Airlann"),
 
     ISLE_OF_MAN("IM", "IMN", "Isle of Man"),
 
@@ -504,7 +505,8 @@ public enum Country implements HasName, HasAliases {
     UNITED_ARAB_EMIRATES("AE", "ARE", "United Arab Emirates"),
 
     UNITED_KINGDOM("GB", "GBR", "United Kingdom", "Great Britain", "United Kingdom of Great Britain",
-            "United Kingdom of Great Britain and Northern Ireland", "England", "Scotland", "Wales", "Northern Ireland", "UK"),
+            "United Kingdom of Great Britain and Northern Ireland", "England", "Scotland", "Wales", "Northern Ireland",
+            "UK"),
 
     UNITED_STATES_MINOR_OUTLYING_ISLANDS("UM", "UMI", "United States Minor Outlying Islands"),
 

@@ -27,7 +27,6 @@ import java.util.concurrent.Callable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.maxrows.MaxRowsFilter;
 import org.datacleaner.descriptors.Descriptors;
@@ -118,7 +117,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
         }
 
         // add a max rows filter
-        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
+        final FilterComponentBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb
+                .addFilter(MaxRowsFilter.class);
         maxRowFilter.getComponentInstance().setMaxRows(_previewRows);
         ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
@@ -148,10 +148,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
             throw new IllegalStateException(firstError);
         }
 
-        final List<AnalyzerResult> results = resultFuture.getResults();
+        final List<? extends PreviewTransformedDataAnalyzer> results = resultFuture
+                .getResults(PreviewTransformedDataAnalyzer.class);
         assert results.size() == 1;
 
-        final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) results.get(0);
+        final PreviewTransformedDataAnalyzer result = results.get(0);
 
         final List<Object[]> rows = result.getList();
         final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
@@ -171,7 +172,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
     private TransformerComponentBuilder<?> findTransformerComponentBuilder(AnalysisJobBuilder ajb,
             TransformerComponentBuilder<?> transformerJobBuilder) {
         final AnalysisJobBuilder analysisJobBuilder = _transformerJobBuilder.getAnalysisJobBuilder();
-        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(_transformerJobBuilder);
+        final int transformerIndex = analysisJobBuilder.getTransformerComponentBuilders().indexOf(
+                _transformerJobBuilder);
         return ajb.getTransformerComponentBuilders().get(transformerIndex);
     }
 

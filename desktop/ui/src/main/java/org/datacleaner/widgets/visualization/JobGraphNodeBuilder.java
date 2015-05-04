@@ -87,15 +87,7 @@ class JobGraphNodeBuilder {
             addNodes(graph, sourceColumnFinder, fjb, -1);
         }
 
-        // This loop is not very pretty but it ensures that we don't prematurely
-        // stop looking for stuff to remove from the graph. The issue is that
-        // with the current design, the removeUnnecesaryEdges method may remove
-        // something which then should call for a re-evaluation of other edges
-        // to be removed.
-        boolean removedSomething = true;
-        while (removedSomething) {
-            removedSomething = removeUnnecesaryEdges(graph, sourceColumnFinder);
-        }
+        removeUnnecesaryEdges(graph, sourceColumnFinder);
 
         return graph;
     }
@@ -111,10 +103,30 @@ class JobGraphNodeBuilder {
      * 
      * @param graph
      * @param sourceColumnFinder
+     */
+    private void removeUnnecesaryEdges(DirectedGraph<Object, JobGraphLink> graph, SourceColumnFinder sourceColumnFinder) {
+        // This loop is not very pretty but it ensures that we don't prematurely
+        // stop looking for stuff to remove from the graph. The issue is that
+        // with the current design, the removeUnnecesaryEdges method may remove
+        // something which then should call for a re-evaluation of other edges
+        // to be removed.
+        boolean removedSomething = true;
+        while (removedSomething) {
+            removedSomething = removeUnnecesaryEdgesIfAny(graph, sourceColumnFinder);
+        }
+    }
+
+    /**
+     * Runs a single check through the graph to remove unnecesary edges (see
+     * {@link #removeUnnecesaryEdges(DirectedGraph, SourceColumnFinder)} if any
+     * are found.
+     * 
+     * @param graph
+     * @param sourceColumnFinder
      * 
      * @return whether or not any edges were removed
      */
-    private boolean removeUnnecesaryEdges(final DirectedGraph<Object, JobGraphLink> graph,
+    private boolean removeUnnecesaryEdgesIfAny(final DirectedGraph<Object, JobGraphLink> graph,
             final SourceColumnFinder sourceColumnFinder) {
         final Collection<JobGraphLink> allLinks = graph.getEdges();
         final List<JobGraphLink> linksToRemove = new ArrayList<>();

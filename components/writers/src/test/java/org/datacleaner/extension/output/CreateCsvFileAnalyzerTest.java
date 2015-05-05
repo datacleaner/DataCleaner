@@ -88,7 +88,7 @@ public class CreateCsvFileAnalyzerTest {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
-        final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort");
+        final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
 
         analyzer.file = new File("csvtest-sortnumerical.csv");
         analyzer.initTempFile();
@@ -148,7 +148,7 @@ public class CreateCsvFileAnalyzerTest {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
-        final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort");
+        final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
 
         analyzer.file = new File("csvtest-sortnumerical.csv");
         analyzer.initTempFile();

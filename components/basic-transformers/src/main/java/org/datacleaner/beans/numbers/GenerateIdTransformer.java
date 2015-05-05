@@ -38,35 +38,48 @@ import org.datacleaner.components.categories.NumbersCategory;
 @Categorized(NumbersCategory.class)
 public class GenerateIdTransformer implements Transformer {
 
-	@Configured
-	@Description("A column which represent the scope for which the ID will be generated. "
-			+ "If eg. a source column is selected, an ID will be generated for each source record. "
-			+ "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
-	InputColumn<?> columnInScope;
+    public enum IdType {
+        SEQUENCE, ROWID;
+    }
 
-	@Configured
-	int offset = 0;
+    @Configured
+    @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row ID.")
+    IdType idType = IdType.SEQUENCE;
 
-	private final AtomicInteger _counter;
+    @Configured
+    @Description("A column which represent the scope for which the ID will be generated. "
+            + "If eg. a source column is selected, an ID will be generated for each source record. "
+            + "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
+    InputColumn<?> columnInScope;
 
-	public GenerateIdTransformer() {
-		_counter = new AtomicInteger();
-	}
+    @Configured
+    int offset = 0;
 
-	@Initialize
-	public void init() {
-		_counter.set(offset);
-	}
+    private final AtomicInteger _counter;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(Integer.class, "Generated ID");
-	}
+    public GenerateIdTransformer() {
+        _counter = new AtomicInteger();
+    }
 
-	@Override
-	public Integer[] transform(InputRow inputRow) {
-		int id = _counter.incrementAndGet();
-		return new Integer[] { id };
-	}
+    @Initialize
+    public void init() {
+        _counter.set(offset);
+    }
+
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(Integer.class, "Generated ID");
+    }
+
+    @Override
+    public Integer[] transform(InputRow inputRow) {
+        int id;
+        if (IdType.ROWID.equals(idType)) {
+            id = inputRow.getId();
+        } else {
+            id = _counter.incrementAndGet();
+        }
+        return new Integer[] { id };
+    }
 
 }

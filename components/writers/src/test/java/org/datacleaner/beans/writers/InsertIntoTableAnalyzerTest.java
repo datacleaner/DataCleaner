@@ -37,8 +37,9 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -111,7 +112,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.values = new InputColumn[] { col1, col2 };
 
         insertIntoTable.validate();
-        
+
         try {
             insertIntoTable.init();
             fail("Exception expected");
@@ -158,7 +159,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.columnNames = new String[] { "foo", "bar" };
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
         insertIntoTable.errorLogFile = null;
-        insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class); 
+        insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
         InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
         InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
@@ -208,7 +209,7 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         insertIntoTable.tableName = "test_table";
         insertIntoTable.columnNames = new String[] { "foo", "bar" };
         insertIntoTable.errorHandlingOption = ErrorHandlingOption.SAVE_TO_FILE;
-        insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class); 
+        insertIntoTable._componentContext = EasyMock.createMock(ComponentContext.class);
 
         InputColumn<Object> col1 = new MockInputColumn<Object>("in1", Object.class);
         InputColumn<Object> col2 = new MockInputColumn<Object>("in2", Object.class);
@@ -309,12 +310,13 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         // run a "copy lines" job with multithreading
         {
-            DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
+            final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
 
-            DataCleanerConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(
-                    new MultiThreadedTaskRunner(4)).replace(datastoreCatalog);
+            final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
+                    datastoreCatalog).withEnvironment(
+                    new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
 
-            AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+            final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
             try {
 
                 ajb.setDatastore(datastoreIn);

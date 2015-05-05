@@ -42,7 +42,7 @@ public class GenerateIdTransformer implements Transformer {
     public enum IdType implements HasName {
         SEQUENCE("Sequence"), ROW_NUMBER("Row number");
         
-        private String name;
+        private final String name;
         
         private IdType(String name) {
             this.name = name;

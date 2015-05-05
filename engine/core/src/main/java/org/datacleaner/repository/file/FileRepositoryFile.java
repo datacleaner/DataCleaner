@@ -60,6 +60,16 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
         _lock = new ReentrantReadWriteLock();
     }
 
+    /**
+     * Gets the physical {@link File} that is backing this
+     * {@link RepositoryFile} instance.
+     * 
+     * @return
+     */
+    public File getFile() {
+        return _file;
+    }
+
     @Override
     public RepositoryFolder getParent() {
         return _parent;

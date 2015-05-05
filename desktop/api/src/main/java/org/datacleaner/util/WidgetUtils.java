@@ -132,14 +132,14 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
     // white with 10% alpha/opacity
-    public static final Color BG_SEMI_TRANSPARENT = new Color(0.0f, 0.0f, 0.0f, 0.05f);
+    public static final Color BG_SEMI_TRANSPARENT = new ColorUIResource(new Color(0.0f, 0.0f, 0.0f, 0.05f));
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
 
     // white
-    public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
+    public static final Color BG_COLOR_BRIGHTEST = new ColorUIResource(Color.WHITE);
 
     // #e1e1e1 (silver-ish)
     public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
@@ -154,7 +154,7 @@ public final class WidgetUtils {
 
     public static final Color BG_COLOR_DARK = new ColorUIResource(33, 33, 33);
 
-    public static final Color BG_COLOR_DARKEST = ColorUIResource.BLACK;
+    public static final Color BG_COLOR_DARKEST = new ColorUIResource(Color.BLACK);
 
     public static final Color COLOR_DEFAULT_BACKGROUND = BG_COLOR_BRIGHTEST;
     public static final Color COLOR_WELL_BACKGROUND = BG_COLOR_BRIGHT;

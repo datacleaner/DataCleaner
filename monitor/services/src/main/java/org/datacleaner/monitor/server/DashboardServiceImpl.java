@@ -144,17 +144,33 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline) {
-        final List<MetricIdentifier> metricIdentifiers = timeline.getMetrics();
-
-        JobIdentifier jobIdentifier = timeline.getJobIdentifier();
+        final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
         final List<RepositoryFile> resultFiles = _resultDao.getResultsForJob(tenant, jobIdentifier);
-        final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
 
+        final List<TimelineDataRow> rows = getTimelineData(tenant, timeline, resultFiles, _metricValueProducer);
+
+        final TimelineData timelineData = new TimelineData();
+        timelineData.setRows(rows);
+
+        return timelineData;
+    }
+
+    protected static List<TimelineDataRow> getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
+            Iterable<RepositoryFile> resultFiles, MetricValueProducer metricValueProducer) {
+        final List<MetricIdentifier> metricIdentifiers = timeline.getMetrics();
+        final JobIdentifier jobIdentifier = timeline.getJobIdentifier();
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
 
+        final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
         for (RepositoryFile resultFile : resultFiles) {
-            final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile,
-                    tenant, jobIdentifier);
+            final MetricValues metricValues;
+            try {
+                metricValues = metricValueProducer
+                        .getMetricValues(metricIdentifiers, resultFile, tenant, jobIdentifier);
+            } catch (Exception e) {
+                logger.warn("Failed to read result metrics of file: {}", resultFile, e);
+                continue;
+            }
             final Date date = metricValues.getMetricDate();
             if (isInRange(date, horizontalAxisOption)) {
                 final TimelineDataRow row = new TimelineDataRow(date, resultFile.getQualifiedPath());
@@ -167,13 +183,10 @@ public class DashboardServiceImpl implements DashboardService {
         // sort rows to ensure correct date order
         Collections.sort(rows);
 
-        final TimelineData timelineData = new TimelineData();
-        timelineData.setRows(rows);
-
-        return timelineData;
+        return rows;
     }
 
-    private boolean isInRange(Date date, HorizontalAxisOption horizontalAxisOption) {
+    private static boolean isInRange(Date date, HorizontalAxisOption horizontalAxisOption) {
         final Date beginDate = horizontalAxisOption.getBeginDate();
         final Date endDate = horizontalAxisOption.getEndDate();
 

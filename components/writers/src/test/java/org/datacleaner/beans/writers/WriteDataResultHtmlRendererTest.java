@@ -23,8 +23,9 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.datacleaner.api.Renderer;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.descriptors.ClasspathScanDescriptorProvider;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.RendererBeanDescriptor;
@@ -67,7 +68,8 @@ public class WriteDataResultHtmlRendererTest {
                         + "AnnotationBasedRendererBeanDescriptor[org.datacleaner.beans.writers.WriteDataResultHtmlRenderer]]",
                 sorted.toString());
 
-        final DataCleanerConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(descriptorProvider);
+        final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
+                .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
         final RendererFactory rendererFactory = new RendererFactory(conf);
 
         final Renderer<? super WriteDataResultImpl, ? extends HtmlFragment> renderer = rendererFactory.getRenderer(

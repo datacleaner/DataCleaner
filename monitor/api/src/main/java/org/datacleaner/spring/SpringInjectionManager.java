@@ -19,17 +19,26 @@
  */
 package org.datacleaner.spring;
 
+import java.util.Collection;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerImpl;
 import org.datacleaner.configuration.InjectionPoint;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.reference.ReferenceDataCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+
+import com.google.common.collect.Sets;
 
 /**
  * A Spring-based {@link InjectionManager} implementation
@@ -37,6 +46,14 @@ import org.springframework.context.ApplicationContext;
 final class SpringInjectionManager extends InjectionManagerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringInjectionManager.class);
+
+    /**
+     * Classes that Spring injection should definately ignore (and avoid warn
+     * logging).
+     */
+    private static final Collection<Class<?>> NON_INJECTED_CLASSES = Sets.<Class<?>> newHashSet(
+            DataCleanerConfiguration.class, DataCleanerHomeFolder.class, Datastore.class, DatastoreCatalog.class,
+            ReferenceDataCatalog.class, Table.class, Column.class);
 
     private final ApplicationContext _applicationContext;
 
@@ -50,11 +67,16 @@ final class SpringInjectionManager extends InjectionManagerImpl {
     protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
         Object instance = super.getInstanceInternal(injectionPoint);
         if (instance == null) {
-            Class<?> baseType = injectionPoint.getBaseType();
+            final Class<?> baseType = injectionPoint.getBaseType();
+            if (NON_INJECTED_CLASSES.contains(baseType)) {
+                logger.debug("Skipping injection of type {} because it is not a candidate for Spring injection",
+                        baseType);
+                return null;
+            }
             try {
                 final Map<String, ?> beans = _applicationContext.getBeansOfType(baseType, false, true);
                 if (beans.isEmpty()) {
-                    logger.warn("No beans resolved of type {}", baseType);
+                    logger.warn("No beans resolved of type {} (in {})", baseType, injectionPoint.getInstance());
                 } else if (beans.size() == 1) {
                     Object bean = beans.values().iterator().next();
                     logger.debug("Resolved spring bean for injection: {}", bean);

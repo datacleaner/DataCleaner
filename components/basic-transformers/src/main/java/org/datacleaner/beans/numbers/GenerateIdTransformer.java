@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -38,12 +39,23 @@ import org.datacleaner.components.categories.NumbersCategory;
 @Categorized(NumbersCategory.class)
 public class GenerateIdTransformer implements Transformer {
 
-    public enum IdType {
-        SEQUENCE, ROWID;
+    public enum IdType implements HasName {
+        SEQUENCE("Sequence"), ROW_NUMBER("Row number");
+        
+        private String name;
+        
+        private IdType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     @Configured
-    @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row ID.")
+    @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row number.")
     IdType idType = IdType.SEQUENCE;
 
     @Configured
@@ -73,8 +85,8 @@ public class GenerateIdTransformer implements Transformer {
 
     @Override
     public Integer[] transform(InputRow inputRow) {
-        int id;
-        if (IdType.ROWID.equals(idType)) {
+        final int id;
+        if (IdType.ROW_NUMBER == idType) {
             id = inputRow.getId();
         } else {
             id = _counter.incrementAndGet();

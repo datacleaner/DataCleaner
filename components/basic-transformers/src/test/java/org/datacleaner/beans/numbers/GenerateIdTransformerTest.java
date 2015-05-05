@@ -58,7 +58,7 @@ public class GenerateIdTransformerTest extends TestCase {
     }
     
     public void testRowId() throws Exception {
-        transformer.idType = IdType.ROWID;
+        transformer.idType = IdType.ROW_NUMBER;
         
         final Integer[] result1 = transformer.transform(new MockInputRow().put(col, null));
         final Integer[] result2 = transformer.transform(new MockInputRow().put(col, null));

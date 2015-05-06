@@ -25,7 +25,6 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.FilterOutcomes;
-import org.datacleaner.util.SourceColumnFinder;
 
 final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements RowProcessingConsumer {
 
@@ -35,17 +34,8 @@ final class AnalyzerConsumer extends AbstractRowProcessingConsumer implements Ro
     private final boolean _concurrent;
 
     public AnalyzerConsumer(Analyzer<?> analyzer, AnalyzerJob analyzerJob, InputColumn<?>[] inputColumns,
-            SourceColumnFinder sourceColumnFinder) {
-        super(null, null, analyzerJob, analyzerJob, sourceColumnFinder);
-        _analyzer = analyzer;
-        _analyzerJob = analyzerJob;
-        _inputColumns = inputColumns;
-        _concurrent = determineConcurrent();
-    }
-
-    public AnalyzerConsumer(Analyzer<?> analyzer, AnalyzerJob analyzerJob, InputColumn<?>[] inputColumns,
-            RowProcessingPublisher publishers) {
-        super(publishers, analyzerJob, analyzerJob);
+            RowProcessingPublisher publisher) {
+        super(publisher, analyzerJob, analyzerJob);
         _analyzer = analyzer;
         _analyzerJob = analyzerJob;
         _inputColumns = inputColumns;

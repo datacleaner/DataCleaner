@@ -33,7 +33,6 @@ import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector.Listener;
-import org.datacleaner.util.SourceColumnFinder;
 
 /**
  * {@link RowProcessingConsumer} implementation for {@link Transformer}s.
@@ -46,15 +45,6 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     private final boolean _concurrent;
     private RowIdGenerator _idGenerator;
 
-    public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
-            InputColumn<?>[] inputColumns, SourceColumnFinder sourceColumnFinder) {
-        super(null, null, transformerJob, transformerJob, sourceColumnFinder);
-        _transformer = transformer;
-        _transformerJob = transformerJob;
-        _inputColumns = inputColumns;
-        _concurrent = determineConcurrent();
-    }
-    
     public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
             InputColumn<?>[] inputColumns, RowProcessingPublisher publisher) {
         super(publisher, transformerJob, transformerJob);

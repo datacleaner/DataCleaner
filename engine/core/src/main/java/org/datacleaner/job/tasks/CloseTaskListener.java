@@ -19,43 +19,55 @@
  */
 package org.datacleaner.job.tasks;
 
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.concurrent.TaskListener;
+import org.datacleaner.job.runner.ActiveOutputDataStream;
+import org.datacleaner.job.runner.RowProcessingConsumer;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Task listener that runs for every component to close it after execution of a
+ * job.
+ * 
+ * This class is NOT a {@link Task} because it needs to run regardless of
+ * errors, which tasks don't.
+ */
 public class CloseTaskListener implements TaskListener {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(CloseTaskListener.class);
 
     private final LifeCycleHelper _lifeCycleHelper;
-    private final ComponentDescriptor<?> _descriptor;
-    private final Object _component;
     private final AtomicBoolean _success;
+    private final RowProcessingConsumer _consumer;
     private final TaskListener _nextTaskListener;
 
-    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, ComponentDescriptor<?> descriptor, Object component,
-            AtomicBoolean success) {
-        this(lifeCycleHelper, descriptor, component, success, null);
-    }
-
-    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, ComponentDescriptor<?> descriptor, Object component,
-            AtomicBoolean success, TaskListener nextTaskListener) {
+    public CloseTaskListener(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, AtomicBoolean success,
+            TaskListener nextTaskListener) {
         _lifeCycleHelper = lifeCycleHelper;
-        _descriptor = descriptor;
-        _component = component;
+        _consumer = consumer;
         _success = success;
         _nextTaskListener = nextTaskListener;
     }
 
-    private void cleanup() {
-        logger.debug("execute()");
+    public void cleanup() {
+        logger.debug("cleanup()");
+
+        final Object component = _consumer.getComponent();
+        final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
 
         // close can occur AFTER completion
-        _lifeCycleHelper.close(_descriptor, _component, _success.get());
+        _lifeCycleHelper.close(descriptor, component, _success.get());
+
+        final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
+        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+            activeOutputDataStream.close();
+        }
+
         _lifeCycleHelper.closeReferenceData();
     }
 

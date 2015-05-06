@@ -30,7 +30,6 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.ImmutableFilterOutcome;
 import org.datacleaner.util.ReflectionUtils;
-import org.datacleaner.util.SourceColumnFinder;
 
 final class FilterConsumer extends AbstractRowProcessingConsumer implements RowProcessingConsumer {
 
@@ -38,15 +37,6 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
     private final FilterJob _filterJob;
     private final InputColumn<?>[] _inputColumns;
     private final boolean _concurrent;
-
-    public FilterConsumer(Filter<?> filter, FilterJob filterJob, InputColumn<?>[] inputColumns,
-            SourceColumnFinder sourceColumnFinder) {
-        super(null, null, filterJob, filterJob, sourceColumnFinder);
-        _filter = filter;
-        _filterJob = filterJob;
-        _inputColumns = inputColumns;
-        _concurrent = determineConcurrent();
-    }
 
     public FilterConsumer(Filter<?> filter, FilterJob filterJob, InputColumn<?>[] inputColumns,
             RowProcessingPublisher publisher) {

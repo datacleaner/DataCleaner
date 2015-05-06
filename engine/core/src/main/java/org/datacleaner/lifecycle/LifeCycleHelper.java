@@ -300,9 +300,4 @@ public final class LifeCycleHelper {
             initialize(descriptor, referenceData);
         }
     }
-
-    public void initializeOutputDataStreams() {
-        // TODO Auto-generated method stub
-        
-    }
 }

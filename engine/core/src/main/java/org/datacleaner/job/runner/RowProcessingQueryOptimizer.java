@@ -224,25 +224,21 @@ public class RowProcessingQueryOptimizer {
      * @return
      */
     public Query getOptimizedQuery() {
-        // if (isOptimizable()) {
-        // return _baseQuery;
-        // }
-
         // create a copy/clone of the original query
         Query q = _baseQuery.clone();
 
-        Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
+        final Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
         for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
-            FilterConsumer consumer = entry.getKey();
-            FilterOutcome outcome = entry.getValue();
-            Filter<?> filter = consumer.getComponent();
+            final FilterConsumer consumer = entry.getKey();
+            final FilterOutcome outcome = entry.getValue();
+            final Filter<?> filter = consumer.getComponent();
 
             @SuppressWarnings("rawtypes")
-            QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+            final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
 
             @SuppressWarnings("unchecked")
-            Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
+            final Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
             q = newQuery;
         }
         return q;

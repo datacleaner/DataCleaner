@@ -19,15 +19,14 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.data.CachingDataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
-import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectItem;
 import org.datacleaner.api.HasOutputDataStreams;
-import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -40,16 +39,13 @@ import org.datacleaner.job.OutputDataStreamJob;
  */
 public class OutputDataStreamRowCollector implements OutputRowCollector {
 
-    private final OutputDataStreamJob _outputDataStreamJob;
-    private final RowProcessingPublisher _publisher;
     private final CachingDataSetHeader _dataSetHeader;
     private final AtomicInteger _rowCounter;
-    private ConsumeRowHandler _consumeRowHandler;
+    private final ConsumeRowHandler _consumeRowHandler;
 
-    public OutputDataStreamRowCollector(OutputDataStreamJob outputDataStreamJob, RowProcessingPublisher publisher) {
-        _outputDataStreamJob = outputDataStreamJob;
-        _publisher = publisher;
-        _dataSetHeader = new CachingDataSetHeader(MetaModelHelper.createSelectItems(publisher.getTable().getColumns()));
+    public OutputDataStreamRowCollector(List<SelectItem> selectItems, ConsumeRowHandler consumeRowHandler) {
+        _dataSetHeader = new CachingDataSetHeader(selectItems);
+        _consumeRowHandler = consumeRowHandler;
         _rowCounter = new AtomicInteger();
     }
 
@@ -61,15 +57,7 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
 
     @Override
     public void putRow(Row row) {
-        MetaModelInputRow inputRow = new MetaModelInputRow(_rowCounter.incrementAndGet(), row);
+        final MetaModelInputRow inputRow = new MetaModelInputRow(_rowCounter.incrementAndGet(), row);
         _consumeRowHandler.consumeRow(inputRow);
     }
-
-    public void configure(HasOutputDataStreams hasOutputDataStreams) {
-        _consumeRowHandler = _publisher.createConsumeRowHandler();
-        final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
-        final Query query = new Query().from(outputDataStream.getTable()).selectAll();
-        hasOutputDataStreams.initializeOutputDataStream(outputDataStream, query, this);
-    }
-
 }

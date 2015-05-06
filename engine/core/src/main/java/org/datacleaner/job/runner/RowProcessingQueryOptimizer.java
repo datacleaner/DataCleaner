@@ -38,11 +38,13 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
+import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,23 +226,35 @@ public class RowProcessingQueryOptimizer {
      * @return
      */
     public Query getOptimizedQuery() {
-        // create a copy/clone of the original query
-        Query q = _baseQuery.clone();
+        Query q = _baseQuery;
 
         final Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
-        for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
+        if (!entries.isEmpty()) {
+            // create a copy/clone of the original query
+            q = q.clone();
 
-            final FilterConsumer consumer = entry.getKey();
-            final FilterOutcome outcome = entry.getValue();
-            final Filter<?> filter = consumer.getComponent();
+            final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, false);
 
-            @SuppressWarnings("rawtypes")
-            final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+            for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
-            @SuppressWarnings("unchecked")
-            final Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
-            q = newQuery;
+                final FilterConsumer consumer = entry.getKey();
+
+                final FilterOutcome outcome = entry.getValue();
+                final Filter<?> filter = consumer.getComponent();
+
+                final FilterJob componentJob = consumer.getComponentJob();
+                lifeCycleHelper.assignConfiguredProperties(componentJob.getDescriptor(), filter,
+                        componentJob.getConfiguration());
+
+                @SuppressWarnings("rawtypes")
+                final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+
+                @SuppressWarnings("unchecked")
+                final Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
+                q = newQuery;
+            }
         }
+
         return q;
     }
 

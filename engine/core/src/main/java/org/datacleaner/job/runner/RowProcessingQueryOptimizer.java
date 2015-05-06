@@ -43,7 +43,6 @@ import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
-import org.scalatest.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

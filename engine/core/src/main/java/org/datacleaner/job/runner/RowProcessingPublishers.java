@@ -32,7 +32,9 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
@@ -41,6 +43,7 @@ import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -75,23 +78,45 @@ public final class RowProcessingPublishers {
 
         _rowProcessingPublishers = new HashMap<Table, RowProcessingPublisher>();
 
-        initialize();
+        initializeAll();
     }
 
-    private void initialize() {
-        for (FilterJob filterJob : _analysisJob.getFilterJobs()) {
-            registerRowProcessingPublishers(filterJob);
-        }
-        for (TransformerJob transformerJob : _analysisJob.getTransformerJobs()) {
-            registerRowProcessingPublishers(transformerJob);
-        }
-        for (AnalyzerJob analyzerJob : _analysisJob.getAnalyzerJobs()) {
-            registerRowProcessingPublishers(analyzerJob);
-        }
+    private void initializeAll() {
+        initializeJob(_analysisJob);
 
         for (RowProcessingPublisher publisher : _rowProcessingPublishers.values()) {
             publisher.initialize();
         }
+    }
+
+    private void initializeJob(AnalysisJob job) {
+        for (FilterJob filterJob : job.getFilterJobs()) {
+            registerRowProcessingPublishers(job, filterJob);
+        }
+        for (TransformerJob transformerJob : job.getTransformerJobs()) {
+            registerRowProcessingPublishers(job, transformerJob);
+        }
+        for (AnalyzerJob analyzerJob : job.getAnalyzerJobs()) {
+            registerRowProcessingPublishers(job, analyzerJob);
+        }
+    }
+
+    private void initializeOutputDataStreamJob(RowProcessingConsumer publishingConsumer,
+            OutputDataStreamJob outputDataStreamJob) {
+        // first initialize the nested job like any other set of components
+        initializeJob(outputDataStreamJob.getJob());
+
+        // then we wire the publisher for this output data stream to a
+        // OutputRowCollector which will get injected via the
+        // HasOutputDataStreams interface.
+        final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
+        final Table table = outputDataStream.getTable();
+        final RowProcessingPublisher publisherForOutputDataStream = getRowProcessingPublisher(table);
+        final OutputDataStreamRowCollector collector = new OutputDataStreamRowCollector(outputDataStreamJob,
+                publisherForOutputDataStream);
+
+        final HasOutputDataStreams component = (HasOutputDataStreams) publishingConsumer.getComponent();
+        collector.configure(component);
     }
 
     public Column[] getPhysicalColumns(ComponentJob componentJob) {
@@ -145,14 +170,14 @@ public final class RowProcessingPublishers {
         return tables;
     }
 
-    private void registerRowProcessingPublishers(ComponentJob componentJob) {
+    private void registerRowProcessingPublishers(final AnalysisJob job, final ComponentJob componentJob) {
         final Column[] physicalColumns = getPhysicalColumns(componentJob);
         final Table[] tables = getTables(componentJob, physicalColumns);
 
         for (Table table : tables) {
             RowProcessingPublisher rowPublisher = _rowProcessingPublishers.get(table);
             if (rowPublisher == null) {
-                rowPublisher = new RowProcessingPublisher(this, table);
+                rowPublisher = new RowProcessingPublisher(this, job, table);
                 rowPublisher.addPrimaryKeysIfSourced();
                 _rowProcessingPublishers.put(table, rowPublisher);
             }
@@ -178,6 +203,14 @@ public final class RowProcessingPublishers {
                 rowPublisher.addFilterBean(filter, filterJob, localInputColumns);
             } else {
                 throw new UnsupportedOperationException("Unsupported component job type: " + componentJob);
+            }
+
+            final OutputDataStreamJob[] outputDataStreamJobs = componentJob.getOutputDataStreamJobs();
+            if (outputDataStreamJobs.length > 0) {
+                RowProcessingConsumer consumer = rowPublisher.getConsumer(componentJob);
+                for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                    initializeOutputDataStreamJob(consumer, outputDataStreamJob);
+                }
             }
         }
     }
@@ -224,6 +257,7 @@ public final class RowProcessingPublishers {
         return _sourceColumnFinder;
     }
 
+    @Deprecated
     protected AnalysisJob getAnalysisJob() {
         return _analysisJob;
     }
@@ -240,6 +274,12 @@ public final class RowProcessingPublishers {
         return _taskRunner;
     }
 
+    /**
+     * 
+     * @return
+     * @deprecated use {@link RowProcessingPublisher#getDatastore()} instead
+     */
+    @Deprecated
     public Datastore getDatastore() {
         return _analysisJob.getDatastore();
     }

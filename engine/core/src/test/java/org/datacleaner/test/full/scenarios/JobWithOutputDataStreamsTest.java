@@ -29,9 +29,13 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.TestHelper;
@@ -47,7 +51,7 @@ public class JobWithOutputDataStreamsTest extends TestCase {
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
 
-    public void testSimpleBuildAndExecuteScenario() throws Exception {
+    public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
             ajb.setDatastore(datastore);
@@ -105,8 +109,9 @@ public class JobWithOutputDataStreamsTest extends TestCase {
         // do some assertions on the built job to check that the data stream is
         // represented there also
         assertEquals(1, job.getAnalyzerJobs().size());
-        assertEquals("analyzer1", job.getAnalyzerJobs().get(0).getName());
-        final OutputDataStreamJob[] outputDataStreamJobs = job.getAnalyzerJobs().get(0).getOutputDataStreamJobs();
+        final AnalyzerJob analyzerJob1 = job.getAnalyzerJobs().get(0);
+        assertEquals("analyzer1", analyzerJob1.getName());
+        final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob1.getOutputDataStreamJobs();
         assertEquals(1, outputDataStreamJobs.length);
 
         final OutputDataStreamJob outputDataStreamJob = outputDataStreamJobs[0];
@@ -116,6 +121,29 @@ public class JobWithOutputDataStreamsTest extends TestCase {
         assertEquals("foo", job2.getSourceColumns().get(0).getName());
         assertEquals("bar", job2.getSourceColumns().get(1).getName());
         assertEquals(1, job2.getAnalyzerJobs().size());
-        assertEquals("analyzer2", job2.getAnalyzerJobs().get(0).getName());
+        final AnalyzerJob analyzerJob2 = job2.getAnalyzerJobs().get(0);
+        assertEquals("analyzer2", analyzerJob2.getName());
+
+        // now run the job(s)
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisResultFuture resultFuture = runner.run(job);
+        resultFuture.await();
+
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+        
+        assertEquals(2, resultFuture.getResults().size());
+
+        // the first result should be trivial - it was also there before issue
+        // #224
+        final ListResult<?> result1 = (ListResult<?>) resultFuture.getResult(analyzerJob1);
+        assertNotNull(result1);
+        assertEquals(122, result1.getValues().size());
+
+        // this result is the "new part" of issue #224
+        final ListResult<?> result2 = (ListResult<?>) resultFuture.getResult(analyzerJob2);
+        assertNotNull(result2);
+        assertEquals(-1, result2.getValues().size());
     }
 }

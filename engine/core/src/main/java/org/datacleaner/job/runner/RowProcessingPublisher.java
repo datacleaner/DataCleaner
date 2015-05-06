@@ -578,7 +578,7 @@ public final class RowProcessingPublisher {
                     includeNonDistributedTasks);
         }
 
-        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer, getQuery());
+        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer, this);
         return new TaskRunnable(task, listener);
     }
 

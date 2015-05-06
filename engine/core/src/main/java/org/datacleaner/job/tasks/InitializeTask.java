@@ -21,11 +21,11 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 
-import org.apache.metamodel.query.Query;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ActiveOutputDataStream;
 import org.datacleaner.job.runner.RowProcessingConsumer;
+import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +39,12 @@ public final class InitializeTask implements Task {
 
     private final LifeCycleHelper _lifeCycleHelper;
     private final RowProcessingConsumer _consumer;
-    private final Query _query;
+    private final RowProcessingPublisher _publisher;
 
-    public InitializeTask(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, Query query) {
+    public InitializeTask(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, RowProcessingPublisher publisher) {
         _lifeCycleHelper = lifeCycleHelper;
         _consumer = consumer;
-        _query = query;
+        _publisher = publisher;
     }
 
     @Override
@@ -60,7 +60,7 @@ public final class InitializeTask implements Task {
         _lifeCycleHelper.validate(descriptor, component);
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-            activeOutputDataStream.initialize(_query);
+            activeOutputDataStream.initialize(_publisher.getQuery());
         }
         _lifeCycleHelper.initialize(descriptor, component);
         _lifeCycleHelper.initializeReferenceData();

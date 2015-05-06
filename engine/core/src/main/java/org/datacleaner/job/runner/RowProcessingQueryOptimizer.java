@@ -38,13 +38,12 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
-import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
-import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.scalatest.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,18 +232,12 @@ public class RowProcessingQueryOptimizer {
             // create a copy/clone of the original query
             q = q.clone();
 
-            final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(null, false);
-
             for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
                 final FilterConsumer consumer = entry.getKey();
 
                 final FilterOutcome outcome = entry.getValue();
                 final Filter<?> filter = consumer.getComponent();
-
-                final FilterJob componentJob = consumer.getComponentJob();
-                lifeCycleHelper.assignConfiguredProperties(componentJob.getDescriptor(), filter,
-                        componentJob.getConfiguration());
 
                 @SuppressWarnings("rawtypes")
                 final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;

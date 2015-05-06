@@ -172,6 +172,7 @@ public final class LookAndFeelManager {
         // Input fields
         UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("TextField.disabledBackground", WidgetUtils.BG_COLOR_BRIGHT);
 
         UIManager.put("TextArea.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -231,7 +232,6 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
-      
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 

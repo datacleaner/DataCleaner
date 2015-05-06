@@ -101,7 +101,7 @@ public final class WidgetFactory {
         final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
         return icon;
     }
-    
+
     public static PopupButton createDarkPopupButton(String text, String imagePath) {
         PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
@@ -267,7 +267,7 @@ public final class WidgetFactory {
         DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
         return taskPaneContainer;
     }
-    
+
     public static JXTaskPane createTaskPane(String title, String imagePath) {
         final ImageIcon icon;
         if (Strings.isNullOrEmpty(imagePath)) {

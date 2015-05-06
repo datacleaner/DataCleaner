@@ -71,6 +71,9 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
                 updateTextFieldsAfterRadioButtonChange();
             }
         };
+        
+        updateTextFieldsAfterRadioButtonChange();
+        
         _radioServiceName.addActionListener(radioActionListener);
         _radioSid.addActionListener(radioActionListener);
     }

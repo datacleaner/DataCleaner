@@ -112,7 +112,7 @@ public class DatabaseDriversPanel extends DCPanel {
         final JPopupMenu addDriverMenu = addDriverButton.getMenu();
 
         final JMenu automaticDownloadAndInstallMenu = new JMenu("Automatic download and install");
-        automaticDownloadAndInstallMenu.setIcon(imageManager.getImageIcon("images/actions/download.png"));
+        automaticDownloadAndInstallMenu.setIcon(imageManager.getImageIcon(IconUtils.ACTION_DOWNLOAD, IconUtils.ICON_SIZE_MENU_ITEM));
 
         final List<DatabaseDriverDescriptor> drivers = _databaseDriverCatalog.getDatabaseDrivers();
         for (DatabaseDriverDescriptor dd : drivers) {
@@ -192,7 +192,7 @@ public class DatabaseDriversPanel extends DCPanel {
                     final DCPanel buttonPanel = new DCPanel();
                     buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
 
-                    final JButton downloadButton = WidgetFactory.createSmallButton("images/actions/download.png");
+                    final JButton downloadButton = WidgetFactory.createSmallButton(IconUtils.ACTION_DOWNLOAD);
                     downloadButton.setToolTipText("Download and install the driver for " + dd.getDisplayName());
 
                     downloadButton.addActionListener(createDownloadActionListener(dd));

@@ -310,13 +310,13 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
 
         // run a "copy lines" job with multithreading
         {
-            DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
+            final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
 
             DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(
                     new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)))
                     .withDatastoreCatalog(datastoreCatalog);
 
-            AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+            final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
             try {
 
                 ajb.setDatastore(datastoreIn);

@@ -45,17 +45,43 @@ import org.datacleaner.monitor.shared.model.JobMetrics;
 import org.datacleaner.monitor.shared.model.MetricGroup;
 import org.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
 
 public class DashboardServiceImplTest extends TestCase {
 
+    private final FileRepository repository = new FileRepository("src/test/resources/example_repo");
+    private final MockJobEngineManager jobEngineManager = new MockJobEngineManager();
+    private final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
+            new DataCleanerEnvironmentImpl(), jobEngineManager);
+    private final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(tenantContextFactory,
+            jobEngineManager);
+
+    public void testSkipInvalidResultFiles() throws Exception {
+        final TenantIdentifier tenant = new TenantIdentifier("tenant4");
+        final TimelineDefinition timeline = new TimelineDefinition();
+        timeline.setJobIdentifier(new JobIdentifier("my job"));
+        final List<MetricIdentifier> metrics = new ArrayList<>();
+        final MetricIdentifier metric = new MetricIdentifier("my metric", "Pattern finder", null, "PRODUCTCODE",
+                "Pattern count", null, null, false, false);
+        metrics.add(metric);
+        timeline.setMetrics(metrics);
+
+        final List<RepositoryFile> resultFiles = tenantContextFactory.getContext(tenant).getResultFolder()
+                .getFiles("my job", ".analysis.result.dat");
+        assertEquals(2, resultFiles.size());
+
+        final List<TimelineDataRow> data = DashboardServiceImpl.getTimelineData(tenant, timeline, resultFiles,
+                metricValueCache);
+        assertNotNull(data);
+        assertEquals(1, data.size());
+
+        // this is the pattern count for product code in the one result file
+        // that is properly deserializable
+        assertEquals("[1]", data.get(0).getMetricValues().toString());
+    }
+
     public void testBasicInteraction() throws Exception {
-        final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        MockJobEngineManager jobEngineManager = new MockJobEngineManager();
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new DataCleanerEnvironmentImpl(), jobEngineManager);
-        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(tenantContextFactory,
-                jobEngineManager);
         final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory, null);
         final TimelineDao timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);
 
@@ -151,7 +177,7 @@ public class DashboardServiceImplTest extends TestCase {
 
         List<TimelineDataRow> rows = data.getRows();
         assertEquals(6, rows.size());
-        
+
         assertEquals("[11, 0, 20, 22, 110]", rows.get(0).getMetricValues().toString());
     }
 }

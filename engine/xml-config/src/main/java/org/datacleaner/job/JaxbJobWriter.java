@@ -55,8 +55,8 @@ import org.datacleaner.job.jaxb.DataContextType;
 import org.datacleaner.job.jaxb.FilterDescriptorType;
 import org.datacleaner.job.jaxb.FilterType;
 import org.datacleaner.job.jaxb.InputType;
-import org.datacleaner.job.jaxb.Job;
 import org.datacleaner.job.jaxb.JobMetadataType;
+import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
@@ -102,7 +102,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
-        final Job jobType = new Job();
+        final JobType jobType = new JobType();
 
         try {
             JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
@@ -482,7 +482,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return id;
     }
 
-    private void addComponents(final Job jobType, final AnalysisJob analysisJob,
+    private void addComponents(final JobType jobType, final AnalysisJob analysisJob,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings) {
         final TransformationType transformationType = new TransformationType();

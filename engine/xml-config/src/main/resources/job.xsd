@@ -3,20 +3,20 @@
 	xmlns:ab="http://eobjects.org/analyzerbeans/job/1.0"
 	elementFormDefault="qualified">
 
-	<element name="job">
-		<complexType>
-			<sequence>
-				<element name="job-metadata" type="ab:jobMetadataType"
-					minOccurs="0" maxOccurs="1" />
-				<element name="source" type="ab:sourceType" minOccurs="0"
-					maxOccurs="1" />
-				<element name="transformation" type="ab:transformationType"
-					minOccurs="0" maxOccurs="1" />
-				<element name="analysis" type="ab:analysisType" minOccurs="1"
-					maxOccurs="1" />
-			</sequence>
-		</complexType>
-	</element>
+	<element name="job" type="ab:jobType" />
+
+	<complexType name="jobType">
+		<sequence>
+			<element name="job-metadata" type="ab:jobMetadataType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="source" type="ab:sourceType" minOccurs="0"
+				maxOccurs="1" />
+			<element name="transformation" type="ab:transformationType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="analysis" type="ab:analysisType" minOccurs="1"
+				maxOccurs="1" />
+		</sequence>
+	</complexType>
 
 	<complexType name="jobMetadataType">
 		<all>

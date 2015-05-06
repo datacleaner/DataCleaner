@@ -17,27 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.test;
 
-import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 
-/**
- * Task that invokes initializing methods for reference data where this is
- * nescesary.
- * 
- * 
- */
-public class InitializeReferenceDataTask implements Task {
+public class TestEnvironment {
+    
+    public static final int THREAD_COUNT = 16;
 
-    private final LifeCycleHelper _lifeCycleHelper;
+    private static final MultiThreadedTaskRunner TASK_RUNNER = new MultiThreadedTaskRunner(THREAD_COUNT);
+    private static final DataCleanerEnvironment ENVIRONMENT = new DataCleanerEnvironmentImpl()
+            .withTaskRunner(TASK_RUNNER);
 
-    public InitializeReferenceDataTask(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
+    public static MultiThreadedTaskRunner getMultiThreadedTaskRunner() {
+        return TASK_RUNNER;
     }
 
-    @Override
-    public void execute() throws Exception {
-        _lifeCycleHelper.initializeReferenceData();
+    public static DataCleanerEnvironment getEnvironment() {
+        return ENVIRONMENT;
     }
-
 }

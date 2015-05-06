@@ -44,10 +44,10 @@ public interface HasOutputDataStreams {
 
     /**
      * Method invoked for each {@link OutputDataStream} that is consumed. The
-     * method is invoked at initialization time (see {@link Initialize}) of the
-     * component. The method passes on an {@link OutputRowCollector} which makes
-     * it possible for this component to post records into the output data
-     * stream.
+     * method is invoked after validation time (see {@link Validate} ) and
+     * before initialization time (see {@link Initialize}) of the component. The
+     * method passes on an {@link OutputRowCollector} which makes it possible
+     * for this component to post records into the output data stream.
      * 
      * If a particular {@link OutputDataStream} is NOT consumed by any following
      * components then this method will not be called.

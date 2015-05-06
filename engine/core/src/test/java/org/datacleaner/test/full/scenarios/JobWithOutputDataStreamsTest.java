@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -38,6 +39,7 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 
 /**
@@ -49,7 +51,9 @@ import org.datacleaner.test.TestHelper;
 public class JobWithOutputDataStreamsTest extends TestCase {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+    private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+            .withEnvironment(environment);
 
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
@@ -132,18 +136,20 @@ public class JobWithOutputDataStreamsTest extends TestCase {
         if (resultFuture.isErrornous()) {
             throw resultFuture.getErrors().get(0);
         }
-        
+
         assertEquals(2, resultFuture.getResults().size());
 
         // the first result should be trivial - it was also there before issue
         // #224
         final ListResult<?> result1 = (ListResult<?>) resultFuture.getResult(analyzerJob1);
         assertNotNull(result1);
-        assertEquals(122, result1.getValues().size());
+        assertEquals(40, result1.getValues().size());
 
         // this result is the "new part" of issue #224
         final ListResult<?> result2 = (ListResult<?>) resultFuture.getResult(analyzerJob2);
         assertNotNull(result2);
-        assertEquals(122, result2.getValues().size());
+        assertEquals(83, result2.getValues().size());
+        final Object lastElement = result2.getValues().get(result2.getValues().size() - 1);
+        assertEquals("MetaModelInputRow[Row[values=[baz, null]]]", lastElement.toString());
     }
 }

@@ -45,6 +45,7 @@ import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.SourceColumnFinder;
@@ -78,33 +79,33 @@ public final class RowProcessingPublishers {
 
         _rowProcessingPublishers = new HashMap<Table, RowProcessingPublisher>();
 
-        initializeAll();
+        registerAll();
     }
 
-    private void initializeAll() {
-        initializeJob(_analysisJob);
+    private void registerAll() {
+        registerJob(_analysisJob, false);
 
         for (RowProcessingPublisher publisher : _rowProcessingPublishers.values()) {
             publisher.initialize();
         }
     }
 
-    private void initializeJob(AnalysisJob job) {
+    private void registerJob(final AnalysisJob job, final boolean outputDataStream) {
         for (FilterJob filterJob : job.getFilterJobs()) {
-            registerRowProcessingPublishers(job, filterJob);
+            registerRowProcessingPublishers(job, filterJob, outputDataStream);
         }
         for (TransformerJob transformerJob : job.getTransformerJobs()) {
-            registerRowProcessingPublishers(job, transformerJob);
+            registerRowProcessingPublishers(job, transformerJob, outputDataStream);
         }
         for (AnalyzerJob analyzerJob : job.getAnalyzerJobs()) {
-            registerRowProcessingPublishers(job, analyzerJob);
+            registerRowProcessingPublishers(job, analyzerJob, outputDataStream);
         }
     }
 
-    private void initializeOutputDataStreamJob(RowProcessingConsumer publishingConsumer,
+    private void registerOutputDataStream(RowProcessingConsumer publishingConsumer,
             OutputDataStreamJob outputDataStreamJob) {
         // first initialize the nested job like any other set of components
-        initializeJob(outputDataStreamJob.getJob());
+        registerJob(outputDataStreamJob.getJob(), true);
 
         // then we wire the publisher for this output data stream to a
         // OutputRowCollector which will get injected via the
@@ -170,14 +171,16 @@ public final class RowProcessingPublishers {
         return tables;
     }
 
-    private void registerRowProcessingPublishers(final AnalysisJob job, final ComponentJob componentJob) {
+    private void registerRowProcessingPublishers(final AnalysisJob job, final ComponentJob componentJob,
+            final boolean outputDataStream) {
         final Column[] physicalColumns = getPhysicalColumns(componentJob);
         final Table[] tables = getTables(componentJob, physicalColumns);
 
         for (Table table : tables) {
             RowProcessingPublisher rowPublisher = _rowProcessingPublishers.get(table);
             if (rowPublisher == null) {
-                rowPublisher = new RowProcessingPublisher(this, job, table);
+                final TaskRunner taskRunner = outputDataStream ? new SingleThreadedTaskRunner() : _taskRunner;
+                rowPublisher = new RowProcessingPublisher(this, job, table, taskRunner);
                 rowPublisher.addPrimaryKeysIfSourced();
                 _rowProcessingPublishers.put(table, rowPublisher);
             }
@@ -209,7 +212,7 @@ public final class RowProcessingPublishers {
             if (outputDataStreamJobs.length > 0) {
                 RowProcessingConsumer consumer = rowPublisher.getConsumer(componentJob);
                 for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
-                    initializeOutputDataStreamJob(consumer, outputDataStreamJob);
+                    registerOutputDataStream(consumer, outputDataStreamJob);
                 }
             }
         }
@@ -268,10 +271,6 @@ public final class RowProcessingPublishers {
 
     protected LifeCycleHelper getLifeCycleHelper() {
         return _lifeCycleHelper;
-    }
-
-    protected TaskRunner getTaskRunner() {
-        return _taskRunner;
     }
 
     /**

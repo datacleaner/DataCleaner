@@ -56,6 +56,7 @@ public class CloseTaskListener implements TaskListener {
 
         // close can occur AFTER completion
         _lifeCycleHelper.close(_descriptor, _component, _success.get());
+        _lifeCycleHelper.closeReferenceData();
     }
 
     @Override

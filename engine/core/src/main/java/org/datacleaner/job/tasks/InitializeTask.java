@@ -48,7 +48,9 @@ public final class InitializeTask implements Task {
 
 		_lifeCycleHelper.assignConfiguredProperties(_componentDescriptor, _component, _beanConfiguration);
 		_lifeCycleHelper.assignProvidedProperties(_componentDescriptor, _component);
+		_lifeCycleHelper.initializeOutputDataStreams();
 		_lifeCycleHelper.initialize(_componentDescriptor, _component);
+		_lifeCycleHelper.initializeReferenceData();
 	}
 
 	@Override

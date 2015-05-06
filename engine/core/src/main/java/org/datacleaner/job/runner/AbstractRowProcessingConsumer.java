@@ -53,21 +53,10 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
 
-    /**
-     * 
-     * @param publishers
-     * @param outcomeSinkJob
-     * @param inputColumnSinkJob
-     * 
-     * @deprecated use
-     *             {@link #AbstractRowProcessingConsumer(AnalysisJob, AnalysisListener, HasComponentRequirement, InputColumnSinkJob, SourceColumnFinder)}
-     *             instead.
-     */
-    @Deprecated
-    protected AbstractRowProcessingConsumer(RowProcessingPublishers publishers, HasComponentRequirement outcomeSinkJob,
+    protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
-        this(publishers.getAnalysisJob(), publishers.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
-                publishers.getSourceColumnFinder());
+        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
+                publisher.getSourceColumnFinder());
     }
 
     protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,

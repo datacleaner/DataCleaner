@@ -47,10 +47,10 @@ final class FilterConsumer extends AbstractRowProcessingConsumer implements RowP
         _inputColumns = inputColumns;
         _concurrent = determineConcurrent();
     }
-    
+
     public FilterConsumer(Filter<?> filter, FilterJob filterJob, InputColumn<?>[] inputColumns,
-            RowProcessingPublishers publishers) {
-        super(publishers, filterJob, filterJob);
+            RowProcessingPublisher publisher) {
+        super(publisher, filterJob, filterJob);
         _filter = filter;
         _filterJob = filterJob;
         _inputColumns = inputColumns;

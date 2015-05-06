@@ -56,8 +56,8 @@ final class TransformerConsumer extends AbstractRowProcessingConsumer implements
     }
     
     public TransformerConsumer(Transformer transformer, TransformerJob transformerJob,
-            InputColumn<?>[] inputColumns, RowProcessingPublishers publishers) {
-        super(publishers, transformerJob, transformerJob);
+            InputColumn<?>[] inputColumns, RowProcessingPublisher publisher) {
+        super(publisher, transformerJob, transformerJob);
         _transformer = transformer;
         _transformerJob = transformerJob;
         _inputColumns = inputColumns;

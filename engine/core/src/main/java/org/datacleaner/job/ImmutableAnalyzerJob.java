@@ -19,95 +19,40 @@
  */
 package org.datacleaner.job;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Map;
-import java.util.Set;
 
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.util.CollectionUtils2;
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.util.ReadObjectBuilder;
 
-import com.google.common.collect.ImmutableMap;
-
-public final class ImmutableAnalyzerJob extends BaseObject implements AnalyzerJob {
+public final class ImmutableAnalyzerJob extends ImmutableComponentJob implements AnalyzerJob {
 
     private static final long serialVersionUID = 1L;
-
-    private final String _name;
-    private final AnalyzerDescriptor<?> _descriptor;
-    private final ComponentConfiguration _beanConfiguration;
-    private final ComponentRequirement _componentRequirement;
-    private final Map<String, String> _metadataProperties;
-
-    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor, ComponentConfiguration beanConfiguration,
-            ComponentRequirement requirement, Map<String, String> metadataProperties) {
-        _name = name;
-        _descriptor = descriptor;
-        _beanConfiguration = beanConfiguration;
-        _componentRequirement = requirement;
-        
-        if (metadataProperties == null) {
-            _metadataProperties = Collections.emptyMap();
-        } else {
-            _metadataProperties = ImmutableMap.copyOf(metadataProperties);
-        }
-    }
     
-    @Override
-    public Map<String, String> getMetadataProperties() {
-        return _metadataProperties;
+    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
+            ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
+            Map<String, String> metadataProperties, OutputDataStreamJob[] outputDataStreamJobs) {
+        super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
-    @Override
-    public ComponentRequirement getComponentRequirement() {
-        return _componentRequirement;
+    public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
+            ComponentConfiguration componentConfiguration, ComponentRequirement requirement,
+            Map<String, String> metadataProperties) {
+        super(name, descriptor, componentConfiguration, requirement, metadataProperties);
     }
 
-    @Override
-    public String getName() {
-        return _name;
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, ImmutableAnalyzerJob.class).readObject(stream);
     }
 
     @Override
     public AnalyzerDescriptor<?> getDescriptor() {
-        return _descriptor;
-    }
-
-    @Override
-    public ComponentConfiguration getConfiguration() {
-        return _beanConfiguration;
-    }
-
-    @Override
-    public InputColumn<?>[] getInput() {
-        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-        Set<ConfiguredPropertyDescriptor> propertiesForInput = _descriptor.getConfiguredPropertiesForInput();
-        for (ConfiguredPropertyDescriptor propertyDescriptor : propertiesForInput) {
-            Object property = _beanConfiguration.getProperty(propertyDescriptor);
-            InputColumn<?>[] inputs = CollectionUtils2.arrayOf(InputColumn.class, property);
-            if (inputs != null) {
-                for (InputColumn<?> inputColumn : inputs) {
-                    result.add(inputColumn);
-                }
-            }
-        }
-        return result.toArray(new InputColumn<?>[result.size()]);
-    }
-
-    @Override
-    protected void decorateIdentity(List<Object> identifiers) {
-        identifiers.add(_name);
-        identifiers.add(_beanConfiguration);
-        identifiers.add(_descriptor);
-        identifiers.add(_componentRequirement);
+        return (AnalyzerDescriptor<?>) super.getDescriptor();
     }
 
     @Override
     public String toString() {
-        return "ImmutableAnalyzerJob[name=" + _name + ",analyzer=" + _descriptor.getDisplayName() + "]";
+        return "ImmutableAnalyzerJob[name=" + getName() + ",analyzer=" + getDescriptor().getDisplayName() + "]";
     }
 }

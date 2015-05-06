@@ -146,7 +146,8 @@
 				minOccurs="0" maxOccurs="1" />
 			<element name="input" type="ab:inputType" minOccurs="0"
 				maxOccurs="unbounded" />
-			<element name="output-data-set" type="ab:outputDataSetType" />
+			<element name="output-data-stream" type="ab:outputDataStreamType"
+				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="requires" type="token" use="optional">
 			<annotation>
@@ -168,7 +169,7 @@
 		<attribute name="ref" type="token" use="required" />
 	</complexType>
 
-	<complexType name="outputDataSetType">
+	<complexType name="outputDataStreamType">
 		<sequence>
 			<element name="job" type="ab:jobType" minOccurs="1"
 				maxOccurs="1" />

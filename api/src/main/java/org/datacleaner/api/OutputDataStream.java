@@ -25,14 +25,14 @@ import org.apache.metamodel.util.HasName;
 import org.datacleaner.connection.PerformanceCharacteristics;
 
 /**
- * Interface that describes the metadata of an output data set. See
- * {@link HasOutputDataSets} for details on how the metadata relates to actual
- * data.
+ * Interface that describes the metadata of an output data stream. See
+ * {@link HasOutputDataStreams} for details on how the metadata relates to
+ * actual data.
  */
-public interface OutputDataSet extends HasName {
+public interface OutputDataStream extends HasName {
 
     /**
-     * Gets the name of the output data set, as presented to the user and
+     * Gets the name of the output data stream, as presented to the user and
      * referenced to in analysis job files etc.
      */
     @Override
@@ -40,16 +40,16 @@ public interface OutputDataSet extends HasName {
 
     /**
      * Gets the logical {@link Table} objects that represent the format of the
-     * data that will be made available by the {@link HasOutputDataSets}
+     * data that will be made available by the {@link HasOutputDataStreams}
      * 
      * @return
      */
     public Table getTable();
 
     /**
-     * Gets performance characteristics of the output data set. This may
+     * Gets performance characteristics of the output data stream. This may
      * influence the {@link Query} posted to consume the data. See
-     * {@link HasOutputDataSets#initializeOutputDataSet(OutputDataSetMetadata, org.apache.metamodel.query.Query, OutputRowCollector)}
+     * {@link HasOutputDataStreams#initializeOutputDataStream(OutputDataStream, Query, OutputRowCollector)}
      * for details on usage.
      * 
      * @return

@@ -144,6 +144,6 @@ public class JobWithOutputDataStreamsTest extends TestCase {
         // this result is the "new part" of issue #224
         final ListResult<?> result2 = (ListResult<?>) resultFuture.getResult(analyzerJob2);
         assertNotNull(result2);
-        assertEquals(-1, result2.getValues().size());
+        assertEquals(122, result2.getValues().size());
     }
 }

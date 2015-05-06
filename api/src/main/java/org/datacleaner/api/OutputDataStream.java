@@ -19,17 +19,20 @@
  */
 package org.datacleaner.api;
 
+import java.io.Serializable;
+
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.connection.PerformanceCharacteristics;
 
 /**
- * Interface that describes the metadata of an output data stream. See
- * {@link HasOutputDataStreams} for details on how the metadata relates to
+ * Interface that describes the metadata of an output data stream.
+ * 
+ * See {@link HasOutputDataStreams} for details on how the metadata relates to
  * actual data.
  */
-public interface OutputDataStream extends HasName {
+public interface OutputDataStream extends HasName, Serializable {
 
     /**
      * Gets the name of the output data stream, as presented to the user and

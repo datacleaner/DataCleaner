@@ -54,7 +54,7 @@ public final class LazyFilterOutcome extends AbstractFilterOutcome {
                     _filterJobBuilder.getConfiguredProperties());
             return new ImmutableFilterJob(_filterJobBuilder.getName(), _filterJobBuilder.getDescriptor(),
                     beanConfiguration, _filterJobBuilder.getComponentRequirement(),
-                    _filterJobBuilder.getMetadataProperties());
+                    _filterJobBuilder.getMetadataProperties(), _filterJobBuilder.getOutputDataStreamJobs());
         }
     }
 

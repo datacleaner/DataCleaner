@@ -17,42 +17,41 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.output;
+package org.datacleaner.job.builder;
 
-import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.connection.PerformanceCharacteristics;
-import org.datacleaner.connection.PerformanceCharacteristicsImpl;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.OutputDataStreamJob;
 
-public class PushOutputDataStream implements OutputDataStream {
+/**
+ * Represents a lazily evaluated {@link OutputDataStreamJob} which is still
+ * being built.
+ */
+public class LazyOutputDataStreamJob implements OutputDataStreamJob {
 
     private static final long serialVersionUID = 1L;
-    
-    private final String _name;
-    private final Table _table;
 
-    public PushOutputDataStream(String name, Table table) {
-        _name = name;
-        _table = table;
+    private final OutputDataStream _outputDataStream;
+    private final transient AnalysisJobBuilder _jobBuilder;
+
+    public LazyOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJobBuilder jobBuilder) {
+        _outputDataStream = outputDataStream;
+        _jobBuilder = jobBuilder;
+
     }
 
     @Override
-    public String getName() {
-        return _name;
+    public OutputDataStream getOutputDataStream() {
+        return _outputDataStream;
     }
 
     @Override
-    public Table getTable() {
-        return _table;
+    public AnalysisJob getJob() {
+        return getJob(false);
     }
 
-    @Override
-    public PerformanceCharacteristics getPerformanceCharacteristics() {
-        return new PerformanceCharacteristicsImpl(false, false);
+    public AnalysisJob getJob(boolean validate) {
+        return _jobBuilder.toAnalysisJob(validate);
     }
 
-    @Override
-    public String toString() {
-        return "PushOutputDataStream[name=" + _name + "]";
-    }
 }

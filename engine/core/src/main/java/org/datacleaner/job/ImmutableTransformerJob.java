@@ -45,6 +45,20 @@ public final class ImmutableTransformerJob extends ImmutableComponentJob impleme
         _output = Collections.unmodifiableList(new ArrayList<MutableInputColumn<?>>(output));
     }
 
+    /**
+     * 
+     * @param name
+     * @param descriptor
+     * @param componentConfiguration
+     * @param output
+     * @param requirement
+     * @param metadataProperties
+     * 
+     * @deprecated use
+     *             {@link #ImmutableTransformerJob(String, TransformerDescriptor, ComponentConfiguration, Collection, ComponentRequirement, Map, OutputDataStreamJob[])}
+     *             instead
+     */
+    @Deprecated
     public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
             ComponentConfiguration componentConfiguration, Collection<MutableInputColumn<?>> output,
             ComponentRequirement requirement, Map<String, String> metadataProperties) {

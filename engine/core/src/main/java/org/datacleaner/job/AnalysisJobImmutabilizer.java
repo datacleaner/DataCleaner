@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.builder.LazyFilterOutcome;
+import org.datacleaner.job.builder.LazyOutputDataStreamJob;
 
 /**
  * Class that will load mutable and lazy components into their immutable
@@ -41,6 +43,24 @@ public final class AnalysisJobImmutabilizer {
     public AnalysisJobImmutabilizer() {
         _referenceMap = new HashMap<>();
         // prevent instantiation
+    }
+
+    public OutputDataStreamJob[] load(OutputDataStreamJob[] outputDataStreamJobs, boolean validate) {
+        if (outputDataStreamJobs == null || outputDataStreamJobs.length == 0) {
+            return outputDataStreamJobs;
+        }
+        final OutputDataStreamJob[] result = new OutputDataStreamJob[outputDataStreamJobs.length];
+        for (int i = 0; i < result.length; i++) {
+            final OutputDataStreamJob outputDataStreamJob = outputDataStreamJobs[i];
+            if (outputDataStreamJob instanceof LazyOutputDataStreamJob) {
+                final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
+                final AnalysisJob job = ((LazyOutputDataStreamJob) outputDataStreamJob).getJob(validate);
+                result[i] = new ImmutableOutputDataStreamJob(outputDataStream, job);
+            } else {
+                result[i] = outputDataStreamJob;
+            }
+        }
+        return result;
     }
 
     public FilterOutcome load(FilterOutcome outcome) {

@@ -40,6 +40,19 @@ public final class ImmutableFilterJob extends ImmutableComponentJob implements F
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
+    /**
+     * 
+     * @param name
+     * @param descriptor
+     * @param componentConfiguration
+     * @param requirement
+     * @param metadataProperties
+     * 
+     * @deprecated use
+     *             {@link #ImmutableFilterJob(String, FilterDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
+     *             instead
+     */
+    @Deprecated
     public ImmutableFilterJob(String name, FilterDescriptor<?, ?> descriptor,
             ComponentConfiguration componentConfiguration, ComponentRequirement requirement,
             Map<String, String> metadataProperties) {

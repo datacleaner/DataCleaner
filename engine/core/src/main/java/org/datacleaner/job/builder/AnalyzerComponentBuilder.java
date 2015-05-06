@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
@@ -40,9 +41,9 @@ import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.ImmutableAnalyzerJob;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,10 +140,12 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = getConfiguredProperties();
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
+        final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
         if (!_multipleJobsSupported) {
             ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
         }
 
@@ -183,7 +186,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             // there's only a single table involved - leave the input columns
             // untouched
             ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
         }
 
@@ -197,10 +201,11 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             Entry<Table, List<InputColumn<?>>> entry = (Entry<Table, List<InputColumn<?>>>) iterator.next();
             List<InputColumn<?>> columns = entry.getValue();
             if (_inputProperty.isArray()) {
-                jobs.add(createPartitionedJob(columns.toArray(new InputColumn[columns.size()]), configuredProperties));
+                jobs.add(createPartitionedJob(columns.toArray(new InputColumn[columns.size()]), configuredProperties,
+                        outputDataStreamJobs));
             } else {
                 for (InputColumn<?> column : columns) {
-                    jobs.add(createPartitionedJob(column, configuredProperties));
+                    jobs.add(createPartitionedJob(column, configuredProperties, outputDataStreamJobs));
                 }
             }
         }
@@ -250,20 +255,21 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     private AnalyzerJob createPartitionedJob(Object columnValue,
-            Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
+            Map<ConfiguredPropertyDescriptor, Object> configuredProperties, OutputDataStreamJob[] outputDataStreamJobs) {
         Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
                 configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
         ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(getComponentRequirement());
-        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                jobProperties), componentRequirement, getMetadataProperties());
+        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                new ImmutableComponentConfiguration(jobProperties), componentRequirement, getMetadataProperties(),
+                outputDataStreamJobs);
         return job;
     }
 
     @Override
     public String toString() {
-        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
-                + "]";
+        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns="
+                + getInputColumns() + "]";
     }
 
     @Override

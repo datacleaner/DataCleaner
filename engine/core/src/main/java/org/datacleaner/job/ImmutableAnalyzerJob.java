@@ -29,13 +29,26 @@ import org.datacleaner.util.ReadObjectBuilder;
 public final class ImmutableAnalyzerJob extends ImmutableComponentJob implements AnalyzerJob {
 
     private static final long serialVersionUID = 1L;
-    
+
     public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
             ComponentConfiguration componentConfiguration, ComponentRequirement componentRequirement,
             Map<String, String> metadataProperties, OutputDataStreamJob[] outputDataStreamJobs) {
         super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
     }
 
+    /**
+     * 
+     * @param name
+     * @param descriptor
+     * @param componentConfiguration
+     * @param requirement
+     * @param metadataProperties
+     * 
+     * @deprecated use
+     *             {@link #ImmutableAnalyzerJob(String, AnalyzerDescriptor, ComponentConfiguration, ComponentRequirement, Map, OutputDataStreamJob[])}
+     *             instead
+     */
+    @Deprecated
     public ImmutableAnalyzerJob(String name, AnalyzerDescriptor<?> descriptor,
             ComponentConfiguration componentConfiguration, ComponentRequirement requirement,
             Map<String, String> metadataProperties) {

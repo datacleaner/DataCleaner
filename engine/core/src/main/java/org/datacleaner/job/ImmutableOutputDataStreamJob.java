@@ -19,17 +19,28 @@
  */
 package org.datacleaner.job;
 
-import java.io.Serializable;
-
 import org.datacleaner.api.OutputDataStream;
 
-/**
- * Represents an entry to run an {@link AnalysisJob} for a particular
- * {@link OutputDataStream}.
- */
-public interface OutputDataStreamJob extends Serializable {
+public class ImmutableOutputDataStreamJob implements OutputDataStreamJob {
 
-    public OutputDataStream getOutputDataStream();
+    private static final long serialVersionUID = 1L;
 
-    public AnalysisJob getJob();
+    private final OutputDataStream _outputDataStream;
+    private final AnalysisJob _job;
+
+    public ImmutableOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJob job) {
+        _outputDataStream = outputDataStream;
+        _job = job;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream() {
+        return _outputDataStream;
+    }
+
+    @Override
+    public AnalysisJob getJob() {
+        return _job;
+    }
+
 }

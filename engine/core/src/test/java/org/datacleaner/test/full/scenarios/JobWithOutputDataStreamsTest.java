@@ -1,0 +1,121 @@
+/**
+ * DataCleaner (community edition)
+ * Copyright (C) 2014 Neopost - Customer Information Management
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+package org.datacleaner.test.full.scenarios;
+
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.test.MockAnalyzer;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
+import org.datacleaner.test.TestHelper;
+
+/**
+ * Basic acceptance test for DC issue #224: Output DataSet (renamed to 'data
+ * stream') producers and jobs. This test uses the additions to the builder API
+ * to build a job with {@link OutputDataStream}s and executes it to verify the
+ * invocation and completion of the {@link OutputDataStreamJob}s.
+ */
+public class JobWithOutputDataStreamsTest extends TestCase {
+
+    private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore);
+
+    public void testSimpleBuildAndExecuteScenario() throws Exception {
+        final AnalysisJob job;
+        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {
+            ajb.setDatastore(datastore);
+
+            ajb.addSourceColumns("customers.contactfirstname");
+            ajb.addSourceColumns("customers.contactlastname");
+
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
+                    .addAnalyzer(MockOutputDataStreamAnalyzer.class);
+
+            // analyzer is still unconfigured
+            assertEquals(0, analyzer1.getOutputDataStreams().size());
+
+            // now configure it
+            final List<MetaModelInputColumn> sourceColumns = ajb.getSourceColumns();
+            analyzer1.setName("analyzer1");
+            analyzer1.addInputColumn(sourceColumns.get(0));
+            assertTrue(analyzer1.isConfigured());
+
+            final List<OutputDataStream> dataStreams = analyzer1.getOutputDataStreams();
+
+            assertEquals(2, dataStreams.size());
+            assertEquals("foo bar records", dataStreams.get(0).getName());
+            assertEquals("counter records", dataStreams.get(1).getName());
+
+            final OutputDataStream dataStream = analyzer1.getOutputDataStream("foo bar records");
+            // assert that the same instance is reused when re-referred to
+            assertSame(dataStreams.get(0), dataStream);
+
+            // the stream is still not "consumed" yet
+            assertFalse(analyzer1.isOutputDataStreamConsumed(dataStream));
+
+            final AnalysisJobBuilder outputDataStreamJobBuilder = analyzer1.getOutputDataStreamJobBuilder(dataStream);
+            final List<MetaModelInputColumn> outputDataStreamColumns = outputDataStreamJobBuilder.getSourceColumns();
+            assertEquals(2, outputDataStreamColumns.size());
+            assertEquals("MetaModelInputColumn[foo bar records.foo]", outputDataStreamColumns.get(0).toString());
+            assertEquals("MetaModelInputColumn[foo bar records.bar]", outputDataStreamColumns.get(1).toString());
+
+            // the stream is still not "consumed" because no components exist in
+            // the output stream
+            assertFalse(analyzer1.isOutputDataStreamConsumed(dataStream));
+
+            final AnalyzerComponentBuilder<MockAnalyzer> analyzer2 = outputDataStreamJobBuilder
+                    .addAnalyzer(MockAnalyzer.class);
+            analyzer2.addInputColumns(outputDataStreamColumns);
+            analyzer2.setName("analyzer2");
+            assertTrue(analyzer2.isConfigured());
+
+            // the stream is still not "consumed" yet
+            assertTrue(analyzer1.isOutputDataStreamConsumed(dataStream));
+
+            job = ajb.toAnalysisJob();
+        }
+
+        // do some assertions on the built job to check that the data stream is
+        // represented there also
+        assertEquals(1, job.getAnalyzerJobs().size());
+        assertEquals("analyzer1", job.getAnalyzerJobs().get(0).getName());
+        final OutputDataStreamJob[] outputDataStreamJobs = job.getAnalyzerJobs().get(0).getOutputDataStreamJobs();
+        assertEquals(1, outputDataStreamJobs.length);
+
+        final OutputDataStreamJob outputDataStreamJob = outputDataStreamJobs[0];
+        assertEquals("foo bar records", outputDataStreamJob.getOutputDataStream().getName());
+        final AnalysisJob job2 = outputDataStreamJob.getJob();
+        assertEquals(2, job2.getSourceColumns().size());
+        assertEquals("foo", job2.getSourceColumns().get(0).getName());
+        assertEquals("bar", job2.getSourceColumns().get(1).getName());
+        assertEquals(1, job2.getAnalyzerJobs().size());
+        assertEquals("analyzer2", job2.getAnalyzerJobs().get(0).getName());
+    }
+}

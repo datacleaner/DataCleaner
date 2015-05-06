@@ -24,6 +24,8 @@ package org.datacleaner.connection;
  */
 public final class PerformanceCharacteristicsImpl implements PerformanceCharacteristics {
 
+    private static final long serialVersionUID = 1L;
+    
     private final boolean _queryOptimizationPreferred;
     private final boolean _naturalRecordOrderConsistent;
 

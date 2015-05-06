@@ -34,6 +34,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.ImmutableFilterJob;
+import org.datacleaner.job.OutputDataStreamJob;
 
 /**
  * A {@link ComponentBuilder} for {@link Filter}s.
@@ -82,14 +83,15 @@ public final class FilterComponentBuilder<F extends Filter<C>, C extends Enum<C>
         }
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
+        final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
         if (_cachedJob == null) {
             _cachedJob = new ImmutableFilterJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                    getConfiguredProperties()), componentRequirement, getMetadataProperties());
+                    getConfiguredProperties()), componentRequirement, getMetadataProperties(), outputDataStreamJobs);
         } else {
             final ImmutableFilterJob newFilterJob = new ImmutableFilterJob(getName(), getDescriptor(),
                     new ImmutableComponentConfiguration(getConfiguredProperties()), componentRequirement,
-                    getMetadataProperties());
+                    getMetadataProperties(), outputDataStreamJobs);
             if (!newFilterJob.equals(_cachedJob)) {
                 _cachedJob = newFilterJob;
             }

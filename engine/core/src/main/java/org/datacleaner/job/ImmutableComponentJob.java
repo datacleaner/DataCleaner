@@ -125,6 +125,7 @@ public class ImmutableComponentJob extends BaseObject implements ComponentJob {
         identifiers.add(_beanConfiguration);
         identifiers.add(_descriptor);
         identifiers.add(_componentRequirement);
+        identifiers.add(_outputDataStreamJobs);
     }
 
     @Override

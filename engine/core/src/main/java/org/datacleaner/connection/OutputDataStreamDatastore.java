@@ -17,42 +17,35 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.output;
+package org.datacleaner.connection;
 
-import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.DataContext;
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.connection.PerformanceCharacteristics;
-import org.datacleaner.connection.PerformanceCharacteristicsImpl;
+import org.datacleaner.data.OutputDataStreamDataContext;
 
-public class PushOutputDataStream implements OutputDataStream {
+/**
+ * A virtual {@link Datastore} that represents/wraps a {@link OutputDataStream}.
+ */
+public class OutputDataStreamDatastore extends UsageAwareDatastore<DataContext> {
+
+    private final OutputDataStream _outputDataStream;
+
+    public OutputDataStreamDatastore(OutputDataStream outputDataStream) {
+        super(outputDataStream.getName());
+        _outputDataStream = outputDataStream;
+    }
 
     private static final long serialVersionUID = 1L;
-    
-    private final String _name;
-    private final Table _table;
-
-    public PushOutputDataStream(String name, Table table) {
-        _name = name;
-        _table = table;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public Table getTable() {
-        return _table;
-    }
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
-        return new PerformanceCharacteristicsImpl(false, false);
+        return _outputDataStream.getPerformanceCharacteristics();
     }
 
     @Override
-    public String toString() {
-        return "PushOutputDataStream[name=" + _name + "]";
+    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final DataContext dataContext = new OutputDataStreamDataContext(_outputDataStream);
+        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
     }
+
 }

@@ -54,7 +54,7 @@ public class JobWithOutputDataStreamsTest extends TestCase {
     private DataCleanerEnvironment environment = TestEnvironment.getEnvironment();
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
             .withEnvironment(environment);
-
+    
     public void testSimpleBuildAndExecuteScenario() throws Throwable {
         final AnalysisJob job;
         try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration)) {

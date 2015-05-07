@@ -22,8 +22,10 @@ package org.datacleaner.job.runner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -87,6 +89,7 @@ public final class RowProcessingPublisher {
     private final List<RowProcessingConsumer> _consumers = new ArrayList<RowProcessingConsumer>();
     private final LazyRef<RowProcessingQueryOptimizer> _queryOptimizerRef;
     private final AtomicBoolean _successful = new AtomicBoolean(true);
+    private final Map<RowProcessingConsumer, ReferenceDataActivationManager> _referenceDataActivationManagers;
 
     /**
      * Constructor to use for creating a {@link RowProcessingPublisher} which
@@ -135,6 +138,7 @@ public final class RowProcessingPublisher {
         _taskRunner = taskRunner;
 
         _queryOptimizerRef = createQueryOptimizerRef();
+        _referenceDataActivationManagers = new IdentityHashMap<>();
 
         final boolean aggressiveOptimizeSelectClause = SystemProperties.getBoolean(
                 SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
@@ -555,31 +559,38 @@ public final class RowProcessingPublisher {
     }
 
     private TaskRunnable createCloseTask(RowProcessingConsumer consumer, TaskListener closeTaskListener) {
-        final LifeCycleHelper lifeCycleHelper = _publishers.getLifeCycleHelper();
+        final LifeCycleHelper lifeCycleHelper = getConsumerSpecificLifeCycleHelper(consumer);
         return new TaskRunnable(null, new CloseTaskListener(lifeCycleHelper, consumer, _successful, closeTaskListener));
     }
 
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
-        final ComponentJob componentJob = consumer.getComponentJob();
-
-        // make a component-context specific injection manager and life-cycle
-        // helper
-        final LifeCycleHelper lifeCycleHelper;
-        {
-            final LifeCycleHelper outerLifeCycleHelper = _publishers.getLifeCycleHelper();
-            final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
-            final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();
-            final ReferenceDataActivationManager referenceDataActivationManager = outerLifeCycleHelper
-                    .getReferenceDataActivationManager();
-            final ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(
-                    outerInjectionManager, _analysisJob, componentJob, _publishers.getAnalysisListener());
-
-            lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
-                    includeNonDistributedTasks);
-        }
-
+        final LifeCycleHelper lifeCycleHelper = getConsumerSpecificLifeCycleHelper(consumer);
         final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer, this);
         return new TaskRunnable(task, listener);
+    }
+
+    private LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
+        final LifeCycleHelper outerLifeCycleHelper = _publishers.getLifeCycleHelper();
+        final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
+        final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();
+        final ReferenceDataActivationManager referenceDataActivationManager = getConsumerSpecificReferenceDataActivationManager(
+                consumer, outerLifeCycleHelper);
+        final ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(outerInjectionManager,
+                _analysisJob, consumer.getComponentJob(), _publishers.getAnalysisListener());
+
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
+                includeNonDistributedTasks);
+        return lifeCycleHelper;
+    }
+
+    private ReferenceDataActivationManager getConsumerSpecificReferenceDataActivationManager(
+            RowProcessingConsumer consumer, LifeCycleHelper outerLifeCycleHelper) {
+        ReferenceDataActivationManager manager = _referenceDataActivationManagers.get(consumer);
+        if (manager == null) {
+            manager = new ReferenceDataActivationManager();
+            _referenceDataActivationManagers.put(consumer, manager);
+        }
+        return manager;
     }
 
     @Override

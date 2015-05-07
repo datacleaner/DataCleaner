@@ -30,7 +30,6 @@ import javax.swing.JComponent;
 
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.panels.ComponentBuilderPresenter;
@@ -56,7 +55,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     private final ComponentBuilder _componentBuilder;
 
     public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
-            AnalysisJobBuilder analysisJobBuilder, ComponentBuilderPresenter presenter) {
+            ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(windowContext, getBannerImage(componentBuilder));

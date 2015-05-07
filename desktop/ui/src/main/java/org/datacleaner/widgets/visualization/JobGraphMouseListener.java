@@ -128,7 +128,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                 IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
         final Datastore datastore = analysisJobBuilder.getDatastore();
         final List<MetaModelInputColumn> inputColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
         previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_windowContext, datastore, inputColumns));
@@ -183,7 +183,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         popup.add(new ChangeRequirementMenu(componentBuilder));
         popup.addSeparator();
-        popup.add(new RemoveComponentMenuItem(_graphContext.getAnalysisJobBuilder(), componentBuilder));
+        popup.add(new RemoveComponentMenuItem(componentBuilder));
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
@@ -264,7 +264,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                     metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
                     metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
                 } else if (vertex instanceof Table) {
-                    JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
+                    JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(vertex), (Table) vertex, x, y);
                 }
             }
             if (selectedObjects.length > 0) {

@@ -21,14 +21,19 @@ package org.datacleaner.widgets.visualization;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.Collection;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.LayoutDecorator;
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
@@ -37,10 +42,12 @@ public class JobGraphContext {
     private final VisualizationViewer<Object, JobGraphLink> _visualizationViewer;
     private final JobGraph _jobGraph;
     private final AnalysisJobBuilder _analysisJobBuilder;
+    private final DirectedGraph<Object, JobGraphLink> _graph;
 
-    public JobGraphContext(JobGraph jobGraph, VisualizationViewer<Object, JobGraphLink> visualizationViewer,
-            AnalysisJobBuilder analysisJobBuilder) {
+    public JobGraphContext(JobGraph jobGraph, DirectedGraph<Object, JobGraphLink> graph,
+            VisualizationViewer<Object, JobGraphLink> visualizationViewer, AnalysisJobBuilder analysisJobBuilder) {
         _jobGraph = jobGraph;
+        _graph = graph;
         _visualizationViewer = visualizationViewer;
         _analysisJobBuilder = analysisJobBuilder;
     }
@@ -53,7 +60,34 @@ public class JobGraphContext {
         return _jobGraph;
     }
 
+    /**
+     * 
+     * @return
+     * @deprecated use {@link #getAnalysisJobBuilder(Object)} instead
+     */
+    @Deprecated
     public AnalysisJobBuilder getAnalysisJobBuilder() {
+        return _analysisJobBuilder;
+    }
+
+    public AnalysisJobBuilder getAnalysisJobBuilder(Object vertex) {
+        if (vertex instanceof ComponentBuilder) {
+            return ((ComponentBuilder) vertex).getAnalysisJobBuilder();
+        }
+        if (vertex instanceof Table) {
+            final Collection<JobGraphLink> inEdges = _graph.getInEdges(vertex);
+            if (inEdges.isEmpty()) {
+                // it's a source table of the main job
+                return _analysisJobBuilder;
+            }
+
+            assert inEdges.size() == 1;
+            
+            final ComponentBuilder sourceComponent = (ComponentBuilder) inEdges.iterator().next().getFrom();
+            final OutputDataStream outputDataStream = sourceComponent.getOutputDataStream((Table)vertex);
+            final AnalysisJobBuilder jobBuilder = sourceComponent.getOutputDataStreamJobBuilder(outputDataStream);
+            return jobBuilder;
+        }
         return _analysisJobBuilder;
     }
 

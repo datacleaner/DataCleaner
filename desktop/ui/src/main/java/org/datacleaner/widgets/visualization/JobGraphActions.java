@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.ComponentBuilderPresenter;
 import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
@@ -70,7 +71,7 @@ public class JobGraphActions {
             final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
 
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
-                    componentBuilder, _graphContext.getAnalysisJobBuilder(), presenter);
+                    componentBuilder, presenter);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -90,8 +91,9 @@ public class JobGraphActions {
             return;
         }
 
-        SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
-                _graphContext.getAnalysisJobBuilder(), table);
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
+        final SourceTableConfigurationDialog dialog = new SourceTableConfigurationDialog(_windowContext,
+                analysisJobBuilder, table);
 
         dialog.addWindowListener(new WindowAdapter() {
             @Override

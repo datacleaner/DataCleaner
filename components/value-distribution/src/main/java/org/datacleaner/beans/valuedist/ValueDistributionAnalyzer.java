@@ -27,19 +27,26 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.schema.ColumnType;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
+import org.datacleaner.job.output.OutputDataStreams;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.CollectionFactoryImpl;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.NullTolerableComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +54,7 @@ import org.slf4j.LoggerFactory;
 @Named("Value distribution")
 @Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions to the typical usage-pattern.")
 @Concurrent(true)
-public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {
+public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult>, HasOutputDataStreams {
 
     public static final String PROPERTY_COLUMN = "Column";
     public static final String PROPERTY_GROUP_COLUMN = "Group column";
@@ -93,6 +100,9 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     RowAnnotationFactory _annotationFactory;
 
     private final Map<String, ValueDistributionGroup> _valueDistributionGroups;
+    private final OutputDataStream outputDataStream = OutputDataStreams.pushDataStream("Distribution")
+            .withColumn("Value", ColumnType.STRING).withColumn(LabelUtils.COUNT_LABEL, ColumnType.INTEGER)
+            .toOutputDataStream();
 
     /**
      * Constructor used for testing and ad-hoc purposes
@@ -134,6 +144,17 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
     public ValueDistributionAnalyzer() {
         _valueDistributionGroups = new TreeMap<String, ValueDistributionGroup>(
                 NullTolerableComparator.get(String.class));
+    }
+
+    @Override
+    public OutputDataStream[] getOutputDataStreams() {
+        return new OutputDataStream[] { outputDataStream };
+    }
+
+    @Override
+    public void initializeOutputDataStream(OutputDataStream outputDataStream, Query query,
+            OutputRowCollector outputRowCollector) {
+        //TODO
     }
 
     @Override

@@ -743,6 +743,20 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     }
 
     @Override
+    public OutputDataStream getOutputDataStream(Table dataStreamTable) {
+        if (dataStreamTable == null) {
+            return null;
+        }
+        final List<OutputDataStream> streams = getOutputDataStreams();
+        for (final OutputDataStream outputDataStream : streams) {
+            if (dataStreamTable.equals(outputDataStream.getTable())) {
+                return outputDataStream;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public OutputDataStream getOutputDataStream(final String name) {
         if (name == null) {
             return null;

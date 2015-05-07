@@ -367,7 +367,7 @@ public final class JobGraph {
             }
         });
 
-        final JobGraphContext graphContext = new JobGraphContext(this, visualizationViewer, _analysisJobBuilder);
+        final JobGraphContext graphContext = new JobGraphContext(this, graph, visualizationViewer, _analysisJobBuilder);
 
         final JobGraphActions actions = new JobGraphActions(graphContext, _windowContext, _presenterRendererFactory,
                 _componentConfigurationDialogs, _tableConfigurationDialogs);
@@ -390,7 +390,7 @@ public final class JobGraph {
 
         final RenderContext<Object, JobGraphLink> renderContext = visualizationViewer.getRenderContext();
 
-        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes);
+        final JobGraphTransformers transformers = new JobGraphTransformers(_userPreferences, _highlighedVertexes, graph);
 
         // instrument the render context with all our transformers and stuff
         renderContext.setVertexFontTransformer(transformers.getVertexFontTransformer());
@@ -401,7 +401,7 @@ public final class JobGraph {
         renderContext.setEdgeShapeTransformer(transformers.getEdgeShapeTransformer());
         renderContext.setEdgeLabelClosenessTransformer(JobGraphTransformers.EDGE_LABEL_CLOSENESS_TRANSFORMER);
         renderContext.setEdgeLabelRenderer(transformers.getEdgeLabelRenderer());
-        renderContext.setVertexIconTransformer(JobGraphTransformers.VERTEX_ICON_TRANSFORMER);
+        renderContext.setVertexIconTransformer(transformers.getVertexIconTransformer());
         renderContext.setVertexShapeTransformer(JobGraphTransformers.VERTEX_SHAPE_TRANSFORMER);
 
         final JButton graphPreferencesButton = createGraphPreferencesButton();

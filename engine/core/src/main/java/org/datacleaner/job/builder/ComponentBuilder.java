@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
@@ -245,6 +246,13 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @return
      */
     public OutputDataStream getOutputDataStream(String name);
+
+    /**
+     * Gets an {@link OutputDataStream} by the reference to it's {@link Table}.
+     * 
+     * @param dataStreamTable
+     */
+    public OutputDataStream getOutputDataStream(Table dataStreamTable);
 
     /**
      * Gets the {@link OutputDataStream}s that are available for this component

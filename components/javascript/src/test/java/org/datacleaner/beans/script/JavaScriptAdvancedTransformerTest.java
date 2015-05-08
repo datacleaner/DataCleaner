@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.job.AbstractOutputRowCollector;

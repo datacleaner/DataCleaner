@@ -27,6 +27,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.job.AbstractOutputRowCollector;
 
 import junit.framework.TestCase;
 
@@ -37,7 +38,7 @@ public class JavaScriptAdvancedTransformerTest extends TestCase {
         final InputColumn<String> col2 = new MockInputColumn<String>("col2");
 
         final List<String> output = new ArrayList<String>();
-        final OutputRowCollector collector = new OutputRowCollector() {
+        final OutputRowCollector collector = new AbstractOutputRowCollector() {
             @Override
             public void putValues(Object... arg0) {
                 output.add(Arrays.toString(arg0));

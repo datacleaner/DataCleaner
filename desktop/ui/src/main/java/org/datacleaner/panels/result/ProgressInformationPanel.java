@@ -75,6 +75,7 @@ public class ProgressInformationPanel extends DCPanel {
         _executionLogTextArea = new JTextArea();
         _executionLogTextArea.setText("--- DataCleaner progress information user-log ---");
         _executionLogTextArea.setEditable(false);
+        _executionLogTextArea.setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
 
         _progressBarPanel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         _progressBarPanel.setLayout(new VerticalLayout(4));

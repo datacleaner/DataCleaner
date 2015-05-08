@@ -43,6 +43,16 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
+    
+    private File generatedFile;
+    
+    @Override
+    protected void tearDown() throws Exception {
+        if (generatedFile != null) {
+            generatedFile.delete();
+        }
+        super.tearDown();
+    }
 
     @Test
     public void testValidateSheetName() throws Exception {
@@ -127,15 +137,16 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
     
     @Test
     public void testSortNumerical() throws Exception {
-        final String filename = "exceltest-sortnumerical.xlsx";
-
+        final String filename = "target/exceltest-sortnumerical.xlsx";
+        
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         // Point of focus: MockInputColumn is of type Input, so it should be sorted as numbers
         final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
 
-        analyzer.file = new File(filename);
+        generatedFile = new File(filename);
+        analyzer.file = generatedFile;
         assertNotNull(analyzer.file);
         
         analyzer.sheetName = "foo";
@@ -193,7 +204,7 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
     @Test
     public void testSortLexicographic() throws Exception {
-        final String filename = "exceltest-sortlexicographic.xlsx";
+        final String filename = "target/exceltest-sortlexicographic.xlsx";
 
         CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
 
@@ -201,7 +212,8 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         // Point of focus: MockInputColumn is of type String, so it should be sorted alphabetically
         final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
 
-        analyzer.file = new File(filename);
+        generatedFile = new File(filename);
+        analyzer.file = generatedFile;
         assertNotNull(analyzer.file);
         
         analyzer.sheetName = "foo";

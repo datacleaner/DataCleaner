@@ -63,7 +63,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.datacleaner.output.excel.ExcelOutputWriterFactory;
-import org.datacleaner.util.CompareUtils;
 import org.datacleaner.util.sort.SortMergeWriter;
 
 @Named("Create Excel spreadsheet")
@@ -254,37 +253,8 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
-
-        final Comparator<? super Row> comparator = new Comparator<Row>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public int compare(Row row1, Row row2) {
-                Comparable<Object> value1 = (Comparable<Object>) row1.getValue(indexOfColumnToBeSortedOn);
-                Comparable<Object> value2 = (Comparable<Object>) row2.getValue(indexOfColumnToBeSortedOn);
-                int comparableResult = CompareUtils.compare(value1, value2);
-                if (comparableResult != 0) {
-                    return comparableResult;
-                } else {
-                    // The values of the data at the row, and column to be
-                    // sorted on are
-                    // exactly the same. Now look at other values of all the
-                    // columns to
-                    // find if the two rows are same.
-                    int numberOfSelectItems = row1.getSelectItems().length;
-                    for (int i = 0; i < numberOfSelectItems; i++) {
-                        Comparable<Object> rowValue1 = (Comparable<Object>) row1.getValue(i);
-                        Comparable<Object> rowValue2 = (Comparable<Object>) row2.getValue(i);
-                        if (CompareUtils.compare(rowValue1, rowValue2) == 0) {
-                            continue;
-                        } else {
-                            return CompareUtils.compare(rowValue1, rowValue2);
-                        }
-                    }
-                }
-
-                return comparableResult;
-            }
-        };
+        
+        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
 
         final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
                 comparator) {
@@ -328,7 +298,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
         sortMergeWriter.write(file);
     }
-
+    
     public void setFile(File file) {
         this.file = file;
     }

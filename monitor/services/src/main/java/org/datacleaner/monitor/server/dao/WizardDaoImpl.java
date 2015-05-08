@@ -37,7 +37,6 @@ import org.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.datacleaner.monitor.wizard.Wizard;
 import org.datacleaner.monitor.wizard.WizardPageController;
 import org.datacleaner.monitor.wizard.WizardSession;
-import org.apache.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +67,14 @@ public class WizardDaoImpl implements WizardDao {
     @Autowired
     public WizardDaoImpl(ApplicationContext applicationContext) {
         _applicationContext = applicationContext;
-        _wizardStateCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+        _wizardStateCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     }
 
     @Override
     public <W extends Wizard<?, ?>> Collection<W> getWizardsOfType(Class<W> wizardClass) {
         return _applicationContext.getBeansOfType(wizardClass).values();
     }
-    
+
     @Override
     public WizardPage previousPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
         final String sessionId = sessionIdentifier.getSessionId();
@@ -85,7 +84,7 @@ public class WizardDaoImpl implements WizardDao {
         // remove the current page from the stack of pages
         state.pages.pollLast();
         final WizardPageController previousPage = state.pages.getLast();
-        
+
         return createPage(sessionIdentifier, previousPage, session);
     }
 

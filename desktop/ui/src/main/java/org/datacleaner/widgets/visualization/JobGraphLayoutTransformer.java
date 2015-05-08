@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.metadata.HasMetadataProperties;
@@ -158,6 +159,22 @@ public class JobGraphLayoutTransformer implements Transformer<Object, Point2D> {
         if (onlyIfCoordinatesDefined && point == null) {
             // this means we are not interested in generating a point
             return null;
+        }
+
+        if (vertex instanceof OutputDataStream) {
+            // TODO: Change to table
+            
+            // streams are always located dependently of their parent component.
+            final Collection<JobGraphLink> inEdges = _graph.getInEdges(vertex);
+            assert inEdges.size() == 1;
+            final JobGraphLink inLink = inEdges.iterator().next();
+            final Object from = inLink.getFrom();
+            Point fromPoint = _points.get(from);
+            if (fromPoint == null) {
+                // not yet created, so we need to create it now.
+                fromPoint = createPoint(from, xIndex, onlyIfCoordinatesDefined);
+            }
+            point = new Point(fromPoint.x + X_OFFSET * 2, fromPoint.y - Y_OFFSET);
         }
 
         if (point != null) {

@@ -53,8 +53,8 @@ public class JobGraphKeyListener extends KeyAdapter {
             final Set<Object> vertices = _graphContext.getSelectedVertices();
             logger.debug("Registered typed DEL. Vertices: {}", vertices);
             if ((vertices != null) && (!vertices.isEmpty())) {
-                final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
                 for (Object vertex : vertices) {
+                    final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(vertex);
                     if (vertex instanceof TransformerComponentBuilder) {
                         final TransformerComponentBuilder<?> tjb = (TransformerComponentBuilder<?>) vertex;
                         analysisJobBuilder.removeTransformer(tjb);

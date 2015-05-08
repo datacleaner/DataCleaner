@@ -5,18 +5,25 @@
 
 	<element name="job">
 		<complexType>
-			<sequence>
-				<element name="job-metadata" type="ab:jobMetadataType"
-					minOccurs="0" maxOccurs="1" />
-				<element name="source" type="ab:sourceType" minOccurs="0"
-					maxOccurs="1" />
-				<element name="transformation" type="ab:transformationType"
-					minOccurs="0" maxOccurs="1" />
-				<element name="analysis" type="ab:analysisType" minOccurs="1"
-					maxOccurs="1" />
-			</sequence>
+			<complexContent>
+				<extension base="ab:jobType">
+				</extension>
+			</complexContent>
 		</complexType>
 	</element>
+
+	<complexType name="jobType">
+		<sequence>
+			<element name="job-metadata" type="ab:jobMetadataType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="source" type="ab:sourceType" minOccurs="0"
+				maxOccurs="1" />
+			<element name="transformation" type="ab:transformationType"
+				minOccurs="0" maxOccurs="1" />
+			<element name="analysis" type="ab:analysisType" minOccurs="0"
+				maxOccurs="1" />
+		</sequence>
+	</complexType>
 
 	<complexType name="jobMetadataType">
 		<all>
@@ -129,9 +136,9 @@
 		</attribute>
 	</complexType>
 
-	<complexType name="transformerType">
+	<complexType name="componentType">
 		<sequence>
-			<element name="descriptor" type="ab:transformerDescriptorType"
+			<element name="descriptor" type="ab:descriptorType"
 				minOccurs="1" maxOccurs="1" />
 			<element name="metadata-properties" type="ab:metadataProperties"
 				minOccurs="0" maxOccurs="1" />
@@ -139,16 +146,18 @@
 				minOccurs="0" maxOccurs="1" />
 			<element name="input" type="ab:inputType" minOccurs="0"
 				maxOccurs="unbounded" />
-			<element name="output" type="ab:outputType" minOccurs="1"
-				maxOccurs="unbounded" />
+			<element name="output-data-stream" type="ab:outputDataStreamType"
+				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="requires" type="token" use="optional">
 			<annotation>
 				<documentation>
-					The ID of a filter outcome that should function as a
-					requirement for execution of this component. Requirements are
-					applied transitively to successive components. Use the keyword
-					'_all_' to override transitive behaviour and don't apply any
+					The description of the component requirement for
+					execution of this component. Requirements are
+					applied transitively
+					to successive components. Use the keyword
+					'_all_' to override
+					transitive behaviour and don't apply any
 					requirements
 				</documentation>
 			</annotation>
@@ -156,35 +165,46 @@
 		<attribute name="name" type="string" use="optional" />
 	</complexType>
 
-	<complexType name="transformerDescriptorType">
+	<complexType name="descriptorType">
 		<attribute name="ref" type="token" use="required" />
 	</complexType>
 
-	<complexType name="filterType">
+	<complexType name="outputDataStreamType">
 		<sequence>
-			<element name="descriptor" type="ab:filterDescriptorType"
-				minOccurs="1" maxOccurs="1" />
-			<element name="metadata-properties" type="ab:metadataProperties"
-				minOccurs="0" maxOccurs="1" />
-			<element name="properties" type="ab:configuredPropertiesType"
-				minOccurs="0" maxOccurs="1" />
-			<element name="input" type="ab:inputType" minOccurs="0"
-				maxOccurs="unbounded" />
-			<element name="outcome" type="ab:outcomeType" minOccurs="1"
-				maxOccurs="unbounded" />
+			<element name="job" type="ab:jobType" minOccurs="1"
+				maxOccurs="1" />
 		</sequence>
-		<attribute name="requires" type="token" use="optional">
-			<annotation>
-				<documentation>
-					The ID of a filter outcome that should function as a
-					requirement for execution of this component. Requirements are
-					applied transitively to successive components. Use the keyword
-					'_all_' to override transitive behaviour and don't apply any
-					requirements
-				</documentation>
-			</annotation>
-		</attribute>
+		<attribute name="id" type="string" use="required" />
 		<attribute name="name" type="string" use="optional" />
+	</complexType>
+
+	<complexType name="transformerType">
+		<complexContent>
+			<extension base="ab:componentType">
+				<sequence>
+					<element name="output" type="ab:outputType" minOccurs="1"
+						maxOccurs="unbounded" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="filterType">
+		<complexContent>
+			<extension base="ab:componentType">
+				<sequence>
+					<element name="outcome" type="ab:outcomeType" minOccurs="1"
+						maxOccurs="unbounded" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="analyzerType">
+		<complexContent>
+			<extension base="ab:componentType">
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="inputType">
@@ -211,39 +231,6 @@
 		<attribute name="id" type="token" use="required" />
 		<attribute name="name" type="string" use="optional" />
 		<attribute name="hidden" type="boolean" use="optional"></attribute>
-	</complexType>
-
-	<complexType name="analyzerType">
-		<sequence>
-			<element name="descriptor" type="ab:analyzerDescriptorType"
-				minOccurs="1" maxOccurs="1" />
-			<element name="metadata-properties" type="ab:metadataProperties"
-				minOccurs="0" maxOccurs="1" />
-			<element name="properties" type="ab:configuredPropertiesType"
-				minOccurs="0" maxOccurs="1" />
-			<element name="input" type="ab:inputType" minOccurs="0"
-				maxOccurs="unbounded" />
-		</sequence>
-		<attribute name="requires" type="token" use="optional">
-			<annotation>
-				<documentation>
-					The ID of a filter outcome that should function as a
-					requirement for execution of this component. Requirements are
-					applied transitively to successive components. Use the keyword
-					'_all_' to override transitive behaviour and don't apply any
-					requirements
-				</documentation>
-			</annotation>
-		</attribute>
-		<attribute name="name" type="string" use="optional" />
-	</complexType>
-
-	<complexType name="analyzerDescriptorType">
-		<attribute name="ref" type="token" use="required" />
-	</complexType>
-
-	<complexType name="filterDescriptorType">
-		<attribute name="ref" type="token" use="required" />
 	</complexType>
 
 	<complexType name="outcomeType">

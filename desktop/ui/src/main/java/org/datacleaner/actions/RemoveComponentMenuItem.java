@@ -39,25 +39,24 @@ public class RemoveComponentMenuItem extends JMenuItem implements ActionListener
 
     private static final long serialVersionUID = 1L;
 
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final ComponentBuilder _componentBuilder;
 
-    public RemoveComponentMenuItem(AnalysisJobBuilder analysisJobBuilder,
+    public RemoveComponentMenuItem(
             ComponentBuilder componentBuilder) {
         super("Remove component", ImageManager.get().getImageIcon(IconUtils.ACTION_REMOVE, IconUtils.ICON_SIZE_SMALL));
-        _analysisJobBuilder = analysisJobBuilder;
         _componentBuilder = componentBuilder;
         addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        final AnalysisJobBuilder analysisJobBuilder = _componentBuilder.getAnalysisJobBuilder();
         if (_componentBuilder instanceof AnalyzerComponentBuilder) {
-            _analysisJobBuilder.removeAnalyzer((AnalyzerComponentBuilder<?>) _componentBuilder);
+            analysisJobBuilder.removeAnalyzer((AnalyzerComponentBuilder<?>) _componentBuilder);
         } else if (_componentBuilder instanceof TransformerComponentBuilder) {
-            _analysisJobBuilder.removeTransformer((TransformerComponentBuilder<?>) _componentBuilder);
+            analysisJobBuilder.removeTransformer((TransformerComponentBuilder<?>) _componentBuilder);
         } else if (_componentBuilder instanceof FilterComponentBuilder) {
-            _analysisJobBuilder.removeFilter((FilterComponentBuilder<?, ?>) _componentBuilder);
+            analysisJobBuilder.removeFilter((FilterComponentBuilder<?, ?>) _componentBuilder);
         } else {
             throw new IllegalStateException("Unexpected component type: " + _componentBuilder);
         }

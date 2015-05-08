@@ -17,27 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.job;
 
-import org.datacleaner.lifecycle.LifeCycleHelper;
+import java.io.Serializable;
+
+import org.datacleaner.api.OutputDataStream;
 
 /**
- * Task that invokes initializing methods for reference data where this is
- * nescesary.
- * 
- * 
+ * Represents an entry to run an {@link AnalysisJob} for a particular
+ * {@link OutputDataStream}.
  */
-public class InitializeReferenceDataTask implements Task {
+public interface OutputDataStreamJob extends Serializable {
 
-    private final LifeCycleHelper _lifeCycleHelper;
+    public OutputDataStream getOutputDataStream();
 
-    public InitializeReferenceDataTask(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
-    }
-
-    @Override
-    public void execute() throws Exception {
-        _lifeCycleHelper.initializeReferenceData();
-    }
-
+    public AnalysisJob getJob();
 }

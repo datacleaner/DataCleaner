@@ -37,6 +37,7 @@ import org.apache.commons.collections15.functors.TruePredicate;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
@@ -52,6 +53,7 @@ import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.elasticsearch.common.base.Strings;
 
+import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
@@ -73,15 +75,18 @@ public class JobGraphTransformers {
 
     private static final ImageManager imageManager = ImageManager.get();
 
+    private final DirectedGraph<Object, JobGraphLink> _graph;
     private final UserPreferences _userPreferences;
     private final Set<Object> _highlighedVertexes;
 
     private final Font _normalFont;
     private final Font _boldFont;
 
-    public JobGraphTransformers(UserPreferences userPreferences, Set<Object> highlighedVertexes) {
+    public JobGraphTransformers(UserPreferences userPreferences, Set<Object> highlighedVertexes,
+            DirectedGraph<Object, JobGraphLink> graph) {
         _userPreferences = userPreferences;
         _highlighedVertexes = highlighedVertexes;
+        _graph = graph;
 
         final float fontFactor;
         String fontFactorString = userPreferences.getAdditionalProperties().get(
@@ -213,39 +218,6 @@ public class JobGraphTransformers {
         };
     }
 
-    public static final Transformer<Object, Icon> VERTEX_ICON_TRANSFORMER = new Transformer<Object, Icon>() {
-        @Override
-        public Icon transform(Object obj) {
-            if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
-                return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
-            }
-            if (obj instanceof ComponentBuilder) {
-                final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
-                final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
-                final boolean configured;
-                if (componentBuilder.getInput().length == 0) {
-                    configured = true;
-                } else {
-                    configured = componentBuilder.isConfigured(false);
-                }
-                return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
-            }
-            if (obj instanceof FilterOutcome) {
-                return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
-            }
-            if (obj instanceof Table) {
-                return imageManager.getImageIcon(IconUtils.MODEL_TABLE, IconUtils.ICON_SIZE_LARGE);
-            }
-            if (obj instanceof Class) {
-                Class<?> cls = (Class<?>) obj;
-                if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
-                    return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
-                }
-            }
-            return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
-        }
-    };
-
     public static final Transformer<Object, String> VERTEX_LABEL_TRANSFORMER = new Transformer<Object, String>() {
         @Override
         public String transform(Object obj) {
@@ -260,6 +232,9 @@ public class JobGraphTransformers {
             }
             if (obj instanceof Table) {
                 return ((Table) obj).getName();
+            }
+            if (obj instanceof OutputDataStream) {
+                return ((OutputDataStream) obj).getName();
             }
             if (obj instanceof Class) {
                 Class<?> cls = (Class<?>) obj;
@@ -291,5 +266,53 @@ public class JobGraphTransformers {
                 return _normalFont;
             }
         };
+    }
+
+    public Transformer<Object, Icon> getVertexIconTransformer() {
+        return new Transformer<Object, Icon>() {
+            @Override
+            public Icon transform(Object obj) {
+                if (obj == JobGraph.MORE_COLUMNS_VERTEX || obj instanceof InputColumn) {
+                    return imageManager.getImageIcon(IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_MEDIUM);
+                }
+                if (obj instanceof ComponentBuilder) {
+                    final ComponentBuilder componentBuilder = (ComponentBuilder) obj;
+                    final ComponentDescriptor<?> descriptor = componentBuilder.getDescriptor();
+                    final boolean configured;
+                    if (componentBuilder.getInput().length == 0) {
+                        configured = true;
+                    } else {
+                        configured = componentBuilder.isConfigured(false);
+                    }
+                    return IconUtils.getDescriptorIcon(descriptor, configured, IconUtils.ICON_SIZE_LARGE);
+                }
+                if (obj instanceof FilterOutcome) {
+                    return imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_MEDIUM);
+                }
+                if (obj instanceof Table) {
+                    final int iconSize;
+                    if (isActiveTable((Table) obj)) {
+                        // a source table
+                        iconSize = IconUtils.ICON_SIZE_LARGE;
+                    } else {
+                        // a output data stream table
+                        iconSize = IconUtils.ICON_SIZE_SMALL;
+                    }
+                    return imageManager.getImageIcon(IconUtils.MODEL_TABLE, iconSize);
+                }
+                if (obj instanceof Class) {
+                    Class<?> cls = (Class<?>) obj;
+                    if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
+                        return imageManager.getImageIcon(IconUtils.MODEL_RESULT, IconUtils.ICON_SIZE_LARGE);
+                    }
+                }
+                return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
+            }
+        };
+    }
+
+    protected boolean isActiveTable(Table obj) {
+        // a source table
+        return _graph.getIncidentEdges(obj).isEmpty();
     }
 }

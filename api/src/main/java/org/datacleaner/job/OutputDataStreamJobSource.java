@@ -17,41 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
-
-import org.datacleaner.job.concurrent.TaskListener;
-import org.datacleaner.lifecycle.LifeCycleHelper;
+package org.datacleaner.job;
 
 /**
- * Task listener that calls closing methods for reference data where this is
- * nescesary.
- * 
- * 
+ * Represents a source of {@link OutputDataStreamJob}s.
  */
-public final class CloseReferenceDataTaskListener implements TaskListener {
+public interface OutputDataStreamJobSource {
 
-    private final LifeCycleHelper _lifeCycleHelper;
-
-    public CloseReferenceDataTaskListener(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
-    }
-
-    private void cleanup() {
-        _lifeCycleHelper.closeReferenceData();
-    }
-
-    @Override
-    public void onBegin(Task task) {
-    }
-
-    @Override
-    public void onComplete(Task task) {
-        cleanup();
-    }
-
-    @Override
-    public void onError(Task task, Throwable throwable) {
-        cleanup();
-    }
-
+    public OutputDataStreamJob[] getOutputDataStreamJobs();
 }

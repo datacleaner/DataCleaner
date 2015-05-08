@@ -26,12 +26,13 @@ import java.util.TreeSet;
 
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
+import org.datacleaner.test.TestEnvironment;
 
 import junit.framework.TestCase;
 
 public class ClasspathScanDescriptorProviderTest extends TestCase {
 
-    private MultiThreadedTaskRunner taskRunner = new MultiThreadedTaskRunner(2);
+    private MultiThreadedTaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
 
     public void testScanOnlySingleJar() throws Exception {
         // File that only contains various transformers

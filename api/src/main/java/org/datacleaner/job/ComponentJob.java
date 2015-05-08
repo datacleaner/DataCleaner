@@ -22,15 +22,15 @@ package org.datacleaner.job;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.apache.metamodel.util.HasName;
+import org.datacleaner.descriptors.ComponentDescriptor;
 
 /**
  * Super-interface for all job entries in an Analysis. A {@link ComponentJob}
  * represents a component's configuration in a {@link AnalysisJob}.
  */
-public interface ComponentJob extends HasName, InputColumnSinkJob, HasComponentRequirement, HasComponentConfiguration,
-        Serializable {
+public interface ComponentJob extends HasName, InputColumnSinkJob, OutputDataStreamJobSource, HasComponentRequirement,
+        HasComponentConfiguration, Serializable {
 
     /**
      * Gets the descriptor of this component type.

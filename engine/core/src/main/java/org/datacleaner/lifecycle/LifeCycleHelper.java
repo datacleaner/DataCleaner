@@ -20,6 +20,7 @@
 package org.datacleaner.lifecycle;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Initialize;
@@ -28,19 +29,26 @@ import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.configuration.InjectionPoint;
+import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.InitializeMethodDescriptor;
+import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
+import org.datacleaner.descriptors.ValidateMethodDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ReferenceDataActivationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility/convenience class for doing simple lifecycle management and/or
  * mimicing the lifecycle of components lifecycle in a job execution.
- * 
- * 
  */
 public final class LifeCycleHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(LifeCycleHelper.class);
 
     private final InjectionManager _injectionManager;
     private final ReferenceDataActivationManager _referenceDataActivationManager;
@@ -163,13 +171,12 @@ public final class LifeCycleHelper {
      * 
      * @param descriptor
      * @param component
-     * @param beanConfiguration
+     * @param componentConfiguration
      */
     public void assignConfiguredProperties(ComponentDescriptor<?> descriptor, Object component,
-            ComponentConfiguration beanConfiguration) {
-        AssignConfiguredCallback callback = new AssignConfiguredCallback(beanConfiguration,
-                _referenceDataActivationManager);
-        callback.onEvent(component, descriptor);
+            ComponentConfiguration componentConfiguration) {
+        final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper(_referenceDataActivationManager);
+        helper.assignProperties(component, descriptor, componentConfiguration);
     }
 
     /**
@@ -179,8 +186,14 @@ public final class LifeCycleHelper {
      * @param component
      */
     public void assignProvidedProperties(ComponentDescriptor<?> descriptor, Object component) {
-        AssignProvidedCallback callback = new AssignProvidedCallback(_injectionManager);
-        callback.onEvent(component, descriptor);
+        final Set<ProvidedPropertyDescriptor> providedDescriptors = descriptor.getProvidedProperties();
+        for (ProvidedPropertyDescriptor providedDescriptor : providedDescriptors) {
+
+            InjectionPoint<Object> injectionPoint = new PropertyInjectionPoint(providedDescriptor, component);
+            Object value = _injectionManager.getInstance(injectionPoint);
+            providedDescriptor.setValue(component, value);
+
+        }
     }
 
     /**
@@ -196,8 +209,10 @@ public final class LifeCycleHelper {
      * @param component
      */
     public void validate(ComponentDescriptor<?> descriptor, Object component) {
-        InitializeCallback callback = new InitializeCallback(true, false, _includeNonDistributedTasks);
-        callback.onEvent(component, descriptor);
+        final Set<ValidateMethodDescriptor> validateDescriptors = descriptor.getValidateMethods();
+        for (ValidateMethodDescriptor validateDescriptor : validateDescriptors) {
+            validateDescriptor.validate(component);
+        }
     }
 
     /**
@@ -213,8 +228,12 @@ public final class LifeCycleHelper {
      * @param component
      */
     public void initialize(ComponentDescriptor<?> descriptor, Object component) {
-        InitializeCallback callback = new InitializeCallback(true, true, _includeNonDistributedTasks);
-        callback.onEvent(component, descriptor);
+        final Set<InitializeMethodDescriptor> initializeDescriptors = descriptor.getInitializeMethods();
+        for (InitializeMethodDescriptor initializeDescriptor : initializeDescriptors) {
+            if (_includeNonDistributedTasks || initializeDescriptor.isDistributed()) {
+                initializeDescriptor.initialize(component);
+            }
+        }
     }
 
     /**
@@ -224,8 +243,18 @@ public final class LifeCycleHelper {
      * @param component
      */
     public void close(ComponentDescriptor<?> descriptor, Object component, boolean success) {
-        CloseCallback callback = new CloseCallback(_includeNonDistributedTasks, success);
-        callback.onEvent(component, descriptor);
+        final Set<CloseMethodDescriptor> closeMethods = descriptor.getCloseMethods();
+        for (CloseMethodDescriptor closeDescriptor : closeMethods) {
+            if (_includeNonDistributedTasks || closeDescriptor.isDistributed()) {
+                if (success && closeDescriptor.isEnabledOnSuccess()) {
+                    closeDescriptor.close(component);
+                } else if (!success && closeDescriptor.isEnabledOnFailure()) {
+                    closeDescriptor.close(component);
+                } else {
+                    logger.debug("Omitting close method {} since success={}", closeDescriptor, success);
+                }
+            }
+        }
     }
 
     /**

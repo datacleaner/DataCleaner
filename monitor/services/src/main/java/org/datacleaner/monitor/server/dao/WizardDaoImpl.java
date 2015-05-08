@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.metamodel.util.Func;
 import org.datacleaner.monitor.shared.model.DCUserInputException;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.monitor.shared.model.WizardIdentifier;

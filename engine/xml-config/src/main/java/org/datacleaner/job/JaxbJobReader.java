@@ -72,20 +72,21 @@ import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
 import org.datacleaner.job.jaxb.ColumnType;
 import org.datacleaner.job.jaxb.ColumnsType;
+import org.datacleaner.job.jaxb.ComponentType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType.Property;
 import org.datacleaner.job.jaxb.DataContextType;
+import org.datacleaner.job.jaxb.DescriptorType;
 import org.datacleaner.job.jaxb.FilterType;
 import org.datacleaner.job.jaxb.InputType;
-import org.datacleaner.job.jaxb.Job;
 import org.datacleaner.job.jaxb.JobMetadataType;
+import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
-import org.datacleaner.job.jaxb.TransformerDescriptorType;
 import org.datacleaner.job.jaxb.TransformerType;
 import org.datacleaner.job.jaxb.VariableType;
 import org.datacleaner.job.jaxb.VariablesType;
@@ -163,11 +164,11 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     @Override
     public AnalysisJobMetadata readMetadata(InputStream inputStream) {
-        Job job = unmarshallJob(inputStream);
+        JobType job = unmarshallJob(inputStream);
         return readMetadata(job);
     }
 
-    public AnalysisJobMetadata readMetadata(Job job) {
+    public AnalysisJobMetadata readMetadata(JobType job) {
         final String datastoreName = job.getSource().getDataContext().getRef();
         final List<String> sourceColumnPaths = getSourceColumnPaths(job);
         final List<org.apache.metamodel.schema.ColumnType> sourceColumnTypes = getSourceColumnTypes(job);
@@ -237,7 +238,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return metadataProperties;
     }
 
-    public Map<String, String> getVariables(Job job) {
+    public Map<String, String> getVariables(JobType job) {
         final Map<String, String> result = new HashMap<String, String>();
 
         VariablesType variablesType = job.getSource().getVariables();
@@ -253,7 +254,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return result;
     }
 
-    public List<String> getSourceColumnPaths(Job job) {
+    public List<String> getSourceColumnPaths(JobType job) {
         final List<String> paths;
 
         final ColumnsType columnsType = job.getSource().getColumns();
@@ -270,7 +271,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return paths;
     }
 
-    private List<org.apache.metamodel.schema.ColumnType> getSourceColumnTypes(Job job) {
+    private List<org.apache.metamodel.schema.ColumnType> getSourceColumnTypes(JobType job) {
         final List<org.apache.metamodel.schema.ColumnType> types;
 
         final ColumnsType columnsType = job.getSource().getColumns();
@@ -342,23 +343,23 @@ public class JaxbJobReader implements JobReader<InputStream> {
         return create(unmarshallJob(inputStream), null, variableOverrides);
     }
 
-    private Job unmarshallJob(InputStream inputStream) {
+    private JobType unmarshallJob(InputStream inputStream) {
         try {
             Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
 
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
-            Job job = (Job) unmarshaller.unmarshal(inputStream);
+            JobType job = (JobType) unmarshaller.unmarshal(inputStream);
             return job;
         } catch (JAXBException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    public AnalysisJobBuilder create(Job job) {
+    public AnalysisJobBuilder create(JobType job) {
         return create(job, null, null);
     }
 
-    public AnalysisJobBuilder create(Job job, SourceColumnMapping sourceColumnMapping,
+    public AnalysisJobBuilder create(JobType job, SourceColumnMapping sourceColumnMapping,
             Map<String, String> variableOverrides) throws NoSuchDatastoreException {
         if (job == null) {
             throw new IllegalArgumentException("Job cannot be null");
@@ -401,7 +402,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
     }
 
-    private AnalysisJobBuilder create(Job job, SourceColumnMapping sourceColumnMapping, JobMetadataType metadata,
+    private AnalysisJobBuilder create(JobType job, SourceColumnMapping sourceColumnMapping, JobMetadataType metadata,
             final Map<String, String> variables, final AnalysisJobBuilder analysisJobBuilder) {
         String ref;
 
@@ -487,13 +488,13 @@ public class JaxbJobReader implements JobReader<InputStream> {
         final TransformationType transformation = job.getTransformation();
         if (transformation != null) {
 
-            final List<Object> transformersAndFilters = transformation.getTransformerOrFilter();
+            final List<ComponentType> transformersAndFilters = transformation.getTransformerOrFilter();
 
             final Map<TransformerType, TransformerComponentBuilder<?>> transformerJobBuilders = new HashMap<>();
             final Map<FilterType, FilterComponentBuilder<?, ?>> filterJobBuilders = new HashMap<>();
 
             // iterate to initialize transformers
-            for (Object o : transformersAndFilters) {
+            for (ComponentType o : transformersAndFilters) {
                 if (o instanceof TransformerType) {
                     TransformerType transformer = (TransformerType) o;
                     ref = transformer.getDescriptor().getRef();
@@ -594,7 +595,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         if (sb.length() != 0) {
                             sb.append(", ");
                         }
-                        TransformerDescriptorType descriptor = transformerType.getDescriptor();
+                        DescriptorType descriptor = transformerType.getDescriptor();
                         sb.append(descriptor.getRef());
                         sb.append("(input: ");
 
@@ -620,7 +621,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             }
 
             // iterate again to initialize all Filters and collect all outcomes
-            for (Object o : transformersAndFilters) {
+            for (ComponentType o : transformersAndFilters) {
                 if (o instanceof FilterType) {
                     FilterType filter = (FilterType) o;
 
@@ -667,23 +668,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
             }
 
             // iterate again to set up filter outcome dependencies
-            for (Object o : transformersAndFilters) {
-                if (o instanceof TransformerType) {
-                    ref = ((TransformerType) o).getRequires();
-                    if (ref != null) {
-                        final TransformerComponentBuilder<?> builder = transformerJobBuilders.get(o);
-                        final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
-                        builder.setComponentRequirement(requirement);
-                    }
-                } else if (o instanceof FilterType) {
-                    ref = ((FilterType) o).getRequires();
-                    if (ref != null) {
-                        final FilterComponentBuilder<?, ?> builder = filterJobBuilders.get(o);
-                        final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
-                        builder.setComponentRequirement(requirement);
-                    }
-                } else {
-                    throw new IllegalStateException("Unexpected transformation child element: " + o);
+            for (ComponentType o : transformersAndFilters) {
+                ref = o.getRequires();
+                if (ref != null) {
+                    final TransformerComponentBuilder<?> builder = transformerJobBuilders.get(o);
+                    final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
+                    builder.setComponentRequirement(requirement);
                 }
             }
         }

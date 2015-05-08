@@ -43,27 +43,28 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.jaxb.AnalysisType;
-import org.datacleaner.job.jaxb.AnalyzerDescriptorType;
 import org.datacleaner.job.jaxb.AnalyzerType;
 import org.datacleaner.job.jaxb.ColumnType;
 import org.datacleaner.job.jaxb.ColumnsType;
+import org.datacleaner.job.jaxb.ComponentType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType.Property;
 import org.datacleaner.job.jaxb.DataContextType;
-import org.datacleaner.job.jaxb.FilterDescriptorType;
+import org.datacleaner.job.jaxb.DescriptorType;
 import org.datacleaner.job.jaxb.FilterType;
 import org.datacleaner.job.jaxb.InputType;
 import org.datacleaner.job.jaxb.Job;
 import org.datacleaner.job.jaxb.JobMetadataType;
+import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
-import org.datacleaner.job.jaxb.TransformerDescriptorType;
 import org.datacleaner.job.jaxb.TransformerType;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
@@ -482,7 +483,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return id;
     }
 
-    private void addComponents(final Job jobType, final AnalysisJob analysisJob,
+    private void addComponents(final JobType jobType, final AnalysisJob analysisJob,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings) {
         final TransformationType transformationType = new TransformationType();
@@ -496,9 +497,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (TransformerJob transformerJob : transformerJobs) {
             TransformerType transformerType = new TransformerType();
             transformerType.setName(transformerJob.getName());
-            TransformerDescriptorType descriptorType = new TransformerDescriptorType();
-            descriptorType.setRef(transformerJob.getDescriptor().getDisplayName());
-            transformerType.setDescriptor(descriptorType);
+            setDescriptor(transformerType, transformerJob.getDescriptor());
             transformationType.getTransformerOrFilter().add(transformerType);
             transformerMappings.put(transformerJob, transformerType);
         }
@@ -508,9 +507,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (FilterJob filterJob : filterJobs) {
             FilterType filterType = new FilterType();
             filterType.setName(filterJob.getName());
-            FilterDescriptorType descriptorType = new FilterDescriptorType();
-            descriptorType.setRef(filterJob.getDescriptor().getDisplayName());
-            filterType.setDescriptor(descriptorType);
+            setDescriptor(filterType, filterJob.getDescriptor());
             transformationType.getTransformerOrFilter().add(filterType);
             filterMappings.put(filterJob, filterType);
         }
@@ -520,12 +517,16 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             AnalyzerType analyzerType = new AnalyzerType();
             analyzerType.setName(analyzerJob.getName());
-            AnalyzerDescriptorType descriptorType = new AnalyzerDescriptorType();
-            descriptorType.setRef(analyzerJob.getDescriptor().getDisplayName());
-            analyzerType.setDescriptor(descriptorType);
+            setDescriptor(analyzerType, analyzerJob.getDescriptor());
             analysisType.getAnalyzer().add(analyzerType);
             analyzerMappings.put(analyzerJob, analyzerType);
         }
+    }
+
+    private void setDescriptor(ComponentType componentType, ComponentDescriptor<?> descriptor) {
+        DescriptorType descriptorType = new DescriptorType();
+        descriptorType.setRef(descriptor.getDisplayName());
+        componentType.setDescriptor(descriptorType);
     }
 
     private static String getId(InputColumn<?> inputColumn, Map<InputColumn<?>, String> columnMappings) {

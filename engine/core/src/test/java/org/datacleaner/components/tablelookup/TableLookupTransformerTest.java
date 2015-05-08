@@ -27,12 +27,11 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.OutputRowCollector;
-import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.components.tablelookup.TableLookupTransformer.JoinSemantic;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.job.AbstractOutputRowCollector;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
 
@@ -105,7 +104,7 @@ public class TableLookupTransformerTest extends TestCase {
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
-        trans.outputRowCollector = new OutputRowCollector() {
+        trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
             public void putValues(Object... values) {
                 result.add(values);
@@ -140,7 +139,7 @@ public class TableLookupTransformerTest extends TestCase {
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
-        trans.outputRowCollector = new OutputRowCollector() {
+        trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
             public void putValues(Object... values) {
                 result.add(values);
@@ -175,7 +174,7 @@ public class TableLookupTransformerTest extends TestCase {
         final TableLookupTransformer trans = createTransformer();
         trans.datastore = new CsvDatastore("my ds", "src/test/resources/employees.csv");
         trans.outputColumns = new String[] { "name" };
-        trans.outputRowCollector = new OutputRowCollector() {
+        trans.outputRowCollector = new AbstractOutputRowCollector() {
             @Override
             public void putValues(Object... values) {
                 result.add(values);

@@ -17,23 +17,30 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.lifecycle;
+package org.datacleaner.job;
 
-import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.api.OutputDataStream;
 
-/**
- * Represents a callback method that will execute a step in the lifecycle of a
- * component. A step might be to call any initializing methods, inject
- * properties or to close the component.
- * 
- * 
- * 
- * @param <C>
- *            the component type
- * @param <D>
- *            the descriptor type
- */
-public interface LifeCycleCallback<C, D extends ComponentDescriptor<?>> {
+public class ImmutableOutputDataStreamJob implements OutputDataStreamJob {
 
-	public void onEvent(C component, D descriptor);
+    private static final long serialVersionUID = 1L;
+
+    private final OutputDataStream _outputDataStream;
+    private final AnalysisJob _job;
+
+    public ImmutableOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJob job) {
+        _outputDataStream = outputDataStream;
+        _job = job;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream() {
+        return _outputDataStream;
+    }
+
+    @Override
+    public AnalysisJob getJob() {
+        return _job;
+    }
+
 }

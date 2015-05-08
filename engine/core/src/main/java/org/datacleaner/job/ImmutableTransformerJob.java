@@ -19,84 +19,59 @@
  */
 package org.datacleaner.job;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.util.CollectionUtils2;
-import org.apache.metamodel.util.BaseObject;
+import org.datacleaner.util.ReadObjectBuilder;
 
-import com.google.common.collect.ImmutableMap;
-
-public final class ImmutableTransformerJob extends BaseObject implements TransformerJob {
+public final class ImmutableTransformerJob extends ImmutableComponentJob implements TransformerJob {
 
     private static final long serialVersionUID = 1L;
 
-    private final String _name;
-    private final TransformerDescriptor<?> _descriptor;
-    private final ComponentConfiguration _beanConfiguration;
     private final List<MutableInputColumn<?>> _output;
-    private final ComponentRequirement _componentRequirement;
-    private final Map<String, String> _metadataProperties;
 
     public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
-            ComponentConfiguration beanConfiguration, Collection<MutableInputColumn<?>> output,
-            ComponentRequirement requirement, Map<String, String> metadataProperties) {
-        _name = name;
-        _descriptor = descriptor;
-        _beanConfiguration = beanConfiguration;
+            ComponentConfiguration componentConfiguration, Collection<MutableInputColumn<?>> output,
+            ComponentRequirement componentRequirement, Map<String, String> metadataProperties,
+            OutputDataStreamJob[] outputDataStreamJobs) {
+        super(name, descriptor, componentConfiguration, componentRequirement, metadataProperties, outputDataStreamJobs);
         _output = Collections.unmodifiableList(new ArrayList<MutableInputColumn<?>>(output));
-        _componentRequirement = requirement;
-        
-        if (metadataProperties == null) {
-            _metadataProperties = Collections.emptyMap();
-        } else {
-            _metadataProperties = ImmutableMap.copyOf(metadataProperties);
-        }
-    }
-    
-    @Override
-    public Map<String, String> getMetadataProperties() {
-        return _metadataProperties;
     }
 
-    @Override
-    public String getName() {
-        return _name;
+    /**
+     * 
+     * @param name
+     * @param descriptor
+     * @param componentConfiguration
+     * @param output
+     * @param requirement
+     * @param metadataProperties
+     * 
+     * @deprecated use
+     *             {@link #ImmutableTransformerJob(String, TransformerDescriptor, ComponentConfiguration, Collection, ComponentRequirement, Map, OutputDataStreamJob[])}
+     *             instead
+     */
+    @Deprecated
+    public ImmutableTransformerJob(String name, TransformerDescriptor<?> descriptor,
+            ComponentConfiguration componentConfiguration, Collection<MutableInputColumn<?>> output,
+            ComponentRequirement requirement, Map<String, String> metadataProperties) {
+        this(name, descriptor, componentConfiguration, output, requirement, metadataProperties, null);
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, ImmutableTransformerJob.class).readObject(stream);
     }
 
     @Override
     public TransformerDescriptor<?> getDescriptor() {
-        return _descriptor;
-    }
-
-    @Override
-    public ComponentConfiguration getConfiguration() {
-        return _beanConfiguration;
-    }
-
-    @Override
-    public InputColumn<?>[] getInput() {
-        List<InputColumn<?>> result = new LinkedList<InputColumn<?>>();
-        Set<ConfiguredPropertyDescriptor> propertiesForInput = _descriptor.getConfiguredPropertiesForInput();
-        for (ConfiguredPropertyDescriptor propertyDescriptor : propertiesForInput) {
-            Object property = _beanConfiguration.getProperty(propertyDescriptor);
-            InputColumn<?>[] inputs = CollectionUtils2.arrayOf(InputColumn.class, property);
-            if (inputs != null) {
-                for (InputColumn<?> inputColumn : inputs) {
-                    result.add(inputColumn);
-                }
-            }
-        }
-        return result.toArray(new InputColumn<?>[result.size()]);
+        return (TransformerDescriptor<?>) super.getDescriptor();
     }
 
     @Override
@@ -105,21 +80,7 @@ public final class ImmutableTransformerJob extends BaseObject implements Transfo
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
-        identifiers.add(_name);
-        identifiers.add(_beanConfiguration);
-        identifiers.add(_descriptor);
-        identifiers.add(_output);
-        identifiers.add(_componentRequirement);
-    }
-
-    @Override
     public String toString() {
-        return "ImmutableTransformerJob[name=" + _name + ",transformer=" + _descriptor.getDisplayName() + "]";
-    }
-
-    @Override
-    public ComponentRequirement getComponentRequirement() {
-        return _componentRequirement;
+        return "ImmutableTransformerJob[name=" + getName() + ",transformer=" + getDescriptor().getDisplayName() + "]";
     }
 }

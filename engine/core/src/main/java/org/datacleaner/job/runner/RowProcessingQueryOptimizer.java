@@ -224,27 +224,29 @@ public class RowProcessingQueryOptimizer {
      * @return
      */
     public Query getOptimizedQuery() {
-        // if (isOptimizable()) {
-        // return _baseQuery;
-        // }
+        Query q = _baseQuery;
 
-        // create a copy/clone of the original query
-        Query q = _baseQuery.clone();
+        final Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
+        if (!entries.isEmpty()) {
+            // create a copy/clone of the original query
+            q = q.clone();
 
-        Set<Entry<FilterConsumer, FilterOutcome>> entries = _optimizedFilters.entrySet();
-        for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
+            for (Entry<FilterConsumer, FilterOutcome> entry : entries) {
 
-            FilterConsumer consumer = entry.getKey();
-            FilterOutcome outcome = entry.getValue();
-            Filter<?> filter = consumer.getComponent();
+                final FilterConsumer consumer = entry.getKey();
 
-            @SuppressWarnings("rawtypes")
-            QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+                final FilterOutcome outcome = entry.getValue();
+                final Filter<?> filter = consumer.getComponent();
 
-            @SuppressWarnings("unchecked")
-            Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
-            q = newQuery;
+                @SuppressWarnings("rawtypes")
+                final QueryOptimizedFilter queryOptimizedFilter = (QueryOptimizedFilter) filter;
+
+                @SuppressWarnings("unchecked")
+                final Query newQuery = queryOptimizedFilter.optimizeQuery(q, outcome.getCategory());
+                q = newQuery;
+            }
         }
+
         return q;
     }
 

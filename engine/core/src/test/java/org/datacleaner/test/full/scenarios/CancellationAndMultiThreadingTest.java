@@ -37,6 +37,7 @@ import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
+import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 
 public class CancellationAndMultiThreadingTest extends TestCase {
@@ -59,10 +60,10 @@ public class CancellationAndMultiThreadingTest extends TestCase {
     }
 
     public void runScenario() {
-        MultiThreadedTaskRunner taskRunner = new MultiThreadedTaskRunner(30);
+        MultiThreadedTaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
 
         ThreadPoolExecutor executorService = (ThreadPoolExecutor) taskRunner.getExecutorService();
-        assertEquals(30, executorService.getMaximumPoolSize());
+        assertEquals(TestEnvironment.THREAD_COUNT, executorService.getMaximumPoolSize());
         assertEquals(0, executorService.getActiveCount());
 
         DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl()
@@ -112,7 +113,7 @@ public class CancellationAndMultiThreadingTest extends TestCase {
                 fail("Interrupted! " + e.getMessage());
             }
 
-            assertEquals(30, executorService.getMaximumPoolSize());
+            assertEquals(TestEnvironment.THREAD_COUNT, executorService.getMaximumPoolSize());
 
             long completedTaskCount = executorService.getCompletedTaskCount();
             assertTrue("completedTaskCount was: " + completedTaskCount, completedTaskCount > 3);

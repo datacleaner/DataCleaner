@@ -39,7 +39,6 @@ import org.apache.metamodel.drop.DropTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.NumberComparator;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
@@ -54,8 +53,6 @@ import org.datacleaner.api.Validate;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.beans.writers.WriteDataResultImpl;
 import org.datacleaner.components.categories.WriteSuperCategory;
-import org.datacleaner.components.convert.ConvertToDateTransformer;
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.ExcelDatastore;
@@ -66,8 +63,6 @@ import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.datacleaner.output.excel.ExcelOutputWriterFactory;
-import org.datacleaner.util.CompareUtils;
-import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.sort.SortMergeWriter;
 
 @Named("Create Excel spreadsheet")
@@ -259,7 +254,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
         
-        final Comparator<? super Row> comparator = createComparator();
+        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
 
         final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
                 comparator) {
@@ -304,57 +299,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         sortMergeWriter.write(file);
     }
     
-    private Comparator<Row> createComparator() {
-        final Class<?> dataType = columnToBeSortedOn.getDataType();
-        final boolean isNumber = dataType != null && ReflectionUtils.isNumber(dataType);
-        final boolean isDate = dataType != null && ReflectionUtils.isDate(dataType);
-
-        return new Comparator<Row>() {
-            @Override
-            public int compare(Row row1, Row row2) {
-                final Comparable<?> value1 = getComparableValue(row1, isNumber, isDate);
-                final Comparable<?> value2 = getComparableValue(row2, isNumber, isDate);
-                int comparableResult = CompareUtils.compareUnbound(value1, value2);
-                if (comparableResult != 0) {
-                    return comparableResult;
-                } else {
-                    // The values of the data at the row, and column to be
-                    // sorted on are
-                    // exactly the same. Now look at other values of all the
-                    // columns to
-                    // find if the two rows are same.
-                    int numberOfSelectItems = row1.getSelectItems().length;
-                    for (int i = 0; i < numberOfSelectItems; i++) {
-                        final String rowValue1 = (String) row1.getValue(i);
-                        final String rowValue2 = (String) row2.getValue(i);
-                        if (CompareUtils.compare(rowValue1, rowValue2) == 0) {
-                            continue;
-                        } else {
-                            return CompareUtils.compare(rowValue1, rowValue2);
-                        }
-                    }
-                }
-
-                return comparableResult;
-            }
-        };
-    }
-    
-    protected Comparable<?> getComparableValue(Row row, boolean isNumber, boolean isDate) {
-        final String value = (String) row.getValue(indexOfColumnToBeSortedOn);
-        if (isNumber) {
-            final Number result = ConvertToNumberTransformer.transformValue(value);
-            if (result instanceof Comparable) {
-                return (Comparable<?>) result;
-            }
-            return NumberComparator.getComparable(result);
-        }
-        if (isDate) {
-            return ConvertToDateTransformer.getInternalInstance().transformValue(value);
-        }
-        return value;
-    }
-
     public void setFile(File file) {
         this.file = file;
     }

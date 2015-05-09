@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class JoinTaskListener implements TaskListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(JoinTaskListener.class);
 
 	private final AtomicInteger _countDown;
 	private final TaskListener _nestedTaskListener;
@@ -79,10 +79,10 @@ public final class JoinTaskListener implements TaskListener {
 	private void invokeNested(final int count, Task task) {
 		if (count == 0) {
 			if (_error == null) {
-				logger.info("Calling onComplete(...) on nested TaskListener ()");
+				logger.debug("Calling onComplete(...) on nested TaskListener ()");
 				_nestedTaskListener.onComplete(task);
 			} else {
-				logger.info("Calling onError(...) on nested TaskListener ()");
+				logger.debug("Calling onError(...) on nested TaskListener ()");
 				_nestedTaskListener.onError(task, _error);
 			}
 		}

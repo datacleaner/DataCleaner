@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class JobCompletionTaskListener implements StatusAwareTaskListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ForkTaskListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobCompletionTaskListener.class);
 
     private final CountDownLatch _countDownLatch;
     private final AtomicInteger _successCountDown;
@@ -91,7 +91,7 @@ public final class JobCompletionTaskListener implements StatusAwareTaskListener 
     @Override
     public void onError(Task task, Throwable throwable) {
         logger.debug("onError(...)");
-        _analysisListener.errorUknown(_analysisJobMetrics.getAnalysisJob(), throwable);
+        _analysisListener.errorUnknown(_analysisJobMetrics.getAnalysisJob(), throwable);
         _countDownLatch.countDown();
     }
 

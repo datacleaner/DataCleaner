@@ -136,7 +136,7 @@ final class AnalysisRunnerJobDelegate {
 
             return new AnalysisResultFutureImpl(_resultQueue, jobCompletionTaskListener, _errorAware);
         } catch (RuntimeException e) {
-            _analysisListener.errorUknown(_job, e);
+            _analysisListener.errorUnknown(_job, e);
             throw e;
         }
 
@@ -153,7 +153,7 @@ final class AnalysisRunnerJobDelegate {
     private void scheduleRowProcessing(RowProcessingPublishers publishers, LifeCycleHelper lifeCycleHelper,
             JobCompletionTaskListener jobCompletionTaskListener, AnalysisJobMetrics analysisJobMetrics) {
 
-        logger.info("Created {} row processor publishers", publishers.size());
+        logger.info("Created {} row processor publisher(s)", publishers.size());
         final TaskListener rowProcessorPublishersDoneCompletionListener = new JoinTaskListener(publishers.size(),
                 jobCompletionTaskListener);
 

@@ -318,7 +318,7 @@ public final class RowProcessingPublisher {
                     activeOutputDataStream.await();
                 } catch (InterruptedException e) {
                     logger.error("Unexpected error awaiting output data stream", e);
-                    listener.errorUknown(_analysisJob, e);
+                    listener.errorUnknown(_analysisJob, e);
                     return false;
                 }
             }

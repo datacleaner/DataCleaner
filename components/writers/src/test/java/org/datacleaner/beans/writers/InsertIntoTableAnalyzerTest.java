@@ -312,9 +312,9 @@ public class InsertIntoTableAnalyzerTest extends TestCase {
         {
             final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastoreIn);
 
-            final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(
-                    datastoreCatalog).withEnvironment(
-                    new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)));
+            DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(
+                    new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(4)))
+                    .withDatastoreCatalog(datastoreCatalog);
 
             final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
             try {

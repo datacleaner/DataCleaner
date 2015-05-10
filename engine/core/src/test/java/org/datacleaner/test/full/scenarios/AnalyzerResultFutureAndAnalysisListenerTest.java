@@ -39,7 +39,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.runner.AnalysisJobMetrics;
 import org.datacleaner.job.runner.AnalysisListener;
@@ -50,6 +49,7 @@ import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.MockFutureAnalyzer;
+import org.datacleaner.test.TestEnvironment;
 import org.datacleaner.test.TestHelper;
 
 /**
@@ -63,7 +63,7 @@ import org.datacleaner.test.TestHelper;
 public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
 
     private final Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
-    private final TaskRunner taskRunner = new MultiThreadedTaskRunner(10);
+    private final TaskRunner taskRunner = TestEnvironment.getMultiThreadedTaskRunner();
     private final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(
             environment).withDatastores(datastore);

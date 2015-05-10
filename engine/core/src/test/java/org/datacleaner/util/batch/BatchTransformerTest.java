@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
-import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -36,11 +35,11 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
-import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.test.MockAnalyzer;
+import org.datacleaner.test.TestEnvironment;
 
 public class BatchTransformerTest extends TestCase {
 
@@ -55,7 +54,7 @@ public class BatchTransformerTest extends TestCase {
         DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(new CsvDatastore("foo",
                 "src/test/resources/employees.csv"));
         configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog)
-                .withEnvironment(new DataCleanerEnvironmentImpl().withTaskRunner(new MultiThreadedTaskRunner(10)));
+                .withEnvironment(TestEnvironment.getEnvironment());
 
         try (AnalysisJobBuilder jobBuilder = new AnalysisJobBuilder(configuration)) {
             jobBuilder.setDatastore("foo");

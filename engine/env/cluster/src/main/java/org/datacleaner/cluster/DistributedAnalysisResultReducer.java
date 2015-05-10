@@ -107,7 +107,7 @@ final class DistributedAnalysisResultReducer {
                     logger.error(
                             "Encountered error before reducing results (showing stack trace of invoking the reducer): "
                                     + firstError.getMessage(), new Throwable());
-                    _analysisListener.errorUknown(_masterJob, firstError);
+                    _analysisListener.errorUnknown(_masterJob, firstError);
                 }
 
                 // error occurred!

@@ -169,10 +169,7 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
 
         final String originalMessagesString = messagesList.toString();
 
-        final int indexRunReturned = getIndexAndVerifyExists(messagesList, "AnalysisRunner.run(job) returned");
         final int indexRowProcessingSuccess = getIndexAndVerifyExists(messagesList, "rowProcessingSuccess");
-
-        assertTrue(originalMessagesString, indexRowProcessingSuccess > indexRunReturned);
 
         final int indexNormalAnalyzerSuccess = getIndexAndVerifyExists(messagesList,
                 "componentSuccess(normal analyzer,ListResult)");
@@ -204,8 +201,11 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
         assertTrue(originalMessagesString, indexAnalyzerResultReady > indexAnalyzerResultNotReady);
 
         final int indexJobSuccess = getIndexAndVerifyExists(messagesList, "jobSuccess");
-
         assertTrue(originalMessagesString, indexJobSuccess > indexFutureAnalyzerSuccess);
+
+        // final assertion: that run(...) returned asynchronously (some time before everything was done)
+        final int indexRunReturned = getIndexAndVerifyExists(messagesList, "AnalysisRunner.run(job) returned");
+        assertTrue(originalMessagesString, indexJobSuccess > indexRunReturned);
     }
 
     private int getIndexAndVerifyExists(List<String> messagesList, String string) {

@@ -65,7 +65,7 @@ public abstract class AbstractJobBuilderPopupListener {
             }
         });
 
-        final JMenuItem removeMenuItem = new RemoveComponentMenuItem(_analysisJobBuilder, _componentBuilder) {
+        final JMenuItem removeMenuItem = new RemoveComponentMenuItem(_componentBuilder) {
 
             private static final long serialVersionUID = 1L;
 

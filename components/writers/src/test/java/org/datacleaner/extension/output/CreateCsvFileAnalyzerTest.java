@@ -53,7 +53,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer = new CreateCsvFileAnalyzer();
 
-        analyzer.file = new File("csvtest.csv");
+        analyzer.file = new File("target/csvtest.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         // Case 1 - file does not exists
@@ -96,7 +96,7 @@ public class CreateCsvFileAnalyzerTest {
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
 
-        analyzer.file = new File("csvtest-sortnumerical.csv");
+        analyzer.file = new File("targer/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();
@@ -153,7 +153,7 @@ public class CreateCsvFileAnalyzerTest {
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
 
-        analyzer.file = new File("csvtest-sortnumerical.csv");
+        analyzer.file = new File("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();
@@ -210,7 +210,7 @@ public class CreateCsvFileAnalyzerTest {
         final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
         final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
 
-        analyzer.file = new File("csvtest-customcolumnheaders.csv");
+        analyzer.file = new File("target/csvtest-customcolumnheaders.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();

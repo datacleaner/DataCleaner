@@ -96,7 +96,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Configured(order = 6, required = false, value = PROPERTY_COLUMN_TO_BE_SORTED_ON)
     InputColumn<?> columnToBeSortedOn;
 
-    @Configured(value = PROPERTY_OVERWRITE_FILE_IF_EXISTS)
+    @Configured(value = PROPERTY_OVERWRITE_FILE_IF_EXISTS, required = false)
     boolean overwriteFileIfExists;
 
     @Configured(PROPERTY_FIELD_NAMES)

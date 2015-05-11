@@ -94,7 +94,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     @Configured(order = 1, required = false)
     InputColumn<?> columnToBeSortedOn;
     
-    @Configured(PROPERTY_FIELD_NAMES)
+    @Configured(value = PROPERTY_FIELD_NAMES, required = false)
     @MappedProperty(PROPERTY_COLUMNS)
     String[] fields;
 

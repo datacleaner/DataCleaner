@@ -196,10 +196,6 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         }
 
         assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]", resultIds.toString());
-        
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
 
     @Test
@@ -263,9 +259,6 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         }
 
         assertEquals("[0, 1, 10, 11, 12, 2, 3, 4, 5, 6, 7, 8, 9]", resultIds.toString());
-        
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
+    
 }

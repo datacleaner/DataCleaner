@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.api.RendererBean;
 import org.datacleaner.api.RendererPrecedence;
-import org.datacleaner.extension.output.CreateCsvFileAnalyzer;
+import org.datacleaner.extension.output.CreateExcelSpreadsheetAnalyzer;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPresenter;
@@ -32,23 +32,23 @@ import org.datacleaner.panels.ComponentBuilderPresenterRenderingFormat;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentBuilderPresenterRenderingFormat.class)
-public class CreateCsvFileAnalyzerSwingRenderer implements
-        Renderer<AnalyzerComponentBuilder<CreateCsvFileAnalyzer>, AnalyzerComponentBuilderPresenter> {
+public class CreateExcelSpreadsheetAnalyzerSwingRenderer implements
+        Renderer<AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer>, AnalyzerComponentBuilderPresenter> {
 
     @Inject
     DCModule dcModule;
 
     @Override
-    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
-        Class<CreateCsvFileAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
-        if (componentClass == CreateCsvFileAnalyzer.class) {
+    public RendererPrecedence getPrecedence(AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
+        Class<CreateExcelSpreadsheetAnalyzer> componentClass = ajb.getDescriptor().getComponentClass();
+        if (componentClass == CreateExcelSpreadsheetAnalyzer.class) {
             return RendererPrecedence.HIGH;
         }
         return RendererPrecedence.NOT_CAPABLE;
     }
 
     @Override
-    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateCsvFileAnalyzer> ajb) {
+    public AnalyzerComponentBuilderPresenter render(AnalyzerComponentBuilder<CreateExcelSpreadsheetAnalyzer> ajb) {
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
         return new CustomHeaderColumnNamesAnalyzerJobPanel(ajb, propertyWidgetFactory);

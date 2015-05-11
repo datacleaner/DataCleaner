@@ -29,7 +29,7 @@ import org.datacleaner.widgets.properties.MultipleMappedStringsPropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidget;
 import org.datacleaner.widgets.properties.PropertyWidgetFactory;
 
-public class CreateCsvFileAnalyzerJobPanel extends AnalyzerComponentBuilderPanel {
+public class CustomHeaderColumnNamesAnalyzerJobPanel extends AnalyzerComponentBuilderPanel {
 
     private static final long serialVersionUID = 1L;
     
@@ -37,7 +37,7 @@ public class CreateCsvFileAnalyzerJobPanel extends AnalyzerComponentBuilderPanel
     private final ConfiguredPropertyDescriptor _inputColumnsProperty;
     private final ConfiguredPropertyDescriptor _mappedStringsProperty;
 
-    public CreateCsvFileAnalyzerJobPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder,
+    public CustomHeaderColumnNamesAnalyzerJobPanel(AnalyzerComponentBuilder<?> analyzerJobBuilder,
             PropertyWidgetFactory propertyWidgetFactory) {
         super(analyzerJobBuilder, propertyWidgetFactory);
 

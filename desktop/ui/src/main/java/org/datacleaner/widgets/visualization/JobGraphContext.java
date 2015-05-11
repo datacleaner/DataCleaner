@@ -23,7 +23,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Set;
 
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -53,7 +55,30 @@ public class JobGraphContext {
         return _jobGraph;
     }
 
-    public AnalysisJobBuilder getAnalysisJobBuilder() {
+    /**
+     * Gets the main/primary/parent {@link AnalysisJobBuilder} in use on the
+     * {@link JobGraph} canvas. Note that other {@link AnalysisJobBuilder}s may
+     * exist if the job has components which publish {@link OutputDataStream}s.
+     * Therefore the {@link #getAnalysisJobBuilder(Object)} method is preferred
+     * if any vertex-specific interaction is needed.
+     * 
+     * @return
+     */
+    public AnalysisJobBuilder getMainAnalysisJobBuilder() {
+        return _analysisJobBuilder;
+    }
+
+    /**
+     * Gets the {@link AnalysisJobBuilder} object pertaining to a particular
+     * vertex on the {@link JobGraph}.
+     * 
+     * @param vertex
+     * @return
+     */
+    public AnalysisJobBuilder getAnalysisJobBuilder(Object vertex) {
+        if (vertex instanceof ComponentBuilder) {
+            return ((ComponentBuilder) vertex).getAnalysisJobBuilder();
+        }
         return _analysisJobBuilder;
     }
 

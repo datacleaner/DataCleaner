@@ -54,7 +54,7 @@ public final class RowConsumerTaskListener implements TaskListener {
 	public void onError(Task task, Throwable throwable) {
 		boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
 		if (!alreadyRegisteredError) {
-			_analysisListener.errorUknown(_analysisJob, throwable);
+			_analysisListener.errorUnknown(_analysisJob, throwable);
 		}
 
 		incrementCounter();

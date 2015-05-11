@@ -141,7 +141,7 @@ final class AnalysisRunnerJobDelegate {
 
             return new AnalysisResultFutureImpl(_resultQueue, jobCompletionTaskListener, _errorAware);
         } catch (RuntimeException e) {
-            _analysisListener.errorUknown(_job, e);
+            _analysisListener.errorUnknown(_job, e);
             throw e;
         }
 

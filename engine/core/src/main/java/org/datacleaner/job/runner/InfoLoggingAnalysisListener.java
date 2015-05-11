@@ -45,16 +45,14 @@ public class InfoLoggingAnalysisListener extends AnalysisListenerAdaptor {
 
     @Override
     public void rowProcessingBegin(AnalysisJob job, RowProcessingMetrics metrics) {
-        logger.info("Beginning row processing of {}", metrics.getTable());
+        logger.info("Processing of '{}' start", metrics.getTable().getName());
     }
-
+    
     @Override
-    public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
-        if (currentRow > 0 && currentRow % 1000 == 0) {
-            logger.info("Reading row no. {} in {}", new Object[] { currentRow, metrics.getTable().getName() });
-        }
+    public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
+        logger.info("Processing of '{}' success", metrics.getTable().getName());
     }
-
+    
     @Override
     public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
         if (message instanceof ExecutionLogMessage) {

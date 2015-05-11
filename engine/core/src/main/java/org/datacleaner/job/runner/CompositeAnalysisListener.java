@@ -146,9 +146,9 @@ public final class CompositeAnalysisListener implements AnalysisListener {
     }
 
     @Override
-    public void errorUknown(AnalysisJob job, Throwable throwable) {
+    public void errorUnknown(AnalysisJob job, Throwable throwable) {
         for (AnalysisListener delegate : _delegates) {
-            delegate.errorUknown(job, throwable);
+            delegate.errorUnknown(job, throwable);
         }
     }
 }

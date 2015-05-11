@@ -108,5 +108,5 @@ public interface AnalysisListener {
 
     public void errorInComponent(AnalysisJob job, ComponentJob componentJob, InputRow row, Throwable throwable);
 
-    public void errorUknown(AnalysisJob job, Throwable throwable);
+    public void errorUnknown(AnalysisJob job, Throwable throwable);
 }

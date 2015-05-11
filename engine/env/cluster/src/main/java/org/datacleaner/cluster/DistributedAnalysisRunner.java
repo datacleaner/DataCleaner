@@ -172,7 +172,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
             }
 
         } catch (RuntimeException e) {
-            _analysisListener.errorUknown(job, e);
+            _analysisListener.errorUnknown(job, e);
             throw e;
         }
 
@@ -224,7 +224,7 @@ public final class DistributedAnalysisRunner implements AnalysisRunner {
                 final AnalysisResultFuture slaveResultFuture = _clusterManager.dispatchJob(slaveJob, context);
                 results.add(slaveResultFuture);
             } catch (Exception e) {
-                _analysisListener.errorUknown(job, e);
+                _analysisListener.errorUnknown(job, e);
                 // exceptions due to dispatching jobs are added as the first of
                 // the job's errors, and the rest of the execution is aborted.
                 AnalysisResultFuture errorResult = new FailedAnalysisResultFuture(e);

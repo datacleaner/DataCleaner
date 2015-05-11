@@ -26,8 +26,7 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -46,7 +45,7 @@ public class DataStructuresIntegrationTest extends TestCase {
 	public void testBuildAndExtractFromStructures() throws Throwable {
 		Datastore datastore = TestHelper.createSampleDatabaseDatastore("orderdb");
 		DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
-		AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog);
+		DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
 
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
 		ajb.setDatastore("orderdb");

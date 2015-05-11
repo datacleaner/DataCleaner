@@ -34,14 +34,24 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.junit.After;
 import org.junit.Test;
 
 public class CreateCsvFileAnalyzerTest {
 
+    private CreateCsvFileAnalyzer analyzer;
+    
+    @After
+    public void tearDown() {
+        if ((analyzer != null) && (analyzer.file != null)) {
+            analyzer.file.delete();
+        }
+    }
+    
     @Test
     public void test() throws Exception {
 
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        analyzer = new CreateCsvFileAnalyzer();
 
         analyzer.file = new File("csvtest.csv");
         analyzer.initTempFile();
@@ -81,7 +91,7 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void testSortNumerical() throws Exception {
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
@@ -134,10 +144,6 @@ public class CreateCsvFileAnalyzerTest {
         }
 
         assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]", resultIds.toString());
-        
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
 
     @Test
@@ -195,10 +201,6 @@ public class CreateCsvFileAnalyzerTest {
         }
 
         assertEquals("[0, 1, 10, 11, 12, 2, 3, 4, 5, 6, 7, 8, 9]", resultIds.toString());
-
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
     
     @Test
@@ -247,10 +249,6 @@ public class CreateCsvFileAnalyzerTest {
             assertEquals("CustomNameForStringColumn", columnNames[0]);
             assertEquals("CustomNameForIntegerColumn", columnNames[1]);
         }
-
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
 
 }

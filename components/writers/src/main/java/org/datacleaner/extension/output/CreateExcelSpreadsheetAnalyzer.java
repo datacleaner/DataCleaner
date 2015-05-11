@@ -45,6 +45,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.FileProperty;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
@@ -75,6 +76,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_SHEET_NAME = "Sheet name";
     public static final String PROPERTY_OVERWRITE_SHEET_IF_EXISTS = "Overwrite sheet if exists";
+    public static final String PROPERTY_FIELD_NAMES = "Fields";
     private static final String[] excelExtension  = {"xlsx", "xls"}; 
     
     private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
@@ -91,6 +93,10 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Configured(order = 1, required = false)
     InputColumn<?> columnToBeSortedOn;
+    
+    @Configured(PROPERTY_FIELD_NAMES)
+    @MappedProperty(PROPERTY_COLUMNS)
+    String[] fields;
 
     private final Character separatorChar = ',';
     private final Character quoteChar = '"';
@@ -194,17 +200,17 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         if (columnToBeSortedOn != null) {
             return createTemporaryCsvWriter();
         } else {
-            return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
+            return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, fields, columns);
         }
     }
 
     private OutputWriter createTemporaryCsvWriter() {
         final List<String> headers = new ArrayList<String>();
         for (int i = 0; i < columns.length; i++) {
-            String columnName = columns[i].getName();
+            String columnName = getColumnHeader(i);
             headers.add(columnName);
             if (columnToBeSortedOn != null) {
-                if (columnName.equals(columnToBeSortedOn.getName())) {
+                if (columns[i].getName().equals(columnToBeSortedOn.getName())) {
                     indexOfColumnToBeSortedOn = i;
                 }
             }
@@ -232,6 +238,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
                 quoteChar, escapeChar, includeHeader, columns);
+    }
+    
+    private String getColumnHeader(int i) {
+        if (fields == null) {
+            return columns[i].getName();
+        }
+        return fields[i];
     }
 
     @Override

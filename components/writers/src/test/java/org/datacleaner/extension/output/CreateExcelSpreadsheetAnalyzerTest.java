@@ -281,9 +281,9 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         analyzer.columns[0] = stringColumn;
         analyzer.columns[1] = integerColumn;
         
-//        analyzer.fields = new String[2];
-//        analyzer.fields[0] = "CustomNameForStringColumn";
-//        analyzer.fields[1] = "CustomNameForIntegerColumn";
+        analyzer.fields = new String[2];
+        analyzer.fields[0] = "CustomNameForStringColumn";
+        analyzer.fields[1] = "CustomNameForIntegerColumn";
 
         analyzer.init();
 

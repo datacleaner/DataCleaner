@@ -96,7 +96,7 @@ public class CreateCsvFileAnalyzerTest {
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
 
-        analyzer.file = new File("targer/csvtest-sortnumerical.csv");
+        analyzer.file = new File("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();

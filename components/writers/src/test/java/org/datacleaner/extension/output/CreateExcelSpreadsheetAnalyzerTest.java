@@ -261,4 +261,60 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
         assertEquals("[0, 1, 10, 11, 12, 2, 3, 4, 5, 6, 7, 8, 9]", resultIds.toString());
     }
     
+    @Test
+    public void testCustomColumnHeaders() throws Exception {
+        final String filename = "target/exceltest-customcolumnheaders.xlsx";
+
+        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+
+        final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
+        final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
+
+        generatedFile = new File(filename);
+        analyzer.file = generatedFile;
+        analyzer.initTempFile();
+        assertNotNull(analyzer.file);
+        
+        analyzer.sheetName = "foo";
+
+        analyzer.columns = new InputColumn<?>[2];
+        analyzer.columns[0] = stringColumn;
+        analyzer.columns[1] = integerColumn;
+        
+//        analyzer.fields = new String[2];
+//        analyzer.fields[0] = "CustomNameForStringColumn";
+//        analyzer.fields[1] = "CustomNameForIntegerColumn";
+
+        analyzer.init();
+
+        InputRow[] rows = new InputRow[13];
+        rows[0] = new MockInputRow().put(stringColumn, "row00").put(integerColumn, 7);
+        rows[1] = new MockInputRow().put(stringColumn, "row01").put(integerColumn, 9);
+        rows[2] = new MockInputRow().put(stringColumn, "row02").put(integerColumn, 2);
+        rows[3] = new MockInputRow().put(stringColumn, "row03").put(integerColumn, 3);
+        rows[4] = new MockInputRow().put(stringColumn, "row04").put(integerColumn, 4);
+        rows[5] = new MockInputRow().put(stringColumn, "row05").put(integerColumn, 12);
+        rows[6] = new MockInputRow().put(stringColumn, "row06").put(integerColumn, 6);
+        rows[7] = new MockInputRow().put(stringColumn, "row07").put(integerColumn, 0);
+        rows[8] = new MockInputRow().put(stringColumn, "row08").put(integerColumn, 8);
+        rows[9] = new MockInputRow().put(stringColumn, "row09").put(integerColumn, 1);
+        rows[10] = new MockInputRow().put(stringColumn, "row10").put(integerColumn, 10);
+        rows[11] = new MockInputRow().put(stringColumn, "row11").put(integerColumn, 11);
+        rows[12] = new MockInputRow().put(stringColumn, "row12").put(integerColumn, 5);
+
+        for (int i = 0; i < rows.length; i++) {
+            analyzer.run(rows[i], i);
+        }
+
+        analyzer.getResult();
+
+        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
+            String[] columnNames = outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(analyzer.sheetName).getColumnNames();
+            assertEquals(2, columnNames.length);
+            assertEquals("CustomNameForStringColumn", columnNames[0]);
+            assertEquals("CustomNameForIntegerColumn", columnNames[1]);
+        }
+    }
+    
 }

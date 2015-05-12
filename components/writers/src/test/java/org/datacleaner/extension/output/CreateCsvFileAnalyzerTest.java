@@ -19,11 +19,7 @@
  */
 package org.datacleaner.extension.output;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,16 +34,26 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.junit.After;
 import org.junit.Test;
 
 public class CreateCsvFileAnalyzerTest {
 
+    private CreateCsvFileAnalyzer analyzer;
+    
+    @After
+    public void tearDown() {
+        if ((analyzer != null) && (analyzer.file != null)) {
+            analyzer.file.delete();
+        }
+    }
+    
     @Test
     public void test() throws Exception {
 
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        analyzer = new CreateCsvFileAnalyzer();
 
-        analyzer.file = new File("csvtest.csv");
+        analyzer.file = new File("target/csvtest.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         // Case 1 - file does not exists
@@ -85,12 +91,12 @@ public class CreateCsvFileAnalyzerTest {
 
     @Test
     public void testSortNumerical() throws Exception {
-        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+        analyzer = new CreateCsvFileAnalyzer();
 
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<Integer> idColumn = new MockInputColumn<Integer>("IdToSort", Integer.class);
 
-        analyzer.file = new File("csvtest-sortnumerical.csv");
+        analyzer.file = new File("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();
@@ -138,10 +144,6 @@ public class CreateCsvFileAnalyzerTest {
         }
 
         assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]", resultIds.toString());
-        
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
     }
 
     @Test
@@ -151,7 +153,7 @@ public class CreateCsvFileAnalyzerTest {
         final InputColumn<String> testColumn = new MockInputColumn<String>("TestColumn");
         final InputColumn<String> idColumn = new MockInputColumn<String>("IdToSort", String.class);
 
-        analyzer.file = new File("csvtest-sortnumerical.csv");
+        analyzer.file = new File("target/csvtest-sortnumerical.csv");
         analyzer.initTempFile();
         assertNotNull(analyzer.file);
         final String targetFilename = analyzer.file.getName();
@@ -199,10 +201,58 @@ public class CreateCsvFileAnalyzerTest {
         }
 
         assertEquals("[0, 1, 10, 11, 12, 2, 3, 4, 5, 6, 7, 8, 9]", resultIds.toString());
+    }
+    
+    @Test
+    public void testCustomColumnHeaders() throws Exception {
+        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 
-        // TODO: If the test fails, file won't be deleted - introduce tearDown method
-        analyzer.file.delete();
-        assertFalse(analyzer.file.exists());
+        final InputColumn<String> stringColumn = new MockInputColumn<String>("StringColumn");
+        final InputColumn<Integer> integerColumn = new MockInputColumn<Integer>("IntegerColumn");
+
+        analyzer.file = new File("target/csvtest-customcolumnheaders.csv");
+        analyzer.initTempFile();
+        assertNotNull(analyzer.file);
+        final String targetFilename = analyzer.file.getName();
+
+        analyzer.columns = new InputColumn<?>[2];
+        analyzer.columns[0] = stringColumn;
+        analyzer.columns[1] = integerColumn;
+        
+        analyzer.fields = new String[2];
+        analyzer.fields[0] = "CustomNameForStringColumn";
+        analyzer.fields[1] = "CustomNameForIntegerColumn";
+
+        analyzer.init();
+
+        InputRow[] rows = new InputRow[13];
+        rows[0] = new MockInputRow().put(stringColumn, "row00").put(integerColumn, 7);
+        rows[1] = new MockInputRow().put(stringColumn, "row01").put(integerColumn, 9);
+        rows[2] = new MockInputRow().put(stringColumn, "row02").put(integerColumn, 2);
+        rows[3] = new MockInputRow().put(stringColumn, "row03").put(integerColumn, 3);
+        rows[4] = new MockInputRow().put(stringColumn, "row04").put(integerColumn, 4);
+        rows[5] = new MockInputRow().put(stringColumn, "row05").put(integerColumn, 12);
+        rows[6] = new MockInputRow().put(stringColumn, "row06").put(integerColumn, 6);
+        rows[7] = new MockInputRow().put(stringColumn, "row07").put(integerColumn, 0);
+        rows[8] = new MockInputRow().put(stringColumn, "row08").put(integerColumn, 8);
+        rows[9] = new MockInputRow().put(stringColumn, "row09").put(integerColumn, 1);
+        rows[10] = new MockInputRow().put(stringColumn, "row10").put(integerColumn, 10);
+        rows[11] = new MockInputRow().put(stringColumn, "row11").put(integerColumn, 11);
+        rows[12] = new MockInputRow().put(stringColumn, "row12").put(integerColumn, 5);
+
+        for (int i = 0; i < rows.length; i++) {
+            analyzer.run(rows[i], i);
+        }
+
+        analyzer.getResult();
+
+        CsvDatastore outputDatastore = new CsvDatastore("csvtest-customcolumnheaders", analyzer.file.getAbsolutePath());
+        try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
+            String[] columnNames = outputDatastoreConnection.getSchemaNavigator().getDefaultSchema().getTableByName(targetFilename).getColumnNames();
+            assertEquals(2, columnNames.length);
+            assertEquals("CustomNameForStringColumn", columnNames[0]);
+            assertEquals("CustomNameForIntegerColumn", columnNames[1]);
+        }
     }
 
 }

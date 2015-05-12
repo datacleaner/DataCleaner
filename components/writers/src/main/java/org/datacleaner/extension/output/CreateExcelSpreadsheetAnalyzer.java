@@ -45,7 +45,6 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.FileProperty;
-import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
@@ -76,9 +75,8 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_SHEET_NAME = "Sheet name";
     public static final String PROPERTY_OVERWRITE_SHEET_IF_EXISTS = "Overwrite sheet if exists";
-    public static final String PROPERTY_FIELD_NAMES = "Fields";
-    private static final String[] excelExtension  = {"xlsx", "xls"}; 
-    
+    private static final String[] excelExtension = { "xlsx", "xls" };
+
     private static final char[] ILLEGAL_SHEET_CHARS = new char[] { '.', ':' };
 
     @Configured(PROPERTY_FILE)
@@ -93,10 +91,6 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
     @Configured(order = 1, required = false)
     InputColumn<?> columnToBeSortedOn;
-    
-    @Configured(value = PROPERTY_FIELD_NAMES, required = false)
-    @MappedProperty(PROPERTY_COLUMNS)
-    String[] fields;
 
     private final Character separatorChar = ',';
     private final Character quoteChar = '"';
@@ -147,11 +141,11 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                 }
             }
         }
-        
-        if (!FilenameUtils.isExtension(file.getName(), excelExtension)){
-           throw new IllegalStateException("Please add the '.xlsx'  or '.xls' extension to the filename"); 
+
+        if (!FilenameUtils.isExtension(file.getName(), excelExtension)) {
+            throw new IllegalStateException("Please add the '.xlsx'  or '.xls' extension to the filename");
         }
-       
+
     }
 
     @Override
@@ -239,7 +233,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
                 quoteChar, escapeChar, includeHeader, columns);
     }
-    
+
     private String getColumnHeader(int i) {
         if (fields == null) {
             return columns[i].getName();
@@ -266,8 +260,9 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
         final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
         final Table table = tempDataContext.getDefaultSchema().getTable(0);
-        
-        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
+
+        final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
+                indexOfColumnToBeSortedOn);
 
         final SortMergeWriter<Row, ExcelDataContextWriter> sortMergeWriter = new SortMergeWriter<Row, ExcelDataContextWriter>(
                 comparator) {
@@ -311,7 +306,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
         }
         sortMergeWriter.write(file);
     }
-    
+
     public void setFile(File file) {
         this.file = file;
     }

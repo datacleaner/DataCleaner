@@ -27,12 +27,15 @@ import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
-import org.datacleaner.components.categories.ImproveSuperCategory;
 import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.ImproveSuperCategory;
 import org.datacleaner.reference.SynonymCatalog;
 
 /**
@@ -44,7 +47,10 @@ import org.datacleaner.reference.SynonymCatalog;
 @Named("Synonym lookup")
 @Alias("Synonym replacement")
 @Description("Replaces strings with their synonyms")
-@Categorized(superCategory=ImproveSuperCategory.class)
+@ExternalDocumentation({
+        @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
+        @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
+@Categorized(superCategory = ImproveSuperCategory.class)
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured
@@ -76,7 +82,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     public OutputColumns getOutputColumns() {
         return new OutputColumns(String.class, new String[] { column.getName() + " (synonyms replaced)" });
     }
-    
+
     @Override
     public String getSuggestedLabel() {
         if (synonymCatalog == null) {

@@ -52,6 +52,7 @@ public class CountryTest extends TestCase {
         assertEquals(Country.IRELAND, Country.find("Republic of Ireland"));
         assertEquals(Country.IRELAND, Country.find("Ire land"));
         assertEquals(Country.IRELAND, Country.find("Eir"));
+        assertEquals(Country.IRELAND, Country.find("Ire"));
         assertEquals(Country.IRELAND, Country.find("Eire"));
         assertEquals(Country.IRELAND, Country.find("Éire"));
         assertEquals(Country.IRELAND, Country.find("Airlann"));

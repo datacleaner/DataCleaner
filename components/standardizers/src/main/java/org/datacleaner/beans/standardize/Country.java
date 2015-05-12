@@ -250,7 +250,7 @@ public enum Country implements HasName, HasAliases {
 
     IRAQ("IQ", "IRQ", "Iraq", "Irak"),
 
-    IRELAND("IE", "IRL", "Ireland", "Eire", "Eir", "Éire", "Airlann"),
+    IRELAND("IE", "IRL", "Ireland", "Eire", "Eir", "Éire", "Airlann", "Ire"),
 
     ISLE_OF_MAN("IM", "IMN", "Isle of Man"),
 

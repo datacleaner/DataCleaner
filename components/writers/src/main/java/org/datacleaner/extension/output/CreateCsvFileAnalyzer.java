@@ -159,7 +159,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             String columnName = getColumnHeader(i);
             headers.add(columnName);
             if (columnToBeSortedOn != null) {
-                if (columns[i].getName().equals(columnToBeSortedOn.getName())) {
+                if (columns[i].equals(columnToBeSortedOn)) {
                     indexOfColumnToBeSortedOn = i;
                 }
             }

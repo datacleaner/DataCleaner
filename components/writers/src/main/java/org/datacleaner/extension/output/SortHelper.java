@@ -64,12 +64,11 @@ public class SortHelper {
                     for (int i = 0; i < numberOfSelectItems; i++) {
                         final String rowValue1 = (String) row1.getValue(i);
                         final String rowValue2 = (String) row2.getValue(i);
-                        final String rowValue1LowerCased = rowValue1.toLowerCase();
-                        final String rowValue2LowerCased = rowValue2.toLowerCase();
-                        if (CompareUtils.compare(rowValue1LowerCased, rowValue2LowerCased) == 0) {
+                        final int compareResult = rowValue1.compareToIgnoreCase(rowValue2);
+                        if (compareResult == 0) {
                             continue;
                         } else {
-                            return CompareUtils.compare(rowValue1LowerCased, rowValue2LowerCased);
+                            return compareResult;
                         }
                     }
                 }

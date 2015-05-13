@@ -262,6 +262,65 @@ public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
     }
     
     @Test
+    public void testSortLexicographicCaseSensitivity() throws Exception {
+        final String filename = "target/exceltest-sortlexicographiccasesensitivity.xlsx";
+
+        CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+
+        final InputColumn<String> sortColumn = new MockInputColumn<String>("SortColumn");
+        final InputColumn<String> someColumn = new MockInputColumn<String>("SomeColumn", String.class);
+        
+        generatedFile = new File(filename);
+        analyzer.file = generatedFile;
+        assertNotNull(analyzer.file);
+        
+        analyzer.sheetName = "foo";
+        
+        assertNotNull(analyzer.file);
+
+        analyzer.columns = new InputColumn<?>[2];
+        analyzer.columns[0] = sortColumn;
+        analyzer.columns[1] = someColumn;
+
+        analyzer.columnToBeSortedOn = sortColumn;
+
+        analyzer.validate();
+        
+        analyzer.init();
+
+        InputRow[] rows = new InputRow[8];
+        rows[0] = new MockInputRow().put(sortColumn, "Claudia").put(someColumn, 1);
+        rows[1] = new MockInputRow().put(sortColumn, "Dennis").put(someColumn, 2);
+        rows[2] = new MockInputRow().put(sortColumn, "Kasper").put(someColumn, 3);
+        rows[3] = new MockInputRow().put(sortColumn, "Tomasz").put(someColumn, 4);
+        rows[4] = new MockInputRow().put(sortColumn, "claudia").put(someColumn, 5);
+        rows[5] = new MockInputRow().put(sortColumn, "dennis").put(someColumn, 6);
+        rows[6] = new MockInputRow().put(sortColumn, "kasper").put(someColumn, 7);
+        rows[7] = new MockInputRow().put(sortColumn, "tomasz").put(someColumn, 8);
+
+        for (int i = 0; i < rows.length; i++) {
+            analyzer.run(rows[i], i);
+        }
+
+        analyzer.getResult();
+
+        final List<String> resultIds = new ArrayList<>(13);
+        ExcelDatastore outputDatastore = new ExcelDatastore(filename, new FileResource(analyzer.file), analyzer.file.getAbsolutePath());
+        try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
+            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            try (DataSet dataSet = dataContext.query().from("foo").selectAll().execute()) {
+                while (dataSet.next()) {
+                    Row row = dataSet.getRow();
+                    String value = (String) row.getValue(0);
+                    resultIds.add(value);
+                }
+            }
+        }
+
+        assertEquals("[Claudia, claudia, Dennis, dennis, Kasper, kasper, Tomasz, tomasz]", resultIds.toString());
+    }
+    
+    @Test
     public void testCustomColumnHeaders() throws Exception {
         final String filename = "target/exceltest-customcolumnheaders.xlsx";
 

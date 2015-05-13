@@ -151,7 +151,7 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
      * @param job
      * @param throwable
      * 
-     * @deprecated use {@link #errorUknown(AnalysisJob, Throwable)} (this method
+     * @deprecated use {@link #errorUnknown(AnalysisJob, Throwable)} (this method
      *             retained for forward-going compatibility).
      */
     @Deprecated

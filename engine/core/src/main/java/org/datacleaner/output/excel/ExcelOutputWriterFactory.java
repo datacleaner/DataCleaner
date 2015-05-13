@@ -40,7 +40,7 @@ public final class ExcelOutputWriterFactory {
 	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
 	private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
 
-	public static OutputWriter getWriter(String filename, String sheetName, final InputColumn<?>... columns) {
+	public static OutputWriter getWriter(String filename, String sheetName, String[] columnNames, final InputColumn<?>... columns) {
 		ExcelOutputWriter outputWriter;
 		synchronized (dataContexts) {
 			UpdateableDataContext dataContext = dataContexts.get(filename);
@@ -49,7 +49,7 @@ public final class ExcelOutputWriterFactory {
 				File file = new File(filename);
 				dataContext = new ExcelDataContext(file);
 
-				Table table = getTable(dataContext, sheetName, columns);
+				Table table = getTable(dataContext, sheetName, columnNames);
 
 				dataContexts.put(filename, dataContext);
 				counters.put(filename, new AtomicInteger(1));
@@ -57,7 +57,7 @@ public final class ExcelOutputWriterFactory {
 
 				// write the headers
 			} else {
-				Table table = getTable(dataContext, sheetName, columns);
+				Table table = getTable(dataContext, sheetName, columnNames);
 				outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
 				counters.get(filename).incrementAndGet();
 			}
@@ -66,7 +66,7 @@ public final class ExcelOutputWriterFactory {
 		return outputWriter;
 	}
 
-	private static Table getTable(UpdateableDataContext dataContext, final String sheetName, final InputColumn<?>[] columns) {
+	private static Table getTable(UpdateableDataContext dataContext, final String sheetName, final String[] columnNames) {
 		final Schema schema = dataContext.getDefaultSchema();
 		Table table = schema.getTableByName(sheetName);
 		if (table == null) {
@@ -75,8 +75,8 @@ public final class ExcelOutputWriterFactory {
 				@Override
 				public void run(UpdateCallback callback) {
 					TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
-					for (InputColumn<?> inputColumn : columns) {
-						tableBuilder.withColumn(inputColumn.getName());
+					for (String columnName : columnNames) {
+						tableBuilder.withColumn(columnName);
 					}
 					tableRef.set(tableBuilder.execute());
 				}

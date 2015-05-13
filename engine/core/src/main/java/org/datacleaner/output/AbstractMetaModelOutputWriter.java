@@ -88,10 +88,8 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 					for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
 						RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
 						for (int i = 0; i < _columns.length; i++) {
-							InputColumn<?> column = _columns[i];
 							Object value = rowData[i];
-							String columnName = getTargetColumnName(column);
-							insertBuilder = insertBuilder.value(columnName, value);
+							insertBuilder = insertBuilder.value(i, value);
 						}
 						insertBuilder.execute();
 					}
@@ -101,10 +99,6 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 	}
 
 	protected abstract Table getTable();
-
-	protected String getTargetColumnName(InputColumn<?> column) {
-		return column.getName();
-	}
 
 	@Override
 	public final void close() {

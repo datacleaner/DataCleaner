@@ -74,6 +74,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
+    
 
     @Configured(value = PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
@@ -155,10 +156,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
         List<String> headers = new ArrayList<String>();
         for (int i = 0; i < columns.length; i++) {
-            String columnName = columns[i].getName();
+            String columnName = getColumnHeader(i);
             headers.add(columnName);
             if (columnToBeSortedOn != null) {
-                if (columnName.equals(columnToBeSortedOn.getName())) {
+                if (columns[i].equals(columnToBeSortedOn)) {
                     indexOfColumnToBeSortedOn = i;
                 }
             }
@@ -190,6 +191,13 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                 quoteChar, escapeChar, includeHeader, columns);
     }
 
+    private String getColumnHeader(int i) {
+        if (fields == null) {
+            return columns[i].getName();
+        }
+        return fields[i];
+    }
+
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
         final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
@@ -200,7 +208,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
             final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-            final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn, indexOfColumnToBeSortedOn);
+            final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
+                    indexOfColumnToBeSortedOn);
 
             final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
             final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {

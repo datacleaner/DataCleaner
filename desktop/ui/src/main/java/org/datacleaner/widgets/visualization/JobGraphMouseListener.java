@@ -128,7 +128,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         final JMenuItem previewMenuItem = new JMenuItem("Preview data", ImageManager.get().getImageIcon(
                 IconUtils.ACTION_PREVIEW, IconUtils.ICON_SIZE_SMALL));
-        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(table);
         final Datastore datastore = analysisJobBuilder.getDatastore();
         final List<MetaModelInputColumn> inputColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
         previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_windowContext, datastore, inputColumns));
@@ -183,7 +183,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
         popup.add(new ChangeRequirementMenu(componentBuilder));
         popup.addSeparator();
-        popup.add(new RemoveComponentMenuItem(_graphContext.getAnalysisJobBuilder(), componentBuilder));
+        popup.add(new RemoveComponentMenuItem(componentBuilder));
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());
     }
 
@@ -211,7 +211,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         final JPopupMenu popup = new JPopupMenu();
 
         final Point point = me.getPoint();
-        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder();
+        final AnalysisJobBuilder analysisJobBuilder = _graphContext.getMainAnalysisJobBuilder();
         final DataCleanerConfiguration configuration = analysisJobBuilder.getConfiguration();
         final Set<ComponentSuperCategory> superCategories = configuration.getEnvironment().getDescriptorProvider()
                 .getComponentSuperCategories();
@@ -233,7 +233,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         logger.debug("Graph released");
 
         if (isLeftClick(me)) {
-            if(v instanceof ComponentBuilder){
+            if (v instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) v;
 
                 final boolean ended = _linkPainter.endLink(componentBuilder, me);
@@ -264,13 +264,14 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
                     metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_X, "" + x.intValue());
                     metadataProperties.put(JobGraphMetadata.METADATA_PROPERTY_COORDINATES_Y, "" + y.intValue());
                 } else if (vertex instanceof Table) {
-                    JobGraphMetadata.setPointForTable(_graphContext.getAnalysisJobBuilder(), (Table) vertex, x, y);
+                    final AnalysisJobBuilder analysisJobBuilder = _graphContext.getAnalysisJobBuilder(vertex);
+                    JobGraphMetadata.setPointForTable(analysisJobBuilder, (Table) vertex, x, y);
                 }
             }
             if (selectedObjects.length > 0) {
                 _graphContext.getJobGraph().refresh();
             }
-            
+
         } else if (isRightClick(me)) {
             if (v instanceof ComponentBuilder) {
                 final ComponentBuilder componentBuilder = (ComponentBuilder) v;
@@ -313,7 +314,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     @Override
     public void graphClicked(Object v, MouseEvent me) {
         logger.debug("graphClicked({}, {})", v, me);
-        //We do nothing. We show the menu only when the mouse is released
+        // We do nothing. We show the menu only when the mouse is released
     }
 
     @Override
@@ -327,7 +328,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
         // reset the variable for next time
         _clickCaught = false;
     }
-    
+
     private boolean isLeftClick(MouseEvent me) {
         int button = me.getButton();
         return button == MouseEvent.BUTTON1 && (!me.isMetaDown());

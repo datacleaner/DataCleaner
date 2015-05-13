@@ -37,6 +37,9 @@ import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -53,6 +56,7 @@ import org.slf4j.LoggerFactory;
 
 @Named("Pattern finder")
 @Description("The Pattern Finder will inspect your String values and generate and match string patterns that suit your data.\nIt can be used for a lot of purposes but is excellent for verifying or getting ideas about the format of the string-values in a column.")
+@ExternalDocumentation(value = { @DocumentationLink(title = "Kasper's Source: Pattern Finder 2.0", url = "http://kasper.eobjects.org/2010/09/pattern-finder-20-latest-feature-in.html", type = DocumentationType.TECH, version = "2.0") })
 @Concurrent(true)
 public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
 

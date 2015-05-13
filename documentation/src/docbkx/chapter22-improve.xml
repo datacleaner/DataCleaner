@@ -301,11 +301,15 @@
 				in these lists are acceptable.
 			</para>
 			<para>
-				When finishing the training, save the reference to file. The
-				reference
-				is the most important part of the Duplicate detection
+				When finishing the training, remember save the reference to file.
+				The reference is the most important part of the Duplicate detection
 				model, since it allows you to reproduce and re-train a model based
-				on past classifications.
+				on past classifications. You will find the 'Save reference' button
+				to do this in the
+				<emphasis>Duplicates reference</emphasis>
+				tab. To re-instantiate your training session you can then later
+				configure the previously mentioned "Reference file" property to the
+				saved file.
 			</para>
 
 			<para>To validate the training results and obtain the best model,
@@ -545,11 +549,15 @@
 			</para>
 
 			<para>
-				Open the duplicates staging datastore as the job source datastore.
+				Open the duplicates staging datastore as the job source
+				datastore.
 				Apply
-				"Merge duplicates (Simple)" transformer to the RECORDS table
-				from the duplicates datastore. Select all the relevant columns as
-				input (in our case all of them) and select GROUPID column in "Group
+				"Merge duplicates (Simple)" transformer to the
+				RECORDS table
+				from the duplicates datastore. Select all the relevant
+				columns as
+				input (in our case all of them) and select GROUPID column
+				in "Group
 				id" dropdown menu and GROUPSIZE column in "Group count".
 			</para>
 

@@ -59,6 +59,7 @@ public class SharedDescriptorProvider implements DescriptorProvider {
                 // scenarios)
                 ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
                 scanner.scanPackage("org.datacleaner.beans", true);
+                scanner.scanPackage("org.datacleaner.components", true);
                 scanner.scanPackage("org.datacleaner.result.renderer", false);
                 scanner.scanPackage("org.datacleaner.extension", true);
                 scanner.scanPackage("com.hi", true);

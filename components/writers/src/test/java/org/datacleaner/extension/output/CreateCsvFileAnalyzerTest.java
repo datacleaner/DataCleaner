@@ -204,6 +204,58 @@ public class CreateCsvFileAnalyzerTest {
     }
     
     @Test
+    public void testSortLexicographicCaseSensitivity() throws Exception {
+        CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
+
+        final InputColumn<String> sortColumn = new MockInputColumn<String>("SortColumn");
+        final InputColumn<String> someColumn = new MockInputColumn<String>("SomeColumn", String.class);
+
+        analyzer.file = new File("target/csvtest-sortlexicographiccasesensitivity.csv");
+        analyzer.initTempFile();
+        assertNotNull(analyzer.file);
+        final String targetFilename = analyzer.file.getName();
+
+        analyzer.columns = new InputColumn<?>[2];
+        analyzer.columns[0] = sortColumn;
+        analyzer.columns[1] = someColumn;
+
+        analyzer.columnToBeSortedOn = sortColumn;
+
+        analyzer.init();
+
+        InputRow[] rows = new InputRow[8];
+        rows[0] = new MockInputRow().put(sortColumn, "Claudia").put(someColumn, 1);
+        rows[1] = new MockInputRow().put(sortColumn, "Dennis").put(someColumn, 2);
+        rows[2] = new MockInputRow().put(sortColumn, "Kasper").put(someColumn, 3);
+        rows[3] = new MockInputRow().put(sortColumn, "Tomasz").put(someColumn, 4);
+        rows[4] = new MockInputRow().put(sortColumn, "claudia").put(someColumn, 5);
+        rows[5] = new MockInputRow().put(sortColumn, "dennis").put(someColumn, 6);
+        rows[6] = new MockInputRow().put(sortColumn, "kasper").put(someColumn, 7);
+        rows[7] = new MockInputRow().put(sortColumn, "tomasz").put(someColumn, 8);
+
+        for (int i = 0; i < rows.length; i++) {
+            analyzer.run(rows[i], i);
+        }
+
+        analyzer.getResult();
+
+        final List<String> resultIds = new ArrayList<>(13);
+        CsvDatastore outputDatastore = new CsvDatastore("csvtest-sortlexicographiccasesensitivity", analyzer.file.getAbsolutePath());
+        try (UpdateableDatastoreConnection outputDatastoreConnection = outputDatastore.openConnection()) {
+            DataContext dataContext = outputDatastoreConnection.getDataContext();
+            try (DataSet dataSet = dataContext.query().from(targetFilename).selectAll().execute()) {
+                while (dataSet.next()) {
+                    Row row = dataSet.getRow();
+                    String idValue = (String) row.getValue(0);
+                    resultIds.add(idValue);
+                }
+            }
+        }
+
+        assertEquals("[Claudia, claudia, Dennis, dennis, Kasper, kasper, Tomasz, tomasz]", resultIds.toString());
+    }
+    
+    @Test
     public void testCustomColumnHeaders() throws Exception {
         CreateCsvFileAnalyzer analyzer = new CreateCsvFileAnalyzer();
 

@@ -104,7 +104,7 @@ public class JobWithOutputDataStreamsTest extends TestCase {
             analyzer2.setName("analyzer2");
             assertTrue(analyzer2.isConfigured());
 
-            // the stream is still not "consumed" yet
+            // now the stream is consumed
             assertTrue(analyzer1.isOutputDataStreamConsumed(dataStream));
 
             job = ajb.toAnalysisJob();

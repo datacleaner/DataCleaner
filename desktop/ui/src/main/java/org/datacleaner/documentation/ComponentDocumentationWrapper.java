@@ -25,6 +25,7 @@ import java.util.Set;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.ComponentCategory;
 import org.datacleaner.api.Concurrent;
+import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
@@ -74,6 +75,15 @@ public class ComponentDocumentationWrapper {
 
     public boolean isQueryOptimizable() {
         return ReflectionUtils.is(_componentDescriptor.getComponentClass(), QueryOptimizedFilter.class);
+    }
+
+    public ExternalDocumentation.DocumentationLink[] getDocumentationLinks() {
+        final ExternalDocumentation externalDocumentation = _componentDescriptor
+                .getAnnotation(ExternalDocumentation.class);
+        if (externalDocumentation == null) {
+            return new ExternalDocumentation.DocumentationLink[0];
+        }
+        return externalDocumentation.value();
     }
 
     public String[] getAliases() {

@@ -66,16 +66,24 @@ h3 {
 					<li><a href="index.html">Library</a></li>
 
 					<!-- categorization -->
-					<li>Transform</li> 					<li>String manipulation</li>
+					<li>Improve</li> 
 
-					<li class="active">Concatenator</li>
+					<li class="active">Synonym lookup</li>
 				</ol>
 				<div class="jumbotron">
 					<h1>
-						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB1UlEQVR42u2VPUvDYBDH/w7q4svmoIKDjqJDQT+Fg6iTjg6OuunUgrMgvoEUpdK0yeAgdhEd+gmELkXxBXURFFta0Lb21Tu5FBrypBFBO+TgkkDu7v977rk8ATzzzDPPWt0qOhZqBmrslSjm7WLM96ZXdRTI78g3MiH0/gqAilzUCxs4dwNggTlxFJjbufer3uUPMUiiFfIXKvTKzzkNAyoAfg4E0PZ2gK6KgSWBzjtq06WmgqD2r8kqNsm3v7dBx6oTgGkpDd2S+6QSZ20TwBaCkq+5SEmHr6RhUlZ01QyAxatRrAvwokrcCtAAURfUkawDGbgRoAk3M0C5l7kj9KvE7QDY47L6PWvLCcAvhXddD6GBdDGCcRGPW/VsO/AYQicn8tDxIJpChTCGBSB1u4UO1RYkA2gvhDBEcUGJP3PTgXr7yxHMOq2KvaxjxmkI2dL76BGATLMZ8FuGL9YMgGJOmwFw92Qbsk5fQYP4exB9VLxE/sHfszWRTzb+tjmGY+0AeHuKYYxx6wU25voMouN2RZJ0h9PxWAZ02cUQZosaRn9y9CZkj6dUMTQj0wKZUPwLyiT8THftM4oR74/qaD6fr/af3hIAcfIHuf+1+70Z9Ozf7Qs3CrvZsKowsAAAAABJRU5ErkJggg==" alt="" /> <span>Concatenator</span>
+						<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACY0lEQVR42u2Xy2sTURTG82+4r/jEVyqoCK4VBBeioCiu/AMUwbcuXbnRjWhjO1oLWiomjcUi1SYRimLVTCapaRI1mVbz6jTTvCaZ4XPujaYZ7CPz0gr94CzuZeZ+v9w5954Th2Mlyel0rvkbsSQA23EPdsYqgOoxrIZnhQOs70L82CASp4Y0ET/hRXh3L9iNLsSOuNW555g89BTBtRYDiKNJLCZFUSB4Ygjv6UX69jgdS1Mivpx+YR0AWXQ5FT+kEdraDf6Knz6v1GUkz4xYA/Bb5Yk8ogf6ET8+iPps5U+I9z8Q2tICIStInn1lHQB/2d98Mf94YsGdmHs7DXbzfS3EudfWAAjeOIIdd6lBOZpf9HPMjU2B3eSiwBRCjdT5UfMARNVkAbVcedmcEAM8PR0aiAs+g0koyTAi0ZcCu6ELqUvzEK2fsW0AkuFGVRj5Ru8RDcTVgD4AcqbNqPDyK9h1KsRFX/NI89ff6LuKp2+MmYKYHUrQdfhrAc2p0lULvt98Zwri8/5+uo6ULtJxvVDVX4zSt8YNmdeyJYS2dSOyrw9ytd5IUn/KWDXM3Pmoy7wuVBA9OIDwroeoJAQ6VwpmVKAe4+U46wq2Z65uM6mQ3M4HqERnGuZsBtz2HvP9QJYJLW0uSpg8/AxcJ0PrCDUPZcHtYKxpSMi1nOuLLGguFyXaI5BfSkxpMeO05pZ0RAQi/0RbmORyjVZMknSlT5mGeTgHzsnY05KRDmhmINo0T5z00nnBHZs372Ts7wljR92I7H3UHJMdIDtBitJ/3pT+S4CWGLYxPO38T/TYGY5V/dJPzntMmDtub7AAAAAASUVORK5CYII=" alt="" /> <span>Synonym lookup</span>
 					</h1>
-					<div><p>Concatenate several column values into one.</p></div>
+					<div><p>Replaces strings with their synonyms</p></div>
 					
+					<div>
+						<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+						<a href="https://www.youtube.com/watch?v=iy-j5s-uHz4">Segmenting customers on messy data</a>
+					</div>
+					<div>
+						<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+						<a href="https://www.youtube.com/watch?v=_YiPaA8bFt4">Understanding and using Synonyms</a>
+					</div>
 				</div>
 
 				<div>
@@ -90,7 +98,8 @@ h3 {
 						execution possible</span>
 
 					<!-- aliases -->
-					
+					 <span class="label label-info">Alias:
+						Synonym replacement</span> 
 				</div>
 			</div>
 		</div>
@@ -113,21 +122,39 @@ h3 {
 						<h3>
 							 <span
 								class="glyphicon glyphicon-log-in" aria-hidden="true"></span>
-							 Columns
+							 Column
 						</h3>  <!-- type --> <span
-						class="label label-primary">List of InputColumn&lt;Object&gt;</span>  
+						class="label label-primary">InputColumn&lt;String&gt;</span>  
 
 						<!-- required/optional -->  <span
 						class="label label-info">Required</span> 
 					</li> 					<li class="list-group-item">
 						<h3>
 							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-							 Separator
-						</h3> <p>A string to separate the concatenated values</p> <!-- type --> <span
-						class="label label-primary">String</span>  
+							 Look up every token
+						</h3> <p>Tokenize and look up every token of the input, rather than looking up the complete input string?</p> <!-- type --> <span
+						class="label label-primary">boolean</span>  
 
 						<!-- required/optional -->  <span
-						class="label label-info">Optional</span> 
+						class="label label-info">Required</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Retain original value
+						</h3> <p>Retain original value in case no synonym is found (otherwise null)</p> <!-- type --> <span
+						class="label label-primary">boolean</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Required</span> 
+					</li> 					<li class="list-group-item">
+						<h3>
+							 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							 Synonym catalog
+						</h3>  <!-- type --> <span
+						class="label label-primary">SynonymCatalog</span>  
+
+						<!-- required/optional -->  <span
+						class="label label-info">Required</span> 
 					</li> 
 				</ul>
 

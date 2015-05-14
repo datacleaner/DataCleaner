@@ -29,6 +29,7 @@ import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.filter.EqualsFilter;
 import org.datacleaner.beans.stringpattern.PatternFinderAnalyzer;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.beans.transform.SynonymLookupTransformer;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
@@ -49,6 +50,20 @@ public class ComponentDocumentationBuilderTest {
         final File benchmarkFile = new File("src/test/resources/documentation/pattern_finder.html");
         final File outputFile = new File("target/documentation_pattern_finder.html");
         final ComponentDescriptor<?> descriptor = Descriptors.ofAnalyzer(PatternFinderAnalyzer.class);
+
+        runBenchmarkTest(descriptor, benchmarkFile, outputFile);
+    }
+
+    /**
+     * Test of an component with video link
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testBuildSynonymLookupDocs() throws Exception {
+        final File benchmarkFile = new File("src/test/resources/documentation/synonym_lookup.html");
+        final File outputFile = new File("target/documentation_synonym_lookup.html");
+        final ComponentDescriptor<?> descriptor = Descriptors.ofTransformer(SynonymLookupTransformer.class);
 
         runBenchmarkTest(descriptor, benchmarkFile, outputFile);
     }

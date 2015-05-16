@@ -201,11 +201,10 @@ public class AnalyzerResultFutureAndAnalysisListenerTest extends TestCase {
         assertTrue(originalMessagesString, indexAnalyzerResultReady > indexAnalyzerResultNotReady);
 
         final int indexJobSuccess = getIndexAndVerifyExists(messagesList, "jobSuccess");
-        assertTrue(originalMessagesString, indexJobSuccess > indexFutureAnalyzerSuccess);
-
-        // final assertion: that run(...) returned asynchronously (some time before everything was done)
+        
         final int indexRunReturned = getIndexAndVerifyExists(messagesList, "AnalysisRunner.run(job) returned");
         assertTrue(originalMessagesString, indexJobSuccess > indexRunReturned);
+        assertTrue(originalMessagesString, indexJobSuccess > indexFutureAnalyzerSuccess);
     }
 
     private int getIndexAndVerifyExists(List<String> messagesList, String string) {

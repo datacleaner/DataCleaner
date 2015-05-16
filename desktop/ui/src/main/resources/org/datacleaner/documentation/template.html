@@ -78,7 +78,18 @@ h3 {
 					<h1>
 						<img src="${icon}" alt="" /> <span>${component.name}</span>
 					</h1>
-					${component.description}
+					<div>${component.description}</div>
+					
+					<#list component.documentationLinks as link>
+					<div>
+						<#if link.type().name() == 'VIDEO'>
+						<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+						<#else>
+						<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+						</#if>
+						<a href="${link.url()}">${link.title()}</a>
+					</div>
+					</#list>
 				</div>
 
 				<div>

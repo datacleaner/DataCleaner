@@ -25,18 +25,23 @@ import java.util.Arrays;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.ExcelDatastore;
-import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.util.StringUtils;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
+import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlDomDataContext;
+import org.datacleaner.connection.CouchDbDatastore;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.DatastoreCatalog;
+import org.datacleaner.connection.ElasticSearchDatastore;
+import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.SalesforceDatastore;
+import org.datacleaner.util.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -116,6 +121,31 @@ public class DatastoreXmlExternalizer {
             }
         }
 
+        if (datastore instanceof ElasticSearchDatastore) {
+            final SimpleTableDef[] tableDefs = ((ElasticSearchDatastore) datastore).getTableDefs();
+            if (tableDefs == null) {
+                return true;
+            }
+        }
+
+        if (datastore instanceof MongoDbDatastore) {
+            final SimpleTableDef[] tableDefs = ((MongoDbDatastore) datastore).getTableDefs();
+            if (tableDefs == null) {
+                return true;
+            }
+        }
+
+        if (datastore instanceof CouchDbDatastore) {
+            final SimpleTableDef[] tableDefs = ((CouchDbDatastore) datastore).getTableDefs();
+            if (tableDefs == null) {
+                return true;
+            }
+        }
+
+        if (datastore instanceof SalesforceDatastore) {
+            return true;
+        }
+
         return false;
     }
 
@@ -141,9 +171,9 @@ public class DatastoreXmlExternalizer {
                         if (datastoreName.equals(value)) {
                             // we have a match
                             datastoreCatalogElement.removeChild(element);
-                            
+
                             onDocumentChanged(getDocument());
-                            
+
                             return true;
                         }
                     }
@@ -178,6 +208,8 @@ public class DatastoreXmlExternalizer {
             elem = toElement((ExcelDatastore) datastore, filename);
         } else if (datastore instanceof JdbcDatastore) {
             elem = toElement((JdbcDatastore) datastore);
+        } else if (datastore instanceof ElasticSearchDatastore) {
+            elem = toElement((ElasticSearchDatastore) datastore);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }
@@ -253,6 +285,91 @@ public class DatastoreXmlExternalizer {
         if (!Strings.isNullOrEmpty(catalogName)) {
             appendElement(ds, "catalog-name", catalogName);
         }
+
+        return ds;
+    }
+
+    /**
+     * Externalizes a {@link ElasticSearchDatastore} to a XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    public Element toElement(ElasticSearchDatastore datastore) {
+        final Element ds = getDocument().createElement("elasticsearch-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "hostname", datastore.getHostname());
+        appendElement(ds, "port", datastore.getPort());
+        appendElement(ds, "cluster-name", datastore.getClusterName());
+        appendElement(ds, "index-name", datastore.getIndexName());
+
+        return ds;
+    }
+
+    /**
+     * Externalizes a {@link MongoDbDatastore} to a XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    public Element toElement(MongoDbDatastore datastore) {
+        final Element ds = getDocument().createElement("mongodb-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "hostname", datastore.getHostname());
+        appendElement(ds, "port", datastore.getPort());
+        appendElement(ds, "database-name", datastore.getDatabaseName());
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", datastore.getPassword());
+
+        return ds;
+    }
+
+    /**
+     * Externalizes a {@link CouchDa} to a XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    public Element toElement(CouchDbDatastore datastore) {
+        final Element ds = getDocument().createElement("couchdb-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "hostname", datastore.getHostname());
+        appendElement(ds, "port", datastore.getPort());
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", datastore.getPassword());
+        appendElement(ds, "ssl", datastore.isSslEnabled());
+
+        return ds;
+    }
+
+    /**
+     * Externalizes a {@link CouchDa} to a XML element
+     * 
+     * @param datastore
+     * @return
+     */
+    public Element toElement(SalesforceDatastore datastore) {
+        final Element ds = getDocument().createElement("salesforce-datastore");
+        ds.setAttribute("name", datastore.getName());
+        if (!StringUtils.isNullOrEmpty(datastore.getDescription())) {
+            ds.setAttribute("description", datastore.getDescription());
+        }
+
+        appendElement(ds, "username", datastore.getUsername());
+        appendElement(ds, "password", datastore.getPassword());
+        appendElement(ds, "security-token", datastore.getSecurityToken());
 
         return ds;
     }
@@ -377,6 +494,10 @@ public class DatastoreXmlExternalizer {
     private void appendElement(Element parent, String elementName, Object value) {
         if (value == null) {
             return;
+        }
+
+        if (value instanceof char[]) {
+            value = new String((char[]) value);
         }
 
         String stringValue = value.toString();

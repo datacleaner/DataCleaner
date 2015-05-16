@@ -210,6 +210,12 @@ public class DatastoreXmlExternalizer {
             elem = toElement((JdbcDatastore) datastore);
         } else if (datastore instanceof ElasticSearchDatastore) {
             elem = toElement((ElasticSearchDatastore) datastore);
+        } else if (datastore instanceof MongoDbDatastore) {
+            elem = toElement((MongoDbDatastore) datastore);
+        } else if (datastore instanceof CouchDbDatastore) {
+            elem = toElement((CouchDbDatastore) datastore);
+        } else if (datastore instanceof SalesforceDatastore) {
+            elem = toElement((SalesforceDatastore) datastore);
         } else {
             throw new UnsupportedOperationException("Non-supported datastore: " + datastore);
         }

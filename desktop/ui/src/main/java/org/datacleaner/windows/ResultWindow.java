@@ -88,7 +88,6 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
-import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 /**
  * Window in which the result (and running progress information) of job
@@ -103,7 +102,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane(true);
+    private final VerticalTabbedPane _tabbedPane = new VerticalTabbedPane();
     private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
     private final AnalysisJob _job;
     private final DataCleanerConfiguration _configuration;
@@ -147,9 +146,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         final Dimension size = getDefaultWindowSize();
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), size.width, size.height);
         _progressInformationPanel = new ProgressInformationPanel(running);
-        _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
+        _tabbedPane.addTab("Progress information",
+                imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
-        _tabbedPane.setUnclosableTab(0);
 
         _pluggableButtons = new ArrayList<JComponent>(1);
 

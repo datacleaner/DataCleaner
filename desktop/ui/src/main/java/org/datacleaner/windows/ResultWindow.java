@@ -83,7 +83,6 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
-import org.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 /**
  * Window in which the result (and running progress information) of job
@@ -98,7 +97,7 @@ public final class ResultWindow extends AbstractWindow {
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane(true);
+    private final VerticalTabbedPane _tabbedPane = new VerticalTabbedPane();
     private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
     private final AnalysisJob _job;
     private final DataCleanerConfiguration _configuration;
@@ -138,9 +137,9 @@ public final class ResultWindow extends AbstractWindow {
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
         _progressInformationPanel = new ProgressInformationPanel(running);
-        _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
+        _tabbedPane.addTab("Progress information",
+                imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
-        _tabbedPane.setUnclosableTab(0);
 
         _pluggableButtons = new ArrayList<JComponent>(1);
 
@@ -489,7 +488,7 @@ public final class ResultWindow extends AbstractWindow {
                 sb.append("Component ");
                 sb.append(LabelUtils.getLabel(componentJob));
                 sb.append(" finished.");
-                
+
                 if (result == null) {
                     _progressInformationPanel.addUserLog(sb.toString());
                 } else {

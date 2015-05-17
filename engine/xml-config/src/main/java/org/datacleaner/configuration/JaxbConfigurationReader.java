@@ -1220,7 +1220,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             return null;
         }
         if (possiblyEncodedPassword.startsWith(ENCODED_PASSWORD_PREFIX)) {
-            return SecurityUtils.decodePassword(possiblyEncodedPassword);
+            return SecurityUtils.decodePassword(possiblyEncodedPassword.substring(ENCODED_PASSWORD_PREFIX.length()));
         }
         return possiblyEncodedPassword;
     }

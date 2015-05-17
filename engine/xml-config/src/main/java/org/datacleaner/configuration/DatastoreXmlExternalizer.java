@@ -41,6 +41,7 @@ import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
+import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -271,7 +272,7 @@ public class DatastoreXmlExternalizer {
             appendElement(ds, "url", datastore.getJdbcUrl());
             appendElement(ds, "driver", datastore.getDriverClass());
             appendElement(ds, "username", datastore.getUsername());
-            appendElement(ds, "password", datastore.getPassword());
+            appendElement(ds, "password", encodePassword(datastore.getPassword()));
             appendElement(ds, "multiple-connections", datastore.isMultipleConnections() + "");
         } else {
             appendElement(ds, "datasource-jndi-url", jndiUrl);
@@ -293,6 +294,20 @@ public class DatastoreXmlExternalizer {
         }
 
         return ds;
+    }
+
+    private String encodePassword(String password) {
+        if (password == null) {
+            return null;
+        }
+        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
+    }
+
+    private String encodePassword(char[] password) {
+        if (password == null) {
+            return null;
+        }
+        return JaxbConfigurationReader.ENCODED_PASSWORD_PREFIX + SecurityUtils.encodePassword(password);
     }
 
     /**
@@ -333,7 +348,7 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "database-name", datastore.getDatabaseName());
         appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", datastore.getPassword());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
 
         return ds;
     }
@@ -354,7 +369,7 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "hostname", datastore.getHostname());
         appendElement(ds, "port", datastore.getPort());
         appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", datastore.getPassword());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "ssl", datastore.isSslEnabled());
 
         return ds;
@@ -374,7 +389,7 @@ public class DatastoreXmlExternalizer {
         }
 
         appendElement(ds, "username", datastore.getUsername());
-        appendElement(ds, "password", datastore.getPassword());
+        appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "security-token", datastore.getSecurityToken());
 
         return ds;

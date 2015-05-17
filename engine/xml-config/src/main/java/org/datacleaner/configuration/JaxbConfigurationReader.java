@@ -158,6 +158,7 @@ import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.util.CollectionUtils2;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.SecurityUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -172,6 +173,8 @@ import com.google.common.base.Strings;
 public final class JaxbConfigurationReader implements ConfigurationReader<InputStream> {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationReader.class);
+
+    public static final String ENCODED_PASSWORD_PREFIX = "enc:";
 
     private final JAXBContext _jaxbContext;
     private final ConfigurationReaderInterceptor _interceptor;
@@ -747,7 +750,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
         final String keySpace = getStringVariable("keyspace", datastoreType.getKeyspace());
         final String username = getStringVariable("username", datastoreType.getUsername());
-        final String password = getStringVariable("password", datastoreType.getPassword());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
         final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
 
         final List<org.datacleaner.configuration.jaxb.CassandraDatastoreType.TableDef> tableDefList = datastoreType
@@ -886,7 +889,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
     private Datastore createDatastore(String name, SalesforceDatastoreType datastoreType) {
         String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getStringVariable("password", datastoreType.getPassword());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
         String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
         return new SalesforceDatastore(name, username, password, securityToken);
     }
@@ -894,7 +897,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private Datastore createDatastore(String name, SugarCrmDatastoreType datastoreType) {
         String baseUrl = getStringVariable("baseUrl", datastoreType.getBaseUrl());
         String username = getStringVariable("username", datastoreType.getUsername());
-        String password = getStringVariable("password", datastoreType.getPassword());
+        String password = getPasswordVariable("password", datastoreType.getPassword());
         return new SugarCrmDatastore(name, baseUrl, username, password);
     }
 
@@ -903,7 +906,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         Integer port = getIntegerVariable("port", mongodbDatastoreType.getPort());
         String databaseName = getStringVariable("databaseName", mongodbDatastoreType.getDatabaseName());
         String username = getStringVariable("username", mongodbDatastoreType.getUsername());
-        String password = getStringVariable("password", mongodbDatastoreType.getPassword());
+        String password = getPasswordVariable("password", mongodbDatastoreType.getPassword());
 
         List<org.datacleaner.configuration.jaxb.MongodbDatastoreType.TableDef> tableDefList = mongodbDatastoreType
                 .getTableDef();
@@ -944,7 +947,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String hostname = getStringVariable("hostname", couchdbDatastoreType.getHostname());
         final Integer port = getIntegerVariable("port", couchdbDatastoreType.getPort());
         final String username = getStringVariable("username", couchdbDatastoreType.getUsername());
-        final String password = getStringVariable("password", couchdbDatastoreType.getPassword());
+        final String password = getPasswordVariable("password", couchdbDatastoreType.getPassword());
         final boolean sslEnabled = getBooleanVariable("ssl", couchdbDatastoreType.isSsl(), false);
 
         final List<org.datacleaner.configuration.jaxb.CouchdbDatastoreType.TableDef> tableDefList = couchdbDatastoreType
@@ -1104,7 +1107,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             final String url = getStringVariable("url", jdbcDatastoreType.getUrl());
             final String driver = getStringVariable("driver", jdbcDatastoreType.getDriver());
             final String username = getStringVariable("username", jdbcDatastoreType.getUsername());
-            final String password = getStringVariable("password", jdbcDatastoreType.getPassword());
+            final String password = getPasswordVariable("password", jdbcDatastoreType.getPassword());
             boolean multipleConnections = getBooleanVariable("multipleConnections",
                     jdbcDatastoreType.isMultipleConnections(), true);
 
@@ -1209,6 +1212,17 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         }
         logger.info("Overriding variable '{}' with value: {}", variablePath, value);
         return value;
+    }
+
+    private String getPasswordVariable(String key, String valueIfNull) {
+        final String possiblyEncodedPassword = getStringVariable(key, valueIfNull);
+        if (possiblyEncodedPassword == null) {
+            return null;
+        }
+        if (possiblyEncodedPassword.startsWith(ENCODED_PASSWORD_PREFIX)) {
+            return SecurityUtils.decodePassword(possiblyEncodedPassword);
+        }
+        return possiblyEncodedPassword;
     }
 
     public Integer getIntegerVariable(String key, Integer valueIfNull) {

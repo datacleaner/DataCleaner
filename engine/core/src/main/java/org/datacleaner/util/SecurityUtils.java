@@ -36,10 +36,6 @@ import org.datacleaner.util.ws.NaiveTrustManager;
  */
 public class SecurityUtils {
 
-    protected static final char[] SECRET = "cafelattebabemlobhat".toCharArray();
-    protected static final byte[] SALT = { (byte) 0xde, (byte) 0x33, (byte) 0x12, (byte) 0x10, (byte) 0x33,
-            (byte) 0x10, (byte) 0x12, (byte) 0xde };
-
     private SecurityUtils() {
         // prevent instantiation
     }
@@ -80,9 +76,24 @@ public class SecurityUtils {
         if (password == null) {
             return null;
         }
-        EncodedStringConverter converter = new EncodedStringConverter();
-        String encodedPassword = converter.toString(new String(password));
+        final EncodedStringConverter converter = new EncodedStringConverter();
+        final String encodedPassword = converter.toString(new String(password));
         return encodedPassword;
+    }
+    
+    /**
+     * Encodes/obfuscates a password. Although this does not prevent actual
+     * hacking of password, it does remove the obvious threats of having
+     * passwords stored as clear text.
+     * 
+     * @param password
+     * @return a String containing the encoded password
+     */
+    public static String encodePassword(String password) {
+        if (password == null) {
+            return null;
+        }
+        return encodePassword(password.toCharArray());
     }
 
     /**
@@ -99,8 +110,8 @@ public class SecurityUtils {
         if (encodedPassword == null) {
             return null;
         }
-        EncodedStringConverter converter = new EncodedStringConverter();
-        String password = converter.fromString(String.class, encodedPassword);
+        final EncodedStringConverter converter = new EncodedStringConverter();
+        final String password = converter.fromString(String.class, encodedPassword);
         return password;
     }
 

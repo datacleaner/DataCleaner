@@ -24,18 +24,19 @@ import junit.framework.TestCase;
 public class SecurityUtilsTest extends TestCase {
 
     public void testNullValues() throws Exception {
-        assertNull(SecurityUtils.encodePassword(null));
+        assertNull(SecurityUtils.encodePassword((char[]) null));
+        assertNull(SecurityUtils.encodePassword((String) null));
         assertNull(SecurityUtils.decodePassword(null));
     }
-    
+
     public void testEmptyStringValues() throws Exception {
         String encoded = SecurityUtils.encodePassword("".toCharArray());
         assertNotNull(encoded);
-        
+
         String decoded = SecurityUtils.decodePassword(encoded);
         assertNotNull(decoded);
         assertEquals("", decoded);
-        
+
         assertNotNull(SecurityUtils.decodePassword(""));
     }
 

@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -74,10 +75,13 @@ public class VerticalTabbedPane extends DCPanel {
         add(wrapLeftPanel(_leftPanel), BorderLayout.WEST);
     }
 
-    private DCPanel wrapLeftPanel(DCPanel panel) {
+    private JComponent wrapLeftPanel(final DCPanel panel) {
+        final JScrollPane scroll = WidgetUtils.scrolleable(panel);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
         final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
         collapsiblePane.getContentPane().setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        collapsiblePane.add(panel);
+        collapsiblePane.add(scroll);
         collapsiblePane.setAnimated(false);
 
         final JButton toggleTabViewButton = new JButton(

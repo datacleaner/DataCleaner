@@ -162,11 +162,11 @@ public final class DataCleanerHome {
 
             if (!upgraded) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
-                copyFile(candidate, manager, "conf.xml", false);
+                copyIfNonExisting(candidate, manager, "conf.xml");
 
                 final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
                 for (String filePath : allFilePaths) {
-                    copyFile(candidate, manager, filePath, false);
+                    copyIfNonExisting(candidate, manager, filePath);
                 }
             }
         }
@@ -236,14 +236,12 @@ public final class DataCleanerHome {
         return VFSUtils.toFile(_dataCleanerHome);
     }
 
-    private static FileObject copyFile(FileObject candidate, FileSystemManager manager, String filename,
-            boolean overwriteIfExists) throws FileSystemException {
+    private static FileObject copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
+            throws FileSystemException {
         FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
-            if (!overwriteIfExists) {
-                logger.info("File already exists in DATACLEANER_HOME: " + filename);
-                return file;
-            }
+            logger.info("File already exists in DATACLEANER_HOME: " + filename);
+            return file;
         }
         FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {

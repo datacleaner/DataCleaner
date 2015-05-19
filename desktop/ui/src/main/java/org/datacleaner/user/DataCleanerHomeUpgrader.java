@@ -33,12 +33,10 @@ import org.apache.commons.vfs2.AllFileSelector;
 import org.apache.commons.vfs2.FileDepthSelector;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.util.ResourceManager;
-import org.datacleaner.util.VFSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +52,6 @@ public final class DataCleanerHomeUpgrader {
 
     public boolean upgrade(FileObject target) {
         try {
-            final FileSystemManager manager = VFSUtils.getFileSystemManager();
-
             FileObject upgradeCandidate = findUpgradeCandidate(target.getParent());
 
             if (upgradeCandidate == null) {
@@ -69,7 +65,7 @@ public final class DataCleanerHomeUpgrader {
             // Overwrite example jobs
             final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
             for (String filePath : allFilePaths) {
-                copyFile(target, manager, filePath, true);
+                owerwriteFileWithDefaults(target, filePath);
             }
             return true;
         } catch (FileSystemException e) {
@@ -178,25 +174,15 @@ public final class DataCleanerHomeUpgrader {
         return validatedVersionFolders;
     }
 
-    private static FileObject copyFile(FileObject candidate, FileSystemManager manager, String filename,
-            boolean overwriteIfExists) throws FileSystemException {
-        // TODO: this method is also in DataCleanerHome - extract a helper or
-        // sth
-
-        FileObject file = candidate.resolveFile(filename);
-        if (file.exists()) {
-            if (!overwriteIfExists) {
-                logger.info("File already exists in DATACLEANER_HOME: " + filename);
-                return file;
-            }
-        }
+    private static FileObject owerwriteFileWithDefaults(FileObject targetDirectory, String targetFilename) throws FileSystemException {
+        FileObject file = targetDirectory.resolveFile(targetFilename);
         FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {
             parentFile.createFolder();
         }
 
         final ResourceManager resourceManager = ResourceManager.get();
-        final URL url = resourceManager.getUrl("datacleaner-home/" + filename);
+        final URL url = resourceManager.getUrl("datacleaner-home/" + targetFilename);
         if (url == null) {
             return null;
         }

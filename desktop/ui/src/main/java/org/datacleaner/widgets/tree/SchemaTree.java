@@ -275,7 +275,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
         final Set<ComponentSuperCategory> superCategories = descriptorProvider.getComponentSuperCategories();
         for (ComponentSuperCategory superCategory : superCategories) {
-            final DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(superCategory);
+            final DefaultMutableTreeNode superCategoryNode = new DefaultMutableTreeNode(superCategory);
             final Collection<? extends ComponentDescriptor<?>> componentDescriptors = descriptorProvider
                     .getComponentDescriptorsOfSuperCategory(superCategory);
 
@@ -289,7 +289,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             }
 
             if (filteredComponentDescriptors.size() > 0) {
-                libraryRoot.add(schemaNode);
+                libraryRoot.add(superCategoryNode);
             }
 
             final Map<ComponentCategory, DefaultMutableTreeNode> categoryTreeNodes = new HashMap<>();
@@ -299,7 +299,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                 public void addCategory(ComponentCategory category) {
                     final DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(category);
                     categoryTreeNodes.put(category, treeNode);
-                    schemaNode.add(treeNode);
+                    superCategoryNode.add(treeNode);
                 }
 
                 @Override
@@ -314,7 +314,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
                     }
 
                     if (!placedInSubmenu) {
-                        schemaNode.add(new DefaultMutableTreeNode(descriptor));
+                        superCategoryNode.add(new DefaultMutableTreeNode(descriptor));
                     }
                 }
             };

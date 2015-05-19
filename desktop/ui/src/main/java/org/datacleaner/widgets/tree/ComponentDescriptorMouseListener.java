@@ -73,8 +73,8 @@ public class ComponentDescriptorMouseListener extends MouseAdapter {
                     }
                 });
 
-                final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Component description",
-                        IconUtils.ACTION_HELP);
+                final JMenuItem referenceDocumentationItem = WidgetFactory.createMenuItem("Documentation",
+                        IconUtils.MENU_DOCUMENTATION);
                 referenceDocumentationItem.addActionListener(new ComponentReferenceDocumentationActionListener(
                         _analysisJobBuilder.getConfiguration(), componentDescriptor));
 

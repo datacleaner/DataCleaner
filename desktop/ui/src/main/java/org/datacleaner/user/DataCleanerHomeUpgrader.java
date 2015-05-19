@@ -52,36 +52,38 @@ public final class DataCleanerHomeUpgrader {
 
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
-    public FileObject upgrade(FileObject candidate) throws FileSystemException {
+    public boolean upgrade(FileObject target) {
+        try {
+            final FileSystemManager manager = VFSUtils.getFileSystemManager();
 
-        final FileSystemManager manager = VFSUtils.getFileSystemManager();
+            FileObject upgradeCandidate = findUpgradeCandidate(target.getParent());
 
-        FileObject upgradeCandidate = findUpgradeCandidate(candidate);
+            if (upgradeCandidate == null) {
+                logger.info("Did not find a suitable upgrade candidate");
+                return false;
+            }
 
-        if (upgradeCandidate == null) {
-            logger.info("Did not find a suitable upgrade candidate");
-            return null;
+            logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeCandidate);
+            target.copyFrom(upgradeCandidate, new AllFileSelector());
+
+            // Overwrite example jobs
+            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+            for (String filePath : allFilePaths) {
+                copyFile(target, manager, filePath, true);
+            }
+            return true;
+        } catch (FileSystemException e) {
+            logger.warn("Exception occured during upgrading: {}", e);
+            return false;
         }
-        
-        logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeCandidate);
-        candidate.copyFrom(upgradeCandidate, new AllFileSelector());
-
-        // Overwrite example jobs
-        final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
-        for (String filePath : allFilePaths) {
-            copyFile(candidate, manager, filePath, true);
-        }
-        return candidate;
     }
 
-    private FileObject findUpgradeCandidate(FileObject candidate) throws FileSystemException {
-        FileObject parent = candidate.getParent();
+    private FileObject findUpgradeCandidate(FileObject parentFolder) throws FileSystemException {
         List<FileObject> versionFolders = new ArrayList<>();
-        FileObject[] allFoldersInParent = parent.findFiles(new FileDepthSelector(1, 1));
+        FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
         for (FileObject folderInParent : allFoldersInParent) {
             final String folderInParentName = folderInParent.getName().getBaseName();
-            if (folderInParent.getType().equals(FileType.FOLDER) && (!folderInParent.equals(candidate))
-                    && (!candidateBlacklist.contains(folderInParentName))) {
+            if (folderInParent.getType().equals(FileType.FOLDER) && (!candidateBlacklist.contains(folderInParentName))) {
                 versionFolders.add(folderInParent);
             }
         }
@@ -178,8 +180,9 @@ public final class DataCleanerHomeUpgrader {
 
     private static FileObject copyFile(FileObject candidate, FileSystemManager manager, String filename,
             boolean overwriteIfExists) throws FileSystemException {
-        // TODO: this method is also in DataCleanerHome - extract a helper or sth
-        
+        // TODO: this method is also in DataCleanerHome - extract a helper or
+        // sth
+
         FileObject file = candidate.resolveFile(filename);
         if (file.exists()) {
             if (!overwriteIfExists) {

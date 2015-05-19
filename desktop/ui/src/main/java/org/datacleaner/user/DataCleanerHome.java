@@ -158,9 +158,9 @@ public final class DataCleanerHome {
 
         if (!isUsable(candidate)) {
             DataCleanerHomeUpgrader upgrader = new DataCleanerHomeUpgrader();
-            FileObject upgradeCandidate = upgrader.upgrade(candidate);
+            boolean upgraded = upgrader.upgrade(candidate);
 
-            if (upgradeCandidate == null) {
+            if (!upgraded) {
                 logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
                 copyFile(candidate, manager, "conf.xml", false);
 

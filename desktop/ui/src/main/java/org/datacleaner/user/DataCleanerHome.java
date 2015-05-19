@@ -171,8 +171,6 @@ public final class DataCleanerHome {
                 logger.debug("Upgrading DATACLEANER_HOME from : {}", upgradeCandidate);
                 candidate.copyFrom(upgradeCandidate, new AllFileSelector());
 
-                // TODO: Merge (?) conf.xml file
-
                 // Overwrite example jobs
                 final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
                 for (String filePath : allFilePaths) {
@@ -192,10 +190,9 @@ public final class DataCleanerHome {
     }
 
     private static FileObject findUpgradeCandidate(FileObject candidate) throws FileSystemException {
-        List<String> candidateBlacklist = Arrays.asList("log", "UNKNOWN");
+        List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
         FileObject parent = candidate.getParent();
-        logger.debug("Parent of DATACLEANER_HOME candidate: {}", parent);
         List<FileObject> versionFolders = new ArrayList<>();
         FileObject[] allFoldersInParent = parent.findFiles(new FileDepthSelector(1, 1));
         for (FileObject folderInParent : allFoldersInParent) {
@@ -205,57 +202,75 @@ public final class DataCleanerHome {
                 versionFolders.add(folderInParent);
             }
         }
-        logger.debug("Version folder candidates: {}", versionFolders);
 
         List<FileObject> validateVersionFolders = validateVersionFolders(versionFolders);
 
-        FileObject latestVersion = Collections.max(validateVersionFolders, new Comparator<FileObject>() {
+        if (!validateVersionFolders.isEmpty()) {
 
-            @Override
-            public int compare(FileObject o1, FileObject o2) {
-                String o1BaseName = o1.getName().getBaseName();
-                String o2BaseName = o2.getName().getBaseName();
+            FileObject latestVersion = Collections.max(validateVersionFolders, new Comparator<FileObject>() {
 
-                String[] o1Split = o1BaseName.split("\\.");
-                String[] o2Split = o2BaseName.split("\\.");
+                @Override
+                public int compare(FileObject o1, FileObject o2) {
+                    String o1BaseName = o1.getName().getBaseName();
+                    String o2BaseName = o2.getName().getBaseName();
 
-                for (int i = 0; i < Math.min(o1Split.length, o2Split.length); i++) {
-                    Integer o1Part;
-                    if (o1Split[i].endsWith("-SNAPSHOT")) {
-                        o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-SNAPSHOT")));
-                    } else {
-                        o1Part = Integer.parseInt(o1Split[i]);
+                    String[] o1Split = o1BaseName.split("\\.");
+                    String[] o2Split = o2BaseName.split("\\.");
+
+                    for (int i = 0; i < Math.min(o1Split.length, o2Split.length); i++) {
+                        Integer o1Part;
+                        if (o1Split[i].endsWith("-SNAPSHOT")) {
+                            o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-SNAPSHOT")));
+                        } else {
+                            o1Part = Integer.parseInt(o1Split[i]);
+                        }
+                        Integer o2Part;
+                        if (o2Split[i].endsWith("-SNAPSHOT")) {
+                            o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-SNAPSHOT")));
+                        } else {
+                            o2Part = Integer.parseInt(o2Split[i]);
+                        }
+
+                        int compareTo = o1Part.compareTo(o2Part);
+                        if (compareTo == 0) {
+                            // check another part
+                            continue;
+                        } else {
+                            return compareTo;
+                        }
                     }
-                    Integer o2Part;
-                    if (o2Split[i].endsWith("-SNAPSHOT")) {
-                        o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-SNAPSHOT")));
-                    } else {
-                        o2Part = Integer.parseInt(o2Split[i]);
-                    }
 
-                    int compareTo = o1Part.compareTo(o2Part);
-                    if (compareTo == 0) {
-                        // check another part
-                        continue;
-                    } else {
-                        return compareTo;
-                    }
+                    Integer o1SplitLength = (Integer) o1Split.length;
+                    Integer o2SplitLength = (Integer) o2Split.length;
+                    return o1SplitLength.compareTo(o2SplitLength);
                 }
-
-                Integer o1SplitLength = (Integer) o1Split.length;
-                Integer o2SplitLength = (Integer) o2Split.length;
-                return o1SplitLength.compareTo(o2SplitLength);
-            }
-        });
-        return latestVersion;
+            });
+            return latestVersion;
+        } else {
+            return null;
+        }
     }
 
     private static List<FileObject> validateVersionFolders(List<FileObject> versionFolders) {
         List<FileObject> validatedVersionFolders = new ArrayList<>();
+        Integer currentMajorVersion = Version.getMajorVersion();
+        if (currentMajorVersion == null) {
+            return validatedVersionFolders;
+        }
+
         for (FileObject versionFolder : versionFolders) {
             String baseName = versionFolder.getName().getBaseName();
 
             String[] versionParts = baseName.split("\\.");
+
+            try {
+                int majorVersion = Integer.parseInt(versionParts[0]);
+                if (majorVersion != currentMajorVersion) {
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                continue;
+            }
 
             for (String versionPart : versionParts) {
                 if (versionPart.endsWith("-SNAPSHOT")) {

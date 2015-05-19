@@ -39,6 +39,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.datacleaner.api.Component;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.util.IconUtils;
 
 import freemarker.cache.ClassTemplateLoader;
@@ -109,9 +110,13 @@ public class ComponentDocumentationBuilder {
                         configuredProperties);
                 final List<ConfiguredPropertyDocumentationWrapper> propertyList = new ArrayList<>();
                 for (ConfiguredPropertyDescriptor property : properties) {
-                    ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
-                            property);
-                    propertyList.add(wrapper);
+                    final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
+                    // we do not show hidden properties in docs
+                    if (hiddenProperty == null) {
+                        ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
+                                property);
+                        propertyList.add(wrapper);
+                    }
                 }
 
                 data.put("properties", propertyList);

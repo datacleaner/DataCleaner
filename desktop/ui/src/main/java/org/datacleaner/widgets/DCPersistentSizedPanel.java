@@ -19,6 +19,7 @@
  */
 package org.datacleaner.widgets;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import org.datacleaner.panels.DCPanel;
@@ -32,11 +33,16 @@ public class DCPersistentSizedPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final WindowSizePreferences _userPreferenceUtils;
+    private final WindowSizePreferences _windowSizePreferences;
 
-    public DCPersistentSizedPanel(final WindowSizePreferences userWindowSizePreferenceUtils) {
-        _userPreferenceUtils = userWindowSizePreferenceUtils;
-        final Dimension preferredSizeFromUserPreferences = _userPreferenceUtils.getUserPreferredSize();
+    public DCPersistentSizedPanel(final WindowSizePreferences windowSizePreferences) {
+        this(null, windowSizePreferences);
+    }
+
+    public DCPersistentSizedPanel(final Color bgColor, final WindowSizePreferences windowSizePreferences) {
+        super(bgColor);
+        _windowSizePreferences = windowSizePreferences;
+        final Dimension preferredSizeFromUserPreferences = _windowSizePreferences.getUserPreferredSize();
         setPreferredSize(preferredSizeFromUserPreferences);
     }
 

@@ -201,7 +201,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _optionsDialogProvider = optionsDialogProvider;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
-        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass().getName(), DEFAULT_WINDOW_WIDTH,
+        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), DEFAULT_WINDOW_WIDTH,
                 DEFAULT_WINDOW_HEIGHT);
 
         if (analysisJobBuilder == null) {

@@ -25,6 +25,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
@@ -83,12 +86,14 @@ import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.util.WindowSizePreferences;
+import org.datacleaner.widgets.DCPersistentSizedPanel;
 
 /**
  * Window in which the result (and running progress information) of job
  * execution is shown.
  */
-public final class ResultWindow extends AbstractWindow {
+public final class ResultWindow extends AbstractWindow implements WindowListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -111,6 +116,7 @@ public final class ResultWindow extends AbstractWindow {
     private final JButton _exportButton;
     private final JButton _publishButton;
     private final List<JComponent> _pluggableButtons;
+    private final WindowSizePreferences _windowSizePreference;
 
     private AnalysisResult _result;
 
@@ -136,6 +142,9 @@ public final class ResultWindow extends AbstractWindow {
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
+
+        final Dimension size = getDefaultWindowSize();
+        _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), size.width, size.height);
         _progressInformationPanel = new ProgressInformationPanel(running);
         _tabbedPane.addTab("Progress information",
                 imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
@@ -229,6 +238,28 @@ public final class ResultWindow extends AbstractWindow {
         _worker.execute();
     }
 
+    private Dimension getDefaultWindowSize() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        int height = 550;
+        if (screenHeight > 1000) {
+            height = 900;
+        } else if (screenHeight > 750) {
+            height = 700;
+        }
+
+        int width = 750;
+        if (screenWidth > 1200) {
+            width = 1100;
+        } else if (screenWidth > 1000) {
+            width = 900;
+        }
+
+        return new Dimension(width, height);
+    }
+
     private ResultListPanel getDescriptorResultPanel(final ComponentDescriptor<?> descriptor) {
         ResultListPanel resultPanel = _resultPanels.get(descriptor);
         if (resultPanel == null) {
@@ -313,7 +344,7 @@ public final class ResultWindow extends AbstractWindow {
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND, _windowSizePreference);
         panel.setLayout(new BorderLayout());
 
         String bannerTitle = "Analysis results";
@@ -343,25 +374,6 @@ public final class ResultWindow extends AbstractWindow {
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
-
-        int height = 550;
-        if (screenHeight > 1000) {
-            height = 900;
-        } else if (screenHeight > 750) {
-            height = 700;
-        }
-
-        int width = 750;
-        if (screenWidth > 1200) {
-            width = 1100;
-        } else if (screenWidth > 1000) {
-            width = 900;
-        }
-
-        panel.setPreferredSize(width, height);
         return panel;
     }
 
@@ -542,5 +554,18 @@ public final class ResultWindow extends AbstractWindow {
                 _exportButton.setVisible(!running);
             }
         });
+    }
+
+    public void windowClosed(WindowEvent e) {
+        if (this.getExtendedState() == JFrame.MAXIMIZED_BOTH) {
+            _windowSizePreference.setUserPreferredSize(null, true);
+        } else {
+            _windowSizePreference.setUserPreferredSize(getSize(), false);
+        }
+    }
+
+    @Override
+    protected boolean maximizeWindow() {
+        return _windowSizePreference.isWindowMaximized();
     }
 }

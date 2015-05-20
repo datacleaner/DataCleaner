@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -109,6 +110,12 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
         });
 
+        final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
+                IconUtils.MENU_DOCUMENTATION);
+        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(_componentBuilder
+                .getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
+
+        banner.add(documentationButton);
         if (ChangeRequirementMenu.isRelevant(_componentBuilder)) {
             banner.add(new ChangeRequirementButton(_componentBuilder));
         }

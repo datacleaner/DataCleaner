@@ -26,8 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 import org.apache.metamodel.schema.Column;
 
 /**
@@ -40,7 +38,6 @@ import org.apache.metamodel.schema.Column;
 @Target({ ElementType.FIELD })
 @Documented
 @Inherited
-@Qualifier
 public @interface ColumnProperty {
 
     /**

@@ -36,6 +36,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
+import org.datacleaner.VersionComparator;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * DataCleaner and upgrades.
  */
 public final class DataCleanerHomeUpgrader {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHomeUpgrader.class);
 
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
@@ -84,49 +85,25 @@ public final class DataCleanerHomeUpgrader {
             }
         }
 
-        List<FileObject> validateVersionFolders = validateVersionFolders(versionFolders);
+        List<FileObject> validatedVersionFolders = validateVersionFolders(versionFolders);
 
-        if (!validateVersionFolders.isEmpty()) {
+        if (!validatedVersionFolders.isEmpty()) {
 
-            FileObject latestVersion = Collections.max(validateVersionFolders, new Comparator<FileObject>() {
-
-                @Override
-                public int compare(FileObject o1, FileObject o2) {
-                    String o1BaseName = o1.getName().getBaseName();
-                    String o2BaseName = o2.getName().getBaseName();
-
-                    String[] o1Split = o1BaseName.split("\\.");
-                    String[] o2Split = o2BaseName.split("\\.");
-
-                    for (int i = 0; i < Math.min(o1Split.length, o2Split.length); i++) {
-                        Integer o1Part;
-                        if (o1Split[i].endsWith("-SNAPSHOT")) {
-                            o1Part = Integer.parseInt(o1Split[i].substring(0, o1Split[i].lastIndexOf("-SNAPSHOT")));
-                        } else {
-                            o1Part = Integer.parseInt(o1Split[i]);
-                        }
-                        Integer o2Part;
-                        if (o2Split[i].endsWith("-SNAPSHOT")) {
-                            o2Part = Integer.parseInt(o2Split[i].substring(0, o2Split[i].lastIndexOf("-SNAPSHOT")));
-                        } else {
-                            o2Part = Integer.parseInt(o2Split[i]);
-                        }
-
-                        int compareTo = o1Part.compareTo(o2Part);
-                        if (compareTo == 0) {
-                            // check another part
-                            continue;
-                        } else {
-                            return compareTo;
-                        }
-                    }
-
-                    Integer o1SplitLength = (Integer) o1Split.length;
-                    Integer o2SplitLength = (Integer) o2Split.length;
-                    return o1SplitLength.compareTo(o2SplitLength);
+            List<String> versions = new ArrayList<>();
+            for (FileObject validatedVersionFolder : validatedVersionFolders) {
+                String baseName = validatedVersionFolder.getName().getBaseName();
+                versions.add(baseName);
+            }
+            
+            final Comparator<String> comp = new VersionComparator();           
+            String latestVersion = Collections.max(versions, comp);
+            FileObject latestVersionFolder = null; 
+            for (FileObject validatedVersionFolder : validatedVersionFolders) {
+                if (validatedVersionFolder.getName().getBaseName().equals(latestVersion)) {
+                    latestVersionFolder = validatedVersionFolder; 
                 }
-            });
-            return latestVersion;
+            }
+            return latestVersionFolder;
         } else {
             return null;
         }

@@ -165,11 +165,14 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
                 "org.datacleaner.result.ValueCountListImpl");
 
         // duplicate detection analyzer changed
-        addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer",
-                "com.hi.hiqmr.datacleaner.deduplication.DuplicateDetectionAnalyzer");
+        final String duplicateDetectionClassName = "com.hi.hiqmr.packaging.datacleaner.deduplication.DuplicateDetectionAnalyzer";
+        addRenamedClass("com.hi.contacts.datacleaner.DuplicateDetectionAnalyzer", duplicateDetectionClassName);
         addRenamedClass("com.hi.hiqmr.datacleaner.deduplication.Identify7DeduplicationAnalyzer",
-                "com.hi.hiqmr.datacleaner.deduplication.DuplicateDetectionAnalyzer");
-        
+                duplicateDetectionClassName);
+        addRenamedClass("com.hi.hiqmr.datacleaner.deduplication.DuplicateDetectionAnalyzer",
+                duplicateDetectionClassName);
+        addRenamedClass("com.hi.hiqmr.deduplication.DuplicateDetectionAnalyzer", duplicateDetectionClassName);
+
         addRenamedPackage("com.hi.contacts.security", "com.hi.common.client.security");
 
         // Classes moved in DC 4.0
@@ -178,11 +181,16 @@ public class ChangeAwareObjectInputStream extends LegacyDeserializationObjectInp
         addRenamedClass("org.datacleaner.result.Metric", Metric.class);
         addRenamedClass("org.datacleaner.job.BeanConfiguration", ComponentConfiguration.class);
         addRenamedClass("org.datacleaner.job.ImmutableBeanConfiguration", ImmutableComponentConfiguration.class);
-        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedAnalyzerBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptor");
-        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedTransformerBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedTransformerComponentDescriptor");
-        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedFilterBeanDescriptor", "org.datacleaner.descriptors.AnnotationBasedFilterComponentDescriptor");
-        addRenamedClass("org.datacleaner.descriptors.AbstractHasAnalyzerResultBeanDescriptor", "org.datacleaner.descriptors.AbstractHasAnalyzerResultComponentDescriptor");
-        addRenamedClass("org.datacleaner.descriptors.AbstractBeanDescriptor", "org.datacleaner.descriptors.AbstractComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedAnalyzerBeanDescriptor",
+                "org.datacleaner.descriptors.AnnotationBasedAnalyzerComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedTransformerBeanDescriptor",
+                "org.datacleaner.descriptors.AnnotationBasedTransformerComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AnnotationBasedFilterBeanDescriptor",
+                "org.datacleaner.descriptors.AnnotationBasedFilterComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AbstractHasAnalyzerResultBeanDescriptor",
+                "org.datacleaner.descriptors.AbstractHasAnalyzerResultComponentDescriptor");
+        addRenamedClass("org.datacleaner.descriptors.AbstractBeanDescriptor",
+                "org.datacleaner.descriptors.AbstractComponentDescriptor");
 
         addRenamedClass("org.eobjects.analyzer.result.AnalyzerResult", AnalyzerResult.class);
         addRenamedClass("org.eobjects.analyzer.result.AnalyzerResultReducer", AnalyzerResultReducer.class);

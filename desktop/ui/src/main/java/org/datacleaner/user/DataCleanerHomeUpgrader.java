@@ -61,7 +61,7 @@ public final class DataCleanerHomeUpgrader {
      */
     public boolean upgrade(FileObject target) {
         try {
-            FileObject upgradeCandidate = findUpgradeCandidate(target.getParent());
+            FileObject upgradeCandidate = findUpgradeCandidate(target);
 
             if (upgradeCandidate == null) {
                 logger.info("Did not find a suitable upgrade candidate");
@@ -83,12 +83,14 @@ public final class DataCleanerHomeUpgrader {
         }
     }
 
-    private FileObject findUpgradeCandidate(FileObject parentFolder) throws FileSystemException {
+    private FileObject findUpgradeCandidate(FileObject target) throws FileSystemException {
+        FileObject parentFolder = target.getParent();
+        
         List<FileObject> versionFolders = new ArrayList<>();
         FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
         for (FileObject folderInParent : allFoldersInParent) {
             final String folderInParentName = folderInParent.getName().getBaseName();
-            if (folderInParent.getType().equals(FileType.FOLDER) && (!candidateBlacklist.contains(folderInParentName))) {
+            if (folderInParent.getType().equals(FileType.FOLDER) && (!folderInParentName.equals(target.getName().getBaseName())) && (!candidateBlacklist.contains(folderInParentName))) {
                 versionFolders.add(folderInParent);
             }
         }

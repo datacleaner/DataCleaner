@@ -127,7 +127,8 @@
 			SQLEXPRESS instance:
 		</para>
 		<programlisting lang="xml">
-			&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt; </programlisting>
+			&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
+		</programlisting>
 	</section>
 
 	<section id="configuration_file_datastore_csv">
@@ -180,7 +181,7 @@
 
 	<section id="configuration_file_datastore_excel">
 		<title>Excel spreadsheets</title>
-		<para>This is an example of a Excel spreadsheet datastore</para>
+		<para>This is an example of an Excel spreadsheet datastore</para>
 		<programlisting>
 			&lt;excel-datastore&#160;name="my_excel_spreadsheet"&gt;
 			&#160;&lt;filename&gt;/path/to/file.xls&lt;/filename&gt;
@@ -231,6 +232,18 @@
 			(MetaModel is the data access library used to read data in
 			DataCleaner).
 		</para>
+	</section>
+
+	<section id="configuration_file_datastore_elasticsearch">
+		<title>ElasticSearch index</title>
+		<para>This is an example of an ElasticSearch index datastore</para>
+		<programlisting>
+			&lt;elasticsearch-datastore&#160;name="my_elastic_search_index"&gt;
+			&#160;&lt;hostname&gt;localhost&lt;/hostname&gt;
+			&#160;&lt;port&gt;9300&lt;/port&gt;
+			&#160;&lt;cluster-name&gt;my_es_cluster&lt;/cluster-name&gt;
+			&#160;&lt;index-name&gt;my_index&lt;/index-name&gt;
+			&lt;/elasticsearch-datastore&gt; </programlisting>
 	</section>
 
 	<section id="configuration_file_datastore_mongodb">
@@ -366,7 +379,8 @@
 			execute the tasks of an analysis job. Typically you shouldn't edit
 			this element. However, here are the two options:
 		</para>
-		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt; </programlisting>
+		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt;
+		</programlisting>
 		<para>Defines a multi threaded task runner with a thread pool of 30
 			available threads. Beware that although 30 might seem like a high
 			number that too small a pool of threads might cause issues because

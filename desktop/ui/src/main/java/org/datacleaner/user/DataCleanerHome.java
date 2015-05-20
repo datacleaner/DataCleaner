@@ -60,14 +60,14 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataCleanerHome {
 
-    // note: Logger is specified using a string. This is because the logger is
-    // to be used also in the static initializer and any error in that code
-    // would otherwise be swallowed.
     private static final Logger logger;
 
     private static final FileObject _dataCleanerHome;
 
     static {
+        // note: Logger is specified using a string. This is because the logger is
+        // to be used also in the static initializer and any error in that code
+        // would otherwise be swallowed.
         logger = LoggerFactory.getLogger("org.datacleaner.user.DataCleanerHome");
         logger.info("Initializing DATACLEANER_HOME");
         try {

@@ -42,6 +42,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.ChangeRequirementButton;
+import org.datacleaner.widgets.ChangeRequirementMenu;
 import org.datacleaner.widgets.visualization.JobGraph;
 
 /**
@@ -115,7 +116,9 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
                 .getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
 
         banner.add(documentationButton);
-        banner.add(new ChangeRequirementButton(_componentBuilder));
+        if (ChangeRequirementMenu.isRelevant(_componentBuilder)) {
+            banner.add(new ChangeRequirementButton(_componentBuilder));
+        }
         banner.add(renameButton);
 
         return banner;

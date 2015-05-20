@@ -30,7 +30,7 @@ public class WindowSizePreferences {
     private final String _identifier;
     private final int _defaultWidth;
     private final int _defaultHeight;
-
+    
     /**
      * 
      * @param userPreferences
@@ -43,9 +43,9 @@ public class WindowSizePreferences {
      * @param defaultHeight
      *            represents the default height
      */
-    public WindowSizePreferences(final UserPreferences userPreferences, final String identifier,
+    public WindowSizePreferences(final UserPreferences userPreferences, final Class<?> windowClass,
             final int defaultWidth, int defaultHeight) {
-        _identifier = identifier;
+        _identifier = windowClass.getName();
         _defaultWidth = defaultWidth;
         _defaultHeight = defaultHeight;
         _userPreferences = userPreferences;
@@ -89,15 +89,15 @@ public class WindowSizePreferences {
     }
 
     private String getHeightPropertyKey() {
-        return getClass().getName() + "." + _identifier + ".height";
+        return _identifier + "." + _identifier + ".height";
     }
 
     private String getWidthPropertyKey() {
-        return getClass().getName() + "." + _identifier + ".width";
+        return _identifier + "." + _identifier + ".width";
     }
 
     private String getIsMaximizedWindowPropertyKey() {
-        return getClass().getName() + "." + _identifier + ".maximized";
+        return _identifier + "." + _identifier + ".maximized";
     }
 
 }

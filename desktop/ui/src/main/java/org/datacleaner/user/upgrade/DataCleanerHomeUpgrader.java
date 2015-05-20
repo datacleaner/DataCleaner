@@ -53,8 +53,8 @@ public final class DataCleanerHomeUpgrader {
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
     /**
-     * Finds a folder to upgrade from based on the "newFolder" parameter - upgrades
-     * are performed only within the same major version.
+     * Finds a folder to upgrade from based on the "newFolder" parameter -
+     * upgrades are performed only within the same major version.
      * 
      * @param newFolder
      *            The folder we want to upgrade to (the new version)
@@ -62,7 +62,12 @@ public final class DataCleanerHomeUpgrader {
      */
     public boolean upgrade(FileObject newFolder) {
         try {
-            FileObject upgradeFromFolderCandidate = findUpgradeCandidate(newFolder);
+            if (newFolder.getChildren().length != 0) {
+                // if the folder is not new then we don't want to touch it
+                return false;
+            }
+            
+            final FileObject upgradeFromFolderCandidate = findUpgradeCandidate(newFolder);
 
             if (upgradeFromFolderCandidate == null) {
                 logger.info("Did not find a suitable upgrade candidate");

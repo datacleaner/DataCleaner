@@ -26,8 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 /**
  * Annotation used for {@link Configured} properties that are mapped to another
  * {@link Configured} property.
@@ -47,7 +45,6 @@ import javax.inject.Qualifier;
 @Target({ ElementType.FIELD })
 @Documented
 @Inherited
-@Qualifier
 public @interface MappedProperty {
 
     /**

@@ -26,8 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 /**
  * Annotation containing supplementary metadata about a number property. This
  * metadata can be used as a way to give hints to the UI as to how the content
@@ -37,7 +35,6 @@ import javax.inject.Qualifier;
 @Target({ ElementType.FIELD })
 @Documented
 @Inherited
-@Qualifier
 public @interface NumberProperty {
 
     /**

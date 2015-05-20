@@ -181,7 +181,9 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             popup.add(previewMenuItem);
         }
 
-        popup.add(new ChangeRequirementMenu(componentBuilder));
+        if (ChangeRequirementMenu.isRelevant(componentBuilder)) {
+            popup.add(new ChangeRequirementMenu(componentBuilder));
+        }
         popup.addSeparator();
         popup.add(new RemoveComponentMenuItem(componentBuilder));
         popup.show(_graphContext.getVisualizationViewer(), me.getX(), me.getY());

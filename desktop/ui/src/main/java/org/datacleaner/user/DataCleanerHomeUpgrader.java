@@ -46,11 +46,19 @@ import org.slf4j.LoggerFactory;
  * DataCleaner and upgrades.
  */
 public final class DataCleanerHomeUpgrader {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerHomeUpgrader.class);
 
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
+    /**
+     * Finds a folder to upgrade from based on the "target" parameter - upgrades
+     * are performed only within the same major version.
+     * 
+     * @param target
+     *            The folder we want to upgrade to (the new version)
+     * @return true if upgrade was successful, false otherwise
+     */
     public boolean upgrade(FileObject target) {
         try {
             FileObject upgradeCandidate = findUpgradeCandidate(target.getParent());
@@ -94,13 +102,13 @@ public final class DataCleanerHomeUpgrader {
                 String baseName = validatedVersionFolder.getName().getBaseName();
                 versions.add(baseName);
             }
-            
-            final Comparator<String> comp = new VersionComparator();           
+
+            final Comparator<String> comp = new VersionComparator();
             String latestVersion = Collections.max(versions, comp);
-            FileObject latestVersionFolder = null; 
+            FileObject latestVersionFolder = null;
             for (FileObject validatedVersionFolder : validatedVersionFolders) {
                 if (validatedVersionFolder.getName().getBaseName().equals(latestVersion)) {
-                    latestVersionFolder = validatedVersionFolder; 
+                    latestVersionFolder = validatedVersionFolder;
                 }
             }
             return latestVersionFolder;
@@ -151,7 +159,8 @@ public final class DataCleanerHomeUpgrader {
         return validatedVersionFolders;
     }
 
-    private static FileObject owerwriteFileWithDefaults(FileObject targetDirectory, String targetFilename) throws FileSystemException {
+    private static FileObject owerwriteFileWithDefaults(FileObject targetDirectory, String targetFilename)
+            throws FileSystemException {
         FileObject file = targetDirectory.resolveFile(targetFilename);
         FileObject parentFile = file.getParent();
         if (!parentFile.exists()) {

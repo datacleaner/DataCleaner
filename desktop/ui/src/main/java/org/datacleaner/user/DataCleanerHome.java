@@ -39,6 +39,7 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.user.upgrade.DataCleanerHomeUpgrader;
 import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;

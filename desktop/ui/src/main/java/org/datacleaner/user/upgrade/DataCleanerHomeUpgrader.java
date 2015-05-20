@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.user;
+package org.datacleaner.user.upgrade;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +37,7 @@ import org.apache.commons.vfs2.FileType;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.Version;
 import org.datacleaner.VersionComparator;
+import org.datacleaner.user.DemoConfiguration;
 import org.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,29 +53,34 @@ public final class DataCleanerHomeUpgrader {
     private static final List<String> candidateBlacklist = Arrays.asList("log", Version.UNKNOWN_VERSION);
 
     /**
-     * Finds a folder to upgrade from based on the "target" parameter - upgrades
+     * Finds a folder to upgrade from based on the "newFolder" parameter - upgrades
      * are performed only within the same major version.
      * 
-     * @param target
+     * @param newFolder
      *            The folder we want to upgrade to (the new version)
      * @return true if upgrade was successful, false otherwise
      */
-    public boolean upgrade(FileObject target) {
+    public boolean upgrade(FileObject newFolder) {
         try {
-            FileObject upgradeCandidate = findUpgradeCandidate(target);
+            FileObject upgradeFromFolderCandidate = findUpgradeCandidate(newFolder);
 
-            if (upgradeCandidate == null) {
+            if (upgradeFromFolderCandidate == null) {
                 logger.info("Did not find a suitable upgrade candidate");
                 return false;
             }
 
-            logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeCandidate);
-            target.copyFrom(upgradeCandidate, new AllFileSelector());
+            logger.info("Upgrading DATACLEANER_HOME from : {}", upgradeFromFolderCandidate);
+            newFolder.copyFrom(upgradeFromFolderCandidate, new AllFileSelector());
+
+            // special handling of userpreferences.dat - we only want to keep
+            // the good parts ;-)
+            final UserPreferencesUpgrader userPreferencesUpgrader = new UserPreferencesUpgrader(newFolder);
+            userPreferencesUpgrader.upgrade();
 
             // Overwrite example jobs
             final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
             for (String filePath : allFilePaths) {
-                owerwriteFileWithDefaults(target, filePath);
+                overwriteFileWithDefaults(newFolder, filePath);
             }
             return true;
         } catch (FileSystemException e) {
@@ -85,12 +91,14 @@ public final class DataCleanerHomeUpgrader {
 
     private FileObject findUpgradeCandidate(FileObject target) throws FileSystemException {
         FileObject parentFolder = target.getParent();
-        
+
         List<FileObject> versionFolders = new ArrayList<>();
         FileObject[] allFoldersInParent = parentFolder.findFiles(new FileDepthSelector(1, 1));
         for (FileObject folderInParent : allFoldersInParent) {
             final String folderInParentName = folderInParent.getName().getBaseName();
-            if (folderInParent.getType().equals(FileType.FOLDER) && (!folderInParentName.equals(target.getName().getBaseName())) && (!candidateBlacklist.contains(folderInParentName))) {
+            if (folderInParent.getType().equals(FileType.FOLDER)
+                    && (!folderInParentName.equals(target.getName().getBaseName()))
+                    && (!candidateBlacklist.contains(folderInParentName))) {
                 versionFolders.add(folderInParent);
             }
         }
@@ -161,7 +169,7 @@ public final class DataCleanerHomeUpgrader {
         return validatedVersionFolders;
     }
 
-    private static FileObject owerwriteFileWithDefaults(FileObject targetDirectory, String targetFilename)
+    private static FileObject overwriteFileWithDefaults(FileObject targetDirectory, String targetFilename)
             throws FileSystemException {
         FileObject file = targetDirectory.resolveFile(targetFilename);
         FileObject parentFile = file.getParent();

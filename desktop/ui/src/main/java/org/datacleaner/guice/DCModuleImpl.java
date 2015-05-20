@@ -178,7 +178,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
             }
 
-            final FileObject userPreferencesFile = dataCleanerHome.resolveFile("userpreferences.dat");
+            final FileObject userPreferencesFile = dataCleanerHome.resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
 
             return new LazyRef<UserPreferences>() {
                 @Override

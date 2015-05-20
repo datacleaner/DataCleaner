@@ -113,7 +113,7 @@ public class ComponentDocumentationBuilder {
                     final HiddenProperty hiddenProperty = property.getAnnotation(HiddenProperty.class);
                     // we do not show hidden properties in docs
                     if (hiddenProperty == null) {
-                        ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
+                        final ConfiguredPropertyDocumentationWrapper wrapper = new ConfiguredPropertyDocumentationWrapper(
                                 property);
                         propertyList.add(wrapper);
                     }

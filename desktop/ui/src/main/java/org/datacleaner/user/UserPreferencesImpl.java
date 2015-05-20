@@ -66,6 +66,8 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private static final long serialVersionUID = 6L;
 
+    public static final String DEFAULT_FILENAME = "userpreferences.dat";
+
     private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
 
     private transient FileObject _userPreferencesFile;
@@ -95,10 +97,24 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private MonitorConnection monitorConnection;
 
+    /**
+     * Creates a new {@link UserPreferencesImpl} object which refers to a file,
+     * but does NOT load the file contents.
+     * 
+     * @param userPreferencesFile
+     */
     public UserPreferencesImpl(FileObject userPreferencesFile) {
         _userPreferencesFile = userPreferencesFile;
     }
 
+    /**
+     * Loads a user preferences file and initializes a
+     * {@link UserPreferencesImpl} object using it.
+     * 
+     * @param userPreferencesFile
+     * @param loadDatabaseDrivers
+     * @return
+     */
     public static UserPreferences load(final FileObject userPreferencesFile, final boolean loadDatabaseDrivers) {
         try {
             if (userPreferencesFile == null || !userPreferencesFile.exists()) {

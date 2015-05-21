@@ -31,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.swing.AbstractButton;
@@ -41,6 +39,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
@@ -74,8 +73,8 @@ import org.datacleaner.job.runner.ComponentMetrics;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.panels.result.AnalyzerResultPanel;
 import org.datacleaner.panels.result.ProgressInformationPanel;
-import org.datacleaner.panels.result.ResultListPanel;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UserPreferences;
@@ -103,7 +102,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     private static final ImageManager imageManager = ImageManager.get();
 
     private final VerticalTabbedPane _tabbedPane = new VerticalTabbedPane();
-    private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
     private final AnalysisJob _job;
     private final DataCleanerConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
@@ -260,32 +258,19 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return new Dimension(width, height);
     }
 
-    private ResultListPanel getDescriptorResultPanel(final ComponentDescriptor<?> descriptor) {
-        ResultListPanel resultPanel = _resultPanels.get(descriptor);
-        if (resultPanel == null) {
-            resultPanel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-            ResultListPanel previous = _resultPanels.putIfAbsent(descriptor, resultPanel);
-            if (previous != null) {
-                resultPanel = previous;
-            } else {
-                final ResultListPanel finalResultListPanel = resultPanel;
-                final String name = descriptor.getDisplayName();
-                final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        _tabbedPane.addTab(name, icon, finalResultListPanel);
-                    }
-                });
+    public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
+        final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
+        final String name = LabelUtils.getLabel(componentJob, false, false, false);
+        final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
+        WidgetUtils.invokeSwingAction(new Runnable() {
+            @Override
+            public void run() {
+                final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
+                        _progressInformationPanel, componentJob, result);
+                final JScrollPane scroll = WidgetUtils.scrolleable(resultPanel);
+                _tabbedPane.addTab(name, icon, scroll);
             }
-        }
-        return resultPanel;
-    }
-
-    public void addResult(ComponentJob componentJob, AnalyzerResult result) {
-        ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
-        ResultListPanel resultListPanel = getDescriptorResultPanel(descriptor);
-        resultListPanel.addResult(componentJob, result);
+        });
     }
 
     @Override
@@ -410,10 +395,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     public UserPreferences getUserPreferences() {
         return _userPreferences;
-    }
-
-    public Map<Object, ResultListPanel> getResultPanels() {
-        return _resultPanels;
     }
 
     public void onUnexpectedError(AnalysisJob job, Throwable throwable) {

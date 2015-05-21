@@ -21,6 +21,7 @@ package org.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -118,10 +119,17 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
             dataset.addValue(count, expression, "");
         }
 
-        JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, true,
+        // only show legend if there are not too many patterns
+        final boolean showLegend = dataset.getRowCount() < 25;
+        
+        JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, showLegend,
                 true, false);
         ChartUtils.applyStyles(chart);
-        displayChartCallback.displayChart(new ChartPanel(chart));
+        
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 600));
+        
+        displayChartCallback.displayChart(chartPanel);
     }
 
     @Override

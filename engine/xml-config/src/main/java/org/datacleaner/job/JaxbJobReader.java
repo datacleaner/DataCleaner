@@ -65,7 +65,6 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
-import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -405,7 +404,6 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private AnalysisJobBuilder create(JobType job, SourceColumnMapping sourceColumnMapping, JobMetadataType metadata,
             final Map<String, String> variables, final AnalysisJobBuilder analysisJobBuilder) {
-        String ref;
 
         final Datastore datastore;
         final DatastoreConnection datastoreConnection;
@@ -413,8 +411,8 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
         if (sourceColumnMapping == null) {
             // use automatic mapping if no explicit mapping is supplied
-            DataContextType dataContext = source.getDataContext();
-            ref = dataContext.getRef();
+            final DataContextType dataContext = source.getDataContext();
+            final String ref = dataContext.getRef();
             if (StringUtils.isNullOrEmpty(ref)) {
                 throw new IllegalStateException("Datastore ref cannot be null");
             }
@@ -425,29 +423,316 @@ public class JaxbJobReader implements JobReader<InputStream> {
             }
             datastoreConnection = datastore.openConnection();
 
-            List<String> sourceColumnPaths = getSourceColumnPaths(job);
+            final List<String> sourceColumnPaths = getSourceColumnPaths(job);
             sourceColumnMapping = new SourceColumnMapping(sourceColumnPaths);
             sourceColumnMapping.autoMap(datastore);
         } else {
             datastore = sourceColumnMapping.getDatastore();
-            final DatastoreConnection connection = datastore.openConnection();
-            datastoreConnection = connection;
+            datastoreConnection = datastore.openConnection();
         }
 
-        // map column id's to input columns
+        try {
+            analysisJobBuilder.setDatastore(datastore);
+            if (metadata != null) {
+                final ImmutableAnalysisJobMetadata immutableAnalysisJobMetadata = new ImmutableAnalysisJobMetadata(
+                        metadata.getJobName(), metadata.getJobVersion(), metadata.getJobDescription(),
+                        metadata.getAuthor(), convertToDate(metadata.getCreatedDate()),
+                        convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
+                        getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
+                analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
+            }
 
-        analysisJobBuilder.setDatastore(datastore);
-        if (metadata != null) {
-            final ImmutableAnalysisJobMetadata immutableAnalysisJobMetadata = new ImmutableAnalysisJobMetadata(
-                    metadata.getJobName(), metadata.getJobVersion(), metadata.getJobDescription(),
-                    metadata.getAuthor(), convertToDate(metadata.getCreatedDate()),
-                    convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
-                    getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
-            analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
+            // map column id's to input columns
+            final Map<String, InputColumn<?>> inputColumns = readSourceColumns(sourceColumnMapping, analysisJobBuilder,
+                    source);
+
+            final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
+            final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+
+            final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
+
+            // iterate to create all the initial component builders without any
+            // wiring
+            final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
+            for (ComponentType componentType : allComponentTypes) {
+                final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder,
+                        descriptorProvider, componentType);
+
+                initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType,
+                        componentBuilder);
+            }
+
+            wireInputColumns(inputColumns, componentBuilders);
+
+            wireRequirements(componentBuilders);
+
+            return analysisJobBuilder;
+        } finally {
+            datastoreConnection.close();
+        }
+    }
+
+    private void wireRequirements(final Map<ComponentType, ComponentBuilder> componentBuilders) {
+        final Map<String, FilterOutcome> outcomeMapping = new HashMap<String, FilterOutcome>();
+
+        // iterate initialize collect all outcomes by their IDs
+        for (ComponentType componentType : componentBuilders.keySet()) {
+            if (componentType instanceof FilterType) {
+                final FilterType filterType = (FilterType) componentType;
+                final FilterComponentBuilder<?, ?> filterBuilder = (FilterComponentBuilder<?, ?>) componentBuilders
+                        .get(componentType);
+
+                final List<OutcomeType> outcomeTypes = filterType.getOutcome();
+                for (OutcomeType outcomeType : outcomeTypes) {
+                    final String categoryName = outcomeType.getCategory();
+                    final Enum<?> category = filterBuilder.getDescriptor().getOutcomeCategoryByName(categoryName);
+                    if (category == null) {
+                        throw new ComponentConfigurationException("No such outcome category name: " + categoryName
+                                + " (in " + filterBuilder.getDescriptor().getDisplayName() + ")");
+                    }
+
+                    final String id = outcomeType.getId();
+                    if (StringUtils.isNullOrEmpty(id)) {
+                        throw new IllegalStateException("Outcome id cannot be null");
+                    }
+                    if (outcomeMapping.containsKey(id)) {
+                        throw new ComponentConfigurationException("Outcome id '" + id + "' is not unique");
+                    }
+                    outcomeMapping.put(id, filterBuilder.getFilterOutcome(category));
+                }
+            }
         }
 
+        // iterate again to set up filter outcome dependencies
+        for (ComponentType componentType : componentBuilders.keySet()) {
+            wireRequirement(outcomeMapping, componentBuilders, componentType);
+        }
+    }
+
+    private ComponentBuilder createComponentBuilder(final AnalysisJobBuilder analysisJobBuilder,
+            final DescriptorProvider descriptorProvider, ComponentType componentType) {
+        String ref;
+        final ComponentBuilder componentBuilder;
+
+        if (componentType instanceof TransformerType) {
+            // special instantiation of transformers
+            final TransformerType transformer = (TransformerType) componentType;
+            ref = transformer.getDescriptor().getRef();
+            if (StringUtils.isNullOrEmpty(ref)) {
+                throw new IllegalStateException("Transformer descriptor ref cannot be null");
+            }
+            final TransformerDescriptor<?> descriptor = descriptorProvider.getTransformerDescriptorByDisplayName(ref);
+            if (descriptor == null) {
+                throw new NoSuchComponentException(Transformer.class, ref);
+            }
+            componentBuilder = analysisJobBuilder.addTransformer(descriptor);
+        } else if (componentType instanceof FilterType) {
+            // special instantiation of filters
+            final FilterType filter = (FilterType) componentType;
+
+            ref = filter.getDescriptor().getRef();
+
+            if (StringUtils.isNullOrEmpty(ref)) {
+                throw new IllegalStateException("Filter descriptor ref cannot be null");
+            }
+            final FilterDescriptor<?, ?> descriptor = descriptorProvider.getFilterDescriptorByDisplayName(ref);
+            if (descriptor == null) {
+                throw new NoSuchComponentException(Filter.class, ref);
+            }
+            componentBuilder = analysisJobBuilder.addFilter(descriptor);
+        } else if (componentType instanceof AnalyzerType) {
+            // special instantiation of analyzers
+            final AnalyzerType analyzer = (AnalyzerType) componentType;
+
+            ref = analyzer.getDescriptor().getRef();
+
+            if (StringUtils.isNullOrEmpty(ref)) {
+                throw new IllegalStateException("Analyzer descriptor ref cannot be null");
+            }
+
+            final AnalyzerDescriptor<?> descriptor = descriptorProvider.getAnalyzerDescriptorByDisplayName(ref);
+
+            if (descriptor == null) {
+                throw new NoSuchComponentException(Analyzer.class, ref);
+            }
+
+            final Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
+            componentBuilder = analysisJobBuilder.addAnalyzer(analyzerClass);
+        } else {
+            throw new UnsupportedOperationException("Unexpected transformation component type: " + componentType);
+        }
+        return componentBuilder;
+    }
+
+    private List<ComponentType> getAllComponentTypes(JobType job) {
+        final List<ComponentType> result = new ArrayList<>();
+        final TransformationType transformation = job.getTransformation();
+        if (transformation != null) {
+            result.addAll(transformation.getTransformerOrFilter());
+        }
+        final AnalysisType analysis = job.getAnalysis();
+        if (analysis != null) {
+            result.addAll(analysis.getAnalyzer());
+        }
+        return result;
+    }
+
+    /**
+     * Wires input columns from either source or transformer output. This
+     * process is an iteration to find the next consumer with
+     * "satisfied column requirements".
+     * 
+     * @param inputColumns
+     * @param componentBuilders
+     */
+    private void wireInputColumns(final Map<String, InputColumn<?>> inputColumns,
+            final Map<ComponentType, ComponentBuilder> componentBuilders) {
+        // iterate again to set up column dependencies (one at a time -
+        // whichever is possible based on the configuration of the column
+        // sources (transformers))
+        final List<ComponentType> unconfiguredComponentKeys = new LinkedList<ComponentType>(componentBuilders.keySet());
+        while (!unconfiguredComponentKeys.isEmpty()) {
+            boolean progress = false;
+            for (Iterator<ComponentType> it = unconfiguredComponentKeys.iterator(); it.hasNext();) {
+                boolean configurable = true;
+
+                final ComponentType unconfiguredTransformerKey = it.next();
+                final List<InputType> input = unconfiguredTransformerKey.getInput();
+                for (InputType inputType : input) {
+                    final String ref = inputType.getRef();
+                    if (StringUtils.isNullOrEmpty(ref)) {
+                        final String value = inputType.getValue();
+                        if (value == null) {
+                            throw new IllegalStateException("Component input column ref & value cannot be null");
+                        }
+                    } else if (!inputColumns.containsKey(ref)) {
+                        configurable = false;
+                        break;
+                    }
+                }
+
+                if (configurable) {
+                    progress = true;
+                    final ComponentBuilder componentBuilder = componentBuilders.get(unconfiguredTransformerKey);
+
+                    applyInputColumns(input, inputColumns, componentBuilder);
+
+                    if (componentBuilder instanceof TransformerComponentBuilder) {
+                        final TransformerComponentBuilder<?> transformerBuilder = (TransformerComponentBuilder<?>) componentBuilder;
+                        final TransformerType transformerType = (TransformerType) unconfiguredTransformerKey;
+
+                        final List<MutableInputColumn<?>> outputColumns = transformerBuilder.getOutputColumns();
+                        final List<OutputType> output = transformerType.getOutput();
+
+                        if (outputColumns.size() != output.size()) {
+                            final String message = "Expected " + outputColumns.size() + " output column(s), but found "
+                                    + output.size() + " (" + transformerBuilder + ")";
+                            if (outputColumns.isEmpty()) {
+                                // typically empty output columns is due to
+                                // a component not being configured, we'll
+                                // attach the configuration exception as a
+                                // cause.
+                                try {
+                                    transformerBuilder.isConfigured(true);
+                                } catch (Exception e) {
+                                    throw new ComponentConfigurationException(message, e);
+                                }
+                            }
+                            throw new ComponentConfigurationException(message);
+                        }
+
+                        for (int i = 0; i < output.size(); i++) {
+                            final OutputType o1 = output.get(i);
+                            final MutableInputColumn<?> o2 = outputColumns.get(i);
+                            final String name = o1.getName();
+                            if (!StringUtils.isNullOrEmpty(name)) {
+                                o2.setName(name);
+                            }
+                            final Boolean hidden = o1.isHidden();
+                            if (hidden != null && hidden.booleanValue()) {
+                                o2.setHidden(true);
+                            }
+                            final String id = o1.getId();
+                            if (StringUtils.isNullOrEmpty(id)) {
+                                throw new IllegalStateException("Transformer output column id cannot be null");
+                            }
+                            registerInputColumn(inputColumns, id, o2);
+                        }
+                    }
+
+                    // remove this component from the "unconfigured" set
+                    it.remove();
+                }
+            }
+
+            if (!progress) {
+                // no progress was made in a complete iteration - no satisfied
+                // requirements where found. Time to produce an error message...
+                final StringBuilder sb = new StringBuilder();
+                for (ComponentType transformerType : unconfiguredComponentKeys) {
+                    if (sb.length() != 0) {
+                        sb.append(", ");
+                    }
+                    final DescriptorType descriptor = transformerType.getDescriptor();
+                    sb.append(descriptor.getRef());
+                    sb.append("(input: ");
+
+                    final List<InputType> input = transformerType.getInput();
+                    int i = 0;
+                    for (InputType inputType : input) {
+                        if (i != 0) {
+                            sb.append(", ");
+                        }
+                        final String ref = inputType.getRef();
+                        if (StringUtils.isNullOrEmpty(ref)) {
+                            sb.append("value=" + inputType.getValue());
+                        } else {
+                            sb.append("ref=" + ref);
+                        }
+                        i++;
+                    }
+                    sb.append(")");
+                }
+                throw new ComponentConfigurationException("Could not connect column dependencies for components: "
+                        + sb.toString());
+            }
+        }
+    }
+
+    private void initializeComponentBuilder(final Map<String, String> variables, final StringConverter stringConverter,
+            final Map<ComponentType, ComponentBuilder> componentBuilders, ComponentType componentType,
+            final ComponentBuilder componentBuilder) {
+        // shared setting of properties (except for input columns)
+        componentBuilder.setName(componentType.getName());
+
+        applyProperties(componentBuilder, componentType.getProperties(), componentType.getMetadataProperties(),
+                stringConverter, variables);
+
+        componentBuilders.put(componentType, componentBuilder);
+    }
+
+    private void wireRequirement(final Map<String, FilterOutcome> outcomeMapping,
+            final Map<ComponentType, ComponentBuilder> componentBuilders, ComponentType componentType) {
+        final String ref = componentType.getRequires();
+        if (ref != null) {
+            final ComponentBuilder builder = componentBuilders.get(componentType);
+            final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
+            builder.setComponentRequirement(requirement);
+        }
+    }
+
+    /**
+     * Reads the source element of the job to extract a map of column IDs and
+     * related source {@link InputColumn}s.
+     * 
+     * @param sourceColumnMapping
+     * @param analysisJobBuilder
+     * @param source
+     * @return
+     */
+    private Map<String, InputColumn<?>> readSourceColumns(SourceColumnMapping sourceColumnMapping,
+            final AnalysisJobBuilder analysisJobBuilder, final SourceType source) {
         final Map<String, InputColumn<?>> inputColumns = new HashMap<String, InputColumn<?>>();
-
         final ColumnsType columnsType = source.getColumns();
         if (columnsType != null) {
             final List<ColumnType> columns = columnsType.getColumn();
@@ -481,252 +766,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 analysisJobBuilder.addSourceColumn(inputColumn);
             }
         }
-
-        final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
-        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
-
-        final Map<String, FilterOutcome> outcomeMapping = new HashMap<String, FilterOutcome>();
-
-        final TransformationType transformation = job.getTransformation();
-        if (transformation != null) {
-
-            final List<ComponentType> transformersAndFilters = transformation.getTransformerOrFilter();
-            final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
-
-            // iterate to create all the initial component builders without any
-            // wiring
-            for (ComponentType componentType : transformersAndFilters) {
-                final ComponentBuilder componentBuilder;
-
-                if (componentType instanceof TransformerType) {
-                    // special instantiation of transformers
-                    final TransformerType transformer = (TransformerType) componentType;
-                    ref = transformer.getDescriptor().getRef();
-                    if (StringUtils.isNullOrEmpty(ref)) {
-                        throw new IllegalStateException("Transformer descriptor ref cannot be null");
-                    }
-                    final TransformerDescriptor<?> transformerDescriptor = descriptorProvider
-                            .getTransformerDescriptorByDisplayName(ref);
-                    if (transformerDescriptor == null) {
-                        throw new NoSuchComponentException(Transformer.class, ref);
-                    }
-                    componentBuilder = analysisJobBuilder.addTransformer(transformerDescriptor);
-                } else if (componentType instanceof FilterType) {
-                    // special instantiation of filters
-                    final FilterType filter = (FilterType) componentType;
-
-                    ref = filter.getDescriptor().getRef();
-
-                    if (StringUtils.isNullOrEmpty(ref)) {
-                        throw new IllegalStateException("Filter descriptor ref cannot be null");
-                    }
-                    final FilterDescriptor<?, ?> filterDescriptor = descriptorProvider
-                            .getFilterDescriptorByDisplayName(ref);
-                    if (filterDescriptor == null) {
-                        throw new NoSuchComponentException(Filter.class, ref);
-                    }
-                    componentBuilder = analysisJobBuilder.addFilter(filterDescriptor);
-                } else {
-                    throw new UnsupportedOperationException("Unexpected transformation component type: "
-                            + componentType);
-                }
-
-                // shared setting of properties (except for input columns)
-                componentBuilder.setName(componentType.getName());
-
-                applyProperties(componentBuilder, componentType.getProperties(), componentType.getMetadataProperties(),
-                        stringConverter, variables);
-
-                componentBuilders.put(componentType, componentBuilder);
-            }
-
-            // iterate again to set up column dependencies (one at a time -
-            // whichever is possible based on the configuration of the column
-            // sources (transformers))
-            final List<ComponentType> unconfiguredComponentKeys = new LinkedList<ComponentType>(
-                    componentBuilders.keySet());
-            while (!unconfiguredComponentKeys.isEmpty()) {
-                boolean progress = false;
-                for (Iterator<ComponentType> it = unconfiguredComponentKeys.iterator(); it.hasNext();) {
-                    boolean configurable = true;
-
-                    final ComponentType unconfiguredTransformerKey = it.next();
-                    final List<InputType> input = unconfiguredTransformerKey.getInput();
-                    for (InputType inputType : input) {
-                        ref = inputType.getRef();
-                        if (StringUtils.isNullOrEmpty(ref)) {
-                            final String value = inputType.getValue();
-                            if (value == null) {
-                                throw new IllegalStateException("Component input column ref & value cannot be null");
-                            }
-                        } else if (!inputColumns.containsKey(ref)) {
-                            configurable = false;
-                            break;
-                        }
-                    }
-
-                    if (configurable) {
-                        progress = true;
-                        ComponentBuilder componentBuilder = componentBuilders.get(unconfiguredTransformerKey);
-
-                        applyInputColumns(input, inputColumns, componentBuilder);
-
-                        if (componentBuilder instanceof TransformerComponentBuilder) {
-                            final TransformerComponentBuilder<?> transformerBuilder = (TransformerComponentBuilder<?>) componentBuilder;
-                            final TransformerType transformerType = (TransformerType) unconfiguredTransformerKey;
-
-                            final List<MutableInputColumn<?>> outputColumns = transformerBuilder.getOutputColumns();
-                            final List<OutputType> output = transformerType.getOutput();
-
-                            if (outputColumns.size() != output.size()) {
-                                final String message = "Expected " + outputColumns.size()
-                                        + " output column(s), but found " + output.size() + " (" + transformerBuilder
-                                        + ")";
-                                if (outputColumns.isEmpty()) {
-                                    // typically empty output columns is due to
-                                    // a component not being configured, we'll
-                                    // attach the configuration exception as a
-                                    // cause.
-                                    try {
-                                        transformerBuilder.isConfigured(true);
-                                    } catch (Exception e) {
-                                        throw new ComponentConfigurationException(message, e);
-                                    }
-                                }
-                                throw new ComponentConfigurationException(message);
-                            }
-
-                            for (int i = 0; i < output.size(); i++) {
-                                final OutputType o1 = output.get(i);
-                                final MutableInputColumn<?> o2 = outputColumns.get(i);
-                                final String name = o1.getName();
-                                if (!StringUtils.isNullOrEmpty(name)) {
-                                    o2.setName(name);
-                                }
-                                final Boolean hidden = o1.isHidden();
-                                if (hidden != null && hidden.booleanValue()) {
-                                    o2.setHidden(true);
-                                }
-                                final String id = o1.getId();
-                                if (StringUtils.isNullOrEmpty(id)) {
-                                    throw new IllegalStateException("Transformer output column id cannot be null");
-                                }
-                                registerInputColumn(inputColumns, id, o2);
-                            }
-                        }
-
-                        // remove this component from the "unconfigurable" set
-                        it.remove();
-                    }
-                }
-
-                if (!progress) {
-                    StringBuilder sb = new StringBuilder();
-                    for (ComponentType transformerType : unconfiguredComponentKeys) {
-                        if (sb.length() != 0) {
-                            sb.append(", ");
-                        }
-                        DescriptorType descriptor = transformerType.getDescriptor();
-                        sb.append(descriptor.getRef());
-                        sb.append("(input: ");
-
-                        List<InputType> input = transformerType.getInput();
-                        int i = 0;
-                        for (InputType inputType : input) {
-                            if (i != 0) {
-                                sb.append(", ");
-                            }
-                            ref = inputType.getRef();
-                            if (StringUtils.isNullOrEmpty(ref)) {
-                                sb.append("value=" + inputType.getValue());
-                            } else {
-                                sb.append("ref=" + ref);
-                            }
-                            i++;
-                        }
-                        sb.append(")");
-                    }
-                    throw new ComponentConfigurationException("Could not connect column dependencies for components: "
-                            + sb.toString());
-                }
-            }
-
-            // iterate again to initialize all filters and collect all outcomes
-            for (ComponentType componentType : transformersAndFilters) {
-                final ComponentBuilder componentBuilder = componentBuilders.get(componentType);
-                if (componentBuilder instanceof FilterComponentBuilder) {
-                    final FilterType filterType = (FilterType) componentType;
-                    final FilterComponentBuilder<?, ?> filterBuilder = (FilterComponentBuilder<?, ?>) componentBuilder;
-
-                    final List<OutcomeType> outcomeTypes = filterType.getOutcome();
-                    for (OutcomeType outcomeType : outcomeTypes) {
-                        final String categoryName = outcomeType.getCategory();
-                        final Enum<?> category = filterBuilder.getDescriptor().getOutcomeCategoryByName(categoryName);
-                        if (category == null) {
-                            throw new ComponentConfigurationException("No such outcome category name: " + categoryName
-                                    + " (in " + filterBuilder.getDescriptor().getDisplayName() + ")");
-                        }
-
-                        final String id = outcomeType.getId();
-                        if (StringUtils.isNullOrEmpty(id)) {
-                            throw new IllegalStateException("Outcome id cannot be null");
-                        }
-                        if (outcomeMapping.containsKey(id)) {
-                            throw new ComponentConfigurationException("Outcome id '" + id + "' is not unique");
-                        }
-                        outcomeMapping.put(id, filterBuilder.getFilterOutcome(category));
-                    }
-                }
-            }
-
-            // iterate again to set up filter outcome dependencies
-            for (ComponentType componentType : transformersAndFilters) {
-                ref = componentType.getRequires();
-                if (ref != null) {
-                    final ComponentBuilder builder = componentBuilders.get(componentType);
-                    final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
-                    builder.setComponentRequirement(requirement);
-                }
-            }
-        }
-
-        final  AnalysisType analysis = job.getAnalysis();
-
-        final  List<AnalyzerType> analyzers = analysis.getAnalyzer();
-        for (AnalyzerType analyzerType : analyzers) {
-            ref = analyzerType.getDescriptor().getRef();
-            if (StringUtils.isNullOrEmpty(ref)) {
-                throw new IllegalStateException("Analyzer descriptor ref cannot be null");
-            }
-
-            final AnalyzerDescriptor<?> descriptor = descriptorProvider.getAnalyzerDescriptorByDisplayName(ref);
-
-            if (descriptor == null) {
-                throw new NoSuchComponentException(Analyzer.class, ref);
-            }
-
-            Class<? extends Analyzer<?>> beanClass = descriptor.getComponentClass();
-            AnalyzerComponentBuilder<? extends Analyzer<?>> analyzerJobBuilder = analysisJobBuilder
-                    .addAnalyzer(beanClass);
-            analyzerJobBuilder.setName(analyzerType.getName());
-
-            List<InputType> input = analyzerType.getInput();
-
-            applyInputColumns(input, inputColumns, analyzerJobBuilder);
-            applyProperties(analyzerJobBuilder, analyzerType.getProperties(), analyzerType.getMetadataProperties(),
-                    stringConverter, variables);
-
-            ref = analyzerType.getRequires();
-            if (ref != null) {
-                final ComponentRequirement requirement = getRequirement(ref, outcomeMapping);
-                analyzerJobBuilder.setComponentRequirement(requirement);
-            }
-
-        }
-
-        datastoreConnection.close();
-
-        return analysisJobBuilder;
+        return inputColumns;
     }
 
     private Date convertToDate(XMLGregorianCalendar calendar) {

@@ -356,4 +356,14 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals("2000-01-01",
                 new SimpleDateFormat("yyyy-MM-dd").format(convertToDateTransformer.getNullReplacement()));
     }
+
+    public void testReadChainOfFilters() throws Exception {
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJobBuilder jobBuilder = reader.create(new File("src/test/resources/example-job-chain-of-filters.xml"));
+        assertNotNull(jobBuilder);
+
+        assertEquals(3, jobBuilder.getFilterComponentBuilders().size());
+        assertEquals(1, jobBuilder.getAnalyzerComponentBuilders().size());
+        assertEquals(0, jobBuilder.getTransformerComponentBuilders().size());
+    }
 }

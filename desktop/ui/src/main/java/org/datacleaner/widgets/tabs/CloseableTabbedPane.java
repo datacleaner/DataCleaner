@@ -54,25 +54,20 @@ public final class CloseableTabbedPane extends JTabbedPane {
     private static final long serialVersionUID = -411551524171347329L;
     private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
 
-    public static final Color COLOR_BACKGROUND = WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND;
-
+    public static final Color COLOR_BACKGROUND = WidgetUtils.COLOR_DEFAULT_BACKGROUND;
+    public static final Color COLOR_FOREGROUND_SELECTED = WidgetUtils.BG_COLOR_DARKEST;
+    public static final Color COLOR_FOREGROUND = WidgetUtils.BG_COLOR_LESS_DARK;
+    
     private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
     private final List<Integer> _unclosables = new LinkedList<Integer>();
     private final List<Integer> _separators = new LinkedList<Integer>();
     private final Map<Integer, ActionListener> _doubleClickActionListeners = new HashMap<Integer, ActionListener>();
     private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
 
-    private Color unselectedTabTopColor = WidgetUtils.BG_COLOR_DARKEST;
-    private Color unselectedTabBottomColor = WidgetUtils.BG_COLOR_DARKEST;
-    private Color selectedTabTopColor = WidgetUtils.BG_COLOR_BRIGHTEST;
-    private Color selectedTabBottomColor = WidgetUtils.BG_COLOR_BRIGHTEST;
-    private Color _tabBorderColor = WidgetUtils.BG_COLOR_LESS_DARK;
-
     /**
      * Create a tabbed pane using defaults
      */
     public CloseableTabbedPane() {
-        //
         this(true);
     }
 
@@ -85,11 +80,11 @@ public final class CloseableTabbedPane extends JTabbedPane {
     public CloseableTabbedPane(boolean addBorder) {
         super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
         setUI(new CloseableTabbedPaneUI(this));
-        setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        setForeground(COLOR_FOREGROUND);
         setBackground(COLOR_BACKGROUND);
         setOpaque(true);
         if (addBorder) {
-            setBorder(WidgetUtils.BORDER_WIDE);
+            setBorder(WidgetUtils.BORDER_WIDE_DEFAULT);
         }
     }
 
@@ -295,7 +290,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
     @Override
     public Color getForegroundAt(int index) {
         if (getSelectedIndex() == index) {
-            return WidgetUtils.BG_COLOR_DARKEST;
+            return COLOR_FOREGROUND_SELECTED;
         }
         return super.getForegroundAt(index);
     }
@@ -303,51 +298,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
     @Override
     public void updateUI() {
         repaint();
-    }
-
-    @Override
-    public void setBackground(Color bg) {
-        super.setBackground(bg);
-    }
-
-    public Color getUnselectedTabTopColor() {
-        return unselectedTabTopColor;
-    }
-
-    public void setUnselectedTabTopColor(Color unselectedTabTopColor) {
-        this.unselectedTabTopColor = unselectedTabTopColor;
-    }
-
-    public Color getUnselectedTabBottomColor() {
-        return unselectedTabBottomColor;
-    }
-
-    public void setUnselectedTabBottomColor(Color unselectedTabBottomColor) {
-        this.unselectedTabBottomColor = unselectedTabBottomColor;
-    }
-
-    public Color getSelectedTabTopColor() {
-        return selectedTabTopColor;
-    }
-
-    public void setSelectedTabTopColor(Color selectedTabTopColor) {
-        this.selectedTabTopColor = selectedTabTopColor;
-    }
-
-    public Color getSelectedTabBottomColor() {
-        return selectedTabBottomColor;
-    }
-
-    public void setSelectedTabBottomColor(Color selectedTabBottomColor) {
-        this.selectedTabBottomColor = selectedTabBottomColor;
-    }
-
-    public Color getTabBorderColor() {
-        return _tabBorderColor;
-    }
-
-    public void setTabBorderColor(Color tabBorderColor) {
-        _tabBorderColor = tabBorderColor;
     }
 
     public Tab getTab(int i) {

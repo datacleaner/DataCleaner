@@ -177,8 +177,15 @@ public final class WidgetUtils {
 
     public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 
-    public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
-    public static final Border BORDER_WIDE_BRIGHTEST = new LineBorder(BG_COLOR_BRIGHTEST, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_ALTERNATIVE = new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_DEFAULT = new LineBorder(COLOR_DEFAULT_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_WELL = new LineBorder(COLOR_WELL_BACKGROUND, BORDER_WIDE_WIDTH);
+    
+    @Deprecated
+    public static final Border BORDER_WIDE = BORDER_WIDE_ALTERNATIVE;
+    
+    @Deprecated
+    public static final Border BORDER_WIDE_BRIGHTEST = BORDER_WIDE_DEFAULT;
 
     public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);

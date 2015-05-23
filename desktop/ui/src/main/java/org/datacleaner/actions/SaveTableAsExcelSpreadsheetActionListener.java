@@ -51,8 +51,6 @@ import com.google.inject.Injector;
 
 /**
  * Provides an action for the user to save a table as an Excel spreadsheet
- * 
- * @author Kasper Sørensen
  */
 public final class SaveTableAsExcelSpreadsheetActionListener implements ActionListener {
 
@@ -104,6 +102,11 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
             @Override
             protected int getDialogWidth() {
                 return 600;
+            }
+            
+            @Override
+            protected boolean isWindowResizable() {
+                return true;
             }
 
             @Override

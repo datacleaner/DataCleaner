@@ -215,7 +215,7 @@ public class RegexSwapDialog extends AbstractDialog {
         final DCPanel regexDetailsPanel = createRegexDetailsPanel();
 
         final DCPanel treePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        treePanel.setBorder(WidgetUtils.BORDER_WIDE);
+        treePanel.setBorder(WidgetUtils.BORDER_WIDE_ALTERNATIVE);
         treePanel.setLayout(new BorderLayout());
         treePanel.add(WidgetUtils.scrolleable(_categoryTree), BorderLayout.CENTER);
 

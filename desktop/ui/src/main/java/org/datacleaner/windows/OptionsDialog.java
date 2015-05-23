@@ -89,14 +89,18 @@ public class OptionsDialog extends AbstractWindow {
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
 
-        _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS), getGeneralTab());
-        _tabbedPane.addTab("Database drivers", imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH),
+        _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
+                getGeneralTab());
+        _tabbedPane.addTab("Database drivers",
+                imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_TAB),
                 databaseDriversPanel);
-        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
-        _tabbedPane
-                .addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
-        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
-        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN),
+        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
+                getNetworkTab());
+        _tabbedPane.addTab("Performance",
+                imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
+        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
+                getMemoryTab());
+        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
 
         _tabbedPane.setUnclosableTab(0);
@@ -415,7 +419,7 @@ public class OptionsDialog extends AbstractWindow {
         final DCBannerPanel banner = new DCBannerPanel("Options");
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);

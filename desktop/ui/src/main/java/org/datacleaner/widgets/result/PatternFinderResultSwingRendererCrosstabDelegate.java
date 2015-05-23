@@ -127,7 +127,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
         ChartUtils.applyStyles(chart);
         
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 600));
+        chartPanel.setPreferredSize(new Dimension(800, 400));
         
         displayChartCallback.displayChart(chartPanel);
     }

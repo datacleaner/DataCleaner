@@ -203,9 +203,9 @@ public final class LookAndFeelManager {
         UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
         // tool tip colors
-        UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("ToolTip.background", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHT);
-        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE);
+        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE_ALTERNATIVE);
 
         // task pane colors
         UIManager.put("TaskPaneContainer.background", WidgetUtils.COLOR_WELL_BACKGROUND);

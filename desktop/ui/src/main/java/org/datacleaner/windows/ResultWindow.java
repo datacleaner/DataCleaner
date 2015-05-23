@@ -268,6 +268,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
                         _progressInformationPanel, componentJob, result);
                 final JScrollPane scroll = WidgetUtils.scrolleable(resultPanel);
+                scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
                 _tabbedPane.addTab(name, icon, scroll);
             }
         });

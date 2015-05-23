@@ -21,7 +21,6 @@ package org.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -126,8 +125,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
                 true, false);
         ChartUtils.applyStyles(chart);
         
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(800, 400));
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
         
         displayChartCallback.displayChart(chartPanel);
     }

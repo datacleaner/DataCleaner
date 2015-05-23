@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -101,7 +102,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final VerticalTabbedPane _tabbedPane = new VerticalTabbedPane();
+    private final VerticalTabbedPane _tabbedPane;
+    private final Map<ComponentJob, AnalyzerResultPanel> _resultPanels;
     private final AnalysisJob _job;
     private final DataCleanerConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
@@ -135,6 +137,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
+        _tabbedPane = new VerticalTabbedPane();
+        _resultPanels = new IdentityHashMap<>();
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
@@ -258,22 +262,35 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return new Dimension(width, height);
     }
 
-    public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
-        final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
-        final String name = LabelUtils.getLabel(componentJob, false, false, false);
-        final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
-                        _progressInformationPanel, componentJob, result);
-
-                final JScrollPane scroll = WidgetUtils.scrolleable(resultPanel);
-                scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-                _tabbedPane.addTab(name, icon, scroll);
+    public AnalyzerResultPanel getOrCreateResultPanel(final ComponentJob componentJob) {
+        synchronized (_resultPanels) {
+            final AnalyzerResultPanel existingPanel = _resultPanels.get(componentJob);
+            if (existingPanel != null) {
+                return existingPanel;
             }
-        });
+            final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
+            final String name = LabelUtils.getLabel(componentJob, false, false, false);
+            final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
+            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel,
+                    componentJob);
+            _resultPanels.put(componentJob, resultPanel);
+            WidgetUtils.invokeSwingAction(new Runnable() {
+                @Override
+                public void run() {
+                    
+                    final JScrollPane scroll = WidgetUtils.scrolleable(resultPanel);
+                    scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                    
+                    _tabbedPane.addTab(name, icon, scroll);
+                }
+            });
+            return resultPanel;
+        }
+    }
+
+    public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
+        final AnalyzerResultPanel resultPanel = getOrCreateResultPanel(componentJob);
+        resultPanel.setResult(result);
     }
 
     @Override
@@ -449,13 +466,24 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
-                if (expectedRows == -1) {
-                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
-                } else {
-                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName() + " (approx. "
-                            + expectedRows + " rows)");
-                    _progressInformationPanel.setExpectedRows(table, expectedRows);
-                }
+                WidgetUtils.invokeSwingAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (expectedRows == -1) {
+                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
+                        } else {
+                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName() + " (approx. "
+                                    + expectedRows + " rows)");
+                            _progressInformationPanel.setExpectedRows(table, expectedRows);
+                        }
+                        
+                        final ComponentJob[] componentJobs = metrics.getResultProducers();
+                        for (ComponentJob componentJob : componentJobs) {
+                            // instantiate result panels
+                            getOrCreateResultPanel(componentJob);
+                        }
+                    }
+                });
             }
 
             @Override
@@ -468,7 +496,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
-                        + " finished. Generating results ...");
+                        + " finished. Generating results...");
             }
 
             @Override

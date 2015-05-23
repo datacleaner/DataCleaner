@@ -524,4 +524,14 @@ public final class RowProcessingPublisher {
         }
         return analyzerJobs.toArray(new AnalyzerJob[analyzerJobs.size()]);
     }
+
+    public ComponentJob[] getResultProducers() {
+        final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
+        for (RowProcessingConsumer consumer : _consumers) {
+            if (consumer.isResultProducer()) {
+                resultProducers.add(consumer.getComponentJob());
+            }
+        }
+        return resultProducers.toArray(new ComponentJob[resultProducers.size()]);
+    }
 }

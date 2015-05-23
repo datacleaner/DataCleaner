@@ -79,7 +79,7 @@ class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult,
 
     ChartUtils.applyStyles(chart);
 
-    val chartPanel = new ChartPanel(chart)
+    val chartPanel = ChartUtils.createPanel(chart, true);
 
     chartPanel.addChartMouseListener(new ChartMouseListener() {
       override def chartMouseClicked(event: ChartMouseEvent) = {

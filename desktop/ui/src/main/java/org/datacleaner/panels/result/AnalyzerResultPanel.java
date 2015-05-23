@@ -65,14 +65,13 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     private final RendererFactory _rendererFactory;
     private final ProgressInformationPanel _progressInformationPanel;
     private final ComponentJob _componentJob;
-    private final AnalyzerResult _result;
+    private final LoadingIcon _loadingIcon;
 
     public AnalyzerResultPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel,
-            ComponentJob componentJob, AnalyzerResult result) {
+            ComponentJob componentJob) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _rendererFactory = rendererFactory;
         _progressInformationPanel = progressInformationPanel;
-        _result = result;
         _componentJob = componentJob;
 
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -81,7 +80,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TASK_PANE);
 
-        final String headerText = getHeaderText(componentJob);
+        final String headerText = getHeaderText();
         final JLabel header1 = createHeader(icon, headerText, WidgetUtils.FONT_HEADER1, WidgetUtils.BG_COLOR_DARK);
         final JLabel header2 = createHeader(null, getSubHeaderText(componentJob, headerText), WidgetUtils.FONT_SMALL,
                 WidgetUtils.BG_COLOR_BLUE_MEDIUM);
@@ -93,9 +92,12 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
         headerPanel.setBorder(new EmptyBorder(0, 0, 4, 0));
         add(headerPanel, BorderLayout.NORTH);
 
-        final LoadingIcon loadingIcon = new LoadingIcon();
-        add(loadingIcon, BorderLayout.CENTER);
+        _loadingIcon = new LoadingIcon();
+        add(_loadingIcon, BorderLayout.CENTER);
+    }
 
+    public void setResult(final AnalyzerResult result) {
+        final String headerText = getHeaderText();
         _progressInformationPanel.addUserLog("Rendering result for " + headerText);
 
         // use a swing worker to run the rendering in the background
@@ -104,16 +106,16 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
             @Override
             protected JComponent doInBackground() throws Exception {
                 final Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(
-                        _result, SwingRenderingFormat.class);
+                        result, SwingRenderingFormat.class);
                 if (renderer == null) {
-                    final String message = "No renderer found for result type " + _result.getClass().getName();
+                    final String message = "No renderer found for result type " + result.getClass().getName();
                     logger.error(message);
                     throw new IllegalStateException(message);
                 }
-                logger.debug("renderer.render({})", _result);
-                final JComponent component = renderer.render(_result);
+                logger.debug("renderer.render({})", result);
+                final JComponent component = renderer.render(result);
                 if (logger.isInfoEnabled()) {
-                    final String resultAsString = getResultAsString(_componentJob, _result);
+                    final String resultAsString = getResultAsString(_componentJob, result);
                     if (resultAsString != null) {
                         String resultAsStringToLog = resultAsString.replaceAll("\n", " | ");
                         if (resultAsStringToLog.length() > 150) {
@@ -129,7 +131,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                 JComponent component;
                 try {
                     component = get();
-                    if (_result instanceof AnalyzerResultFuture) {
+                    if (result instanceof AnalyzerResultFuture) {
                         _progressInformationPanel.addUserLog(headerText + " is still in progress - see the '"
                                 + _componentJob.getDescriptor().getDisplayName() + "' tab");
                     } else {
@@ -147,7 +149,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                             "An error occurred while rendering result, check the 'Progress information' tab.", icon,
                             SwingConstants.LEFT));
 
-                    final String resultAsString = getResultAsString(_componentJob, _result);
+                    final String resultAsString = getResultAsString(_componentJob, result);
                     if (resultAsString != null) {
                         final DCLabel label = DCLabel.darkMultiLine(resultAsString);
                         label.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -156,7 +158,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
                     component = panel;
                 }
 
-                remove(loadingIcon);
+                remove(_loadingIcon);
                 add(component, BorderLayout.CENTER);
 
                 updateUI();
@@ -173,8 +175,8 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
         return label;
     }
 
-    private String getHeaderText(final ComponentJob componentJob) {
-        return LabelUtils.getLabel(componentJob, false, false, false);
+    private String getHeaderText() {
+        return LabelUtils.getLabel(_componentJob, false, false, false);
     }
 
     private String getSubHeaderText(final ComponentJob componentJob, final String headerText) {

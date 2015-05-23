@@ -200,7 +200,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             }
         }
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());

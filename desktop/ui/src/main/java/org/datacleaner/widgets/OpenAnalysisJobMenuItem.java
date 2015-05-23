@@ -59,7 +59,7 @@ public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener
         final String title;
         final String filename = file.getName().getBaseName();
         final String jobExtension = FileFilters.ANALYSIS_XML.getExtension();
-        final String resultExtension = FileFilters.ANALYSIS_XML.getExtension();
+        final String resultExtension = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
         if (filename.toLowerCase().endsWith(jobExtension)) {
             title = filename.substring(0, filename.length() - jobExtension.length());

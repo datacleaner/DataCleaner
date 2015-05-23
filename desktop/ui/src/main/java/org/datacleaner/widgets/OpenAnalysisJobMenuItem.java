@@ -33,31 +33,43 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
 /**
- * Menu item that represents opening a "recent" job on the {@link DatastoreManagementPanel}
- * 's "more jobs" drop down menu.
+ * Menu item that represents opening a "recent" job on the
+ * {@link DatastoreManagementPanel} 's "more jobs" drop down menu.
  */
 public class OpenAnalysisJobMenuItem extends JMenuItem implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon icon = ImageManager.get().getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_JOB = ImageManager.get()
+            .getImageIcon(IconUtils.MODEL_JOB, IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_RESULT = ImageManager.get().getImageIcon(IconUtils.MODEL_RESULT,
+            IconUtils.ICON_SIZE_SMALL);
+    private static final Icon ICON_FILE = ImageManager.get().getImageIcon(IconUtils.FILE_FILE,
+            IconUtils.ICON_SIZE_SMALL);
 
     private final OpenAnalysisJobActionListener _openAnalysisJobActionListener;
     private final FileObject _file;
 
     public OpenAnalysisJobMenuItem(final FileObject file,
             final OpenAnalysisJobActionListener openAnalysisJobActionListener) {
-        super(icon);
+        super();
         _file = file;
         _openAnalysisJobActionListener = openAnalysisJobActionListener;
 
         final String title;
         final String filename = file.getName().getBaseName();
-        final String extension = FileFilters.ANALYSIS_XML.getExtension();
-        if (filename.toLowerCase().endsWith(extension)) {
-            title = filename.substring(0, filename.length() - extension.length());
+        final String jobExtension = FileFilters.ANALYSIS_XML.getExtension();
+        final String resultExtension = FileFilters.ANALYSIS_XML.getExtension();
+
+        if (filename.toLowerCase().endsWith(jobExtension)) {
+            title = filename.substring(0, filename.length() - jobExtension.length());
+            setIcon(ICON_JOB);
+        } else if (filename.toLowerCase().endsWith(resultExtension)) {
+            title = filename.substring(0, filename.length() - resultExtension.length());
+            setIcon(ICON_RESULT);
         } else {
             title = filename;
+            setIcon(ICON_FILE);
         }
 
         setText(title);

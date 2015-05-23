@@ -21,12 +21,15 @@ package org.datacleaner.panels.result;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Rectangle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -53,7 +56,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Panel that displays the rendered result in the {@link ResultWindow}.
  */
-public class AnalyzerResultPanel extends DCPanel {
+public class AnalyzerResultPanel extends DCPanel implements Scrollable {
 
     private static final long serialVersionUID = 1L;
 
@@ -71,8 +74,9 @@ public class AnalyzerResultPanel extends DCPanel {
         _progressInformationPanel = progressInformationPanel;
         _result = result;
         _componentJob = componentJob;
-        setLayout(new VerticalLayout(4));
+
         setBorder(new EmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout());
 
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TASK_PANE);
@@ -82,11 +86,15 @@ public class AnalyzerResultPanel extends DCPanel {
         final JLabel header2 = createHeader(null, getSubHeaderText(componentJob, headerText), WidgetUtils.FONT_SMALL,
                 WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
-        add(header1);
-        add(header2);
+        final DCPanel headerPanel = new DCPanel();
+        headerPanel.setLayout(new VerticalLayout(4));
+        headerPanel.add(header1);
+        headerPanel.add(header2);
+        headerPanel.setBorder(new EmptyBorder(0, 0, 4, 0));
+        add(headerPanel, BorderLayout.NORTH);
 
         final LoadingIcon loadingIcon = new LoadingIcon();
-        add(loadingIcon);
+        add(loadingIcon, BorderLayout.CENTER);
 
         _progressInformationPanel.addUserLog("Rendering result for " + headerText);
 
@@ -148,14 +156,9 @@ public class AnalyzerResultPanel extends DCPanel {
                     component = panel;
                 }
 
-                // a container panel around the rendered panel helps set the
-                // appropriate size
-                final DCPanel containerPanel = new DCPanel();
-                containerPanel.setLayout(new BorderLayout());
-                containerPanel.add(component, BorderLayout.CENTER);
-
                 remove(loadingIcon);
-                add(containerPanel);
+                add(component, BorderLayout.CENTER);
+
                 updateUI();
             };
 
@@ -191,5 +194,33 @@ public class AnalyzerResultPanel extends DCPanel {
             logger.error("Couldn't render result of {} as label using toString() method", componentJob, ex);
             return null;
         }
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return WidgetUtils.SCROLL_UNIT_INCREMENT;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        // page down scrolls almost a full screen size
+        return visibleRect.height - 10;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        // ensure that the width within the scroll area never expands the
+        // viewport
+        return true;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 }

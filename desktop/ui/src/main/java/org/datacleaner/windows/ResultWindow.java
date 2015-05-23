@@ -237,9 +237,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     }
 
     private Dimension getDefaultWindowSize() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final int screenWidth = screenSize.width;
+        final int screenHeight = screenSize.height;
 
         int height = 550;
         if (screenHeight > 1000) {
@@ -267,8 +267,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void run() {
                 final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
                         _progressInformationPanel, componentJob, result);
+
                 final JScrollPane scroll = WidgetUtils.scrolleable(resultPanel);
                 scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
                 _tabbedPane.addTab(name, icon, scroll);
             }
         });
@@ -330,11 +332,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND, _windowSizePreference);
-        panel.setLayout(new BorderLayout());
-
+        final String datastoreName = getDatastoreName();
         String bannerTitle = "Analysis results";
-        String datastoreName = getDatastoreName();
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
             bannerTitle = bannerTitle + " | " + datastoreName;
 
@@ -357,9 +356,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         banner.add(_cancelButton);
         banner.add(Box.createHorizontalStrut(10));
 
+        final DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND, _windowSizePreference);
+        panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
-
         return panel;
     }
 

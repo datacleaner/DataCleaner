@@ -20,6 +20,7 @@
 package org.datacleaner.widgets;
 
 import java.awt.Dimension;
+import java.awt.image.ImageObserver;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -28,25 +29,35 @@ import org.datacleaner.util.ImageManager;
 
 public class LoadingIcon extends JLabel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final ImageIcon ICON = ImageManager.get().getImageIcon("images/status/loading.gif");
+    public static final String ICON_PATH = "images/status/loading.gif";
 
-	public LoadingIcon() {
-		super();
-		setIcon(ICON);
-		ICON.setImageObserver(this);
-		setHorizontalAlignment(JLabel.CENTER);
-	}
+    /**
+     * @deprecated instantiate a new {@link ImageIcon} based on
+     *             {@link #ICON_PATH} because the animation requires a single
+     *             {@link ImageObserver} which means that the icon should not be
+     *             shared.
+     */
+    @Deprecated
+    public static final ImageIcon ICON = ImageManager.get().getImageIcon(ICON_PATH);
 
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		ICON.setImageObserver(null);
-	}
+    public LoadingIcon() {
+        super();
+        ImageIcon icon = ImageManager.get().getImageIcon(ICON_PATH);
+        setIcon(icon);
+        icon.setImageObserver(this);
+        setHorizontalAlignment(JLabel.CENTER);
+    }
 
-	public LoadingIcon setPreferredSize(int w, int h) {
-		setPreferredSize(new Dimension(w, h));
-		return this;
-	}
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        ICON.setImageObserver(null);
+    }
+
+    public LoadingIcon setPreferredSize(int w, int h) {
+        setPreferredSize(new Dimension(w, h));
+        return this;
+    }
 }

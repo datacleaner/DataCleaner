@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -111,20 +110,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
             int tabCountBefore = getTabCount();
             addTab("SEPARATOR", new JLabel());
             _separators.add(tabCountBefore);
-        }
-    }
-
-    public void addTab(Tab tab) {
-        final Icon icon = tab.getIcon();
-        if (icon == null) {
-            addTab(tab.getTitle(), tab.getContents());
-        } else {
-            addTab(tab.getTitle(), icon, tab.getContents());
-        }
-
-        if (!tab.isCloseable()) {
-            final int index = getTabCount() - 1;
-            setUnclosableTab(index);
         }
     }
 
@@ -298,14 +283,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
     @Override
     public void updateUI() {
         repaint();
-    }
-
-    public Tab getTab(int i) {
-        Component contents = getTabComponentAt(i);
-        String title = getTitleAt(i);
-        Icon icon = getIconAt(i);
-        boolean closeable = isCloseable(i);
-        return new Tab(title, icon, contents, closeable);
     }
 
     public boolean isCloseable(int i) {

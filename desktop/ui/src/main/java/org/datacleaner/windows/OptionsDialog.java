@@ -25,8 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -40,7 +38,6 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.Func;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
@@ -64,15 +61,12 @@ import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.Tab;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class OptionsDialog extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
-
-    public static final List<Func<OptionsDialog, Tab>> PLUGGABLE_TABS = new ArrayList<Func<OptionsDialog, Tab>>(0);
 
     private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
@@ -109,13 +103,6 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.setUnclosableTab(3);
         _tabbedPane.setUnclosableTab(4);
         _tabbedPane.setUnclosableTab(5);
-
-        for (Func<OptionsDialog, Tab> pluggableTabs : PLUGGABLE_TABS) {
-            final Tab tab = pluggableTabs.eval(this);
-            if (tab != null) {
-                _tabbedPane.addTab(tab);
-            }
-        }
     }
 
     public void selectDatabaseDriversTab() {

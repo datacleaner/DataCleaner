@@ -64,7 +64,7 @@ public final class ForkTaskListener implements TaskListener {
 		logger.info("onComplete({})", _whatAreYouWaitingFor);
 		int index = 1;
 		for (TaskRunnable tr : _tasks) {
-			logger.info("Scheduling task {} out of {}: {}", new Object[] { index, _tasks.size(), tr });
+			logger.debug("Scheduling task {} out of {}: {}", new Object[] { index, _tasks.size(), tr });
 			_taskRunner.run(tr);
 			index++;
 		}

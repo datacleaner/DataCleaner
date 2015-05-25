@@ -26,8 +26,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Qualifier;
-
 import org.datacleaner.api.Configured;
 
 /**
@@ -41,7 +39,6 @@ import org.datacleaner.api.Configured;
 @Target({ ElementType.FIELD })
 @Documented
 @Inherited
-@Qualifier
 public @interface HiddenProperty {
 
 }

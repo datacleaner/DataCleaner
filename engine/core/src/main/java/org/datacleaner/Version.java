@@ -31,6 +31,8 @@ import com.google.common.base.Strings;
  * Determines and exposes the version of DataCleaner.
  */
 public class Version {
+    
+    public static final String UNKNOWN_VERSION = "UNKNOWN";
 
     private static final String VERSION;
     private static final String DISTRIBUTION_VERSION;
@@ -60,6 +62,21 @@ public class Version {
 
     public static String getEdition() {
         return EDITION;
+    }
+    
+    /**
+     * Return the major version of current version, e.g. return 4 for 4.0.6
+     * 
+     * @return major version or null if the current version is UNKNOWN
+     */
+    public static Integer getMajorVersion() {
+        if (VERSION.equals("UNKNOWN")) {
+            return null;
+        }
+        
+        String[] versionParts = VERSION.split("\\.");
+        int majorVersion = Integer.parseInt(versionParts[0]);
+        return majorVersion;
     }
     
     public static String getDistributionVersion() {
@@ -92,7 +109,7 @@ public class Version {
     }
 
     private static String determineVersion() {
-        return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", "UNKNOWN");
+        return determineVersionFromMavenProperties("org.eobjects.datacleaner", "DataCleaner-api", UNKNOWN_VERSION);
     }
 
     private static String determineVersionFromMavenProperties(String groupId, String artifactId, String valueIfNull) {

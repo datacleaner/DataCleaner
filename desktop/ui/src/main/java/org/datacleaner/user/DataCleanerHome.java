@@ -39,6 +39,7 @@ import org.datacleaner.configuration.DataCleanerHomeFolder;
 import org.datacleaner.configuration.DataCleanerHomeFolderImpl;
 import org.datacleaner.extensions.ClassLoaderUtils;
 import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.user.upgrade.DataCleanerHomeUpgrader;
 import org.datacleaner.util.ResourceManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
@@ -59,14 +60,14 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataCleanerHome {
 
-    // note: Logger is specified using a string. This is because the logger is
-    // to be used also in the static initializer and any error in that code
-    // would otherwise be swallowed.
     private static final Logger logger;
 
     private static final FileObject _dataCleanerHome;
 
     static {
+        // note: Logger is specified using a string. This is because the logger is
+        // to be used also in the static initializer and any error in that code
+        // would otherwise be swallowed.
         logger = LoggerFactory.getLogger("org.datacleaner.user.DataCleanerHome");
         logger.info("Initializing DATACLEANER_HOME");
         try {
@@ -157,12 +158,17 @@ public final class DataCleanerHome {
         }
 
         if (!isUsable(candidate)) {
-            logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
-            copyIfNonExisting(candidate, manager, "conf.xml");
+            DataCleanerHomeUpgrader upgrader = new DataCleanerHomeUpgrader();
+            boolean upgraded = upgrader.upgrade(candidate);
 
-            final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
-            for (String filePath : allFilePaths) {
-                copyIfNonExisting(candidate, manager, filePath);
+            if (!upgraded) {
+                logger.debug("Copying default configuration and examples to DATACLEANER_HOME directory: {}", candidate);
+                copyIfNonExisting(candidate, manager, "conf.xml");
+
+                final List<String> allFilePaths = DemoConfiguration.getAllFilePaths();
+                for (String filePath : allFilePaths) {
+                    copyIfNonExisting(candidate, manager, filePath);
+                }
             }
         }
         return candidate;

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<source>
+		<data-context ref="my database" />
+		<columns>
+			<column id="col_fn" path="PUBLIC.EMPLOYEES.FIRSTNAME" />
+			<column id="col_supervisor" path="PUBLIC.EMPLOYEES.REPORTSTO" />
+			<column id="col_office" path="PUBLIC.EMPLOYEES.OFFICECODE" />
+		</columns>
+	</source>
+
+	<transformation>
+		<!-- order is off by intention - this is the logical third filter -->
+		<filter requires="has_office">
+			<descriptor ref="Max rows" />
+			<properties>
+				<property name="Max rows" value="10" />
+			</properties>
+			<outcome id="first_10" category="VALID" />
+		</filter>
+		
+		<!-- this is the logical first filter -->
+		<filter>
+			<descriptor ref="Null check" />
+			<input ref="col_supervisor" />
+			<outcome id="has_supervisor" category="NOT_NULL" />
+		</filter>
+		
+		<!-- this is the logical second filter -->
+		<filter requires="has_supervisor">
+			<descriptor ref="Null check" />
+			<input ref="col_office" />
+			<outcome id="has_office" category="NOT_NULL" />
+		</filter>
+	</transformation>
+
+	<analysis>
+		<analyzer requires="first_10">
+			<descriptor ref="Value distribution" />
+			<input ref="col_fn" />
+		</analyzer>
+	</analysis>
+
+</job>

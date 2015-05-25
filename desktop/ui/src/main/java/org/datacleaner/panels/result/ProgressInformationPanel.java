@@ -67,7 +67,7 @@ public class ProgressInformationPanel extends DCPanel {
     private final Stopwatch _stopWatch;
 
     public ProgressInformationPanel(boolean running) {
-        super();
+        super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         setLayout(new BorderLayout());
         _tableProgressInformationPanels = new ConcurrentHashMap<Table, TableProgressInformationPanel>();
         _progressTimingCounters = new ConcurrentHashMap<Table, ProgressCounter>();

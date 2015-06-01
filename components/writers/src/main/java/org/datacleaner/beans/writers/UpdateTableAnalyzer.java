@@ -86,13 +86,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Update table")
-@Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore.")
+@Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore."
+        + "\nTo understand the configuration of the Update table component, consider a typical SQL update statement:"
+        + "\n<blockquote>UPDATE table SET name = 'John Doe' WHERE id = 42</blockquote>"
+        + "\nHere we see that there is a condition (WHERE id=42) and a value to update (name should become 'John Doe'). This is what the two inputs are referring to. But obviously you are not dealing with constant values like 'John Doe' or '42'. You have a field in your DC job that you want to map to fields in your database."
+        + "\nUsually the 'condition value' would be a mapping of the key that you have in your job towards the key that is in the database. The 'values to update' property would include the columns that you wish to update based on the values you have in your job.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
 public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
         PrecedingComponentConsumer {
 
     private static final String PROPERTY_NAME_VALUES = "Values";
+    private static final String PROPERTY_NAME_CONDITION_VALUES = "Condition values";
 
     private static final File TEMP_DIR = FileHelper.getTempDir();
 
@@ -113,7 +118,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
     String[] columnNames;
 
     @Inject
-    @Configured(order = 3)
+    @Configured(value = PROPERTY_NAME_CONDITION_VALUES, order = 3)
     @Description("Values that make up the condition of the table update")
     InputColumn<?>[] conditionValues;
 
@@ -121,6 +126,7 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
     @Configured(order = 4)
     @Description("Names of columns in the target table, which form the conditions of the update.")
     @ColumnProperty
+    @MappedProperty(PROPERTY_NAME_CONDITION_VALUES)
     String[] conditionColumnNames;
 
     @Inject

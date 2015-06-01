@@ -70,8 +70,8 @@ public final class CsvOutputWriterFactory {
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(String filename, final String[] headers, Character separatorChar,
-            Character quoteChar, Character escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+    public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar,
+            char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
         CsvOutputWriter outputWriter;
         synchronized (dataContexts) {
             UpdateableDataContext dataContext = dataContexts.get(filename);
@@ -114,17 +114,8 @@ public final class CsvOutputWriterFactory {
         return outputWriter;
     }
 
-    private static CsvConfiguration getConfiguration(Character separatorChar, Character quoteChar, Character escapeChar,
+    private static CsvConfiguration getConfiguration(char separatorChar, char quoteChar, char escapeChar,
             boolean includeHeader) {
-        if (separatorChar == null) {
-            separatorChar = CsvConfiguration.NOT_A_CHAR;
-        }
-        if (quoteChar == null) {
-            quoteChar = CsvConfiguration.NOT_A_CHAR;
-        }
-        if (escapeChar == null) {
-            escapeChar = CsvConfiguration.NOT_A_CHAR;
-        }
         final int headerLine;
         if (includeHeader) {
             headerLine = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;

@@ -69,211 +69,252 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Distributed(false)
-public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
+public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer
+		implements HasLabelAdvice {
 
-    public static final String PROPERTY_FILE = "File";
-    public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
-    public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
-    
+	public static final String PROPERTY_FILE = "File";
+	public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
+	public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
 
-    @Configured(value = PROPERTY_FILE, order = 1)
-    @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
-    File file;
+	@Inject
+	@Configured(value = PROPERTY_FILE, order = 1)
+	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv",
+			"txt", "dat" })
+	File file;
 
-    @Configured(order = 2, required = false)
-    Character separatorChar = ',';
+	@Inject
+	@Configured(order = 2, required = false)
+	char separatorChar = ',';
 
-    @Configured(order = 3, required = false)
-    Character quoteChar = '"';
+	@Inject
+	@Configured(order = 3, required = false)
+	Character quoteChar = '"';
 
-    @Configured(order = 4, required = false)
-    Character escapeChar = '\\';
+	@Inject
+	@Configured(order = 4, required = false)
+	Character escapeChar = '\\';
 
-    @Configured(order = 5, required = false)
-    boolean includeHeader = true;
+	@Inject
+	@Configured(order = 5, required = false)
+	boolean includeHeader = true;
 
-    @Configured(order = 6, required = false, value = PROPERTY_COLUMN_TO_BE_SORTED_ON)
-    InputColumn<?> columnToBeSortedOn;
+	@Inject
+	@Configured(order = 6, required = false, value = PROPERTY_COLUMN_TO_BE_SORTED_ON)
+	InputColumn<?> columnToBeSortedOn;
 
-    @Configured(value = PROPERTY_OVERWRITE_FILE_IF_EXISTS)
-    boolean overwriteFileIfExists;
+	@Inject
+	@Configured(value = PROPERTY_OVERWRITE_FILE_IF_EXISTS)
+	boolean overwriteFileIfExists;
 
-    @Inject
-    @Provided
-    UserPreferences userPreferences;
+	@Inject
+	@Provided
+	UserPreferences userPreferences;
 
-    private File _targetFile;
+	private File _targetFile;
+	private int _indexOfColumnToBeSortedOn = -1;
+	private boolean _isColumnToBeSortedOnPresentInInput = true;
 
-    private int indexOfColumnToBeSortedOn = -1;
+	@Initialize
+	public void initTempFile() throws Exception {
+		if (_targetFile == null) {
+			if (columnToBeSortedOn != null) {
+				_targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+			} else {
+				_targetFile = file;
+			}
+		}
+	}
 
-    private boolean isColumnToBeSortedOnPresentInInput = true;
+	@Override
+	public String getSuggestedLabel() {
+		if (file == null) {
+			return null;
+		}
+		return file.getName();
+	}
 
-    @Initialize
-    public void initTempFile() throws Exception {
-        if (_targetFile == null) {
-            if (columnToBeSortedOn != null) {
-                _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
-            } else {
-                _targetFile = file;
-            }
-        }
-    }
+	@Validate
+	public void validate() {
+		if (file.exists() && !overwriteFileIfExists) {
+			throw new IllegalStateException(
+					"The file already exists. Please configure the job to overwrite the existing file.");
+		}
+	}
 
-    @Override
-    public String getSuggestedLabel() {
-        if (file == null) {
-            return null;
-        }
-        return file.getName();
-    }
+	@Override
+	public void configureForFilterOutcome(AnalysisJobBuilder ajb,
+			FilterDescriptor<?, ?> descriptor, String categoryName) {
+		final String dsName = ajb.getDatastore().getName();
+		final File saveDatastoreDirectory = userPreferences
+				.getSaveDatastoreDirectory();
+		final String displayName = descriptor.getDisplayName();
+		file = new File(saveDatastoreDirectory, "output-" + dsName + "-"
+				+ displayName + "-" + categoryName + ".csv");
+	}
 
-    @Validate
-    public void validate() {
-        if (file.exists() && !overwriteFileIfExists) {
-            throw new IllegalStateException(
-                    "The file already exists. Please configure the job to overwrite the existing file.");
-        }
-    }
+	@Override
+	public void configureForTransformedData(AnalysisJobBuilder ajb,
+			TransformerDescriptor<?> descriptor) {
+		final String dsName = ajb.getDatastore().getName();
+		final File saveDatastoreDirectory = userPreferences
+				.getSaveDatastoreDirectory();
+		final String displayName = descriptor.getDisplayName();
+		file = new File(saveDatastoreDirectory, "output-" + dsName + "-"
+				+ displayName + ".csv");
+	}
 
-    @Override
-    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterDescriptor<?, ?> descriptor, String categoryName) {
-        final String dsName = ajb.getDatastore().getName();
-        final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
-        final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-" + categoryName + ".csv");
-    }
+	@Override
+	public OutputWriter createOutputWriter() {
 
-    @Override
-    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerDescriptor<?> descriptor) {
-        final String dsName = ajb.getDatastore().getName();
-        final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
-        final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
-    }
+		List<String> headers = new ArrayList<String>();
+		for (int i = 0; i < columns.length; i++) {
+			String columnName = getColumnHeader(i);
+			headers.add(columnName);
+			if (columnToBeSortedOn != null) {
+				if (columns[i].equals(columnToBeSortedOn)) {
+					_indexOfColumnToBeSortedOn = i;
+				}
+			}
+		}
 
-    @Override
-    public OutputWriter createOutputWriter() {
+		if (columnToBeSortedOn != null) {
+			if (_indexOfColumnToBeSortedOn == -1) {
+				this._isColumnToBeSortedOnPresentInInput = false;
+				_indexOfColumnToBeSortedOn = columns.length;
+				headers.add(columnToBeSortedOn.getName());
+				InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
+				for (int i = 0; i < columns.length; i++) {
+					newColumns[i] = columns[i];
+				}
+				newColumns[columns.length] = columnToBeSortedOn;
+				columns = newColumns;
+			}
+		}
 
-        List<String> headers = new ArrayList<String>();
-        for (int i = 0; i < columns.length; i++) {
-            String columnName = getColumnHeader(i);
-            headers.add(columnName);
-            if (columnToBeSortedOn != null) {
-                if (columns[i].equals(columnToBeSortedOn)) {
-                    indexOfColumnToBeSortedOn = i;
-                }
-            }
-        }
+		if (_targetFile == null) {
+			try {
+				initTempFile();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 
-        if (columnToBeSortedOn != null) {
-            if (indexOfColumnToBeSortedOn == -1) {
-                this.isColumnToBeSortedOnPresentInInput = false;
-                indexOfColumnToBeSortedOn = columns.length;
-                headers.add(columnToBeSortedOn.getName());
-                InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
-                for (int i = 0; i < columns.length; i++) {
-                    newColumns[i] = columns[i];
-                }
-                newColumns[columns.length] = columnToBeSortedOn;
-                columns = newColumns;
-            }
-        }
+		return CsvOutputWriterFactory
+				.getWriter(_targetFile.getPath(),
+						headers.toArray(new String[0]), separatorChar,
+						getSafeQuoteChar(), getSafeEscapeChar(), includeHeader,
+						columns);
+	}
 
-        if (_targetFile == null) {
-            try {
-                initTempFile();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+	private char getSafeQuoteChar() {
+		if (quoteChar == null) {
+			return CsvConfiguration.NOT_A_CHAR;
+		}
+		return quoteChar;
+	}
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                quoteChar, escapeChar, includeHeader, columns);
-    }
+	private char getSafeEscapeChar() {
+		if (escapeChar == null) {
+			return CsvConfiguration.NOT_A_CHAR;
+		}
+		return escapeChar;
+	}
 
-    private String getColumnHeader(int i) {
-        if (fields == null) {
-            return columns[i].getName();
-        }
-        return fields[i];
-    }
+	private String getColumnHeader(int i) {
+		if (fields == null) {
+			return columns[i].getName();
+		}
+		return fields[i];
+	}
 
-    @Override
-    protected WriteDataResult getResultInternal(int rowCount) {
-        final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
+	@Override
+	protected WriteDataResult getResultInternal(int rowCount) {
+		final CsvConfiguration csvConfiguration = new CsvConfiguration(
+				CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
+				FileHelper.DEFAULT_ENCODING, separatorChar, getSafeQuoteChar(),
+				getSafeEscapeChar(), false, true);
 
-        if (columnToBeSortedOn != null) {
+		if (columnToBeSortedOn != null) {
 
-            final CsvDataContext tempDataContext = new CsvDataContext(_targetFile, csvConfiguration);
-            final Table table = tempDataContext.getDefaultSchema().getTable(0);
+			final CsvDataContext tempDataContext = new CsvDataContext(
+					_targetFile, csvConfiguration);
+			final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
-            final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
-                    indexOfColumnToBeSortedOn);
+			final Comparator<? super Row> comparator = SortHelper
+					.createComparator(columnToBeSortedOn,
+							_indexOfColumnToBeSortedOn);
 
-            final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
-            final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
+			final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
+			final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(
+					comparator) {
 
-                @Override
-                protected void writeHeader(Writer writer) throws IOException {
-                    List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
-                    if (!isColumnToBeSortedOnPresentInInput) {
-                        headers.remove(columnToBeSortedOn.getName());
-                    }
+				@Override
+				protected void writeHeader(Writer writer) throws IOException {
+					List<String> headers = new ArrayList<String>(
+							Arrays.asList(table.getColumnNames()));
+					if (!_isColumnToBeSortedOnPresentInInput) {
+						headers.remove(columnToBeSortedOn.getName());
+					}
 
-                    final String[] columnNames = headers.toArray(new String[0]);
-                    final String line = csvWriter.buildLine(columnNames);
-                    writer.write(line);
-                }
+					final String[] columnNames = headers.toArray(new String[0]);
+					final String line = csvWriter.buildLine(columnNames);
+					writer.write(line);
+				}
 
-                @Override
-                protected void writeRow(Writer writer, Row row, int count) throws IOException {
-                    for (int i = 0; i < count; i++) {
-                        List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
-                        if (!isColumnToBeSortedOnPresentInInput) {
-                            valuesList.remove(indexOfColumnToBeSortedOn);
-                        }
+				@Override
+				protected void writeRow(Writer writer, Row row, int count)
+						throws IOException {
+					for (int i = 0; i < count; i++) {
+						List<Object> valuesList = new ArrayList<Object>(
+								Arrays.asList(row.getValues()));
+						if (!_isColumnToBeSortedOnPresentInInput) {
+							valuesList.remove(_indexOfColumnToBeSortedOn);
+						}
 
-                        final Object[] values = valuesList.toArray(new Object[0]);
+						final Object[] values = valuesList
+								.toArray(new Object[0]);
 
-                        final String[] stringValues = new String[values.length];
-                        for (int j = 0; j < stringValues.length; j++) {
-                            final Object obj = values[j];
-                            if (obj != null) {
-                                stringValues[j] = obj.toString();
-                            }
-                        }
-                        final String line = csvWriter.buildLine(stringValues);
-                        writer.write(line);
-                    }
-                }
+						final String[] stringValues = new String[values.length];
+						for (int j = 0; j < stringValues.length; j++) {
+							final Object obj = values[j];
+							if (obj != null) {
+								stringValues[j] = obj.toString();
+							}
+						}
+						final String line = csvWriter.buildLine(stringValues);
+						writer.write(line);
+					}
+				}
 
-                @Override
-                protected Writer createWriter(File file) {
-                    return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);
-                }
-            };
+				@Override
+				protected Writer createWriter(File file) {
+					return FileHelper.getWriter(file,
+							FileHelper.DEFAULT_ENCODING);
+				}
+			};
 
-            // read from the temp file and sort it into the final file
-            final DataSet dataSet = tempDataContext.query().from(table).selectAll().execute();
-            try {
-                while (dataSet.next()) {
-                    final Row row = dataSet.getRow();
-                    sortMergeWriter.append(row);
-                }
-            } finally {
-                dataSet.close();
-            }
+			// read from the temp file and sort it into the final file
+			final DataSet dataSet = tempDataContext.query().from(table)
+					.selectAll().execute();
+			try {
+				while (dataSet.next()) {
+					final Row row = dataSet.getRow();
+					sortMergeWriter.append(row);
+				}
+			} finally {
+				dataSet.close();
+			}
 
-            sortMergeWriter.write(file);
-        }
+			sortMergeWriter.write(file);
+		}
 
-        final Resource resource = new FileResource(file);
-        final Datastore datastore = new CsvDatastore(file.getName(), resource, csvConfiguration);
-        return new WriteDataResultImpl(rowCount, datastore, null, null);
-    }
+		final Resource resource = new FileResource(file);
+		final Datastore datastore = new CsvDatastore(file.getName(), resource,
+				csvConfiguration);
+		return new WriteDataResultImpl(rowCount, datastore, null, null);
+	}
 
-    public void setFile(File file) {
-        this.file = file;
-    }
+	public void setFile(File file) {
+		this.file = file;
+	}
 }

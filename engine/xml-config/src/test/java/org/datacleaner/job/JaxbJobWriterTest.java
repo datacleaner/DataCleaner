@@ -118,7 +118,7 @@ public class JaxbJobWriterTest extends TestCase {
         final byte[] bytes = out.toByteArray();
         final String str = new String(bytes);
         assertTrue(str,
-                str.indexOf("<column id=\"col_3\" path=\"csv_with_blank_column_name.txt.\" type=\"STRING\"/>") != -1);
+                str.indexOf("<column id=\"col_\" path=\"csv_with_blank_column_name.txt.\" type=\"STRING\"/>") != -1);
 
         final AnalysisJob readJob = new JaxbJobReader(conf).read(new ByteArrayInputStream(bytes));
 
@@ -213,8 +213,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("    <source>", lines[7]);
             assertEquals("        <data-context ref=_db_/>", lines[8]);
             assertEquals("        <columns>", lines[9]);
-            assertEquals("            <column id=_col_0_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
-            assertEquals("            <column id=_col_1_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>", lines[11]);
+            assertEquals("            <column id=_col_orderdate_ path=_ORDERS.ORDERDATE_ type=_TIMESTAMP_/>", lines[10]);
+            assertEquals("            <column id=_col_shippeddate_ path=_ORDERS.SHIPPEDDATE_ type=_TIMESTAMP_/>", lines[11]);
             assertEquals("        </columns>", lines[12]);
             assertEquals("    </source>", lines[13]);
             assertEquals("    <transformation/>", lines[14]);
@@ -228,8 +228,8 @@ public class JaxbJobWriterTest extends TestCase {
             assertEquals("                <property name=_Fault tolerant switch from/to dates_ value=_true_/>",
                     lines[20]);
             assertEquals("            </properties>", lines[21]);
-            assertEquals("            <input ref=_col_0_ name=_From column_/>", lines[22]);
-            assertEquals("            <input ref=_col_1_ name=_To column_/>", lines[23]);
+            assertEquals("            <input ref=_col_orderdate_ name=_From column_/>", lines[22]);
+            assertEquals("            <input ref=_col_shippeddate_ name=_To column_/>", lines[23]);
             assertEquals("        </analyzer>", lines[24]);
             assertEquals("    </analysis>", lines[25]);
             assertEquals("</job>", lines[26]);

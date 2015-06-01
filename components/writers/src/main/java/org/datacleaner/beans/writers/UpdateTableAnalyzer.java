@@ -76,6 +76,11 @@ import org.datacleaner.connection.FileDatastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
+import org.datacleaner.data.MetaModelInputColumn;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.desktop.api.PrecedingComponentConsumer;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.WriteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +89,8 @@ import org.slf4j.LoggerFactory;
 @Description("Update records in a table in a registered datastore. This component allows you to map the values available in the flow with the columns of the target table, in order to update the values of these columns in the datastore.")
 @Categorized(superCategory = WriteSuperCategory.class)
 @Concurrent(true)
-public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice {
+public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<Iterable<Object[]>>, HasLabelAdvice,
+        PrecedingComponentConsumer {
 
     private static final String PROPERTY_NAME_VALUES = "Values";
 
@@ -95,62 +101,62 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
     private static final Logger logger = LoggerFactory.getLogger(UpdateTableAnalyzer.class);
 
     @Inject
-    @Configured(PROPERTY_NAME_VALUES)
+    @Configured(value = PROPERTY_NAME_VALUES, order = 1)
     @Description("Values to update in the table")
     InputColumn<?>[] values;
 
     @Inject
-    @Configured
+    @Configured(order = 2)
     @Description("Names of columns in the target table, on which the values will be updated.")
     @ColumnProperty
     @MappedProperty(PROPERTY_NAME_VALUES)
     String[] columnNames;
 
     @Inject
-    @Configured
+    @Configured(order = 3)
     @Description("Values that make up the condition of the table update")
     InputColumn<?>[] conditionValues;
 
     @Inject
-    @Configured
+    @Configured(order = 4)
     @Description("Names of columns in the target table, which form the conditions of the update.")
     @ColumnProperty
     String[] conditionColumnNames;
 
     @Inject
-    @Configured
+    @Configured(order = 5)
     @Description("Datastore to write to")
     UpdateableDatastore datastore;
 
     @Inject
-    @Configured(required = false)
+    @Configured(order = 6, required = false)
     @Description("Schema name of target table")
     @SchemaProperty
     String schemaName;
 
     @Inject
-    @Configured(required = false)
+    @Configured(order = 7, required = false)
     @Description("Table to target (update)")
     @TableProperty
     String tableName;
 
     @Inject
-    @Configured("Buffer size")
+    @Configured(order = 8, value = "Buffer size")
     @Description("How much data to buffer before committing batches of data. Large batches often perform better, but require more memory.")
     WriteBufferSizeOption bufferSizeOption = WriteBufferSizeOption.MEDIUM;
 
     @Inject
-    @Configured(value = "How to handle updation errors?")
+    @Configured(value = "How to handle updation errors?", order = 9)
     ErrorHandlingOption errorHandlingOption = ErrorHandlingOption.STOP_JOB;
 
     @Inject
-    @Configured(value = "Error log file location", required = false)
+    @Configured(value = "Error log file location", required = false, order = 10)
     @Description("Directory or file path for saving erroneous records")
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = ".csv")
     File errorLogFile = TEMP_DIR;
 
     @Inject
-    @Configured(required = false)
+    @Configured(required = false, order = 11)
     @Description("Additional values to write to error log")
     InputColumn<?>[] additionalErrorLogValues;
 
@@ -525,5 +531,28 @@ public class UpdateTableAnalyzer implements Analyzer<WriteDataResult>, Action<It
                 }
             });
         }
+    }
+
+    @Override
+    public void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder, TransformerDescriptor<?> descriptor) {
+        final List<Table> tables = analysisJobBuilder.getSourceTables();
+        if (tables.size() == 1) {
+            final List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(tables.get(0));
+            final List<InputColumn<?>> primaryKeys = new ArrayList<InputColumn<?>>();
+            for (MetaModelInputColumn inputColumn : sourceColumns) {
+                if (inputColumn.getPhysicalColumn().isPrimaryKey()) {
+                    primaryKeys.add(inputColumn);
+                }
+            }
+
+            if (!primaryKeys.isEmpty()) {
+                conditionValues = primaryKeys.toArray(new InputColumn[primaryKeys.size()]);
+            }
+        }
+    }
+
+    @Override
+    public void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterDescriptor<?, ?> descriptor,
+            String categoryName) {
     }
 }

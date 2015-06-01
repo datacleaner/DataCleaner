@@ -8,9 +8,9 @@
     <source>
         <data-context ref="my db"/>
         <columns>
-            <column id="col_0" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
-            <column id="col_1" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
-            <column id="col_2" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
+            <column id="col_firstname" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
+            <column id="col_lastname" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
+            <column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
         </columns>
     </source>
     <transformation/>
@@ -18,8 +18,8 @@
         <analyzer>
             <descriptor ref="String analyzer"/>
             <properties/>
-            <input ref="col_0"/>
-            <input ref="col_1"/>
+            <input ref="col_firstname"/>
+            <input ref="col_lastname"/>
         </analyzer>
     </analysis>
 </job>

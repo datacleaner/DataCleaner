@@ -8,9 +8,9 @@
     <source>
         <data-context ref="my database"/>
         <columns>
-            <column id="col_0" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
-            <column id="col_1" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
-            <column id="col_2" path="EMPLOYEES.REPORTSTO" type="INTEGER"/>
+            <column id="col_firstname" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
+            <column id="col_lastname" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
+            <column id="col_reportsto" path="EMPLOYEES.REPORTSTO" type="INTEGER"/>
         </columns>
     </source>
     <transformation>
@@ -19,9 +19,9 @@
             <properties>
                 <property name="Separator" value=" "/>
             </properties>
-            <input ref="col_0"/>
-            <input ref="col_1"/>
-            <output id="col_3" name="Concat of FIRSTNAME,LASTNAME"/>
+            <input ref="col_firstname"/>
+            <input ref="col_lastname"/>
+            <output id="col_concatoffirstnamelastname" name="Concat of FIRSTNAME,LASTNAME"/>
         </transformer>
         <filter>
             <descriptor ref="Null check"/>
@@ -29,7 +29,7 @@
                 <property name="Consider empty string as null" value="false"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
             </properties>
-            <input ref="col_2"/>
+            <input ref="col_reportsto"/>
             <outcome id="outcome_0" category="NOT_NULL"/>
         </filter>
     </transformation>
@@ -37,7 +37,7 @@
         <analyzer requires="_any_">
             <descriptor ref="String analyzer"/>
             <properties/>
-            <input ref="col_3"/>
+            <input ref="col_concatoffirstnamelastname"/>
         </analyzer>
     </analysis>
 </job>

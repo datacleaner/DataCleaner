@@ -62,24 +62,6 @@ public final class AnalysisJobImmutabilizer {
         return result;
     }
 
-    public OutputDataStreamJob[] load(OutputDataStreamJob[] outputDataStreamJobs, boolean validate) {
-        if (outputDataStreamJobs == null || outputDataStreamJobs.length == 0) {
-            return outputDataStreamJobs;
-        }
-        final OutputDataStreamJob[] result = new OutputDataStreamJob[outputDataStreamJobs.length];
-        for (int i = 0; i < result.length; i++) {
-            final OutputDataStreamJob outputDataStreamJob = outputDataStreamJobs[i];
-            if (outputDataStreamJob instanceof LazyOutputDataStreamJob) {
-                final OutputDataStream outputDataStream = outputDataStreamJob.getOutputDataStream();
-                final AnalysisJob job = ((LazyOutputDataStreamJob) outputDataStreamJob).getJob(validate);
-                result[i] = new ImmutableOutputDataStreamJob(outputDataStream, job);
-            } else {
-                result[i] = outputDataStreamJob;
-            }
-        }
-        return result;
-    }
-
     public FilterOutcome load(FilterOutcome outcome) {
         if (outcome instanceof LazyFilterOutcome) {
             LazyFilterOutcome lfo = (LazyFilterOutcome) outcome;

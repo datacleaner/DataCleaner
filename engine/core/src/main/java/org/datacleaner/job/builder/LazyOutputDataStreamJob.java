@@ -37,7 +37,6 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
     public LazyOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJobBuilder jobBuilder) {
         _outputDataStream = outputDataStream;
         _jobBuilder = jobBuilder;
-
     }
 
     @Override
@@ -53,5 +52,4 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
     public AnalysisJob getJob(boolean validate) {
         return _jobBuilder.toAnalysisJob(validate);
     }
-
 }

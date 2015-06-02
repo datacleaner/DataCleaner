@@ -34,6 +34,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.util.StringUtils;
@@ -221,5 +222,10 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
     @Override
     public ComponentSuperCategory getComponentSuperCategory() {
         return null;
+    }
+
+    @Override
+    public OutputDataStreamJob[] getOutputDataStreamJobs() {
+        return new OutputDataStreamJob[0];
     }
 }

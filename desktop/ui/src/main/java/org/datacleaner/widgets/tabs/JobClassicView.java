@@ -70,7 +70,7 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
     private static final ImageManager imageManager = ImageManager.get();
     private static final Logger logger = LoggerFactory.getLogger(JobClassicView.class);
 
-    private static final int TAB_ICON_SIZE = IconUtils.ICON_SIZE_LARGE;
+    private static final int TAB_ICON_SIZE = IconUtils.ICON_SIZE_TAB;
     private static final int SOURCE_TAB = 0;
     private static final int METADATA_TAB = 1;
 
@@ -95,7 +95,7 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
         _sourceColumnsPanel = new SourceColumnsPanel(analysisJobBuilder, windowContext);
         _metadataPanel = new MetadataPanel(analysisJobBuilder);
 
-        _tabbedPane = new CloseableTabbedPane(false);
+        _tabbedPane = new CloseableTabbedPane(true);
         _tabbedPane.addTabCloseListener(this);
         _tabbedPane.addChangeListener(new ChangeListener() {
             @Override
@@ -167,7 +167,8 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
                 .render(analyzerJobBuilder);
 
         _analyzerPresenters.put(analyzerJobBuilder, presenter);
-        JComponent comp = presenter.createJComponent();
+        final JComponent comp = presenter.createJComponent();
+        comp.setBackground(CloseableTabbedPane.COLOR_BACKGROUND);
         _tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
                 IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
         _jobBuilderTabs.put(presenter, comp);
@@ -193,6 +194,7 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
 
         _transformerPresenters.put(transformerJobBuilder, presenter);
         final JComponent comp = presenter.createJComponent();
+        comp.setBackground(CloseableTabbedPane.COLOR_BACKGROUND);
         _tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
                 IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
         _jobBuilderTabs.put(presenter, comp);
@@ -216,7 +218,8 @@ public class JobClassicView extends DCPanel implements TabCloseListener {
                 .render(filterJobBuilder);
 
         _filterPresenters.put(filterJobBuilder, presenter);
-        JComponent comp = presenter.createJComponent();
+        final JComponent comp = presenter.createJComponent();
+        comp.setBackground(CloseableTabbedPane.COLOR_BACKGROUND);
         _tabbedPane.addTab(LabelUtils.getLabel(filterJobBuilder),
                 IconUtils.getDescriptorIcon(filterJobBuilder.getDescriptor(), TAB_ICON_SIZE), comp);
         _jobBuilderTabs.put(presenter, comp);

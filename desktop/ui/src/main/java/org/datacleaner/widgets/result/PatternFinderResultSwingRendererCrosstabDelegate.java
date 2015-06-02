@@ -118,10 +118,16 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
             dataset.addValue(count, expression, "");
         }
 
-        JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, true,
+        // only show legend if there are not too many patterns
+        final boolean showLegend = dataset.getRowCount() < 25;
+        
+        JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, showLegend,
                 true, false);
         ChartUtils.applyStyles(chart);
-        displayChartCallback.displayChart(new ChartPanel(chart));
+        
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
+        
+        displayChartCallback.displayChart(chartPanel);
     }
 
     @Override

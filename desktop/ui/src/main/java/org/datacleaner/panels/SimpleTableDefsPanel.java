@@ -53,7 +53,8 @@ public class SimpleTableDefsPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE);
+    private static final Icon TABLE_ICON = ImageManager.get().getImageIcon(IconUtils.MODEL_TABLE,
+            IconUtils.ICON_SIZE_TAB);
 
     private final CloseableTabbedPane _tabbedPane;
     private final SchemaFactory _schemaFactory;
@@ -77,13 +78,12 @@ public class SimpleTableDefsPanel extends DCPanel {
         _instructionsLabel.setFont(WidgetUtils.FONT_HEADER1);
         _instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         _instructionsLabel.setVerticalAlignment(SwingConstants.CENTER);
-        
+
         _tabbedPaneContainer = new DCPanel(CloseableTabbedPane.COLOR_BACKGROUND);
         _tabbedPaneContainer.setLayout(new BorderLayout());
 
-
         setLayout(new BorderLayout());
-        
+
         if (tableDefs == null || tableDefs.length == 0) {
             setTabbedPaneVisible(false);
         } else {
@@ -179,8 +179,8 @@ public class SimpleTableDefsPanel extends DCPanel {
     }
 
     public SimpleTableDef[] getTableDefs() {
-        int tabCount = _tabbedPane.getTabCount();
-        SimpleTableDef[] result = new SimpleTableDef[tabCount];
+        final int tabCount = _tabbedPane.getTabCount();
+        final SimpleTableDef[] result = new SimpleTableDef[tabCount];
         for (int i = 0; i < result.length; i++) {
             result[i] = getTableDef(i);
         }
@@ -188,8 +188,8 @@ public class SimpleTableDefsPanel extends DCPanel {
     }
 
     private SimpleTableDef getTableDef(int index) {
-        Component component = _tabbedPane.getComponentAt(index);
-        SimpleTableDefPanel panel = (SimpleTableDefPanel) component;
+        final Component component = _tabbedPane.getComponentAt(index);
+        final SimpleTableDefPanel panel = (SimpleTableDefPanel) component;
         return panel.getTableDef();
     }
 }

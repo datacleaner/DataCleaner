@@ -80,7 +80,7 @@ public interface AnalysisListener {
     public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message);
 
     /**
-     * Notifies the listener that row processing has finished succesfully.
+     * Notifies the listener that row processing has finished successfully.
      * 
      * @param job
      * @param metrics

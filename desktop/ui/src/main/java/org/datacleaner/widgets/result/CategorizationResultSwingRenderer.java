@@ -69,7 +69,7 @@ public class CategorizationResultSwingRenderer extends AbstractCategorizationRes
         final JFreeChart chart = ChartFactory.createPieChart(null, dataset, true, false, false);
         ChartUtils.applyStyles(chart);
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
 
         final DCPanel leftPanel = WidgetUtils.decorateWithShadow(chartPanel);
 

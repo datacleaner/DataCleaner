@@ -1,5 +1,6 @@
 package org.datacleaner.visualization
 
+import java.io.Serializable
 import org.datacleaner.api.InputRow
 import org.datacleaner.storage.RowAnnotation
 import org.datacleaner.storage.RowAnnotationFactory
@@ -10,7 +11,7 @@ import scala.collection.mutable.LinkedHashMap
 /**
  * Represents a group of scattered points
  */
-class ScatterGroup(name: String, rowAnnotationFactory: RowAnnotationFactory) {
+class ScatterGroup(name: String, rowAnnotationFactory: RowAnnotationFactory) extends Serializable {
   
   def name(): String = name
 

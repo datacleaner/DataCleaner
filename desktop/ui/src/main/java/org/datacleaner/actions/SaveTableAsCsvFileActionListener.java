@@ -106,12 +106,16 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
             }
 
             @Override
+            protected boolean isWindowResizable() {
+                return true;
+            }
+
+            @Override
             protected JComponent getDialogContent() {
                 final AnalyzerDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
                 final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
                 tabbedPane.addTab(descriptor.getDisplayName(),
-                        IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB),
-                        presenter.createJComponent());
+                        IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB), presenter.createJComponent());
                 tabbedPane.setUnclosableTab(0);
                 return tabbedPane;
             }
@@ -135,7 +139,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
                 window.startAnalysis();
             }
         });
-        
+
         final JButton closeButton = WidgetFactory.createDefaultButton("Close", IconUtils.ACTION_CLOSE_DARK);
         closeButton.addActionListener(new ActionListener() {
             @Override

@@ -28,11 +28,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.swing.AbstractButton;
@@ -57,7 +56,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.job.AnalysisJob;
@@ -74,8 +72,8 @@ import org.datacleaner.job.runner.ComponentMetrics;
 import org.datacleaner.job.runner.RowProcessingMetrics;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.panels.result.AnalyzerResultPanel;
 import org.datacleaner.panels.result.ProgressInformationPanel;
-import org.datacleaner.panels.result.ResultListPanel;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.user.UserPreferences;
@@ -88,6 +86,8 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
+import org.datacleaner.widgets.tabs.Tab;
+import org.datacleaner.widgets.tabs.VerticalTabbedPane;
 
 /**
  * Window in which the result (and running progress information) of job
@@ -102,8 +102,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     private static final ImageManager imageManager = ImageManager.get();
 
-    private final VerticalTabbedPane _tabbedPane = new VerticalTabbedPane();
-    private final ConcurrentMap<Object, ResultListPanel> _resultPanels = new ConcurrentHashMap<Object, ResultListPanel>();
+    private final VerticalTabbedPane _tabbedPane;
+    private final Map<ComponentJob, Tab<AnalyzerResultPanel>> _resultPanels;
     private final AnalysisJob _job;
     private final DataCleanerConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
@@ -137,6 +137,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
+        _tabbedPane = new VerticalTabbedPane();
+        _resultPanels = new IdentityHashMap<>();
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
@@ -202,10 +204,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             _result = result;
             _worker = null;
 
-            Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
+            final Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
             for (Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
-                ComponentJob componentJob = entry.getKey();
-                AnalyzerResult analyzerResult = entry.getValue();
+                final ComponentJob componentJob = entry.getKey();
+                final AnalyzerResult analyzerResult = entry.getValue();
 
                 addResult(componentJob, analyzerResult);
             }
@@ -239,9 +241,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     }
 
     private Dimension getDefaultWindowSize() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final int screenWidth = screenSize.width;
+        final int screenHeight = screenSize.height;
 
         int height = 550;
         if (screenHeight > 1000) {
@@ -260,32 +262,33 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return new Dimension(width, height);
     }
 
-    private ResultListPanel getDescriptorResultPanel(final ComponentDescriptor<?> descriptor) {
-        ResultListPanel resultPanel = _resultPanels.get(descriptor);
-        if (resultPanel == null) {
-            resultPanel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-            ResultListPanel previous = _resultPanels.putIfAbsent(descriptor, resultPanel);
-            if (previous != null) {
-                resultPanel = previous;
-            } else {
-                final ResultListPanel finalResultListPanel = resultPanel;
-                final String name = descriptor.getDisplayName();
-                final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TAB);
-                WidgetUtils.invokeSwingAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        _tabbedPane.addTab(name, icon, finalResultListPanel);
-                    }
-                });
+    public Tab<AnalyzerResultPanel> getOrCreateResultPanel(final ComponentJob componentJob, boolean finished) {
+        synchronized (_resultPanels) {
+            final Tab<AnalyzerResultPanel> existingTab = _resultPanels.get(componentJob);
+            if (existingTab != null) {
+                return existingTab;
             }
+            
+            String title = LabelUtils.getLabel(componentJob, false, false, false);
+            if (title.length() > 40) {
+                title = title.substring(0, 39) + "...";
+            }
+            
+            final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
+            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
+                    _progressInformationPanel, componentJob);
+            final Tab<AnalyzerResultPanel> tab = _tabbedPane.addTab(title, icon, resultPanel);
+            tab.setTooltip(LabelUtils.getLabel(componentJob, false, true, true));
+
+            _resultPanels.put(componentJob, tab);
+
+            return tab;
         }
-        return resultPanel;
     }
 
-    public void addResult(ComponentJob componentJob, AnalyzerResult result) {
-        ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
-        ResultListPanel resultListPanel = getDescriptorResultPanel(descriptor);
-        resultListPanel.addResult(componentJob, result);
+    public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
+        final Tab<AnalyzerResultPanel> tab = getOrCreateResultPanel(componentJob, true);
+        tab.getContents().setResult(result);
     }
 
     @Override
@@ -344,11 +347,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     @Override
     protected JComponent getWindowContent() {
-        DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND, _windowSizePreference);
-        panel.setLayout(new BorderLayout());
-
+        final String datastoreName = getDatastoreName();
         String bannerTitle = "Analysis results";
-        String datastoreName = getDatastoreName();
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
             bannerTitle = bannerTitle + " | " + datastoreName;
 
@@ -371,9 +371,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         banner.add(_cancelButton);
         banner.add(Box.createHorizontalStrut(10));
 
+        final DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND, _windowSizePreference);
+        panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);
-
         return panel;
     }
 
@@ -410,10 +411,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     public UserPreferences getUserPreferences() {
         return _userPreferences;
-    }
-
-    public Map<Object, ResultListPanel> getResultPanels() {
-        return _resultPanels;
     }
 
     public void onUnexpectedError(AnalysisJob job, Throwable throwable) {
@@ -467,13 +464,25 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
-                if (expectedRows == -1) {
-                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
-                } else {
-                    _progressInformationPanel.addUserLog("Starting processing of " + table.getName() + " (approx. "
-                            + expectedRows + " rows)");
-                    _progressInformationPanel.setExpectedRows(table, expectedRows);
-                }
+                WidgetUtils.invokeSwingAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        final ComponentJob[] componentJobs = metrics.getResultProducers();
+                        for (ComponentJob componentJob : componentJobs) {
+                            // instantiate result panels
+                            getOrCreateResultPanel(componentJob, false);
+                        }
+                        _tabbedPane.updateUI();
+                        
+                        if (expectedRows == -1) {
+                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
+                        } else {
+                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
+                                    + " (approx. " + expectedRows + " rows)");
+                            _progressInformationPanel.setExpectedRows(table, expectedRows);
+                        }
+                    }
+                });
             }
 
             @Override
@@ -486,7 +495,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
-                        + " finished. Generating results ...");
+                        + " finished. Generating results...");
             }
 
             @Override
@@ -506,7 +515,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 } else {
                     sb.append(" Adding result...");
                     _progressInformationPanel.addUserLog(sb.toString());
-                    addResult(componentJob, result);
+                    WidgetUtils.invokeSwingAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            addResult(componentJob, result);
+                        }
+                    });
                 }
             }
 

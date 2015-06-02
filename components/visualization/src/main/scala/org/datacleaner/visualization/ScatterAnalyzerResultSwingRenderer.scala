@@ -59,7 +59,7 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
 
     ChartUtils.applyStyles(chart);
 
-    val chartPanel = new ChartPanel(chart)
+    val chartPanel = ChartUtils.createPanel(chart, true);
     chartPanel.addChartMouseListener(new ChartMouseListener() {
       override def chartMouseClicked(event: ChartMouseEvent) = {
         val entity = event.getEntity()

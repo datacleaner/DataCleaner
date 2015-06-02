@@ -86,6 +86,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
     private final DCTable _table;
     private final RendererFactory _rendererFactory;
     private final WindowContext _windowContext;
+    private final DCPanel _rightPanel = new DCPanel();
 
     private Collection<ValueFrequency> _valueCounts;
 
@@ -199,38 +200,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             }
         }
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
-
-        // chartPanel.addChartMouseListener(new ChartMouseListener() {
-        //
-        // @Override
-        // public void chartMouseMoved(ChartMouseEvent event) {
-        // ChartEntity entity = event.getEntity();
-        // if (entity instanceof PieSectionEntity) {
-        // PieSectionEntity pieSectionEntity = (PieSectionEntity) entity;
-        // String sectionKey = (String) pieSectionEntity.getSectionKey();
-        // if (_groups.containsKey(sectionKey)) {
-        // chartPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        // } else {
-        // chartPanel.setCursor(Cursor.getDefaultCursor());
-        // }
-        // } else {
-        // chartPanel.setCursor(Cursor.getDefaultCursor());
-        // }
-        // }
-        //
-        // @Override
-        // public void chartMouseClicked(ChartMouseEvent event) {
-        // ChartEntity entity = event.getEntity();
-        // if (entity instanceof PieSectionEntity) {
-        // PieSectionEntity pieSectionEntity = (PieSectionEntity) entity;
-        // String sectionKey = (String) pieSectionEntity.getSectionKey();
-        // if (_groups.containsKey(sectionKey)) {
-        // drillToGroup(result, sectionKey, true);
-        // }
-        // }
-        // }
-        // });
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());
@@ -244,15 +214,14 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             }
         });
 
-        final DCPanel rightPanel = new DCPanel();
-        rightPanel.setLayout(new VerticalLayout());
-        rightPanel.add(_backButton);
-        rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
+        _rightPanel.setLayout(new VerticalLayout());
+        _rightPanel.add(_backButton);
+        _rightPanel.add(WidgetUtils.decorateWithShadow(_table.toPanel()));
 
         final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         split.setOpaque(false);
         split.add(leftPanel);
-        split.add(rightPanel);
+        split.add(_rightPanel);
         split.setDividerLocation(550);
 
         return split;
@@ -297,6 +266,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
         _table.setModel(model);
         _backButton.setVisible(false);
+        _rightPanel.updateUI();
     }
 
     protected void setDataSetValue(String label, Integer value) {
@@ -392,5 +362,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         }
         _table.setModel(model);
         _backButton.setVisible(showBackButton);
+        _rightPanel.updateUI();
     }
 }

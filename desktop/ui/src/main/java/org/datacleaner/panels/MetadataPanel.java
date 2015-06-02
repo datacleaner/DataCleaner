@@ -65,6 +65,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
         _table = new DCTable(COLUMN_NAMES);
+        _table.setColumnControlVisible(false);
         _table.setAlignment(4, Alignment.RIGHT);
         _table.setAlignment(5, Alignment.CENTER);
         _table.setAlignment(6, Alignment.CENTER);

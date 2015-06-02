@@ -42,7 +42,6 @@ public final class AnalysisJobImmutabilizer {
 
     public AnalysisJobImmutabilizer() {
         _referenceMap = new HashMap<>();
-        // prevent instantiation
     }
 
     public OutputDataStreamJob[] load(OutputDataStreamJob[] outputDataStreamJobs, boolean validate) {

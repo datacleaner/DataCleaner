@@ -171,7 +171,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
         if (columnToBeSortedOn != null) {
             if (_indexOfColumnToBeSortedOn == -1) {
-                this._isColumnToBeSortedOnPresentInInput = false;
+                _isColumnToBeSortedOnPresentInInput = false;
                 _indexOfColumnToBeSortedOn = columns.length;
                 headers.add(columnToBeSortedOn.getName());
                 InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];

@@ -34,9 +34,12 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 
@@ -70,10 +73,22 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
 
     public List<InputColumn<?>> getInputColumns() {
         if (_inputColumns == null) {
-            InputRow[] rows = getRows();
+            final InputRow[] rows = getRows();
             if (rows.length > 0) {
-                InputRow firstRow = rows[0];
-                _inputColumns = firstRow.getInputColumns();
+                final InputRow firstRow = rows[0];
+                final List<InputColumn<?>> inputColumns = firstRow.getInputColumns();
+                _inputColumns = CollectionUtils.filter(inputColumns, new Predicate<InputColumn<?>>() {
+                    @Override
+                    public Boolean eval(InputColumn<?> col) {
+                        if (col instanceof MutableInputColumn) {
+                            if (((MutableInputColumn<?>) col).isHidden()) {
+                                // avoid hidden columns in the
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                });
             } else {
                 _inputColumns = new ArrayList<InputColumn<?>>(0);
             }

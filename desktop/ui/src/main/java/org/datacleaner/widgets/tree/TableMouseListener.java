@@ -32,17 +32,21 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
 import org.datacleaner.actions.QueryActionListener;
 import org.datacleaner.actions.QuickAnalysisActionListener;
 import org.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.WidgetFactory;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.Table;
+import org.datacleaner.windows.DropTableDialog;
 
 import com.google.inject.Injector;
 
@@ -62,12 +66,12 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+        final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
         if (path == null) {
             return;
         }
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-        Object userObject = node.getUserObject();
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+        final Object userObject = node.getUserObject();
         if (userObject instanceof Table) {
             final Table table = (Table) userObject;
 
@@ -127,7 +131,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
                         .createInjector();
 
-                QuickAnalysisActionListener quickAnalysisActionListener = injector
+                final QuickAnalysisActionListener quickAnalysisActionListener = injector
                         .getInstance(QuickAnalysisActionListener.class);
                 quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
                 popup.add(quickAnalysisMenuItem);
@@ -139,14 +143,14 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
                 final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem(
                         "Save table as Excel spreadsheet", IconUtils.COMPONENT_TYPE_WRITE_DATA);
-                SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
+                final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
                         .getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
                 saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
                 popup.add(saveAsExcelFileMenuItem);
 
                 final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
                         IconUtils.COMPONENT_TYPE_WRITE_DATA);
-                SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
+                final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
                         .getInstance(SaveTableAsCsvFileActionListener.class);
 
                 saveAsCsvFileMenuItem.addActionListener(saveTableAsCsvFileActionListener);
@@ -157,6 +161,24 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
                         _schemaTree.getDatastore(), columns));
                 popup.add(previewMenuItem);
+
+                final Datastore datastore = _schemaTree.getDatastore();
+                if (datastore instanceof UpdateableDatastore) {
+                    popup.addSeparator();
+
+                    final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                    final WindowContext windowContext = injector.getInstance(WindowContext.class);
+                    final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DELETE);
+                    dropTableMenuItem.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            final DropTableDialog dialog = new DropTableDialog(windowContext, updateableDatastore,
+                                    table, _schemaTree);
+                            dialog.open();
+                        }
+                    });
+                    popup.add(dropTableMenuItem);
+                }
 
                 popup.show((Component) e.getSource(), e.getX(), e.getY());
             }

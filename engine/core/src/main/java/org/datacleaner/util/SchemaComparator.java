@@ -22,6 +22,7 @@ package org.datacleaner.util;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 
 /**
@@ -53,7 +54,7 @@ public class SchemaComparator implements Comparator<Schema>, Serializable {
 		if (name == null) {
 			return false;
 		}
-		return "information_schema".equals(name.toLowerCase());
+		return MetaModelHelper.isInformationSchema(schema);
 	}
 
 }

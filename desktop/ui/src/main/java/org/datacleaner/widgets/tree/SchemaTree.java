@@ -89,7 +89,7 @@ import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer,
         ComponentDescriptorsUpdatedListener {
-    
+
     private static final long serialVersionUID = 7763827443642264329L;
 
     private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
@@ -103,12 +103,12 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     private static final String NO_COMPONENTS_FOUND_SEARCH_RESULT = "No components found matching search criteria.";
 
     private final Datastore _datastore;
-    private final DatastoreConnection _datastoreConnection;
     private final TreeCellRenderer _rendererDelegate;
     private final WindowContext _windowContext;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final InjectorBuilder _injectorBuilder;
 
+    private DatastoreConnection _datastoreConnection;
     private String _searchTerm = "";
 
     @Inject
@@ -164,7 +164,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     @Override
     public void removeNotify() {
         super.removeNotify();
-        MouseListener[] mouseListeners = getMouseListeners();
+        final MouseListener[] mouseListeners = getMouseListeners();
         for (MouseListener mouseListener : mouseListeners) {
             removeMouseListener(mouseListener);
         }
@@ -241,7 +241,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
     }
 
     private void updateTree() {
-
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         final DefaultMutableTreeNode datastoreNode = new DefaultMutableTreeNode();
@@ -250,7 +249,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         datastoreNode.setUserObject(_datastoreConnection.getDatastore());
         final SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
         schemaNavigator.refreshSchemas();
-        Schema[] schemas = schemaNavigator.getSchemas();
+        final Schema[] schemas = schemaNavigator.getSchemas();
 
         // make sure that information schemas are arranged at the top
         Arrays.sort(schemas, new SchemaComparator());
@@ -609,6 +608,14 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
         createLibrary(libraryNode);
         DefaultTreeModel model = (DefaultTreeModel) getModel();
         model.reload(libraryNode);
+        expandStandardPaths();
+    }
+
+    /**
+     * Refreshes the tree's contents
+     */
+    public void refreshDatastore() {
+        updateTree();
         expandStandardPaths();
     }
 

@@ -23,6 +23,7 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
@@ -60,6 +61,11 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
     public int getExpectedRows() {
         final Integer expectedRows = _expectedRows.get();
         return expectedRows.intValue();
+    }
+    
+    @Override
+    public ComponentJob[] getResultProducers() {
+        return _publisher.getResultProducers();
     }
 
     @Override
@@ -106,5 +112,4 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
             }
         };
     }
-
 }

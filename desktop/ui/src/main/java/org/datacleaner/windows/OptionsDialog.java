@@ -25,8 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -40,7 +38,6 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.apache.metamodel.util.Func;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
@@ -64,15 +61,12 @@ import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HelpIcon;
 import org.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.datacleaner.widgets.tabs.Tab;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class OptionsDialog extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
-
-    public static final List<Func<OptionsDialog, Tab>> PLUGGABLE_TABS = new ArrayList<Func<OptionsDialog, Tab>>(0);
 
     private final ImageManager imageManager = ImageManager.get();
     private final UserPreferences _userPreferences;
@@ -89,14 +83,18 @@ public class OptionsDialog extends AbstractWindow {
         _configuration = configuration;
         _tabbedPane = new CloseableTabbedPane(true);
 
-        _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS), getGeneralTab());
-        _tabbedPane.addTab("Database drivers", imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH),
+        _tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_TAB),
+                getGeneralTab());
+        _tabbedPane.addTab("Database drivers",
+                imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_TAB),
                 databaseDriversPanel);
-        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
-        _tabbedPane
-                .addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
-        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
-        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN),
+        _tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png", IconUtils.ICON_SIZE_TAB),
+                getNetworkTab());
+        _tabbedPane.addTab("Performance",
+                imageManager.getImageIcon("images/menu/performance.png", IconUtils.ICON_SIZE_TAB), getPerformanceTab());
+        _tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png", IconUtils.ICON_SIZE_TAB),
+                getMemoryTab());
+        _tabbedPane.addTab("Extensions", imageManager.getImageIcon(IconUtils.PLUGIN, IconUtils.ICON_SIZE_TAB),
                 extensionPackagesPanel);
 
         _tabbedPane.setUnclosableTab(0);
@@ -105,13 +103,6 @@ public class OptionsDialog extends AbstractWindow {
         _tabbedPane.setUnclosableTab(3);
         _tabbedPane.setUnclosableTab(4);
         _tabbedPane.setUnclosableTab(5);
-
-        for (Func<OptionsDialog, Tab> pluggableTabs : PLUGGABLE_TABS) {
-            final Tab tab = pluggableTabs.eval(this);
-            if (tab != null) {
-                _tabbedPane.addTab(tab);
-            }
-        }
     }
 
     public void selectDatabaseDriversTab() {
@@ -415,7 +406,7 @@ public class OptionsDialog extends AbstractWindow {
         final DCBannerPanel banner = new DCBannerPanel("Options");
         _tabbedPane.bindTabTitleToBanner(banner);
 
-        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
+        final DCPanel panel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         panel.setLayout(new BorderLayout());
         panel.add(banner, BorderLayout.NORTH);
         panel.add(_tabbedPane, BorderLayout.CENTER);

@@ -21,6 +21,7 @@ package org.datacleaner.job.runner;
 
 import java.util.Collection;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -101,4 +102,10 @@ public interface RowProcessingConsumer {
      * @return the component instance
      */
     public Object getComponent();
+
+    /**
+     * Determines if the {@link ComponentJob} represented in this consumer is expected to produce an {@link AnalyzerResult}
+     * @return
+     */
+    public boolean isResultProducer();
 }

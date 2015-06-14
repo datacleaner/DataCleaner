@@ -205,13 +205,12 @@ public class JobGraphLinkPainter {
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
                     if (inputProperty.isArray()) {
-                        _actions.showConfigurationDialog(componentBuilder);
                         componentBuilder.addInputColumns(getRelevantSourceColumn(sourceColumns, inputProperty),
                                 inputProperty);
                     } else {
-                        _actions.showConfigurationDialog(componentBuilder);
                         componentBuilder.addInputColumn(sourceColumns.get(0), inputProperty);
                     }
+                    _actions.showConfigurationDialog(componentBuilder);
 
                     // returning true to indicate a change
                     logger.debug("createLink(...) returning true - input column(s) added");

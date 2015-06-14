@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -140,6 +141,11 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     @Override
     public InputColumn<?>[] getOutputColumns() {
         return new InputColumn[0];
+    }
+    
+    @Override
+    public boolean isResultProducer() {
+        return getComponent() instanceof HasAnalyzerResult;
     }
 
     @Override

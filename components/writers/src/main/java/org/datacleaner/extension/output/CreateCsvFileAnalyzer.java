@@ -74,27 +74,33 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     public static final String PROPERTY_FILE = "File";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
-    
 
+    @Inject
     @Configured(value = PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
     File file;
 
+    @Inject
     @Configured(order = 2, required = false)
-    Character separatorChar = ',';
+    char separatorChar = ',';
 
+    @Inject
     @Configured(order = 3, required = false)
     Character quoteChar = '"';
 
+    @Inject
     @Configured(order = 4, required = false)
     Character escapeChar = '\\';
 
+    @Inject
     @Configured(order = 5, required = false)
     boolean includeHeader = true;
 
+    @Inject
     @Configured(order = 6, required = false, value = PROPERTY_COLUMN_TO_BE_SORTED_ON)
     InputColumn<?> columnToBeSortedOn;
 
+    @Inject
     @Configured(value = PROPERTY_OVERWRITE_FILE_IF_EXISTS)
     boolean overwriteFileIfExists;
 
@@ -103,10 +109,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     UserPreferences userPreferences;
 
     private File _targetFile;
-
-    private int indexOfColumnToBeSortedOn = -1;
-
-    private boolean isColumnToBeSortedOnPresentInInput = true;
+    private int _indexOfColumnToBeSortedOn = -1;
+    private boolean _isColumnToBeSortedOnPresentInInput = true;
 
     @Initialize
     public void initTempFile() throws Exception {
@@ -160,15 +164,15 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             headers.add(columnName);
             if (columnToBeSortedOn != null) {
                 if (columns[i].equals(columnToBeSortedOn)) {
-                    indexOfColumnToBeSortedOn = i;
+                    _indexOfColumnToBeSortedOn = i;
                 }
             }
         }
 
         if (columnToBeSortedOn != null) {
-            if (indexOfColumnToBeSortedOn == -1) {
-                this.isColumnToBeSortedOnPresentInInput = false;
-                indexOfColumnToBeSortedOn = columns.length;
+            if (_indexOfColumnToBeSortedOn == -1) {
+                _isColumnToBeSortedOnPresentInInput = false;
+                _indexOfColumnToBeSortedOn = columns.length;
                 headers.add(columnToBeSortedOn.getName());
                 InputColumn<?>[] newColumns = new InputColumn<?>[columns.length + 1];
                 for (int i = 0; i < columns.length; i++) {
@@ -188,7 +192,21 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         }
 
         return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                quoteChar, escapeChar, includeHeader, columns);
+                getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
+    }
+
+    private char getSafeQuoteChar() {
+        if (quoteChar == null) {
+            return CsvConfiguration.NOT_A_CHAR;
+        }
+        return quoteChar;
+    }
+
+    private char getSafeEscapeChar() {
+        if (escapeChar == null) {
+            return CsvConfiguration.NOT_A_CHAR;
+        }
+        return escapeChar;
     }
 
     private String getColumnHeader(int i) {
@@ -201,7 +219,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Override
     protected WriteDataResult getResultInternal(int rowCount) {
         final CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-                FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar, false, true);
+                FileHelper.DEFAULT_ENCODING, separatorChar, getSafeQuoteChar(), getSafeEscapeChar(), false, true);
 
         if (columnToBeSortedOn != null) {
 
@@ -209,7 +227,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             final Table table = tempDataContext.getDefaultSchema().getTable(0);
 
             final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
-                    indexOfColumnToBeSortedOn);
+                    _indexOfColumnToBeSortedOn);
 
             final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
             final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
@@ -217,7 +235,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                 @Override
                 protected void writeHeader(Writer writer) throws IOException {
                     List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
-                    if (!isColumnToBeSortedOnPresentInInput) {
+                    if (!_isColumnToBeSortedOnPresentInInput) {
                         headers.remove(columnToBeSortedOn.getName());
                     }
 
@@ -230,8 +248,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
                 protected void writeRow(Writer writer, Row row, int count) throws IOException {
                     for (int i = 0; i < count; i++) {
                         List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
-                        if (!isColumnToBeSortedOnPresentInInput) {
-                            valuesList.remove(indexOfColumnToBeSortedOn);
+                        if (!_isColumnToBeSortedOnPresentInInput) {
+                            valuesList.remove(_indexOfColumnToBeSortedOn);
                         }
 
                         final Object[] values = valuesList.toArray(new Object[0]);

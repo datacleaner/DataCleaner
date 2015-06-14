@@ -119,7 +119,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
                             meanMarker.setLabelFont(WidgetUtils.FONT_SMALL);
                             chart.getXYPlot().addDomainMarker(meanMarker);
 
-                            final ChartPanel chartPanel = new ChartPanel(chart);
+                            final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
                             displayChartCallback.displayChart(chartPanel);
                         }
                     };

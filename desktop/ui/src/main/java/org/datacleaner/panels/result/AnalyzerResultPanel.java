@@ -20,13 +20,19 @@
 package org.datacleaner.panels.result;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultFuture;
@@ -39,72 +45,60 @@ import org.datacleaner.result.renderer.SwingRenderingFormat;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
-import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.DCTaskPaneContainer;
 import org.datacleaner.widgets.LoadingIcon;
-import org.jdesktop.swingx.JXTaskPane;
+import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Panel that displays a collection of results in task panes.
+ * Panel that displays the rendered result in the {@link ResultWindow}.
  */
-public class ResultListPanel extends DCPanel {
+public class AnalyzerResultPanel extends DCPanel implements Scrollable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory.getLogger(ResultListPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AnalyzerResultPanel.class);
 
     private final RendererFactory _rendererFactory;
-    private final DCTaskPaneContainer _taskPaneContainer;
     private final ProgressInformationPanel _progressInformationPanel;
+    private final ComponentJob _componentJob;
+    private final LoadingIcon _loadingIcon;
 
-    public ResultListPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel) {
+    public AnalyzerResultPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel,
+            ComponentJob componentJob) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _rendererFactory = rendererFactory;
         _progressInformationPanel = progressInformationPanel;
-        _taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-        setLayout(new BorderLayout());
-        add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
-    }
+        _componentJob = componentJob;
 
-    public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
+        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setLayout(new BorderLayout());
+
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TASK_PANE);
 
-        final String resultLabel = LabelUtils.getLabel(componentJob);
+        final String headerText = getHeaderText();
+        final JLabel header1 = createHeader(icon, headerText, WidgetUtils.FONT_HEADER1, WidgetUtils.BG_COLOR_DARK);
+        final JLabel header2 = createHeader(null, getSubHeaderText(componentJob, headerText), WidgetUtils.FONT_SMALL,
+                WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
-        final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
+        final DCPanel headerPanel = new DCPanel();
+        headerPanel.setLayout(new VerticalLayout(4));
+        headerPanel.add(header1);
+        headerPanel.add(header2);
+        headerPanel.setBorder(new EmptyBorder(0, 0, 4, 0));
+        add(headerPanel, BorderLayout.NORTH);
 
-        final DCPanel taskPanePanel = new DCPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        taskPanePanel.setLayout(new BorderLayout());
-        taskPane.add(taskPanePanel);
+        _loadingIcon = new LoadingIcon();
+        add(_loadingIcon, BorderLayout.CENTER);
+    }
 
-        taskPanePanel.add(new LoadingIcon());
-        _progressInformationPanel.addUserLog("Rendering result for " + resultLabel);
-
-        WidgetUtils.invokeSwingAction(new Runnable() {
-            @Override
-            public void run() {
-                String title = taskPane.getTitle();
-                JXTaskPane[] taskPanes = _taskPaneContainer.getTaskPanes();
-                boolean added = false;
-                for (int i = 0; i < taskPanes.length; i++) {
-                    JXTaskPane existingTaskPane = taskPanes[i];
-                    if (existingTaskPane.getTitle().compareTo(title) > 0) {
-                        _taskPaneContainer.add(taskPane, i);
-                        added = true;
-                        break;
-                    }
-                }
-                if (!added) {
-                    _taskPaneContainer.add(taskPane);
-                }
-            }
-        });
+    public void setResult(final AnalyzerResult result) {
+        final String headerText = getHeaderText();
+        _progressInformationPanel.addUserLog("Rendering result for " + headerText);
 
         // use a swing worker to run the rendering in the background
         new SwingWorker<JComponent, Void>() {
@@ -121,7 +115,7 @@ public class ResultListPanel extends DCPanel {
                 logger.debug("renderer.render({})", result);
                 final JComponent component = renderer.render(result);
                 if (logger.isInfoEnabled()) {
-                    final String resultAsString = getResultAsString(componentJob, result);
+                    final String resultAsString = getResultAsString(_componentJob, result);
                     if (resultAsString != null) {
                         String resultAsStringToLog = resultAsString.replaceAll("\n", " | ");
                         if (resultAsStringToLog.length() > 150) {
@@ -134,16 +128,14 @@ public class ResultListPanel extends DCPanel {
             }
 
             protected void done() {
-                taskPanePanel.removeAll();
                 JComponent component;
                 try {
                     component = get();
-                    taskPanePanel.add(component);
                     if (result instanceof AnalyzerResultFuture) {
-                        _progressInformationPanel.addUserLog(resultLabel + " is still in progress - see the '"
-                                + componentJob.getDescriptor().getDisplayName() + "' tab");
+                        _progressInformationPanel.addUserLog(headerText + " is still in progress - see the '"
+                                + _componentJob.getDescriptor().getDisplayName() + "' tab");
                     } else {
-                        _progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+                        _progressInformationPanel.addUserLog("Result rendered for " + headerText);
                     }
                 } catch (Exception e) {
                     logger.error("Error occurred while rendering result", e);
@@ -157,20 +149,44 @@ public class ResultListPanel extends DCPanel {
                             "An error occurred while rendering result, check the 'Progress information' tab.", icon,
                             SwingConstants.LEFT));
 
-                    final String resultAsString = getResultAsString(componentJob, result);
+                    final String resultAsString = getResultAsString(_componentJob, result);
                     if (resultAsString != null) {
                         final DCLabel label = DCLabel.darkMultiLine(resultAsString);
                         label.setBorder(WidgetUtils.BORDER_EMPTY);
                         panel.add(label);
                     }
-
-                    taskPanePanel.add(panel);
+                    component = panel;
                 }
 
-                taskPanePanel.updateUI();
+                remove(_loadingIcon);
+                add(component, BorderLayout.CENTER);
+
+                updateUI();
             };
 
         }.execute();
+    }
+
+    private JLabel createHeader(Icon icon, String header, Font font, Color color) {
+        final JLabel label = new JLabel(header, icon, JLabel.LEFT);
+        label.setOpaque(false);
+        label.setFont(font);
+        label.setForeground(color);
+        return label;
+    }
+
+    private String getHeaderText() {
+        return LabelUtils.getLabel(_componentJob, false, false, false);
+    }
+
+    private String getSubHeaderText(final ComponentJob componentJob, final String headerText) {
+        String subHeaderString = LabelUtils.getLabel(componentJob, true, true, true);
+        final int indexOfHeader = subHeaderString.indexOf(headerText);
+        if (indexOfHeader != -1) {
+            // remove the redundant part of both headers
+            subHeaderString = subHeaderString.substring(indexOfHeader + headerText.length());
+        }
+        return subHeaderString;
     }
 
     protected String getResultAsString(ComponentJob componentJob, AnalyzerResult result) {
@@ -180,5 +196,33 @@ public class ResultListPanel extends DCPanel {
             logger.error("Couldn't render result of {} as label using toString() method", componentJob, ex);
             return null;
         }
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return WidgetUtils.SCROLL_UNIT_INCREMENT;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        // page down scrolls almost a full screen size
+        return visibleRect.height - 10;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        // ensure that the width within the scroll area never expands the
+        // viewport
+        return true;
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
     }
 }

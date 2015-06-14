@@ -36,8 +36,6 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollBar;
-import javax.swing.JSplitPane;
-import javax.swing.border.EmptyBorder;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.AnalyzerResult;
@@ -68,6 +66,7 @@ import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.windows.DetailsResultWindow;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -96,7 +95,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
     private static final String LABEL_OVERLAPS = "Overlaps";
     private static final String LABEL_GAPS = "Gaps";
     private static final String LABEL_COMPLETE_DURATION = "Complete duration";
-    private static final int GROUPS_VISIBLE = 6;
+    private static final int GROUPS_VISIBLE = 8;
 
     @Override
     public JComponent render(DateGapAnalyzerResult result) {
@@ -185,7 +184,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
                     WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT));
         }
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
+        final int visibleLines = Math.min(GROUPS_VISIBLE, groupNames.size());
+        final ChartPanel chartPanel = ChartUtils.createPanel(chart, ChartUtils.WIDTH_WIDE, visibleLines * 50 + 200);
 
         chartPanel.addChartMouseListener(new ChartMouseListener() {
             @Override
@@ -204,19 +204,15 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
             }
         });
 
-        final int visibleLines = Math.min(GROUPS_VISIBLE, groupNames.size());
-
-        chartPanel.setPreferredSize(new Dimension(0, visibleLines * 50 + 200));
-
         final JComponent decoratedChartPanel;
 
-        StringBuilder chartDescription = new StringBuilder();
+        final StringBuilder chartDescription = new StringBuilder("<html>");
         chartDescription
-                .append("<html><p>The chart displays the recorded timeline based on FROM and TO dates.<br/><br/>");
+                .append("<p>The chart displays the recorded timeline based on FROM and TO dates.</p>");
         chartDescription
-                .append("The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.<br/><br/>");
+                .append("<p>The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.</p>");
         chartDescription
-                .append("You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail.");
+                .append("<p>You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail.</p>");
 
         if (groupNames.size() > GROUPS_VISIBLE) {
             final JScrollBar scroll = new JScrollBar(JScrollBar.VERTICAL);
@@ -247,25 +243,22 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
             outerPanel.setLayout(new BorderLayout());
             outerPanel.add(chartPanel, BorderLayout.CENTER);
             outerPanel.add(scroll, BorderLayout.EAST);
-            chartDescription.append("<br/><br/>Use the right <b>scrollbar</b> to scroll up and down on the chart.");
+            chartDescription.append("<p>Use the right <b>scrollbar</b> to scroll up and down on the chart.</p>");
             decoratedChartPanel = outerPanel;
-
         } else {
             decoratedChartPanel = chartPanel;
         }
 
-        chartDescription.append("</p></html>");
+        chartDescription.append("</html>");
 
         final JLabel chartDescriptionLabel = new JLabel(chartDescription.toString());
 
-        chartDescriptionLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new VerticalLayout());
+        panel.add(chartDescriptionLabel);
+        panel.add(decoratedChartPanel);
 
-        final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        split.add(decoratedChartPanel);
-        split.add(chartDescriptionLabel);
-        split.setDividerLocation(550);
-
-        return split;
+        return panel;
     }
 
     private TimePeriod createTimePeriod(long from, long to) {

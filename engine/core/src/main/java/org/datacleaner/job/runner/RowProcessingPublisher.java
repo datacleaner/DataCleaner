@@ -624,4 +624,14 @@ public final class RowProcessingPublisher {
     public SourceColumnFinder getSourceColumnFinder() {
         return _publishers.getSourceColumnFinder();
     }
+    
+    public ComponentJob[] getResultProducers() {
+        final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
+        for (RowProcessingConsumer consumer : _consumers) {
+            if (consumer.isResultProducer()) {
+                resultProducers.add(consumer.getComponentJob());
+            }
+        }
+        return resultProducers.toArray(new ComponentJob[resultProducers.size()]);
+    }
 }

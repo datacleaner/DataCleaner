@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.windows;
+package org.datacleaner.widgets.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -39,9 +38,9 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -60,14 +59,15 @@ public class VerticalTabbedPane extends DCPanel {
     private static final Border BORDER_TABS = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(
             10, 4, 10, 4));
 
-    private final List<Entry<JButton, JComponent>> _components;
+    private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
+    private JComponent _currentContent;
     private DCBannerPanel _banner;
 
     public VerticalTabbedPane() {
         super();
 
-        _components = new ArrayList<>();
+        _tabs = new ArrayList<>();
         _leftPanel = new DCPanel();
         _leftPanel.setLayout(new VerticalLayout(0));
 
@@ -78,7 +78,7 @@ public class VerticalTabbedPane extends DCPanel {
     private JComponent wrapLeftPanel(final DCPanel panel) {
         final JScrollPane scroll = WidgetUtils.scrolleable(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
+
         final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
         collapsiblePane.getContentPane().setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         collapsiblePane.add(scroll);
@@ -119,13 +119,13 @@ public class VerticalTabbedPane extends DCPanel {
     }
 
     public int getTabCount() {
-        return _components.size();
+        return _tabs.size();
     }
 
     public int getSelectedIndex() {
         int i = 0;
-        for (Entry<JButton, JComponent> entry : _components) {
-            final JButton button = entry.getKey();
+        for (VerticalTab<?> tab : _tabs) {
+            final JButton button = tab.getButton();
             if (button.getForeground() == COLOR_SELECTED_FOREGROUND
                     && button.getBackground() == COLOR_SELECTED_BACKGROUND) {
                 return i;
@@ -138,25 +138,31 @@ public class VerticalTabbedPane extends DCPanel {
 
     public void setSelectedIndex(int index) {
         // reset other components
-        for (Entry<JButton, JComponent> entry : _components) {
-            final JButton button = entry.getKey();
+        for (VerticalTab<?> tab : _tabs) {
+            final JButton button = tab.getButton();
             button.setForeground(null);
             button.setBackground(null);
-
-            final JComponent component = entry.getValue();
-            remove(component);
         }
 
-        final Entry<JButton, JComponent> entry = _components.get(index);
+        if (_currentContent != null) {
+            remove(_currentContent);
+        }
+
+        final VerticalTab<?> tab = _tabs.get(index);
 
         // styling of button
-        final JButton button = entry.getKey();
+        final JButton button = tab.getButton();
         button.setBackground(COLOR_SELECTED_BACKGROUND);
         button.setForeground(COLOR_SELECTED_FOREGROUND);
 
         // set component as content
-        final JComponent panel = entry.getValue();
-        add(panel, BorderLayout.CENTER);
+        final JComponent panel = tab.getContents();
+
+        final JScrollPane scroll = WidgetUtils.scrolleable(panel);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        add(scroll, BorderLayout.CENTER);
+        _currentContent = scroll;
 
         // update banner if necesary
         if (_banner != null) {
@@ -167,8 +173,8 @@ public class VerticalTabbedPane extends DCPanel {
         updateUI();
     }
 
-    public void addTab(String title, Icon icon, JComponent component) {
-        final int index = _components.size();
+    public <C extends JComponent> Tab<C> addTab(String title, Icon icon, C component) {
+        final int index = _tabs.size();
 
         final JButton button = WidgetFactory.createDefaultButton(title, icon);
         button.setHorizontalAlignment(SwingConstants.LEFT);
@@ -180,12 +186,15 @@ public class VerticalTabbedPane extends DCPanel {
             }
         });
         _leftPanel.add(button);
-        _components.add(new ImmutableEntry<JButton, JComponent>(button, component));
+        final VerticalTab<C> tab = new VerticalTab<C>(button, component);
+        _tabs.add(tab);
 
         if (index == 0) {
             // the first tab automatically gets selected
             button.doClick();
         }
+        
+        return tab;
     }
 
     public void bindTabTitleToBanner(DCBannerPanel banner) {

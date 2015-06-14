@@ -121,6 +121,8 @@ public final class WidgetUtils {
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
+    public static final int SCROLL_UNIT_INCREMENT = 20;
+
     // blue base color of DC styling (#3b76bc)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
@@ -177,8 +179,15 @@ public final class WidgetUtils {
 
     public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 
-    public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
-    public static final Border BORDER_WIDE_BRIGHTEST = new LineBorder(BG_COLOR_BRIGHTEST, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_ALTERNATIVE = new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_DEFAULT = new LineBorder(COLOR_DEFAULT_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_WELL = new LineBorder(COLOR_WELL_BACKGROUND, BORDER_WIDE_WIDTH);
+
+    @Deprecated
+    public static final Border BORDER_WIDE = BORDER_WIDE_ALTERNATIVE;
+
+    @Deprecated
+    public static final Border BORDER_WIDE_BRIGHTEST = BORDER_WIDE_DEFAULT;
 
     public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
@@ -451,7 +460,7 @@ public final class WidgetUtils {
         if (comp != null) {
             scroll.setViewportView(comp);
         }
-        scroll.getVerticalScrollBar().setUnitIncrement(20);
+        scroll.getVerticalScrollBar().setUnitIncrement(SCROLL_UNIT_INCREMENT);
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         return scroll;

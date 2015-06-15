@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
@@ -55,10 +56,12 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final SchemaTree _schemaTree;
     private final InjectorBuilder _injectorBuilder;
+    private final WindowContext _windowContext;
 
     @Inject
-    protected TableMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
+    protected TableMouseListener(WindowContext windowContext, SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
             InjectorBuilder injectorBuilder) {
+        _windowContext = windowContext;
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
         _injectorBuilder = injectorBuilder;
@@ -128,7 +131,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
                         IconUtils.MODEL_QUICK_ANALYSIS);
 
-                Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
+                final Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
                         .createInjector();
 
                 final QuickAnalysisActionListener quickAnalysisActionListener = injector
@@ -164,20 +167,22 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
                 final Datastore datastore = _schemaTree.getDatastore();
                 if (datastore instanceof UpdateableDatastore) {
-                    popup.addSeparator();
+                    if (!MetaModelHelper.isInformationSchema(table.getSchema())) {
+                        popup.addSeparator();
 
-                    final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                    final WindowContext windowContext = injector.getInstance(WindowContext.class);
-                    final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DELETE);
-                    dropTableMenuItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            final DropTableDialog dialog = new DropTableDialog(windowContext, updateableDatastore,
-                                    table, _schemaTree);
-                            dialog.open();
-                        }
-                    });
-                    popup.add(dropTableMenuItem);
+                        final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                        final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table",
+                                IconUtils.ACTION_DELETE);
+                        dropTableMenuItem.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                final DropTableDialog dialog = new DropTableDialog(_windowContext, updateableDatastore,
+                                        table, _schemaTree);
+                                dialog.open();
+                            }
+                        });
+                        popup.add(dropTableMenuItem);
+                    }
                 }
 
                 popup.show((Component) e.getSource(), e.getX(), e.getY());

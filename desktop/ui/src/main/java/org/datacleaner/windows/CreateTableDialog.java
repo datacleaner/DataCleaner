@@ -86,7 +86,7 @@ public class CreateTableDialog extends AbstractDialog {
 
     @Override
     protected String getBannerTitle() {
-        return "Drop table\nin schema '" + _schema.getName() + "'";
+        return "Create table\nin schema '" + _schema.getName() + "'";
     }
 
     @Override

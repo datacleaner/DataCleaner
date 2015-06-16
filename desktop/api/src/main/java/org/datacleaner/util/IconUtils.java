@@ -136,6 +136,9 @@ public final class IconUtils {
     public static final String ACTION_LOG = "images/actions/log.png";
     public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
     public static final String ACTION_DOWNLOAD = "images/actions/download.png";
+    public static final String ACTION_DELETE = "images/actions/delete.png";
+    public static final String ACTION_DROP_TABLE = "images/actions/drop_table.png";
+    public static final String ACTION_CREATE_TABLE = "images/actions/create_table.png";
 
     public static final String APPLICATION_ICON = "images/window/app-icon.png";
     public static final String WEBSITE = "images/actions/website.png";

@@ -97,8 +97,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
     private static final long serialVersionUID = 1L;
 
-    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(
-            0);
+    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(0);
 
     private static final ImageManager imageManager = ImageManager.get();
 
@@ -132,9 +131,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      * @param rendererInitializerProvider
      */
     @Inject
-    protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job,
-            @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
-            UserPreferences userPreferences, RendererFactory rendererFactory) {
+    protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job, @Nullable AnalysisResult result,
+            @Nullable @JobFile FileObject jobFilename, WindowContext windowContext, UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
         _tabbedPane = new VerticalTabbedPane();
@@ -148,8 +146,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         final Dimension size = getDefaultWindowSize();
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), size.width, size.height);
         _progressInformationPanel = new ProgressInformationPanel(running);
-        _tabbedPane.addTab("Progress information",
-                imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
+        _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
 
         _pluggableButtons = new ArrayList<JComponent>(1);
@@ -164,15 +161,13 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         };
 
         _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
-        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
-                resultRef, _jobFilename));
+        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences, resultRef, _jobFilename));
 
         _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
         _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
 
         _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
-        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
-                _userPreferences));
+        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
 
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             JComponent component = pluggableComponent.eval(this);
@@ -268,15 +263,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             if (existingTab != null) {
                 return existingTab;
             }
-            
-            String title = LabelUtils.getLabel(componentJob, false, false, false);
-            if (title.length() > 40) {
-                title = title.substring(0, 39) + "...";
-            }
-            
+
+            String title = getTabTitle(componentJob, null);
+
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
-            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
-                    _progressInformationPanel, componentJob);
+            final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory, _progressInformationPanel, componentJob);
             final Tab<AnalyzerResultPanel> tab = _tabbedPane.addTab(title, icon, resultPanel);
             tab.setTooltip(LabelUtils.getLabel(componentJob, false, true, true));
 
@@ -286,8 +277,17 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         }
     }
 
+    private String getTabTitle(final ComponentJob componentJob, AnalyzerResult result) {
+        String title = LabelUtils.getLabel(componentJob, result, false, false, false);
+        if (title.length() > 40) {
+            title = title.substring(0, 39) + "...";
+        }
+        return title;
+    }
+
     public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
         final Tab<AnalyzerResultPanel> tab = getOrCreateResultPanel(componentJob, true);
+        _tabbedPane.updateTabTitle(getTabTitle(componentJob, result), tab);
         tab.getContents().setResult(result);
     }
 
@@ -357,8 +357,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
         }
 
-        final DCBannerPanel banner = new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"),
-                bannerTitle);
+        final DCBannerPanel banner = new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"), bannerTitle);
         _tabbedPane.bindTabTitleToBanner(banner);
 
         for (JComponent pluggableButton : _pluggableButtons) {
@@ -473,12 +472,11 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                             getOrCreateResultPanel(componentJob, false);
                         }
                         _tabbedPane.updateUI();
-                        
+
                         if (expectedRows == -1) {
                             _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
                         } else {
-                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
-                                    + " (approx. " + expectedRows + " rows)");
+                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName() + " (approx. " + expectedRows + " rows)");
                             _progressInformationPanel.setExpectedRows(table, expectedRows);
                         }
                     }
@@ -486,16 +484,14 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
-                    final int currentRow) {
+            public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row, final int currentRow) {
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
             @Override
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
-                _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
-                        + " finished. Generating results...");
+                _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName() + " finished. Generating results...");
             }
 
             @Override
@@ -525,25 +521,18 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row,
-                    final Throwable throwable) {
-                _progressInformationPanel.addUserLog(
-                        "An error occurred in the filter: " + LabelUtils.getLabel(filterJob), throwable, true);
+            public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row, final Throwable throwable) {
+                _progressInformationPanel.addUserLog("An error occurred in the filter: " + LabelUtils.getLabel(filterJob), throwable, true);
             }
 
             @Override
-            public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row,
-                    final Throwable throwable) {
-                _progressInformationPanel
-                        .addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
-                                throwable, true);
+            public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row, final Throwable throwable) {
+                _progressInformationPanel.addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob), throwable, true);
             }
 
             @Override
-            public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row,
-                    final Throwable throwable) {
-                _progressInformationPanel.addUserLog(
-                        "An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob), throwable, true);
+            public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row, final Throwable throwable) {
+                _progressInformationPanel.addUserLog("An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob), throwable, true);
             }
 
             @Override

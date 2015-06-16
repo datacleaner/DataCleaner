@@ -83,7 +83,7 @@ public class DropTableDialog extends AbstractDialog {
 
         final JXTextField confirmTextField = WidgetFactory.createTextField("Enter the table's name to confirm");
 
-        final JButton dropTableButton = WidgetFactory.createPrimaryButton("Drop table", IconUtils.ACTION_EXECUTE);
+        final JButton dropTableButton = WidgetFactory.createPrimaryButton("Drop table", IconUtils.ACTION_DROP_TABLE);
         dropTableButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,6 +115,8 @@ public class DropTableDialog extends AbstractDialog {
         row++;
         WidgetUtils.addToGridBag(dropTableButton, panel, 0, row, 0.5, 0.1);
         WidgetUtils.addToGridBag(cancelButton, panel, 1, row, 0.5, 0.1);
+        
+        panel.setPreferredSize(getDialogWidth(), 300);
 
         return panel;
     }

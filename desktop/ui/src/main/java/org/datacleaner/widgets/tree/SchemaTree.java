@@ -52,6 +52,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
@@ -476,7 +477,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
             component = _rendererDelegate.getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row,
                     hasFocus);
             icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA, IconUtils.ICON_SIZE_MENU_ITEM);
-            if (SchemaComparator.isInformationSchema(schema)) {
+            if (MetaModelHelper.isInformationSchema(schema)) {
                 icon = imageManager.getImageIcon(IconUtils.MODEL_SCHEMA_INFORMATION, IconUtils.ICON_SIZE_MENU_ITEM);
             }
         } else if (value instanceof Table) {

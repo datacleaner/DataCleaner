@@ -26,90 +26,90 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.connection.Datastore;
-import org.datacleaner.util.IconUtils;
-import org.datacleaner.util.ImageManager;
-import org.datacleaner.util.SchemaComparator;
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.NamedStructure;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImageManager;
 
 public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
 
-	private static final long serialVersionUID = 1L;
-	private static final ImageManager imageManager = ImageManager.get();
+    private static final long serialVersionUID = 1L;
+    private static final ImageManager imageManager = ImageManager.get();
 
-	private boolean indentEnabled;
-	private String nullText = "- none -";
+    private boolean indentEnabled;
+    private String nullText = "- none -";
 
-	public SchemaStructureComboBoxListRenderer() {
-		this(true);
-	}
-	
-	public SchemaStructureComboBoxListRenderer(boolean indentsEnabled) {
-		indentEnabled = indentsEnabled;
-	}
+    public SchemaStructureComboBoxListRenderer() {
+        this(true);
+    }
 
-	@Override
-	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-			boolean cellHasFocus) {
-		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    public SchemaStructureComboBoxListRenderer(boolean indentsEnabled) {
+        indentEnabled = indentsEnabled;
+    }
 
-		int indent = 0;
-		Icon icon = null;
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+            boolean cellHasFocus) {
+        JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-		if (value == null) {
-			result.setText(getNullText());
-		} else if (value instanceof NamedStructure) {
-			result.setText(((NamedStructure) value).getName());
-			if (value instanceof Schema) {
-				icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
-				if (SchemaComparator.isInformationSchema((Schema) value)) {
-					icon = imageManager.getImageIcon("images/model/schema_information.png", IconUtils.ICON_SIZE_SMALL);
-				} else {
-					icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
-				}
-			} else if (value instanceof Table) {
-				icon = imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_SMALL);
-				indent = 10;
-			} else if (value instanceof Column) {
-				icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
-				indent = 20;
-			}
-		} else if (value instanceof Datastore) {
-			Datastore datastore = (Datastore) value;
-			icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
-			result.setText(datastore.getName());
-		} else if (value instanceof InputColumn<?>) {
-			result.setText(((InputColumn<?>) value).getName());
-			icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
-		}
+        int indent = 0;
+        Icon icon = null;
 
-		if (icon != null) {
-			result.setIcon(icon);
-		}
-		if (isIndentEnabled()) {
-			result.setBorder(new EmptyBorder(0, indent, 0, 0));
-		}
+        if (value == null) {
+            result.setText(getNullText());
+        } else if (value instanceof NamedStructure) {
+            result.setText(((NamedStructure) value).getName());
+            if (value instanceof Schema) {
+                icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
+                if (MetaModelHelper.isInformationSchema((Schema) value)) {
+                    icon = imageManager.getImageIcon("images/model/schema_information.png", IconUtils.ICON_SIZE_SMALL);
+                } else {
+                    icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
+                }
+            } else if (value instanceof Table) {
+                icon = imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_SMALL);
+                indent = 10;
+            } else if (value instanceof Column) {
+                icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+                indent = 20;
+            }
+        } else if (value instanceof Datastore) {
+            Datastore datastore = (Datastore) value;
+            icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
+            result.setText(datastore.getName());
+        } else if (value instanceof InputColumn<?>) {
+            result.setText(((InputColumn<?>) value).getName());
+            icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+        }
 
-		return result;
-	}
+        if (icon != null) {
+            result.setIcon(icon);
+        }
+        if (isIndentEnabled()) {
+            result.setBorder(new EmptyBorder(0, indent, 0, 0));
+        }
 
-	public void setIndentEnabled(boolean indent) {
-		this.indentEnabled = indent;
-	}
+        return result;
+    }
 
-	public boolean isIndentEnabled() {
-		return indentEnabled;
-	}
+    public void setIndentEnabled(boolean indent) {
+        this.indentEnabled = indent;
+    }
 
-	public void setNullText(String nullText) {
-		this.nullText = nullText;
-	}
+    public boolean isIndentEnabled() {
+        return indentEnabled;
+    }
 
-	public String getNullText() {
-		return nullText;
-	}
+    public void setNullText(String nullText) {
+        this.nullText = nullText;
+    }
+
+    public String getNullText() {
+        return nullText;
+    }
 }

@@ -32,7 +32,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
@@ -59,8 +58,8 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
     private final WindowContext _windowContext;
 
     @Inject
-    protected TableMouseListener(WindowContext windowContext, SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
-            InjectorBuilder injectorBuilder) {
+    protected TableMouseListener(WindowContext windowContext, SchemaTree schemaTree,
+            AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder) {
         _windowContext = windowContext;
         _schemaTree = schemaTree;
         _analysisJobBuilder = analysisJobBuilder;
@@ -101,92 +100,113 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                     }
                 }
 
+                final Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
+                        .createInjector();
+
                 final JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(table.getName());
 
                 if (enableAddTable) {
-                    final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
-                            "images/actions/toggle-source-table.png");
-                    addTableItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            addTable(table);
-                        }
-                    });
-                    popup.add(addTableItem);
+                    addAddTableToSourceMenuItem(table, popup);
                 }
 
                 if (enableRemoveTable) {
-                    final JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
-                            "images/actions/toggle-source-table.png");
-                    removeTableItem.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            removeTable(table);
-                        }
-                    });
-                    popup.add(removeTableItem);
+                    addRemoveTableFromSourceMenuItem(table, popup);
                 }
 
-                final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
-                        IconUtils.MODEL_QUICK_ANALYSIS);
-
-                final Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null)
-                        .createInjector();
-
-                final QuickAnalysisActionListener quickAnalysisActionListener = injector
-                        .getInstance(QuickAnalysisActionListener.class);
-                quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
-                popup.add(quickAnalysisMenuItem);
-
-                final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", IconUtils.MODEL_QUERY);
-                queryMenuItem.addActionListener(new QueryActionListener(_schemaTree.getWindowContext(),
-                        _analysisJobBuilder, table));
-                popup.add(queryMenuItem);
-
-                final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem(
-                        "Save table as Excel spreadsheet", IconUtils.COMPONENT_TYPE_WRITE_DATA);
-                final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
-                        .getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
-                saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
-                popup.add(saveAsExcelFileMenuItem);
-
-                final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
-                        IconUtils.COMPONENT_TYPE_WRITE_DATA);
-                final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
-                        .getInstance(SaveTableAsCsvFileActionListener.class);
-
-                saveAsCsvFileMenuItem.addActionListener(saveTableAsCsvFileActionListener);
-                popup.add(saveAsCsvFileMenuItem);
-
-                final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
-                        IconUtils.ACTION_PREVIEW);
-                previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-                        _schemaTree.getDatastore(), columns));
-                popup.add(previewMenuItem);
-
-                final Datastore datastore = _schemaTree.getDatastore();
-                if (datastore instanceof UpdateableDatastore) {
-                    if (!MetaModelHelper.isInformationSchema(table.getSchema())) {
-                        popup.addSeparator();
-
-                        final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                        final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table",
-                                IconUtils.ACTION_DELETE);
-                        dropTableMenuItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                final DropTableDialog dialog = new DropTableDialog(_windowContext, updateableDatastore,
-                                        table, _schemaTree);
-                                dialog.open();
-                            }
-                        });
-                        popup.add(dropTableMenuItem);
-                    }
-                }
-
+                addQuickAnalysisMenuItem(injector, popup);
+                addQueryTableMenuItem(table, popup);
+                addSaveTableAsExcelMenuItem(popup, injector);
+                addSaveTableAsCsvMenuItem(popup, injector);
+                addPreviewTableMenuItem(columns, popup);
+                addDropTableMenuItem(table, popup);
                 popup.show((Component) e.getSource(), e.getX(), e.getY());
             }
+        }
+    }
+
+    private void addQueryTableMenuItem(final Table table, final JPopupMenu popup) {
+        final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", IconUtils.MODEL_QUERY);
+        queryMenuItem.addActionListener(new QueryActionListener(_schemaTree.getWindowContext(), _analysisJobBuilder,
+                table));
+        popup.add(queryMenuItem);
+    }
+
+    private void addQuickAnalysisMenuItem(final Injector injector, final JPopupMenu popup) {
+        final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
+                IconUtils.MODEL_QUICK_ANALYSIS);
+
+        final QuickAnalysisActionListener quickAnalysisActionListener = injector
+                .getInstance(QuickAnalysisActionListener.class);
+        quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
+        popup.add(quickAnalysisMenuItem);
+    }
+
+    private void addRemoveTableFromSourceMenuItem(final Table table, final JPopupMenu popup) {
+        final JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
+                "images/actions/toggle-source-table.png");
+        removeTableItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeTable(table);
+            }
+        });
+        popup.add(removeTableItem);
+    }
+
+    private void addAddTableToSourceMenuItem(final Table table, final JPopupMenu popup) {
+        final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
+                "images/actions/toggle-source-table.png");
+        addTableItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addTable(table);
+            }
+        });
+        popup.add(addTableItem);
+    }
+
+    private void addSaveTableAsExcelMenuItem(final JPopupMenu popup, Injector injector) {
+        final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem("Save table as Excel spreadsheet",
+                IconUtils.COMPONENT_TYPE_WRITE_DATA);
+        final SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
+                .getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
+        saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
+        popup.add(saveAsExcelFileMenuItem);
+    }
+
+    private void addSaveTableAsCsvMenuItem(final JPopupMenu popup, Injector injector) {
+        final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
+                IconUtils.COMPONENT_TYPE_WRITE_DATA);
+        final SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
+                .getInstance(SaveTableAsCsvFileActionListener.class);
+        saveAsCsvFileMenuItem.addActionListener(saveTableAsCsvFileActionListener);
+        popup.add(saveAsCsvFileMenuItem);
+    }
+
+    private void addPreviewTableMenuItem(final Column[] columns, final JPopupMenu popup) {
+        final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", IconUtils.ACTION_PREVIEW);
+        previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
+                _schemaTree.getDatastore(), columns));
+        popup.add(previewMenuItem);
+    }
+
+    private void addDropTableMenuItem(final Table table, final JPopupMenu popup) {
+        final Datastore datastore = _schemaTree.getDatastore();
+        if (datastore instanceof UpdateableDatastore) {
+            popup.addSeparator();
+
+            final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+            final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DROP_TABLE);
+            dropTableMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final DropTableDialog dialog = new DropTableDialog(_windowContext, updateableDatastore, table,
+                            _schemaTree);
+                    dialog.open();
+                }
+            });
+            popup.add(dropTableMenuItem);
         }
     }
 

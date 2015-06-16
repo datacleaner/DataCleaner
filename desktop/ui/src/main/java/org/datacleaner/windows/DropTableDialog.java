@@ -52,7 +52,7 @@ public class DropTableDialog extends AbstractDialog {
     public DropTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Table table,
             SchemaTree schemaTree) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
-        
+
         _datastore = datastore;
         _table = table;
         _schemaTree = schemaTree;

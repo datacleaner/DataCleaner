@@ -198,7 +198,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
             popup.addSeparator();
 
             final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-            final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DELETE);
+            final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Drop table", IconUtils.ACTION_DROP_TABLE);
             dropTableMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

@@ -100,7 +100,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
         // The table name (String) property
         final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(transformerJobBuilder,
-                _tableNameProperty);
+                _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the output columns (String[]) property
@@ -136,7 +136,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
 
         // initialize
         schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
-        tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+        tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
         outputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
         inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
     }

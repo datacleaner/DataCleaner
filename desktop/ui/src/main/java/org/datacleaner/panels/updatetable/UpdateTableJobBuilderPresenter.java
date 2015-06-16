@@ -108,7 +108,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         // The table name (String) property
         final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
-                analyzerJobBuilder, _tableNameProperty);
+                analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         _inputColumnPropertyWidgets = new MultipleMappedColumnsPropertyWidget[2];
@@ -167,7 +167,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         // initialize
         schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
-        tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+        tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
 
         for (int i = 0; i < _inputColumnPropertyWidgets.length; i++) {
             MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = _inputColumnPropertyWidgets[i];

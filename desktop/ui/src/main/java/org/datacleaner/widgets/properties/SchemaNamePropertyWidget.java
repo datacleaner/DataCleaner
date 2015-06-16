@@ -136,7 +136,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
             @Override
             public void onItemSelected(Schema item) {
                 // update the table name when schema is selected
-                tableNamePropertyWidget.setSchema(item);
+                tableNamePropertyWidget.setSchema(_datastoreRef.get(), item);
             }
         });
     }

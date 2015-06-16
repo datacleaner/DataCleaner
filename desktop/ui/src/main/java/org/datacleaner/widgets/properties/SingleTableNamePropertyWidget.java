@@ -19,18 +19,32 @@
  */
 package org.datacleaner.widgets.properties;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 
 import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.UpdateableDatastore;
+import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
+import org.datacleaner.windows.CreateTableDialog;
 
 /**
  * Alternative String property widget, specifically built for components that
@@ -40,10 +54,39 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
 
     private final DCComboBox<Table> _comboBox;
     private final MutableRef<Schema> _schemaRef;
+    private final MutableRef<Datastore> _datastoreRef;
+    private DCPanel _panelAroundButton;
 
+    /**
+     * Creates the property widget
+     * 
+     * @param componentBuilder
+     * @param propertyDescriptor
+     * 
+     * @deprecated use
+     *             {@link #SingleTableNamePropertyWidget(ComponentBuilder, ConfiguredPropertyDescriptor, WindowContext)}
+     *             instead.
+     */
+    @Deprecated
     public SingleTableNamePropertyWidget(final ComponentBuilder componentBuilder,
             final ConfiguredPropertyDescriptor propertyDescriptor) {
+        this(componentBuilder, propertyDescriptor, null);
+    }
+
+    /**
+     * Creates the property widget
+     * 
+     * @param componentBuilder
+     * @param propertyDescriptor
+     * @param windowContext
+     */
+    public SingleTableNamePropertyWidget(final ComponentBuilder componentBuilder,
+            final ConfiguredPropertyDescriptor propertyDescriptor, final WindowContext windowContext) {
         super(componentBuilder, propertyDescriptor);
+
+        _schemaRef = new MutableRef<Schema>();
+        _datastoreRef = new MutableRef<Datastore>();
+
         _comboBox = new DCComboBox<Table>();
         _comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
         _comboBox.setEditable(false);
@@ -53,9 +96,44 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
                 fireValueChanged();
             }
         });
-        add(_comboBox);
-        _schemaRef = new MutableRef<Schema>();
-        
+
+        final JButton createTableButton = WidgetFactory.createSmallButton(IconUtils.ACTION_CREATE_TABLE);
+        createTableButton.setToolTipText("Create table");
+        createTableButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final Schema schema = _schemaRef.get();
+                final Datastore datastore = _datastoreRef.get();
+                if (datastore instanceof UpdateableDatastore) {
+                    final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                    final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema);
+                    dialog.addListener(new CreateTableDialog.Listener() {
+                        @Override
+                        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
+                            try (UpdateableDatastoreConnection con = datastore.openConnection()) {
+                                con.getDataContext().refreshSchemas();
+                                final Schema newSchema = con.getDataContext().getSchemaByName(schema.getName());
+                                setSchema(datastore, newSchema);
+                                setValue(tableName);
+                            }
+                        }
+                    });
+                    dialog.open();
+                }
+            }
+        });
+
+        _panelAroundButton = DCPanel.around(createTableButton);
+        _panelAroundButton.setBorder(WidgetUtils.BORDER_EMPTY);
+        _panelAroundButton.setVisible(false);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(_comboBox, BorderLayout.CENTER);
+        panel.add(_panelAroundButton, BorderLayout.EAST);
+
+        add(panel);
+
         setValue(getCurrentValue());
     }
 
@@ -63,9 +141,23 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox.addListener(listener);
     }
 
+    /**
+     * @param schema
+     * 
+     * @deprecated use {@link #setSchema(Datastore, Schema)} instead
+     */
+    @Deprecated
     public void setSchema(Schema schema) {
-        String previousValue = getValue();
+        setSchema(null, schema);
+    }
+
+    public void setSchema(Datastore datastore, Schema schema) {
+        _panelAroundButton.setVisible(CreateTableDialog.isCreateTableAppropriate(datastore, schema));
+
+        final String previousValue = getValue();
         _schemaRef.set(schema);
+        _datastoreRef.set(datastore);
+
         if (schema == null) {
             _comboBox.setModel(new DefaultComboBoxModel<Table>(new Table[1]));
         } else {
@@ -128,7 +220,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         _comboBox.setEditable(true);
         _comboBox.setSelectedItem(table);
         _comboBox.setEditable(false);
-        
+
         fireValueChanged();
     }
 }

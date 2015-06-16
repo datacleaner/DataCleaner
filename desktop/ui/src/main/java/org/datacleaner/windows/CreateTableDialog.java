@@ -28,12 +28,15 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.CreateTable;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.panels.CreateTableColumnDefintionPanel;
@@ -43,7 +46,6 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -53,20 +55,50 @@ import org.jdesktop.swingx.VerticalLayout;
 public class CreateTableDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
+    
+    public static interface Listener {
+        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName);
+    }
 
     private final UpdateableDatastore _datastore;
     private final Schema _schema;
-    private final SchemaTree _schemaTree;
     private final DCPanel _columnsListPanel;
     private final List<CreateTableColumnDefintionPanel> _columnDefinitionPanels;
+    private final List<Listener> _listeners;
 
-    public CreateTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Schema schema,
-            SchemaTree schemaTree) {
+    /**
+     * Determines if it is appropriate/possible to create a table in a
+     * particular schema or a particular datastore.
+     * 
+     * @param datastore
+     * @param schema
+     * @return
+     */
+    public static boolean isCreateTableAppropriate(Datastore datastore, Schema schema) {
+        if (datastore == null || schema == null) {
+            return false;
+        }
+        if (!(datastore instanceof UpdateableDatastore)) {
+            return false;
+        }
+        if (datastore instanceof CsvDatastore) {
+            // see issue https://issues.apache.org/jira/browse/METAMODEL-31 - as
+            // long as this is an issue we do not want to expose "create table"
+            // functionality to CSV datastores.
+            return false;
+        }
+        if (MetaModelHelper.isInformationSchema(schema)) {
+            return false;
+        }
+        return true;
+    }
+
+    public CreateTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Schema schema) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _datastore = datastore;
         _schema = schema;
-        _schemaTree = schemaTree;
+        _listeners = new ArrayList<CreateTableDialog.Listener>(1);
 
         _columnDefinitionPanels = new ArrayList<CreateTableColumnDefintionPanel>();
 
@@ -77,6 +109,17 @@ public class CreateTableDialog extends AbstractDialog {
         // add some columns to begin with
         addColumnDefinitionPanel(new CreateTableColumnDefintionPanel(this, "ID", ColumnType.INTEGER, true));
         addColumnDefinitionPanel();
+    }
+    
+    public void addListener(Listener listener) {
+        if (listener == null) {
+            return;
+        }
+        _listeners.add(listener);
+    }
+    
+    public void removeListener(Listener listener) {
+        _listeners.remove(listener);
     }
 
     @Override
@@ -98,14 +141,15 @@ public class CreateTableDialog extends AbstractDialog {
     protected JComponent getDialogContent() {
         final DCLabel label1 = DCLabel
                 .darkMultiLine("Please fill out the name and describe the columns that should comprise your new table. The table will be created in the schema '<b>"
-                        + _schema.getName() + "</b>'");
+                        + _schema.getName() + "</b>' of datastore '<b>" + _datastore.getName() + "</b>'");
 
         final DCLabel label2 = DCLabel
                 .darkMultiLine("Note that the column data types may be adapted/interpreted in order to fit the type of datastore, should they not apply to the datastore natively.");
 
         final JXTextField tableNameTextField = WidgetFactory.createTextField("Table name");
 
-        final JButton createTableButton = WidgetFactory.createPrimaryButton("Create table", IconUtils.ACTION_CREATE_TABLE);
+        final JButton createTableButton = WidgetFactory.createPrimaryButton("Create table",
+                IconUtils.ACTION_CREATE_TABLE);
         createTableButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -130,7 +174,9 @@ public class CreateTableDialog extends AbstractDialog {
                 }
 
                 doCreateTable(tableName, columns);
-                _schemaTree.refreshDatastore();
+                for (Listener listener : _listeners) {
+                    listener.onTableCreated(_datastore, _schema, tableName);
+                }
                 CreateTableDialog.this.close();
             }
         });

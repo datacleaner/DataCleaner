@@ -33,11 +33,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.util.IconUtils;
@@ -101,36 +99,26 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 
     private void addCreateTableMenuItem(final Schema schema, JPopupMenu popup) {
         final Datastore datastore = _schemaTree.getDatastore();
-        if (datastore instanceof UpdateableDatastore) {
-            if (isCreateTableAppropriate(datastore, schema)) {
-                popup.addSeparator();
+        if (CreateTableDialog.isCreateTableAppropriate(datastore, schema)) {
+            popup.addSeparator();
 
-                final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table",
-                        IconUtils.ACTION_CREATE_TABLE);
-                createTableMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore,
-                                schema, _schemaTree);
-                        dialog.open();
-                    }
-                });
-                popup.add(createTableMenuItem);
-            }
+            final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+            final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table",
+                    IconUtils.ACTION_CREATE_TABLE);
+            createTableMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore, schema);
+                    dialog.addListener(new CreateTableDialog.Listener() {
+                        @Override
+                        public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
+                            _schemaTree.refreshDatastore();
+                        }
+                    });
+                    dialog.open();
+                }
+            });
+            popup.add(createTableMenuItem);
         }
-    }
-
-    private boolean isCreateTableAppropriate(Datastore datastore, Schema schema) {
-        if (datastore instanceof CsvDatastore) {
-            // see issue https://issues.apache.org/jira/browse/METAMODEL-31 - as
-            // long as this is an issue we do not want to expose "create table"
-            // functionality to CSV datastores.
-            return false;
-        }
-        if (MetaModelHelper.isInformationSchema(schema)) {
-            return false;
-        }
-        return true;
     }
 }

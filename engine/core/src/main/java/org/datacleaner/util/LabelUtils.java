@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -96,13 +97,26 @@ public final class LabelUtils {
      * 
      * @return
      */
-    public static String getLabel(ComponentJob job, boolean includeDescriptorName, boolean includeInputColumnNames,
+    public static String getLabel(ComponentJob job, boolean includeDescriptorName, boolean includeInputColumnNames, boolean includeRequirements) {
+        return getLabel(job, null, includeDescriptorName, includeInputColumnNames, includeRequirements);
+    }
+
+    public static String getLabel(ComponentJob job, AnalyzerResult result, boolean includeDescriptorName, boolean includeInputColumnNames,
             boolean includeRequirements) {
         final String jobName = job.getName();
         final StringBuilder label = new StringBuilder();
         if (Strings.isNullOrEmpty(jobName)) {
             ComponentDescriptor<?> descriptor = job.getDescriptor();
-            label.append(descriptor.getDisplayName());
+            String displayName = descriptor.getDisplayName();
+            if (result != null) {
+                if (result instanceof HasLabelAdvice) {
+                    final String suggestedLabel = ((HasLabelAdvice) result).getSuggestedLabel();
+                    if (!Strings.isNullOrEmpty(suggestedLabel)) {
+                        displayName = suggestedLabel;
+                    }
+                }
+            }
+            label.append(displayName);
         } else {
             label.append(jobName);
         }

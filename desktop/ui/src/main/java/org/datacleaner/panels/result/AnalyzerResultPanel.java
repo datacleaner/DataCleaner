@@ -66,6 +66,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     private final ProgressInformationPanel _progressInformationPanel;
     private final ComponentJob _componentJob;
     private final LoadingIcon _loadingIcon;
+    private final JLabel _headerLabel;
 
     public AnalyzerResultPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel,
             ComponentJob componentJob) {
@@ -81,14 +82,14 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
         final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_TASK_PANE);
 
         final String headerText = getHeaderText();
-        final JLabel header1 = createHeader(icon, headerText, WidgetUtils.FONT_HEADER1, WidgetUtils.BG_COLOR_DARK);
-        final JLabel header2 = createHeader(null, getSubHeaderText(componentJob, headerText), WidgetUtils.FONT_SMALL,
+        _headerLabel = createHeader(icon, headerText, WidgetUtils.FONT_HEADER1, WidgetUtils.BG_COLOR_DARK);
+        final JLabel subheader = createHeader(null, getSubHeaderText(componentJob, headerText), WidgetUtils.FONT_SMALL,
                 WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
         final DCPanel headerPanel = new DCPanel();
         headerPanel.setLayout(new VerticalLayout(4));
-        headerPanel.add(header1);
-        headerPanel.add(header2);
+        headerPanel.add(_headerLabel);
+        headerPanel.add(subheader);
         headerPanel.setBorder(new EmptyBorder(0, 0, 4, 0));
         add(headerPanel, BorderLayout.NORTH);
 
@@ -99,6 +100,7 @@ public class AnalyzerResultPanel extends DCPanel implements Scrollable {
     public void setResult(final AnalyzerResult result) {
         final String headerText = getHeaderText();
         _progressInformationPanel.addUserLog("Rendering result for " + headerText);
+        _headerLabel.setText(LabelUtils.getLabel(_componentJob, result, false, false, false));
 
         // use a swing worker to run the rendering in the background
         new SwingWorker<JComponent, Void>() {

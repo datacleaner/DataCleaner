@@ -56,8 +56,7 @@ public class VerticalTabbedPane extends DCPanel {
 
     private static final Color COLOR_SELECTED_FOREGROUND = WidgetUtils.BG_COLOR_BLUE_DARK;
     private static final Color COLOR_SELECTED_BACKGROUND = WidgetUtils.BG_COLOR_LESS_BRIGHT;
-    private static final Border BORDER_TABS = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(
-            10, 4, 10, 4));
+    private static final Border BORDER_TABS = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
 
     private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
@@ -84,8 +83,7 @@ public class VerticalTabbedPane extends DCPanel {
         collapsiblePane.add(scroll);
         collapsiblePane.setAnimated(false);
 
-        final JButton toggleTabViewButton = new JButton(
-                imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
+        final JButton toggleTabViewButton = new JButton(imageManager.getImageIcon("images/widgets/vertical-tabs-collapse.png"));
         toggleTabViewButton.setBorder(null);
         toggleTabViewButton.setOpaque(false);
         toggleTabViewButton.setContentAreaFilled(false);
@@ -126,8 +124,7 @@ public class VerticalTabbedPane extends DCPanel {
         int i = 0;
         for (VerticalTab<?> tab : _tabs) {
             final JButton button = tab.getButton();
-            if (button.getForeground() == COLOR_SELECTED_FOREGROUND
-                    && button.getBackground() == COLOR_SELECTED_BACKGROUND) {
+            if (button.getForeground() == COLOR_SELECTED_FOREGROUND && button.getBackground() == COLOR_SELECTED_BACKGROUND) {
                 return i;
             }
             i++;
@@ -193,8 +190,13 @@ public class VerticalTabbedPane extends DCPanel {
             // the first tab automatically gets selected
             button.doClick();
         }
-        
+
         return tab;
+    }
+
+    public <C extends JComponent> void updateTabTitle(String title, Tab<C> tab) {
+        int index = _tabs.indexOf(tab);
+        ((JButton) _leftPanel.getComponent(index)).setText(title);
     }
 
     public void bindTabTitleToBanner(DCBannerPanel banner) {

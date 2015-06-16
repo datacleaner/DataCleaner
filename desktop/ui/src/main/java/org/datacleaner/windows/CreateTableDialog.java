@@ -105,7 +105,7 @@ public class CreateTableDialog extends AbstractDialog {
 
         final JXTextField tableNameTextField = WidgetFactory.createTextField("Table name");
 
-        final JButton createTableButton = WidgetFactory.createPrimaryButton("Create table", IconUtils.ACTION_EXECUTE);
+        final JButton createTableButton = WidgetFactory.createPrimaryButton("Create table", IconUtils.ACTION_CREATE_TABLE);
         createTableButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -169,7 +169,7 @@ public class CreateTableDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(createTableButton, panel, 0, row, 0.5, 0.1);
         WidgetUtils.addToGridBag(cancelButton, panel, 1, row, 0.5, 0.1);
 
-        panel.setPreferredSize(700, 550);
+        panel.setPreferredSize(getDialogWidth(), 400);
 
         return panel;
     }

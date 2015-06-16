@@ -37,6 +37,7 @@ import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.util.IconUtils;
@@ -50,7 +51,8 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
     private final Provider<TableMouseListener> _tableMouseListenerProvider;
 
     @Inject
-    protected SchemaMouseListener(WindowContext windowContext, SchemaTree schemaTree, Provider<TableMouseListener> tableMouseListenerProvider) {
+    protected SchemaMouseListener(WindowContext windowContext, SchemaTree schemaTree,
+            Provider<TableMouseListener> tableMouseListenerProvider) {
         _windowContext = windowContext;
         _schemaTree = schemaTree;
         _tableMouseListenerProvider = tableMouseListenerProvider;
@@ -72,41 +74,63 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
             if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
                 JPopupMenu popup = new JPopupMenu();
                 popup.setLabel(schema.getName());
-                JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
-                        "images/actions/toggle-source-table.png");
-                addTableItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
-                        Table[] tables = schema.getTables();
-                        for (Table table : tables) {
-                            tableMouseListener.addTable(table);
-                        }
-                    }
-                });
-                popup.add(addTableItem);
 
-                final Datastore datastore = _schemaTree.getDatastore();
-                if (datastore instanceof UpdateableDatastore) {
-                    if (!MetaModelHelper.isInformationSchema(schema)) {
-                        popup.addSeparator();
-                        
-                        final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                        final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table", IconUtils.ACTION_CREATE_TABLE);
-                        createTableMenuItem.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore,
-                                        schema, _schemaTree);
-                                dialog.open();
-                            }
-                        });
-                        popup.add(createTableMenuItem);
-                    }
-                }
+                addAddTablesToSourceMenuItem(schema, popup);
+                addCreateTableMenuItem(schema, popup);
 
                 popup.show((Component) e.getSource(), e.getX(), e.getY());
             }
         }
+    }
+
+    private void addAddTablesToSourceMenuItem(final Schema schema, JPopupMenu popup) {
+        final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
+                "images/actions/toggle-source-table.png");
+        addTableItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
+                final Table[] tables = schema.getTables();
+                for (final Table table : tables) {
+                    tableMouseListener.addTable(table);
+                }
+            }
+        });
+        popup.add(addTableItem);
+    }
+
+    private void addCreateTableMenuItem(final Schema schema, JPopupMenu popup) {
+        final Datastore datastore = _schemaTree.getDatastore();
+        if (datastore instanceof UpdateableDatastore) {
+            if (isCreateTableAppropriate(datastore, schema)) {
+                popup.addSeparator();
+
+                final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
+                final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table",
+                        IconUtils.ACTION_CREATE_TABLE);
+                createTableMenuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore,
+                                schema, _schemaTree);
+                        dialog.open();
+                    }
+                });
+                popup.add(createTableMenuItem);
+            }
+        }
+    }
+
+    private boolean isCreateTableAppropriate(Datastore datastore, Schema schema) {
+        if (datastore instanceof CsvDatastore) {
+            // see issue https://issues.apache.org/jira/browse/METAMODEL-31 - as
+            // long as this is an issue we do not want to expose "create table"
+            // functionality to CSV datastores.
+            return false;
+        }
+        if (MetaModelHelper.isInformationSchema(schema)) {
+            return false;
+        }
+        return true;
     }
 }

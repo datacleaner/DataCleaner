@@ -120,7 +120,6 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 addSaveTableAsCsvMenuItem(popup, injector);
                 addPreviewTableMenuItem(columns, popup);
                 addDropTableMenuItem(table, popup);
-
                 popup.show((Component) e.getSource(), e.getX(), e.getY());
             }
         }

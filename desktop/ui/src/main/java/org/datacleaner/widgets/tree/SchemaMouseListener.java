@@ -92,8 +92,8 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
                         popup.addSeparator();
                         
                         final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                        final JMenuItem dropTableMenuItem = WidgetFactory.createMenuItem("Create table", IconUtils.ACTION_CREATE_TABLE);
-                        dropTableMenuItem.addActionListener(new ActionListener() {
+                        final JMenuItem createTableMenuItem = WidgetFactory.createMenuItem("Create table", IconUtils.ACTION_CREATE_TABLE);
+                        createTableMenuItem.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 final CreateTableDialog dialog = new CreateTableDialog(_windowContext, updateableDatastore,
@@ -101,7 +101,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
                                 dialog.open();
                             }
                         });
-                        popup.add(dropTableMenuItem);
+                        popup.add(createTableMenuItem);
                     }
                 }
 

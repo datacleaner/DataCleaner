@@ -23,6 +23,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -33,7 +34,9 @@ import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.create.CreateTable;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.schema.Schema;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
@@ -55,7 +58,7 @@ import org.jdesktop.swingx.VerticalLayout;
 public class CreateTableDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static interface Listener {
         public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName);
     }
@@ -94,6 +97,11 @@ public class CreateTableDialog extends AbstractDialog {
     }
 
     public CreateTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Schema schema) {
+        this(windowContext, datastore, schema, null);
+    }
+
+    public CreateTableDialog(WindowContext windowContext, UpdateableDatastore datastore, Schema schema,
+            Collection<InputColumn<?>> columnSuggestions) {
         super(windowContext, ImageManager.get().getImage("images/window/banner-tabledef.png"));
 
         _datastore = datastore;
@@ -106,18 +114,34 @@ public class CreateTableDialog extends AbstractDialog {
         _columnsListPanel.setBorder(WidgetUtils.BORDER_EMPTY);
         _columnsListPanel.setLayout(new VerticalLayout());
 
-        // add some columns to begin with
-        addColumnDefinitionPanel(new CreateTableColumnDefintionPanel(this, "ID", ColumnType.INTEGER, true));
-        addColumnDefinitionPanel();
+        if (columnSuggestions != null && !columnSuggestions.isEmpty()) {
+            // add columns based on the suggestions
+            for (InputColumn<?> columnSuggestion : columnSuggestions) {
+                final String name = columnSuggestion.getName();
+                if (columnSuggestion.isPhysicalColumn()) {
+                    final Column physicalColumn = columnSuggestion.getPhysicalColumn();
+                    final ColumnType columnType = physicalColumn.getType();
+                    final boolean isPrimaryKey = physicalColumn.isPrimaryKey();
+                    addColumnDefinitionPanel(new CreateTableColumnDefintionPanel(this, name, columnType, isPrimaryKey));
+                } else {
+                    final ColumnType columnType = ColumnTypeImpl.convertColumnType(columnSuggestion.getDataType());
+                    addColumnDefinitionPanel(new CreateTableColumnDefintionPanel(this, name, columnType, false));
+                }
+            }
+        } else {
+            // add some columns to begin with
+            addColumnDefinitionPanel(new CreateTableColumnDefintionPanel(this, "ID", ColumnType.INTEGER, true));
+            addColumnDefinitionPanel();
+        }
     }
-    
+
     public void addListener(Listener listener) {
         if (listener == null) {
             return;
         }
         _listeners.add(listener);
     }
-    
+
     public void removeListener(Listener listener) {
         _listeners.remove(listener);
     }
@@ -210,7 +234,8 @@ public class CreateTableDialog extends AbstractDialog {
         row++;
         WidgetUtils.addToGridBag(buttonPanel, panel, 0, row, 2, 1);
         row++;
-        WidgetUtils.addToGridBag(_columnsListPanel, panel, 0, row, 2, 1, GridBagConstraints.NORTHWEST, 0, 1.0, 1.0);
+        WidgetUtils.addToGridBag(WidgetUtils.scrolleable(_columnsListPanel), panel, 0, row, 2, 1,
+                GridBagConstraints.NORTHWEST, 0, 1.0, 1.0, GridBagConstraints.BOTH);
         row++;
         WidgetUtils.addToGridBag(createTableButton, panel, 0, row, 0.5, 0.1);
         WidgetUtils.addToGridBag(cancelButton, panel, 1, row, 0.5, 0.1);

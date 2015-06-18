@@ -99,8 +99,8 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(transformerJobBuilder,
-                _tableNameProperty, windowContext);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
+                transformerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the output columns (String[]) property

@@ -102,8 +102,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(analyzerJobBuilder,
-                _tableNameProperty, windowContext);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
+                analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the InputColumn<?>[] property

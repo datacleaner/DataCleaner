@@ -22,6 +22,8 @@ package org.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -31,10 +33,13 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.MutableRef;
+import org.apache.metamodel.util.Predicate;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.UpdateableDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
+import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
@@ -55,7 +60,7 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
     private final DCComboBox<Table> _comboBox;
     private final MutableRef<Schema> _schemaRef;
     private final MutableRef<Datastore> _datastoreRef;
-    private DCPanel _panelAroundButton;
+    private final DCPanel _panelAroundButton;
 
     /**
      * Creates the property widget
@@ -106,7 +111,8 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
                 final Datastore datastore = _datastoreRef.get();
                 if (datastore instanceof UpdateableDatastore) {
                     final UpdateableDatastore updateableDatastore = (UpdateableDatastore) datastore;
-                    final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema);
+                    final CreateTableDialog dialog = new CreateTableDialog(windowContext, updateableDatastore, schema,
+                            getCreateTableColumnSuggestions());
                     dialog.addListener(new CreateTableDialog.Listener() {
                         @Override
                         public void onTableCreated(UpdateableDatastore datastore, Schema schema, String tableName) {
@@ -135,6 +141,22 @@ public class SingleTableNamePropertyWidget extends AbstractPropertyWidget<String
         add(panel);
 
         setValue(getCurrentValue());
+    }
+
+    protected Collection<InputColumn<?>> getCreateTableColumnSuggestions() {
+        final ComponentBuilder componentBuilder = getComponentBuilder();
+        List<InputColumn<?>> columns = componentBuilder.getAnalysisJobBuilder().getAvailableInputColumns(
+                componentBuilder);
+        columns = CollectionUtils.filter(columns, new Predicate<InputColumn<?>>() {
+            @Override
+            public Boolean eval(InputColumn<?> column) {
+                if (column instanceof MutableInputColumn) {
+                    return !((MutableInputColumn<?>) column).isHidden();
+                }
+                return true;
+            }
+        });
+        return columns;
     }
 
     public void addComboListener(Listener<Table> listener) {

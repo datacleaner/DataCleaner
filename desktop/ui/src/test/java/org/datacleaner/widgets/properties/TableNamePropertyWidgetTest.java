@@ -72,11 +72,12 @@ public class TableNamePropertyWidgetTest extends TestCase {
 
         final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(ds);
         final WindowContext windowContext = new SimpleWindowContext();
-        
+
         final SingleDatastorePropertyWidget datastoreWidget1 = new SingleDatastorePropertyWidget(tjb,
                 datastoreProperty, datastoreCatalog);
         final SchemaNamePropertyWidget schemaWidget1 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty, windowContext);
+        final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty,
+                windowContext);
         datastoreWidget1.connectToSchemaNamePropertyWidget(schemaWidget1);
         schemaWidget1.connectToTableNamePropertyWidget(tableWidget1);
         collection1.registerWidget(tableProperty, tableWidget1);
@@ -84,7 +85,8 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final SingleDatastorePropertyWidget datastoreWidget2 = new SingleDatastorePropertyWidget(tjb,
                 datastoreProperty, datastoreCatalog);
         final SchemaNamePropertyWidget schemaWidget2 = new SchemaNamePropertyWidget(tjb, schemaProperty);
-        final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty, windowContext);
+        final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty,
+                windowContext);
         datastoreWidget2.connectToSchemaNamePropertyWidget(schemaWidget2);
         schemaWidget2.connectToTableNamePropertyWidget(tableWidget2);
         collection2.registerWidget(tableProperty, tableWidget2);
@@ -112,7 +114,8 @@ public class TableNamePropertyWidgetTest extends TestCase {
         analysisJobBuilder.close();
     }
 
-    private PropertyWidgetCollection createPropertyWidgetCollection(TransformerComponentBuilder<TableLookupTransformer> tjb) {
+    private PropertyWidgetCollection createPropertyWidgetCollection(
+            TransformerComponentBuilder<TableLookupTransformer> tjb) {
         final PropertyWidgetCollection collection = new PropertyWidgetCollection(tjb);
         tjb.addChangeListener(new TransformerChangeListener() {
             @Override

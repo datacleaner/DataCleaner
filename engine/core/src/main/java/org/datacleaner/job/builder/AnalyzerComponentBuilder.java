@@ -140,9 +140,11 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
+        String label = LabelUtils.getLabel(this);
         if (!_multipleJobsSupported) {
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -182,8 +184,9 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (originatingTables.size() == 1 && _inputProperty.isArray()) {
             // there's only a single table involved - leave the input columns
             // untouched
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -255,15 +258,15 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                 configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
         ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(getComponentRequirement());
-        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                jobProperties), componentRequirement, getMetadataProperties());
+        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                new ImmutableComponentConfiguration(jobProperties), componentRequirement, getMetadataProperties());
         return job;
     }
 
     @Override
     public String toString() {
-        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
-                + "]";
+        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns="
+                + getInputColumns() + "]";
     }
 
     @Override

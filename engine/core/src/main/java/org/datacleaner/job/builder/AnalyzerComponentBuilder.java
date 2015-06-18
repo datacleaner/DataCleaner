@@ -115,7 +115,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         }
 
         if (validate && analyzerJobs.length > 1) {
-            throw new IllegalStateException("This builder generates " + analyzerJobs.length + " jobs, but a single job was requested");
+            throw new IllegalStateException("This builder generates " + analyzerJobs.length
+                    + " jobs, but a single job was requested");
         }
 
         return analyzerJobs[0];
@@ -133,15 +134,17 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return toAnalyzerJobs(validate, new AnalysisJobImmutabilizer());
     }
 
-    public AnalyzerJob[] toAnalyzerJobs(boolean validate, AnalysisJobImmutabilizer immutabilizer) throws IllegalStateException {
+    public AnalyzerJob[] toAnalyzerJobs(boolean validate, AnalysisJobImmutabilizer immutabilizer)
+            throws IllegalStateException {
         final Map<ConfiguredPropertyDescriptor, Object> configuredProperties = getConfiguredProperties();
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
         String label = LabelUtils.getLabel(this);
         if (!_multipleJobsSupported) {
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(), new ImmutableComponentConfiguration(
-                    configuredProperties), componentRequirement, getMetadataProperties());
+            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -181,8 +184,9 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (originatingTables.size() == 1 && _inputProperty.isArray()) {
             // there's only a single table involved - leave the input columns
             // untouched
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(), new ImmutableComponentConfiguration(
-                    configuredProperties), componentRequirement, getMetadataProperties());
+            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(label, getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties());
             return new AnalyzerJob[] { job };
         }
 
@@ -211,7 +215,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn, ConfiguredPropertyDescriptor propertyDescriptor) {
+    public AnalyzerComponentBuilder<A> addInputColumn(InputColumn<?> inputColumn,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
         assert propertyDescriptor.isInputColumn();
         if (inputColumn == null) {
             throw new IllegalArgumentException("InputColumn cannot be null");
@@ -236,7 +241,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
                     }
                 }
                 if (throwException) {
-                    throw new ComponentConfigurationException("No input columns configured for " + LabelUtils.getLabel(this));
+                    throw new ComponentConfigurationException("No input columns configured for "
+                            + LabelUtils.getLabel(this));
                 } else {
                     return false;
                 }
@@ -246,22 +252,26 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         return super.isConfigured(configuredProperty, throwException);
     }
 
-    private AnalyzerJob createPartitionedJob(Object columnValue, Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
-        Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(configuredProperties);
+    private AnalyzerJob createPartitionedJob(Object columnValue,
+            Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
+        Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
+                configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
         ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(getComponentRequirement());
-        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(jobProperties),
-                componentRequirement, getMetadataProperties());
+        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                new ImmutableComponentConfiguration(jobProperties), componentRequirement, getMetadataProperties());
         return job;
     }
 
     @Override
     public String toString() {
-        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns() + "]";
+        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns="
+                + getInputColumns() + "]";
     }
 
     @Override
-    public AnalyzerComponentBuilder<A> setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty, Object value) {
+    public AnalyzerComponentBuilder<A> setConfiguredProperty(ConfiguredPropertyDescriptor configuredProperty,
+            Object value) {
         if (isMultipleJobsDeterminedBy(configuredProperty)) {
 
             // the dummy value is used just to pass something to the underlying

@@ -388,7 +388,13 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
         final DCBannerPanel banner = new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"),
                 bannerTitle);
-        _tabbedPane.bindTabTitleToBanner(banner);
+        _tabbedPane.addListener(new VerticalTabbedPane.Listener() {
+            @Override
+            public void stateChanged(int newIndex, Tab<?> newTab) {
+                banner.setTitle2(newTab.getTitle());
+                banner.updateUI();
+            }
+        });
 
         for (JComponent pluggableButton : _pluggableButtons) {
             banner.add(pluggableButton);

@@ -35,7 +35,6 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.panels.DCBannerPanel;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.WidgetFactory;
@@ -62,7 +61,12 @@ public class VerticalTabbedPane extends DCPanel {
     private final List<VerticalTab<?>> _tabs;
     private final DCPanel _leftPanel;
     private JComponent _currentContent;
-    private DCBannerPanel _banner;
+
+    public static interface Listener {
+        public void stateChanged(int newIndex, Tab<?> newTab);
+    }
+
+    private List<Listener> changeListeners = new ArrayList<Listener>();
 
     public VerticalTabbedPane() {
         super();
@@ -164,10 +168,8 @@ public class VerticalTabbedPane extends DCPanel {
         add(scroll, BorderLayout.CENTER);
         _currentContent = scroll;
 
-        // update banner if necesary
-        if (_banner != null) {
-            _banner.setTitle2(button.getText());
-            _banner.updateUI();
+        for (Listener listener : changeListeners) {
+            listener.stateChanged(index, tab);
         }
 
         updateUI();
@@ -193,17 +195,11 @@ public class VerticalTabbedPane extends DCPanel {
             // the first tab automatically gets selected
             button.doClick();
         }
-        
+
         return tab;
     }
 
-    public void bindTabTitleToBanner(DCBannerPanel banner) {
-        _banner = banner;
-        final int selectedIndex = getSelectedIndex();
-        if (selectedIndex != -1) {
-            // refresh the selection and thus the banner
-            setSelectedIndex(selectedIndex);
-        }
+    public void addListener(Listener listener) {
+        changeListeners.add(listener);
     }
-
 }

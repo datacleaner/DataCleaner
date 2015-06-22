@@ -112,7 +112,10 @@ public final class LabelUtils {
                     LifeCycleHelper lch = new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null,
                             false);
                     lch.assignConfiguredProperties(descriptor, c, job.getConfiguration());
-                    baseName = c.getSuggestedLabel();
+                    String suggestedLabel = c.getSuggestedLabel();
+                    if(!StringUtils.isNullOrEmpty(suggestedLabel)) {
+                        baseName = suggestedLabel;
+                    }
                 } catch (Exception e) {
                     // Ignore.
                 }

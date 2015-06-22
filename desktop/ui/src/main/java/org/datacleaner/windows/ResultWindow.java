@@ -41,6 +41,10 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.metamodel.schema.Table;
@@ -88,6 +92,7 @@ import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
 import org.datacleaner.widgets.tabs.Tab;
 import org.datacleaner.widgets.tabs.VerticalTabbedPane;
+import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * Window in which the result (and running progress information) of job
@@ -137,13 +142,55 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         final boolean running = (result == null);
-        _tabbedPane = new VerticalTabbedPane();
+
         _resultPanels = new IdentityHashMap<>();
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
+
+        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
+            @Override
+            public AnalysisResult get() {
+                return getResult();
+            }
+        };
+
+        Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
+        _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
+        _publishButton.setBorder(buttonBorder);
+        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
+                resultRef, _jobFilename));
+
+        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
+        _saveButton.setBorder(buttonBorder);
+        _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+
+        _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
+        _exportButton.setBorder(buttonBorder);
+        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
+                _userPreferences));
+
+        _tabbedPane = new VerticalTabbedPane() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected JComponent wrapLeftPanel(DCPanel originalPanel) {
+                DCPanel buttonPanel = new DCPanel();
+                buttonPanel.setLayout(new VerticalLayout());
+                buttonPanel.setBorder(new MatteBorder(6, 0, 0, 0, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
+                buttonPanel.add(_publishButton);
+                buttonPanel.add(_exportButton);
+                buttonPanel.add(_saveButton);
+
+                DCPanel wrappedPanel = new DCPanel();
+                wrappedPanel.setLayout(new BorderLayout());
+                wrappedPanel.add(originalPanel, BorderLayout.CENTER);
+                wrappedPanel.add(buttonPanel, BorderLayout.SOUTH);
+                return super.wrapLeftPanel(wrappedPanel);
+            }
+        };
 
         final Dimension size = getDefaultWindowSize();
         _windowSizePreference = new WindowSizePreferences(_userPreferences, getClass(), size.width, size.height);
@@ -155,24 +202,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         _pluggableButtons = new ArrayList<JComponent>(1);
 
         _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
-
-        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
-            @Override
-            public AnalysisResult get() {
-                return getResult();
-            }
-        };
-
-        _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
-        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
-                resultRef, _jobFilename));
-
-        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
-        _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
-
-        _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
-        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
-                _userPreferences));
 
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             JComponent component = pluggableComponent.eval(this);
@@ -268,12 +297,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             if (existingTab != null) {
                 return existingTab;
             }
-            
+
             String title = LabelUtils.getLabel(componentJob, false, false, false);
             if (title.length() > 40) {
                 title = title.substring(0, 39) + "...";
             }
-            
+
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
             final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
                     _progressInformationPanel, componentJob);
@@ -365,9 +394,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             banner.add(pluggableButton);
         }
 
-        banner.add(_publishButton);
-        banner.add(_exportButton);
-        banner.add(_saveButton);
         banner.add(_cancelButton);
         banner.add(Box.createHorizontalStrut(10));
 
@@ -473,7 +499,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                             getOrCreateResultPanel(componentJob, false);
                         }
                         _tabbedPane.updateUI();
-                        
+
                         if (expectedRows == -1) {
                             _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
                         } else {

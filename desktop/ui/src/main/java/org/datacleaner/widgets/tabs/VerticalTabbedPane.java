@@ -75,7 +75,7 @@ public class VerticalTabbedPane extends DCPanel {
         add(wrapLeftPanel(_leftPanel), BorderLayout.WEST);
     }
 
-    private JComponent wrapLeftPanel(final DCPanel panel) {
+    protected JComponent wrapLeftPanel(final DCPanel panel) {
         final JScrollPane scroll = WidgetUtils.scrolleable(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 

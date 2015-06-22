@@ -180,9 +180,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new VerticalLayout());
                 buttonPanel.setBorder(new MatteBorder(6, 0, 0, 0, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
-                buttonPanel.add(_publishButton);
-                buttonPanel.add(_exportButton);
                 buttonPanel.add(_saveButton);
+                buttonPanel.add(_exportButton);
+                buttonPanel.add(_publishButton);
 
                 DCPanel wrappedPanel = new DCPanel();
                 wrappedPanel.setLayout(new BorderLayout());

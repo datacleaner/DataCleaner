@@ -40,6 +40,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -159,15 +160,18 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
         Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
         _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
+        _publishButton.setHorizontalAlignment(SwingConstants.LEFT);
         _publishButton.setBorder(buttonBorder);
         _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
                 resultRef, _jobFilename));
 
         _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
+        _saveButton.setHorizontalAlignment(SwingConstants.LEFT);
         _saveButton.setBorder(buttonBorder);
         _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
 
         _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
+        _exportButton.setHorizontalAlignment(SwingConstants.LEFT);
         _exportButton.setBorder(buttonBorder);
         _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
@@ -179,10 +183,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             protected JComponent wrapLeftPanel(DCPanel originalPanel) {
                 DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new VerticalLayout());
-                buttonPanel.setBorder(new MatteBorder(6, 0, 0, 0, WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND));
-                buttonPanel.add(_saveButton);
-                buttonPanel.add(_exportButton);
+                buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
                 buttonPanel.add(_publishButton);
+                buttonPanel.add(_exportButton);
+                buttonPanel.add(_saveButton);
 
                 DCPanel wrappedPanel = new DCPanel();
                 wrappedPanel.setLayout(new BorderLayout());

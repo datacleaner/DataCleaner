@@ -102,8 +102,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(analyzerJobBuilder,
-                _tableNameProperty);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
+                analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the InputColumn<?>[] property
@@ -133,7 +133,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         // initialize
         schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
-        tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+        tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
         inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
     }
 

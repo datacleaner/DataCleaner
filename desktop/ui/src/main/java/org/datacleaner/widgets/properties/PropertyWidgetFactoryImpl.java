@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.ColumnProperty;
@@ -33,6 +32,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.MappedProperty;
 import org.datacleaner.api.SchemaProperty;
 import org.datacleaner.api.TableProperty;
+import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.UpdateableDatastore;
@@ -153,7 +153,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                     && mappedToProperty.getAnnotation(SchemaProperty.class) != null) {
 
                 final SingleTableNamePropertyWidget tablePropertyWidget = new SingleTableNamePropertyWidget(
-                        getComponentBuilder(), mappedProperty);
+                        getComponentBuilder(), mappedProperty, getWindowContext());
                 final SchemaNamePropertyWidget schemaPropertyWidget;
                 if (mappedToPropertyWidget == null) {
                     schemaPropertyWidget = new SchemaNamePropertyWidget(getComponentBuilder(), mappedToProperty);
@@ -161,12 +161,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                     schemaPropertyWidget = (SchemaNamePropertyWidget) mappedToPropertyWidget;
                 }
 
-                schemaPropertyWidget.addComboListener(new DCComboBox.Listener<Schema>() {
-                    @Override
-                    public void onItemSelected(Schema item) {
-                        tablePropertyWidget.setSchema(item);
-                    }
-                });
+                schemaPropertyWidget.connectToTableNamePropertyWidget(tablePropertyWidget);
 
                 final PropertyWidgetMapping mapping = new PropertyWidgetMapping();
                 mapping.putMapping(mappedProperty, tablePropertyWidget);
@@ -180,7 +175,8 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
 
                 final SingleTableNamePropertyWidget tablePropertyWidget;
                 if (mappedToPropertyWidget == null) {
-                    tablePropertyWidget = new SingleTableNamePropertyWidget(getComponentBuilder(), mappedToProperty);
+                    tablePropertyWidget = new SingleTableNamePropertyWidget(getComponentBuilder(), mappedToProperty,
+                            getWindowContext());
                 } else {
                     tablePropertyWidget = (SingleTableNamePropertyWidget) mappedToPropertyWidget;
                 }
@@ -212,6 +208,10 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
         }
 
         return null;
+    }
+
+    private WindowContext getWindowContext() {
+        return _dcModule.createChildInjectorForComponent(_componentBuilder).getInstance(WindowContext.class);
     }
 
     @Override

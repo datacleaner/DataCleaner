@@ -26,12 +26,15 @@ import java.util.Date;
 
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +105,22 @@ public final class LabelUtils {
         final StringBuilder label = new StringBuilder();
         if (Strings.isNullOrEmpty(jobName)) {
             ComponentDescriptor<?> descriptor = job.getDescriptor();
-            label.append(descriptor.getDisplayName());
+            String baseName = descriptor.getDisplayName();
+            if (ReflectionUtils.is(descriptor.getComponentClass(), HasLabelAdvice.class)) {
+                try {
+                    HasLabelAdvice c = (HasLabelAdvice) descriptor.newInstance();
+                    LifeCycleHelper lch = new LifeCycleHelper((DataCleanerConfiguration) null, (AnalysisJob) null,
+                            false);
+                    lch.assignConfiguredProperties(descriptor, c, job.getConfiguration());
+                    String suggestedLabel = c.getSuggestedLabel();
+                    if(!StringUtils.isNullOrEmpty(suggestedLabel)) {
+                        baseName = suggestedLabel;
+                    }
+                } catch (Exception e) {
+                    // Ignore.
+                }
+            }
+            label.append(baseName);
         } else {
             label.append(jobName);
         }

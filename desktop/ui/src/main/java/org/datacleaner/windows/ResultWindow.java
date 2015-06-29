@@ -268,12 +268,12 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             if (existingTab != null) {
                 return existingTab;
             }
-            
+
             String title = LabelUtils.getLabel(componentJob, false, false, false);
             if (title.length() > 40) {
                 title = title.substring(0, 39) + "...";
             }
-            
+
             final Icon icon = IconUtils.getDescriptorIcon(componentJob.getDescriptor(), IconUtils.ICON_SIZE_TAB);
             final AnalyzerResultPanel resultPanel = new AnalyzerResultPanel(_rendererFactory,
                     _progressInformationPanel, componentJob);
@@ -473,7 +473,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                             getOrCreateResultPanel(componentJob, false);
                         }
                         _tabbedPane.updateUI();
-                        
+
                         if (expectedRows == -1) {
                             _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
                         } else {

@@ -38,7 +38,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
 
     private final AtomicInteger _requestCount = new AtomicInteger();
     private final AtomicInteger _activeRequestsCount = new AtomicInteger();
-
+    
     @Override
     public ServiceResult<R> invokeService(Callable<R> callable) {
         _requestCount.incrementAndGet();
@@ -93,4 +93,7 @@ public class SimpleServiceSession<R> implements ServiceSession<R> {
         }
     }
 
+    @Override
+    public void close() {
+    }
 }

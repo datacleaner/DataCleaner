@@ -26,6 +26,7 @@
 		<module>network-tools</module>
 		<module>writers</module>
 		<module>el</module>
+		<module>http</module>
 		<module>javascript</module>
 		<module>i18n</module>
 	</modules>

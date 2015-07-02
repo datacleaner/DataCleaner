@@ -50,7 +50,10 @@ import org.datacleaner.util.ws.PooledServiceSession;
 import org.datacleaner.util.ws.ServiceResult;
 
 @Named("HTTP request")
+
+// TODO: What category would make sense?
 @Categorized(value = {})
+
 @Description("Sends a HTTP request for each record.")
 public class HttpRequestTransformer implements Transformer {
 
@@ -117,7 +120,7 @@ public class HttpRequestTransformer implements Transformer {
     public Object[] transform(InputRow inputRow) {
         final Charset usedCharset = Charset.forName(charset);
 
-        // TODO: Do variable/parameter replacement in body and url
+        // TODO: Do variable/parameter replacement in body and url. See maybe how it is done in the "Batch emailing" extension
 
         final HttpUriRequest request = method.createRequest(url);
         if (request instanceof HttpEntityEnclosingRequest) {

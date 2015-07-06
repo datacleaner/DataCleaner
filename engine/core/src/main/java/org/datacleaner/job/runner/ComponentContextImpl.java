@@ -33,10 +33,30 @@ public class ComponentContextImpl implements ComponentContext {
     private final ComponentJob _component;
     private final AnalysisListener _listener;
 
+    /**
+     * The preferred constructor which is aware of the component and allows
+     * publishing messages to an {@link AnalysisListener}.
+     * 
+     * @param job
+     * @param component
+     * @param listener
+     */
     public ComponentContextImpl(AnalysisJob job, ComponentJob component, AnalysisListener listener) {
         _job = job;
         _component = component;
         _listener = listener;
+    }
+
+    /**
+     * Constructor used in situations where an {@link AnalysisListener} is not
+     * available, typically at job building time rather than run time.
+     * 
+     * @param job
+     */
+    public ComponentContextImpl(AnalysisJob job) {
+        _job = job;
+        _component = null;
+        _listener = null;
     }
 
     @Override

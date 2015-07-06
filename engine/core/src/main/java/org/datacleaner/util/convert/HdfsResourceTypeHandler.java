@@ -30,6 +30,8 @@ import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
  */
 public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource> {
 
+    private static final String PREFIX = "hdfs://";
+
     @Override
     public boolean isParserFor(Class<? extends Resource> resourceType) {
         return ReflectionUtils.is(resourceType, HdfsResource.class);
@@ -42,12 +44,12 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
 
     @Override
     public HdfsResource parsePath(String path) {
-        return new HdfsResource(path);
+        return new HdfsResource(PREFIX + path);
     }
 
     @Override
     public String createPath(Resource resource) {
-        return resource.getQualifiedPath();
+        return resource.getQualifiedPath().substring(PREFIX.length());
     }
 
 }

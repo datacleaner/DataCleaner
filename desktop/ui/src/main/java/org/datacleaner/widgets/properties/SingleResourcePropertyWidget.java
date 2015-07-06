@@ -49,6 +49,7 @@ import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.UrlResource;
 import org.jdesktop.swingx.JXTextField;
@@ -87,7 +88,7 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             extensions = fileProperty.extension();
         }
 
-        _resourceTypeComboBox = new DCComboBox<String>(new String[] { "file", "url", "classpath", "vfs" });
+        _resourceTypeComboBox = new DCComboBox<String>(new String[] { "file", "url", "hdfs", "classpath", "vfs" });
         _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
         _otherPathTextField = WidgetFactory.createTextField();
 
@@ -123,8 +124,8 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             _otherPathTextField.setVisible(false);
             _filenameField.setFile(((FileResource) currentValue).getFile());
             _immutableValue = null;
-        } else if (currentValue instanceof UrlResource || currentValue instanceof VfsResource
-                || currentValue instanceof ClasspathResource) {
+        } else if (currentValue instanceof UrlResource || currentValue instanceof HdfsResource
+                || currentValue instanceof VfsResource || currentValue instanceof ClasspathResource) {
             _filenameField.setVisible(false);
             _immutableValue = null;
         } else {
@@ -246,6 +247,10 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             _resourceTypeComboBox.setSelectedItem("url");
             final String url = ((UrlResource) value).getUri().toString();
             _otherPathTextField.setText(url);
+        } else if (value instanceof HdfsResource) {
+            _resourceTypeComboBox.setSelectedItem("hdfs");
+            final String path = value.getQualifiedPath();
+            _otherPathTextField.setText(path);
         } else if (value instanceof ClasspathResource) {
             _resourceTypeComboBox.setSelectedItem("classpath");
             final String resourcePath = ((ClasspathResource) value).getResourcePath();

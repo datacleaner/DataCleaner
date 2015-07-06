@@ -44,12 +44,19 @@ public class HdfsResourceTypeHandler implements ResourceTypeHandler<HdfsResource
 
     @Override
     public HdfsResource parsePath(String path) {
-        return new HdfsResource(PREFIX + path);
+        if (!path.startsWith(PREFIX)) {
+            path = PREFIX + path;
+        }
+        return new HdfsResource(path);
     }
 
     @Override
     public String createPath(Resource resource) {
-        return resource.getQualifiedPath().substring(PREFIX.length());
+        String path = resource.getQualifiedPath();
+        if (path.startsWith(PREFIX)) {
+            path = path.substring(PREFIX.length());
+        }
+        return path;
     }
 
 }

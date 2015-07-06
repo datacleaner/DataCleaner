@@ -187,7 +187,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected JComponent wrapLeftPanel(DCPanel originalPanel) {
+            protected JComponent wrapInCollapsiblePane(final JComponent originalPanel) {
                 DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new VerticalLayout());
                 buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
@@ -198,7 +198,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 wrappedPanel.setLayout(new BorderLayout());
                 wrappedPanel.add(originalPanel, BorderLayout.CENTER);
                 wrappedPanel.add(buttonPanel, BorderLayout.SOUTH);
-                return super.wrapLeftPanel(wrappedPanel);
+                return super.wrapInCollapsiblePane(wrappedPanel);
             }
         };
 

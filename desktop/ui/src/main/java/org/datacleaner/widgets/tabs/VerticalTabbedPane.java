@@ -76,16 +76,19 @@ public class VerticalTabbedPane extends DCPanel {
         _leftPanel.setLayout(new VerticalLayout(0));
 
         setLayout(new BorderLayout());
-        add(wrapLeftPanel(_leftPanel), BorderLayout.WEST);
+        add(wrapInCollapsiblePane(wrapInScrollPane(_leftPanel)), BorderLayout.WEST);
     }
-
-    protected JComponent wrapLeftPanel(final DCPanel panel) {
+    
+    protected JComponent wrapInScrollPane(final JComponent panel) {
         final JScrollPane scroll = WidgetUtils.scrolleable(panel);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        return scroll;
+    }
 
+    protected JComponent wrapInCollapsiblePane(final JComponent panel) {
         final JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
         collapsiblePane.getContentPane().setBackground(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
-        collapsiblePane.add(scroll);
+        collapsiblePane.add(panel);
         collapsiblePane.setAnimated(false);
 
         final JButton toggleTabViewButton = new JButton(

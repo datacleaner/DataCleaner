@@ -58,6 +58,7 @@ public class ResourceConverter implements Converter<Resource> {
         final List<ResourceTypeHandler<?>> result = new ArrayList<>();
         result.add(new FileResourceTypeHandler(configuration));
         result.add(new UrlResourceTypeHandler());
+        result.add(new HdfsResourceTypeHandler());
         result.add(new ClasspathResourceTypeHandler());
         result.add(new VfsResourceTypeHandler());
         return result;

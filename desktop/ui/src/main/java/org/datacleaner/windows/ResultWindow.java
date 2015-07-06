@@ -40,6 +40,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -91,6 +92,8 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
+import org.datacleaner.widgets.PopupButton;
+import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.widgets.tabs.Tab;
 import org.datacleaner.widgets.tabs.VerticalTabbedPane;
 import org.jdesktop.swingx.VerticalLayout;
@@ -118,9 +121,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
     private final JButton _cancelButton;
-    private final JButton _saveButton;
-    private final JButton _exportButton;
-    private final JButton _publishButton;
+    private final PopupButton _saveResultsPopupButton;
     private final List<JComponent> _pluggableButtons;
     private final WindowSizePreferences _windowSizePreference;
 
@@ -159,23 +160,29 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         };
 
         Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
-        _publishButton = WidgetFactory.createDefaultButton("Publish to server", IconUtils.MENU_DQ_MONITOR);
-        _publishButton.setHorizontalAlignment(SwingConstants.LEFT);
-        _publishButton.setBorder(buttonBorder);
-        _publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
-                resultRef, _jobFilename));
+        _saveResultsPopupButton = WidgetFactory.createDefaultPopupButton("Save results", IconUtils.ACTION_SAVE_DARK);
+        _saveResultsPopupButton.setHorizontalAlignment(SwingConstants.LEFT);
+        _saveResultsPopupButton.setBorder(buttonBorder);
+        _saveResultsPopupButton.setMenuPosition(MenuPosition.TOP);
+        _saveResultsPopupButton.getMenu().setBorder(new MatteBorder(1, 0, 0, 1, WidgetUtils.BG_COLOR_MEDIUM));
 
-        _saveButton = WidgetFactory.createDefaultButton("Save result", IconUtils.ACTION_SAVE_DARK);
-        _saveButton.setHorizontalAlignment(SwingConstants.LEFT);
-        _saveButton.setBorder(buttonBorder);
-        _saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+        JMenuItem saveAsFileItem = WidgetFactory.createMenuItem("Save as result file", IconUtils.ACTION_SAVE_DARK);
+        saveAsFileItem.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+        saveAsFileItem.setBorder(buttonBorder);
+        _saveResultsPopupButton.getMenu().add(saveAsFileItem);
 
-        _exportButton = WidgetFactory.createDefaultButton("Export to HTML", IconUtils.WEBSITE);
-        _exportButton.setHorizontalAlignment(SwingConstants.LEFT);
-        _exportButton.setBorder(buttonBorder);
-        _exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
+        JMenuItem exportToHtmlItem = WidgetFactory.createMenuItem("Export to HTML", IconUtils.WEBSITE);
+        exportToHtmlItem.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration,
                 _userPreferences));
+        exportToHtmlItem.setBorder(buttonBorder);
+        _saveResultsPopupButton.getMenu().add(exportToHtmlItem);
 
+        JMenuItem publishToServerItem = WidgetFactory.createMenuItem("Publish to server", IconUtils.MENU_DQ_MONITOR);
+        publishToServerItem.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
+                _userPreferences, resultRef, _jobFilename));
+        publishToServerItem.setBorder(buttonBorder);
+        _saveResultsPopupButton.getMenu().add(publishToServerItem);
+        
         _tabbedPane = new VerticalTabbedPane() {
             private static final long serialVersionUID = 1L;
 
@@ -184,9 +191,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 DCPanel buttonPanel = new DCPanel();
                 buttonPanel.setLayout(new VerticalLayout());
                 buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
-                buttonPanel.add(_publishButton);
-                buttonPanel.add(_exportButton);
-                buttonPanel.add(_saveButton);
+
+                buttonPanel.add(_saveResultsPopupButton);
 
                 DCPanel wrappedPanel = new DCPanel();
                 wrappedPanel.setLayout(new BorderLayout());
@@ -599,9 +605,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 for (JComponent pluggableButton : _pluggableButtons) {
                     pluggableButton.setVisible(!running);
                 }
-                _saveButton.setVisible(!running);
-                _publishButton.setVisible(!running);
-                _exportButton.setVisible(!running);
+                _saveResultsPopupButton.setVisible(!running);
             }
         });
     }

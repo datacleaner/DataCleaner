@@ -22,7 +22,6 @@ package org.datacleaner.windows;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -30,38 +29,34 @@ import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.util.ImmutableEntry;
-import org.datacleaner.util.StringUtils;
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.CsvConfigurationDetection;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
+import org.datacleaner.util.ImmutableEntry;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
-import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
 import org.datacleaner.widgets.HeaderLineComboBox;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.util.FileHelper;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
+import org.datacleaner.widgets.ResourceSelector;
+import org.datacleaner.widgets.ResourceTypePresenter;
 
 /**
  * Dialog for setting up CSV datastores.
- * 
- * @author Kasper Sørensen
  */
-public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvDatastore> {
+public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDialog<CsvDatastore> {
 
     private static final long serialVersionUID = 1L;
 
@@ -88,9 +83,10 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     private volatile boolean showPreview = true;
 
     @Inject
-    public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-            WindowContext windowContext, UserPreferences userPreferences) {
-        super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
+    public CsvDatastoreDialog(@Nullable CsvDatastore originalDatastore,
+            MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
+            DataCleanerConfiguration configuration, UserPreferences userPreferences) {
+        super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
         _separatorCharField = new JComboBox<String>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
                 SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
@@ -109,12 +105,14 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
         _failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
         _failOnInconsistenciesCheckBox.setOpaque(false);
         _failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _failOnInconsistenciesCheckBox.setToolTipText("Check this checkbox to fail fast in case of inconsistent record lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
+        _failOnInconsistenciesCheckBox
+                .setToolTipText("Check this checkbox to fail fast in case of inconsistent record lengths found in the CSV file. If not checked, missing fields will be represented by <null> values.");
 
         _multilineValuesCheckBox = new JCheckBox("Enable multi-line values?", false);
         _multilineValuesCheckBox.setOpaque(false);
         _multilineValuesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        _multilineValuesCheckBox.setToolTipText("Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
+        _multilineValuesCheckBox
+                .setToolTipText("Check this checkbox if you want to allow CSV values to span multiple lines. Since this is rare, and comes at a performance penalty, we recommend turning multi-line values off.");
 
         setSaveButtonEnabled(false);
         showPreview = true;
@@ -217,7 +215,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     }
 
     @Override
-    protected void onFileSelected(File file) {
+    protected void onSelected(Resource resource) {
         onSettingsUpdated(true, true);
     }
 
@@ -226,14 +224,14 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
             return;
         }
 
-        final File file = new File(getFilename());
-        if (file == null || !file.exists()) {
-            setStatusError("No file selected, or file does not exist");
+        final Resource resource = getResource();
+        if (resource == null || !resource.isExists()) {
+            setStatusError("No source selected, or source does not exist");
             showPreview = false;
             return;
         }
 
-        final CsvConfigurationDetection detection = new CsvConfigurationDetection(file);
+        final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
 
         final CsvConfiguration configuration;
 
@@ -398,22 +396,21 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     }
 
     @Override
-    protected CsvDatastore getPreviewDatastore(String filename) {
-        return createDatastore("Preview", filename, false);
+    protected CsvDatastore getPreviewDatastore(Resource resource) {
+        return createDatastore("Preview", resource, false);
     }
 
     @Override
-    protected CsvDatastore createDatastore(String name, String filename) {
+    protected CsvDatastore createDatastore(String name, Resource resource) {
         boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
-        return createDatastore(name, filename, failOnInconsistentRecords);
+        return createDatastore(name, resource, failOnInconsistentRecords);
     }
 
-    private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
-        final Resource resource = new FileResource(filename);
-        return new CsvDatastore(name, resource, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(),
-                getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
+    private CsvDatastore createDatastore(String name, Resource resource, boolean failOnInconsistentRecords) {
+        return new CsvDatastore(name, resource, resource.getQualifiedPath(), getQuoteChar(), getSeparatorChar(),
+                getEscapeChar(), getEncoding(), failOnInconsistentRecords, isMultilineValues(), getHeaderLine());
     }
-    
+
     public boolean isMultilineValues() {
         return _multilineValuesCheckBox.isSelected();
     }
@@ -424,31 +421,29 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     }
 
     @Override
-    protected void setFileFilters(final FilenameTextField filenameField) {
-        FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
-                FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
-        filenameField.addChoosableFileFilter(combinedFilter);
-        filenameField.addChoosableFileFilter(FileFilters.CSV);
-        filenameField.addChoosableFileFilter(FileFilters.TSV);
-        filenameField.addChoosableFileFilter(FileFilters.DAT);
-        filenameField.addChoosableFileFilter(FileFilters.TXT);
-        filenameField.addChoosableFileFilter(FileFilters.ALL);
-        filenameField.setSelectedFileFilter(combinedFilter);
+    protected void initializeFileFilters(ResourceSelector resourceSelector) {
+        final FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
+                FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+        resourceSelector.addChoosableFileFilter(combinedFilter);
+        resourceSelector.addChoosableFileFilter(FileFilters.CSV);
+        resourceSelector.addChoosableFileFilter(FileFilters.TSV);
+        resourceSelector.addChoosableFileFilter(FileFilters.DAT);
+        resourceSelector.addChoosableFileFilter(FileFilters.TXT);
+        resourceSelector.addChoosableFileFilter(FileFilters.ALL);
+        resourceSelector.setSelectedFileFilter(combinedFilter);
 
-        filenameField.addFileSelectionListener(new FileSelectionListener() {
-
+        resourceSelector.addListener(new ResourceTypePresenter.Listener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
-                if (FileFilters.TSV.accept(file)) {
+            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+                if (FileFilters.TSV.accept(resource)) {
                     _separatorCharField.setSelectedItem(SEPARATOR_TAB);
                 }
-            }
-        });
 
-        filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
                 onSettingsUpdated(true, true);
+            }
+
+            @Override
+            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
             }
         });
     }

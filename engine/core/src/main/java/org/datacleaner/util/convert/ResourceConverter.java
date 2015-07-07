@@ -22,6 +22,7 @@ package org.datacleaner.util.convert;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,6 +174,10 @@ public class ResourceConverter implements Converter<Resource> {
             }
         }
         throw new IllegalStateException("Could not find a resource handler for resource: " + resource);
+    }
+
+    public Collection<ResourceTypeHandler<?>> getResourceTypeHandlers() {
+        return Collections.unmodifiableCollection(_parsers.values());
     }
 
     @Override

@@ -29,10 +29,15 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.panels.DCPanel;
+import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
@@ -42,15 +47,20 @@ import org.jdesktop.swingx.JXTextField;
 /**
  * A widget for selecting a file(name). It will be represented as a textfield
  * with a browse button.
+ * 
+ * It is preferred to use this widget's "big brother" implementation,
+ * {@link ResourceSelector} which will work with any type of {@link Resource},
+ * not just files (e.g. {@link FileResource} and others).
  */
-public final class FilenameTextField extends DCPanel {
+public final class FilenameTextField extends DCPanel implements ResourceTypePresenter<FileResource> {
 
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _textField = WidgetFactory.createTextField("Filename");
     private final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
-    private final List<FileSelectionListener> _listeners = new ArrayList<FileSelectionListener>();
-    private final List<FileFilter> _chooseableFileFilters = new ArrayList<FileFilter>();
+    private final List<FileSelectionListener> _fileSelectionListeners = new ArrayList<>();
+    private final List<Listener> _resourceSelectionListeners = new ArrayList<>();
+    private final List<FileFilter> _chooseableFileFilters = new ArrayList<>();
     private volatile FileFilter _selectedFileFilter;
     private volatile File _directory;
     private int _fileSelectionMode = JFileChooser.FILES_ONLY;
@@ -116,13 +126,35 @@ public final class FilenameTextField extends DCPanel {
                         } else {
                             _directory = file.getParentFile();
                         }
-                        for (FileSelectionListener listener : _listeners) {
-                            listener.onSelected(FilenameTextField.this, file);
-                        }
+                        notifyListeners(file);
                     }
                 }
             }
         });
+        
+        _textField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                final String text = _textField.getText();
+                notifyListeners(text);
+            }
+        });
+    }
+
+    private void notifyListeners(String text) {
+        for (Listener listener : _resourceSelectionListeners) {
+            listener.onPathEntered(this, text);
+        }
+    }
+
+    private void notifyListeners(final File file) {
+        for (FileSelectionListener listener : _fileSelectionListeners) {
+            listener.onSelected(this, file);
+        }
+        final Resource fileResource = new FileResource(file);
+        for (Listener listener : _resourceSelectionListeners) {
+            listener.onResourceSelected(this, fileResource);
+        }
     }
 
     public File getDirectory() {
@@ -163,19 +195,26 @@ public final class FilenameTextField extends DCPanel {
     }
 
     public void addFileSelectionListener(FileSelectionListener listener) {
-        _listeners.add(listener);
+        _fileSelectionListeners.add(listener);
     }
 
     public void removeFileSelectionListener(FileSelectionListener listener) {
-        _listeners.remove(listener);
+        _fileSelectionListeners.remove(listener);
     }
 
+    @Override
     public void addChoosableFileFilter(FileFilter filter) {
         _chooseableFileFilters.add(filter);
     }
 
+    @Override
     public void setSelectedFileFilter(FileFilter filter) {
         _selectedFileFilter = filter;
+    }
+
+    @Override
+    public void removeChoosableFileFilter(FileFilter filter) {
+        _chooseableFileFilters.remove(filter);
     }
 
     public void setFileSelectionMode(int fileSelectionMode) {
@@ -184,5 +223,36 @@ public final class FilenameTextField extends DCPanel {
 
     public int getFileSelectionMode() {
         return _fileSelectionMode;
+    }
+
+    @Override
+    public JComponent getWidget() {
+        return this;
+    }
+
+    @Override
+    public FileResource getResource() {
+        final File file = getFile();
+        if (file == null) {
+            return null;
+        }
+        return new FileResource(file);
+    }
+
+    @Override
+    public void setResource(FileResource resource) {
+        setFile(resource.getFile());
+    }
+
+    @Override
+    public void addListener(
+            org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
+        _resourceSelectionListeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(
+            org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
+        _resourceSelectionListeners.remove(listener);
     }
 }

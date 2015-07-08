@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Completion listener for a full AnalysisJob. Use the isDone() method to ask
  * whether or not the job is finished.
- * 
- * 
+ *
+ *
  */
 public final class JobCompletionTaskListener implements StatusAwareTaskListener {
 
@@ -75,24 +75,31 @@ public final class JobCompletionTaskListener implements StatusAwareTaskListener 
 
     @Override
     public void onComplete(Task task) {
-        logger.debug("onComplete(...)");
+        try {
+            logger.debug("onComplete(...)");
 
-        final int successCountDownStatus = _successCountDown.decrementAndGet();
-        if (successCountDownStatus == 0) {
-            _completionTime = new Date();
-            _analysisListener.jobSuccess(_analysisJobMetrics.getAnalysisJob(), _analysisJobMetrics);
+            final int successCountDownStatus = _successCountDown.decrementAndGet();
+            if (successCountDownStatus == 0) {
+                _completionTime = new Date();
+                _analysisListener.jobSuccess(_analysisJobMetrics.getAnalysisJob(), _analysisJobMetrics);
+            }
+
+        } finally {
+            // as the last thing we need to call countDown() to unlock any waiting
+            // threads on await()
+
+            _countDownLatch.countDown();
         }
-
-        // as the last thing we need to call countDown() to unlock any waiting
-        // threads on await()
-        _countDownLatch.countDown();
     }
 
     @Override
     public void onError(Task task, Throwable throwable) {
-        logger.debug("onError(...)");
-        _analysisListener.errorUnknown(_analysisJobMetrics.getAnalysisJob(), throwable);
-        _countDownLatch.countDown();
+        try {
+            logger.debug("onError(...)");
+            _analysisListener.errorUnknown(_analysisJobMetrics.getAnalysisJob(), throwable);
+        } finally {
+            _countDownLatch.countDown();
+        }
     }
 
     @Override

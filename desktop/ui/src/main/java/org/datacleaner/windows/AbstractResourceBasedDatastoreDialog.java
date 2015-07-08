@@ -30,7 +30,6 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
@@ -93,6 +92,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
      * Max amount of columns to display in the preview table
      */
     private static final int PREVIEW_COLUMNS = 10;
+    private static final int PREVIEW_ROWS = 7;
 
     private final ResourceSelector _resourceSelector;
     private final DCPanel _previewTablePanel;
@@ -118,12 +118,12 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         initializeFileFilters(_resourceSelector);
 
         _resourceSelector.addListener(new ResourceTypePresenter.Listener() {
-            
+
             @Override
             public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
                 onSelected(null);
             }
-            
+
             @Override
             public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
                 if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
@@ -168,6 +168,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         setSaveButtonEnabled(valid);
         if (valid) {
             updatePreviewTable();
+        } else {
+            hidePreviewTable();
         }
     }
 
@@ -175,11 +177,6 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         final Resource resource = _resourceSelector.getResource();
         if (resource == null) {
             setStatusError("Please enter or select a source");
-            return false;
-        }
-
-        if (!resource.isExists()) {
-            setStatusError("The source does not exist!");
             return false;
         }
 
@@ -231,7 +228,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
         // show loading indicator
         setSaveButtonEnabled(false);
-        _previewTable.setVisible(false);
+        _previewTablePanel.setVisible(false);
         _loadingIcon.setVisible(true);
 
         // read file in background, it may take time if eg. it's located on a
@@ -247,29 +244,32 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             protected void done() {
                 try {
                     DataSet dataSet = get();
-                    if (dataSet != null) {
-                        TableModel tableModel = new DataSetTableModel(dataSet);
+                    if (dataSet == null) {
+                        hidePreviewTable();
+                    } else {
+                        final TableModel tableModel = new DataSetTableModel(dataSet);
                         _previewTable.setModel(tableModel);
                     }
                 } catch (Throwable e) {
-                    if (e instanceof ExecutionException) {
-                        // get the cause of the execution exception (it's a
-                        // wrapper around the throwable)
-                        e = e.getCause();
-                    }
                     if (logger.isWarnEnabled()) {
                         logger.warn("Error creating preview data: " + e.getMessage(), e);
                     }
 
-                    setStatusError("Error create preview data: " + e.getMessage());
+                    hidePreviewTable();
+                    setStatusError(e);
                 }
 
                 // show table
-                _previewTable.setVisible(true);
+                _previewTablePanel.setVisible(true);
                 _loadingIcon.setVisible(false);
                 setSaveButtonEnabled(true);
             }
         }.execute();
+    }
+
+    private void hidePreviewTable() {
+        final DefaultTableModel dummyTableModel = new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS);
+        _previewTable.setModel(dummyTableModel);
     }
 
     private final DataSet getPreviewData(Resource resource) {
@@ -282,6 +282,10 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
         try (DatastoreConnection con = datastore.openConnection()) {
             final DataContext dc = con.getDataContext();
             final Table table = getPreviewTable(dc);
+            if (table == null) {
+                logger.info("Not displaying preview because getPreviewTable(..) returned null");
+                return null;
+            }
 
             Column[] columns = table.getColumns();
             if (columns.length > getPreviewColumns()) {
@@ -289,7 +293,7 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
                 columns = Arrays.copyOf(columns, getPreviewColumns());
             }
             final Query q = dc.query().from(table).select(columns).toQuery();
-            q.setMaxRows(7);
+            q.setMaxRows(PREVIEW_ROWS);
 
             final DataSet dataSet = dc.executeQuery(q);
 
@@ -299,9 +303,12 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
     @Override
     protected final JComponent getDialogContent() {
-        DCPanel formPanel = new DCPanel();
+        final DCPanel formPanel = new DCPanel();
+        GridBagLayout layout = new GridBagLayout();
+        layout.columnWidths = new int[] { 120, 450 };
+        formPanel.setLayout(layout);
 
-        List<Entry<String, JComponent>> formElements = getFormElements();
+        final List<Entry<String, JComponent>> formElements = getFormElements();
         // temporary variable to make it easier to refactor the layout
         int row = 0;
         for (Entry<String, JComponent> entry : formElements) {
@@ -322,7 +329,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
         final DCPanel centerPanel = new DCPanel();
         centerPanel.setLayout(new GridBagLayout());
-        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 0, 0);
+        WidgetUtils.addToGridBag(formPanel, centerPanel, 0, 0, 1, 1, GridBagConstraints.NORTH, 4, 1.0, 0,
+                GridBagConstraints.BOTH);
 
         if (isPreviewTableEnabled()) {
             WidgetUtils.addToGridBag(_previewTablePanel, centerPanel, 0, 1, 1, 1, GridBagConstraints.NORTH, 4, 0.1,
@@ -355,7 +363,11 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
     }
 
     protected Table getPreviewTable(DataContext dc) {
-        return dc.getDefaultSchema().getTables()[0];
+        final Table[] tables = dc.getDefaultSchema().getTables();
+        if (tables.length == 0) {
+            return null;
+        }
+        return tables[0];
     }
 
     protected int getPreviewColumns() {

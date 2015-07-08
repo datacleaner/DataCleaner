@@ -59,7 +59,7 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
     private final JXTextField _textField = WidgetFactory.createTextField("Filename");
     private final JButton _browseButton = WidgetFactory.createDefaultButton("Browse", IconUtils.ACTION_BROWSE);
     private final List<FileSelectionListener> _fileSelectionListeners = new ArrayList<>();
-    private final List<Listener> _resourceSelectionListeners = new ArrayList<>();
+    private final List<ResourceTypePresenter.Listener> _resourceListeners = new ArrayList<>();
     private final List<FileFilter> _chooseableFileFilters = new ArrayList<>();
     private volatile FileFilter _selectedFileFilter;
     private volatile File _directory;
@@ -131,18 +131,23 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
                 }
             }
         });
-        
+
         _textField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                final String text = _textField.getText();
-                notifyListeners(text);
+                final File file = getFile();
+                if (file == null) {
+                    final String text = _textField.getText();
+                    notifyListeners(text);
+                } else {
+                    notifyListeners(file);
+                }
             }
         });
     }
 
     private void notifyListeners(String text) {
-        for (Listener listener : _resourceSelectionListeners) {
+        for (Listener listener : _resourceListeners) {
             listener.onPathEntered(this, text);
         }
     }
@@ -152,7 +157,7 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
             listener.onSelected(this, file);
         }
         final Resource fileResource = new FileResource(file);
-        for (Listener listener : _resourceSelectionListeners) {
+        for (Listener listener : _resourceListeners) {
             listener.onResourceSelected(this, fileResource);
         }
     }
@@ -245,14 +250,12 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
     }
 
     @Override
-    public void addListener(
-            org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
-        _resourceSelectionListeners.add(listener);
+    public void addListener(org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
+        _resourceListeners.add(listener);
     }
 
     @Override
-    public void removeListener(
-            org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
-        _resourceSelectionListeners.remove(listener);
+    public void removeListener(org.datacleaner.widgets.ResourceTypePresenter.Listener listener) {
+        _resourceListeners.remove(listener);
     }
 }

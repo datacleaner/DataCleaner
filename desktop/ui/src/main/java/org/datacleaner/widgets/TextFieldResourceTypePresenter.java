@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
@@ -71,7 +72,7 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
 
         final Resource resource = getResource();
         if (resource == null) {
-            // do something?
+            // TODO: do something?
             return;
         }
 
@@ -80,19 +81,45 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
             if (selectedFileFilter instanceof ExtensionFilter) {
                 final ExtensionFilter extensionFilter = (ExtensionFilter) selectedFileFilter;
                 if (!extensionFilter.accept(resource)) {
-                    // do something?
+                    // TODO: do something?
                 }
             }
         }
 
-        if (!resource.isExists()) {
-            // do something?
-            return;
-        }
+        // do the remaining in a swing worker to avoid blocking the UI since it
+        // will often time require I/O which may take time
+        final SwingWorker<Resource, Void> worker = new SwingWorker<Resource, Void>() {
+            @Override
+            protected Resource doInBackground() throws Exception {
+                if (!resource.isExists()) {
+                    // TODO: do something?
+                    return null;
+                }
 
-        for (Listener resourceSelectionListener : _resourceSelectionListeners) {
-            resourceSelectionListener.onResourceSelected(this, resource);
-        }
+                return resource;
+            }
+            
+            @Override
+            protected void done() {
+                final Resource resource;
+                try {
+                    resource = get();
+                } catch (Exception e) {
+                    // TODO: do something?
+                    return;
+                }
+                
+                if (resource == null) {
+                    // TODO: do something
+                    return;
+                }
+                
+                for (Listener resourceSelectionListener : _resourceSelectionListeners) {
+                    resourceSelectionListener.onResourceSelected(TextFieldResourceTypePresenter.this, resource);
+                }
+            }
+        };
+        worker.execute();
     }
 
     @Override

@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.csv.CsvConfiguration;
@@ -41,6 +42,7 @@ import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.CsvConfigurationDetection;
+import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
@@ -173,38 +175,38 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             }
             _escapeCharField.setSelectedItem(escape);
 
-            onSettingsUpdated(false, false);
+            onSettingsUpdated(false, false, getResource());
         }
 
         // add listeners
         _separatorCharField.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false);
+                onSettingsUpdated(false, false, getResource());
             }
         });
         _quoteCharField.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false);
+                onSettingsUpdated(false, false, getResource());
             }
         });
         _escapeCharField.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                onSettingsUpdated(false, false);
+                onSettingsUpdated(false, false, getResource());
             }
         });
         _encodingComboBox.addListener(new Listener<String>() {
             @Override
             public void onItemSelected(String item) {
-                onSettingsUpdated(true, false);
+                onSettingsUpdated(true, false, getResource());
             }
         });
         _headerLineComboBox.addListener(new DCComboBox.Listener<Integer>() {
             @Override
             public void onItemSelected(Integer item) {
-                onSettingsUpdated(false, false);
+                onSettingsUpdated(false, false, getResource());
             }
         });
     }
@@ -216,78 +218,93 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
 
     @Override
     protected void onSelected(Resource resource) {
-        onSettingsUpdated(true, true);
+        onSettingsUpdated(true, true, resource);
     }
 
-    private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
+    private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding, final Resource resource) {
         if (!validateForm()) {
             return;
         }
 
-        final Resource resource = getResource();
-        if (resource == null || !resource.isExists()) {
-            setStatusError("No source selected, or source does not exist");
-            showPreview = false;
-            return;
-        }
+        new SwingWorker<CsvConfiguration, Void>() {
+            @Override
+            protected CsvConfiguration doInBackground() throws Exception {
+                if (resource == null || !resource.isExists()) {
+                    throw new NullPointerException("No source selected, or source does not exist");
+                }
 
-        final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
+                final CsvConfigurationDetection detection = new CsvConfigurationDetection(resource);
+                final CsvConfiguration configuration;
 
-        final CsvConfiguration configuration;
-
-        try {
-            if (autoDetectEncoding) {
-                configuration = detection.suggestCsvConfiguration();
-            } else {
-                String charSet = _encodingComboBox.getSelectedItem().toString();
-                configuration = detection.suggestCsvConfiguration(charSet);
-            }
-        } catch (IllegalStateException e) {
-            logger.debug("Failed to auto detect CSV configuration", e);
-            setStatusError(e.getMessage());
-            return;
-        }
-
-        if (autoDetectEncoding) {
-            _encodingComboBox.setSelectedItem(configuration.getEncoding());
-        }
-
-        if (autoDetectSeparatorAndQuote) {
-            // set the separator
-            final char separatorChar = configuration.getSeparatorChar();
-            if (separatorChar == ',') {
-                _separatorCharField.setSelectedItem(SEPARATOR_COMMA);
-            } else if (separatorChar == ';') {
-                _separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
-            } else if (separatorChar == '\t') {
-                _separatorCharField.setSelectedItem(SEPARATOR_TAB);
-            } else if (separatorChar == '|') {
-                _separatorCharField.setSelectedItem(SEPARATOR_PIPE);
-            } else {
-                _separatorCharField.setSelectedItem(separatorChar + "");
+                try {
+                    if (autoDetectEncoding) {
+                        configuration = detection.suggestCsvConfiguration();
+                    } else {
+                        final String charSet = _encodingComboBox.getSelectedItem().toString();
+                        configuration = detection.suggestCsvConfiguration(charSet);
+                    }
+                } catch (Exception e) {
+                    logger.debug("Failed to auto detect CSV configuration", e);
+                    throw e;
+                }
+                return configuration;
             }
 
-            // set the quote
-            final char quoteChar = configuration.getQuoteChar();
-            if (quoteChar == CsvConfiguration.NOT_A_CHAR) {
-                _quoteCharField.setSelectedItem(QUOTE_NONE);
-            } else if (quoteChar == '\'') {
-                _quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
-            } else if (quoteChar == '"') {
-                _quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
-            } else {
-                _quoteCharField.setSelectedItem(quoteChar + "");
-            }
+            @Override
+            protected void done() {
+                final CsvConfiguration configuration;
+                try {
+                    configuration = get();
+                } catch (Exception e) {
+                    final Throwable error = ErrorUtils.unwrapForPresentation(e);
+                    setStatusError(error.getMessage());
+                    showPreview = false;
+                    return;
+                }
 
-            // set the escape char
-            char escapeChar = configuration.getEscapeChar();
-            if (escapeChar == '\\') {
-                _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
-            }
-        }
+                if (autoDetectEncoding) {
+                    _encodingComboBox.setSelectedItem(configuration.getEncoding());
+                }
 
-        showPreview = true;
-        validateAndUpdate();
+                if (autoDetectSeparatorAndQuote) {
+                    // set the separator
+                    final char separatorChar = configuration.getSeparatorChar();
+                    if (separatorChar == ',') {
+                        _separatorCharField.setSelectedItem(SEPARATOR_COMMA);
+                    } else if (separatorChar == ';') {
+                        _separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
+                    } else if (separatorChar == '\t') {
+                        _separatorCharField.setSelectedItem(SEPARATOR_TAB);
+                    } else if (separatorChar == '|') {
+                        _separatorCharField.setSelectedItem(SEPARATOR_PIPE);
+                    } else {
+                        _separatorCharField.setSelectedItem(separatorChar + "");
+                    }
+
+                    // set the quote
+                    final char quoteChar = configuration.getQuoteChar();
+                    if (quoteChar == CsvConfiguration.NOT_A_CHAR) {
+                        _quoteCharField.setSelectedItem(QUOTE_NONE);
+                    } else if (quoteChar == '\'') {
+                        _quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
+                    } else if (quoteChar == '"') {
+                        _quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
+                    } else {
+                        _quoteCharField.setSelectedItem(quoteChar + "");
+                    }
+
+                    // set the escape char
+                    char escapeChar = configuration.getEscapeChar();
+                    if (escapeChar == '\\') {
+                        _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
+                    }
+                }
+
+                showPreview = true;
+                validateAndUpdate();
+            }
+        }.execute();
+        ;
     }
 
     @Override
@@ -439,7 +456,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                     _separatorCharField.setSelectedItem(SEPARATOR_TAB);
                 }
 
-                onSettingsUpdated(true, true);
+                onSettingsUpdated(true, true, resource);
             }
 
             @Override

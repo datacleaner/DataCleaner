@@ -19,11 +19,10 @@
  */
 package org.datacleaner.beans.standardize;
 
+import java.util.Map;
 import org.datacleaner.result.CategorizationResult;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-
-import java.util.Map;
 
 public class CountryStandardizationResult extends CategorizationResult {
     private static final long serialVersionUID = 1L;

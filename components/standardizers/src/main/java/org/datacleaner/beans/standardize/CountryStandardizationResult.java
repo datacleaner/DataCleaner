@@ -19,16 +19,23 @@
  */
 package org.datacleaner.beans.standardize;
 
-import java.util.Map;
-
 import org.datacleaner.result.CategorizationResult;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
 
+import java.util.Map;
+
 public class CountryStandardizationResult extends CategorizationResult {
     private static final long serialVersionUID = 1L;
 
-    public CountryStandardizationResult(RowAnnotationFactory rowAnnotationFactory, Map<String, RowAnnotation> countryCountMap) {
+    private final int _unrecognizedCountries;
+
+    public CountryStandardizationResult(RowAnnotationFactory rowAnnotationFactory, Map<String, RowAnnotation> countryCountMap, int unrecognizedCountries) {
         super(rowAnnotationFactory, countryCountMap);
+        _unrecognizedCountries = unrecognizedCountries;
+    }
+
+    public int getUnrecognizedCountries() {
+        return _unrecognizedCountries;
     }
 }

@@ -20,6 +20,7 @@
 package org.datacleaner.beans.standardize;
 
 import java.util.Map;
+
 import org.datacleaner.result.CategorizationResult;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;

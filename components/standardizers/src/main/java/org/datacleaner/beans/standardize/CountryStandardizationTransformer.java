@@ -45,17 +45,24 @@ import org.datacleaner.util.LabelUtils;
 @Categorized(MatchingAndStandardizationCategory.class)
 public class CountryStandardizationTransformer implements Transformer, HasAnalyzerResult<CountryStandardizationResult> {
 
+    public static enum OutputFormat {
+        ISO2, ISO3, NAME
+    }
+
     public static final String PROPERTY_COUNTRY_COLUMN = "Country column";
     public static final String PROPERTY_OUTPUT_FORMAT = "Output format";
     public static final String PROPERTY_DEFAULT_COUNTRY = "Default country";
-
     public final Map<String, RowAnnotation> countryCountMap = new HashMap<>();
+
     @Configured(PROPERTY_COUNTRY_COLUMN)
     InputColumn<String> countryColumn;
+
     @Configured(PROPERTY_OUTPUT_FORMAT)
     OutputFormat outputFormat = OutputFormat.ISO2;
+
     @Configured(value = PROPERTY_DEFAULT_COUNTRY, required = false)
     Country defaultCountry = null;
+
     @Provided
     @Inject
     RowAnnotationFactory _rowAnnotationFactory;
@@ -119,10 +126,6 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
     @Override
     public CountryStandardizationResult getResult() {
         return new CountryStandardizationResult(_rowAnnotationFactory, countryCountMap, _unrecognizedCountries.intValue());
-    }
-
-    public static enum OutputFormat {
-        ISO2, ISO3, NAME
     }
 
 }

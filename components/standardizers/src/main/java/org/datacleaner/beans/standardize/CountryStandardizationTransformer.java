@@ -22,6 +22,7 @@ package org.datacleaner.beans.standardize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 

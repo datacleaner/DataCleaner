@@ -117,7 +117,7 @@ public enum Country implements HasName, HasAliases {
 
     CAMEROON("CM", "CMR", "Cameroon"),
 
-    CANADA("CA", "CAN", "Canada"),
+    CANADA("CA", "CAN", "Canada", "Kanada"),
 
     CAPE_VERDE("CV", "CPV", "Cape Verde", "Cabo Verde"),
 

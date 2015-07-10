@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -45,8 +46,19 @@ import org.datacleaner.util.LabelUtils;
 @Categorized(MatchingAndStandardizationCategory.class)
 public class CountryStandardizationTransformer implements Transformer, HasAnalyzerResult<CountryStandardizationResult> {
 
-    public static enum OutputFormat {
-        ISO2, ISO3, NAME
+    public static enum OutputFormat implements HasName {
+
+        ISO2("2-letter ISO code"), ISO3("3-letter ISO code"), NAME("Country name");
+
+        private final String _name;
+
+        private OutputFormat(String name) {
+            _name = name;
+        }
+
+        public String getName() {
+            return _name;
+        };
     }
 
     public static final String PROPERTY_COUNTRY_COLUMN = "Country column";
@@ -55,12 +67,15 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
     public final Map<String, RowAnnotation> countryCountMap = new HashMap<>();
 
     @Configured(PROPERTY_COUNTRY_COLUMN)
+    @Description("A column containing potentially unstandardized country names, codes, abbreviations.")
     InputColumn<String> countryColumn;
 
     @Configured(PROPERTY_OUTPUT_FORMAT)
+    @Description("The output format of the transformation.")
     OutputFormat outputFormat = OutputFormat.ISO2;
 
     @Configured(value = PROPERTY_DEFAULT_COUNTRY, required = false)
+    @Description("Country to return if input value is missing or not recognized.")
     Country defaultCountry = null;
 
     @Provided
@@ -120,12 +135,13 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
         }
         _rowAnnotationFactory.annotate(inputRow, 1, annotation);
 
-        return new String[]{countryName};
+        return new String[] { countryName };
     }
 
     @Override
     public CountryStandardizationResult getResult() {
-        return new CountryStandardizationResult(_rowAnnotationFactory, countryCountMap, _unrecognizedCountries.intValue());
+        return new CountryStandardizationResult(_rowAnnotationFactory, countryCountMap,
+                _unrecognizedCountries.intValue());
     }
 
 }

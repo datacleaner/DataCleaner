@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://eobjects.org/analyzerbeans/configuration/1.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/analyzerbeans/configuration/1.0"
 	xmlns:ab="http://eobjects.org/analyzerbeans/configuration/1.0"
 	elementFormDefault="qualified">
 
@@ -14,7 +13,8 @@
 					<annotation>
 						<documentation>
 							Defines the catalog of datastores that are usable
-							as input sources for the analysis jobs.
+							as
+							input sources for the analysis jobs.
 						</documentation>
 					</annotation>
 				</element>
@@ -76,15 +76,20 @@
 				<annotation>
 					<documentation>
 						Select this storage provider to use a storage
-						provider that combines different technologies based on the
+						provider
+						that combines different technologies based on the
 						storage
-						entity type. This is the recommended storage provider
+						entity type.
+						This is the recommended storage provider
 						for typical
-						data profiling needs as it allows to combine
+						data profiling
+						needs as it allows to combine
 						in-memory row
-						annotations (for previewing in profiling results)
+						annotations (for
+						previewing in profiling results)
 						with database
-						backed collections (for intermediary results).
+						backed collections (for
+						intermediary results).
 					</documentation>
 				</annotation>
 			</element>
@@ -93,9 +98,12 @@
 				<annotation>
 					<documentation>
 						Select this storage provider to store staging data
-						and intermediary results in memory. This is by far the best
-						performing storage provider but it also brings in the risk of
-						running out of memory for very large jobs.
+						and
+						intermediary results in memory. This is by far the best
+						performing
+						storage provider but it also brings in the risk of
+						running out of
+						memory for very large jobs.
 					</documentation>
 				</annotation>
 			</element>
@@ -105,7 +113,8 @@
 					<documentation>
 						This storage provider uses the H2 database engine
 						as
-						a backing store for intermediary results.
+						a
+						backing store for intermediary results.
 					</documentation>
 				</annotation>
 			</element>
@@ -328,26 +337,28 @@
 						<sequence>
 							<element name="url" minOccurs="1" maxOccurs="1" type="string" />
 							<element name="driver" minOccurs="1" maxOccurs="1" type="string" />
-							<element name="username" minOccurs="0" maxOccurs="1"
-								type="string" />
-							<element name="password" minOccurs="0" maxOccurs="1"
-								type="string" />
+							<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+							<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 							<element name="multiple-connections" minOccurs="0"
 								maxOccurs="1" type="boolean" default="true">
 								<annotation>
 									<documentation>
 										Indicates whether multiple connections (aka.
 										connection pooling) may be created or not. Connection pooling
-										is preferred for performance reasons, but can safely be
-										disabled if not desired. The max number of connections cannot
-										be configured, but no more connections than the number of
-										threads in the task runner should be expected.
+										is
+										preferred for performance reasons, but can safely be
+										disabled if
+										not desired. The max number of connections cannot
+										be configured,
+										but no more connections than the number of
+										threads in the task
+										runner should be expected.
 									</documentation>
 								</annotation>
 							</element>
 						</sequence>
-						<element name="datasource-jndi-url" minOccurs="0"
-							maxOccurs="1" type="string" />
+						<element name="datasource-jndi-url" minOccurs="0" maxOccurs="1"
+							type="string" />
 					</choice>
 					<element name="table-types" minOccurs="0" maxOccurs="1">
 						<complexType>
@@ -415,6 +426,8 @@
 						maxOccurs="1" />
 					<element name="security-token" type="string" minOccurs="1"
 						maxOccurs="1" />
+					<element name="endpoint-url" type="string" minOccurs="0"
+						maxOccurs="1" />
 				</all>
 			</extension>
 		</complexContent>
@@ -439,8 +452,7 @@
 		<complexContent>
 			<extension base="ab:abstractDatastoreType">
 				<sequence>
-					<element name="schema-name" minOccurs="0" maxOccurs="1"
-						type="string" />
+					<element name="schema-name" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="table" minOccurs="0" maxOccurs="unbounded"
 						type="ab:pojoTableType" />
 				</sequence>
@@ -537,8 +549,7 @@
 								<element name="property" minOccurs="1" maxOccurs="unbounded">
 									<complexType>
 										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
+											<element name="name" minOccurs="1" maxOccurs="1" type="string" />
 											<element name="type" minOccurs="0" maxOccurs="1"
 												type="normalizedString" />
 										</sequence>
@@ -560,8 +571,7 @@
 					<element name="port" minOccurs="0" maxOccurs="1" type="int" />
 					<element name="cluster-name" minOccurs="1" maxOccurs="1"
 						type="string" />
-					<element name="index-name" minOccurs="1" maxOccurs="1"
-						type="string" />
+					<element name="index-name" minOccurs="1" maxOccurs="1" type="string" />
 					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
 						<complexType>
 							<sequence>
@@ -570,8 +580,7 @@
 								<element name="field" minOccurs="1" maxOccurs="unbounded">
 									<complexType>
 										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
+											<element name="name" minOccurs="1" maxOccurs="1" type="string" />
 											<element name="type" minOccurs="0" maxOccurs="1"
 												type="normalizedString" />
 										</sequence>
@@ -603,8 +612,7 @@
 								<element name="column" minOccurs="1" maxOccurs="unbounded">
 									<complexType>
 										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
+											<element name="name" minOccurs="1" maxOccurs="1" type="string" />
 											<element name="type" minOccurs="0" maxOccurs="1"
 												type="normalizedString" />
 										</sequence>
@@ -630,13 +638,11 @@
 					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
 						<complexType>
 							<sequence>
-								<element name="database" minOccurs="1" maxOccurs="1"
-									type="string" />
+								<element name="database" minOccurs="1" maxOccurs="1" type="string" />
 								<element name="field" minOccurs="1" maxOccurs="unbounded">
 									<complexType>
 										<sequence>
-											<element name="name" minOccurs="1" maxOccurs="1"
-												type="string" />
+											<element name="name" minOccurs="1" maxOccurs="1" type="string" />
 											<element name="type" minOccurs="0" maxOccurs="1"
 												type="normalizedString" />
 										</sequence>
@@ -656,8 +662,7 @@
 				<all>
 					<element name="filename" type="string" minOccurs="1"
 						maxOccurs="1" />
-					<element name="width-specification" minOccurs="1"
-						maxOccurs="1">
+					<element name="width-specification" minOccurs="1" maxOccurs="1">
 						<complexType>
 							<choice>
 								<element name="fixed-value-width" type="int" default="10"
@@ -673,7 +678,8 @@
 						<annotation>
 							<documentation>
 								The index (1-based) of the header line. If no
-								header line is present, use 0.
+								header
+								line is present, use 0.
 							</documentation>
 						</annotation>
 					</element>
@@ -722,8 +728,7 @@
 					<element name="table-def" minOccurs="0" maxOccurs="unbounded">
 						<complexType>
 							<sequence>
-								<element name="rowXpath" minOccurs="1" maxOccurs="1"
-									type="string" />
+								<element name="rowXpath" minOccurs="1" maxOccurs="1" type="string" />
 								<element name="valueXpath" minOccurs="1" maxOccurs="unbounded"
 									type="string" />
 							</sequence>
@@ -878,8 +883,7 @@
 
 	<complexType name="valueListDictionaryType">
 		<sequence>
-			<element name="value" minOccurs="1" maxOccurs="unbounded"
-				type="string" />
+			<element name="value" minOccurs="1" maxOccurs="unbounded" type="string" />
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 		<attribute name="description" type="string" use="optional" />
@@ -902,7 +906,8 @@
 				<documentation>
 					Sets a threshold upon the number of annotated rows to
 					store in memory. Any additional rows will be discarded, although
-					the counter will still handle them correctly.
+					the
+					counter will still handle them correctly.
 				</documentation>
 			</annotation>
 		</attribute>
@@ -932,7 +937,8 @@
 						Sets the path for the directory to use for on-disk
 						storage. This is optional as H2 will otherwise
 						automatically assign
-						a temporary directory for the purpose.
+						a
+						temporary directory for the purpose.
 					</documentation>
 				</annotation>
 			</element>
@@ -943,8 +949,8 @@
 		<sequence>
 			<element name="collections-storage" minOccurs="1" maxOccurs="1"
 				type="ab:storageProviderType" />
-			<element name="row-annotation-storage" minOccurs="1"
-				maxOccurs="1" type="ab:storageProviderType" />
+			<element name="row-annotation-storage" minOccurs="1" maxOccurs="1"
+				type="ab:storageProviderType" />
 		</sequence>
 	</complexType>
 
@@ -978,7 +984,8 @@
 					<documentation>
 						Adds a property to this custom type. Properties are
 						mapped to fields in the corresponding class that are annotated
-						with the @Configured annotation.
+						with
+						the @Configured annotation.
 					</documentation>
 				</annotation>
 				<complexType>

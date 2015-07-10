@@ -21,6 +21,7 @@ package org.datacleaner.windows;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.net.URI;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -43,6 +44,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.HelpIcon;
 import org.jdesktop.swingx.JXTextField;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 
 /**
@@ -55,6 +57,7 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
     private final JXTextField _securityTokenTextField;
+    private final JXTextField _endpointUrlTextField;
 
     @Inject
     public SalesforceDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
@@ -64,25 +67,18 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
         _securityTokenTextField = WidgetFactory.createTextField("Security token");
-        
-        _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+        _endpointUrlTextField = WidgetFactory.createTextField("Custom Endpoint URL");
+
+        final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
             }
-        });
-        _passwordTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _securityTokenTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
+        };
+        _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _securityTokenTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _endpointUrlTextField.getDocument().addDocumentListener(genericDocumentListener);
 
         if (originalDatastore != null) {
             _datastoreNameTextField.setText(originalDatastore.getName());
@@ -91,9 +87,10 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
             _securityTokenTextField.setText(originalDatastore.getSecurityToken());
+            _endpointUrlTextField.setText(originalDatastore.getEndpointUrl());
         }
     }
-    
+
     @Override
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
@@ -101,17 +98,32 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
             setStatusError("Please enter a datastore name");
             return false;
         }
-        
+
         final String username = _usernameTextField.getText();
         if (StringUtils.isNullOrEmpty(username)) {
             setStatusError("Please enter username");
             return false;
         }
-        
+
         final String securityToken = _securityTokenTextField.getText();
         if (StringUtils.isNullOrEmpty(securityToken)) {
             setStatusError("Please enter Salesforce security token");
             return false;
+        }
+
+        final String endpointUrl = _endpointUrlTextField.getText();
+        if (!StringUtils.isNullOrEmpty(endpointUrl)) {
+            if (!endpointUrl.startsWith("http") || endpointUrl.indexOf("://") == -1) {
+                setStatusError("Not a valid endpoint URL");
+                return false;
+            }
+
+            try {
+                URI.create(endpointUrl);
+            } catch (Exception e) {
+                setStatusError("Not a valid endpoint URL: " + e.getMessage());
+                return false;
+            }
         }
 
         setStatusValid();
@@ -125,8 +137,9 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
         final String securityToken = _securityTokenTextField.getText();
+        final String endpointUrl = Strings.emptyToNull(_endpointUrlTextField.getText());
 
-        return new SalesforceDatastore(name, username, password, securityToken);
+        return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
     }
 
     @Override
@@ -143,13 +156,13 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
     protected String getDatastoreIconPath() {
         return IconUtils.SALESFORCE_IMAGEPATH;
     }
-    
+
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Salesforce username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Salesforce password", _passwordTextField));
-        
+
         DCPanel securityTokenPanel = new DCPanel(Color.WHITE);
         FlowLayout layout = (FlowLayout) securityTokenPanel.getLayout();
         layout.setVgap(0);
@@ -160,8 +173,10 @@ public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<Salesforc
         _securityTokenTextField.setBorder(WidgetUtils.BORDER_EMPTY);
         securityTokenPanel.add(_securityTokenTextField);
         securityTokenPanel.add(securityTokenHelpIcon);
-        
+
         result.add(new ImmutableEntry<String, JComponent>("Salesforce security token", securityTokenPanel));
+
+        result.add(new ImmutableEntry<String, JComponent>("(Optional) Endpoint URL", _endpointUrlTextField));
         return result;
     }
 

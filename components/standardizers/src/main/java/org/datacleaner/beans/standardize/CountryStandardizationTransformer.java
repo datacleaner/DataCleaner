@@ -21,6 +21,7 @@ package org.datacleaner.beans.standardize;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,15 +45,14 @@ import org.datacleaner.util.LabelUtils;
 @Categorized(MatchingAndStandardizationCategory.class)
 public class CountryStandardizationTransformer implements Transformer, HasAnalyzerResult<CountryStandardizationResult> {
 
-    public static final String PROPERTY_COUNTRY_COLUMN = "Country column";
-    public static final String PROPERTY_OUTPUT_FORMAT = "Output format";
-    public static final String PROPERTY_DEFAULT_COUNTRY = "Default country";
-
-    public final Map<String, RowAnnotation> countryCountMap = new HashMap<>();
-
     public static enum OutputFormat {
         ISO2, ISO3, NAME
     }
+
+    public static final String PROPERTY_COUNTRY_COLUMN = "Country column";
+    public static final String PROPERTY_OUTPUT_FORMAT = "Output format";
+    public static final String PROPERTY_DEFAULT_COUNTRY = "Default country";
+    public final Map<String, RowAnnotation> countryCountMap = new HashMap<>();
 
     @Configured(PROPERTY_COUNTRY_COLUMN)
     InputColumn<String> countryColumn;
@@ -66,6 +66,7 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
     @Provided
     @Inject
     RowAnnotationFactory _rowAnnotationFactory;
+    AtomicInteger _unrecognizedCountries = new AtomicInteger(0);
 
     @Override
     public OutputColumns getOutputColumns() {
@@ -75,7 +76,12 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
     @Override
     public String[] transform(InputRow inputRow) {
         final String value = inputRow.getValue(countryColumn);
-        final Country country = Country.find(value, defaultCountry);
+        Country country = Country.find(value);
+
+        if (country == null) {
+            _unrecognizedCountries.incrementAndGet();
+            country = defaultCountry;
+        }
 
         final String countryName;
         if (country == null) {
@@ -97,29 +103,29 @@ public class CountryStandardizationTransformer implements Transformer, HasAnalyz
         }
 
         final String correctedCountryName;
-        
-        if(countryName != null){
+
+        if (countryName != null) {
             correctedCountryName = countryName;
         } else {
             correctedCountryName = LabelUtils.UNEXPECTED_LABEL;
         }
-        
+
         final RowAnnotation annotation;
         // ConcurrentHashMap does not support null keys
         synchronized (this) {
-            if (!countryCountMap.containsKey(countryName)) {
+            if (!countryCountMap.containsKey(correctedCountryName)) {
                 countryCountMap.put(correctedCountryName, _rowAnnotationFactory.createAnnotation());
             }
             annotation = countryCountMap.get(correctedCountryName);
         }
         _rowAnnotationFactory.annotate(inputRow, 1, annotation);
 
-        return new String[] { countryName };
+        return new String[]{countryName};
     }
 
     @Override
     public CountryStandardizationResult getResult() {
-        return new CountryStandardizationResult(_rowAnnotationFactory, countryCountMap);
+        return new CountryStandardizationResult(_rowAnnotationFactory, countryCountMap, _unrecognizedCountries.intValue());
     }
 
 }

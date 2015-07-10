@@ -81,7 +81,7 @@ public enum Country implements HasName, HasAliases {
 
     BELARUS("BY", "BLR", "Belarus"),
 
-    BELGIUM("BE", "BEL", "Belgium", "Kingdom of Belgium"),
+    BELGIUM("BE", "BEL", "Belgium", "Kingdom of Belgium", "Belgie", "België"),
 
     BELIZE("BZ", "BLZ", "Belize"),
 

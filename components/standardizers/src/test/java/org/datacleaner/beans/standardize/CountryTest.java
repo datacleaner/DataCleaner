@@ -58,6 +58,13 @@ public class CountryTest extends TestCase {
         assertEquals(Country.IRELAND, Country.find("Airlann"));
         assertEquals(Country.IRELAND, Country.find(".ie"));
     }
+    
+    public void testFindBelgium() throws Exception {
+        assertEquals(Country.BELGIUM, Country.find("Belgium"));
+        assertEquals(Country.BELGIUM, Country.find("BE"));
+        assertEquals(Country.BELGIUM, Country.find("Belgie"));
+        assertEquals(Country.BELGIUM, Country.find("BELGIË"));
+    }
 
     public void testFindGreatBritain() throws Exception {
         assertEquals(Country.UNITED_KINGDOM, Country.find("GB"));

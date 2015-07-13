@@ -28,6 +28,7 @@ import org.apache.metamodel.util.Resource;
 import org.datacleaner.util.FileResolver;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
@@ -75,6 +76,7 @@ public class DefaultConfigurationReaderInterceptor implements ConfigurationReade
         final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
         handlers.add(new FileResourceTypeHandler(getHomeFolder()));
         handlers.add(new UrlResourceTypeHandler());
+        handlers.add(new HdfsResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());
         return handlers;

@@ -391,6 +391,11 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "security-token", datastore.getSecurityToken());
+        
+        final String endpointUrl = datastore.getEndpointUrl();
+        if (!Strings.isNullOrEmpty(endpointUrl)) {
+            appendElement(ds, "endpoint-url", endpointUrl);
+        }
 
         return ds;
     }

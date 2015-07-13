@@ -891,7 +891,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         String username = getStringVariable("username", datastoreType.getUsername());
         String password = getPasswordVariable("password", datastoreType.getPassword());
         String securityToken = getStringVariable("securityToken", datastoreType.getSecurityToken());
-        return new SalesforceDatastore(name, username, password, securityToken);
+        String endpointUrl = getStringVariable("endpointUrl", datastoreType.getEndpointUrl());
+        return new SalesforceDatastore(name, username, password, securityToken, endpointUrl);
     }
 
     private Datastore createDatastore(String name, SugarCrmDatastoreType datastoreType) {

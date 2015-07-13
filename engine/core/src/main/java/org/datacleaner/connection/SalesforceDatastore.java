@@ -21,22 +21,31 @@ package org.datacleaner.connection;
 
 import org.apache.metamodel.salesforce.SalesforceDataContext;
 
+import com.google.common.base.Strings;
+
 /**
  * A datastore that uses a Salesforce.com account as it's source.
  */
-public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext> implements UpdateableDatastore, UsernameDatastore {
+public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataContext> implements UpdateableDatastore,
+        UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
 
     private final String _username;
     private final String _password;
     private final String _securityToken;
+    private final String _endpointUrl;
 
     public SalesforceDatastore(String name, String username, String password, String securityToken) {
+        this(name, username, password, securityToken, null);
+    }
+
+    public SalesforceDatastore(String name, String username, String password, String securityToken, String endpointUrl) {
         super(name);
         _username = username;
         _password = password;
         _securityToken = securityToken;
+        _endpointUrl = endpointUrl;
     }
 
     /**
@@ -67,6 +76,16 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
         return _securityToken;
     }
 
+    /**
+     * Gets the endpoint URL to use for Salesforce.com web services, or null if
+     * the default/production URL should be used.
+     * 
+     * @return
+     */
+    public String getEndpointUrl() {
+        return _endpointUrl;
+    }
+
     @Override
     public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
@@ -80,7 +99,12 @@ public class SalesforceDatastore extends UsageAwareDatastore<SalesforceDataConte
 
     @Override
     protected UsageAwareDatastoreConnection<SalesforceDataContext> createDatastoreConnection() {
-        final SalesforceDataContext dataContext = new SalesforceDataContext(_username, _password, _securityToken);
+        final SalesforceDataContext dataContext;
+        if (Strings.isNullOrEmpty(_endpointUrl)) {
+            dataContext = new SalesforceDataContext(_username, _password, _securityToken);
+        } else {
+            dataContext = new SalesforceDataContext(_endpointUrl, _username, _password, _securityToken);
+        }
         return new UpdateableDatastoreConnectionImpl<SalesforceDataContext>(dataContext, this);
     }
 

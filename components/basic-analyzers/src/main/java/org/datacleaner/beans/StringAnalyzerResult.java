@@ -19,6 +19,8 @@
  */
 package org.datacleaner.beans;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;
@@ -31,10 +33,16 @@ import org.datacleaner.result.CrosstabResult;
  * 
  */
 @Distributed(reducer = StringAnalyzerResultReducer.class)
+@JsonAutoDetect(
+        fieldVisibility= JsonAutoDetect.Visibility.ANY,
+        getterVisibility= JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
+        setterVisibility=JsonAutoDetect.Visibility.NONE)
 public class StringAnalyzerResult extends CrosstabResult {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     private final InputColumn<String>[] _columns;
 
     public StringAnalyzerResult(InputColumn<String>[] columns, Crosstab<?> crosstab) {

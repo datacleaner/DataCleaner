@@ -21,6 +21,8 @@ package org.datacleaner.beans.valuedist;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
@@ -39,12 +41,19 @@ import org.datacleaner.result.ValueCountingAnalyzerResult;
  * 
  * 
  */
+@JsonAutoDetect(
+        fieldVisibility= JsonAutoDetect.Visibility.ANY,
+        getterVisibility= JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
+        setterVisibility=JsonAutoDetect.Visibility.NONE)
 public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult implements
         GroupedValueCountingAnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     private final InputColumn<?> _column;
+    @JsonIgnore
     private final InputColumn<String> _groupColumn;
     private final Collection<? extends ValueCountingAnalyzerResult> _result;
 

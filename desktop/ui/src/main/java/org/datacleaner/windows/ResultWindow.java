@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.swing.AbstractButton;
-import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -122,7 +121,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     private final UserPreferences _userPreferences;
     private final JButton _cancelButton;
     private final PopupButton _saveResultsPopupButton;
-    private final List<JComponent> _pluggableButtons;
     private final WindowSizePreferences _windowSizePreference;
 
     private AnalysisResult _result;
@@ -160,6 +158,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         };
 
         Border buttonBorder = new CompoundBorder(WidgetUtils.BORDER_LIST_ITEM_SUBTLE, new EmptyBorder(10, 4, 10, 4));
+        _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
+        _cancelButton.setHorizontalAlignment(SwingConstants.LEFT);
+        _cancelButton.setBorder(buttonBorder);
+
         _saveResultsPopupButton = WidgetFactory.createDefaultPopupButton("Save results", IconUtils.ACTION_SAVE_DARK);
         _saveResultsPopupButton.setHorizontalAlignment(SwingConstants.LEFT);
         _saveResultsPopupButton.setBorder(buttonBorder);
@@ -182,7 +184,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 _userPreferences, resultRef, _jobFilename));
         publishToServerItem.setBorder(buttonBorder);
         _saveResultsPopupButton.getMenu().add(publishToServerItem);
-        
+
         _tabbedPane = new VerticalTabbedPane() {
             private static final long serialVersionUID = 1L;
 
@@ -193,6 +195,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
 
                 buttonPanel.add(_saveResultsPopupButton);
+                buttonPanel.add(_cancelButton);
 
                 DCPanel wrappedPanel = new DCPanel();
                 wrappedPanel.setLayout(new BorderLayout());
@@ -209,21 +212,22 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 imageManager.getImageIcon("images/model/progress_information.png", IconUtils.ICON_SIZE_TAB),
                 _progressInformationPanel);
 
-        _pluggableButtons = new ArrayList<JComponent>(1);
-
-        _cancelButton = WidgetFactory.createDefaultButton("Cancel job", IconUtils.ACTION_STOP);
-
         for (Func<ResultWindow, JComponent> pluggableComponent : PLUGGABLE_BANNER_COMPONENTS) {
             JComponent component = pluggableComponent.eval(this);
             if (component != null) {
                 if (component instanceof AbstractButton) {
-                    // tweak buttons to fit our styling
-                    AbstractButton b = (AbstractButton) component;
-                    b.setOpaque(true);
-                    WidgetUtils.setDefaultButtonStyle(b);
+                    AbstractButton button = (AbstractButton) component;
+                    JMenuItem menuItem = WidgetFactory.createMenuItem(button.getText(), button.getIcon());
+                    for (ActionListener listener : button.getActionListeners()) {
+                        menuItem.addActionListener(listener);
+                    }
+                    menuItem.setBorder(buttonBorder);
+                    _saveResultsPopupButton.getMenu().add(menuItem);
+                } else if (component instanceof JMenuItem) {
+                    JMenuItem menuItem = (JMenuItem) component;
+                    menuItem.setBorder(buttonBorder);
+                    _saveResultsPopupButton.getMenu().add(menuItem);
                 }
-
-                _pluggableButtons.add(component);
             }
         }
 
@@ -405,13 +409,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 banner.updateUI();
             }
         });
-
-        for (JComponent pluggableButton : _pluggableButtons) {
-            banner.add(pluggableButton);
-        }
-
-        banner.add(_cancelButton);
-        banner.add(Box.createHorizontalStrut(10));
 
         final DCPanel panel = new DCPersistentSizedPanel(WidgetUtils.COLOR_DEFAULT_BACKGROUND, _windowSizePreference);
         panel.setLayout(new BorderLayout());
@@ -601,10 +598,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             @Override
             public void run() {
                 _cancelButton.setVisible(running);
-
-                for (JComponent pluggableButton : _pluggableButtons) {
-                    pluggableButton.setVisible(!running);
-                }
                 _saveResultsPopupButton.setVisible(!running);
             }
         });

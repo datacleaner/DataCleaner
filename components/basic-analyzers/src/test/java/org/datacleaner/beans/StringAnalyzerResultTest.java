@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
@@ -32,6 +33,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnalysisResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
+import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
@@ -72,12 +74,24 @@ public class StringAnalyzerResultTest extends TestCase {
         }
     }
 
-    public void testJsonSerialize() {
-        ObjectMapper m = new ObjectMapper();
-        CrosstabDimension d1 = new CrosstabDimension("time");
-        CrosstabDimension d2 = new CrosstabDimension("category");
+    public void testJsonSerialize() throws JsonProcessingException {
+        CrosstabDimension d1 = new CrosstabDimension("Column");
+        d1.addCategory("MyColumn1");
+        CrosstabDimension d2 = new CrosstabDimension("Metric");
+        d2.addCategory("Char Count");
+        d2.addCategory("Word Count");
         List<CrosstabDimension> dims = Arrays.asList(d1, d2);
         Crosstab<Integer> ctab = new Crosstab<>(Integer.class, dims);
-        StringAnalyzerResult r = new StringAnalyzerResult(null, ctab);
+        CrosstabNavigator nav = new CrosstabNavigator(ctab);
+        nav.where(d1, "MyColumn1").where(d2, "Char Count").put(123);
+        nav.where(d1, "MyColumn1").where(d2, "Word Count").put(74);
+
+        StringAnalyzerResult result = new StringAnalyzerResult(null, ctab);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(result);
+        assertEquals(
+                "{\"crosstab\":{\"dimensions\":[{\"name\":\"Column\",\"categories\":[\"MyColumn1\"]},{\"name\":\"Metric\",\"categories\":[\"Char Count\",\"Word Count\"]}],\"data\":{\"MyColumn1\":{\"Char Count\":\"123\",\"Word Count\":\"74\"}}}}",
+                json);
     }
 }

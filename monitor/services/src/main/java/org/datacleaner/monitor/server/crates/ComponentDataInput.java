@@ -23,37 +23,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
-import org.apache.metamodel.query.SelectItem;
-import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.*;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.jaxb.PojoTableType;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
-import org.datacleaner.data.MutableInputColumn;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author j.horcicka (GMC)
- * @since 10.7.15
+ * Crate for a component input.
+ * @author k.houzvicka
+ * @since 9. 7. 2015
  */
-public class ComponentRequestCrate {
-
-    private Map<String, String> propertiesMap = new HashMap<>();
+public class ComponentDataInput implements Serializable {
+    private ComponentConfiguration configuration = new ComponentConfiguration();
     private List<String> columnList = new ArrayList<>();
     private List<List<String>> dataTable = new ArrayList<>();
-
     @JsonIgnore
     public MutableTable table;
     @JsonIgnore
     public List<InputColumn> inputColumns;
     @JsonIgnore
     public List<InputRow> inputRows;
+
+    public ComponentConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(ComponentConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     public List<List<String>> getDataTable() {
         return dataTable;
@@ -69,14 +71,6 @@ public class ComponentRequestCrate {
 
     public void setColumnList(List<String> columnList) {
         this.columnList = columnList;
-    }
-
-    public Map<String,String> getPropertiesMap() {
-        return propertiesMap;
-    }
-
-    public void setPropertiesMap(Map<String, String> propertiesMap) {
-        this.propertiesMap = propertiesMap;
     }
 
     public Table getTable() {
@@ -95,6 +89,7 @@ public class ComponentRequestCrate {
         table = new MutableTable("table-name");
         inputColumns = new ArrayList<>();
         int index = 0;
+
         for (String columnName : columnList) {
             Column column = new MutableColumn(columnName, ColumnType.VARCHAR, table, index, true);
             table.addColumn(index, column);
@@ -106,6 +101,7 @@ public class ComponentRequestCrate {
         DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
         inputRows = new ArrayList<>();
         int id = 0;
+
         for (List<String> row : dataTable) {
             DefaultRow inputRow = new DefaultRow(header, row.toArray());
             inputRows.add(new MetaModelInputRow(id, inputRow));

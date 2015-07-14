@@ -20,12 +20,18 @@
 package org.datacleaner.beans;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnalysisResult;
+import org.datacleaner.result.Crosstab;
+import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.util.ChangeAwareObjectInputStream;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
@@ -64,5 +70,14 @@ public class StringAnalyzerResultTest extends TestCase {
         } finally {
             in.close();
         }
+    }
+
+    public void testJsonSerialize() {
+        ObjectMapper m = new ObjectMapper();
+        CrosstabDimension d1 = new CrosstabDimension("time");
+        CrosstabDimension d2 = new CrosstabDimension("category");
+        List<CrosstabDimension> dims = Arrays.asList(d1, d2);
+        Crosstab<Integer> ctab = new Crosstab<>(Integer.class, dims);
+        StringAnalyzerResult r = new StringAnalyzerResult(null, ctab);
     }
 }

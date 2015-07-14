@@ -19,13 +19,21 @@
  */
 package org.datacleaner.beans;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import org.datacleaner.api.Distributed;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.Metric;
 import org.datacleaner.result.Crosstab;
+import org.datacleaner.result.CrosstabDimension;
+import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.CrosstabResult;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Result type of the StringAnalyzer
@@ -33,16 +41,10 @@ import org.datacleaner.result.CrosstabResult;
  * 
  */
 @Distributed(reducer = StringAnalyzerResultReducer.class)
-@JsonAutoDetect(
-        fieldVisibility= JsonAutoDetect.Visibility.ANY,
-        getterVisibility= JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
-        setterVisibility=JsonAutoDetect.Visibility.NONE)
-public class StringAnalyzerResult extends CrosstabResult {
+public class StringAnalyzerResult extends CrosstabResult implements JsonSerializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
     private final InputColumn<String>[] _columns;
 
     public StringAnalyzerResult(InputColumn<String>[] columns, Crosstab<?> crosstab) {
@@ -181,4 +183,59 @@ public class StringAnalyzerResult extends CrosstabResult {
                 .where(StringAnalyzer.DIMENSION_MEASURES, StringAnalyzer.MEASURE_WORD_COUNT).get();
     }
 
+    @Override
+    public void serialize(JsonGenerator json, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+        CrosstabNavigator nav = new CrosstabNavigator(getCrosstab());
+        List<CrosstabDimension> dims = getCrosstab().getDimensions();
+
+        json.writeStartObject();
+        json.writeFieldName("crosstab");
+        json.writeStartObject();
+
+        json.writeFieldName("dimensions");
+        json.writeStartArray();
+        for(CrosstabDimension dim: dims) {
+            json.writeStartObject();
+            json.writeStringField("name", dim.getName());
+            json.writeFieldName("categories");
+            json.writeStartArray();
+            for(String cat: dim.getCategories()) {
+                json.writeString(cat);
+            }
+            json.writeEndArray();
+            json.writeEndObject();
+        }
+        json.writeEndArray();
+
+        json.writeFieldName("data");
+        writeDimensionRec(json, nav, dims);
+        json.writeEndObject();
+        json.writeEndObject();
+    }
+
+    private void writeDimensionRec(JsonGenerator json, CrosstabNavigator nav, List<CrosstabDimension> dims) throws IOException {
+        if(dims.size() == 0) {
+            return;
+        }
+        json.writeStartObject();
+        CrosstabDimension dim = dims.get(0);
+        if(dims.size() == 1) {
+            for(String category: dim.getCategories()) {
+                nav.where(dim, category);
+                Object value = nav.get();
+                json.writeStringField(category, value.toString());
+            }
+        } else {
+            for(String category: dim.getCategories()) {
+                nav.where(dim, category);
+                json.writeFieldName(category);
+                writeDimensionRec(json, nav, dims.subList(1, dims.size()));
+            }
+        }
+        json.writeEndObject();
+    }
+
+    @Override
+    public void serializeWithType(JsonGenerator jsonGenerator, SerializerProvider serializerProvider, TypeSerializer typeSerializer) throws IOException, JsonProcessingException {
+    }
 }

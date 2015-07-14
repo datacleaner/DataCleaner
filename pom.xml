@@ -7,6 +7,7 @@
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
+		<hadoop.version>2.6.0</hadoop.version>
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
 		<guava.version>18.0</guava.version>
@@ -543,6 +544,31 @@
 				<version>${guava.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-auth</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-mapreduce-client-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-mapreduce-client-core</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>${httpcomponents.version}</version>
@@ -710,10 +736,10 @@
 				<version>3.0</version>
 			</dependency>
 			<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>${freemarker.version}</version>
-		</dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>${freemarker.version}</version>
+			</dependency>
 
 			<!-- logging dependencies -->
 			<dependency>

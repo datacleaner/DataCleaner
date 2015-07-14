@@ -415,6 +415,8 @@
 						maxOccurs="1" />
 					<element name="security-token" type="string" minOccurs="1"
 						maxOccurs="1" />
+					<element name="endpoint-url" type="string" minOccurs="0"
+						maxOccurs="1" />
 				</all>
 			</extension>
 		</complexContent>

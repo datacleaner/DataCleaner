@@ -93,16 +93,26 @@ public class ComponentsControllerV1 {
         return "Test result " + id;
     }
 
+    @RequestMapping(method = RequestMethod.PUT, produces = JSON)
+    @ResponseBody
+    public ComponentDataOutput provideInputAndGetResultStateless(@PathVariable(TENANT) final String tenant,
+                                                                 @RequestBody final ComponentDataInput inputData) {
+        init(tenant);
+        ComponentHandler componentHandler = new ComponentHandler(dcConfiguration, inputData);
+        ComponentDataOutput output = new ComponentDataOutput();
+        output.setResults(componentHandler.getResults());
+
+        return output;
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = JSON)
     @ResponseBody
     public ComponentDataOutput provideInputAndGetResult(@PathVariable(TENANT) final String tenant,
                                                         @PathVariable final int id,
                                                         @RequestBody final ComponentDataInput inputData) {
         init(tenant);
-        ComponentConfiguration componentConfiguration = inputData.getConfiguration();
+        checkExistingComponent(id);
         ComponentHandler componentHandler = new ComponentHandler(dcConfiguration, inputData);
-        logger.info("Component " + componentConfiguration.getId() + " was created. ");
-
         ComponentDataOutput output = new ComponentDataOutput();
         output.setResults(componentHandler.getResults());
 

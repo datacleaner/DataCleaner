@@ -279,6 +279,8 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
             logger.info("Not displaying preview table because isPreviewDataAvailable() returned false");
             return null;
         }
+        
+        logger.info("Attempting to fetch preview data from resource: {}", resource);
 
         final D datastore = getPreviewDatastore(resource);
         try (DatastoreConnection con = datastore.openConnection()) {

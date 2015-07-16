@@ -127,7 +127,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         // we need to do this ugly cast in order to call setResource(...) with a
         // generic argument
         @SuppressWarnings("unchecked")
-        ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
+        final ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
         presenter.setResource(resource);
     }
 
@@ -152,8 +152,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     }
 
     @Override
-    public void addListener(
-            Listener listener) {
+    public void addListener(Listener listener) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
         for (ResourceTypePresenter<?> presenter : presenters) {
             presenter.addListener(listener);
@@ -161,12 +160,11 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     }
 
     @Override
-    public void removeListener(
-            Listener listener) {
+    public void removeListener(Listener listener) {
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
         for (ResourceTypePresenter<?> presenter : presenters) {
             presenter.removeListener(listener);
-        }        
+        }
     }
 
     @Override
@@ -182,7 +180,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
         for (ResourceTypePresenter<?> presenter : presenters) {
             presenter.removeChoosableFileFilter(fileFilter);
-        }        
+        }
     }
 
     @Override
@@ -190,6 +188,6 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         final Collection<ResourceTypePresenter<?>> presenters = getResourceTypePresenters();
         for (ResourceTypePresenter<?> presenter : presenters) {
             presenter.setSelectedFileFilter(fileFilter);
-        }        
+        }
     }
 }

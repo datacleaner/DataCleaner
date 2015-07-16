@@ -15,8 +15,8 @@
 		<metamodel.version>4.3.5</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
-		<spring.core.version>3.2.12.RELEASE</spring.core.version>
-		<spring.security.version>3.2.5.RELEASE</spring.security.version>
+		<spring.core.version>4.1.7.RELEASE</spring.core.version>
+		<spring.security.version>3.2.7.RELEASE</spring.security.version>
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>54.1.1</icu4j.version>

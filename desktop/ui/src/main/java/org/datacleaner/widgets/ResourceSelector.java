@@ -93,6 +93,9 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         case "file":
             presenter = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), _openMode);
             break;
+        case "hdfs":
+            presenter = new HdfsResourceTypePresenter();
+            break;
         default:
             presenter = new TextFieldResourceTypePresenter(resourceTypeHandler);
             break;
@@ -111,6 +114,7 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         }
         final ResourceTypePresenter<?> presenter = _resourceTypePresenters.get(item);
         presenter.getWidget().setVisible(true);
+        updateUI();
         _currentPresenter = presenter;
     }
 

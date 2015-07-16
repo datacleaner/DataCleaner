@@ -126,8 +126,10 @@ public abstract class AbstractResourceBasedDatastoreDialog<D extends ResourceDat
 
             @Override
             public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
-                if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
-                    _datastoreNameTextField.setText(resource.getName());
+                if (resource != null) {
+                    if (StringUtils.isNullOrEmpty(_datastoreNameTextField.getText())) {
+                        _datastoreNameTextField.setText(resource.getName());
+                    }
                 }
 
                 validateAndUpdate();

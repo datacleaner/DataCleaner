@@ -29,6 +29,7 @@ import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.SimpleTableDef;
 import org.apache.metamodel.xml.XmlDomDataContext;
@@ -111,6 +112,9 @@ public class DatastoreXmlExternalizer {
         if (datastore instanceof CsvDatastore) {
             final Resource resource = ((CsvDatastore) datastore).getResource();
             if (resource instanceof FileResource) {
+                return true;
+            }
+            if (resource instanceof HdfsResource) {
                 return true;
             }
         }
@@ -248,6 +252,9 @@ public class DatastoreXmlExternalizer {
     protected String toFilename(final Resource resource) throws UnsupportedOperationException {
         if (resource instanceof FileResource) {
             return ((FileResource) resource).getFile().getPath();
+        }
+        if (resource instanceof HdfsResource) {
+            return ((HdfsResource) resource).getQualifiedPath();
         }
 
         throw new UnsupportedOperationException("Unsupported resource type: " + resource);

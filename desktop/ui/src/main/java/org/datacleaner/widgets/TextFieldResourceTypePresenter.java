@@ -49,7 +49,7 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
 
     private final ResourceTypeHandler<?> _resourceTypeHandler;
     private final JXTextField _pathTextField;
-    private final List<Listener> _resourceSelectionListeners = new ArrayList<>();
+    private final List<Listener> _listeners = new ArrayList<>();
     private final List<FileFilter> _fileFilters = new ArrayList<>();
 
     public TextFieldResourceTypePresenter(ResourceTypeHandler<?> resourceTypeHandler) {
@@ -64,20 +64,30 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
     }
 
     private void onPathChanged() {
+        final Resource resource;
+
         final String path = _pathTextField.getText();
         if (Strings.isNullOrEmpty(path)) {
-            // do something?
-            return;
+            resource = null;
+        } else {
+            resource = getResource();
         }
 
-        final Resource resource = getResource();
+        handleResourceCandidate(resource, this, _listeners, _fileFilters);
+    }
+
+    protected static void handleResourceCandidate(final Resource resource,
+            final ResourceTypePresenter<?> resourceTypePresenter, final List<ResourceTypePresenter.Listener> listeners,
+            final List<FileFilter> fileFilters) {
+
         if (resource == null) {
-            // TODO: do something?
+            // do nothing
+            notifyListeners(null, resourceTypePresenter, listeners);
             return;
         }
 
-        if (!_fileFilters.isEmpty()) {
-            final FileFilter selectedFileFilter = _fileFilters.get(0);
+        if (!fileFilters.isEmpty()) {
+            final FileFilter selectedFileFilter = fileFilters.get(0);
             if (selectedFileFilter instanceof ExtensionFilter) {
                 final ExtensionFilter extensionFilter = (ExtensionFilter) selectedFileFilter;
                 if (!extensionFilter.accept(resource)) {
@@ -86,40 +96,39 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
             }
         }
 
-        // do the remaining in a swing worker to avoid blocking the UI since it
+        // do this in a swing worker to avoid blocking the UI since it
         // will often time require I/O which may take time
         final SwingWorker<Resource, Void> worker = new SwingWorker<Resource, Void>() {
             @Override
             protected Resource doInBackground() throws Exception {
                 if (!resource.isExists()) {
-                    // TODO: do something?
                     return null;
                 }
 
                 return resource;
             }
-            
+
             @Override
             protected void done() {
-                final Resource resource;
+                Resource resource;
                 try {
                     resource = get();
                 } catch (Exception e) {
-                    // TODO: do something?
-                    return;
+                    resource = null;
                 }
-                
-                if (resource == null) {
-                    // TODO: do something
-                    return;
-                }
-                
-                for (Listener resourceSelectionListener : _resourceSelectionListeners) {
-                    resourceSelectionListener.onResourceSelected(TextFieldResourceTypePresenter.this, resource);
-                }
+
+                notifyListeners(resource, resourceTypePresenter, listeners);
             }
         };
         worker.execute();
+    }
+
+    private static void notifyListeners(final Resource resource, final ResourceTypePresenter<?> resourceTypePresenter,
+            final List<ResourceTypePresenter.Listener> listeners) {
+
+        for (ResourceTypePresenter.Listener resourceSelectionListener : listeners) {
+            resourceSelectionListener.onResourceSelected(resourceTypePresenter, resource);
+        }
     }
 
     @Override
@@ -146,12 +155,12 @@ public class TextFieldResourceTypePresenter implements ResourceTypePresenter<Res
 
     @Override
     public void addListener(Listener listener) {
-        _resourceSelectionListeners.add(listener);
+        _listeners.add(listener);
     }
 
     @Override
     public void removeListener(Listener listener) {
-        _resourceSelectionListeners.remove(listener);
+        _listeners.remove(listener);
     }
 
     @Override

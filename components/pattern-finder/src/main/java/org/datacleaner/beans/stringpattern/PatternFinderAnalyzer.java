@@ -274,7 +274,7 @@ public class PatternFinderAnalyzer implements Analyzer<PatternFinderResult> {
             RowAnnotation annotation = entry.getValue();
             int size = annotation.getRowCount();
             nav.put(size, true);
-            nav.attach(new AnnotatedRowsResult(annotation, _rowAnnotationFactory, column));
+            nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _rowAnnotationFactory, column));
 
             nav.where(DIMENSION_NAME_MEASURES, MEASURE_SAMPLE);
             nav.put(pattern.getSampleString(), true);

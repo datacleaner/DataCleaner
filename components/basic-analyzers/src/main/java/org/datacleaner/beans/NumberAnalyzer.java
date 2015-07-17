@@ -230,6 +230,6 @@ public class NumberAnalyzer implements Analyzer<NumberAnalyzerResult> {
     }
 
     private void addAttachment(CrosstabNavigator<Number> nav, RowAnnotation annotation, InputColumn<?> column) {
-        nav.attach(new AnnotatedRowsResult(annotation, _annotationFactory, column));
+        nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
     }
 }

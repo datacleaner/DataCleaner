@@ -150,6 +150,6 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
 
     @Override
     public boolean hasSampleRows(RowAnnotation annotation) {
-        return _storage.contains(annotation);
+        return _storage.containsKey(annotation);
     }
 }

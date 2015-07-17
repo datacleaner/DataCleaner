@@ -65,6 +65,27 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
     private transient TableModel _tableModel;
     private transient List<InputColumn<?>> _inputColumns;
 
+    /**
+     * Factory method for {@link AnnotatedRowsResult} that will return non-null
+     * ONLY if the {@link RowAnnotation} passed in has any sample rows according
+     * to the {@link RowAnnotationFactory}.
+     * 
+     * Otherwise returning null has the benefit that usually it makes it easy to
+     * filter out unnecesary drill-to-detail result objects.
+     * 
+     * @param annotation
+     * @param annotationFactory
+     * @param column
+     * @return
+     */
+    public static AnnotatedRowsResult createIfSampleRowsAvailable(RowAnnotation annotation,
+            RowAnnotationFactory annotationFactory, InputColumn<?>... columns) {
+        if (annotationFactory.hasSampleRows(annotation)) {
+            return new AnnotatedRowsResult(annotation, annotationFactory, columns);
+        }
+        return null;
+    }
+
     public AnnotatedRowsResult(RowAnnotation annotation, RowAnnotationFactory annotationFactory,
             InputColumn<?>... highlightedColumns) {
         _annotationFactoryRef = new SerializableRef<RowAnnotationFactory>(annotationFactory);

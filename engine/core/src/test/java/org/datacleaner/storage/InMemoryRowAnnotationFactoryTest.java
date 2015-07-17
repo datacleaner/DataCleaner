@@ -21,34 +21,9 @@ package org.datacleaner.storage;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 
 public class InMemoryRowAnnotationFactoryTest extends TestCase {
-
-    public void testGetValueCounts() throws Exception {
-        RowAnnotationFactory f = RowAnnotations.getDefaultFactory();
-        RowAnnotation a = f.createAnnotation();
-
-        MockInputColumn<String> col1 = new MockInputColumn<String>("greeting", String.class);
-        MockInputColumn<String> col2 = new MockInputColumn<String>("greeter", String.class);
-
-        f.annotate(new MockInputRow(1).put(col1, "hello").put(col2, "world"), 3, a);
-
-        assertEquals(3, f.getValueCounts(a, col1).get("hello").intValue());
-        assertEquals(3, f.getValueCounts(a, col2).get("world").intValue());
-
-        f.annotate(new MockInputRow(2).put(col1, "hi").put(col2, "world"), 2, a);
-
-        assertEquals(3, f.getValueCounts(a, col1).get("hello").intValue());
-        assertEquals(2, f.getValueCounts(a, col1).get("hi").intValue());
-        assertEquals(5, f.getValueCounts(a, col2).get("world").intValue());
-
-        f.reset(a);
-
-        assertEquals(0, f.getRows(a).length);
-        assertEquals(0, f.getValueCounts(a, col1).size());
-    }
 
     public void testCountingAboveThreshold() throws Exception {
         RowAnnotationFactory f = RowAnnotations.getDefaultFactory();

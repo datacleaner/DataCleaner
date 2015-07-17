@@ -21,13 +21,15 @@ package org.datacleaner.storage;
 
 public class RowAnnotations {
 
-    private static final RowAnnotationFactory _defaultRowAnnotationFactory = new InMemoryRowAnnotationFactory2();
-
     public static RowAnnotationFactory getDefaultFactory() {
-        return _defaultRowAnnotationFactory;
+        return getInMemoryFactory();
     }
 
-    public static RowAnnotationFactory getInMemoryFactory(int inMemoryRowThreshold) {
-        return new InMemoryRowAnnotationFactory2(inMemoryRowThreshold);
+    public static RowAnnotationFactory getInMemoryFactory() {
+        return getInMemoryFactory(500, 500);
+    }
+
+    public static RowAnnotationFactory getInMemoryFactory(int maxSampleSets, int maxSampledRecords) {
+        return new InMemoryRowAnnotationFactory2(maxSampleSets, maxSampledRecords);
     }
 }

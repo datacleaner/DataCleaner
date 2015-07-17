@@ -75,10 +75,8 @@ import org.datacleaner.configuration.jaxb.ElasticSearchDatastoreType.TableDef.Fi
 import org.datacleaner.configuration.jaxb.ExcelDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType;
 import org.datacleaner.configuration.jaxb.FixedWidthDatastoreType.WidthSpecification;
-import org.datacleaner.configuration.jaxb.H2StorageProviderType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType;
 import org.datacleaner.configuration.jaxb.HbaseDatastoreType.TableDef.Column;
-import org.datacleaner.configuration.jaxb.HsqldbStorageProviderType;
 import org.datacleaner.configuration.jaxb.InMemoryStorageProviderType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType;
 import org.datacleaner.configuration.jaxb.JdbcDatastoreType.TableTypes;
@@ -151,8 +149,6 @@ import org.datacleaner.reference.TextFileDictionary;
 import org.datacleaner.reference.TextFileSynonymCatalog;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
-import org.datacleaner.storage.H2StorageProvider;
-import org.datacleaner.storage.HsqldbStorageProvider;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.util.CollectionUtils2;
@@ -409,7 +405,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final InMemoryStorageProviderType inMemoryStorageProvider = storageProviderType.getInMemory();
         if (inMemoryStorageProvider != null) {
             int maxRowsThreshold = inMemoryStorageProvider.getMaxRowsThreshold();
-            return new InMemoryStorageProvider(maxRowsThreshold);
+            // TODO: Also have a XML attribute for the max sets
+            return new InMemoryStorageProvider(500, maxRowsThreshold);
         }
 
         final CustomElementType customStorageProvider = storageProviderType.getCustomStorageProvider();
@@ -428,39 +425,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             return storageProvider;
         }
 
-        final HsqldbStorageProviderType hsqldbStorageProvider = storageProviderType.getHsqldb();
-        if (hsqldbStorageProvider != null) {
-            String directoryPath = hsqldbStorageProvider.getTempDirectory();
-            if (directoryPath == null) {
-                directoryPath = _interceptor.getTemporaryStorageDirectory();
-            }
-
-            directoryPath = createFilename(directoryPath);
-
-            if (directoryPath == null) {
-                return new HsqldbStorageProvider();
-            } else {
-                return new HsqldbStorageProvider(directoryPath);
-            }
-        }
-
-        final H2StorageProviderType h2StorageProvider = storageProviderType.getH2Database();
-        if (h2StorageProvider != null) {
-            String directoryPath = h2StorageProvider.getTempDirectory();
-            if (directoryPath == null) {
-                directoryPath = _interceptor.getTemporaryStorageDirectory();
-            }
-
-            directoryPath = createFilename(directoryPath);
-
-            if (directoryPath == null) {
-                return new H2StorageProvider();
-            } else {
-                return new H2StorageProvider(directoryPath);
-            }
-        }
-
-        throw new IllegalStateException("Unknown storage provider type: " + storageProviderType);
+        return environment.getStorageProvider();
     }
 
     @SuppressWarnings("deprecation")

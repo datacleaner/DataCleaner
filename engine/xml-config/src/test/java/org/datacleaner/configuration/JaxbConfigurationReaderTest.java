@@ -68,7 +68,7 @@ import org.datacleaner.result.renderer.HtmlRenderingFormat;
 import org.datacleaner.result.renderer.TextRenderingFormat;
 import org.datacleaner.storage.BerkeleyDbStorageProvider;
 import org.datacleaner.storage.CombinedStorageProvider;
-import org.datacleaner.storage.HsqldbStorageProvider;
+import org.datacleaner.storage.InMemoryRowAnnotationFactory2;
 import org.datacleaner.storage.StorageProvider;
 import org.junit.Assert;
 
@@ -204,7 +204,7 @@ public class JaxbConfigurationReaderTest extends TestCase {
 
         CombinedStorageProvider csp = (CombinedStorageProvider) storageProvider;
         assertEquals(BerkeleyDbStorageProvider.class, csp.getCollectionsStorageProvider().getClass());
-        assertEquals(HsqldbStorageProvider.class, csp.getRowAnnotationsStorageProvider().getClass());
+        assertEquals(InMemoryRowAnnotationFactory2.class, csp.getRowAnnotationsStorageProvider().getClass());
     }
 
     public void testAllDatastoreTypes() throws Exception {

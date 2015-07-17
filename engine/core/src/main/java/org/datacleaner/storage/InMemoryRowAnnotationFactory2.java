@@ -23,11 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 
 /**
@@ -36,60 +34,46 @@ import org.datacleaner.api.InputRow;
  * records. A new class was added to allow deserialization of old DataCleaner
  * results, yet this class fully replaces the old one functionally.
  */
-final class InMemoryRowAnnotationFactory2 implements RowAnnotationFactory, Serializable {
+public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFactory2 implements RowAnnotationFactory,
+        Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final ConcurrentHashMap<RowAnnotation, Collection<InputRow>> _storage;
+    /**
+     * Kind of a magic number, but a way to ensure that the ratio between sample
+     * sets and records is kept under control, at least in default scenarios.
+     */
+    private static final int DEFAULT_SAMPLE_LIMIT = 500 * 500;
+
+    private final ConcurrentHashMap<RowAnnotation, List<InputRow>> _storage;
     private final int _maxSampleRecords;
+    private final int _maxSampleSets;
 
     public InMemoryRowAnnotationFactory2() {
         this(500);
     }
 
     public InMemoryRowAnnotationFactory2(int maxSampleRecords) {
+        this(500, DEFAULT_SAMPLE_LIMIT / maxSampleRecords);
+    }
+
+    /**
+     * 
+     * @param maxSampleSets
+     *            the maximum number of sample record collections to keep
+     * @param maxSampleRecords
+     *            the maximum number of records to keep in each collection
+     */
+    public InMemoryRowAnnotationFactory2(int maxSampleSets, int maxSampleRecords) {
         _storage = new ConcurrentHashMap<>();
+        _maxSampleSets = maxSampleSets;
         _maxSampleRecords = maxSampleRecords;
     }
 
-    @Override
-    public RowAnnotation createAnnotation() {
-        return new RowAnnotationImpl();
-    }
-
-    @Override
-    public void annotate(InputRow[] rows, RowAnnotation annotation) {
-        if (rows == null || annotation == null || rows.length == 0) {
-            return;
-        }
-
-        final Collection<InputRow> rowCollection = getInputRowCollection(rows.length, annotation);
-
-        incrementAnnotationCount(annotation, rows.length);
-        addInputRowsToCollection(rowCollection, rows);
-    }
-
-    private void incrementAnnotationCount(RowAnnotation annotation, int count) {
-        final RowAnnotationImpl rowAnnotationImpl = (RowAnnotationImpl) annotation;
-        rowAnnotationImpl.incrementRowCount(count);
-    }
-
-    private void addInputRowsToCollection(Collection<InputRow> rowCollection, InputRow[] rows) {
-        int size = rowCollection.size();
-        if (size >= _maxSampleRecords) {
-            return;
-        }
-
-        for (InputRow inputRow : rows) {
-            rowCollection.add(inputRow);
-            size++;
-            if (size >= _maxSampleRecords) {
-                return;
-            }
-        }
-    }
-
     private void addInputRowsToCollection(Collection<InputRow> rowCollection, Collection<InputRow> rows) {
+        if (rowCollection == null) {
+            return;
+        }
         int size = rowCollection.size();
         if (size >= _maxSampleRecords) {
             return;
@@ -105,10 +89,13 @@ final class InMemoryRowAnnotationFactory2 implements RowAnnotationFactory, Seria
     }
 
     private Collection<InputRow> getInputRowCollection(int defaultSize, RowAnnotation annotation) {
-        Collection<InputRow> rowCollection = _storage.get(annotation);
+        List<InputRow> rowCollection = _storage.get(annotation);
         if (rowCollection == null) {
+            if (_storage.size() > _maxSampleSets) {
+                return null;
+            }
             rowCollection = new ArrayList<InputRow>(defaultSize);
-            final Collection<InputRow> existingCollection = _storage.putIfAbsent(annotation, rowCollection);
+            final List<InputRow> existingCollection = _storage.putIfAbsent(annotation, rowCollection);
             if (existingCollection != null) {
                 rowCollection = existingCollection;
             }
@@ -117,11 +104,11 @@ final class InMemoryRowAnnotationFactory2 implements RowAnnotationFactory, Seria
     }
 
     @Override
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation) {
-        incrementAnnotationCount(annotation, distinctCount);
+    public void annotate(InputRow row, RowAnnotation annotation) {
+        super.annotate(row, annotation);
 
         final Collection<InputRow> rowCollection = getInputRowCollection(10, annotation);
-        for (int i = 0; i < distinctCount; i++) {
+        if (rowCollection != null) {
             if (rowCollection.size() >= _maxSampleRecords) {
                 return;
             }
@@ -130,45 +117,25 @@ final class InMemoryRowAnnotationFactory2 implements RowAnnotationFactory, Seria
     }
 
     @Override
-    public void reset(RowAnnotation annotation) {
-        final RowAnnotationImpl rowAnnotationImpl = (RowAnnotationImpl) annotation;
-        rowAnnotationImpl.resetRowCount();
-        
+    public void resetAnnotation(RowAnnotation annotation) {
+        super.resetAnnotation(annotation);
+
         _storage.remove(annotation);
     }
 
     @Override
-    public InputRow[] getRows(RowAnnotation annotation) {
-        final Collection<InputRow> collection = _storage.get(annotation);
+    public List<InputRow> getSampleRows(RowAnnotation annotation) {
+        final List<InputRow> collection = _storage.get(annotation);
         if (collection == null) {
-            return new InputRow[0];
+            return Collections.emptyList();
         }
-        return collection.toArray(new InputRow[collection.size()]);
-    }
-
-    @Override
-    public Map<Object, Integer> getValueCounts(RowAnnotation annotation, InputColumn<?> inputColumn) {
-        final Collection<InputRow> collection = _storage.get(annotation);
-        if (collection == null || collection.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        final Map<Object, Integer> map = new HashMap<Object, Integer>();
-
-        for (InputRow row : collection) {
-            final Object value = row.getValue(inputColumn);
-            Integer count = map.get(value);
-            if (count == null) {
-                count = 0;
-            }
-            count = count.intValue() + 1;
-            map.put(value, count);
-        }
-        return map;
+        return Collections.unmodifiableList(collection);
     }
 
     @Override
     public void transferAnnotations(RowAnnotation from, RowAnnotation to) {
+        super.transferAnnotations(from, to);
+
         final Collection<InputRow> fromCollection = _storage.get(from);
         if (fromCollection == null || fromCollection.isEmpty()) {
             return;
@@ -176,9 +143,13 @@ final class InMemoryRowAnnotationFactory2 implements RowAnnotationFactory, Seria
 
         Collection<InputRow> toCollection = getInputRowCollection(fromCollection.size(), to);
 
-        incrementAnnotationCount(to, from.getRowCount());
         addInputRowsToCollection(toCollection, fromCollection);
 
-        reset(from);
+        _storage.remove(from);
+    }
+
+    @Override
+    public boolean hasSampleRows(RowAnnotation annotation) {
+        return _storage.contains(annotation);
     }
 }

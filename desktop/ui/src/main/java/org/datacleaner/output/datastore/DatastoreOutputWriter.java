@@ -25,20 +25,23 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.apache.metamodel.DataContextFactory;
+import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.create.CreateTable;
+import org.apache.metamodel.drop.DropTable;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.apache.metamodel.schema.Schema;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.storage.H2StorageProvider;
-import org.datacleaner.storage.SqlDatabaseUtils;
-import org.datacleaner.util.ReflectionUtils;
 import org.datacleaner.output.OutputRow;
 import org.datacleaner.output.OutputWriter;
-import org.apache.metamodel.DataContext;
-import org.apache.metamodel.DataContextFactory;
+import org.datacleaner.util.ReflectionUtils;
 
 final class DatastoreOutputWriter implements OutputWriter {
 
-	private static final String DRIVER_CLASS_NAME = H2StorageProvider.DRIVER_CLASS_NAME;
+	private static final String DRIVER_CLASS_NAME = "org.h2.Driver";
 
 	private final String _datastoreName;
 	private final String _jdbcUrl;
@@ -76,16 +79,17 @@ final class DatastoreOutputWriter implements OutputWriter {
 		tableName = DatastoreOutputUtils.safeName(tableName);
 
 		synchronized (DatastoreOutputWriter.class) {
-			final DataContext dc = DataContextFactory.createJdbcDataContext(_connection);
+			final UpdateableDataContext dc = DataContextFactory.createJdbcDataContext(_connection);
 			dc.refreshSchemas();
-			final String[] tableNames = dc.getDefaultSchema().getTableNames();
+			final Schema schema = dc.getDefaultSchema();
+            final String[] tableNames = schema.getTableNames();
 
 			if (truncateExisting) {
 				_tableName = tableName;
 
 				for (String existingTableName : tableNames) {
 					if (_tableName.equalsIgnoreCase(existingTableName)) {
-						SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
+					    dc.executeUpdate(new DropTable(schema, existingTableName));
 					}
 				}
 			} else {
@@ -107,25 +111,18 @@ final class DatastoreOutputWriter implements OutputWriter {
 			}
 
 			// create a CREATE TABLE statement and execute it
-			final StringBuilder createStatementBuilder = new StringBuilder();
-			createStatementBuilder.append("CREATE TABLE ");
-			createStatementBuilder.append(_tableName);
-			createStatementBuilder.append(" (");
+			CreateTable createTable = new CreateTable(schema, _tableName);
+			
 			for (int i = 0; i < columns.length; i++) {
-				if (i != 0) {
-					createStatementBuilder.append(',');
-				}
-				InputColumn<?> column = columns[i];
-				createStatementBuilder.append(DatastoreOutputUtils.safeName(column.getName()));
-				createStatementBuilder.append(' ');
-				if (!isDirectlyInsertableType(column)) {
-					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(String.class));
-				} else {
-					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
-				}
+			    final InputColumn<?> column = columns[i];
+			    final String columnName = DatastoreOutputUtils.safeName(column.getName());
+			    final Class<?> dataType = column.getDataType();
+			    final ColumnType columnType = ColumnTypeImpl.convertColumnType(dataType);
+                
+			    createTable.withColumn(columnName).ofType(columnType);
 			}
-			createStatementBuilder.append(')');
-			SqlDatabaseUtils.performUpdate(_connection, createStatementBuilder.toString());
+			
+			dc.executeUpdate(createTable);
 		}
 
 		// create a reusable INSERT statement
@@ -159,8 +156,12 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 	@Override
 	public void close() {
-		SqlDatabaseUtils.safeClose(null, _insertStatement);
-
+	    try{
+	        _insertStatement.close();
+	    } catch (Exception e) {
+	        // do nothing
+	    }
+	    
 		DatastoreOutputWriterFactory.release(this);
 
 		Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "", true);

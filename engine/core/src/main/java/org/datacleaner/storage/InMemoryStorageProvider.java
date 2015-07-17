@@ -35,14 +35,16 @@ import java.util.Set;
  */
 public final class InMemoryStorageProvider implements StorageProvider {
 
-    private final int _storedRowsThreshold;
+    private final int _maxSampleSets;
+    private final int _maxSampleRecords;
 
     public InMemoryStorageProvider() {
-        this(1000);
+        this(500, 500);
     }
 
-    public InMemoryStorageProvider(int storedRowsThreshold) {
-        _storedRowsThreshold = storedRowsThreshold;
+    public InMemoryStorageProvider(int maxSampleSets, int maxSampleRecords) {
+        _maxSampleSets = maxSampleSets;
+        _maxSampleRecords = maxSampleRecords;
     }
 
     @Override
@@ -62,6 +64,6 @@ public final class InMemoryStorageProvider implements StorageProvider {
 
     @Override
     public RowAnnotationFactory createRowAnnotationFactory() {
-        return RowAnnotations.getInMemoryFactory(_storedRowsThreshold);
+        return RowAnnotations.getInMemoryFactory(_maxSampleSets, _maxSampleRecords);
     }
 }

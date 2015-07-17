@@ -37,9 +37,9 @@ import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.AverageBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class StringAnalyzer implements Analyzer<StringAnalyzerResult> {
 	@SafeVarargs
 	public StringAnalyzer(InputColumn<String>... columns) {
 		_columns = columns;
-		_annotationFactory = new InMemoryRowAnnotationFactory();
+		_annotationFactory = RowAnnotations.getDefaultFactory();
 		init();
 	}
 

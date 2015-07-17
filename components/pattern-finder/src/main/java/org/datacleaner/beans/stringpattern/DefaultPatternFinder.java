@@ -62,7 +62,7 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
     public DefaultPatternFinder(TokenizerConfiguration configuration, int inMemoryRowThreshold) {
         super(configuration);
         _annotations = new ConcurrentHashMap<TokenPattern, RowAnnotation>();
-        _annotationFactory = RowAnnotations.getInMemoryFactory(inMemoryRowThreshold);
+        _annotationFactory = RowAnnotations.getInMemoryFactory(100, inMemoryRowThreshold);
     }
 
     @Override

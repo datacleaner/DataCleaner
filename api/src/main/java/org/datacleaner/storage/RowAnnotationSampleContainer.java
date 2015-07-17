@@ -19,20 +19,30 @@
  */
 package org.datacleaner.storage;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.datacleaner.api.InputRow;
 
 /**
- * A {@link RowAnnotationFactory} that does not store any row samples. As such
- * it is usually not very useful to the user but can function as a stub for
- * situations where the row data is irrelevant.
+ * A component for retrieving sample {@link InputRow}s that are annotated using
+ * with a {@link RowAnnotation}.
  */
-public class DummyRowAnnotationFactory extends AbstractRowAnnotationFactory2 {
+public interface RowAnnotationSampleContainer {
 
-    @Override
-    public List<InputRow> getSampleRows(RowAnnotation annotation) {
-        return Collections.emptyList();
-    }
+    /**
+     * Determines if there are sample rows available for a specific
+     * {@link RowAnnotation}.
+     * 
+     * @param annotation
+     * @return
+     */
+    public boolean hasSampleRows(RowAnnotation annotation);
+
+    /**
+     * Gets all the available sample rows with a given annotation.
+     * 
+     * @param annotation
+     * @return
+     */
+    public List<InputRow> getSampleRows(RowAnnotation annotation);
 }

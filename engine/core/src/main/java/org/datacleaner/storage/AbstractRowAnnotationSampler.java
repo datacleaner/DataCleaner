@@ -19,7 +19,6 @@
  */
 package org.datacleaner.storage;
 
-interface SqlDatabaseCollection {
+public abstract class AbstractRowAnnotationSampler  implements RowAnnotationFactory {
 
-	public String getTableName();
 }

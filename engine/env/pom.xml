@@ -9,7 +9,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>berkeleydb</module>
-		<module>h2</module>
 		<module>cluster</module>
 	</modules>
 	

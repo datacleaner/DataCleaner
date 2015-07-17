@@ -280,6 +280,6 @@ public final class BerkeleyDbStorageProvider implements StorageProvider {
 	@Override
 	public RowAnnotationFactory createRowAnnotationFactory() {
 		// TODO: Create a persistent RowAnnotationFactory
-		return new InMemoryRowAnnotationFactory();
+		return new InMemoryRowAnnotationFactory2();
 	}
 }

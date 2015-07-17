@@ -99,18 +99,6 @@
 					</documentation>
 				</annotation>
 			</element>
-			<element name="h2-database" type="ab:h2StorageProviderType"
-				minOccurs="1" maxOccurs="1">
-				<annotation>
-					<documentation>
-						This storage provider uses the H2 database engine
-						as
-						a backing store for intermediary results.
-					</documentation>
-				</annotation>
-			</element>
-			<element name="hsqldb" type="ab:hsqldbStorageProviderType"
-				minOccurs="1" maxOccurs="1" />
 			<element name="berkeley-db" type="ab:berkeleyDbStorageProviderType"
 				minOccurs="1" maxOccurs="1" />
 			<element name="custom-storage-provider" type="ab:customElementType"

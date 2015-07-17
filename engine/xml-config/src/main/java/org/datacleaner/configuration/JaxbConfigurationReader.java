@@ -404,9 +404,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
 
         final InMemoryStorageProviderType inMemoryStorageProvider = storageProviderType.getInMemory();
         if (inMemoryStorageProvider != null) {
-            int maxRowsThreshold = inMemoryStorageProvider.getMaxRowsThreshold();
-            // TODO: Also have a XML attribute for the max sets
-            return new InMemoryStorageProvider(500, maxRowsThreshold);
+            final int maxRowsThreshold = inMemoryStorageProvider.getMaxRowsThreshold();
+            final int maxSetsThreshold = inMemoryStorageProvider.getMaxSetsThreshold();
+            return new InMemoryStorageProvider(maxSetsThreshold, maxRowsThreshold);
         }
 
         final CustomElementType customStorageProvider = storageProviderType.getCustomStorageProvider();

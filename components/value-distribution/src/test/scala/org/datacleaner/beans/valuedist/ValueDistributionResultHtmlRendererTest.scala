@@ -128,6 +128,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     Assert.assertEquals(3, htmlFragment.getHeadElements().size());
 
     val html = htmlFragment.getBodyElements().get(7).toHtml(context);
+    
     Assert.assertEquals("""<div class="valueDistributionResultContainer">
                  <div class="valueDistributionGroupPanel">
              <h3>Group: eobjects.dk</h3>
@@ -200,18 +201,21 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     var html: String = null;
 
     html = htmlFragment.getBodyElements().get(0).toHtml(context);
+    
     Assert.assertEquals("""<div id="reselem_2" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (9)</h3>
-<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr></table>
+<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr><tr class="odd"><td class="highlighted">kasper</td></tr><tr class="even"><td class="highlighted">kasper</td></tr></table>
 </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
 
     html = htmlFragment.getBodyElements().get(1).toHtml(context);
+
     Assert.assertEquals("""<div id="reselem_3" class="drillToDetailsPanel" style="display:none;">
 <h3>Records (3)</h3>
-<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr></table>
+<table class="annotatedRowsTable"><tr class="odd"><th>email username</th></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr><tr class="odd"><td class="highlighted">kasper.sorensen</td></tr><tr class="even"><td class="highlighted">kasper.sorensen</td></tr></table>
 </div>""".replaceAll("\r\n", "\n"), html.replaceAll("\r\n", "\n"));
 
     html = htmlFragment.getBodyElements().get(4).toHtml(context);
+    
     Assert.assertEquals("""<div class="valueDistributionResultContainer">
                  <div class="valueDistributionGroupPanel">
              

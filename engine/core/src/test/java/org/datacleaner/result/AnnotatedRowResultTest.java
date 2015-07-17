@@ -23,20 +23,20 @@ import java.util.Arrays;
 
 import javax.swing.table.TableModel;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.lang.SerializationUtils;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-
-import junit.framework.TestCase;
+import org.datacleaner.storage.RowAnnotations;
 
 public class AnnotatedRowResultTest extends TestCase {
 
 	public void testSerializeAndDeserialize() throws Exception {
-		RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+		RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 		RowAnnotation annotation = annotationFactory.createAnnotation();
 		InputColumn<String> col1 = new MockInputColumn<String>("foo", String.class);
 		InputColumn<String> col2 = new MockInputColumn<String>("bar", String.class);

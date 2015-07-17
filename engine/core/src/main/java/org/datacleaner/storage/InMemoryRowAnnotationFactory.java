@@ -26,13 +26,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.datacleaner.api.InputRow;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.util.ImmutableEntry;
 
 /**
  * Default {@link RowAnnotationFactory} instance. Stores up to 1000 rows in an
  * in memory annotation.
+ * 
+ * @deprecated get your {@link RowAnnotationFactory} from the
+ *             {@link DataCleanerEnvironment#getStorageProvider()} method or the
+ *             {@link RowAnnotations} class instead.
  */
-public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory implements RowAnnotationFactory {
+@Deprecated
+public class InMemoryRowAnnotationFactory extends AbstractRowAnnotationFactory {
 
     private static final long serialVersionUID = 1L;
 

@@ -35,9 +35,9 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;
 import org.apache.metamodel.util.Ref;
@@ -215,7 +215,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
     public RowAnnotation getAnnotation() {
         if (_annotation == null) {
             // only occurs for deserialized instances
-            return new InMemoryRowAnnotationFactory().createAnnotation();
+            return RowAnnotations.getDefaultFactory().createAnnotation();
         }
         return _annotation;
     }

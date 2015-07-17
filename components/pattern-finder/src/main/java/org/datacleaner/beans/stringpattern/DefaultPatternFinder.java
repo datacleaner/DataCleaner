@@ -24,14 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.datacleaner.api.InputRow;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 
 /**
  * Default PatternFinder implementation, used by the PatternFinderAnalyzer.
- * 
- * 
  */
 public final class DefaultPatternFinder extends PatternFinder<InputRow> {
 
@@ -64,7 +62,7 @@ public final class DefaultPatternFinder extends PatternFinder<InputRow> {
     public DefaultPatternFinder(TokenizerConfiguration configuration, int inMemoryRowThreshold) {
         super(configuration);
         _annotations = new ConcurrentHashMap<TokenPattern, RowAnnotation>();
-        _annotationFactory = new InMemoryRowAnnotationFactory(inMemoryRowThreshold);
+        _annotationFactory = RowAnnotations.getInMemoryFactory(inMemoryRowThreshold);
     }
 
     @Override

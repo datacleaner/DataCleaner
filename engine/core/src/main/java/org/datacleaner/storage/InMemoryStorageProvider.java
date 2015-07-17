@@ -35,33 +35,33 @@ import java.util.Set;
  */
 public final class InMemoryStorageProvider implements StorageProvider {
 
-	private final int _storedRowsThreshold;
-	
-	public InMemoryStorageProvider() {
-		this(1000);
-	}
+    private final int _storedRowsThreshold;
 
-	public InMemoryStorageProvider(int storedRowsThreshold) {
-		_storedRowsThreshold = storedRowsThreshold;
-	}
+    public InMemoryStorageProvider() {
+        this(1000);
+    }
 
-	@Override
-	public <E> List<E> createList(Class<E> valueType) throws IllegalStateException {
-		return new ArrayList<E>();
-	}
+    public InMemoryStorageProvider(int storedRowsThreshold) {
+        _storedRowsThreshold = storedRowsThreshold;
+    }
 
-	@Override
-	public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException {
-		return new HashMap<K, V>();
-	}
+    @Override
+    public <E> List<E> createList(Class<E> valueType) throws IllegalStateException {
+        return new ArrayList<E>();
+    }
 
-	@Override
-	public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException {
-		return new HashSet<E>();
-	}
+    @Override
+    public <K, V> Map<K, V> createMap(Class<K> keyType, Class<V> valueType) throws IllegalStateException {
+        return new HashMap<K, V>();
+    }
 
-	@Override
-	public RowAnnotationFactory createRowAnnotationFactory() {
-		return new InMemoryRowAnnotationFactory(_storedRowsThreshold);
-	}
+    @Override
+    public <E> Set<E> createSet(Class<E> valueType) throws IllegalStateException {
+        return new HashSet<E>();
+    }
+
+    @Override
+    public RowAnnotationFactory createRowAnnotationFactory() {
+        return RowAnnotations.getInMemoryFactory(_storedRowsThreshold);
+    }
 }

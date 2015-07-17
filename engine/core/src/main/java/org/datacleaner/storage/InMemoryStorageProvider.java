@@ -42,9 +42,13 @@ public final class InMemoryStorageProvider implements StorageProvider {
         this(500, 500);
     }
 
+    public InMemoryStorageProvider(int maxSampleRecords) {
+        this(Math.min(10, 500 * 500 / maxSampleRecords), maxSampleRecords);
+    }
+
     public InMemoryStorageProvider(int maxSampleSets, int maxSampleRecords) {
-        _maxSampleSets = maxSampleSets;
-        _maxSampleRecords = maxSampleRecords;
+        _maxSampleSets = Math.max(0, maxSampleSets);
+        _maxSampleRecords = Math.max(0, maxSampleRecords);
     }
 
     @Override

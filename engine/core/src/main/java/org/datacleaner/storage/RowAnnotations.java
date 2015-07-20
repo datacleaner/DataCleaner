@@ -19,20 +19,17 @@
  */
 package org.datacleaner.storage;
 
-import java.util.Collections;
-import java.util.List;
+public class RowAnnotations {
 
-import org.datacleaner.api.InputRow;
+    public static RowAnnotationFactory getDefaultFactory() {
+        return getInMemoryFactory();
+    }
 
-/**
- * A {@link RowAnnotationFactory} that does not store any row samples. As such
- * it is usually not very useful to the user but can function as a stub for
- * situations where the row data is irrelevant.
- */
-public class DummyRowAnnotationFactory extends AbstractRowAnnotationFactory2 {
+    public static RowAnnotationFactory getInMemoryFactory() {
+        return getInMemoryFactory(500, 500);
+    }
 
-    @Override
-    public List<InputRow> getSampleRows(RowAnnotation annotation) {
-        return Collections.emptyList();
+    public static RowAnnotationFactory getInMemoryFactory(int maxSampleSets, int maxSampledRecords) {
+        return new InMemoryRowAnnotationFactory2(maxSampleSets, maxSampledRecords);
     }
 }

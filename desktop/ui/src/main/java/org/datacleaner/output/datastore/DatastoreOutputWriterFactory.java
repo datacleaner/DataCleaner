@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.storage.SqlDatabaseUtils;
 import org.datacleaner.output.OutputWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +98,7 @@ public final class DatastoreOutputWriterFactory {
                     } catch (SQLException e) {
                         logger.error("Could not invoke SHUTDOWN", e);
                     } finally {
-                        SqlDatabaseUtils.safeClose(null, st);
+                        st.close();
                     }
 
                 } catch (SQLException e) {

@@ -185,9 +185,9 @@ public class ValueDistributionAndStringAnalysisTest extends TestCase {
         assertNotNull(resultProducer);
 
         AnnotatedRowsResult arr = (AnnotatedRowsResult) resultProducer.getResult();
-        InputRow[] rows = arr.getRows();
-        assertEquals(1, rows.length);
-        assertEquals("Foon Yue", rows[0].getValue(analysisJobBuilder.getSourceColumnByName("FIRSTNAME")).toString());
+        List<InputRow> rows = arr.getSampleRows();
+        assertEquals(1, rows.size());
+        assertEquals("Foon Yue", rows.get(0).getValue(analysisJobBuilder.getSourceColumnByName("FIRSTNAME")).toString());
 
         resultProducer = crosstab.where("Column", "FIRSTNAME").where("Measures", "Diacritic chars").explore();
         assertNull(resultProducer);

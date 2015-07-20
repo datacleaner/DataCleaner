@@ -26,9 +26,9 @@ import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.result.AnnotatedRowsResult;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.widgets.result.AnnotatedRowsResultSwingRenderer.AnnotatedRowResultPanel;
 import org.datacleaner.widgets.table.DCTable;
@@ -40,7 +40,7 @@ public class AnnotatedRowsResultSwingRendererTest extends TestCase {
 		renderer.userPreferences = new UserPreferencesImpl(null);
 		renderer.datastoreCatalog = new DatastoreCatalogImpl();
 
-		RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+		RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 		RowAnnotation annotation = annotationFactory.createAnnotation();
 
 		MockInputColumn<String> colFoo = new MockInputColumn<String>("foo", String.class);

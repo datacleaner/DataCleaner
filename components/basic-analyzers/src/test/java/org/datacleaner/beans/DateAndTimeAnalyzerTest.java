@@ -26,8 +26,11 @@ import junit.framework.TestCase;
 
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.job.AnalysisJob;
@@ -39,14 +42,18 @@ import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.ResultProducer;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
+import org.datacleaner.storage.InMemoryStorageProvider;
+import org.datacleaner.storage.StorageProvider;
 import org.datacleaner.test.TestHelper;
 
 public class DateAndTimeAnalyzerTest extends TestCase {
     public void testOrderFactTable() throws Throwable {
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(
-                TestHelper.createSampleDatabaseDatastore("orderdb")));
+        StorageProvider storageProvider = new InMemoryStorageProvider(20, 1000);
+        DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withStorageProvider(storageProvider);
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withEnvironment(environment)
+                .withDatastoreCatalog(new DatastoreCatalogImpl(TestHelper.createSampleDatabaseDatastore("orderdb")));
         AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
-        
+
         try {
             ajb.setDatastore("orderdb");
 
@@ -90,16 +97,16 @@ public class DateAndTimeAnalyzerTest extends TestCase {
             InputColumn<?> column = ajb.getSourceColumnByName("ORDERDATE");
 
             ResultProducer resultProducer = nav.where("Measure", "Highest date").explore();
-            testAnnotatedRowResult(resultProducer.getResult(), column, 19, 19);
+            assertAnnotatedRowResult(resultProducer.getResult(), column, 19, 19);
 
             resultProducer = nav.where("Measure", "Lowest date").explore();
-            testAnnotatedRowResult(resultProducer.getResult(), column, 4, 4);
+            assertAnnotatedRowResult(resultProducer.getResult(), column, 4, 4);
 
             resultProducer = nav.where("Measure", "Highest time").explore();
-            testAnnotatedRowResult(resultProducer.getResult(), column, 2996, 1000);
+            assertAnnotatedRowResult(resultProducer.getResult(), column, 2996, 1000);
 
             resultProducer = nav.where("Measure", "Lowest time").explore();
-            testAnnotatedRowResult(resultProducer.getResult(), column, 2996, 1000);
+            assertAnnotatedRowResult(resultProducer.getResult(), column, 2996, 1000);
 
             assertEquals(2996, result.getRowCount(new MockInputColumn<Date>("ORDERDATE")));
             assertEquals(0, result.getNullCount(new MockInputColumn<Date>("ORDERDATE")));
@@ -117,7 +124,7 @@ public class DateAndTimeAnalyzerTest extends TestCase {
         assertEquals(12934, DateAndTimeAnalyzerResult.convertToDaysSinceEpoch("2005-05-31"));
     }
 
-    private void testAnnotatedRowResult(AnalyzerResult result, InputColumn<?> col, int rowCount, int distinctRowCount) {
+    private void assertAnnotatedRowResult(AnalyzerResult result, InputColumn<?> col, int rowCount, int distinctRowCount) {
         assertTrue("Unexpected result type: " + result.getClass(), result instanceof AnnotatedRowsResult);
         AnnotatedRowsResult res = (AnnotatedRowsResult) result;
         InputColumn<?>[] highlightedColumns = res.getHighlightedColumns();
@@ -125,6 +132,8 @@ public class DateAndTimeAnalyzerTest extends TestCase {
         assertEquals(col, highlightedColumns[0]);
 
         assertEquals(rowCount, res.getAnnotatedRowCount());
-        assertEquals(distinctRowCount, res.getRows().length);
+
+        final List<InputRow> sampleRows = res.getSampleRows();
+        assertEquals(distinctRowCount, sampleRows.size());
     }
 }

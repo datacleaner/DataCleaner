@@ -122,7 +122,7 @@ public class ConfigurationFactory {
 
     @Bean(name = "storageProvider")
     public StorageProvider createStorageProvider() {
-        return new InMemoryStorageProvider(300);
+        return new InMemoryStorageProvider(1000, 100);
     }
 
     @Bean(name = "dataCleanerEnvironment")

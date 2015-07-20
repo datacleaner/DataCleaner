@@ -37,8 +37,8 @@ import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 
 public class CompletenessAnalyzerTest extends TestCase {
 
@@ -46,9 +46,9 @@ public class CompletenessAnalyzerTest extends TestCase {
         AnalyzerDescriptor<CompletenessAnalyzer> descriptor = Descriptors.ofAnalyzer(CompletenessAnalyzer.class);
         assertTrue(descriptor.isDistributable());
     }
-    
+
     public void testAllFieldsEvaluationMode() throws Exception {
-        final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 
         final InputColumn<?> col1 = new MockInputColumn<String>("foo");
         final InputColumn<?> col2 = new MockInputColumn<String>("bar");
@@ -58,7 +58,8 @@ public class CompletenessAnalyzerTest extends TestCase {
         analyzer._annotationFactory = annotationFactory;
         analyzer._invalidRecords = annotationFactory.createAnnotation();
         analyzer._valueColumns = new InputColumn[] { col1, col2 };
-        analyzer._conditions = new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_NULL, CompletenessAnalyzer.Condition.NOT_NULL };
+        analyzer._conditions = new CompletenessAnalyzer.Condition[] { CompletenessAnalyzer.Condition.NOT_NULL,
+                CompletenessAnalyzer.Condition.NOT_NULL };
 
         analyzer.init();
 
@@ -78,11 +79,11 @@ public class CompletenessAnalyzerTest extends TestCase {
             List<TableDataProvider<?>> tableDataProviders = Collections.emptyList();
             ajb.setDatastore(new PojoDatastore("ds", tableDataProviders));
             ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
-            
+
             AnalyzerComponentBuilder<CompletenessAnalyzer> analyzer = ajb.addAnalyzer(CompletenessAnalyzer.class);
             analyzer.getComponentInstance().setValueColumns(ajb.getSourceColumns().toArray(new InputColumn[0]));
             analyzer.getComponentInstance().fillAllConditions(Condition.NOT_BLANK_OR_NULL);
-            
+
             assertTrue(analyzer.isConfigured(true));
         } finally {
             ajb.close();
@@ -90,7 +91,7 @@ public class CompletenessAnalyzerTest extends TestCase {
     }
 
     public void testSimpleScenario() throws Exception {
-        final RowAnnotationFactory annotationFactory = new InMemoryRowAnnotationFactory();
+        final RowAnnotationFactory annotationFactory = RowAnnotations.getDefaultFactory();
 
         final InputColumn<?> col1 = new MockInputColumn<String>("foo");
         final InputColumn<?> col2 = new MockInputColumn<String>("bar");

@@ -11,9 +11,7 @@
 				<berkeley-db />
 			</collections-storage>
 			<row-annotation-storage>
-				<hsqldb>
-					<temp-directory>target/temp</temp-directory>
-				</hsqldb>
+				<in-memory max-rows-threshold="5" />
 			</row-annotation-storage>
 		</combined>
 	</storage-provider>

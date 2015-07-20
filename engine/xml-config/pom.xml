@@ -202,12 +202,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-env-h2</artifactId>
-			<version>${project.version}</version>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-env-berkeleydb</artifactId>
 			<version>${project.version}</version>
 			<optional>true</optional>

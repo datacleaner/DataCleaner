@@ -10,7 +10,7 @@
 		<hadoop.version>2.6.0</hadoop.version>
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.2.5</httpcomponents.version>
-		<guava.version>18.0</guava.version>
+		<guava.version>16.0.1</guava.version>
 		<metamodel.version>4.3.5</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>

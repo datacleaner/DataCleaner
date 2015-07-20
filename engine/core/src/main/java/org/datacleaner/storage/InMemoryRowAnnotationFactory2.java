@@ -91,7 +91,7 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
     private Collection<InputRow> getInputRowCollection(int defaultSize, RowAnnotation annotation) {
         List<InputRow> rowCollection = _storage.get(annotation);
         if (rowCollection == null) {
-            if (_storage.size() > _maxSampleSets) {
+            if (_storage.size() >= _maxSampleSets) {
                 return null;
             }
             rowCollection = new ArrayList<InputRow>(defaultSize);

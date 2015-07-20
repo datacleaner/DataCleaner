@@ -24,7 +24,12 @@ import java.util.List;
 import org.datacleaner.api.InputRow;
 
 /**
- * Abstract implementation of {@link RowAnnotationSampleContainer}
+ * Abstract implementation of {@link RowAnnotationSampleContainer}.
+ * 
+ * This class is the successor of {@link AbstractRowAnnotationFactory} which was
+ * found to be too wasteful in terms of memory usage. A new class was added to
+ * allow deserialization of old DataCleaner results, yet this class fully
+ * replaces the old one functionally.
  */
 public abstract class AbstractRowAnnotationFactory2 implements RowAnnotationFactory, RowAnnotationSampleContainer,
         RowAnnotationHandler {

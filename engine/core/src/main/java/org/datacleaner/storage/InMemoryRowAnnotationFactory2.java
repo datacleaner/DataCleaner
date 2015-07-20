@@ -80,10 +80,12 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
         }
 
         for (InputRow inputRow : rows) {
-            rowCollection.add(inputRow);
-            size++;
-            if (size >= _maxSampleRecords) {
-                return;
+            synchronized (rowCollection) {
+                rowCollection.add(inputRow);
+                size++;
+                if (size >= _maxSampleRecords) {
+                    return;
+                }
             }
         }
     }
@@ -109,10 +111,12 @@ public final class InMemoryRowAnnotationFactory2 extends AbstractRowAnnotationFa
 
         final Collection<InputRow> rowCollection = getInputRowCollection(10, annotation);
         if (rowCollection != null) {
-            if (rowCollection.size() >= _maxSampleRecords) {
-                return;
+            synchronized (rowCollection) {
+                if (rowCollection.size() >= _maxSampleRecords) {
+                    return;
+                }
+                rowCollection.add(row);
             }
-            rowCollection.add(row);
         }
     }
 

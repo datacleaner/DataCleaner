@@ -41,6 +41,7 @@ import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.DCDocumentListener;
+import org.datacleaner.util.ErrorUtils;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.ImmutableEntry;
@@ -143,6 +144,11 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     protected void setStatusWarning(String text) {
         _statusLabel.setText(text);
         _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
+    }
+    
+    protected void setStatusError(Throwable error) {
+        error = ErrorUtils.unwrapForPresentation(error);
+        setStatusError(error.getMessage());
     }
     
     protected void setStatusError(String text) {

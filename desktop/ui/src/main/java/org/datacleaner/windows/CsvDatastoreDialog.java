@@ -304,7 +304,6 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                 validateAndUpdate();
             }
         }.execute();
-        ;
     }
 
     @Override

@@ -71,14 +71,14 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Distributed(false)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
-    public static final String PROPERTY_FILE = "File";
+    public static final String PROPERTY_FILE = "File Resource";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
 
     @Inject
     @Configured(value = PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
-    File file;
+    Resource file;
 
     @Inject
     @Configured(order = 2, required = false)
@@ -108,15 +108,16 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Provided
     UserPreferences userPreferences;
 
-    private File _targetFile;
+    private Resource _targetFile;
     private int _indexOfColumnToBeSortedOn = -1;
     private boolean _isColumnToBeSortedOnPresentInInput = true;
 
     @Initialize
     public void initTempFile() throws Exception {
+        
         if (_targetFile == null) {
             if (columnToBeSortedOn != null) {
-                _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+                _targetFile = new FileResource("csv_file_analyzer.csv");
             } else {
                 _targetFile = file;
             }
@@ -133,7 +134,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Validate
     public void validate() {
-        if (file.exists() && !overwriteFileIfExists) {
+        if (file.isExists() && !overwriteFileIfExists) {
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
         }
@@ -144,7 +145,9 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-" + categoryName + ".csv");
+        final File filename = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
+                + categoryName + ".csv");
+        file = new FileResource(filename);
     }
 
     @Override
@@ -152,7 +155,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv"));
     }
 
     @Override
@@ -191,8 +194,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             }
         }
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
+        return CsvOutputWriterFactory.getWriter(_targetFile.getQualifiedPath(), headers.toArray(new String[0]),
+                separatorChar, getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
     }
 
     private char getSafeQuoteChar() {
@@ -282,16 +285,14 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             } finally {
                 dataSet.close();
             }
-
-            sortMergeWriter.write(file);
+            sortMergeWriter.write(file.getQualifiedPath());
         }
 
-        final Resource resource = new FileResource(file);
-        final Datastore datastore = new CsvDatastore(file.getName(), resource, csvConfiguration);
+        final Datastore datastore = new CsvDatastore(file.getName(), file, csvConfiguration);
         return new WriteDataResultImpl(rowCount, datastore, null, null);
     }
 
-    public void setFile(File file) {
+    public void setFile(Resource file) {
         this.file = file;
     }
 }

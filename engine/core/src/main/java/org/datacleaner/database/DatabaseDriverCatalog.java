@@ -65,6 +65,7 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_LUCIDDB = "LucidDB";
     public static final String DATABASE_NAME_PERVASIVE = "Pervasive";
     public static final String DATABASE_NAME_CUBRID = "Cubrid";
+    public static final String DATABASE_NAME_HIVE = "Apache Hive";
 
     private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
@@ -112,7 +113,8 @@ public class DatabaseDriverCatalog implements Serializable {
                 "http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar",
                 "jdbc:derby:<database>");
         add(DATABASE_NAME_ORACLE, "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
-                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>", "jdbc:oracle:thin:@<hostname>:<port>/<service>:<server>/<instance>");
+                "jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>",
+                "jdbc:oracle:thin:@<hostname>:<port>/<service>:<server>/<instance>");
         add(DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL, "images/datastore-types/databases/microsoft.png",
                 "com.microsoft.sqlserver.jdbc.SQLServerDriver", null,
                 "jdbc:sqlserver://<hostname>:3341;databaseName=<database>",
@@ -138,6 +140,9 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
         add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
+        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", "org.apache.hadoop.hive.jdbc.HiveDriver",
+                "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
+                "jdbc:hive://<hostname>:10000/<database>");
 
         Collections.sort(_databaseDrivers);
     }

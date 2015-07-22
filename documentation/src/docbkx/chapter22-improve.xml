@@ -152,12 +152,6 @@
 								later, it can be re-applied very easily.
 							</entry>
 						</row>
-						<row>
-							<entry>Reference file</entry>
-							<entry>If you previously created a reference file in the Training
-								tool that you wish to reuse, you can select it here.
-							</entry>
-						</row>
 					</tbody>
 				</tgroup>
 			</table>
@@ -171,14 +165,25 @@
 				you can toggle the button on the right side to determine if the pair
 				is a duplicate or not:
 			</para>
-
+			
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="analyzer_reference_training_tool.jpg"
+					<imagedata fileref="analyzer_reference_training_tool.png"
 						format="JPG" />
 				</imageobject>
 			</mediaobject>
 
+			<para>To help you, columns with equal values are shown in a grey font, while
+				different values are shown in black.
+			</para>
+
+			<para>Right-clicking on the classification button opens a small menu that allows you to
+				mark all examples on the (remainder of) this page or all examples on all pages as
+				Undecided, duplicates or uniques. This helps when almost all examples are duplicates
+				or uniques. You can mark all examples as duplicates, review, and only toggle the
+				examples that are no duplicates.
+			</para>
+			
 			<para>You do not need to classify all samples shown. Recommended
 				usage is:
 			</para>
@@ -203,6 +208,37 @@
 				amount of pairs.
 			</para>
 
+			<para>The model is automatically saved every time after training. There
+				is no need to save the model by hand. The saved model includes the
+				matching rules, settings, and all pairs the user classified as duplicate or unique.
+			</para>
+			
+			<para>Some more hints for training:
+			</para>
+			
+			<orderedlist>
+				<listitem>
+					<para>Classifying uniques is just as important as classifying
+					duplicates. Keep the numbers of duplicate examples and unique
+					examples roughly equal.
+					</para>
+				</listitem>
+				<listitem>
+					<para>Try to find and mark some examples of every duplicate 
+					category that you know of. You can use the ""search pairs" tool to help you.
+					</para>
+				</listitem>
+				<listitem>
+					<para>Sometimes the machine learning gets skewed and does not provide
+						examples of a category of duplicate records or unique records.
+						In those cases, close then re-open the training tool as described below, but do
+						<emphasis>not</emphasis> press the train model button yet. The training
+						tool shows a less specialised set of duplicate samples. You should now be
+						able to find examples of the category you need added to the model.
+					</para>
+				</listitem>
+			</orderedlist>
+			
 			<para>
 				All duplicate detection models may have irregularities. When
 				you ask a computer to do a complex task like matching, it may come
@@ -219,7 +255,7 @@
 				the tab 'Duplicates reference'.
 			</para>
 
-			<para>If you're looking for particular types of duplicate pairs, you
+			<para>If you're looking for particular types of duplicate pair examples, you
 				may want to go to the 'Search pairs' tab. In this tab you will find
 				options to search for records with matching or non-matching values
 				for particular fields. This may be a very useful shortcut for
@@ -227,69 +263,71 @@
 			</para>
 
 			<para>Finally, the tab 'Training parameters' presents buttons and
-				sliders for
-				you to influence the Machine Learning approach. It
-				presents the
-				following options:
+				sliders for you to influence the Machine Learning approach.
+			</para>
+			
+			<para>Moving the top slider to the left makes duplicate detection compare
+				more records. This will take more time, but also increase the matching
+				quality. Moving this slider to the right makes duplicate detection to
+				make less comparisons, resulting in higher speed, but can lead to more
+				missed matches (false negatives). 
 			</para>
 
-			<table>
-				<title>'Training parameters' options</title>
-				<tgroup cols="2">
-					<thead>
-						<row>
-							<entry>Parameter</entry>
-							<entry>Description</entry>
-						</row>
-					</thead>
-					<tbody>
-						<row>
-							<entry>Only optimize the preselection when sufficient duplicates
-								have been marked
-							</entry>
-							<entry>This will optimize the matching rules using an initial
-								model for pre-selection until sufficient pairs have been marked
-								as duplicates and uniques. This is the default value.
-							</entry>
-						</row>
-						<row>
-							<entry>Always optimize the preselection</entry>
-							<entry>This will always train pre-selection and matching rules.
-								Training both is slower, but an improved preselection has a
-								better performance during
-								duplicate detection. Training the
-								potential pair generation too early
-								might result in the exclusion
-								of some groups of duplicate pairs.
-								It is recommended to perform
-								training of the full model only after the user has
-								classified
-								varying examples of duplicates and unique records.
-							</entry>
-						</row>
-						<row>
-							<entry>Never optimize the preselection</entry>
-							<entry>This never trains the pre-selection, but only the matching
-								rules.
-							</entry>
-						</row>
-					</tbody>
-				</tgroup>
-			</table>
+			<para>Moving the bottom slider to the left makes comparison of records more
+			    strict. Moving this slider to the right makes it more lax.
+			</para>
 
+			<para>The user defined rules enable you to enforce fixed rules. The possible
+			     types of fixed rules are listed below. You can apply a rule to each column. 
+			     Rules that force a pair to be unique take precedence over rules that force 
+			     a pair to be duplicate. Empty values count as different.
+			</para>
+
+			<orderedlist>
+				<listitem>
+					<para>forces pairs to be duplicate when equals - The pair is always 
+						a duplicate if any column marked with this value is equal.
+					</para>
+				</listitem>
+				<listitem>
+					<para>forces pairs to be unique when equals - The pair is never
+						a duplicate if any columns marked with this value is different.
+					</para>
+				</listitem>
+				<listitem>
+					<para>forces pairs to be unique when different - The pair is never
+						a duplicate if any columns marked with this value is different
+					</para>
+				</listitem>
+				<listitem>
+					<para>forces pairs to be duplicate when equals and unique when different -
+						The pair is never a duplicate if any columns marked with this value is different, 
+						but the pairs is always a duplicate if all columns marked with this value are equal.
+					</para>
+				</listitem>
+				<listitem>
+					<para>forces pairs to be unique when equals and unique when different - The pair is
+						never a duplicate unless the value in one of the records is empty.
+					</para>
+				</listitem>
+			</orderedlist>
+			
+			<para>We recommend applying fixed rules only after training the model and only
+				when strictly necessary.
+			</para>
+			
 			<para>
 				After updating the matching model, the user can continue in 2
 				ways. If
 				the user is satisfied with the model (few false positives
 				and false
 				negatives) then he can save the model and start using it in
-				duplicate detection. Otherwise, the user must start a new iteration
-				of classifying
-				more of the presented samples and refining the model
+				duplicate detection. Otherwise, the user can classify
+				more of the presented samples and refine the model
 				again.
 			</para>
 			<para>
-				Longer training set typically allows for a more advanced
+				More training typically allows for a more advanced
 				matching model,
 				capable of handling more corner cases. The false
 				negatives and
@@ -300,34 +338,16 @@
 				differences
 				in these lists are acceptable.
 			</para>
-			<para>
-				When finishing the training, remember save the reference to file.
-				The reference is the most important part of the Duplicate detection
-				model, since it allows you to reproduce and re-train a model based
-				on past classifications. You will find the 'Save reference' button
-				to do this in the
-				<emphasis>Duplicates reference</emphasis>
-				tab. To re-instantiate your training session you can then later
-				configure the previously mentioned "Reference file" property to the
-				saved file.
-			</para>
 
 			<para>To validate the training results and obtain the best model,
-				training can be repeated on a different sample.
+				training can be repeated on a different sample. The already
+				classified record pairs will automatically be added to the
+				new sample.
 			</para>
 
 			<orderedlist>
 				<listitem>
-					<para>
-						Save the reference
-					</para>
-				</listitem>
-				<listitem>
 					<para>Close the training tool.</para>
-				</listitem>
-				<listitem>
-					<para>In the Training tool properties, specify the saved reference.
-					</para>
 				</listitem>
 				<listitem>
 					<para>Re-run the Training tool. A new sample will be generated. All
@@ -356,11 +376,6 @@
 				</listitem>
 			</orderedlist>
 
-			<para>Use the 'Export model' button to save the current matching
-				model. A dialog appears which allows the user to choose the location
-				and file name for the model.
-			</para>
-
 		</section>
 
 		<section>
@@ -368,28 +383,27 @@
 				'Detection' mode
 			</title>
 			<para>When the matching model is complete you are ready to find all
-				the duplicates in the dataset, usie the Duplicate Detection
-				analyzer.
+				the duplicates in the dataset. Use the same Duplicate detection
+				component, but change the execution mode in "Duplicate detection".  
 			</para>
 
-			<para>Configure the analyzer with the same input fields as your
-				Training tool. Load the matching model from the file you saved at
-				the end of your training session. When you run the job, you will see
+			<para>When you run the job, you will see
 				a Duplicate detection result with complete groups of duplicates,
 				like this:
 			</para>
 
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="analyzer_reference_duplicate_detection.jpg"
+					<imagedata fileref="analyzer_reference_duplicate_detection.png"
 						format="JPG" />
 				</imageobject>
 			</mediaobject>
 
 			<para>Once you have a duplicate detection result that you wish to
 				post-process, e.g. for merging or manual inspection, you can export
-				the result by clicking one of the 'Export to staging table' or
-				'Export to Excel' buttons in the top of the result screen.
+				the result by clicking the 'Write duplicates' button in the top of the result screen.
+				You can save the duplicate records, the duplicate pairs and also the unique records in
+				a datastore table of your choice. Or you can create an excel file or a staging table.
 			</para>
 
 			<para>The Duplicate detection analyzer can run stand-alone to
@@ -400,9 +414,8 @@
 				Duplicate
 				detection component can be used in combination with an
 				Hadoop server
-				component. This server component is a Enterprise
-				edition feature
-				only.
+				component. This server component is an Enterprise
+				edition feature.
 			</para>
 
 		</section>

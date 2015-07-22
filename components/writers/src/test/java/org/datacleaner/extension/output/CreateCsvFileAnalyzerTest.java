@@ -36,13 +36,20 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.UpdateableDatastoreConnection;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.junit.After;
 import org.junit.Test;
 
 public class CreateCsvFileAnalyzerTest {
 
     private CreateCsvFileAnalyzer analyzer;
-
-
+    
+    @After
+    public void tearDown() {
+        if ((analyzer != null) && (analyzer.file != null)) {
+           // analyzer.file.delete();
+        }
+    }
+    
     @Test
     public void test() throws Exception {
 
@@ -59,7 +66,7 @@ public class CreateCsvFileAnalyzerTest {
 
         analyzer.overwriteFileIfExists = true;
         analyzer.validate();
-
+        
         // Case 2 - file exists
 //        final boolean createNewFile = analyzer.file.;
 //        assertTrue(createNewFile);

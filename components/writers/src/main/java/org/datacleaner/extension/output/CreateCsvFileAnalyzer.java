@@ -114,10 +114,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
 
     @Initialize
     public void initTempFile() throws Exception {
-        
+
         if (_targetFile == null) {
             if (columnToBeSortedOn != null) {
-                _targetFile = new FileResource("csv_file_analyzer.csv");
+                _targetFile = new FileResource(File.createTempFile("csv_file_analyzer", ".csv"));
             } else {
                 _targetFile = file;
             }
@@ -145,9 +145,9 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        final File filename = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
+        final File fileTemp = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
                 + categoryName + ".csv");
-        file = new FileResource(filename);
+        file = new FileResource(fileTemp);
     }
 
     @Override
@@ -155,7 +155,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new FileResource(new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv"));
+        final File fileTemp = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+        file = new FileResource(fileTemp);
     }
 
     @Override
@@ -194,8 +195,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             }
         }
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getQualifiedPath(), headers.toArray(new String[0]),
-                separatorChar, getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
+        return CsvOutputWriterFactory.getWriter(_targetFile, headers.toArray(new String[0]), separatorChar,
+                getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
     }
 
     private char getSafeQuoteChar() {
@@ -285,7 +286,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             } finally {
                 dataSet.close();
             }
-            sortMergeWriter.write(file.getQualifiedPath());
+
+            sortMergeWriter.write(((FileResource) file).getFile());
         }
 
         final Datastore datastore = new CsvDatastore(file.getName(), file, csvConfiguration);

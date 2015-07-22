@@ -17,39 +17,35 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.builder;
+package org.datacleaner.connection;
 
+import org.apache.metamodel.DataContext;
 import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.data.OutputDataStreamDataContext;
 
 /**
- * Represents a lazily evaluated {@link OutputDataStreamJob} which is still
- * being built.
+ * A virtual {@link Datastore} that represents/wraps a {@link OutputDataStream}.
  */
-public class LazyOutputDataStreamJob implements OutputDataStreamJob {
+public class OutputDataStreamDatastore extends UsageAwareDatastore<DataContext> {
+
+    private final OutputDataStream _outputDataStream;
+
+    public OutputDataStreamDatastore(OutputDataStream outputDataStream) {
+        super(outputDataStream.getName());
+        _outputDataStream = outputDataStream;
+    }
 
     private static final long serialVersionUID = 1L;
 
-    private final OutputDataStream _outputDataStream;
-    private final transient AnalysisJobBuilder _jobBuilder;
-
-    public LazyOutputDataStreamJob(OutputDataStream outputDataStream, AnalysisJobBuilder jobBuilder) {
-        _outputDataStream = outputDataStream;
-        _jobBuilder = jobBuilder;
+    @Override
+    public PerformanceCharacteristics getPerformanceCharacteristics() {
+        return _outputDataStream.getPerformanceCharacteristics();
     }
 
     @Override
-    public OutputDataStream getOutputDataStream() {
-        return _outputDataStream;
+    protected UsageAwareDatastoreConnection<DataContext> createDatastoreConnection() {
+        final DataContext dataContext = new OutputDataStreamDataContext(_outputDataStream);
+        return new DatastoreConnectionImpl<DataContext>(dataContext, this);
     }
 
-    @Override
-    public AnalysisJob getJob() {
-        return getJob(false);
-    }
-
-    public AnalysisJob getJob(boolean validate) {
-        return _jobBuilder.toAnalysisJob(validate);
-    }
 }

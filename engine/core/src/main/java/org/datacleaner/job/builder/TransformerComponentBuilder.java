@@ -24,16 +24,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputColumns;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.data.TransformedInputColumn;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
-import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.IdGenerator;
@@ -41,8 +39,8 @@ import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.job.ImmutableTransformerJob;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.TransformerJob;
-import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.StringUtils;
 
 /**
@@ -76,32 +74,18 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
      * @return
      */
     public List<MutableInputColumn<?>> getOutputColumns() {
-        if (!isConfigured()) {
+        final Component component = getComponentInstanceForQuestioning();
+        if (component == null) {
             // as long as the transformer is not configured, just return an
             // empty list
             return Collections.emptyList();
         }
 
-        final Transformer component = getComponentInstance();
-        final TransformerDescriptor<T> descriptor = getDescriptor();
+        final Transformer transformer = (Transformer) component;
 
-        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
-        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
-                .getInjectionManager(configuration);
-
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);
-
-        // mimic the configuration of a real transformer bean instance
-        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());
-        lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
-        lifeCycleHelper.assignProvidedProperties(descriptor, component);
-
-        // only validate, don't initialize
-        lifeCycleHelper.validate(descriptor, component);
-
-        final OutputColumns outputColumns = component.getOutputColumns();
+        final OutputColumns outputColumns = transformer.getOutputColumns();
         if (outputColumns == null) {
-            throw new IllegalStateException("getOutputColumns() returned null on transformer: " + component);
+            throw new IllegalStateException("getOutputColumns() returned null on transformer: " + transformer);
         }
         boolean changed = false;
 
@@ -204,9 +188,10 @@ public final class TransformerComponentBuilder<T extends Transformer> extends
         }
 
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
+        final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
 
         return new ImmutableTransformerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties());
+                getConfiguredProperties()), getOutputColumns(), componentRequirement, getMetadataProperties(), outputDataStreamJobs);
     }
 
     @Override

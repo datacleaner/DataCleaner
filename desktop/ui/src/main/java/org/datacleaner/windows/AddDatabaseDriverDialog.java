@@ -31,7 +31,6 @@ import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.database.DatabaseDriverCatalog;
@@ -40,7 +39,6 @@ import org.datacleaner.database.UserDatabaseDriver;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatabaseDriversPanel;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
@@ -147,12 +145,6 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
-				updateStatus();
-			}
-		});
-		filenameTextField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
 				updateStatus();
 			}
 		});

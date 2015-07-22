@@ -123,13 +123,13 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         if (StringUtils.isNullOrEmpty(filename)) {
             return null;
         }
-        
+
         if (_accessMode == FileAccessMode.SAVE && _extensions != null && _extensions.length > 0) {
             if (filename.indexOf('.') == -1) {
                 filename = filename + '.' + _extensions[0];
             }
         }
-        
+
         return _fileResolver.toFile(filename);
     }
 
@@ -144,7 +144,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
         if (existingFile != null && existingFile.getAbsoluteFile().equals(value.getAbsoluteFile())) {
             return;
         }
-        
+
         final String filename = _fileResolver.toPath(value);
         _filenameField.setFilename(filename);
     }

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
 import org.datacleaner.api.FileProperty;
@@ -32,7 +31,6 @@ import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
 import org.datacleaner.util.FileResolver;
@@ -48,6 +46,8 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
     private final FilenameTextField _filenameField;
     private final UserPreferences _userPreferences;
     private final FileResolver _fileResolver;
+    private final FileAccessMode _accessMode;
+    private final String[] _extensions;
 
     @Inject
     public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor, ComponentBuilder componentBuilder,
@@ -58,25 +58,22 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
         boolean openFileDialog = true;
 
-        final String[] extensions;
-        final FileAccessMode accessMode;
-
         FileProperty fileProperty = propertyDescriptor.getAnnotation(FileProperty.class);
         if (fileProperty != null) {
-            accessMode = fileProperty.accessMode();
-            extensions = fileProperty.extension();
+            _accessMode = fileProperty.accessMode();
+            _extensions = fileProperty.extension();
 
-            openFileDialog = (accessMode == FileAccessMode.OPEN);
+            openFileDialog = (_accessMode == FileAccessMode.OPEN);
         } else {
-            extensions = null;
-            accessMode = FileAccessMode.OPEN;
+            _extensions = null;
+            _accessMode = FileAccessMode.OPEN;
         }
 
         _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
 
-        if (extensions != null && extensions.length > 0) {
-            List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
-            for (String extension : extensions) {
+        if (_extensions != null && _extensions.length > 0) {
+            List<FileFilter> filters = new ArrayList<FileFilter>(_extensions.length);
+            for (String extension : _extensions) {
                 FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", "." + extension);
                 filters.add(filter);
                 _filenameField.addChoosableFileFilter(filter);
@@ -97,25 +94,13 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
             _filenameField.setFile(currentValue);
         }
 
-        _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-
-            @Override
-            protected void onChange(DocumentEvent e) {
-                fireValueChanged();
-            }
-        });
-
         _filenameField.addFileSelectionListener(new FileSelectionListener() {
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
-                final File dir = file.getParentFile();
-                if (accessMode == FileAccessMode.SAVE && extensions != null && extensions.length > 0) {
-                    if (file.getName().indexOf('.') == -1) {
-                        final String newFilename = file.getName() + '.' + extensions[0];
-                        _filenameField.setFile(new File(dir, newFilename));
-                    }
+                if (file != null) {
+                    final File dir = file.getParentFile();
+                    _userPreferences.setConfiguredFileDirectory(dir);
                 }
-                _userPreferences.setConfiguredFileDirectory(dir);
                 fireValueChanged();
             }
         });
@@ -134,12 +119,18 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
     @Override
     public File getValue() {
-        String text = _filenameField.getFilename();
-        if (StringUtils.isNullOrEmpty(text)) {
+        String filename = _filenameField.getFilename();
+        if (StringUtils.isNullOrEmpty(filename)) {
             return null;
         }
         
-        return _fileResolver.toFile(text);
+        if (_accessMode == FileAccessMode.SAVE && _extensions != null && _extensions.length > 0) {
+            if (filename.indexOf('.') == -1) {
+                filename = filename + '.' + _extensions[0];
+            }
+        }
+        
+        return _fileResolver.toFile(filename);
     }
 
     @Override

@@ -17,20 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.util.http;
+package org.datacleaner.widgets.database;
 
-import java.io.Closeable;
+public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+    public HiveDatabaseConnectionPresenter() {
+        super("jdbc:hive://HOSTNAME:PORT/DATABASE");
+    }
 
-/**
- * Defines a HTTP client for external web service connectivity over HTTP.
- */
-public interface WebServiceHttpClient extends Closeable {
-
-    public HttpResponse execute(HttpUriRequest request) throws Exception;
-    
     @Override
-    public void close();
+    protected int getDefaultPort() {
+        // no port involved
+        return 10000;
+    }
+
+    @Override
+    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
+            String param3, String param4) {
+        return "jdbc:hive://" + hostname + ":" + port + "/" + database;
+    }
+
 }

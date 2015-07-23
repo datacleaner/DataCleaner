@@ -420,6 +420,11 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     }
 
     private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
+            panel.add(createNewJdbcDatastoreButton("Apache Hive", "Connect to an Apache Hive database",
+                    "images/datastore-types/databases/hive.png", DatabaseDriverCatalog.DATABASE_NAME_HIVE,
+                    databaseNames));
+        }
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
             panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
                     "images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL,

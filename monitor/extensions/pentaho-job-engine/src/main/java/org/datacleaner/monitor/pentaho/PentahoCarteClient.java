@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.pentaho;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +33,15 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
+import org.datacleaner.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,34 +49,37 @@ import org.w3c.dom.Element;
 /**
  * Helper class for HTTP interactions with Carte
  */
-public final class PentahoCarteClient {
+public final class PentahoCarteClient implements Closeable {
 
     private final PentahoJobType _pentahoJobType;
-    private final HttpClient _httpClient;
+    private final CloseableHttpClient _httpClient;
+    private final HttpClientContext _httpClientContext;
 
     public PentahoCarteClient(PentahoJobType pentahoJobType) {
         _pentahoJobType = pentahoJobType;
-        _httpClient = createHttpClient(pentahoJobType);
+        _httpClientContext = createHttpClientContext(pentahoJobType);
+        _httpClient = HttpClients.custom().useSystemProperties().build();
     }
 
-    private HttpClient createHttpClient(PentahoJobType pentahoJobType) {
+    @Override
+    public void close() {
+        FileHelper.safeClose(_httpClient);
+    }
+
+    private HttpClientContext createHttpClientContext(PentahoJobType pentahoJobType) {
         final String hostname = pentahoJobType.getCarteHostname();
         final Integer port = pentahoJobType.getCartePort();
         final String username = pentahoJobType.getCarteUsername();
         final String password = pentahoJobType.getCartePassword();
 
-        final DefaultHttpClient httpClient = new DefaultHttpClient();
-        final CredentialsProvider credentialsProvider = httpClient.getCredentialsProvider();
-
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-
-        final List<String> authpref = new ArrayList<String>();
-        authpref.add(AuthPolicy.BASIC);
-        authpref.add(AuthPolicy.DIGEST);
-        httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
-
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(new AuthScope(hostname, port), credentials);
-        return httpClient;
+
+        final HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(credentialsProvider);
+
+        return context;
     }
 
     public List<PentahoTransformation> getAvailableTransformations() throws PentahoJobException {
@@ -110,7 +114,7 @@ public final class PentahoCarteClient {
 
     public HttpResponse execute(HttpGet request) {
         try {
-            return _httpClient.execute(request);
+            return _httpClient.execute(request, _httpClientContext);
         } catch (Exception e) {
             throw new PentahoJobException("Failed to invoke HTTP request: " + e.getMessage(), e);
         }

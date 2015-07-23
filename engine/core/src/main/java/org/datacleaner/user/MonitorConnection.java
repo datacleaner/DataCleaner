@@ -23,10 +23,11 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.datacleaner.util.StringUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
@@ -75,15 +76,15 @@ public class MonitorConnection implements Serializable {
     }
 
     public MonitorHttpClient getHttpClient() {
-        final HttpClient httpClient;
+        final CloseableHttpClient httpClient;
         if (_userPreferences == null) {
-            httpClient = new DefaultHttpClient();
+            final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
+            if (_acceptUnverifiedSslPeers) {
+                clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
+            }
+            httpClient = clientBuilder.build();
         } else {
             httpClient = _userPreferences.createHttpClient();
-        }
-
-        if (_acceptUnverifiedSslPeers) {
-            SecurityUtils.removeSshCertificateChecks(httpClient);
         }
 
         if (!isAuthenticationEnabled()) {

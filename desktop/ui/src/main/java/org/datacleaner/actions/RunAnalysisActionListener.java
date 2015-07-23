@@ -57,7 +57,7 @@ public class RunAnalysisActionListener implements ActionListener {
             }
             _lastClickTime = thisClickTime;
         }
-
+        
         final InjectorBuilder injectorBuilder = _dcModule.createInjectorBuilder();
         injectorBuilder.with(AnalysisJobBuilder.class, _analysisJobBuilder);
         injectorBuilder.with(DataCleanerConfiguration.class, _analysisJobBuilder.getConfiguration());

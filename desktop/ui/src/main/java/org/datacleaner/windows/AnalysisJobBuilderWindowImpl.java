@@ -742,65 +742,22 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
 
         // Run analysis
-        _executeButton.addActionListener(new RunAnalysisActionListener(_dcModule, _analysisJobBuilder));
+        _executeButton.addActionListener(execute(_analysisJobBuilder));
 
         _executionAlternativesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JMenuItem executeNormallyMenutItem = WidgetFactory.createMenuItem("Run normally",
                         IconUtils.ACTION_EXECUTE);
-                executeNormallyMenutItem
-                        .addActionListener(new RunAnalysisActionListener(_dcModule, _analysisJobBuilder));
+                executeNormallyMenutItem.addActionListener(execute(_analysisJobBuilder));
 
                 final JMenuItem executePreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
                         IconUtils.ACTION_PREVIEW);
-                executePreviewMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?", "100");
-                        final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
-                        if (maxRows == null) {
-                            WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
-                        }
-                        
-                        final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                        final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
-                        final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
-                                .addFilter(MaxRowsFilter.class);
-                        maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
-                        maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
-                        final FilterOutcome filterOutcome = maxRowsFilter
-                                .getFilterOutcome(MaxRowsFilter.Category.VALID);
-                        final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
-                        for (ComponentBuilder componentBuilder : componentBuilders) {
-                            if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
-                                componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
-                            }
-                        }
-
-                        final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
-                                jobBuilderCopy);
-                        runAnalysis.run();
-                    }
-                });
+                executePreviewMenuItem.addActionListener(executePreview());
 
                 final JMenuItem executeSingleThreadedMenuItem = WidgetFactory.createMenuItem("Run single-threaded",
                         IconUtils.MODEL_ROW);
-                executeSingleThreadedMenuItem.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(
-                                _configuration).withEnvironment(new DataCleanerEnvironmentImpl(_configuration
-                                .getEnvironment()).withTaskRunner(new SingleThreadedTaskRunner()));
-
-                        final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
-                        final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(configuration, jobCopy);
-
-                        final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
-                                jobBuilderCopy);
-                        runAnalysis.run();
-                    }
-                });
+                executeSingleThreadedMenuItem.addActionListener(executeSingleThreaded());
 
                 final JPopupMenu menu = new JPopupMenu();
                 menu.add(executeNormallyMenutItem);
@@ -808,7 +765,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 menu.add(executePreviewMenuItem);
                 menu.add(executeSingleThreadedMenuItem);
 
-                final int horizontalPosition = -1 * menu.getPreferredSize().width + _executionAlternativesButton.getWidth();
+                final int horizontalPosition = -1 * menu.getPreferredSize().width
+                        + _executionAlternativesButton.getWidth();
                 menu.show(_executionAlternativesButton, horizontalPosition, _executionAlternativesButton.getHeight());
             }
         });
@@ -875,20 +833,73 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return panel;
     }
 
-    protected void execute(AnalysisJobBuilder analysisJobBuilder) {
-        applyPropertyValues();
+    private ActionListener execute(final AnalysisJobBuilder analysisJobBuilder) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyPropertyValues();
 
-        if (analysisJobBuilder.getAnalyzerComponentBuilders().isEmpty()) {
-            // Present choices to user to write file somewhere,
-            // and then run a copy of the job based on that.
-            ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                    _dcModule, getWindowContext(), analysisJobBuilder, _userPreferences);
-            executeJobWithoutAnalyzersPanel.open();
-            return;
-        }
+                if (analysisJobBuilder.getAnalyzerComponentBuilders().isEmpty()) {
+                    // Present choices to user to write file somewhere,
+                    // and then run a copy of the job based on that.
+                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                            _dcModule, getWindowContext(), analysisJobBuilder, _userPreferences);
+                    executeJobWithoutAnalyzersPanel.open();
+                    return;
+                }
 
-        final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule, analysisJobBuilder);
-        runAnalysis.run();
+                final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
+                        analysisJobBuilder);
+                runAnalysis.run();
+            }
+        };
+    }
+
+    private ActionListener executeSingleThreaded() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(_configuration)
+                        .withEnvironment(new DataCleanerEnvironmentImpl(_configuration.getEnvironment())
+                                .withTaskRunner(new SingleThreadedTaskRunner()));
+
+                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(configuration, jobCopy);
+
+                execute(jobBuilderCopy).actionPerformed(e);
+            }
+        };
+    }
+
+    private ActionListener executePreview() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
+                        "100");
+                final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
+                if (maxRows == null) {
+                    WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
+                    return;
+                }
+
+                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
+                final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
+                        .addFilter(MaxRowsFilter.class);
+                maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
+                maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
+                final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
+                final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
+                for (ComponentBuilder componentBuilder : componentBuilders) {
+                    if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
+                        componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                    }
+                }
+
+                execute(jobBuilderCopy).actionPerformed(e);
+            }
+        };
     }
 
     private JToggleButton createMoreMenuButton() {

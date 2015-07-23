@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.util.ImmutableEntry;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,6 +164,8 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
     protected abstract W createWriter(File file);
 
+    protected abstract W createWriter(Resource file);
+
     protected void writeNull(W writer, int nullCount) throws IOException {
         writeRow(writer, null, nullCount);
     }
@@ -174,102 +177,15 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
     }
 
     /**
-     * @param file
+     * @param resource
      * @return the written count of rows
      */
-    public int write(final File file) {
+    public int write(final Resource file) {
         W writer = null;
         ObjectInputStream[] tempFileObjectInputStreams = null;
         try {
             writer = createWriter(file);
-            writeHeader(writer);
-
-            int rowCount = 0;
-
-            final boolean writeNullsFirst = writeNullsFirst();
-
-            final int nullCount = _nullCount.get();
-            if (nullCount > 0 && writeNullsFirst) {
-                writeNull(writer, nullCount);
-                rowCount++;
-            }
-
-            if (_tempFiles.isEmpty()) {
-                logger.info("No temp files created yet, flushing buffer directly to target file: {}", file);
-                Set<Entry<R, Integer>> entries = _buffer.entrySet();
-                for (Entry<R, Integer> entry : entries) {
-                    writeRow(writer, entry.getKey(), entry.getValue());
-                    rowCount++;
-                }
-                _buffer.clear();
-
-                if (nullCount > 0 && !writeNullsFirst) {
-                    writeNull(writer, nullCount);
-                    rowCount++;
-                }
-
-                return rowCount;
-            }
-
-            if (!_buffer.isEmpty()) {
-                flushBuffer();
-            }
-
-            tempFileObjectInputStreams = createTempFileObjectInputStreams();
-
-            final List<Entry<R, Integer>> rowCandidates = new ArrayList<Entry<R, Integer>>(_tempFiles.size());
-            for (int i = 0; i < _tempFiles.size(); i++) {
-                rowCandidates.add(null);
-            }
-
-            while (true) {
-                readNextRows(rowCandidates, tempFileObjectInputStreams);
-
-                Entry<R, Integer> currentRow = null;
-
-                // find the next row to write
-                for (Entry<R, Integer> rowCandidate : rowCandidates) {
-                    if (rowCandidate != null) {
-                        if (currentRow == null) {
-                            currentRow = rowCandidate;
-                        } else {
-                            if (_comparator.compare(rowCandidate.getKey(), currentRow.getKey()) < 0) {
-                                currentRow = rowCandidate;
-                            }
-                        }
-                    }
-                }
-
-                if (currentRow == null) {
-                    // the writing is done!
-                    break;
-                }
-
-                // set count to 0 (the next loop will increment it)
-                currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), 0);
-
-                for (int i = 0; i < rowCandidates.size(); i++) {
-                    Entry<R, Integer> rowCandidate = rowCandidates.get(i);
-                    if (rowCandidate != null) {
-                        if (_comparator.compare(rowCandidate.getKey(), currentRow.getKey()) == 0) {
-                            // sum up a new count
-                            final int newCount = currentRow.getValue().intValue() + rowCandidate.getValue().intValue();
-                            currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), newCount);
-                            rowCandidates.set(i, null);
-                        }
-                    }
-                }
-
-                writeRow(writer, currentRow.getKey(), currentRow.getValue());
-                rowCount++;
-            }
-
-            if (nullCount > 0 && !writeNullsFirst) {
-                writeNull(writer, nullCount);
-                rowCount++;
-            }
-
-            return rowCount;
+            return processRows(writer, tempFileObjectInputStreams);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         } finally {
@@ -280,6 +196,117 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
                 }
             }
         }
+    }
+
+    /**
+     * @param file
+     * @return the written count of rows
+     */
+    public int write(final File file) {
+        W writer = null;
+        ObjectInputStream[] tempFileObjectInputStreams = null;
+        try {
+            writer = createWriter(file);
+            return processRows(writer, tempFileObjectInputStreams);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            FileHelper.safeClose(writer);
+            if (tempFileObjectInputStreams != null) {
+                for (int i = 0; i < tempFileObjectInputStreams.length; i++) {
+                    FileHelper.safeClose(tempFileObjectInputStreams[i]);
+                }
+            }
+        }
+    }
+
+    public int processRows(W writer, ObjectInputStream[] tempFileObjectInputStreams) throws Exception {
+        writeHeader(writer);
+        int rowCount = 0;
+
+        final boolean writeNullsFirst = writeNullsFirst();
+
+        final int nullCount = _nullCount.get();
+        if (nullCount > 0 && writeNullsFirst) {
+            writeNull(writer, nullCount);
+            rowCount++;
+        }
+
+        if (_tempFiles.isEmpty()) {
+            Set<Entry<R, Integer>> entries = _buffer.entrySet();
+            for (Entry<R, Integer> entry : entries) {
+                writeRow(writer, entry.getKey(), entry.getValue());
+                rowCount++;
+            }
+            _buffer.clear();
+
+            if (nullCount > 0 && !writeNullsFirst) {
+                writeNull(writer, nullCount);
+                rowCount++;
+            }
+
+            return rowCount;
+        }
+
+        if (!_buffer.isEmpty()) {
+            flushBuffer();
+        }
+
+        tempFileObjectInputStreams = createTempFileObjectInputStreams();
+
+        final List<Entry<R, Integer>> rowCandidates = new ArrayList<Entry<R, Integer>>(_tempFiles.size());
+        for (int i = 0; i < _tempFiles.size(); i++) {
+            rowCandidates.add(null);
+        }
+
+        while (true) {
+            readNextRows(rowCandidates, tempFileObjectInputStreams);
+
+            Entry<R, Integer> currentRow = null;
+
+            // find the next row to write
+            for (Entry<R, Integer> rowCandidate : rowCandidates) {
+                if (rowCandidate != null) {
+                    if (currentRow == null) {
+                        currentRow = rowCandidate;
+                    } else {
+                        if (_comparator.compare(rowCandidate.getKey(), currentRow.getKey()) < 0) {
+                            currentRow = rowCandidate;
+                        }
+                    }
+                }
+            }
+
+            if (currentRow == null) {
+                // the writing is done!
+                break;
+            }
+
+            // set count to 0 (the next loop will increment it)
+            currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), 0);
+
+            for (int i = 0; i < rowCandidates.size(); i++) {
+                Entry<R, Integer> rowCandidate = rowCandidates.get(i);
+                if (rowCandidate != null) {
+                    if (_comparator.compare(rowCandidate.getKey(), currentRow.getKey()) == 0) {
+                        // sum up a new count
+                        final int newCount = currentRow.getValue().intValue() + rowCandidate.getValue().intValue();
+                        currentRow = new ImmutableEntry<R, Integer>(currentRow.getKey(), newCount);
+                        rowCandidates.set(i, null);
+                    }
+                }
+            }
+
+            writeRow(writer, currentRow.getKey(), currentRow.getValue());
+            rowCount++;
+        }
+
+        if (nullCount > 0 && !writeNullsFirst) {
+            writeNull(writer, nullCount);
+            rowCount++;
+        }
+
+        return rowCount;
     }
 
     private void readNextRows(List<Entry<R, Integer>> nextRows, ObjectInputStream[] tempFileObjectInputStreams)

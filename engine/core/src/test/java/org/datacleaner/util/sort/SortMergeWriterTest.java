@@ -28,6 +28,7 @@ import java.util.Comparator;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
 
 public class SortMergeWriterTest extends TestCase {
@@ -74,6 +75,11 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("text,count\n");
+            }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                return null;
             };
         };
 
@@ -131,6 +137,12 @@ public class SortMergeWriterTest extends TestCase {
                     writeRow(writer, "<null>", nullCount);
                 }
             }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                //Do nothing
+                return null;
+            }
         };
 
         sorter.append("foo");
@@ -171,6 +183,11 @@ public class SortMergeWriterTest extends TestCase {
             @Override
             protected void writeNull(Writer writer, int nullCount) throws IOException {
                 writeRow(writer, "<null>", nullCount);
+            }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                return null;
             }
         };
 
@@ -219,6 +236,12 @@ public class SortMergeWriterTest extends TestCase {
             protected File createTempFile() throws IOException {
                 throw new IllegalStateException("This test is not supposed to require temp files!");
             }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                //Do nothing
+                return null;
+            }
         };
 
         sorter.append("1234");
@@ -256,6 +279,12 @@ public class SortMergeWriterTest extends TestCase {
 
             protected void writeHeader(Writer writer) throws IOException {
                 writer.write("number,count\n");
+            }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                // Do nothing
+                return null;
             };
         };
 
@@ -314,6 +343,12 @@ public class SortMergeWriterTest extends TestCase {
             @Override
             protected void writeHeader(Writer writer) throws IOException {
                 // do nothing
+            }
+
+            @Override
+            protected Writer createWriter(Resource file) {
+                // Do nothing
+                return null;
             }
         };
 

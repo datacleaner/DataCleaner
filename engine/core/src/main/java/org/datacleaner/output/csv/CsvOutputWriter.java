@@ -24,7 +24,7 @@ import org.datacleaner.output.AbstractMetaModelOutputWriter;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.schema.Table;
 
-final class CsvOutputWriter extends AbstractMetaModelOutputWriter {
+final public class CsvOutputWriter extends AbstractMetaModelOutputWriter {
 
 	private final String _filename;
 	private final Table _table;

@@ -39,6 +39,7 @@ import org.apache.metamodel.drop.DropTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
@@ -291,6 +292,12 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                     final Object[] values = valuesList.toArray(new Object[0]);
                     writer.insertValues(values);
                 }
+            }
+
+            @Override
+            protected ExcelDataContextWriter createWriter(Resource file) {
+                // Do nothing
+                return null;
             }
         };
 

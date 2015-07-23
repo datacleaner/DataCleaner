@@ -79,34 +79,12 @@ public final class CsvOutputWriterFactory {
             if (dataContext == null) {
 
                 File file = new File(filename);
-                File parentFile = file.getParentFile();
-                if (parentFile != null && !parentFile.exists()) {
-                    parentFile.mkdirs();
-                }
                 dataContext = new CsvDataContext(file, getConfiguration(separatorChar, quoteChar, escapeChar,
                         includeHeader));
-
-                final Schema schema = dataContext.getDefaultSchema();
-                dataContext.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback callback) {
-                        TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
-                        for (String header : headers) {
-                            tableBuilder.withColumn(header);
-                        }
-                        tableBuilder.execute();
-                    }
-                });
-
-                Table table = dataContext.getDefaultSchema().getTables()[0];
-
-                dataContexts.put(filename, dataContext);
-                counters.put(filename, new AtomicInteger(1));
-                outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
-
+                return createCsvOutputWriter(filename, headers, dataContext, file, columns);
                 // write the headers
             } else {
-                Table table = dataContext.getDefaultSchema().getTables()[0];
+                final Table table = dataContext.getDefaultSchema().getTables()[0];
                 outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
                 counters.get(filename).incrementAndGet();
             }
@@ -134,41 +112,46 @@ public final class CsvOutputWriterFactory {
             UpdateableDataContext dataContext = dataContexts.get(resource);
             if (dataContext == null) {
 
-                File file = new File(resource.getName());
-                File parentFile = file.getParentFile();
-                if (parentFile != null && !parentFile.exists()) {
-                    parentFile.mkdirs();
-                }
                 dataContext = new CsvDataContext(resource, getConfiguration(separatorChar, quoteChar, escapeChar,
                         includeHeader));
-
-                final Schema schema = dataContext.getDefaultSchema();
-                dataContext.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback callback) {
-                        TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
-                        for (String header : headers) {
-                            tableBuilder.withColumn(header);
-                        }
-                        tableBuilder.execute();
-                    }
-                });
-
-                Table table = dataContext.getDefaultSchema().getTables()[0];
-
-                dataContexts.put(resource.getName(), dataContext);
-                counters.put(resource.getName(), new AtomicInteger(1));
-                outputWriter = new CsvOutputWriter(dataContext, resource.getName(), table, columns);
+                File file = new File(resource.getName());
+                return createCsvOutputWriter(resource.getName(), headers, dataContext, file, columns);
 
                 // write the headers
             } else {
-                Table table = dataContext.getDefaultSchema().getTables()[0];
+                final Table table = dataContext.getDefaultSchema().getTables()[0];
                 outputWriter = new CsvOutputWriter(dataContext, resource.getName(), table, columns);
                 counters.get(resource).incrementAndGet();
             }
         }
 
         return outputWriter;
+    }
+
+    private static CsvOutputWriter createCsvOutputWriter(String filename, final String[] headers,
+            UpdateableDataContext dataContext, File file, final InputColumn<?>... columns) {
+        File parentFile = file.getParentFile();
+        if (parentFile != null && !parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+
+        final Schema schema = dataContext.getDefaultSchema();
+        dataContext.executeUpdate(new UpdateScript() {
+            @Override
+            public void run(UpdateCallback callback) {
+                TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
+                for (String header : headers) {
+                    tableBuilder.withColumn(header);
+                }
+                tableBuilder.execute();
+            }
+        });
+
+        final Table table = dataContext.getDefaultSchema().getTables()[0];
+
+        dataContexts.put(filename, dataContext);
+        counters.put(filename, new AtomicInteger(1));
+        return new CsvOutputWriter(dataContext, filename, table, columns);
     }
 
     private static CsvConfiguration getConfiguration(char separatorChar, char quoteChar, char escapeChar,

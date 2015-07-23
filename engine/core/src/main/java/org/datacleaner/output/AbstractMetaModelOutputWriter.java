@@ -23,12 +23,12 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.datacleaner.api.InputColumn;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * This implementation holds a buffer of records to write, to avoid hitting the
  * executeUpdate() method for every single record.
  */
-public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
+public abstract class AbstractMetaModelOutputWriter implements OutputWriter{
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractMetaModelOutputWriter.class);
 
@@ -73,7 +73,8 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 		return new MetaModelOutputRow(this, _columns);
 	}
 
-	protected final void addToBuffer(Object[] rowData) {
+	@Override
+	public final void addToBuffer(Object[] rowData) {
 		while (!_buffer.offer(rowData)) {
 			flushBuffer();
 		}

@@ -48,13 +48,13 @@ public class DatabaseDriverCatalog implements Serializable {
     public static final String DATABASE_NAME_TERADATA = "Teradata";
     public static final String DATABASE_NAME_H2 = "H2";
     public static final String DATABASE_NAME_HSQLDB_HYPER_SQL = "Hsqldb/HyperSQL";
-    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL = "Microsoft SQL Server (official)";
     public static final String DATABASE_NAME_ORACLE = "Oracle";
     public static final String DATABASE_NAME_APACHE_DERBY_EMBEDDED = "Apache Derby (embedded)";
     public static final String DATABASE_NAME_APACHE_DERBY_CLIENT = "Apache Derby (client)";
     public static final String DATABASE_NAME_SQLITE = "SQLite";
     public static final String DATABASE_NAME_SYBASE = "Sybase";
-    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS = "Microsoft SQL Server (JTDS)";
+    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS = "Microsoft SQL Server";
+    public static final String DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL = "Microsoft SQL Server (official)";
     public static final String DATABASE_NAME_POSTGRESQL = "PostgreSQL";
     public static final String DATABASE_NAME_SAP_DB = "SAP DB";
     public static final String DATABASE_NAME_FIREBIRD = "Firebird";
@@ -91,11 +91,11 @@ public class DatabaseDriverCatalog implements Serializable {
         add(DATABASE_NAME_SAP_DB, "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB",
                 null, "jdbc:sapdb://<hostname>/<database>");
         add(DATABASE_NAME_POSTGRESQL, "images/datastore-types/databases/postgresql.png", "org.postgresql.Driver",
-                "http://repo1.maven.org/maven2/postgresql/postgresql/9.1-901.jdbc4/postgresql-9.1-901.jdbc4.jar",
+                "http://repo1.maven.org/maven2/postgresql/postgresql/9.3-1102-jdbc4/postgresql-9.3-1102-jdbc4.jar",
                 "jdbc:postgresql://<hostname>:5432/<database>");
         add(DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, "images/datastore-types/databases/microsoft.png",
                 "net.sourceforge.jtds.jdbc.Driver",
-                "http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.2.4/jtds-1.2.4.jar",
+                "http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.3.1/jtds-1.3.1.jar",
                 "jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8",
                 "jdbc:jtds:sqlserver://<hostname>:<port>/<database>;instance=<instance>;useUnicode=true;characterEncoding=UTF-8");
         add(DATABASE_NAME_SYBASE, "images/datastore-types/databases/sybase.png", "net.sourceforge.jtds.jdbc.Driver",
@@ -140,7 +140,7 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
         add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
-        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", "org.apache.hadoop.hive.jdbc.HiveDriver",
+        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
                 "jdbc:hive://<hostname>:10000/<database>");
 

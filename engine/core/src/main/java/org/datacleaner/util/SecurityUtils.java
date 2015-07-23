@@ -25,8 +25,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.datacleaner.util.convert.EncodedStringConverter;
+import org.datacleaner.util.ws.NaiveHostnameVerifier;
 import org.datacleaner.util.ws.NaiveTrustManager;
 
 /**
@@ -39,14 +43,32 @@ public class SecurityUtils {
     }
 
     /**
+     * Creates a {@link SSLConnectionSocketFactory} which is careless about SSL
+     * certificate checks. Use with caution!
+     * 
+     * @return
+     */
+    public static SSLConnectionSocketFactory createUnsafeSSLConnectionSocketFactory() {
+        try {
+            SSLContextBuilder builder = new SSLContextBuilder();
+            builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
+                    new NaiveHostnameVerifier());
+            return sslsf;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
      * Removes the certificate checks of HTTPS traffic on a HTTP client. Use
      * with caution!
      * 
      * @param httpClient
      * @throws IllegalStateException
      * 
-     * @{@link Deprecated} use {@link #createSshUnsafeClientConnectionManager()}
-     *         in conjunction with {@link HttpClientBuilder} instead.
+     * @{@link Deprecated} use {@link #createUnsafeSSLConnectionSocketFactory()}
+     *         in conjunction with {@link HttpClients#custom()} instead.
      */
     @Deprecated
     public static void removeSshCertificateChecks(HttpClient httpClient) throws IllegalStateException {
@@ -120,5 +142,4 @@ public class SecurityUtils {
         final String password = converter.fromString(String.class, encodedPassword);
         return password;
     }
-
 }

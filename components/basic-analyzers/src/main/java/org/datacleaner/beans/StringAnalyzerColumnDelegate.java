@@ -177,7 +177,7 @@ final class StringAnalyzerColumnDelegate {
             }
 
             if (_maxChars < numChars) {
-                _annotationFactory.reset(_maxCharsAnnotation);
+                _annotationFactory.resetAnnotation(_maxCharsAnnotation);
                 _maxChars = numChars;
             }
             if (_maxChars == numChars) {
@@ -185,7 +185,7 @@ final class StringAnalyzerColumnDelegate {
             }
 
             if (_minChars > numChars) {
-                _annotationFactory.reset(_minCharsAnnotation);
+                _annotationFactory.resetAnnotation(_minCharsAnnotation);
                 _minChars = numChars;
             }
             if (_minChars == numChars) {
@@ -194,14 +194,14 @@ final class StringAnalyzerColumnDelegate {
 
             if (_maxWords < numWords) {
                 _maxWords = numWords;
-                _annotationFactory.reset(_maxWordsAnnotation);
+                _annotationFactory.resetAnnotation(_maxWordsAnnotation);
             }
             if (_maxWords == numWords) {
                 _annotationFactory.annotate(row, distinctCount, _maxWordsAnnotation);
             }
             if (_minWords > numWords) {
                 _minWords = numWords;
-                _annotationFactory.reset(_minWordsAnnotation);
+                _annotationFactory.resetAnnotation(_minWordsAnnotation);
             }
             if (_minWords == numWords) {
                 _annotationFactory.annotate(row, distinctCount, _minWordsAnnotation);
@@ -209,7 +209,7 @@ final class StringAnalyzerColumnDelegate {
 
             if (_maxWhitespace < numWhitespace) {
                 _maxWhitespace = numWhitespace;
-                _annotationFactory.reset(_maxWhitespaceAnnotation);
+                _annotationFactory.resetAnnotation(_maxWhitespaceAnnotation);
             }
             if (_maxWhitespace == numWhitespace) {
                 _annotationFactory.annotate(row, distinctCount, _maxWhitespaceAnnotation);
@@ -217,7 +217,7 @@ final class StringAnalyzerColumnDelegate {
 
             if (_minWhitespace > numWhitespace) {
                 _minWhitespace = numWhitespace;
-                _annotationFactory.reset(_minWhitespaceAnnotation);
+                _annotationFactory.resetAnnotation(_minWhitespaceAnnotation);
             }
             if (_minWhitespace == numWhitespace) {
                 _annotationFactory.annotate(row, distinctCount, _minWhitespaceAnnotation);

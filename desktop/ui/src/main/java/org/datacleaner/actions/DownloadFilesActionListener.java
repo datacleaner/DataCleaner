@@ -296,6 +296,8 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                         logger.warn("Could not flush & close output stream: " + e.getMessage(), e);
                     }
                 }
+                
+                _httpClient.close();
             }
 
             if (_cancelled) {

@@ -17,23 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.lifecycle;
+package org.datacleaner.storage;
 
-import org.datacleaner.descriptors.ComponentDescriptor;
+import java.util.List;
+
+import org.datacleaner.api.InputRow;
 
 /**
- * Represents a callback method that will execute a step in the lifecycle of a
- * component. A step might be to call any initializing methods, inject
- * properties or to close the component.
- * 
- * 
- * 
- * @param <C>
- *            the component type
- * @param <D>
- *            the descriptor type
+ * A component for retrieving sample {@link InputRow}s that are annotated using
+ * with a {@link RowAnnotation}.
  */
-public interface LifeCycleCallback<C, D extends ComponentDescriptor<?>> {
+public interface RowAnnotationSampleContainer {
 
-	public void onEvent(C component, D descriptor);
+    /**
+     * Determines if there are sample rows available for a specific
+     * {@link RowAnnotation}.
+     * 
+     * @param annotation
+     * @return
+     */
+    public boolean hasSampleRows(RowAnnotation annotation);
+
+    /**
+     * Gets all the available sample rows with a given annotation.
+     * 
+     * @param annotation
+     * @return
+     */
+    public List<InputRow> getSampleRows(RowAnnotation annotation);
 }

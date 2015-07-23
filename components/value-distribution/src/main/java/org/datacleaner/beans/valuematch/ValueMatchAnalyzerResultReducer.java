@@ -21,6 +21,7 @@ package org.datacleaner.beans.valuematch;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,9 +96,11 @@ public class ValueMatchAnalyzerResultReducer implements AnalyzerResultReducer<Va
             return;
         }
 
-        final InputRow[] rows = annotatedRowsResult.getRows();
-        if (rows.length == rowCount) {
-            _rowAnnotationFactory.annotate(rows, annotation);
+        final List<InputRow> rows = annotatedRowsResult.getSampleRows();
+        if (rows.size() == rowCount) {
+            for (InputRow row : rows) {
+                _rowAnnotationFactory.annotate(row, annotation);
+            }
         } else {
             _rowAnnotationFactory.transferAnnotations(annotatedRowsResult.getAnnotation(), annotation);
         }

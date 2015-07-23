@@ -43,6 +43,8 @@ import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.CollectionFactoryImpl;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotationHandler;
+import org.datacleaner.storage.RowAnnotationSampleContainer;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,8 +123,11 @@ public class InjectionManagerImpl implements InjectionManager {
             return new CollectionFactoryImpl(_configuration.getEnvironment().getStorageProvider());
         } else if (baseType == RendererFactory.class) {
             return new RendererFactory(_configuration);
-        } else if (baseType == RowAnnotationFactory.class) {
+        } else if (baseType == RowAnnotationFactory.class || baseType == RowAnnotationSampleContainer.class
+                || baseType == RowAnnotationHandler.class) {
             return _rowAnntationFactoryRef.get();
+        } else if (baseType == RowAnnotation.class) {
+            return _rowAnntationFactoryRef.get().createAnnotation();
         } else if (baseType == AnalyzerBeansConfiguration.class) {
             if (_configuration instanceof AnalyzerBeansConfiguration) {
                 return _configuration;
@@ -149,8 +154,6 @@ public class InjectionManagerImpl implements InjectionManager {
         } else if (baseType == ComponentContext.class) {
             final ComponentContext componentContext = new ComponentContextImpl(_job);
             return componentContext;
-        } else if (baseType == RowAnnotation.class) {
-            return _rowAnntationFactoryRef.get().createAnnotation();
         } else if (baseType == Datastore.class && _job != null) {
             return _job.getDatastore();
         } else if (baseType == DatastoreConnection.class && _job != null) {

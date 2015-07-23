@@ -40,9 +40,9 @@ import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.CollectionFactoryImpl;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.NullTolerableComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +129,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         _topFrequentValues = topFrequentValues;
         _bottomFrequentValues = bottomFrequentValues;
         _collectionFactory = new CollectionFactoryImpl(new InMemoryStorageProvider());
-        _annotationFactory = new InMemoryRowAnnotationFactory();
+        _annotationFactory = RowAnnotations.getDefaultFactory();
     }
 
     /**

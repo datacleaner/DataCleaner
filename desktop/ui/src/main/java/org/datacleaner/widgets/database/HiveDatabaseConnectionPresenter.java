@@ -17,41 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.widgets.database;
 
-import org.datacleaner.job.concurrent.TaskListener;
-import org.datacleaner.lifecycle.LifeCycleHelper;
+public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-/**
- * Task listener that calls closing methods for reference data where this is
- * nescesary.
- * 
- * 
- */
-public final class CloseReferenceDataTaskListener implements TaskListener {
-
-    private final LifeCycleHelper _lifeCycleHelper;
-
-    public CloseReferenceDataTaskListener(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
-    }
-
-    private void cleanup() {
-        _lifeCycleHelper.closeReferenceData();
+    public HiveDatabaseConnectionPresenter() {
+        super("jdbc:hive://HOSTNAME:PORT/DATABASE");
     }
 
     @Override
-    public void onBegin(Task task) {
+    protected int getDefaultPort() {
+        // no port involved
+        return 10000;
     }
 
     @Override
-    public void onComplete(Task task) {
-        cleanup();
-    }
-
-    @Override
-    public void onError(Task task, Throwable throwable) {
-        cleanup();
+    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
+            String param3, String param4) {
+        return "jdbc:hive://" + hostname + ":" + port + "/" + database;
     }
 
 }

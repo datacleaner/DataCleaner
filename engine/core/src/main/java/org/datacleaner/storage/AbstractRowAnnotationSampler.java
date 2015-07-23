@@ -17,27 +17,8 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.storage;
 
-import org.datacleaner.lifecycle.LifeCycleHelper;
-
-/**
- * Task that invokes initializing methods for reference data where this is
- * nescesary.
- * 
- * 
- */
-public class InitializeReferenceDataTask implements Task {
-
-    private final LifeCycleHelper _lifeCycleHelper;
-
-    public InitializeReferenceDataTask(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
-    }
-
-    @Override
-    public void execute() throws Exception {
-        _lifeCycleHelper.initializeReferenceData();
-    }
+public abstract class AbstractRowAnnotationSampler  implements RowAnnotationFactory {
 
 }

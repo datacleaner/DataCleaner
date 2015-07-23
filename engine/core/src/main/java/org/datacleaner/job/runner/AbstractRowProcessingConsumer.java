@@ -19,12 +19,16 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
@@ -35,6 +39,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +58,12 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final HasComponentRequirement _hasComponentRequirement;
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
+    private final List<ActiveOutputDataStream> _outputDataStreams;
 
-    protected AbstractRowProcessingConsumer(RowProcessingPublishers publishers, HasComponentRequirement outcomeSinkJob,
+    protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
-        this(publishers.getAnalysisJob(), publishers.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
-                publishers.getSourceColumnFinder());
+        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
+                .getSourceColumnFinder());
     }
 
     protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,
@@ -73,6 +79,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _analysisListener = analysisListener;
         _hasComponentRequirement = outcomeSinkJob;
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
+        _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
     }
 
@@ -228,5 +235,18 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         }
 
         return componentRequirement.isSatisfied(null, outcomes);
+    }
+
+    @Override
+    public List<ActiveOutputDataStream> getActiveOutputDataStreams() {
+        return Collections.unmodifiableList(_outputDataStreams);
+    }
+
+    @Override
+    public void registerOutputDataStream(OutputDataStreamJob outputDataStreamJob,
+            RowProcessingPublisher publisherForOutputDataStream) {
+        final HasOutputDataStreams component = (HasOutputDataStreams) getComponent();
+        _outputDataStreams
+                .add(new ActiveOutputDataStream(outputDataStreamJob, publisherForOutputDataStream, component));
     }
 }

@@ -59,10 +59,10 @@ final class NumberAnalyzerColumnDelegate {
 			double min = _statistics.getMin();
 
 			if (max < doubleValue) {
-				_annotationFactory.reset(_maxAnnotation);
+				_annotationFactory.resetAnnotation(_maxAnnotation);
 			}
 			if (min > doubleValue) {
-				_annotationFactory.reset(_minAnnotation);
+				_annotationFactory.resetAnnotation(_minAnnotation);
 			}
 
 			for (int i = 0; i < distinctCount; i++) {

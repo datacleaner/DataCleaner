@@ -19,7 +19,17 @@
  */
 package org.datacleaner.storage;
 
-interface SqlDatabaseCollection {
+public class RowAnnotations {
 
-	public String getTableName();
+    public static RowAnnotationFactory getDefaultFactory() {
+        return getInMemoryFactory();
+    }
+
+    public static RowAnnotationFactory getInMemoryFactory() {
+        return getInMemoryFactory(500, 500);
+    }
+
+    public static RowAnnotationFactory getInMemoryFactory(int maxSampleSets, int maxSampledRecords) {
+        return new InMemoryRowAnnotationFactory2(maxSampleSets, maxSampledRecords);
+    }
 }

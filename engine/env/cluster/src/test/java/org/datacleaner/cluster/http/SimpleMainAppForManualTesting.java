@@ -57,8 +57,8 @@ public class SimpleMainAppForManualTesting {
 
         // register endpoints
         final List<String> slaveEndpoints = new ArrayList<String>();
-        slaveEndpoints.add("http://localhost:8080/DataCleaner-monitor/repository/DC/cluster_slave_endpoint");
-        slaveEndpoints.add("http://localhost:9090/DataCleaner-monitor/repository/DC/cluster_slave_endpoint");
+        slaveEndpoints.add("http://localhost:8080/DataCleaner-monitor/repository/demo/cluster_slave_endpoint");
+        slaveEndpoints.add("http://localhost:9090/DataCleaner-monitor/repository/demo/cluster_slave_endpoint");
 
         final HttpClusterManager clusterManager = new HttpClusterManager(httpClient, httpClientContext, slaveEndpoints);
 

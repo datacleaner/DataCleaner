@@ -25,9 +25,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.datacleaner.util.convert.EncodedStringConverter;
 import org.datacleaner.util.ws.NaiveTrustManager;
 
@@ -46,18 +44,26 @@ public class SecurityUtils {
      * 
      * @param httpClient
      * @throws IllegalStateException
+     * 
+     * @{@link Deprecated} use {@link #createSshUnsafeClientConnectionManager()}
+     *         in conjunction with {@link HttpClientBuilder} instead.
      */
+    @Deprecated
     public static void removeSshCertificateChecks(HttpClient httpClient) throws IllegalStateException {
         try {
             // prepare a SSL context which doesn't validate certificates
             final SSLContext sslContext = SSLContext.getInstance("SSL");
             final TrustManager trustManager = new NaiveTrustManager();
             sslContext.init(null, new TrustManager[] { trustManager }, new SecureRandom());
-            final SSLSocketFactory schemeSocketFactory = new SSLSocketFactory(sslContext);
-            final Scheme sslScheme = new Scheme("https", 443, schemeSocketFactory);
+
+            final org.apache.http.conn.ssl.SSLSocketFactory schemeSocketFactory = new org.apache.http.conn.ssl.SSLSocketFactory(
+                    sslContext);
+            final org.apache.http.conn.scheme.Scheme sslScheme = new org.apache.http.conn.scheme.Scheme("https", 443,
+                    schemeSocketFactory);
 
             // try again with a new registry
-            final SchemeRegistry registry = httpClient.getConnectionManager().getSchemeRegistry();
+            final org.apache.http.conn.scheme.SchemeRegistry registry = httpClient.getConnectionManager()
+                    .getSchemeRegistry();
             registry.register(sslScheme);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -80,7 +86,7 @@ public class SecurityUtils {
         final String encodedPassword = converter.toString(new String(password));
         return encodedPassword;
     }
-    
+
     /**
      * Encodes/obfuscates a password. Although this does not prevent actual
      * hacking of password, it does remove the obvious threats of having

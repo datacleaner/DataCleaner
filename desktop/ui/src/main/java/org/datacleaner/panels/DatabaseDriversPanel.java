@@ -37,7 +37,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.datacleaner.actions.DownloadFilesActionListener;
 import org.datacleaner.actions.FileDownloadListener;
 import org.datacleaner.bootstrap.WindowContext;
@@ -77,11 +77,11 @@ public class DatabaseDriversPanel extends DCPanel {
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
-    private final HttpClient _httpClient;
+    private final CloseableHttpClient _httpClient;
 
     @Inject
     protected DatabaseDriversPanel(DataCleanerConfiguration configuration, WindowContext windowContext,
-            UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
+            UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, CloseableHttpClient httpClient) {
         super(WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         _windowContext = windowContext;
         _userPreferences = userPreferences;

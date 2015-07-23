@@ -318,10 +318,10 @@ public class ClusterTestHelper {
 
                 Assert.assertEquals(109, completenessAnalyzerResult.getInvalidRowCount());
 
-                InputRow[] rows = completenessAnalyzerResult.getRows();
+                List<InputRow> rows = completenessAnalyzerResult.getSampleRows();
                 Assert.assertNotNull(rows);
 
-                Assert.assertTrue("No annotated rows available in CompletenessAnalyzer's result", rows.length > 0);
+                Assert.assertTrue("No annotated rows available in CompletenessAnalyzer's result", rows.size() > 0);
 
             } else if (analyzerResult instanceof ValueMatchAnalyzerResult) {
 
@@ -329,13 +329,13 @@ public class ClusterTestHelper {
                 Assert.assertEquals(0, valueMatchAnalyzerResult.getNullCount());
 
                 Assert.assertEquals(83, valueMatchAnalyzerResult.getUnexpectedValueCount().intValue());
-                InputRow[] rows = valueMatchAnalyzerResult.getAnnotatedRowsForUnexpectedValues().getRows();
-                Assert.assertTrue(rows.length > 0);
-                Assert.assertTrue(rows.length <= 83);
+                List<InputRow> rows = valueMatchAnalyzerResult.getAnnotatedRowsForUnexpectedValues().getSampleRows();
+                Assert.assertTrue(rows.size() > 0);
+                Assert.assertTrue(rows.size() <= 83);
 
                 Assert.assertEquals(2, valueMatchAnalyzerResult.getCount("Denmark").intValue());
-                rows = valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getRows();
-                Assert.assertEquals(2, rows.length);
+                rows = valueMatchAnalyzerResult.getAnnotatedRowsForValue("Denmark").getSampleRows();
+                Assert.assertEquals(2, rows.size());
                 for (InputRow row : rows) {
                     String rowString = row.toString();
                     boolean assert1 = rowString

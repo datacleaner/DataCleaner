@@ -19,49 +19,44 @@
  */
 package org.datacleaner.util.http;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.metamodel.util.FileHelper;
 
 /**
  * {@link MonitorHttpClient} for HTTP BASIC based security.
  */
 public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
 
-    private final DefaultHttpClient _httpClient;
+    private final CloseableHttpClient _httpClient;
+    private final HttpClientContext _context;
 
-    public HttpBasicMonitorHttpClient(HttpClient httpClient, String hostname, int port, String username, String password) {
-        _httpClient = (DefaultHttpClient) httpClient;
+    public HttpBasicMonitorHttpClient(CloseableHttpClient httpClient, String hostname, int port, String username,
+            String password) {
+        _httpClient = httpClient;
 
-        final CredentialsProvider credentialsProvider = _httpClient.getCredentialsProvider();
-
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-
-        final List<String> authpref = new ArrayList<String>();
-        authpref.add(AuthPolicy.BASIC);
-        authpref.add(AuthPolicy.DIGEST);
-        _httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
-
         credentialsProvider.setCredentials(new AuthScope(hostname, port), credentials);
+
+        _context = HttpClientContext.create();
+        _context.setCredentialsProvider(credentialsProvider);
     }
 
     @Override
     public HttpResponse execute(HttpUriRequest request) throws Exception {
-        return _httpClient.execute(request);
+        return _httpClient.execute(request, _context);
     }
 
     @Override
     public void close() {
-        // do nothing
+        FileHelper.safeClose(_httpClient);
     }
 
 }

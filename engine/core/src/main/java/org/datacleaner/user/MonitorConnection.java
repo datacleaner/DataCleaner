@@ -23,15 +23,20 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.datacleaner.util.StringUtils;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.datacleaner.util.SecurityUtils;
+import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.SystemProperties;
 import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.datacleaner.util.http.SimpleWebServiceHttpClient;
+import org.datacleaner.util.ws.NaiveHostnameVerifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,15 +80,24 @@ public class MonitorConnection implements Serializable {
     }
 
     public MonitorHttpClient getHttpClient() {
-        final HttpClient httpClient;
+        final CloseableHttpClient httpClient;
         if (_userPreferences == null) {
-            httpClient = new DefaultHttpClient();
+            HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
+            if (_acceptUnverifiedSslPeers) {
+                try {
+                    SSLContextBuilder builder = new SSLContextBuilder();
+                    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+                    SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build(),
+                            new NaiveHostnameVerifier());
+                    httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            } else {
+                httpClient = clientBuilder.build();
+            }
         } else {
             httpClient = _userPreferences.createHttpClient();
-        }
-
-        if (_acceptUnverifiedSslPeers) {
-            SecurityUtils.removeSshCertificateChecks(httpClient);
         }
 
         if (!isAuthenticationEnabled()) {

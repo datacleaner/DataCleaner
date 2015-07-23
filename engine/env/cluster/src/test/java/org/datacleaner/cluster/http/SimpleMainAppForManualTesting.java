@@ -24,11 +24,11 @@ import java.util.List;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
@@ -45,22 +45,22 @@ public class SimpleMainAppForManualTesting {
     public static void main(String[] args) throws Throwable {
 
         // create a HTTP BASIC enabled HTTP client
-        final DefaultHttpClient httpClient = new DefaultHttpClient(new PoolingClientConnectionManager());
-        final CredentialsProvider credentialsProvider = httpClient.getCredentialsProvider();
+        final CloseableHttpClient httpClient = HttpClients.createSystem();
+
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("admin", "admin");
-        final List<String> authpref = new ArrayList<String>();
-        authpref.add(AuthPolicy.BASIC);
-        authpref.add(AuthPolicy.DIGEST);
-        httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
         credentialsProvider.setCredentials(new AuthScope("localhost", 8080), credentials);
         credentialsProvider.setCredentials(new AuthScope("localhost", 9090), credentials);
+
+        final HttpClientContext httpClientContext = HttpClientContext.create();
+        httpClientContext.setCredentialsProvider(credentialsProvider);
 
         // register endpoints
         final List<String> slaveEndpoints = new ArrayList<String>();
         slaveEndpoints.add("http://localhost:8080/DataCleaner-monitor/repository/DC/cluster_slave_endpoint");
         slaveEndpoints.add("http://localhost:9090/DataCleaner-monitor/repository/DC/cluster_slave_endpoint");
 
-        final HttpClusterManager clusterManager = new HttpClusterManager(httpClient, slaveEndpoints);
+        final HttpClusterManager clusterManager = new HttpClusterManager(httpClient, httpClientContext, slaveEndpoints);
 
         final DataCleanerConfiguration configuration = ClusterTestHelper.createConfiguration("manual_test", false);
 
@@ -71,7 +71,8 @@ public class SimpleMainAppForManualTesting {
         jobBuilder.addSourceColumns("CUSTOMERS.CUSTOMERNUMBER", "CUSTOMERS.CUSTOMERNAME", "CUSTOMERS.CONTACTFIRSTNAME",
                 "CUSTOMERS.CONTACTLASTNAME");
 
-        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder.addAnalyzer(CompletenessAnalyzer.class);
+        AnalyzerComponentBuilder<CompletenessAnalyzer> completeness = jobBuilder
+                .addAnalyzer(CompletenessAnalyzer.class);
         completeness.addInputColumns(jobBuilder.getSourceColumns());
         completeness.setConfiguredProperty("Conditions", new CompletenessAnalyzer.Condition[] {
                 CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL, CompletenessAnalyzer.Condition.NOT_BLANK_OR_NULL,
@@ -81,7 +82,7 @@ public class SimpleMainAppForManualTesting {
         jobBuilder.close();
 
         AnalysisResultFuture result = new DistributedAnalysisRunner(configuration, clusterManager).run(job);
-        
+
         if (result.isErrornous()) {
             throw result.getErrors().get(0);
         }

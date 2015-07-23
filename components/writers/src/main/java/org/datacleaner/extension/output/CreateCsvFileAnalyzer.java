@@ -276,9 +276,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             } finally {
                 dataSet.close();
             }
-            // TODO: fix the sorting
             sortMergeWriter.write(file);
-
         }
 
         final Datastore datastore = new CsvDatastore(file.getName(), file, csvConfiguration);

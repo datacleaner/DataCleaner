@@ -22,9 +22,11 @@ package org.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.guice.DCModule;
+import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.windows.ResultWindow;
 
 /**
@@ -32,17 +34,21 @@ import org.datacleaner.windows.ResultWindow;
  */
 public class RunAnalysisActionListener implements ActionListener {
 
-    private final Provider<ResultWindow> _resultWindowProvider;
-
+    private final DCModule _dcModule;
+    private final AnalysisJobBuilder _analysisJobBuilder;
     private long _lastClickTime = 0;
 
-    @Inject
-    protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider) {
-        _resultWindowProvider = resultWindowProvider;
+    public RunAnalysisActionListener(DCModule dcModule, AnalysisJobBuilder analysisJobBuilder) {
+        _dcModule = dcModule;
+        _analysisJobBuilder = analysisJobBuilder;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        run();
+    }
+
+    public void run() {
         synchronized (RunAnalysisActionListener.class) {
             long thisClickTime = System.currentTimeMillis();
             if (thisClickTime - _lastClickTime < 1000) {
@@ -52,7 +58,12 @@ public class RunAnalysisActionListener implements ActionListener {
             _lastClickTime = thisClickTime;
         }
 
-        final ResultWindow window = _resultWindowProvider.get();
+        final InjectorBuilder injectorBuilder = _dcModule.createInjectorBuilder();
+        injectorBuilder.with(AnalysisJobBuilder.class, _analysisJobBuilder);
+        injectorBuilder.with(DataCleanerConfiguration.class, _analysisJobBuilder.getConfiguration());
+        injectorBuilder.with(AnalysisJob.class, _analysisJobBuilder.toAnalysisJob(false));
+
+        final ResultWindow window = injectorBuilder.getInstance(ResultWindow.class);
         window.open();
         window.startAnalysis();
     }

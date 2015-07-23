@@ -66,7 +66,7 @@ import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
@@ -125,12 +125,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private final JButton _analyzeButton;
     private final DCPanel _datastoreListPanel;
     private final JXTextField _searchDatastoreTextField;
-    private final InjectorBuilder _injectorBuilder;
+    private final DCModule _dcModule;
     private final UserPreferences _userPreferences;
 
     public DatastoreManagementPanel(DataCleanerConfiguration configuration,
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
+            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule,
             DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
@@ -138,7 +138,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
-        _injectorBuilder = injectorBuilder;
+        _dcModule = dcModule;
         _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
@@ -254,7 +254,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         for (int i = 0; i < datastoreNames.length; i++) {
             final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
             DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this, getWindow()
-                    .getWindowContext(), _userPreferences, _injectorBuilder);
+                    .getWindowContext(), _userPreferences, _dcModule);
             _datastorePanels.add(datastorePanel);
             _datastoreListPanel.add(datastorePanel);
 
@@ -455,8 +455,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
-                AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
+                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
+                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
                 dialog.setVisible(true);
             }
         });
@@ -484,7 +484,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, null).createInjector();
+                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null).createInjector();
                 JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
                 dialog.setSelectedDatabase(databaseName);
                 dialog.setVisible(true);

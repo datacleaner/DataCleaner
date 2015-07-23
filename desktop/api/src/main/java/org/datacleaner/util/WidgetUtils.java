@@ -89,6 +89,8 @@ public final class WidgetUtils {
     public static final Font FONT_OPENSANS_ITALIC;
     public static final Font FONT_OPENSANS_BOLD_ITALIC;
 
+    public static final Font FONT_FONTAWESOME;
+
     static {
         fonts = new HashMap<String, Font>();
 
@@ -108,6 +110,8 @@ public final class WidgetUtils {
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
         FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
         FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
+        
+        FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
         fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);

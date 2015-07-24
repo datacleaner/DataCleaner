@@ -10,7 +10,27 @@
 	<packaging>war</packaging>
 
 	<build>
-		<plugins>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${project.build.directory}/${project.build.finalName}/restdoc"/>
+                                <copy todir="${project.build.directory}/${project.build.finalName}/restdoc">
+                                    <fileset dir="${project.build.directory}/../../services/target/miredot" includes="**/*" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>

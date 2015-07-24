@@ -89,7 +89,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
                     countQuery.selectCount();
                     countQuery.getSelectClause().getItem(0).setFunctionApproximationAllowed(true);
 
-                    final Datastore datastore = _publishers.getDatastore();
+                    final Datastore datastore = _publisher.getDatastore();
                     try (final DatastoreConnection connection = datastore.openConnection()) {
                         try (final DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
                             if (countDataSet.next()) {

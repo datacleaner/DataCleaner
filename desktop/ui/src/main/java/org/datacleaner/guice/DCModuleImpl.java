@@ -34,7 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
@@ -405,7 +405,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public HttpClient getHttpClient(UserPreferences userPreferences) {
+    public CloseableHttpClient getHttpClient(UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
     }
 

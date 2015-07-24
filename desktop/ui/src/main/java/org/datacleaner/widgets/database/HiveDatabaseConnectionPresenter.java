@@ -17,27 +17,24 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.job.tasks;
+package org.datacleaner.widgets.database;
 
-import org.datacleaner.lifecycle.LifeCycleHelper;
+public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-/**
- * Task that invokes initializing methods for reference data where this is
- * nescesary.
- * 
- * 
- */
-public class InitializeReferenceDataTask implements Task {
-
-    private final LifeCycleHelper _lifeCycleHelper;
-
-    public InitializeReferenceDataTask(LifeCycleHelper lifeCycleHelper) {
-        _lifeCycleHelper = lifeCycleHelper;
+    public HiveDatabaseConnectionPresenter() {
+        super("jdbc:hive://HOSTNAME:PORT/DATABASE");
     }
 
     @Override
-    public void execute() throws Exception {
-        _lifeCycleHelper.initializeReferenceData();
+    protected int getDefaultPort() {
+        // no port involved
+        return 10000;
+    }
+
+    @Override
+    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
+            String param3, String param4) {
+        return "jdbc:hive://" + hostname + ":" + port + "/" + database;
     }
 
 }

@@ -42,6 +42,7 @@ import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.InjectorBuilder;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
@@ -158,56 +159,54 @@ public class AddDatastorePanel extends DCPanel {
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            databaseButton.getMenu().add(
-                    createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
-                            "images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
+            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
         }
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            databaseButton.getMenu().add(
-                    createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-                            "images/datastore-types/databases/postgresql.png",
-                            DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
+            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
         }
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-            databaseButton.getMenu().add(
-                    createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
-                            "images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
+            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
         }
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
             databaseButton.getMenu().add(
-                    createNewJdbcDatastoreButton("Microsoft SQL Server connection",
-                            "Connect to a Microsoft SQL Server database",
-                            "images/datastore-types/databases/microsoft.png",
-                            DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
+                    createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
         }
 
         databaseButton.getMenu().add(
-                createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
-                        IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
-                        IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class));
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
+                createNewDatastoreButton("ElasticSearch", "Connect to ElasticSearch",
                         IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class,
                         ElasticSearchDatastoreDialog.class));
 
         databaseButton.getMenu().add(
-                createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
+                createNewDatastoreButton("Apache HBase", "Connect to Apache HBase", IconUtils.HBASE_IMAGEPATH,
+                        HBaseDatastore.class, HBaseDatastoreDialog.class));
+
+        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
+            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_HIVE));
+        }
+
+        databaseButton.getMenu().add(
+                createNewDatastoreButton("Apache Cassandra", "Connect to Apache Cassandra",
                         IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
 
         databaseButton.getMenu().add(
-                createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
-                        IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class));
+                createNewDatastoreButton("MongoDB", "Connect to MongoDB", IconUtils.MONGODB_IMAGEPATH,
+                        MongoDbDatastore.class, MongoDbDatastoreDialog.class));
+
+        databaseButton.getMenu().add(
+                createNewDatastoreButton("CouchDB", "Connect to Apache CouchDB", IconUtils.COUCHDB_IMAGEPATH,
+                        CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+
         return databaseButton;
     }
 
-    private JMenuItem createNewJdbcDatastoreButton(final String title, final String description,
-            final String imagePath, final String databaseName) {
-        final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
-        item.setToolTipText(description);
+    private JMenuItem createNewJdbcDatastoreButton(final String databaseName) {
+
+        DatabaseDriverDescriptor driverDescriptor = DatabaseDriverCatalog
+                .getDatabaseDriverByDriverDatabaseName(databaseName);
+
+        final JMenuItem item = WidgetFactory.createMenuItem(databaseName, driverDescriptor.getIconImagePath());
+        item.setToolTipText("Connect to " + databaseName);
 
         item.addActionListener(new ActionListener() {
             @Override

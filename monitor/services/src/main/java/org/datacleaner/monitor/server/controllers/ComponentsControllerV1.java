@@ -19,11 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.monitor.configuration.TenantContext;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.server.components.ComponentHandler;
-import org.datacleaner.monitor.server.components.ComponentNotFoundException;
+import org.datacleaner.monitor.server.components.*;
 import org.datacleaner.monitor.server.crates.ComponentConfiguration;
 import org.datacleaner.monitor.server.crates.ComponentDataInput;
 import org.datacleaner.monitor.server.crates.ComponentDataOutput;
@@ -33,14 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
- * and provide the input data separately without any need of the whole job or datastore dcConfiguration.
+ * and provide the input data separately without any need of the whole job or datastore configuration.
  * @author k.houzvicka, j.horcicka
  * @since 8. 7. 2015
  */
@@ -51,99 +46,85 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-    private TenantContext tenantContext;
-    private DataCleanerConfiguration dcConfiguration;
-    // This object will be in tenant Config object
-    private Map<Integer, ComponentConfiguration> configurationMap = new HashMap<>();
 
-    public ComponentConfiguration createComponent(@PathVariable(TENANT) final String tenant,
-                                                  @RequestBody final ComponentDataInput inputData) {
-        init(tenant);
-        ComponentConfiguration componentConfiguration = inputData.getConfiguration();
-        new ComponentHandler(dcConfiguration, inputData);
-        configurationMap.put(componentConfiguration.getId(), componentConfiguration);
-        logger.info("Component " + componentConfiguration.getId() + " was created. ");
-
-        return inputData.getConfiguration();
+    /**
+     * It returns a list of all components and their configurations.
+     * @param tenant
+     * @return
+     */
+    public ComponentList getAllComponents(@PathVariable(TENANT) final String tenant) {
+        // TODO
+        return null;
     }
 
-    public ComponentConfiguration getComponentConfiguration(@PathVariable(TENANT) final String tenant,
-                                                            @PathVariable final int id) {
-        init(tenant);
-        checkExistingComponent(id);
-
-        return configurationMap.get(id);
-    }
-
-    public String getComponentResult(@PathVariable(TENANT) final String tenant,
-                                     @PathVariable final int id) {
-        init(tenant);
-        checkExistingComponent(id);
-
-        return "Test result " + id;
-    }
-
-    public ComponentDataOutput provideInputAndGetResultStateless(@PathVariable(TENANT) final String tenant,
-                                                                 @RequestBody final ComponentDataInput inputData) {
-        init(tenant);
-        ComponentHandler componentHandler = new ComponentHandler(dcConfiguration, inputData);
+    /**
+     * It creates a new component with the provided configuration, runs it and returns the result.
+     * @param tenant
+     * @param name
+     * @param componentDataInput
+     * @return
+     */
+    public ComponentDataOutput processStateless(@PathVariable(TENANT) final String tenant,
+                                                @PathVariable("name") final String name,
+                                                @RequestBody final ComponentDataInput componentDataInput) {
+        ComponentHandler componentHandler = new ComponentHandler(
+                _tenantContextFactory.getContext(tenant).getConfiguration(), componentDataInput);
         ComponentDataOutput output = new ComponentDataOutput();
         output.setResults(componentHandler.getResults());
 
         return output;
     }
 
-    public ComponentDataOutput provideInputAndGetResult(@PathVariable(TENANT) final String tenant,
-                                                        @PathVariable final int id,
-                                                        @RequestBody final ComponentDataInput inputData) {
-        init(tenant);
-        checkExistingComponent(id);
-        ComponentHandler componentHandler = new ComponentHandler(dcConfiguration, inputData);
-        ComponentDataOutput output = new ComponentDataOutput();
-        output.setResults(componentHandler.getResults());
-
-        return output;
+    /**
+     * It runs the component and returns the results.
+     * @param tenant
+     * @param name
+     * @param timeout
+     * @param componentProperties
+     * @return
+     */
+    public String createComponent(@PathVariable(TENANT) final String tenant,
+                                  @PathVariable("name") final String name,
+                                  @PathVariable("timeout") final String timeout,
+                                  @RequestBody final ComponentProperties componentProperties) {
+        // TODO
+        return null;
     }
 
-    public List<ComponentConfiguration> getAllComponents(@PathVariable(TENANT) final String tenant) {
-        init(tenant);
-
-        ComponentConfiguration componentAConfiguration = new ComponentConfiguration();
-        HashMap<String, String> componentAMap = new HashMap<>();
-        componentAMap.put("A", "X");
-        componentAConfiguration.setPropertiesMap(componentAMap);
-
-        ComponentConfiguration componentBConfiguration = new ComponentConfiguration();
-        HashMap<String, String> componentBMap = new HashMap<>(componentAMap);
-        componentBMap.put("B", "Y");
-        componentBConfiguration.setPropertiesMap(componentBMap);
-
-        return Arrays.asList(componentAConfiguration, componentBConfiguration);
+    /**
+     * It returns the continuous result of the component for the provided input data.
+     * @param tenant
+     * @param id
+     * @param inputData
+     * @return
+     */
+    public ComponentResult getContinuousResult(@PathVariable(TENANT) final String tenant,
+                                               @PathVariable("id") final int id,
+                                               @RequestBody final InputData inputData) {
+        // TODO
+        return null;
     }
 
-    public Map<Integer, ComponentConfiguration> getActiveComponents(@PathVariable(TENANT) final String tenant) {
-        init(tenant);
-
-        return configurationMap;
+    /**
+     * It returns the component's final result.
+     * @param tenant
+     * @param id
+     * @return
+     */
+    public ComponentResult getFinalResult(@PathVariable(TENANT) final String tenant,
+                                          @PathVariable("id") final int id) {
+        // TODO
+        return null;
     }
 
+    /**
+     * It deletes the component.
+     * @param tenant
+     * @param id
+     */
     public void deleteComponent(@PathVariable(TENANT) final String tenant,
-                                @PathVariable final int id) {
-        init(tenant);
-
-        checkExistingComponent(id);
-        configurationMap.remove(id);
-        logger.info("Component " + id + " was deleted. ");
+                                @PathVariable("id") final int id) {
+        // TODO
     }
 
-    private void checkExistingComponent(int id) throws ComponentNotFoundException {
-        if (! configurationMap.containsKey(id)) {
-            throw new ComponentNotFoundException(id);
-        }
-    }
-
-    private void init(String tenant) {
-        tenantContext = _tenantContextFactory.getContext(tenant);
-        dcConfiguration = tenantContext.getConfiguration();
-    }
 }

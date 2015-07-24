@@ -21,8 +21,8 @@ package org.datacleaner.job.runner;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +75,10 @@ public final class RowProcessingPublishers {
             _sourceColumnFinder = sourceColumnFinder;
         }
 
-        _rowProcessingPublishers = new HashMap<Table, RowProcessingPublisher>();
+        // note that insertion and extraction order consistency is important
+        // since OutputDataStreamJobs should be initialized after their parent
+        // jobs. For this reason we use a LinkedHashMap and not a regular HashMap.
+        _rowProcessingPublishers = new LinkedHashMap<Table, RowProcessingPublisher>();
 
         registerAll();
     }

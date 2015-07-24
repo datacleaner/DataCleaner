@@ -26,6 +26,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.UrlResource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -33,6 +34,7 @@ import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.util.VFSUtils;
 import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.junit.Test;
 
 public class ResourceConverterTest extends TestCase {
 
@@ -98,5 +100,21 @@ public class ResourceConverterTest extends TestCase {
 
         assertTrue(resource2 instanceof VfsResource);
         assertEquals("target", resource2.getName());
+    }
+    @Test
+    public void testConvertHdfsResource() throws Exception {
+        List<? extends ResourceTypeHandler<?>> handlers = Arrays.asList(new HdfsResourceTypeHandler());
+        ResourceConverter converter = new ResourceConverter(handlers, "foo");
+
+        HdfsResource resource1 = new  HdfsResource("hdfs://localhost:9000/user/vagrant/file.csv");
+
+        String str = converter.toString(resource1);
+
+        assertEquals("hdfs://localhost:9000/user/vagrant/file.csv", str);
+
+        Resource resource2 = converter.fromString(Resource.class, str);
+
+        assertTrue(resource2 instanceof  HdfsResource);
+        assertEquals("file.csv", resource2.getName());
     }
 }

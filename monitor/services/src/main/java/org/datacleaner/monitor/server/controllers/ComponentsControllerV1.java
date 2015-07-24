@@ -30,7 +30,6 @@ import org.datacleaner.monitor.server.crates.ComponentDataOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,10 +45,8 @@ import java.util.Map;
  * @since 8. 7. 2015
  */
 @Controller
-@RequestMapping("/dc-rest-v1/{tenant}/components")
-public class ComponentsControllerV1 {
+public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger logger = LoggerFactory.getLogger(ComponentsControllerV1.class);
-    private static final String JSON = "application/json";
     private static final String TENANT = "tenant";
 
     @Autowired
@@ -59,9 +56,6 @@ public class ComponentsControllerV1 {
     // This object will be in tenant Config object
     private Map<Integer, ComponentConfiguration> configurationMap = new HashMap<>();
 
-    @RequestMapping(method = RequestMethod.POST, consumes = JSON, produces = JSON)
-    @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     public ComponentConfiguration createComponent(@PathVariable(TENANT) final String tenant,
                                                   @RequestBody final ComponentDataInput inputData) {
         init(tenant);
@@ -73,8 +67,6 @@ public class ComponentsControllerV1 {
         return inputData.getConfiguration();
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = JSON)
-    @ResponseBody
     public ComponentConfiguration getComponentConfiguration(@PathVariable(TENANT) final String tenant,
                                                             @PathVariable final int id) {
         init(tenant);
@@ -83,8 +75,6 @@ public class ComponentsControllerV1 {
         return configurationMap.get(id);
     }
 
-    @RequestMapping(value = "/{id}/results", method = RequestMethod.GET, produces = JSON)
-    @ResponseBody
     public String getComponentResult(@PathVariable(TENANT) final String tenant,
                                      @PathVariable final int id) {
         init(tenant);
@@ -93,8 +83,6 @@ public class ComponentsControllerV1 {
         return "Test result " + id;
     }
 
-    @RequestMapping(method = RequestMethod.PUT, produces = JSON)
-    @ResponseBody
     public ComponentDataOutput provideInputAndGetResultStateless(@PathVariable(TENANT) final String tenant,
                                                                  @RequestBody final ComponentDataInput inputData) {
         init(tenant);
@@ -105,8 +93,6 @@ public class ComponentsControllerV1 {
         return output;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = JSON)
-    @ResponseBody
     public ComponentDataOutput provideInputAndGetResult(@PathVariable(TENANT) final String tenant,
                                                         @PathVariable final int id,
                                                         @RequestBody final ComponentDataInput inputData) {
@@ -119,8 +105,6 @@ public class ComponentsControllerV1 {
         return output;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = JSON)
-    @ResponseBody
     public List<ComponentConfiguration> getAllComponents(@PathVariable(TENANT) final String tenant) {
         init(tenant);
 
@@ -137,20 +121,16 @@ public class ComponentsControllerV1 {
         return Arrays.asList(componentAConfiguration, componentBConfiguration);
     }
 
-    @RequestMapping(value = "/active", method = RequestMethod.GET, produces = JSON)
-    @ResponseBody
     public Map<Integer, ComponentConfiguration> getActiveComponents(@PathVariable(TENANT) final String tenant) {
         init(tenant);
 
         return configurationMap;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = JSON)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     public void deleteComponent(@PathVariable(TENANT) final String tenant,
                                 @PathVariable final int id) {
         init(tenant);
+
         checkExistingComponent(id);
         configurationMap.remove(id);
         logger.info("Component " + id + " was deleted. ");

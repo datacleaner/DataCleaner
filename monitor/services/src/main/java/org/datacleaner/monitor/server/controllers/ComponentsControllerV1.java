@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.controllers;
 
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.*;
-import org.datacleaner.monitor.server.crates.ComponentConfiguration;
 import org.datacleaner.monitor.server.crates.ComponentDataInput;
 import org.datacleaner.monitor.server.crates.ComponentDataOutput;
 import org.slf4j.Logger;
@@ -29,9 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component

@@ -878,7 +878,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
                         "100");
                 final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
-                if (maxRows == null) {
+                if (maxRows == null || maxRows.intValue() < 1) {
                     WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
                     return;
                 }

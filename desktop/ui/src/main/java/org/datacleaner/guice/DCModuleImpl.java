@@ -231,7 +231,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
-
+    
     @Provides
     public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
             DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
@@ -425,6 +425,11 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
+    }
+    
+    @Override
+    public InjectorBuilder createInjectorBuilder() {
+        return new InjectorBuilder(this, Guice.createInjector(this));
     }
 
     @Override

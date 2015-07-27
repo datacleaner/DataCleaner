@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.database.DatabaseDriverCatalog;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
 import org.jdesktop.swingx.VerticalLayout;
@@ -35,7 +35,7 @@ public class SelectDatastorePanel extends DCPanel {
 
     private final ExistingDatastorePanel _existingDatastoresPanel;
 
-    public SelectDatastorePanel(InjectorBuilder injectorBuilder, DatabaseDriverCatalog databaseDriverCatalog,
+    public SelectDatastorePanel(DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog,
             DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
             DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
@@ -50,7 +50,7 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, injectorBuilder, datastoreSelectListener,
+        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener,
                 userPreferences, !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {

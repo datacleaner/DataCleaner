@@ -28,7 +28,7 @@ import javax.swing.SwingUtilities;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -47,12 +47,12 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     private final SelectDatastorePanel _selectDatastorePanel;
     private final MutableDatastoreCatalog _datastoreCatalog;
 
-    public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, InjectorBuilder injectorBuilder,
+    public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule,
             DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
             UserPreferences userPreferences) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
-        _selectDatastorePanel = new SelectDatastorePanel(injectorBuilder, databaseDriverCatalog, datastoreCatalog,
+        _selectDatastorePanel = new SelectDatastorePanel(dcModule, databaseDriverCatalog, datastoreCatalog,
                 userPreferences, this, true);
 
         setLayout(new BorderLayout());

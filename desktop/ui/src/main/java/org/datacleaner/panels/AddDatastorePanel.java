@@ -43,7 +43,7 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.IconUtils;
@@ -68,21 +68,21 @@ public class AddDatastorePanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private final InjectorBuilder _injectorBuilder;
+    private final DCModule _dcModule;
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
     private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final DatastoreCatalog _datastoreCatalog;
 
     public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
-            final DatabaseDriverCatalog databaseDriverCatalog, final InjectorBuilder injectorBuilder,
+            final DatabaseDriverCatalog databaseDriverCatalog, final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
             boolean showExistingDatastoresButton) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _datastoreCatalog = datastoreCatalog;
-        _injectorBuilder = injectorBuilder;
+        _dcModule = dcModule;
         _databaseDriverCatalog = databaseDriverCatalog;
         _datastoreSelectedListener = datastoreSelectedListener;
         _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener, userPreferences);
@@ -211,7 +211,8 @@ public class AddDatastorePanel extends DCPanel {
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, null).createInjector();
+                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null)
+                        .createInjector();
                 final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
                 dialog.setSelectedDatabase(databaseName);
                 dialog.setVisible(true);
@@ -237,7 +238,8 @@ public class AddDatastorePanel extends DCPanel {
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
+                Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
+                        .createInjector();
                 final AbstractDatastoreDialog<D> dialog = injectorWithNullDatastore.getInstance(dialogClass);
 
                 dialog.setVisible(true);

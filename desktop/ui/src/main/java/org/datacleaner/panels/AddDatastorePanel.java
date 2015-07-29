@@ -33,6 +33,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
+import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -55,6 +56,7 @@ import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.windows.AbstractDatastoreDialog;
 import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
+import org.datacleaner.windows.DatahubDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
@@ -150,9 +152,12 @@ public class AddDatastorePanel extends DCPanel {
         cloudButton.getMenu().add(
                 createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
                         SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        cloudButton.getMenu().add(
+                createNewDatastoreButton("Datahub", "Connect to a HIquality Datahub", IconUtils.DATAHUB_IMAGEPATH,
+                        DatahubDatastore.class, DatahubDatastoreDialog.class));
         return cloudButton;
     }
-
+    
     private PopupButton createDatabaseButton() {
         final PopupButton databaseButton = WidgetFactory.createDefaultPopupButton("Database",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);

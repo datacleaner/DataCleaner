@@ -32,12 +32,15 @@ public class SparkJobLauncher {
 
     private final DataCleanerConfiguration _dataCleanerConfiguration;
 
+    public SparkJobLauncher(DataCleanerConfiguration dataCleanerConfiguration) {
+        _dataCleanerConfiguration = dataCleanerConfiguration;
+    }
+    
     public SparkJobLauncher(String confXmlPath) {
         _dataCleanerConfiguration = readDataCleanerConfiguration(new HdfsResource(confXmlPath));
     }
-
-    public void launchJob(String analysisJobXmlPath) {
-        final AnalysisJob analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
+    
+    public void launchJob(AnalysisJob analysisJob) {
         final String datastoreName = analysisJob.getDatastore().getName();
 
         final Datastore datastore = _dataCleanerConfiguration.getDatastoreCatalog().getDatastore(datastoreName);
@@ -47,6 +50,11 @@ public class SparkJobLauncher {
         } else {
             // TODO: Initialize JavaSparkContext and read the input datastore file
         }
+    }
+
+    public void launchJob(String analysisJobXmlPath) {
+        final AnalysisJob analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
+        launchJob(analysisJob);
     }
 
     private static DataCleanerConfiguration readDataCleanerConfiguration(HdfsResource confXmlHdfsResource) {

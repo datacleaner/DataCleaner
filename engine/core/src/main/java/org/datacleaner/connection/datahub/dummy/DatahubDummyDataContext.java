@@ -19,11 +19,15 @@
  */
 package org.datacleaner.connection.datahub.dummy;
 
+import java.util.List;
+
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.QueryPostprocessDataContext;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.query.FilterItem;
+import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
@@ -35,6 +39,18 @@ public class DatahubDummyDataContext extends QueryPostprocessDataContext impleme
     public void executeUpdate(UpdateScript arg0) {
         // TODO Auto-generated method stub
         
+    }
+    
+    @Override
+    public DataSet executeQuery(final Query query) {
+        Table table = query.getFromClause().getItem(0).getTable();
+        return new DatahubDummyDataSet(table.getColumns());
+        
+    }
+
+    @Override
+    protected Number executeCountQuery(Table table, List<FilterItem> whereItems, boolean functionApproximationAllowed) {
+        return 3;
     }
 
     @Override
@@ -48,7 +64,7 @@ public class DatahubDummyDataContext extends QueryPostprocessDataContext impleme
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(Table arg0, Column[] columns,
+    protected DataSet materializeMainSchemaTable(Table table, Column[] columns,
             int maxRows) {
         //executes a simple query and returns the result
 //        final StringBuilder sb = new StringBuilder();

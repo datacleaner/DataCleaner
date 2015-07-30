@@ -21,7 +21,12 @@ package org.datacleaner.spark;
 
 import java.io.InputStream;
 
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
@@ -35,11 +40,11 @@ public class SparkJobLauncher {
     public SparkJobLauncher(DataCleanerConfiguration dataCleanerConfiguration) {
         _dataCleanerConfiguration = dataCleanerConfiguration;
     }
-    
+
     public SparkJobLauncher(String confXmlPath) {
         _dataCleanerConfiguration = readDataCleanerConfiguration(new HdfsResource(confXmlPath));
     }
-    
+
     public void launchJob(AnalysisJob analysisJob) {
         final String datastoreName = analysisJob.getDatastore().getName();
 
@@ -48,7 +53,27 @@ public class SparkJobLauncher {
             throw new IllegalStateException("Datastore referred by the job (" + datastoreName
                     + ") has not been found in the specified DataCleanerConfiguration");
         } else {
-            // TODO: Initialize JavaSparkContext and read the input datastore file
+            JavaSparkContext sc = null;
+            try {
+                DataContext dataContext = datastore.openConnection().getDataContext(); 
+                if (dataContext instanceof CsvDataContext) {
+                    CsvDataContext csvDataContext = (CsvDataContext) dataContext;
+                    String datastoreFilePath = csvDataContext.getResource().getQualifiedPath();
+            
+                    SparkConf conf = new SparkConf().setAppName("DataCleaner-spark").setMaster("yarn-client");
+                    sc = new JavaSparkContext(conf);
+
+                    JavaRDD<String> instructionsRDD = sc.textFile(datastoreFilePath);
+                    long lineCount = instructionsRDD.count();
+        
+        
+                    System.out.println("Line count: " + lineCount);
+                }
+            } finally {
+                if (sc != null) {
+                    sc.stop();
+                }
+            }
         }
     }
 
@@ -72,7 +97,7 @@ public class SparkJobLauncher {
 
         return analysisJob;
     }
-    
+
     public DataCleanerConfiguration getDataCleanerConfiguration() {
         return _dataCleanerConfiguration;
     }

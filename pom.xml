@@ -9,6 +9,7 @@
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
 		<hadoop.version>2.6.0</hadoop.version>
+		<spark.version>1.4.1</spark.version>
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>

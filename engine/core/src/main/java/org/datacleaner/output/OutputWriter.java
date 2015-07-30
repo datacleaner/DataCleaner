@@ -27,21 +27,22 @@ import java.io.Closeable;
  */
 public interface OutputWriter extends Closeable {
 
-	/**
-	 * Creates a new row in the output.
-	 * 
-	 * @return
-	 */
-	public OutputRow createRow();
-	
-	/**
-	 * Adds a row to the buffer 
-	 */
-	public void addToBuffer(Object[] rowData);
+    /**
+     * Creates a new row in the output.
+     * 
+     * @return
+     */
+    public OutputRow createRow();
 
-	/**
-	 * Closes the output writing sequence. Implementing classes should flush and
-	 * close any outputstreams etc. here.
-	 */
-	public void close();
+    /**
+     * Adds a row to the buffer
+     */
+    public void addToBuffer(Object[] rowData);
+
+    /**
+     * Closes the output writing sequence. Implementing classes should flush and
+     * close any outputstreams etc. here.
+     * 
+     */
+    public void close();
 }

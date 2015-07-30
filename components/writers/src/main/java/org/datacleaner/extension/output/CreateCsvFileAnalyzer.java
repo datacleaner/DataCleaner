@@ -36,6 +36,7 @@ import org.apache.metamodel.data.Row;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
@@ -119,6 +120,9 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             if (columnToBeSortedOn != null) {
                 _targetFile = new FileResource(File.createTempFile("csv_file_analyzer", ".csv"));
             } else {
+                if (file instanceof HdfsResource){
+                    ((HdfsResource) file).setOverwriteIfExits(overwriteFileIfExists);
+                }
                 _targetFile = file;
             }
         }
@@ -133,7 +137,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     }
 
     @Validate
-    public void validate() {
+    public void validate() throws IOException {
         if (file.isExists() && !overwriteFileIfExists) {
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
@@ -196,6 +200,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         }
 
         _headers = headers.toArray(new String[0]);
+       
         return CsvOutputWriterFactory.getWriter(_targetFile, _headers, separatorChar, getSafeQuoteChar(),
                 getSafeEscapeChar(), includeHeader, columns);
     }

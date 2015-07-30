@@ -36,54 +36,54 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteData
 
     public static final String PROPERTY_COLUMNS = "Columns";
     public static final String PROPERTY_FIELD_NAMES = "Fields";
-    
-	private final AtomicInteger rowCount = new AtomicInteger(0);
 
-	@Configured(PROPERTY_COLUMNS)
-	InputColumn<?>[] columns;
-	
-	@Configured(value = PROPERTY_FIELD_NAMES, required = false)
+    private final AtomicInteger rowCount = new AtomicInteger(0);
+
+    @Configured(PROPERTY_COLUMNS)
+    InputColumn<?>[] columns;
+
+    @Configured(value = PROPERTY_FIELD_NAMES, required = false)
     @MappedProperty(PROPERTY_COLUMNS)
     String[] fields;
 
-	protected OutputWriter outputWriter;
+    protected OutputWriter outputWriter;
 
-	@Initialize
-	public final void init() {
-		outputWriter = createOutputWriter();
-	}
+    @Initialize
+    public final void init() {
+        outputWriter = createOutputWriter();
+    }
 
-	@Override
-	public final WriteDataResult getResult() {
-		outputWriter.close();
-		return getResultInternal(rowCount.get());
-	}
+    @Override
+    public final WriteDataResult getResult() {
+        outputWriter.close();
+        return getResultInternal(rowCount.get());
+    }
 
-	protected abstract WriteDataResult getResultInternal(int rowCount);
+    protected abstract WriteDataResult getResultInternal(int rowCount);
 
-	public abstract OutputWriter createOutputWriter();
+    public abstract OutputWriter createOutputWriter();
 
-	@Override
-	public final void run(InputRow row, int distinctCount) {
-		writeRow(row, distinctCount);
-		rowCount.incrementAndGet();
-	}
+    @Override
+    public final void run(InputRow row, int distinctCount) {
+        writeRow(row, distinctCount);
+        rowCount.incrementAndGet();
+    }
 
-	protected void writeRow(InputRow row, int distinctCount) {
-		OutputRow outputRow = outputWriter.createRow();
-		for (InputColumn<?> col : columns) {
-			@SuppressWarnings("unchecked")
-			InputColumn<Object> objectCol = (InputColumn<Object>) col;
-			outputRow.setValue(objectCol, row.getValue(col));
-		}
-		outputRow.write();
-	}
+    protected void writeRow(InputRow row, int distinctCount) {
+        OutputRow outputRow = outputWriter.createRow();
+        for (InputColumn<?> col : columns) {
+            @SuppressWarnings("unchecked")
+            InputColumn<Object> objectCol = (InputColumn<Object>) col;
+            outputRow.setValue(objectCol, row.getValue(col));
+        }
+        outputRow.write();
+    }
 
-	public void setColumns(InputColumn<?>[] columns) {
-		this.columns = columns;
-	}
+    public void setColumns(InputColumn<?>[] columns) {
+        this.columns = columns;
+    }
 
-	public InputColumn<?>[] getColumns() {
-		return columns;
-	}
+    public InputColumn<?>[] getColumns() {
+        return columns;
+    }
 }

@@ -110,17 +110,39 @@ public final class CsvOutputWriterFactory {
         CsvOutputWriter outputWriter;
         synchronized (dataContexts) {
             UpdateableDataContext dataContext = dataContexts.get(resource);
+            String filename = resource.getName();
             if (dataContext == null) {
 
                 dataContext = new CsvDataContext(resource, getConfiguration(separatorChar, quoteChar, escapeChar,
                         includeHeader));
-                File file = new File(resource.getName());
-                return createCsvOutputWriter(resource.getName(), headers, dataContext, file, columns);
+                File file = new File(filename);
+                File parentFile = file.getParentFile();
+                if (parentFile != null && !parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
+
+                final Schema schema = dataContext.getDefaultSchema();
+                dataContext.executeUpdate(new UpdateScript() {
+                    @Override
+                    public void run(UpdateCallback callback) {
+                        TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
+                        for (String header : headers) {
+                            tableBuilder.withColumn(header);
+                        }
+                        tableBuilder.execute();
+                    }
+                });
+
+                final Table table = dataContext.getDefaultSchema().getTables()[0];
+
+                dataContexts.put(filename, dataContext);
+                counters.put(filename, new AtomicInteger(1));
+                return new CsvOutputWriter(dataContext, filename, resource, table, columns);
 
                 // write the headers
             } else {
                 final Table table = dataContext.getDefaultSchema().getTables()[0];
-                outputWriter = new CsvOutputWriter(dataContext, resource.getName(), table, columns);
+                outputWriter = new CsvOutputWriter(dataContext, filename, resource, table, columns);
                 counters.get(resource).incrementAndGet();
             }
         }

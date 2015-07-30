@@ -23,8 +23,8 @@ import org.datacleaner.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class ComponentsCache
@@ -42,7 +42,7 @@ public class ComponentsCache {
     private static final long CHECK_INTERVAL = 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
-    HashMap<String, ComponentsCacheConfigWrapper> data = new HashMap<>();
+    ConcurrentHashMap<String, ComponentsCacheConfigWrapper> data = new ConcurrentHashMap<>();
 
     Thread checkerThread;
     TimeoutChecker checker;

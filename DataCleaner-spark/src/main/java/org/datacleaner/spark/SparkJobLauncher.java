@@ -64,5 +64,9 @@ public class SparkJobLauncher {
 
         return analysisJob;
     }
+    
+    public DataCleanerConfiguration getDataCleanerConfiguration() {
+        return _dataCleanerConfiguration;
+    }
 
 }

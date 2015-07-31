@@ -66,7 +66,6 @@ public class SparkJobLauncher {
                     JavaRDD<String> instructionsRDD = sc.textFile(datastoreFilePath);
                     long lineCount = instructionsRDD.count();
         
-        
                     System.out.println("Line count: " + lineCount);
                 }
             } finally {
@@ -103,8 +102,12 @@ public class SparkJobLauncher {
     }
     
     public static void main(String[] args) {
-        String confXmlPath = "hdfs://bigdatavm" + ":" + "9000" + "/user/vagrant/conf.xml";
-        String analysisJobXmlPath = "hdfs://bigdatavm" + ":" + "9000" + "/user/vagrant/hdfs-job.analysis.xml";
+        if (args.length < 2) {
+            throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n <path_to_conf_xml_file_in_hdfs> <path_to_analysis_job_xml_in_hdfs>");
+        }
+        
+        String confXmlPath = args[0];
+        String analysisJobXmlPath = args[1];
         SparkJobLauncher sparkJobLauncher = new SparkJobLauncher(confXmlPath);
         sparkJobLauncher.launchJob(analysisJobXmlPath);
     }

@@ -40,7 +40,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
-		<module>DataCleaner-spark</module>
+		<module>spark</module>
 	</modules>
 	<profiles>
 		<profile>

@@ -32,8 +32,12 @@ import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.JaxbJobReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SparkJobLauncher {
+    
+    private static final Logger logger = LoggerFactory.getLogger(SparkJobLauncher.class);
 
     private final DataCleanerConfiguration _dataCleanerConfiguration;
 
@@ -66,7 +70,7 @@ public class SparkJobLauncher {
                     JavaRDD<String> instructionsRDD = sc.textFile(datastoreFilePath);
                     long lineCount = instructionsRDD.count();
         
-                    System.out.println("Line count: " + lineCount);
+                    logger.info("Line count: " + lineCount);
                 }
             } finally {
                 if (sc != null) {

@@ -19,9 +19,18 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
+
 /**
  * @author j.horcicka (GMC)
+ * @author j.neubauer
  * @since 24. 07. 2015
  */
-public interface InputData {
+public class ProcessInput {
+    @JsonProperty
+    public JsonNode data;
+
 }

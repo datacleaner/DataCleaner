@@ -19,22 +19,14 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author j.horcicka (GMC)
- * @since 14. 07. 2015
+ * @Author jakub
+ * @Since 7/31/15
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "There is no such component.")
-public class ComponentNotFoundException extends RuntimeException {
-    private ComponentNotFoundException(String msg) {
-        super(msg);
-    }
-    public static ComponentNotFoundException createTypeNotFound(String type) {
-        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
-    }
-    public static ComponentNotFoundException createInstanceNotFound(String id) {
-        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
-    }
+
+public class ProcessResult {
+    @JsonProperty
+    Object result;
 }

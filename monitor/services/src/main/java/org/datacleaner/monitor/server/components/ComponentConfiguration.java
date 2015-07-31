@@ -17,39 +17,38 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.crates;
+package org.datacleaner.monitor.server.components;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Crate for a component output.
- *
+ * This class contains configuration and state of a particular component.
  * @author k.houzvicka
  * @since 9. 7. 2015
  */
-public class ComponentDataOutput implements Serializable {
-    private Serializable results = null;
-    private ComponentConfiguration configuration = new ComponentConfiguration();
 
-    public Serializable getResults() {
-        return results;
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+public class ComponentConfiguration {
+
+    @JsonProperty
+    private Map<String, JsonNode> properties = new HashMap<>();
+
+    @JsonProperty
+    public List<String> columns;
+
+    public JsonNode getProperty(String name) {
+        return properties.get(name);
     }
 
-    public void setResults(Serializable results) {
-        if (results != null) {
-            this.results = results;
-        }
+    public Collection<String> getPropertiesNames() {
+        return properties.keySet();
     }
 
-    public ComponentConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(ComponentConfiguration configuration) {
-        if (configuration != null) {
-            this.configuration = configuration;
-        }
-    }
 }

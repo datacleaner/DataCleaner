@@ -17,14 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.crates;
+package org.datacleaner.monitor.server.components;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author j.horcicka (GMC)
- * @since 14. 07. 2015
+ * @since 24. 07. 2015
  */
-public enum ComponentStatus {
-    CREATED,
-    PROCESSING,
-    FINISHED;
+public class ProcessOutput {
+    @JsonProperty
+    public Object rows;
+
 }

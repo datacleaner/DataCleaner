@@ -19,9 +19,25 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.monitor.server.components.ComponentConfiguration;
+
+import java.io.Serializable;
+import java.util.List;
+
 /**
- * @author j.horcicka (GMC)
- * @since 24. 07. 2015
+ * Crate for a component processing input.
+ * @author j.neubauer
+ * @since 9. 7. 2015
  */
-public interface ComponentProperties {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ProcessStatelessInput implements Serializable {
+
+    @JsonProperty
+    public ComponentConfiguration configuration;
+    @JsonProperty
+    public JsonNode data;
+
 }

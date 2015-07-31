@@ -26,6 +26,8 @@ import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,6 +41,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @since 24.7.15
  */
 public class ComponentsStore {
+    private static final Logger logger = LoggerFactory.getLogger(ComponentsStore.class);
 
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwLock.readLock();
@@ -68,6 +71,7 @@ public class ComponentsStore {
      * @return
      */
     public ComponentsCacheConfigWrapper getConfiguration(String componentId) {
+        logger.info("Read component with id: {}", componentId);
         readLock.lock();
         final ComponentsCacheConfigWrapper[] conf = new ComponentsCacheConfigWrapper[1];
         try {
@@ -94,6 +98,7 @@ public class ComponentsStore {
      * @param configWrapper
      */
     public void storeConfiguration(final ComponentsCacheConfigWrapper configWrapper) {
+        logger.info("Store component with id: {}", configWrapper.getComponentConfigHolder().getComponentId());
         writeLock.lock();
         try {
             componentsFolder.createFile(configWrapper.componentConfigHolder.componentId, new Action<OutputStream>() {
@@ -116,6 +121,7 @@ public class ComponentsStore {
      * @param componentId
      */
     public void removeConfiguration(String componentId) {
+        logger.info("Remove component with id: {}", componentId);
         writeLock.lock();
         try {
             RepositoryFile configFile = componentsFolder.getFile(componentId);

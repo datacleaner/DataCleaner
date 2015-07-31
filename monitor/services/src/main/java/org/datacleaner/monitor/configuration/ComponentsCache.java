@@ -66,7 +66,7 @@ public class ComponentsCache {
      * @param componentConfigHolder
      */
     public void putComponent(ComponentConfigHolder componentConfigHolder) {
-        logger.info("Put component. name: {0}, componentId: {1}.", componentConfigHolder.configuration.getComponentName(), componentConfigHolder.getComponentId());
+        logger.info("Put component. name: {}, componentId: {}.", componentConfigHolder.configuration.getComponentName(), componentConfigHolder.getComponentId());
         ComponentsCacheConfigWrapper wrapper = new ComponentsCacheConfigWrapper(componentConfigHolder);
         data.put(componentConfigHolder.componentId, wrapper);
         componentsStore.storeConfiguration(wrapper);
@@ -85,10 +85,10 @@ public class ComponentsCache {
         if (ComponentsCacheConfigWrapper == null) {
             ComponentsCacheConfigWrapper = componentsStore.getConfiguration(id);
             if (ComponentsCacheConfigWrapper == null) {
-                logger.warn("Configuration {0} not exists.", id);
+                logger.warn("Configuration {} not exists.", id);
                 return null;
             }
-            logger.info("Component {0} was in store. ", id);
+            logger.info("Component {} was in store. ", id);
             data.put(id, ComponentsCacheConfigWrapper);
         }
         ComponentsCacheConfigWrapper.updateExpirationTime();
@@ -105,7 +105,7 @@ public class ComponentsCache {
         data.remove(id);
         componentsStore.removeConfiguration(id);
         config.close();
-        logger.info("Component {0} was removed from cache and closed.", config.getComponentId());
+        logger.info("Component {} was removed from cache and closed.", config.getComponentId());
     }
 
     /**
@@ -130,7 +130,7 @@ public class ComponentsCache {
 
         for (ComponentsCacheConfigWrapper componentsCacheConfigWrapper : data.values()) {
             componentsCacheConfigWrapper.componentConfigHolder.close();
-            logger.info("Component with id: {0} was closed.", componentsCacheConfigWrapper.componentConfigHolder.getComponentId());
+            logger.info("Component with id: {} was closed.", componentsCacheConfigWrapper.componentConfigHolder.getComponentId());
             // Configuration is still in store.
         }
 
@@ -161,14 +161,14 @@ public class ComponentsCache {
                             logger.info("CacheChecker: Component is updated from store.", key);
                             data.put(key, storeWrapper);
                         } else {
-                            logger.info("CacheChecker: Component {0} expired.", key);
+                            logger.info("CacheChecker: Component {} expired.", key);
                             data.remove(key);
                             componentsStore.removeConfiguration(key);
                             storeWrapper.componentConfigHolder.close();
                         }
                     } else if (wrapper != null && wrapper.mustBeUpdated()) {
                         // update store
-                        logger.info("CacheChecker: Component {0} is saved to store.", key);
+                        logger.info("CacheChecker: Component {} is saved to store.", key);
                         componentsStore.storeConfiguration(wrapper);
                         wrapper.updated();
                     }

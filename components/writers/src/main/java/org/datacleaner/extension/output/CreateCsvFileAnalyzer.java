@@ -120,12 +120,13 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             if (columnToBeSortedOn != null) {
                 _targetFile = new FileResource(File.createTempFile("csv_file_analyzer", ".csv"));
             } else {
-                if (file instanceof HdfsResource){
-                    ((HdfsResource) file).setOverwriteIfExits(overwriteFileIfExists);
-                }
                 _targetFile = file;
+                if (_targetFile instanceof HdfsResource) {
+                    ((HdfsResource) _targetFile).setOverwriteIfExits(overwriteFileIfExists);
+                }
             }
         }
+
     }
 
     @Override
@@ -200,7 +201,7 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         }
 
         _headers = headers.toArray(new String[0]);
-       
+
         return CsvOutputWriterFactory.getWriter(_targetFile, _headers, separatorChar, getSafeQuoteChar(),
                 getSafeEscapeChar(), includeHeader, columns);
     }

@@ -101,5 +101,12 @@ public class SparkJobLauncher {
     public DataCleanerConfiguration getDataCleanerConfiguration() {
         return _dataCleanerConfiguration;
     }
+    
+    public static void main(String[] args) {
+        String confXmlPath = "hdfs://bigdatavm" + ":" + "9000" + "/user/vagrant/conf.xml";
+        String analysisJobXmlPath = "hdfs://bigdatavm" + ":" + "9000" + "/user/vagrant/hdfs-job.analysis.xml";
+        SparkJobLauncher sparkJobLauncher = new SparkJobLauncher(confXmlPath);
+        sparkJobLauncher.launchJob(analysisJobXmlPath);
+    }
 
 }

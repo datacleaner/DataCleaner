@@ -19,15 +19,16 @@
  */
 package org.datacleaner.spark;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.NoSuchDatastoreException;
-
-import static org.junit.Assert.*;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
-//@Ignore
+@Ignore
 public class SparkJobLauncherIntegrationTest {
 
     @Test

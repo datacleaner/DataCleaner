@@ -64,7 +64,7 @@ public class SparkJobLauncher {
                     CsvDataContext csvDataContext = (CsvDataContext) dataContext;
                     String datastoreFilePath = csvDataContext.getResource().getQualifiedPath();
             
-                    SparkConf conf = new SparkConf().setAppName("DataCleaner-spark").setMaster("yarn-client");
+                    SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
                     sc = new JavaSparkContext(conf);
 
                     JavaRDD<String> instructionsRDD = sc.textFile(datastoreFilePath);

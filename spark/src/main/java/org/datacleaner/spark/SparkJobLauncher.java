@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.csv.CsvDataContext;
+import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -94,10 +95,15 @@ public class SparkJobLauncher {
     }
 
     private AnalysisJob readAnalysisJob(HdfsResource analysisJobXmlHdfsResource) {
-        final InputStream analysisJobXmlInputStream = analysisJobXmlHdfsResource.read();
-        final JaxbJobReader jobReader = new JaxbJobReader(_dataCleanerConfiguration);
-        final AnalysisJob analysisJob = jobReader.read(analysisJobXmlInputStream);
+        final AnalysisJob analysisJob = analysisJobXmlHdfsResource.read(new Func<InputStream, AnalysisJob>() {
 
+            @Override
+            public AnalysisJob eval(InputStream in) {
+                final JaxbJobReader jobReader = new JaxbJobReader(_dataCleanerConfiguration);
+                final AnalysisJob analysisJob = jobReader.read(in);
+                return analysisJob;
+            }
+        });
         return analysisJob;
     }
 

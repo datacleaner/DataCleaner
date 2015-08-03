@@ -35,19 +35,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.client.params.CookiePolicy;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.metamodel.util.FileHelper;
@@ -68,7 +67,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private final Charset charset = Charset.forName("UTF-8");
 
-    private final HttpClient _httpClient;
+    private final CloseableHttpClient _httpClient;
     private final String _casServerUrl;
     private final String _username;
     private final String _password;
@@ -77,7 +76,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     private String _requestedService;
     private String _casRestServiceUrl;
 
-    public CASMonitorHttpClient(HttpClient client, String casServerUrl, String username, String password,
+    public CASMonitorHttpClient(CloseableHttpClient client, String casServerUrl, String username, String password,
             String monitorBaseUrl) {
         _httpClient = client;
         _casServerUrl = casServerUrl;
@@ -119,9 +118,9 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     public HttpResponse execute(final HttpUriRequest request) throws Exception {
         // enable cookies
         final CookieStore cookieStore = new BasicCookieStore();
-        final HttpContext context = new BasicHttpContext();
-        context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-        _httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+        final HttpClientContext context = HttpClientContext.create();
+        context.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
+        context.setRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).build());
 
         final String ticketGrantingTicket;
         try {
@@ -262,5 +261,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
                 request.releaseConnection();
             }
         }
+        
+        FileHelper.safeClose(_httpClient);
     }
 }

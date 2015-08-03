@@ -139,35 +139,35 @@ public class DateAndTimeAnalyzer implements Analyzer<DateAndTimeAnalyzerResult> 
             final int numNull = delegate.getNumNull();
             nav.where(measureDimension, MEASURE_NULL_COUNT).put(numNull);
             if (numNull > 0) {
-                nav.attach(new AnnotatedRowsResult(delegate.getNullAnnotation(), _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(delegate.getNullAnnotation(), _annotationFactory, column));
             }
 
             final LocalDate maxDate = delegate.getMaxDate();
             nav.where(measureDimension, MEASURE_HIGHEST_DATE).put(toString(maxDate));
             RowAnnotation annotation = delegate.getMaxDateAnnotation();
             if (annotation.getRowCount() > 0) {
-                nav.attach(new AnnotatedRowsResult(annotation, _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
             }
 
             final LocalDate minDate = delegate.getMinDate();
             nav.where(measureDimension, MEASURE_LOWEST_DATE).put(toString(minDate));
             annotation = delegate.getMinDateAnnotation();
             if (annotation.getRowCount() > 0) {
-                nav.attach(new AnnotatedRowsResult(annotation, _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
             }
 
             final LocalTime maxTime = delegate.getMaxTime();
             nav.where(measureDimension, MEASURE_HIGHEST_TIME).put(toString(maxTime));
             annotation = delegate.getMaxTimeAnnotation();
             if (annotation.getRowCount() > 0) {
-                nav.attach(new AnnotatedRowsResult(annotation, _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
             }
 
             final LocalTime minTime = delegate.getMinTime();
             nav.where(measureDimension, MEASURE_LOWEST_TIME).put(toString(minTime));
             annotation = delegate.getMinTimeAnnotation();
             if (annotation.getRowCount() > 0) {
-                nav.attach(new AnnotatedRowsResult(annotation, _annotationFactory, column));
+                nav.attach(AnnotatedRowsResult.createIfSampleRowsAvailable(annotation, _annotationFactory, column));
             }
 
             final Date mean = delegate.getMean();

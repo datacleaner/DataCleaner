@@ -28,11 +28,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "There is no such component.")
 public class ComponentNotFoundException extends RuntimeException {
-    public ComponentNotFoundException(String type) {
-        super("Component type '" + type + "' does not exist.");
+    private ComponentNotFoundException(String msg) {
+        super(msg);
     }
-
-    public ComponentNotFoundException(Integer id) {
-        super("Component with ID " + id + " does not exist.");
+    public static ComponentNotFoundException createTypeNotFound(String type) {
+        return new ComponentNotFoundException("Component type '" + type + "' does not exist.");
+    }
+    public static ComponentNotFoundException createInstanceNotFound(String id) {
+        return new ComponentNotFoundException("Component with ID " + id + " does not exist.");
     }
 }

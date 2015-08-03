@@ -19,8 +19,6 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import org.datacleaner.monitor.server.crates.ComponentDataInput;
-import org.datacleaner.monitor.server.crates.ComponentDataOutput;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,38 +45,40 @@ public interface ComponentsController {
      * It creates a new component with the provided configuration, runs it and returns the result.
      * @param tenant
      * @param name
-     * @param componentDataInput
+     * @param processStatelessInput
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MIME_TYPE_JSON, produces = MIME_TYPE_JSON)
-    public ComponentDataOutput processStateless(final String tenant, final String name,
-        final ComponentDataInput componentDataInput);
+    public ProcessStatelessOutput processStateless(final String tenant, final String name,
+        final ProcessStatelessInput processStatelessInput);
 
     /**
      * It runs the component and returns the results.
+     *
      * @param tenant
      * @param name
      * @param timeout
-     * @param componentProperties
+     * @param config
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/{name}", method = RequestMethod.POST, produces = MIME_TYPE_JSON)
     @ResponseStatus(HttpStatus.CREATED)
     public String createComponent(final String tenant, final String name, final String timeout,
-        final ComponentProperties componentProperties);
+        final CreateInput config);
 
     /**
      * It returns the continuous result of the component for the provided input data.
      * @param tenant
      * @param id
-     * @param inputData
+     * @param processInput
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MIME_TYPE_JSON)
-    public ComponentResult getContinuousResult(final String tenant, final int id, final InputData inputData);
+    public ProcessOutput processComponent(final String tenant, final int id, final ProcessInput processInput)
+            throws ComponentNotFoundException;
 
     /**
      * It returns the component's final result.
@@ -88,7 +88,8 @@ public interface ComponentsController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MIME_TYPE_JSON)
-    public ComponentResult getFinalResult(final String tenant, final int id);
+    public ProcessResult getFinalResult(final String tenant, final int id)
+            throws ComponentNotFoundException;
 
     /**
      * It deletes the component.
@@ -98,5 +99,6 @@ public interface ComponentsController {
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MIME_TYPE_JSON)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteComponent(final String tenant, final int id);
+    public void deleteComponent(final String tenant, final int id)
+            throws ComponentNotFoundException;
 }

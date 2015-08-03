@@ -216,7 +216,7 @@ public class ConsumeRowHandler {
             }
         }
 
-        List<RowProcessingConsumer> consumers = publisher.getConfigurableConsumers();
+        List<RowProcessingConsumer> consumers = publisher.getConsumers();
         if (!rowConsumeConfiguration.includeAnalyzers) {
             consumers = removeAnalyzers(consumers);
         }

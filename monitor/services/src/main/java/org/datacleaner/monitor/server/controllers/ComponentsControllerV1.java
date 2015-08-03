@@ -21,13 +21,15 @@ package org.datacleaner.monitor.server.controllers;
 
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.server.components.*;
-import org.datacleaner.monitor.server.crates.ComponentDataInput;
-import org.datacleaner.monitor.server.crates.ComponentDataOutput;
+import org.datacleaner.monitor.server.components.ProcessStatelessInput;
+import org.datacleaner.monitor.server.components.ProcessStatelessOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -37,7 +39,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @Controller
 public class ComponentsControllerV1 implements ComponentsController {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentsControllerV1.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
     private static final String TENANT = "tenant";
 
     @Autowired
@@ -57,70 +60,83 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It creates a new component with the provided configuration, runs it and returns the result.
      * @param tenant
      * @param name
-     * @param componentDataInput
+     * @param processStatelessInput
      * @return
      */
-    public ComponentDataOutput processStateless(@PathVariable(TENANT) final String tenant,
-                                                @PathVariable("name") final String name,
-                                                @RequestBody final ComponentDataInput componentDataInput) {
-        ComponentHandler componentHandler = new ComponentHandler(
-                _tenantContextFactory.getContext(tenant).getConfiguration(), componentDataInput);
-        ComponentDataOutput output = new ComponentDataOutput();
-        output.setResults(componentHandler.getResults());
-
+    public ProcessStatelessOutput processStateless(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("name") final String name,
+            @RequestBody final ProcessStatelessInput processStatelessInput) {
+        LOGGER.debug("Running '" + name + "'");
+        ComponentHandler handler = createComponent(tenant, name, processStatelessInput.configuration);
+        ProcessStatelessOutput output = new ProcessStatelessOutput();
+        output.rows = handler.runComponent(processStatelessInput.data);
+        output.result = handler.closeComponent();
         return output;
     }
 
     /**
      * It runs the component and returns the results.
-     * @param tenant
-     * @param name
-     * @param timeout
-     * @param componentProperties
-     * @return
      */
-    public String createComponent(@PathVariable(TENANT) final String tenant,
-                                  @PathVariable("name") final String name,
-                                  @PathVariable("timeout") final String timeout,
-                                  @RequestBody final ComponentProperties componentProperties) {
-        // TODO
-        return null;
+    public String createComponent(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("name") final String name,
+            @PathVariable("timeout") final String timeout,
+            @RequestBody final CreateInput createInput) {
+        ComponentHandler handler = createComponent(tenant, name, createInput.configuration);
+        String id = UUID.randomUUID().toString();
+        // TODO: Use cache
+        // put "createInput" and "name" to storage and "handler" to cache under the key "id".
+        return id;
     }
 
     /**
      * It returns the continuous result of the component for the provided input data.
-     * @param tenant
-     * @param id
-     * @param inputData
-     * @return
      */
-    public ComponentResult getContinuousResult(@PathVariable(TENANT) final String tenant,
-                                               @PathVariable("id") final int id,
-                                               @RequestBody final InputData inputData) {
-        // TODO
-        return null;
+    public ProcessOutput processComponent(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("id") final int id,
+            @RequestBody final ProcessInput processInput)
+            throws ComponentNotFoundException {
+        // TODO: Use cache.
+        // get handler from cache by "id".
+        // If not in cache, get CreateInput and component name object from storage and create the handler and put it to the cache.
+        // Use the private method createComponent(...) for it.
+        ComponentHandler handler = null;
+
+        ProcessOutput out = new ProcessOutput();
+        out.rows = handler.runComponent(processInput.data);
+        return out;
     }
 
     /**
      * It returns the component's final result.
-     * @param tenant
-     * @param id
-     * @return
      */
-    public ComponentResult getFinalResult(@PathVariable(TENANT) final String tenant,
-                                          @PathVariable("id") final int id) {
-        // TODO
+    public ProcessResult getFinalResult(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("id") final int id)
+            throws ComponentNotFoundException {
+        // TODO - only for analyzers, implement it later after the architecture
+        // decisions regarding the load-balancing and failover.
         return null;
     }
 
     /**
      * It deletes the component.
-     * @param tenant
-     * @param id
      */
-    public void deleteComponent(@PathVariable(TENANT) final String tenant,
-                                @PathVariable("id") final int id) {
-        // TODO
+    public void deleteComponent(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("id") final int id)
+            throws ComponentNotFoundException {
+        // TODO - delete from cache and storage.
+    }
+
+    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration) {
+        ComponentHandler handler = new ComponentHandler(
+                _tenantContextFactory.getContext(tenant).getConfiguration(),
+                componentName);
+        handler.createComponent(configuration);
+        return handler;
     }
 
 }

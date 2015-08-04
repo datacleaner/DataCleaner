@@ -155,13 +155,20 @@
 						</documentation>
 					</annotation>
 				</element>
-				<element name="sugar-crm-datastore" type="ab:sugarCrmDatastoreType">
-					<annotation>
-						<documentation>
-							Defines a datastore based on a SugarCRM system.
-						</documentation>
-					</annotation>
-				</element>
+                <element name="sugar-crm-datastore" type="ab:sugarCrmDatastoreType">
+                    <annotation>
+                        <documentation>
+                            Defines a datastore based on a SugarCRM system.
+                        </documentation>
+                    </annotation>
+                </element>
+                <element name="datahub-datastore" type="ab:datahubDatastoreType">
+                    <annotation>
+                        <documentation>
+                            Defines a datastore based on a HIquality Datahub.
+                        </documentation>
+                    </annotation>
+                </element>
 				<element name="hbase-datastore" type="ab:hbaseDatastoreType">
 					<annotation>
 						<documentation>
@@ -390,6 +397,19 @@
 			</extension>
 		</complexContent>
 	</complexType>
+
+    <complexType name="datahubDatastoreType">
+        <complexContent>
+            <extension base="ab:abstractDatastoreType">
+                <all>
+                    <element name="base-url" type="string" minOccurs="1" maxOccurs="1" />
+                    <element name="username" type="string" minOccurs="1" maxOccurs="1" />
+                    <element name="security-token" type="string" minOccurs="1" maxOccurs="1" />
+                    <element name="endpoint-url" type="string" minOccurs="0" maxOccurs="1" />
+                </all>
+            </extension>
+        </complexContent>
+    </complexType>
 
 	<complexType name="pojoDatastoreType">
 		<complexContent>

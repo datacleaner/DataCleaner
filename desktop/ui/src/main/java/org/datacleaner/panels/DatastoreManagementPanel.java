@@ -49,6 +49,7 @@ import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
@@ -88,6 +89,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DatahubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -324,7 +326,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 DCPopupBubble.Position.BOTTOM));
         panel1.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
                 SugarCrmDatastore.class, SugarCrmDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-
+        panel1.add(createNewDatastoreButton("HIquality Datahub", "Connect to a HIquality Datahub",
+                IconUtils.DATAHUB_IMAGEPATH, DatahubDatastore.class, DatahubDatastoreDialog.class,
+                DCPopupBubble.Position.BOTTOM));
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 

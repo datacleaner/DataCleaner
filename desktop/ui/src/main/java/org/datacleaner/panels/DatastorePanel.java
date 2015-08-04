@@ -40,6 +40,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
@@ -70,6 +71,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DatahubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -368,6 +370,15 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = getInjectorBuilder().with(SugarCrmDatastore.class, datastore).createInjector();
                     SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof DatahubDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(DatahubDatastore.class, datastore).createInjector();
+                    DatahubDatastoreDialog dialog = injector.getInstance(DatahubDatastoreDialog.class);
                     dialog.open();
                 }
             });

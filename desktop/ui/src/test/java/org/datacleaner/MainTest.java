@@ -47,7 +47,7 @@ public class MainTest extends TestCase {
         final String hostname = "localhost";
 
         final boolean https = true;
-        final String port = "8";
+        final String port = "8443";
         final String context = "/DataCleaner-monitor";
         final String tenant = "DC";
         final String username = "admin";
@@ -75,9 +75,9 @@ public class MainTest extends TestCase {
                 + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
                 + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
                 + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=" + https
-                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username
-                + " -Ddatacleaner.monitor.security.mode=" + securityMode
-                + " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
+                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username;
+                //+ " -Ddatacleaner.monitor.security.mode=" + securityMode
+                //+ " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
         final String[] args = fullArguments.split(" ");
         Main.main(args);
     }

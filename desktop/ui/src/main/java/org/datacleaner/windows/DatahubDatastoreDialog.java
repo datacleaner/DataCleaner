@@ -44,20 +44,20 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
 
     private static final long serialVersionUID = 1L;
 
-    private final JXTextField _usernameTextField;
-    private final JPasswordField _passwordTextField;
     private final JXTextField _hostTextField;
     private final JXTextField _portTextField;
+    private final JXTextField _usernameTextField;
+    private final JPasswordField _passwordTextField;
 
     @Inject
     public DatahubDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
             @Nullable DatahubDatastore originalDatastore, UserPreferences userPreferences) {
         super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
-        _usernameTextField = WidgetFactory.createTextField("Username");
-        _passwordTextField = WidgetFactory.createPasswordField();
         _hostTextField = WidgetFactory.createTextField("Host name");
         _portTextField = WidgetFactory.createTextField("Port number");
+        _usernameTextField = WidgetFactory.createTextField("Username");
+        _passwordTextField = WidgetFactory.createPasswordField();
 
         final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
@@ -65,36 +65,24 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
                 validateAndUpdate();
             }
         };
-        _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
-        _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
         _hostTextField.getDocument().addDocumentListener(genericDocumentListener);
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
 
         if (originalDatastore != null) {
+            _hostTextField.setText(originalDatastore.getHost());
+            _portTextField.setText(originalDatastore.getPort());
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
 
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
-            _hostTextField.setText(originalDatastore.getHost());
-            _portTextField.setText(originalDatastore.getPort());
         }
     }
 
     @Override
     protected boolean validateForm() {
-        final String datastoreName = _datastoreNameTextField.getText();
-        if (StringUtils.isNullOrEmpty(datastoreName)) {
-            setStatusError("Please enter a datastore name");
-            return false;
-        }
-
-        final String username = _usernameTextField.getText();
-        if (StringUtils.isNullOrEmpty(username)) {
-            setStatusError("Please enter username");
-            return false;
-        }
-
         final String host = _hostTextField.getText();
         if (StringUtils.isNullOrEmpty(host)) {
             setStatusError("Please enter Datahub host name");
@@ -107,20 +95,32 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
             return false;
         }
 
+        final String datastoreName = _datastoreNameTextField.getText();
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            setStatusError("Please enter a datastore name");
+            return false;
+        }
+
+        final String username = _usernameTextField.getText();
+        if (StringUtils.isNullOrEmpty(username)) {
+            setStatusError("Please enter username");
+            return false;
+        }
+
         setStatusValid();
         return true;
     }
 
     @Override
     protected DatahubDatastore createDatastore() {
+        final String host = _hostTextField.getText();
+        final String port = _portTextField.getText();
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
-        final String host = _hostTextField.getText();
-        final String port = _portTextField.getText();
 
-        return new DatahubDatastore(name, username, password, host, port);
+        return new DatahubDatastore(name, host, port, username, password);
     }
 
     @Override
@@ -141,22 +141,10 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
-
-//        DCPanel securityTokenPanel = new DCPanel(Color.WHITE);
-//        FlowLayout layout = (FlowLayout) securityTokenPanel.getLayout();
-//        layout.setVgap(0);
-//        layout.setHgap(0);
-//        HelpIcon securityTokenHelpIcon = new HelpIcon(
-//                "Your security token is set on Datahub by going to: <b><i>Your Name</i> | Setup | My Personal Information | Reset Security Token</b>.<br/>This security token is needed in order to use the Salesforce.com web services.");
-//        securityTokenHelpIcon.setBorder(WidgetUtils.BORDER_EMPTY);
-//        _securityTokenTextField.setBorder(WidgetUtils.BORDER_EMPTY);
-//        securityTokenPanel.add(_securityTokenTextField);
-//        securityTokenPanel.add(securityTokenHelpIcon);
-
         result.add(new ImmutableEntry<String, JComponent>("Datahub hostname", _hostTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub portnumber", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
         return result;
     }
 

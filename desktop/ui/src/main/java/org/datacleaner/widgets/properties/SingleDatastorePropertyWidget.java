@@ -41,6 +41,7 @@ import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
+import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.connection.JsonDatastore;
 import org.datacleaner.connection.MongoDbDatastore;
 import org.datacleaner.connection.OdbDatastore;
@@ -48,6 +49,7 @@ import org.datacleaner.connection.SalesforceDatastore;
 import org.datacleaner.connection.SasDatastore;
 import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.connection.XmlDatastore;
+import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -72,6 +74,7 @@ import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
+import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.OdbDatastoreDialog;
@@ -91,24 +94,6 @@ import com.google.inject.Injector;
  */
 public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
 
-    private class CreateDatastoreActionListener implements ActionListener {
-       
-        private final Class<? extends Datastore> _datastoreClass;
-        private final Class<? extends AbstractDialog> _datastoreDialogClass;
-        
-        public CreateDatastoreActionListener(final Class<? extends Datastore> datastoreClass, final Class<? extends AbstractDialog> datastoreDialogClass) {
-            _datastoreClass = datastoreClass;
-            _datastoreDialogClass = datastoreDialogClass;
-        }
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(_datastoreClass, null).createInjector();
-            final AbstractDialog dialog = injectorWithNullDatastore.getInstance(_datastoreDialogClass);
-            dialog.setVisible(true);
-        }
-    }
-    
     private static final Logger logger = LoggerFactory.getLogger(SingleDatastorePropertyWidget.class);
 
     private final DatastoreCatalog _datastoreCatalog;
@@ -175,72 +160,123 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
     private void populateCreateDatastoreMenu(JPopupMenu createDatastoreMenu) {
         final JMenuItem csvMenuItem = new JMenuItem("CSV file");
-        csvMenuItem.addActionListener(new CreateDatastoreActionListener(CsvDatastore.class, CsvDatastoreDialog.class));
+        csvMenuItem.addActionListener(createActionListener(CsvDatastore.class, CsvDatastoreDialog.class));
         createDatastoreMenu.add(csvMenuItem);
         
         final JMenuItem excelMenuItem = new JMenuItem("Excel spreadsheet");
-        excelMenuItem.addActionListener(new CreateDatastoreActionListener(ExcelDatastore.class, ExcelDatastoreDialog.class));
+        excelMenuItem.addActionListener(createActionListener(ExcelDatastore.class, ExcelDatastoreDialog.class));
         createDatastoreMenu.add(excelMenuItem);
         
         final JMenuItem accessMenuItem = new JMenuItem("Access database");
-        accessMenuItem.addActionListener(new CreateDatastoreActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
+        accessMenuItem.addActionListener(createActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
         createDatastoreMenu.add(accessMenuItem);
         
         final JMenuItem sasMenuItem = new JMenuItem("SAS library");
-        sasMenuItem.addActionListener(new CreateDatastoreActionListener(SasDatastore.class, SasDatastoreDialog.class));
+        sasMenuItem.addActionListener(createActionListener(SasDatastore.class, SasDatastoreDialog.class));
         createDatastoreMenu.add(sasMenuItem);
         
         final JMenuItem dbaseMenuItem = new JMenuItem("DBase database");
-        dbaseMenuItem.addActionListener(new CreateDatastoreActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
+        dbaseMenuItem.addActionListener(createActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
         createDatastoreMenu.add(dbaseMenuItem);
         
         final JMenuItem fixedWidthMenuItem = new JMenuItem("Fixed width file");
-        fixedWidthMenuItem.addActionListener(new CreateDatastoreActionListener(FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
+        fixedWidthMenuItem.addActionListener(createActionListener(FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
         createDatastoreMenu.add(fixedWidthMenuItem);
         
         final JMenuItem xmlMenuItem = new JMenuItem("XML file");
-        xmlMenuItem.addActionListener(new CreateDatastoreActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
+        xmlMenuItem.addActionListener(createActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
         createDatastoreMenu.add(xmlMenuItem);
         
         final JMenuItem jsonMenuItem = new JMenuItem("JSON file");
-        jsonMenuItem.addActionListener(new CreateDatastoreActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
+        jsonMenuItem.addActionListener(createActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
         createDatastoreMenu.add(jsonMenuItem);
         
         final JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org Base database");
-        odbMenuItem.addActionListener(new CreateDatastoreActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
+        odbMenuItem.addActionListener(createActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
         createDatastoreMenu.add(odbMenuItem);
         
         createDatastoreMenu.addSeparator();
         
         final JMenuItem salesforceMenuItem = new JMenuItem("Salesforce.com");
-        salesforceMenuItem.addActionListener(new CreateDatastoreActionListener(SalesforceDatastore.class, SalesforceDatastoreDialog.class));
+        salesforceMenuItem.addActionListener(createActionListener(SalesforceDatastore.class, SalesforceDatastoreDialog.class));
         createDatastoreMenu.add(salesforceMenuItem);
         
         final JMenuItem sugarCrmMenuItem = new JMenuItem("SugarCRM");
-        sugarCrmMenuItem.addActionListener(new CreateDatastoreActionListener(SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        sugarCrmMenuItem.addActionListener(createActionListener(SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
         createDatastoreMenu.add(sugarCrmMenuItem);
         
         createDatastoreMenu.addSeparator();
         
         final JMenuItem mongoDbMenuItem = new JMenuItem("MongoDB database");
-        mongoDbMenuItem.addActionListener(new CreateDatastoreActionListener(MongoDbDatastore.class, MongoDbDatastoreDialog.class));
+        mongoDbMenuItem.addActionListener(createActionListener(MongoDbDatastore.class, MongoDbDatastoreDialog.class));
         createDatastoreMenu.add(mongoDbMenuItem);
         
         final JMenuItem couchDbMenuItem = new JMenuItem("CouchDB database");
-        couchDbMenuItem.addActionListener(new CreateDatastoreActionListener(CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+        couchDbMenuItem.addActionListener(createActionListener(CouchDbDatastore.class, CouchDbDatastoreDialog.class));
         createDatastoreMenu.add(couchDbMenuItem);
         
         final JMenuItem elasticSearchMenuItem = new JMenuItem("ElasticSearch index");
-        elasticSearchMenuItem.addActionListener(new CreateDatastoreActionListener(ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
+        elasticSearchMenuItem.addActionListener(createActionListener(ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
         createDatastoreMenu.add(elasticSearchMenuItem);
         
         final JMenuItem cassandraMenuItem = new JMenuItem("Cassandra database");
-        cassandraMenuItem.addActionListener(new CreateDatastoreActionListener(CassandraDatastore.class, CassandraDatastoreDialog.class));
+        cassandraMenuItem.addActionListener(createActionListener(CassandraDatastore.class, CassandraDatastoreDialog.class));
         createDatastoreMenu.add(cassandraMenuItem);
         
         final JMenuItem hbaseMenuItem = new JMenuItem("HBase database");
-        hbaseMenuItem.addActionListener(new CreateDatastoreActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
+        hbaseMenuItem.addActionListener(createActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
         createDatastoreMenu.add(hbaseMenuItem);
+        
+        DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(DatabaseDriverCatalog.class);
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
+            final JMenuItem hiveMenuItem = new JMenuItem("Apache Hive");
+            hiveMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_HIVE));
+            createDatastoreMenu.add(hiveMenuItem);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+            final JMenuItem mysqlMenuItem = new JMenuItem("MySQL connection");
+            mysqlMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
+            createDatastoreMenu.add(mysqlMenuItem);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+            final JMenuItem postgresqlMenuItem = new JMenuItem("PostgreSQL connection");
+            postgresqlMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
+            createDatastoreMenu.add(postgresqlMenuItem);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+            final JMenuItem sqlServerMenuItem = new JMenuItem("Microsoft SQL Server connection");
+            sqlServerMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
+            createDatastoreMenu.add(sqlServerMenuItem);
+        } 
+    }
+    
+    private ActionListener createActionListener(final Class<? extends Datastore> datastoreClass, final Class<? extends AbstractDialog> datastoreDialogClass) {
+        return new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
+                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(datastoreDialogClass);
+                dialog.setVisible(true);
+            }
+            
+        };
+    }
+    
+    private ActionListener createJdbcActionListener(final String databaseName) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null).createInjector();
+                JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
+                dialog.setSelectedDatabase(databaseName);
+                dialog.setVisible(true);
+            }
+        };
     }
 
     public void addComboListener(Listener<Datastore> listener) {

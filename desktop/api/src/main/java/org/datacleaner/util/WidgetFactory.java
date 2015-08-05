@@ -116,6 +116,21 @@ public final class WidgetFactory {
         return b;
     }
 
+    public static PopupButton createSmallPopupButton(String text, String imagePath) {
+        PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
+
+        b.setFont(WidgetUtils.FONT_SMALL);
+        b.setMargin(new Insets(0, 0, 0, 0));
+        b.setUI(new MetalButtonUI());
+        b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+
+        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        b.setFocusPainted(false);
+
+        return b;
+    }
+
     private static JButton createBasicButton(String text, Icon icon) {
         final JButton b = new JButton();
         if (text != null) {

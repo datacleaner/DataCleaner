@@ -19,19 +19,27 @@
  */
 package org.datacleaner.widgets.properties;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.JButton;
 
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
+import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
+import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ReflectionUtils;
+import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
@@ -49,6 +57,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
     private final DatastoreCatalog _datastoreCatalog;
     private final DCComboBox<Datastore> _comboBox;
+    private final DCPanel _panelAroundButton;
     private final Class<?> _datastoreClass;
     private volatile DatastoreConnection _connection;
 
@@ -88,7 +97,24 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
-        add(_comboBox);
+        final JButton createDatastoreButton = WidgetFactory.createSmallButton(IconUtils.ACTION_CREATE_TABLE);
+        createDatastoreButton.setToolTipText("Create datastore");
+        createDatastoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
+        _panelAroundButton = DCPanel.around(createDatastoreButton);
+        _panelAroundButton.setBorder(WidgetUtils.BORDER_EMPTY);
+        _panelAroundButton.setVisible(true);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(_comboBox, BorderLayout.CENTER);
+        panel.add(_panelAroundButton, BorderLayout.EAST);
+
+        add(panel);
     }
 
     public void addComboListener(Listener<Datastore> listener) {

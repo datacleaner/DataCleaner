@@ -29,11 +29,25 @@ import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.datacleaner.connection.AccessDatastore;
+import org.datacleaner.connection.CassandraDatastore;
+import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.DbaseDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore;
 import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.FixedWidthDatastore;
+import org.datacleaner.connection.HBaseDatastore;
+import org.datacleaner.connection.JsonDatastore;
+import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.OdbDatastore;
+import org.datacleaner.connection.SalesforceDatastore;
+import org.datacleaner.connection.SasDatastore;
+import org.datacleaner.connection.SugarCrmDatastore;
+import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -49,8 +63,22 @@ import org.datacleaner.widgets.DCComboBox.Listener;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.datacleaner.windows.AbstractDialog;
+import org.datacleaner.windows.AccessDatastoreDialog;
+import org.datacleaner.windows.CassandraDatastoreDialog;
+import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DbaseDatastoreDialog;
+import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
+import org.datacleaner.windows.FixedWidthDatastoreDialog;
+import org.datacleaner.windows.HBaseDatastoreDialog;
+import org.datacleaner.windows.JsonDatastoreDialog;
+import org.datacleaner.windows.MongoDbDatastoreDialog;
+import org.datacleaner.windows.OdbDatastoreDialog;
+import org.datacleaner.windows.SalesforceDatastoreDialog;
+import org.datacleaner.windows.SasDatastoreDialog;
+import org.datacleaner.windows.SugarCrmDatastoreDialog;
+import org.datacleaner.windows.XmlDatastoreDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,6 +181,66 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         final JMenuItem excelMenuItem = new JMenuItem("Excel spreadsheet");
         excelMenuItem.addActionListener(new CreateDatastoreActionListener(ExcelDatastore.class, ExcelDatastoreDialog.class));
         createDatastoreMenu.add(excelMenuItem);
+        
+        final JMenuItem accessMenuItem = new JMenuItem("Access database");
+        accessMenuItem.addActionListener(new CreateDatastoreActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
+        createDatastoreMenu.add(accessMenuItem);
+        
+        final JMenuItem sasMenuItem = new JMenuItem("SAS library");
+        sasMenuItem.addActionListener(new CreateDatastoreActionListener(SasDatastore.class, SasDatastoreDialog.class));
+        createDatastoreMenu.add(sasMenuItem);
+        
+        final JMenuItem dbaseMenuItem = new JMenuItem("DBase database");
+        dbaseMenuItem.addActionListener(new CreateDatastoreActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
+        createDatastoreMenu.add(dbaseMenuItem);
+        
+        final JMenuItem fixedWidthMenuItem = new JMenuItem("Fixed width file");
+        fixedWidthMenuItem.addActionListener(new CreateDatastoreActionListener(FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
+        createDatastoreMenu.add(fixedWidthMenuItem);
+        
+        final JMenuItem xmlMenuItem = new JMenuItem("XML file");
+        xmlMenuItem.addActionListener(new CreateDatastoreActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
+        createDatastoreMenu.add(xmlMenuItem);
+        
+        final JMenuItem jsonMenuItem = new JMenuItem("JSON file");
+        jsonMenuItem.addActionListener(new CreateDatastoreActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
+        createDatastoreMenu.add(jsonMenuItem);
+        
+        final JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org Base database");
+        odbMenuItem.addActionListener(new CreateDatastoreActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
+        createDatastoreMenu.add(odbMenuItem);
+        
+        createDatastoreMenu.addSeparator();
+        
+        final JMenuItem salesforceMenuItem = new JMenuItem("Salesforce.com");
+        salesforceMenuItem.addActionListener(new CreateDatastoreActionListener(SalesforceDatastore.class, SalesforceDatastoreDialog.class));
+        createDatastoreMenu.add(salesforceMenuItem);
+        
+        final JMenuItem sugarCrmMenuItem = new JMenuItem("SugarCRM");
+        sugarCrmMenuItem.addActionListener(new CreateDatastoreActionListener(SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        createDatastoreMenu.add(sugarCrmMenuItem);
+        
+        createDatastoreMenu.addSeparator();
+        
+        final JMenuItem mongoDbMenuItem = new JMenuItem("MongoDB database");
+        mongoDbMenuItem.addActionListener(new CreateDatastoreActionListener(MongoDbDatastore.class, MongoDbDatastoreDialog.class));
+        createDatastoreMenu.add(mongoDbMenuItem);
+        
+        final JMenuItem couchDbMenuItem = new JMenuItem("CouchDB database");
+        couchDbMenuItem.addActionListener(new CreateDatastoreActionListener(CouchDbDatastore.class, CouchDbDatastoreDialog.class));
+        createDatastoreMenu.add(couchDbMenuItem);
+        
+        final JMenuItem elasticSearchMenuItem = new JMenuItem("ElasticSearch index");
+        elasticSearchMenuItem.addActionListener(new CreateDatastoreActionListener(ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
+        createDatastoreMenu.add(elasticSearchMenuItem);
+        
+        final JMenuItem cassandraMenuItem = new JMenuItem("Cassandra database");
+        cassandraMenuItem.addActionListener(new CreateDatastoreActionListener(CassandraDatastore.class, CassandraDatastoreDialog.class));
+        createDatastoreMenu.add(cassandraMenuItem);
+        
+        final JMenuItem hbaseMenuItem = new JMenuItem("HBase database");
+        hbaseMenuItem.addActionListener(new CreateDatastoreActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
+        createDatastoreMenu.add(hbaseMenuItem);
     }
 
     public void addComboListener(Listener<Datastore> listener) {

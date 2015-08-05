@@ -33,6 +33,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
@@ -75,7 +76,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
     public UpdateTableJobBuilderPresenter(AnalyzerComponentBuilder<UpdateTableAnalyzer> analyzerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+            DataCleanerConfiguration configuration, DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -98,7 +99,7 @@ class UpdateTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
         final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
+                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property

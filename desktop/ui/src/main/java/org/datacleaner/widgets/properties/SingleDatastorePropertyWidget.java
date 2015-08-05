@@ -26,12 +26,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
+import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.DatastoreChangeListener;
@@ -42,9 +46,15 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.DCComboBox;
 import org.datacleaner.widgets.DCComboBox.Listener;
+import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
+import org.datacleaner.windows.AbstractDialog;
+import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Injector;
 
 /**
  * {@link PropertyWidget} for single datastore properties. Shown as a combo box.
@@ -53,6 +63,24 @@ import org.slf4j.LoggerFactory;
  */
 public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
 
+    private class CreateDatastoreActionListener implements ActionListener {
+       
+        private final Class<? extends Datastore> _datastoreClass;
+        private final Class<? extends AbstractDialog> _datastoreDialogClass;
+        
+        public CreateDatastoreActionListener(final Class<? extends Datastore> datastoreClass, final Class<? extends AbstractDialog> datastoreDialogClass) {
+            _datastoreClass = datastoreClass;
+            _datastoreDialogClass = datastoreDialogClass;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(_datastoreClass, null).createInjector();
+            final AbstractDialog dialog = injectorWithNullDatastore.getInstance(_datastoreDialogClass);
+            dialog.setVisible(true);
+        }
+    }
+    
     private static final Logger logger = LoggerFactory.getLogger(SingleDatastorePropertyWidget.class);
 
     private final DatastoreCatalog _datastoreCatalog;
@@ -60,12 +88,15 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     private final DCPanel _panelAroundButton;
     private final Class<?> _datastoreClass;
     private volatile DatastoreConnection _connection;
+    
+    private final DCModule _dcModule;
 
     @Inject
     public SingleDatastorePropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog) {
+            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule) {
         super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
+        _dcModule = dcModule;
         _datastoreClass = propertyDescriptor.getBaseType();
 
         String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
@@ -97,13 +128,10 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
-        final JButton createDatastoreButton = WidgetFactory.createSmallButton(IconUtils.ACTION_CREATE_TABLE);
+        final PopupButton createDatastoreButton = WidgetFactory.createDefaultPopupButton("", IconUtils.ACTION_CREATE_TABLE);
         createDatastoreButton.setToolTipText("Create datastore");
-        createDatastoreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
+        JPopupMenu createDatastoreMenu = createDatastoreButton.getMenu();
+        populateCreateDatastoreMenu(createDatastoreMenu);
 
         _panelAroundButton = DCPanel.around(createDatastoreButton);
         _panelAroundButton.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -115,6 +143,16 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         panel.add(_panelAroundButton, BorderLayout.EAST);
 
         add(panel);
+    }
+
+    private void populateCreateDatastoreMenu(JPopupMenu createDatastoreMenu) {
+        final JMenuItem csvMenuItem = new JMenuItem("CSV file");
+        csvMenuItem.addActionListener(new CreateDatastoreActionListener(CsvDatastore.class, CsvDatastoreDialog.class));
+        createDatastoreMenu.add(csvMenuItem);
+        
+        final JMenuItem excelMenuItem = new JMenuItem("Excel spreadsheet");
+        excelMenuItem.addActionListener(new CreateDatastoreActionListener(ExcelDatastore.class, ExcelDatastoreDialog.class));
+        createDatastoreMenu.add(excelMenuItem);
     }
 
     public void addComboListener(Listener<Datastore> listener) {

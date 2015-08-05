@@ -159,96 +159,102 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     private void populateCreateDatastoreMenu(JPopupMenu createDatastoreMenu) {
-        final JMenuItem csvMenuItem = new JMenuItem("CSV file");
+        final JMenuItem csvMenuItem = WidgetFactory.createMenuItem("CSV file", IconUtils.CSV_IMAGEPATH);
         csvMenuItem.addActionListener(createActionListener(CsvDatastore.class, CsvDatastoreDialog.class));
         createDatastoreMenu.add(csvMenuItem);
         
-        final JMenuItem excelMenuItem = new JMenuItem("Excel spreadsheet");
+        final JMenuItem excelMenuItem = WidgetFactory.createMenuItem("Excel spreadsheet", IconUtils.EXCEL_IMAGEPATH);
         excelMenuItem.addActionListener(createActionListener(ExcelDatastore.class, ExcelDatastoreDialog.class));
         createDatastoreMenu.add(excelMenuItem);
         
-        final JMenuItem accessMenuItem = new JMenuItem("Access database");
+        final JMenuItem accessMenuItem = WidgetFactory.createMenuItem("Access database", IconUtils.ACCESS_IMAGEPATH);
         accessMenuItem.addActionListener(createActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
         createDatastoreMenu.add(accessMenuItem);
         
-        final JMenuItem sasMenuItem = new JMenuItem("SAS library");
+        final JMenuItem sasMenuItem = WidgetFactory.createMenuItem("SAS library", IconUtils.SAS_IMAGEPATH);
         sasMenuItem.addActionListener(createActionListener(SasDatastore.class, SasDatastoreDialog.class));
         createDatastoreMenu.add(sasMenuItem);
         
-        final JMenuItem dbaseMenuItem = new JMenuItem("DBase database");
+        final JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("DBase database", IconUtils.DBASE_IMAGEPATH);
         dbaseMenuItem.addActionListener(createActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
         createDatastoreMenu.add(dbaseMenuItem);
         
-        final JMenuItem fixedWidthMenuItem = new JMenuItem("Fixed width file");
+        final JMenuItem fixedWidthMenuItem = WidgetFactory.createMenuItem("Fixed width file", IconUtils.FIXEDWIDTH_IMAGEPATH);
         fixedWidthMenuItem.addActionListener(createActionListener(FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
         createDatastoreMenu.add(fixedWidthMenuItem);
         
-        final JMenuItem xmlMenuItem = new JMenuItem("XML file");
+        final JMenuItem xmlMenuItem = WidgetFactory.createMenuItem("XML file", IconUtils.XML_IMAGEPATH);
         xmlMenuItem.addActionListener(createActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
         createDatastoreMenu.add(xmlMenuItem);
         
-        final JMenuItem jsonMenuItem = new JMenuItem("JSON file");
+        final JMenuItem jsonMenuItem = WidgetFactory.createMenuItem("JSON file", IconUtils.JSON_IMAGEPATH);
         jsonMenuItem.addActionListener(createActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
         createDatastoreMenu.add(jsonMenuItem);
         
-        final JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org Base database");
+        final JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org Base database", IconUtils.ODB_IMAGEPATH);
         odbMenuItem.addActionListener(createActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
         createDatastoreMenu.add(odbMenuItem);
         
         createDatastoreMenu.addSeparator();
         
-        final JMenuItem salesforceMenuItem = new JMenuItem("Salesforce.com");
+        final JMenuItem salesforceMenuItem = WidgetFactory.createMenuItem("Salesforce.com", IconUtils.SALESFORCE_IMAGEPATH);
         salesforceMenuItem.addActionListener(createActionListener(SalesforceDatastore.class, SalesforceDatastoreDialog.class));
         createDatastoreMenu.add(salesforceMenuItem);
         
-        final JMenuItem sugarCrmMenuItem = new JMenuItem("SugarCRM");
+        final JMenuItem sugarCrmMenuItem = WidgetFactory.createMenuItem("SugarCRM", IconUtils.SUGAR_CRM_IMAGEPATH);
         sugarCrmMenuItem.addActionListener(createActionListener(SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
         createDatastoreMenu.add(sugarCrmMenuItem);
         
         createDatastoreMenu.addSeparator();
         
-        final JMenuItem mongoDbMenuItem = new JMenuItem("MongoDB database");
+        final JMenuItem mongoDbMenuItem = WidgetFactory.createMenuItem("MongoDB database", IconUtils.MONGODB_IMAGEPATH);
         mongoDbMenuItem.addActionListener(createActionListener(MongoDbDatastore.class, MongoDbDatastoreDialog.class));
         createDatastoreMenu.add(mongoDbMenuItem);
         
-        final JMenuItem couchDbMenuItem = new JMenuItem("CouchDB database");
+        final JMenuItem couchDbMenuItem = WidgetFactory.createMenuItem("CouchDB database", IconUtils.COUCHDB_IMAGEPATH);
         couchDbMenuItem.addActionListener(createActionListener(CouchDbDatastore.class, CouchDbDatastoreDialog.class));
         createDatastoreMenu.add(couchDbMenuItem);
         
-        final JMenuItem elasticSearchMenuItem = new JMenuItem("ElasticSearch index");
+        final JMenuItem elasticSearchMenuItem = WidgetFactory.createMenuItem("ElasticSearch index", IconUtils.ELASTICSEARCH_IMAGEPATH);
         elasticSearchMenuItem.addActionListener(createActionListener(ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class));
         createDatastoreMenu.add(elasticSearchMenuItem);
         
-        final JMenuItem cassandraMenuItem = new JMenuItem("Cassandra database");
+        final JMenuItem cassandraMenuItem = WidgetFactory.createMenuItem("Cassandra database", IconUtils.CASSANDRA_IMAGEPATH);
         cassandraMenuItem.addActionListener(createActionListener(CassandraDatastore.class, CassandraDatastoreDialog.class));
         createDatastoreMenu.add(cassandraMenuItem);
         
-        final JMenuItem hbaseMenuItem = new JMenuItem("HBase database");
+        final JMenuItem hbaseMenuItem = WidgetFactory.createMenuItem("HBase database", IconUtils.HBASE_IMAGEPATH);
         hbaseMenuItem.addActionListener(createActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
         createDatastoreMenu.add(hbaseMenuItem);
         
         DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(DatabaseDriverCatalog.class);
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
-            final JMenuItem hiveMenuItem = new JMenuItem("Apache Hive");
+            final JMenuItem hiveMenuItem = WidgetFactory.createMenuItem("Apache Hive", "images/datastore-types/databases/hive.png");
             hiveMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_HIVE));
             createDatastoreMenu.add(hiveMenuItem);
         }
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            final JMenuItem mysqlMenuItem = new JMenuItem("MySQL connection");
+            final JMenuItem mysqlMenuItem = WidgetFactory.createMenuItem("MySQL connection", "images/datastore-types/databases/mysql.png");
             mysqlMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
             createDatastoreMenu.add(mysqlMenuItem);
         }
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            final JMenuItem postgresqlMenuItem = new JMenuItem("PostgreSQL connection");
+            final JMenuItem postgresqlMenuItem = WidgetFactory.createMenuItem("PostgreSQL connection", "images/datastore-types/databases/postgresql.png");
             postgresqlMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
             createDatastoreMenu.add(postgresqlMenuItem);
         }
         
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+            final JMenuItem oracleMenuItem = WidgetFactory.createMenuItem("Oracle connection", "images/datastore-types/databases/oracle.png");
+            oracleMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
+            createDatastoreMenu.add(oracleMenuItem);
+        } 
+        
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-            final JMenuItem sqlServerMenuItem = new JMenuItem("Microsoft SQL Server connection");
+            final JMenuItem sqlServerMenuItem = WidgetFactory.createMenuItem("Microsoft SQL Server connection", "images/datastore-types/databases/microsoft.png");
             sqlServerMenuItem.addActionListener(createJdbcActionListener(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
             createDatastoreMenu.add(sqlServerMenuItem);
         } 

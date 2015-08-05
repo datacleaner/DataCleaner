@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * recorded and picked up successively by the next run.
  */
 @Named("Capture changed records")
-@Description("Include only records that have changed since the last time you ran the job. This filter assumes a field containing the timestamp of the latest change for each record, and stores the greatest encountered value in order to update the filter's future state.")
+@Description("Include only records that have changed since the last time you ran the job. This filter assumes a field containing the timestamp or a number field of the latest change for each record, and stores the greatest encountered value in order to update the filter's future state.")
 @Distributed(false)
 @Categorized({ FilterCategory.class, DateAndTimeCategory.class })
 @Optimizeable(removeableUponOptimization = false)
@@ -68,7 +68,7 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
     private static final Logger logger = LoggerFactory.getLogger(CaptureChangedRecordsFilter.class);
 
     @Configured
-    @Description("Column containing the last modification timestamp or date.")
+    @Description("Column containing the last modification timestamp or date or number.")
     InputColumn<Object> lastModifiedColumn;
 
     @Configured
@@ -148,12 +148,12 @@ public class CaptureChangedRecordsFilter implements QueryOptimizedFilter<Validat
             if (lastModifiedColumn.isPhysicalColumn()) {
                 Table table = lastModifiedColumn.getPhysicalColumn().getTable();
                 if (table != null && !StringUtils.isNullOrEmpty(table.getName())) {
-                    return table.getName() + "." + lastModifiedColumn.getName() + ".GreatestLastModifiedTimestamp";
+                    return table.getName() + "." + lastModifiedColumn.getName() + ".GreatestLastModifiedValue";
                 }
             }
-            return lastModifiedColumn.getName() + ".GreatestLastModifiedTimestamp";
+            return lastModifiedColumn.getName() + ".GreatestLastModifiedValue";
         }
-        return captureStateIdentifier.trim() + ".GreatestLastModifiedTimestamp";
+        return captureStateIdentifier.trim() + ".GreatestLastModifiedValue";
     }
 
     private Properties loadProperties() throws IOException {

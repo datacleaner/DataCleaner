@@ -94,7 +94,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
         final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule, true);
+                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
+        datastorePropertyWidget.setOnlyUpdatableDatastores(true);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property

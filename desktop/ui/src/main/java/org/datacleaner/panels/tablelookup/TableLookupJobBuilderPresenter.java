@@ -91,7 +91,7 @@ class TableLookupJobBuilderPresenter extends TransformerComponentBuilderPanel {
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
         final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                transformerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule, false);
+                transformerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property

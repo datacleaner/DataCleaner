@@ -102,21 +102,20 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     private final DatastoreCatalog _datastoreCatalog;
     private final DCComboBox<Datastore> _comboBox;
     private final DCPanel _panelAroundButton;
+    private final PopupButton _createDatastoreButton;
     private final Class<?> _datastoreClass;
     private volatile DatastoreConnection _connection;
 
     private final DCModule _dcModule;
 
-    private final boolean _onlyUpdatableDatastores;
+    private boolean _onlyUpdatableDatastores = false;
 
     @Inject
     public SingleDatastorePropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule,
-            boolean onlyUpdatableDatastores) {
+            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule) {
         super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
         _dcModule = dcModule;
-        _onlyUpdatableDatastores = onlyUpdatableDatastores;
         _datastoreClass = propertyDescriptor.getBaseType();
 
         String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
@@ -148,13 +147,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
-        final PopupButton createDatastoreButton = WidgetFactory.createSmallPopupButton("",
+        _createDatastoreButton = WidgetFactory.createSmallPopupButton("",
                 IconUtils.ACTION_CREATE_TABLE);
-        createDatastoreButton.setToolTipText("Create datastore");
-        JPopupMenu createDatastoreMenu = createDatastoreButton.getMenu();
+        _createDatastoreButton.setToolTipText("Create datastore");
+        JPopupMenu createDatastoreMenu = _createDatastoreButton.getMenu();
         populateCreateDatastoreMenu(createDatastoreMenu);
 
-        _panelAroundButton = DCPanel.around(createDatastoreButton);
+        _panelAroundButton = DCPanel.around(_createDatastoreButton);
         _panelAroundButton.setBorder(WidgetUtils.BORDER_EMPTY);
         _panelAroundButton.setVisible(true);
 
@@ -164,6 +163,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         panel.add(_panelAroundButton, BorderLayout.EAST);
 
         add(panel);
+    }
+    
+    public void setOnlyUpdatableDatastores(boolean onlyUpdatableDatastores) {
+        _onlyUpdatableDatastores = onlyUpdatableDatastores;
+        final JPopupMenu menu = _createDatastoreButton.getMenu();
+        menu.removeAll();
+        populateCreateDatastoreMenu(menu);
     }
 
     private void populateCreateDatastoreMenu(JPopupMenu createDatastoreMenu) {

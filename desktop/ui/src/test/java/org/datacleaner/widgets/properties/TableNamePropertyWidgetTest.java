@@ -75,7 +75,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final WindowContext windowContext = new SimpleWindowContext();
 
         final SingleDatastorePropertyWidget datastoreWidget1 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog, new DCModuleImpl(), false);
+                datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget1 = new SchemaNamePropertyWidget(tjb, schemaProperty);
         final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty,
                 windowContext);
@@ -84,7 +84,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         collection1.registerWidget(tableProperty, tableWidget1);
 
         final SingleDatastorePropertyWidget datastoreWidget2 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog, new DCModuleImpl(), false);
+                datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget2 = new SchemaNamePropertyWidget(tjb, schemaProperty);
         final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty,
                 windowContext);

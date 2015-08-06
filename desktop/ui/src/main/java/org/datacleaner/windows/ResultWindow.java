@@ -29,7 +29,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -511,9 +510,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                     @Override
                     public void run() {
                         final ComponentJob[] componentJobs = metrics.getResultProducers();
-                        List<ComponentJob> componentJobsList = Arrays.asList(componentJobs);
                         // Put analyzers at the top, then the rest (untouched)
-                        Collections.sort(componentJobsList, new Comparator<ComponentJob>() {
+                        Arrays.sort(componentJobs, new Comparator<ComponentJob>() {
 
                             @Override
                             public int compare(ComponentJob o1, ComponentJob o2) {
@@ -527,7 +525,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                             }
                         });
                         
-                        for (ComponentJob componentJob : componentJobsList) {
+                        for (ComponentJob componentJob : componentJobs) {
                             // instantiate result panels
                             getOrCreateResultPanel(componentJob, false);
                         }

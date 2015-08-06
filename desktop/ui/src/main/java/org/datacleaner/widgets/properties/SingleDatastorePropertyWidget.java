@@ -150,7 +150,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         _createDatastoreButton = WidgetFactory.createSmallPopupButton("",
                 IconUtils.ACTION_CREATE_TABLE);
         _createDatastoreButton.setToolTipText("Create datastore");
-        JPopupMenu createDatastoreMenu = _createDatastoreButton.getMenu();
+        final JPopupMenu createDatastoreMenu = _createDatastoreButton.getMenu();
         populateCreateDatastoreMenu(createDatastoreMenu);
 
         _panelAroundButton = DCPanel.around(_createDatastoreButton);
@@ -172,8 +172,8 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         populateCreateDatastoreMenu(menu);
     }
 
-    private void populateCreateDatastoreMenu(JPopupMenu createDatastoreMenu) {
-        List<String> alreadyAddedDatabases = new ArrayList<>();
+    private void populateCreateDatastoreMenu(final JPopupMenu createDatastoreMenu) {
+        final List<String> alreadyAddedDatabases = new ArrayList<>();
 
         final JMenuItem csvMenuItem = WidgetFactory.createMenuItem("CSV file", IconUtils.CSV_IMAGEPATH);
         csvMenuItem.addActionListener(createActionListener(CsvDatastore.class, CsvDatastoreDialog.class));
@@ -289,7 +289,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
             alreadyAddedDatabases.add("HBase database");
         }
 
-        DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
+        final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
                 DatabaseDriverCatalog.class);
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
@@ -383,9 +383,9 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null)
+                final Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null)
                         .createInjector();
-                JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
+                final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
                 dialog.setSelectedDatabase(databaseName);
                 dialog.setVisible(true);
             }

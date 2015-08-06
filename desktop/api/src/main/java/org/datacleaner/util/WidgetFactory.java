@@ -116,8 +116,8 @@ public final class WidgetFactory {
         return b;
     }
 
-    public static PopupButton createSmallPopupButton(String text, String imagePath) {
-        PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
+    public static PopupButton createSmallPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
 
         b.setFont(WidgetUtils.FONT_SMALL);
         b.setMargin(new Insets(0, 0, 0, 0));

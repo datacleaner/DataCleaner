@@ -28,6 +28,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +70,7 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterJob;
+import org.datacleaner.job.ImmutableAnalyzerJob;
 import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.PreviousErrorsExistException;
 import org.datacleaner.job.runner.AnalysisJobCancellation;
@@ -507,7 +511,23 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                     @Override
                     public void run() {
                         final ComponentJob[] componentJobs = metrics.getResultProducers();
-                        for (ComponentJob componentJob : componentJobs) {
+                        List<ComponentJob> componentJobsList = Arrays.asList(componentJobs);
+                        // Put analyzers at the top, then the rest (untouched)
+                        Collections.sort(componentJobsList, new Comparator<ComponentJob>() {
+
+                            @Override
+                            public int compare(ComponentJob o1, ComponentJob o2) {
+                                if ((o1 instanceof ImmutableAnalyzerJob) && !(o2 instanceof ImmutableAnalyzerJob)) {
+                                    return -1;
+                                }
+                                if ((o2 instanceof ImmutableAnalyzerJob) && !(o1 instanceof ImmutableAnalyzerJob)) {
+                                    return 1;
+                                }
+                                return 0;
+                            }
+                        });
+                        
+                        for (ComponentJob componentJob : componentJobsList) {
                             // instantiate result panels
                             getOrCreateResultPanel(componentJob, false);
                         }

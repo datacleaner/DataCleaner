@@ -377,7 +377,7 @@ public class DatastorePanel extends DCPanel {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = _injectorBuilder.with(DatahubDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(DatahubDatastore.class, datastore).createInjector();
                     DatahubDatastoreDialog dialog = injector.getInstance(DatahubDatastoreDialog.class);
                     dialog.open();
                 }

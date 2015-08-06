@@ -130,7 +130,7 @@ public final class PropertyWidgetFactoryImpl implements PropertyWidgetFactory {
                     final DatastoreCatalog datastoreCatalog = getComponentBuilder().getAnalysisJobBuilder()
                             .getConfiguration().getDatastoreCatalog();
                     datastorePropertyWidget = new SingleDatastorePropertyWidget(getComponentBuilder(),
-                            mappedToProperty, datastoreCatalog, _dcModule);
+                            mappedToProperty, datastoreCatalog, _dcModule, false);
                 } else {
                     datastorePropertyWidget = (SingleDatastorePropertyWidget) mappedToPropertyWidget;
                 }

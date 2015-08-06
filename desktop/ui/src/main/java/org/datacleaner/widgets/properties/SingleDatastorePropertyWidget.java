@@ -107,12 +107,16 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
     private final DCModule _dcModule;
 
+    private final boolean _onlyUpdatableDatastores;
+
     @Inject
     public SingleDatastorePropertyWidget(ComponentBuilder componentBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule) {
+            ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog, DCModule dcModule,
+            boolean onlyUpdatableDatastores) {
         super(componentBuilder, propertyDescriptor);
         _datastoreCatalog = datastoreCatalog;
         _dcModule = dcModule;
+        _onlyUpdatableDatastores = onlyUpdatableDatastores;
         _datastoreClass = propertyDescriptor.getBaseType();
 
         String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
@@ -175,44 +179,59 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         createDatastoreMenu.add(excelMenuItem);
         alreadyAddedDatabases.add("Excel spreadsheet");
 
-        final JMenuItem accessMenuItem = WidgetFactory.createMenuItem("Access database", IconUtils.ACCESS_IMAGEPATH);
-        accessMenuItem.addActionListener(createActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
-        createDatastoreMenu.add(accessMenuItem);
-        alreadyAddedDatabases.add("Access database");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem accessMenuItem = WidgetFactory
+                    .createMenuItem("Access database", IconUtils.ACCESS_IMAGEPATH);
+            accessMenuItem.addActionListener(createActionListener(AccessDatastore.class, AccessDatastoreDialog.class));
+            createDatastoreMenu.add(accessMenuItem);
+            alreadyAddedDatabases.add("Access database");
+        }
 
-        final JMenuItem sasMenuItem = WidgetFactory.createMenuItem("SAS library", IconUtils.SAS_IMAGEPATH);
-        sasMenuItem.addActionListener(createActionListener(SasDatastore.class, SasDatastoreDialog.class));
-        createDatastoreMenu.add(sasMenuItem);
-        alreadyAddedDatabases.add("SAS library");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem sasMenuItem = WidgetFactory.createMenuItem("SAS library", IconUtils.SAS_IMAGEPATH);
+            sasMenuItem.addActionListener(createActionListener(SasDatastore.class, SasDatastoreDialog.class));
+            createDatastoreMenu.add(sasMenuItem);
+            alreadyAddedDatabases.add("SAS library");
+        }
 
-        final JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("DBase database", IconUtils.DBASE_IMAGEPATH);
-        dbaseMenuItem.addActionListener(createActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
-        createDatastoreMenu.add(dbaseMenuItem);
-        alreadyAddedDatabases.add("DBase database");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("DBase database", IconUtils.DBASE_IMAGEPATH);
+            dbaseMenuItem.addActionListener(createActionListener(DbaseDatastore.class, DbaseDatastoreDialog.class));
+            createDatastoreMenu.add(dbaseMenuItem);
+            alreadyAddedDatabases.add("DBase database");
+        }
 
-        final JMenuItem fixedWidthMenuItem = WidgetFactory.createMenuItem("Fixed width file",
-                IconUtils.FIXEDWIDTH_IMAGEPATH);
-        fixedWidthMenuItem.addActionListener(createActionListener(FixedWidthDatastore.class,
-                FixedWidthDatastoreDialog.class));
-        createDatastoreMenu.add(fixedWidthMenuItem);
-        alreadyAddedDatabases.add("Fixed width file");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem fixedWidthMenuItem = WidgetFactory.createMenuItem("Fixed width file",
+                    IconUtils.FIXEDWIDTH_IMAGEPATH);
+            fixedWidthMenuItem.addActionListener(createActionListener(FixedWidthDatastore.class,
+                    FixedWidthDatastoreDialog.class));
+            createDatastoreMenu.add(fixedWidthMenuItem);
+            alreadyAddedDatabases.add("Fixed width file");
+        }
 
-        final JMenuItem xmlMenuItem = WidgetFactory.createMenuItem("XML file", IconUtils.XML_IMAGEPATH);
-        xmlMenuItem.addActionListener(createActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
-        createDatastoreMenu.add(xmlMenuItem);
-        alreadyAddedDatabases.add("XML file");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem xmlMenuItem = WidgetFactory.createMenuItem("XML file", IconUtils.XML_IMAGEPATH);
+            xmlMenuItem.addActionListener(createActionListener(XmlDatastore.class, XmlDatastoreDialog.class));
+            createDatastoreMenu.add(xmlMenuItem);
+            alreadyAddedDatabases.add("XML file");
+        }
 
-        final JMenuItem jsonMenuItem = WidgetFactory.createMenuItem("JSON file", IconUtils.JSON_IMAGEPATH);
-        jsonMenuItem.addActionListener(createActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
-        createDatastoreMenu.add(jsonMenuItem);
-        alreadyAddedDatabases.add("JSON file");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem jsonMenuItem = WidgetFactory.createMenuItem("JSON file", IconUtils.JSON_IMAGEPATH);
+            jsonMenuItem.addActionListener(createActionListener(JsonDatastore.class, JsonDatastoreDialog.class));
+            createDatastoreMenu.add(jsonMenuItem);
+            alreadyAddedDatabases.add("JSON file");
+        }
 
-        final JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org Base database",
-                IconUtils.ODB_IMAGEPATH);
-        odbMenuItem.addActionListener(createActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
-        createDatastoreMenu.add(odbMenuItem);
-        alreadyAddedDatabases.add("OpenOffice.org Base database");
-        createDatastoreMenu.addSeparator();
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org Base database",
+                    IconUtils.ODB_IMAGEPATH);
+            odbMenuItem.addActionListener(createActionListener(OdbDatastore.class, OdbDatastoreDialog.class));
+            createDatastoreMenu.add(odbMenuItem);
+            alreadyAddedDatabases.add("OpenOffice.org Base database");
+            createDatastoreMenu.addSeparator();
+        }
 
         final JMenuItem salesforceMenuItem = WidgetFactory.createMenuItem("Salesforce.com",
                 IconUtils.SALESFORCE_IMAGEPATH);
@@ -221,11 +240,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         createDatastoreMenu.add(salesforceMenuItem);
         alreadyAddedDatabases.add("Salesforce.com");
 
-        final JMenuItem sugarCrmMenuItem = WidgetFactory.createMenuItem("SugarCRM", IconUtils.SUGAR_CRM_IMAGEPATH);
-        sugarCrmMenuItem
-                .addActionListener(createActionListener(SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
-        createDatastoreMenu.add(sugarCrmMenuItem);
-        alreadyAddedDatabases.add("SugarCRM");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem sugarCrmMenuItem = WidgetFactory.createMenuItem("SugarCRM", IconUtils.SUGAR_CRM_IMAGEPATH);
+            sugarCrmMenuItem.addActionListener(createActionListener(SugarCrmDatastore.class,
+                    SugarCrmDatastoreDialog.class));
+            createDatastoreMenu.add(sugarCrmMenuItem);
+            alreadyAddedDatabases.add("SugarCRM");
+        }
 
         createDatastoreMenu.addSeparator();
 
@@ -246,17 +267,21 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         createDatastoreMenu.add(elasticSearchMenuItem);
         alreadyAddedDatabases.add("ElasticSearch index");
 
-        final JMenuItem cassandraMenuItem = WidgetFactory.createMenuItem("Cassandra database",
-                IconUtils.CASSANDRA_IMAGEPATH);
-        cassandraMenuItem.addActionListener(createActionListener(CassandraDatastore.class,
-                CassandraDatastoreDialog.class));
-        createDatastoreMenu.add(cassandraMenuItem);
-        alreadyAddedDatabases.add("Cassandra database");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem cassandraMenuItem = WidgetFactory.createMenuItem("Cassandra database",
+                    IconUtils.CASSANDRA_IMAGEPATH);
+            cassandraMenuItem.addActionListener(createActionListener(CassandraDatastore.class,
+                    CassandraDatastoreDialog.class));
+            createDatastoreMenu.add(cassandraMenuItem);
+            alreadyAddedDatabases.add("Cassandra database");
+        }
 
-        final JMenuItem hbaseMenuItem = WidgetFactory.createMenuItem("HBase database", IconUtils.HBASE_IMAGEPATH);
-        hbaseMenuItem.addActionListener(createActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
-        createDatastoreMenu.add(hbaseMenuItem);
-        alreadyAddedDatabases.add("HBase database");
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem hbaseMenuItem = WidgetFactory.createMenuItem("HBase database", IconUtils.HBASE_IMAGEPATH);
+            hbaseMenuItem.addActionListener(createActionListener(HBaseDatastore.class, HBaseDatastoreDialog.class));
+            createDatastoreMenu.add(hbaseMenuItem);
+            alreadyAddedDatabases.add("HBase database");
+        }
 
         DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
                 DatabaseDriverCatalog.class);
@@ -324,10 +349,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         createDatastoreMenu.add(otherDatabaseMenuItem);
 
         // composite datastore
-        final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
-                IconUtils.COMPOSITE_IMAGEPATH);
-        compositeMenuItem.addActionListener(createActionListener(CompositeDatastore.class, CompositeDatastoreDialog.class));
-        createDatastoreMenu.add(compositeMenuItem);
+        if (!_onlyUpdatableDatastores) {
+            final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
+                    IconUtils.COMPOSITE_IMAGEPATH);
+            compositeMenuItem.addActionListener(createActionListener(CompositeDatastore.class,
+                    CompositeDatastoreDialog.class));
+            createDatastoreMenu.add(compositeMenuItem);
+        }
     }
 
     private ActionListener createActionListener(final Class<? extends Datastore> datastoreClass,

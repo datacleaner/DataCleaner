@@ -48,6 +48,8 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
     private final JXTextField _portTextField;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
+    private final JXTextField _tenantNameTextField;
+    
 
     @Inject
     public DatahubDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
@@ -58,6 +60,7 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         _portTextField = WidgetFactory.createTextField("Port number");
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
+        _tenantNameTextField = WidgetFactory.createTextField("Tenant id");
 
         final DCDocumentListener genericDocumentListener = new DCDocumentListener() {
             @Override
@@ -69,15 +72,17 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
         _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _tenantNameTextField.getDocument().addDocumentListener(genericDocumentListener);
 
         if (originalDatastore != null) {
             _hostTextField.setText(originalDatastore.getHost());
-            _portTextField.setText(originalDatastore.getPort());
+            _portTextField.setText(originalDatastore.getPort() + "");
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
 
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
+            _tenantNameTextField.setText(originalDatastore.getTenantName());
         }
     }
 
@@ -93,7 +98,19 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         if (StringUtils.isNullOrEmpty(port)) {
             setStatusError("Please enter Datahub port number");
             return false;
+        } else {
+            try {
+                int portInt = Integer.parseInt(port);
+                if (portInt <= 0) {
+                    setStatusError("Please enter a valid (positive port number)");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                setStatusError("Please enter a valid port number");
+                return false;
+            }
         }
+
 
         final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
@@ -107,6 +124,12 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
             return false;
         }
 
+        final String tenantName = _usernameTextField.getText();
+        if (StringUtils.isNullOrEmpty(username)) {
+            setStatusError("Please enter tenant name");
+            return false;
+        }
+
         setStatusValid();
         return true;
     }
@@ -114,13 +137,14 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
     @Override
     protected DatahubDatastore createDatastore() {
         final String host = _hostTextField.getText();
-        final String port = _portTextField.getText();
+        final Integer port = Integer.parseInt(_portTextField.getText());
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
+        final String tenantName = _tenantNameTextField.getText();
 
-        return new DatahubDatastore(name, host, port, username, password);
+        return new DatahubDatastore(name, host, port, username, password, tenantName);
     }
 
     @Override
@@ -145,6 +169,7 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         result.add(new ImmutableEntry<String, JComponent>("Datahub portnumber", _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Datahub tenant name", _tenantNameTextField));
         return result;
     }
 

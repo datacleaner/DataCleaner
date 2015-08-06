@@ -29,22 +29,20 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
      */
     private static final long serialVersionUID = 1L;
     private final String _host;
-    private final String _port;
+    private final Integer _port;
     private final String _username;
     private final String _password;
+    private final String _tenantName;
 
-    public DatahubDatastore(String name, String username, String password,
-            String securityToken) {
-        this(name, username, password, securityToken, null);
-    }
 
-    public DatahubDatastore(String name, String host, String port,
-            String username, String password) {
+    public DatahubDatastore(String name, String host, Integer port,
+            String username, String password, String tenantName) {
         super(name);
         _host = host;
         _port = port;
         _username = username;
         _password = password;
+        _tenantName = tenantName;
     }
 
     @Override
@@ -57,7 +55,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
         return _host;
     }
 
-    public String getPort() {
+    public Integer getPort() {
         return _port;
     }
 
@@ -70,6 +68,10 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
         return _password;
     }
 
+    public String getTenantName() {
+        return _tenantName;
+    }
+
     @Override
     public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
@@ -79,7 +81,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
         final DatahubDataContext dataContext = new DatahubDataContext(_host,
-                _port, _username, _password);
+                _port, _username, _password, _tenantName);
         return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
                 dataContext, this);
     }
@@ -87,7 +89,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port
-                + ", username=" + _username + "]";
+                + ", username=" + _username + ", tenant=" + _tenantName + "]";
     }
 
 }

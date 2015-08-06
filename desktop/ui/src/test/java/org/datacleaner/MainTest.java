@@ -21,9 +21,9 @@ package org.datacleaner;
 
 import java.util.Map;
 
-import org.h2.util.StringUtils;
-
 import junit.framework.TestCase;
+
+import org.h2.util.StringUtils;
 
 public class MainTest extends TestCase {
 
@@ -47,7 +47,7 @@ public class MainTest extends TestCase {
         final String hostname = "localhost";
 
         final boolean https = true;
-        final String port = "8443";
+        final String port = "8";
         final String context = "/DataCleaner-monitor";
         final String tenant = "DC";
         final String username = "admin";

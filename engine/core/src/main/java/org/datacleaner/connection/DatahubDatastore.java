@@ -19,47 +19,38 @@
  */
 package org.datacleaner.connection;
 
-import org.datacleaner.connection.datahub.dummy.DatahubDummyDataContext;
+import org.apache.metamodel.datahub.DatahubDataContext;
 
-
-
-public class DatahubDatastore extends UsageAwareDatastore<DatahubDummyDataContext> implements UpdateableDatastore,
-UsernameDatastore {
+public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
+        implements UpdateableDatastore, UsernameDatastore {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    private final String _username;
-    private final String _password;
     private final String _host;
     private final String _port;
+    private final String _username;
+    private final String _password;
 
-    public DatahubDatastore(String name, String username, String password, String securityToken) {
+    public DatahubDatastore(String name, String username, String password,
+            String securityToken) {
         this(name, username, password, securityToken, null);
     }
 
-    public DatahubDatastore(String name, String username, String password, String host, String port) {
+    public DatahubDatastore(String name, String host, String port,
+            String username, String password) {
         super(name);
-        _username = username;
-        _password = password;
         _host = host;
         _port = port;
+        _username = username;
+        _password = password;
     }
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public String getUsername() {
-        return _username;
-    }
-
-    public String getPassword() {
-        return _password;
     }
 
     public String getHost() {
@@ -71,27 +62,32 @@ UsernameDatastore {
     }
 
     @Override
+    public String getUsername() {
+        return _username;
+    }
+
+    public String getPassword() {
+        return _password;
+    }
+
+    @Override
     public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
         return (UpdateableDatastoreConnection) connection;
     }
 
     @Override
-    protected UsageAwareDatastoreConnection<DatahubDummyDataContext> createDatastoreConnection() {
-        final DatahubDummyDataContext dataContext = new DatahubDummyDataContext();
-//        if (Strings.isNullOrEmpty(_endpointUrl)) {
-//            dataContext = new SalesforceDataContext(_username, _password, _securityToken);
-//        } else {
-//            dataContext = new SalesforceDataContext(_endpointUrl, _username, _password, _securityToken);
-//        }
-        return new UpdateableDatastoreConnectionImpl<DatahubDummyDataContext>(dataContext, this);
+    protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
+        final DatahubDataContext dataContext = new DatahubDataContext(_host,
+                _port, _username, _password);
+        return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
+                dataContext, this);
     }
 
     @Override
     public String toString() {
-        return "DataHubDatastore[username=" + _username + "]";
+        return "DataHubDatastore[host= " + _host + ", port=" + _port
+                + ", username=" + _username + "]";
     }
-
-
 
 }

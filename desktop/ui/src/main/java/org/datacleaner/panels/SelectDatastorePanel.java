@@ -23,7 +23,6 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreSelectedListener;
 import org.datacleaner.user.UserPreferences;
@@ -35,8 +34,7 @@ public class SelectDatastorePanel extends DCPanel {
 
     private final ExistingDatastorePanel _existingDatastoresPanel;
 
-    public SelectDatastorePanel(DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog,
-            DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
+    public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
             DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
@@ -50,8 +48,8 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener,
-                userPreferences, !showExistingDatastoresAsLongList));
+        add(new AddDatastorePanel(datastoreCatalog, dcModule, datastoreSelectListener, userPreferences,
+                !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {
             final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");

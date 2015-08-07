@@ -20,6 +20,7 @@
 package org.datacleaner.connection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -100,31 +101,31 @@ public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
         datastoreDescriptors.add(jsonDatastoreDescriptor);
         
         DatastoreDescriptor salesforceDatastoreDescriptor = new DatastoreDescriptorImpl("Salesforce.com",
-                "Connect to a Salesforce.com account", SalesforceDatastore.class);
+                "Connect to a Salesforce.com account", SalesforceDatastore.class, Arrays.asList("Cloud service"));
         datastoreDescriptors.add(salesforceDatastoreDescriptor);
         
         DatastoreDescriptor sugarCrmDatastoreDescriptor = new DatastoreDescriptorImpl("SugarCRM",
-                "Connect to a SugarCRM system", SugarCrmDatastore.class);
+                "Connect to a SugarCRM system", SugarCrmDatastore.class, Arrays.asList("Cloud service"));
         datastoreDescriptors.add(sugarCrmDatastoreDescriptor);
 
         DatastoreDescriptor mongoDbDatastoreDescriptor = new DatastoreDescriptorImpl("MongoDB database",
-                "Connect to a MongoDB database", MongoDbDatastore.class);
+                "Connect to a MongoDB database", MongoDbDatastore.class, Arrays.asList("Database"));
         datastoreDescriptors.add(mongoDbDatastoreDescriptor);
         
         DatastoreDescriptor couchDbDatastoreDescriptor = new DatastoreDescriptorImpl("CouchDB database",
-                "Connect to an Apache CouchDB database", CouchDbDatastore.class);
+                "Connect to an Apache CouchDB database", CouchDbDatastore.class, Arrays.asList("Database"));
         datastoreDescriptors.add(couchDbDatastoreDescriptor);
         
         DatastoreDescriptor elasticSearchDatastoreDescriptor = new DatastoreDescriptorImpl("ElasticSearch index",
-                "Connect to an ElasticSearch index", ElasticSearchDatastore.class);
+                "Connect to an ElasticSearch index", ElasticSearchDatastore.class, Arrays.asList("Database"));
         datastoreDescriptors.add(elasticSearchDatastoreDescriptor);
         
         DatastoreDescriptor cassandraDatastoreDescriptor = new DatastoreDescriptorImpl("Cassandra database",
-                "Connect to an Apache Cassandra database", CassandraDatastore.class);
+                "Connect to an Apache Cassandra database", CassandraDatastore.class, Arrays.asList("Database"));
         datastoreDescriptors.add(cassandraDatastoreDescriptor);
         
         DatastoreDescriptor hbaseDatastoreDescriptor = new DatastoreDescriptorImpl("HBase database",
-                "Connect to an Apache HBase database", HBaseDatastore.class);
+                "Connect to an Apache HBase database", HBaseDatastore.class, Arrays.asList("Database"));
         datastoreDescriptors.add(hbaseDatastoreDescriptor);
         
         return datastoreDescriptors;
@@ -137,31 +138,31 @@ public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
             DatastoreDescriptor hiveDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE,
-                    "Connect to an Apache Hive database", JdbcDatastore.class);
+                    "Connect to an Apache Hive database", JdbcDatastore.class, Arrays.asList("Database"));
             datastoreDescriptors.add(hiveDatastoreDescriptor);
         }
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
             DatastoreDescriptor mysqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
-                    "Connect to a MySQL database", JdbcDatastore.class);
+                    "Connect to a MySQL database", JdbcDatastore.class, Arrays.asList("Database"));
             datastoreDescriptors.add(mysqlDatastoreDescriptor);
         }
         
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
             DatastoreDescriptor postgresqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-                    "Connect to a PostgreSQL database", JdbcDatastore.class);
+                    "Connect to a PostgreSQL database", JdbcDatastore.class, Arrays.asList("Database"));
             datastoreDescriptors.add(postgresqlDatastoreDescriptor);
         }
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
             DatastoreDescriptor oracleDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
-                    "Connect to a Oracle database", JdbcDatastore.class);
+                    "Connect to a Oracle database", JdbcDatastore.class, Arrays.asList("Database"));
             datastoreDescriptors.add(oracleDatastoreDescriptor);
         }
 
         if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
             DatastoreDescriptor sqlServerDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
-                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
+                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class, Arrays.asList("Database"));
             datastoreDescriptors.add(sqlServerDatastoreDescriptor);
         }
 

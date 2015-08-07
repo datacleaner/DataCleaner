@@ -79,7 +79,6 @@ import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
-import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.JobFile;
@@ -197,7 +196,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             Provider<ReferenceDataDialog> referenceDataDialogProvider, UsageLogger usageLogger,
             Provider<OptionsDialog> optionsDialogProvider,
             Provider<MonitorConnectionDialog> monitorConnectionDialogProvider,
-            OpenAnalysisJobActionListener openAnalysisJobActionListener, DatabaseDriverCatalog databaseDriverCatalog) {
+            OpenAnalysisJobActionListener openAnalysisJobActionListener) {
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
@@ -247,8 +246,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
                 _optionsDialogProvider, _dcModule, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());

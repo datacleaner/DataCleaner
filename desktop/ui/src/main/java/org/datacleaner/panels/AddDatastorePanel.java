@@ -26,21 +26,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 
-import org.datacleaner.connection.CassandraDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
-import org.datacleaner.connection.ElasticSearchDatastore;
-import org.datacleaner.connection.HBaseDatastore;
+import org.datacleaner.connection.DatastoreDescriptor;
+import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
 import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.connection.SugarCrmDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.DCModule;
@@ -52,15 +48,8 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
-import org.datacleaner.windows.AbstractDatastoreDialog;
-import org.datacleaner.windows.CassandraDatastoreDialog;
-import org.datacleaner.windows.CouchDbDatastoreDialog;
-import org.datacleaner.windows.ElasticSearchDatastoreDialog;
-import org.datacleaner.windows.HBaseDatastoreDialog;
+import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
-import org.datacleaner.windows.MongoDbDatastoreDialog;
-import org.datacleaner.windows.SalesforceDatastoreDialog;
-import org.datacleaner.windows.SugarCrmDatastoreDialog;
 
 import com.google.inject.Injector;
 
@@ -71,11 +60,9 @@ public class AddDatastorePanel extends DCPanel {
     private final DCModule _dcModule;
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
-    private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final DatastoreCatalog _datastoreCatalog;
 
-    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
-            final DatabaseDriverCatalog databaseDriverCatalog, final DCModule dcModule,
+    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog, final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
             boolean showExistingDatastoresButton) {
         super();
@@ -83,7 +70,6 @@ public class AddDatastorePanel extends DCPanel {
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _datastoreCatalog = datastoreCatalog;
         _dcModule = dcModule;
-        _databaseDriverCatalog = databaseDriverCatalog;
         _datastoreSelectedListener = datastoreSelectedListener;
         _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener, userPreferences);
 
@@ -143,13 +129,22 @@ public class AddDatastorePanel extends DCPanel {
     private PopupButton createCloudButton() {
         final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
                 IconUtils.CLOUD_IMAGEPATH);
-        cloudButton.setFont(WidgetUtils.FONT_HEADER2);
-        cloudButton.getMenu().add(
-                createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
-                        IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
-        cloudButton.getMenu().add(
-                createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
-                        SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
+        List<DatastoreDescriptor> availableDatastoreDescriptors = _datastoreCatalog.getAvailableDatastoreDescriptors();
+
+        for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
+            if (datastoreDescriptor.getTags().contains("Cloud service")) {
+                if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
+                    cloudButton.getMenu().add(createNewJdbcDatastoreButton(datastoreDescriptor.getName()));
+                } else {
+                    cloudButton.getMenu().add(
+                            createNewDatastoreButton(datastoreDescriptor.getName(),
+                                    datastoreDescriptor.getDescription(),
+                                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                                    datastoreDescriptor.getDatastoreClass(),
+                                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                }
+            }
+        }
         return cloudButton;
     }
 
@@ -158,44 +153,22 @@ public class AddDatastorePanel extends DCPanel {
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
+        List<DatastoreDescriptor> availableDatastoreDescriptors = _datastoreCatalog.getAvailableDatastoreDescriptors();
+
+        for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
+            if (datastoreDescriptor.getTags().contains("Database")) {
+                if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
+                    databaseButton.getMenu().add(createNewJdbcDatastoreButton(datastoreDescriptor.getName()));
+                } else {
+                    databaseButton.getMenu().add(
+                            createNewDatastoreButton(datastoreDescriptor.getName(),
+                                    datastoreDescriptor.getDescription(),
+                                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                                    datastoreDescriptor.getDatastoreClass(),
+                                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                }
+            }
         }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-            databaseButton.getMenu().add(
-                    createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
-        }
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("ElasticSearch", "Connect to ElasticSearch",
-                        IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class,
-                        ElasticSearchDatastoreDialog.class));
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("Apache HBase", "Connect to Apache HBase", IconUtils.HBASE_IMAGEPATH,
-                        HBaseDatastore.class, HBaseDatastoreDialog.class));
-
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
-            databaseButton.getMenu().add(createNewJdbcDatastoreButton(DatabaseDriverCatalog.DATABASE_NAME_HIVE));
-        }
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("Apache Cassandra", "Connect to Apache Cassandra",
-                        IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class));
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("MongoDB", "Connect to MongoDB", IconUtils.MONGODB_IMAGEPATH,
-                        MongoDbDatastore.class, MongoDbDatastoreDialog.class));
-
-        databaseButton.getMenu().add(
-                createNewDatastoreButton("CouchDB", "Connect to Apache CouchDB", IconUtils.COUCHDB_IMAGEPATH,
-                        CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
         return databaseButton;
     }
@@ -230,8 +203,7 @@ public class AddDatastorePanel extends DCPanel {
     }
 
     private <D extends Datastore> JMenuItem createNewDatastoreButton(final String title, final String description,
-            final String imagePath, final Class<D> datastoreClass,
-            final Class<? extends AbstractDatastoreDialog<D>> dialogClass) {
+            final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass) {
         final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
         item.setToolTipText(description);
 
@@ -240,17 +212,17 @@ public class AddDatastorePanel extends DCPanel {
             public void actionPerformed(ActionEvent event) {
                 Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
-                final AbstractDatastoreDialog<D> dialog = injectorWithNullDatastore.getInstance(dialogClass);
+                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
 
                 dialog.setVisible(true);
-                dialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        if (dialog.getSavedDatastore() != null) {
-                            _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
-                        }
-                    }
-                });
+                // dialog.addWindowListener(new WindowAdapter() {
+                // @Override
+                // public void windowClosed(WindowEvent e) {
+                // if (dialog.getSavedDatastore() != null) {
+                // _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
+                // }
+                // }
+                // });
             }
         });
         return item;

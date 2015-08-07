@@ -22,11 +22,63 @@ package org.datacleaner.connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.database.DatabaseDriverCatalog;
+
 @SuppressWarnings("serial")
 public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
 
     @Override
     public List<DatastoreDescriptor> getAvailableDatastoreDescriptors() {
+        List<DatastoreDescriptor> availableDatabaseDescriptors = new ArrayList<>();
+        
+        List<DatastoreDescriptor> manualDatastoreDescriptors = getManualDatastoreDescriptors();
+        availableDatabaseDescriptors.addAll(manualDatastoreDescriptors);
+        
+        List<DatastoreDescriptor> driverBasedDatastoreDescriptors = getDriverBasedDatastoreDescriptors();
+        availableDatabaseDescriptors.addAll(driverBasedDatastoreDescriptors);
+        
+        return availableDatabaseDescriptors;
+    }
+
+    private List<DatastoreDescriptor> getDriverBasedDatastoreDescriptors() {
+        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+        
+        DatabaseDriverCatalog databaseDriverCatalog = new DatabaseDriverCatalog(null);
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
+            DatastoreDescriptor hiveDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE,
+                    "Connect to an Apache Hive database", JdbcDatastore.class);
+            datastoreDescriptors.add(hiveDatastoreDescriptor);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+            DatastoreDescriptor mysqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
+                    "Connect to a MySQL database", JdbcDatastore.class);
+            datastoreDescriptors.add(mysqlDatastoreDescriptor);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+            DatastoreDescriptor postgresqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+                    "Connect to a PostgreSQL database", JdbcDatastore.class);
+            datastoreDescriptors.add(postgresqlDatastoreDescriptor);
+        }
+
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+            DatastoreDescriptor oracleDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
+                    "Connect to a Oracle database", JdbcDatastore.class);
+            datastoreDescriptors.add(oracleDatastoreDescriptor);
+        }
+
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+            DatastoreDescriptor sqlServerDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
+                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
+            datastoreDescriptors.add(sqlServerDatastoreDescriptor);
+        }
+
+        return datastoreDescriptors;
+    }
+
+    private List<DatastoreDescriptor> getManualDatastoreDescriptors() {
         List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
 
         DatastoreDescriptor csvDatastoreDescriptor = new DatastoreDescriptorImpl("CSV file",
@@ -89,7 +141,7 @@ public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
         DatastoreDescriptor hbaseDatastoreDescriptor = new DatastoreDescriptorImpl("HBase database",
                 "Connect to an Apache HBase database", HBaseDatastore.class);
         datastoreDescriptors.add(hbaseDatastoreDescriptor);
-
+        
         return datastoreDescriptors;
     }
 

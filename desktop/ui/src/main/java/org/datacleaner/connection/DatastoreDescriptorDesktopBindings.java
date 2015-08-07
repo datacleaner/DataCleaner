@@ -22,6 +22,7 @@ package org.datacleaner.connection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
@@ -33,6 +34,7 @@ import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
 import org.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.datacleaner.windows.HBaseDatastoreDialog;
+import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.JsonDatastoreDialog;
 import org.datacleaner.windows.MongoDbDatastoreDialog;
 import org.datacleaner.windows.SalesforceDatastoreDialog;
@@ -81,14 +83,29 @@ public class DatastoreDescriptorDesktopBindings {
     private static final DatastoreDescriptor COUCHDB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "CouchDB database", "Connect to an Apache CouchDB database", CouchDbDatastore.class);
 
-    private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("ElasticSearch index",
-            "Connect to an ElasticSearch index", ElasticSearchDatastore.class);
+    private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
+            "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class);
 
-    private static final DatastoreDescriptor CASSANDRA_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Cassandra database",
-            "Connect to an Apache Cassandra database", CassandraDatastore.class);
-    
-    private static final DatastoreDescriptor HBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "HBase database", "Connect to an Apache HBase database", HBaseDatastore.class);
+    private static final DatastoreDescriptor CASSANDRA_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
+            "Cassandra database", "Connect to an Apache Cassandra database", CassandraDatastore.class);
+
+    private static final DatastoreDescriptor HBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("HBase database",
+            "Connect to an Apache HBase database", HBaseDatastore.class);
+
+    private static final DatastoreDescriptor HIVE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
+            DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database", JdbcDatastore.class);
+
+    private static final DatastoreDescriptor MYSQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
+            "Connect to a MySQL database", JdbcDatastore.class);
+
+    private static final DatastoreDescriptor POSTGRESQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+            "Connect to a PostgreSQL database", JdbcDatastore.class);
+
+    private static final DatastoreDescriptor ORACLE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
+            "Connect to a Oracle database", JdbcDatastore.class);
+
+    private static final DatastoreDescriptor SQLSERVER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
+            "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
 
     private static Map<DatastoreDescriptor, String> _iconPaths = new HashMap<DatastoreDescriptor, String>();
 
@@ -110,6 +127,11 @@ public class DatastoreDescriptorDesktopBindings {
         _iconPaths.put(ELASTICSEARCH_DATASTORE_DESCRIPTOR, IconUtils.ELASTICSEARCH_IMAGEPATH);
         _iconPaths.put(CASSANDRA_DATASTORE_DESCRIPTOR, IconUtils.CASSANDRA_IMAGEPATH);
         _iconPaths.put(HBASE_DATASTORE_DESCRIPTOR, IconUtils.HBASE_IMAGEPATH);
+        _iconPaths.put(HIVE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/hive.png");
+        _iconPaths.put(MYSQL_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/mysql.png");
+        _iconPaths.put(POSTGRESQL_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/postgresql.png");
+        _iconPaths.put(ORACLE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/oracle.png");
+        _iconPaths.put(SQLSERVER_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/microsoft.png");
     }
 
     static {
@@ -128,6 +150,11 @@ public class DatastoreDescriptorDesktopBindings {
         _dialogClasses.put(ELASTICSEARCH_DATASTORE_DESCRIPTOR, ElasticSearchDatastoreDialog.class);
         _dialogClasses.put(CASSANDRA_DATASTORE_DESCRIPTOR, CassandraDatastoreDialog.class);
         _dialogClasses.put(HBASE_DATASTORE_DESCRIPTOR, HBaseDatastoreDialog.class);
+        _dialogClasses.put(HIVE_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
+        _dialogClasses.put(MYSQL_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
+        _dialogClasses.put(POSTGRESQL_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
+        _dialogClasses.put(ORACLE_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
+        _dialogClasses.put(SQLSERVER_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
     }
 
     public static String getIconPath(DatastoreDescriptor datastoreDescriptor) {

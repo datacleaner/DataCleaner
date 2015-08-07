@@ -265,6 +265,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
         
+        // set of databases that are displayed directly on panel
+        final Set<String> databaseNames = new HashSet<String>();
+        
         final int panelItemsCount = 10;
         
         for (int i = 0; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panelItemsCount); i++) {
@@ -272,6 +275,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.BOTTOM));
+            databaseNames.add(datastoreDescriptor.getName());
         }
         
         final DCPanel panel2 = new DCPanel();
@@ -282,12 +286,9 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
+            databaseNames.add(datastoreDescriptor.getName());
         }
 
-        // set of databases that are displayed directly on panel
-        final Set<String> databaseNames = new HashSet<String>();
-
-        createDefaultDatabaseButtons(panel2, databaseNames);
 
         panel2.add(Box.createHorizontalStrut(10));
         panel2.add(createMoreDatabasesButton(databaseNames));
@@ -356,34 +357,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return moreDatastoreTypesButton;
     }
 
-    private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
-            panel.add(createNewJdbcDatastoreButton("Apache Hive", "Connect to an Apache Hive database",
-                    "images/datastore-types/databases/hive.png", DatabaseDriverCatalog.DATABASE_NAME_HIVE,
-                    databaseNames));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
-                    "images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
-                    databaseNames));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-                    "images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-                    databaseNames));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-            panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
-                    "images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
-                    databaseNames));
-        }
-        if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-            panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
-                    "Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
-                    DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));
-        }
-    }
-
     private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
             final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass,
             DCPopupBubble.Position popupPosition) {
@@ -402,23 +375,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 dialog.setVisible(true);
             }
         });
-        return button;
-    }
-
-    private JButton createNewJdbcDatastoreButton(final String title, final String description, final String imagePath,
-            final String databaseName, Set<String> databaseNames) {
-
-        databaseNames.add(databaseName);
-
-        final ImageIcon icon = imageManager.getImageIcon(imagePath);
-        final JButton button = WidgetFactory.createImageButton(icon);
-
-        final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
-                + "</html>", 0, 0, icon, DCPopupBubble.Position.TOP);
-        popupBubble.attachTo(button);
-
-        button.addActionListener(createJdbcActionListener(databaseName));
-
         return button;
     }
 

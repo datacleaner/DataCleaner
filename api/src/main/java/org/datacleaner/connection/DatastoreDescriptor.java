@@ -19,41 +19,22 @@
  */
 package org.datacleaner.connection;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Represents a collection of datastores, referenceable and usable by jobs.
+ * A descriptor class for a datastore types in DataCleaner. 
+ *
  */
-public interface DatastoreCatalog extends Serializable {
-
-    /**
-     * Determines if a datastore by a specific name is contained in the
-     * {@link DatastoreCatalog}.
-     * 
-     * @param name
-     * @return
-     */
-    public boolean containsDatastore(String name);
-
-    /**
-     * Gets all the names of the datastores in this datastore catalog.
-     * 
-     * @return
-     */
-    public String[] getDatastoreNames();
-
-    /**
-     * Gets a datastore by it's name. If no such datastore is found, null will
-     * be returned.
-     * 
-     * @param name
-     * @return
-     */
-    public Datastore getDatastore(String name);
+public interface DatastoreDescriptor {
     
-    /**
-     * Returns the descriptors of datastore types available in DataCleaner.
-     */
-    public List<DatastoreDescriptor> getAvailableDatastoreDescriptors();
+    public String getName();
+    
+    public String getDescription();
+    
+    public Class<? extends Datastore> getDatastoreClass();
+    
+    public boolean isUpdatable();
+    
+    public List<String> getTags();
+    
 }

@@ -45,25 +45,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.connection.AccessDatastore;
-import org.datacleaner.connection.CassandraDatastore;
-import org.datacleaner.connection.CouchDbDatastore;
-import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
-import org.datacleaner.connection.DbaseDatastore;
-import org.datacleaner.connection.ElasticSearchDatastore;
-import org.datacleaner.connection.ExcelDatastore;
-import org.datacleaner.connection.FixedWidthDatastore;
-import org.datacleaner.connection.HBaseDatastore;
+import org.datacleaner.connection.DatastoreDescriptor;
+import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
 import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.connection.JsonDatastore;
-import org.datacleaner.connection.MongoDbDatastore;
-import org.datacleaner.connection.OdbDatastore;
-import org.datacleaner.connection.SalesforceDatastore;
-import org.datacleaner.connection.SasDatastore;
-import org.datacleaner.connection.SugarCrmDatastore;
-import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.DCModule;
@@ -82,26 +68,10 @@ import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.windows.AbstractDialog;
-import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
-import org.datacleaner.windows.CouchDbDatastoreDialog;
-import org.datacleaner.windows.CsvDatastoreDialog;
-import org.datacleaner.windows.DbaseDatastoreDialog;
-import org.datacleaner.windows.ElasticSearchDatastoreDialog;
-import org.datacleaner.windows.ExcelDatastoreDialog;
-import org.datacleaner.windows.FixedWidthDatastoreDialog;
-import org.datacleaner.windows.HBaseDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
-import org.datacleaner.windows.JsonDatastoreDialog;
-import org.datacleaner.windows.MongoDbDatastoreDialog;
-import org.datacleaner.windows.OdbDatastoreDialog;
 import org.datacleaner.windows.OptionsDialog;
-import org.datacleaner.windows.SalesforceDatastoreDialog;
-import org.datacleaner.windows.SasDatastoreDialog;
-import org.datacleaner.windows.SugarCrmDatastoreDialog;
-import org.datacleaner.windows.XmlDatastoreDialog;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -292,60 +262,27 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private DCPanel createNewDatastorePanel() {
         final int alignment = Alignment.LEFT.getFlowLayoutAlignment();
         final DCPanel panel1 = new DCPanel();
+        
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
-        panel1.add(createNewDatastoreButton("CSV file",
-                "Comma-separated values (CSV) file (or file with other separators)", IconUtils.CSV_IMAGEPATH,
-                CsvDatastore.class, CsvDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("Excel spreadsheet",
-                "Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
-                IconUtils.EXCEL_IMAGEPATH, ExcelDatastore.class, ExcelDatastoreDialog.class,
-                DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
-                IconUtils.ACCESS_IMAGEPATH, AccessDatastore.class, AccessDatastoreDialog.class,
-                DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
-                IconUtils.SAS_IMAGEPATH, SasDatastore.class, SasDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
-                DbaseDatastore.class, DbaseDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("Fixed width file",
-                "Text file with fixed width values. Each value spans a fixed amount of text characters.",
-                IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class,
-                DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
-                IconUtils.XML_IMAGEPATH, XmlDatastore.class, XmlDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("JSON file", "JavaScript Object NOtation file (.json).",
-                IconUtils.JSON_IMAGEPATH, JsonDatastore.class, JsonDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
-                IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-
-        panel1.add(Box.createHorizontalStrut(10));
-        panel1.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
-                IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class,
-                DCPopupBubble.Position.BOTTOM));
-        panel1.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system", IconUtils.SUGAR_CRM_IMAGEPATH,
-                SugarCrmDatastore.class, SugarCrmDatastoreDialog.class, DCPopupBubble.Position.BOTTOM));
-
+        
+        final int panelItemsCount = 10;
+        
+        for (int i = 0; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panelItemsCount); i++) {
+            DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
+            panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
+                    datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.BOTTOM));
+        }
+        
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        panel2.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
-                IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class,
-                DCPopupBubble.Position.TOP));
-
-        panel2.add(createNewDatastoreButton("CouchDB database", "Connect to an Apache CouchDB database",
-                IconUtils.COUCHDB_IMAGEPATH, CouchDbDatastore.class, CouchDbDatastoreDialog.class,
-                DCPopupBubble.Position.TOP));
-
-        panel2.add(createNewDatastoreButton("ElasticSearch index", "Connect to an ElasticSearch index",
-                IconUtils.ELASTICSEARCH_IMAGEPATH, ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class,
-                DCPopupBubble.Position.TOP));
-
-        panel2.add(createNewDatastoreButton("Cassandra database", "Connect to an Apache Cassandra database",
-                IconUtils.CASSANDRA_IMAGEPATH, CassandraDatastore.class, CassandraDatastoreDialog.class,
-                DCPopupBubble.Position.TOP));
-
-        panel2.add(createNewDatastoreButton("HBase database", "Connect to an Apache HBase database",
-                IconUtils.HBASE_IMAGEPATH, HBaseDatastore.class, HBaseDatastoreDialog.class, DCPopupBubble.Position.TOP));
+        for (int i = panelItemsCount; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), 2 * panelItemsCount); i++) {
+            DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
+            panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
+                    datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
+        }
 
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();

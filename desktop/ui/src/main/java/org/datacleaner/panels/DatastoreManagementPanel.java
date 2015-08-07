@@ -261,9 +261,10 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();
         
-        final int panelItemsCount = 10;
+        final int panel1ItemsCount = 10;
+        final int panel2ItemsCount = 8;
         
-        for (int i = 0; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panelItemsCount); i++) {
+        for (int i = 0; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
@@ -274,7 +275,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        for (int i = panelItemsCount; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), 2 * panelItemsCount); i++) {
+        for (int i = panel1ItemsCount; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount + panel2ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
@@ -283,7 +284,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         }
 
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(_datastoreCatalog.getAvailableDatastoreDescriptors(), 2 * panelItemsCount, databaseNames));
+        panel2.add(createMoreDatabasesButton(_datastoreCatalog.getAvailableDatastoreDescriptors(), panel1ItemsCount + panel2ItemsCount, databaseNames));
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));

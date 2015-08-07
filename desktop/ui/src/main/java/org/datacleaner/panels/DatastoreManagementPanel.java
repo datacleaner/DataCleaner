@@ -39,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -50,8 +49,6 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
 import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
 import org.datacleaner.connection.JdbcDatastore;
-import org.datacleaner.database.DatabaseDriverCatalog;
-import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -69,7 +66,6 @@ import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 import org.datacleaner.windows.OptionsDialog;
 import org.jdesktop.swingx.JXTextField;
@@ -89,7 +85,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     private final MutableDatastoreCatalog _datastoreCatalog;
     private final Provider<OptionsDialog> _optionsDialogProvider;
-    private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final List<DatastorePanel> _datastorePanels;
     private final DCGlassPane _glassPane;
     private final JButton _analyzeButton;
@@ -100,8 +95,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     public DatastoreManagementPanel(DataCleanerConfiguration configuration,
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule,
-            DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
+            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule, UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
         _datastorePanels = new ArrayList<DatastorePanel>();
@@ -109,7 +103,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
         _dcModule = dcModule;
-        _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
         // initialize "Build job" button
@@ -289,9 +282,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             databaseNames.add(datastoreDescriptor.getName());
         }
 
-
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(databaseNames));
+        panel2.add(createMoreDatabasesButton(_datastoreCatalog.getAvailableDatastoreDescriptors(), 2 * panelItemsCount, databaseNames));
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
@@ -301,45 +293,22 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return containerPanel;
     }
 
-    private Component createMoreDatabasesButton(Set<String> databaseNames) {
+    private Component createMoreDatabasesButton(List<DatastoreDescriptor> availableDatastoreDescriptors, int startIndex, Set<String> databaseNames) {
         final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
 
         final JPopupMenu moreDatastoreTypesMenu = moreDatastoreTypesButton.getMenu();
-        // installed databases
-        final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
-                .getInstalledWorkingDatabaseDrivers();
-        for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
-            final String databaseName = databaseDriver.getDisplayName();
-            if (!databaseNames.contains(databaseName)) {
-                final String imagePath = databaseDriver.getIconImagePath();
-                final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
-                final JMenuItem menuItem = WidgetFactory.createMenuItem(databaseName, icon);
-                menuItem.addActionListener(createJdbcActionListener(databaseName));
-                moreDatastoreTypesMenu.add(menuItem);
-            }
+
+        for (int i = startIndex; i < availableDatastoreDescriptors.size(); i++) {
+            DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
+            final String imagePath = DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor);
+            final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
+            menuItem.addActionListener(createJdbcActionListener(datastoreDescriptor.getName()));
+            moreDatastoreTypesMenu.add(menuItem);
         }
-
-        // custom/other jdbc connection
-        final ImageIcon icon = imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH,
-                IconUtils.ICON_SIZE_SMALL);
-        final JMenuItem menuItem = WidgetFactory.createMenuItem("Other database", icon);
-        menuItem.addActionListener(createJdbcActionListener(null));
-        moreDatastoreTypesMenu.add(menuItem);
-
-        // composite datastore
-        final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
-                imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-        compositeMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final CompositeDatastoreDialog dialog = new CompositeDatastoreDialog(_datastoreCatalog, getWindow()
-                        .getWindowContext(), _userPreferences);
-                dialog.open();
-            }
-        });
-
+        
         final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
                 imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
         databaseDriversMenuItem.addActionListener(new ActionListener() {
@@ -352,8 +321,6 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         });
 
         moreDatastoreTypesMenu.add(databaseDriversMenuItem);
-        moreDatastoreTypesMenu.add(new JSeparator(JSeparator.HORIZONTAL));
-        moreDatastoreTypesMenu.add(compositeMenuItem);
         return moreDatastoreTypesButton;
     }
 

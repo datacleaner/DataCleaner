@@ -27,6 +27,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.windows.AbstractDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.CassandraDatastoreDialog;
+import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
@@ -106,6 +107,9 @@ public class DatastoreDescriptorDesktopBindings {
 
     private static final DatastoreDescriptor SQLSERVER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
             "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
+    
+    private static final DatastoreDescriptor COMPOSITE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Composite datastore",
+            "Create a composite datastore", CompositeDatastore.class);
 
     private static Map<DatastoreDescriptor, String> _iconPaths = new HashMap<DatastoreDescriptor, String>();
 
@@ -132,6 +136,7 @@ public class DatastoreDescriptorDesktopBindings {
         _iconPaths.put(POSTGRESQL_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/postgresql.png");
         _iconPaths.put(ORACLE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/oracle.png");
         _iconPaths.put(SQLSERVER_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/microsoft.png");
+        _iconPaths.put(COMPOSITE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/microsoft.png");
     }
 
     static {
@@ -155,14 +160,27 @@ public class DatastoreDescriptorDesktopBindings {
         _dialogClasses.put(POSTGRESQL_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
         _dialogClasses.put(ORACLE_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
         _dialogClasses.put(SQLSERVER_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
+        _dialogClasses.put(COMPOSITE_DATASTORE_DESCRIPTOR, CompositeDatastoreDialog.class);
     }
 
     public static String getIconPath(DatastoreDescriptor datastoreDescriptor) {
-        return _iconPaths.get(datastoreDescriptor);
+        String iconPath = _iconPaths.get(datastoreDescriptor);
+        if (iconPath == null) {
+            if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
+                return IconUtils.GENERIC_DATASTORE_IMAGEPATH;
+            }
+        }
+        return iconPath;
     }
 
     public static Class<? extends AbstractDialog> getDialogClass(DatastoreDescriptor datastoreDescriptor) {
-        return _dialogClasses.get(datastoreDescriptor);
+        Class<? extends AbstractDialog> dialogClass = _dialogClasses.get(datastoreDescriptor);
+        if (dialogClass == null) {
+            if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
+                return JdbcDatastoreDialog.class;
+            }
+        }
+        return dialogClass;
     }
 
 }

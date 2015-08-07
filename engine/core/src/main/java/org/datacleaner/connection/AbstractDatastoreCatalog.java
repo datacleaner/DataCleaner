@@ -20,13 +20,27 @@
 package org.datacleaner.connection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.datacleaner.database.DatabaseDriverCatalog;
+import org.datacleaner.database.DatabaseDriverDescriptor;
+import org.datacleaner.user.UserPreferences;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
 
+    private DatabaseDriverCatalog _databaseDriverCatalog;
+    
+    public AbstractDatastoreCatalog() {
+        this(null);
+    }
+    
+    public AbstractDatastoreCatalog(UserPreferences userPreferences) {
+        _databaseDriverCatalog = new DatabaseDriverCatalog(userPreferences);
+    }
+    
     @Override
     public List<DatastoreDescriptor> getAvailableDatastoreDescriptors() {
         List<DatastoreDescriptor> availableDatabaseDescriptors = new ArrayList<>();
@@ -37,46 +51,17 @@ public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
         List<DatastoreDescriptor> driverBasedDatastoreDescriptors = getDriverBasedDatastoreDescriptors();
         availableDatabaseDescriptors.addAll(driverBasedDatastoreDescriptors);
         
+        Set<String> alreadyAddedDatabaseNames = new HashSet<>();
+        for (DatastoreDescriptor datastoreDescriptor : driverBasedDatastoreDescriptors) {
+            alreadyAddedDatabaseNames.add(datastoreDescriptor.getName());
+        }
+        
+        List<DatastoreDescriptor> otherDatastoreDescriptors = getOtherDatastoreDescriptors(alreadyAddedDatabaseNames);
+        availableDatabaseDescriptors.addAll(otherDatastoreDescriptors);
+        
         return availableDatabaseDescriptors;
     }
 
-    private List<DatastoreDescriptor> getDriverBasedDatastoreDescriptors() {
-        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
-        
-        DatabaseDriverCatalog databaseDriverCatalog = new DatabaseDriverCatalog(null);
-        
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
-            DatastoreDescriptor hiveDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE,
-                    "Connect to an Apache Hive database", JdbcDatastore.class);
-            datastoreDescriptors.add(hiveDatastoreDescriptor);
-        }
-        
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            DatastoreDescriptor mysqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
-                    "Connect to a MySQL database", JdbcDatastore.class);
-            datastoreDescriptors.add(mysqlDatastoreDescriptor);
-        }
-        
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            DatastoreDescriptor postgresqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-                    "Connect to a PostgreSQL database", JdbcDatastore.class);
-            datastoreDescriptors.add(postgresqlDatastoreDescriptor);
-        }
-
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-            DatastoreDescriptor oracleDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
-                    "Connect to a Oracle database", JdbcDatastore.class);
-            datastoreDescriptors.add(oracleDatastoreDescriptor);
-        }
-
-        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-            DatastoreDescriptor sqlServerDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
-                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
-            datastoreDescriptors.add(sqlServerDatastoreDescriptor);
-        }
-
-        return datastoreDescriptors;
-    }
 
     private List<DatastoreDescriptor> getManualDatastoreDescriptors() {
         List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
@@ -144,5 +129,76 @@ public abstract class AbstractDatastoreCatalog implements DatastoreCatalog {
         
         return datastoreDescriptors;
     }
+    
+    private List<DatastoreDescriptor> getDriverBasedDatastoreDescriptors() {
+        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+        
+        DatabaseDriverCatalog databaseDriverCatalog = new DatabaseDriverCatalog(null);
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
+            DatastoreDescriptor hiveDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE,
+                    "Connect to an Apache Hive database", JdbcDatastore.class);
+            datastoreDescriptors.add(hiveDatastoreDescriptor);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+            DatastoreDescriptor mysqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
+                    "Connect to a MySQL database", JdbcDatastore.class);
+            datastoreDescriptors.add(mysqlDatastoreDescriptor);
+        }
+        
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+            DatastoreDescriptor postgresqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+                    "Connect to a PostgreSQL database", JdbcDatastore.class);
+            datastoreDescriptors.add(postgresqlDatastoreDescriptor);
+        }
 
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+            DatastoreDescriptor oracleDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
+                    "Connect to a Oracle database", JdbcDatastore.class);
+            datastoreDescriptors.add(oracleDatastoreDescriptor);
+        }
+
+        if (databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+            DatastoreDescriptor sqlServerDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
+                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
+            datastoreDescriptors.add(sqlServerDatastoreDescriptor);
+        }
+
+        return datastoreDescriptors;
+    }
+
+    private List<DatastoreDescriptor> getOtherDatastoreDescriptors(Set<String> alreadyAddedDatabaseNames) {
+        List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
+        
+        final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
+                .getInstalledWorkingDatabaseDrivers();
+        for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
+            final String databaseName = databaseDriver.getDisplayName();
+            if (!alreadyAddedDatabaseNames.contains(databaseName)) {
+                DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName,
+                        "Connect to " + databaseName, JdbcDatastore.class);
+                datastoreDescriptors.add(jdbcDatastoreDescriptor);
+            }
+        }
+
+        // custom/other jdbc connection
+        final String databaseName = "Other database";
+        if (!alreadyAddedDatabaseNames.contains(databaseName)) {
+            DatastoreDescriptor otherDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName,
+                    "Connect to other database", JdbcDatastore.class);
+            datastoreDescriptors.add(otherDatastoreDescriptor);
+        }
+
+        // composite datastore
+        final String compositeDatastoreName = "Composite datastore";
+        if (!alreadyAddedDatabaseNames.contains(compositeDatastoreName)) {
+            DatastoreDescriptor compositeDatastoreDescriptor = new DatastoreDescriptorImpl(compositeDatastoreName,
+                    "Create composite datastore", JdbcDatastore.class);
+            datastoreDescriptors.add(compositeDatastoreDescriptor);
+        }
+
+        
+        return datastoreDescriptors;
+    }
 }

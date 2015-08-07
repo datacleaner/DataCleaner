@@ -246,7 +246,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 _dcModule);
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
-                _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
+                _optionsDialogProvider, _dcModule, _userPreferences);
         _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog,
                 (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 

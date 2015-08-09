@@ -372,9 +372,62 @@
 
 	<section id="configuration_file_reference_data">
 		<title>Reference data</title>
-		<para>Reference data are defined in the configuration file in the
-			element &lt;reference-data-catalog&gt;.</para>
-	</section>
+		<para>Reference data items (dictionaries, synonym catalogs and string patterns) are defined
+		in the configuration file in the element &lt;reference-data-catalog&gt;. Below some examples:</para>
+		
+		<section>
+			<title>Dictionaries</title>
+			<para>Dictionaries are stored within the &lt;dictionaries&gt; element within the reference data section. Three types of dictionaries can be added.</para>
+			
+			<para>
+				<emphasis>Datastore dictionaries</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;dictionaries&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;datastore-dictionary&#160;name="Lastnames"&#160;description="My&#160;datastore&#160;based&#160;dictionary"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;datastore-name&gt;orderdb&lt;/datastore-name&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;column-path&gt;EMPLOYEES.LASTNAME&lt;/column-path&gt;
+				&#160;&#160;&#160;&#160;&lt;/datastore-dictionary&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/dictionaries&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+			<para>
+				<emphasis>Text file dictionaries</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;dictionaries&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;text-file-dictionary&#160;name="Firstnames"&#160;description="My&#160;file&#160;based&#160;dictionary"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;filename&gt;/path/to/first.txt&lt;/filename&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
+				&#160;&#160;&#160;&#160;&lt;/text-file-dictionary&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/dictionaries&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+			<para>
+				<emphasis>Value list dictionaries</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;dictionaries&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;value-list-dictionary&#160;name="Greetings"&#160;description="My&#160;simple&#160;value&#160;list"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;hello&lt;/value&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;hi&lt;/value&gt;	
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;greetings&lt;/value&gt;
+				&#160;&#160;&#160;&#160;&lt;value&gt;godday&lt;/value&gt;
+				&#160;&#160;&#160;&#160;&lt;/value-list-dictionary&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/dictionaries&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+		</section>
+		</section>
 
 	<section id="configuration_file_task_runner">
 		<title>Task runner</title>
@@ -403,11 +456,8 @@
 		<para>The storage provider is used for storing temporary data used
 			while executing an analysis job. There are two types of storage:
 			Large collections of (single) values and
-			"annotated rows", ie. rows
-			that have been marked with a specific
-			category which
-			will be of
-			interest to the user.
+			"annotated rows", ie. rows that have been sampled or marked with
+			a specific category which will be of interest to the user to inspect.
 		</para>
 		<para>To explain the storage provider configuration let's look at the
 			default element:
@@ -419,7 +469,7 @@
 			&#160;&#160;&#160;&lt;berkeley-db/&gt;
 			&#160;&#160;&lt;/collections-storage&gt;
 			&#160;&#160;&lt;row-annotation-storage&gt;
-			&#160;&#160;&#160;&lt;in-memory&#160;max-rows-threshold="1000"/&gt;
+			&#160;&#160;&#160;&lt;in-memory&#160;max-rows-threshold="1000"&#160;max-sets-threshold="200"/&gt;
 			&#160;&#160;&lt;/row-annotation-storage&gt;
 			&#160;&lt;/combined&gt;
 			&lt;/storage-provider&gt; </programlisting>
@@ -432,9 +482,11 @@
 		</para>
 		<para>
 			Row annotations are stored in memory. There's a threshold of
-			1000 rows which means that if more than 1000 records are annotated
+			1000 rows in maximum 200 sets. This means that if more than 1000 records are annotated
 			with the same category then additional records will not be saved (and
-			thus is not viewable by the user). Most user scenarios will not
+			thus is not viewable by the user). Furthermore it means that only up until 200 sample
+			sets will be saved. Further annotations will not be sampled, but metrics still be counted.
+			Most user scenarios will not
 			require more than max. 1000 annotated records for inspection, but if
 			this is really neccessary a different strategy can be pursued:
 		</para>

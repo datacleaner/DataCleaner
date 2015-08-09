@@ -427,7 +427,77 @@
 				&lt;/reference-data-catalog&gt;
 			</programlisting>
 		</section>
+		<section>
+			<title>Synonym catalogs</title>
+			<para>Synonym catalogs are stored within the &lt;synonym-catalogs&gt; element within the reference data section. Two types of dictionaries can be added.</para>
+			<para>
+				<emphasis>Text file synonym catalogs</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;synonym-catalogs&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;text-file-synonym-catalog name="textfile_syn" description="My text file synonyms"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;filename&gt;/path/to/synonyms.txt&lt;/filename&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;case-sensitive&gt;false&lt;/case-sensitive&gt;
+				&#160;&#160;&#160;&#160;&lt;/text-file-synonym-catalog&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/synonym-catalogs&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+			<para>
+				<emphasis>Datastore synonym catalogs</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;synonym-catalogs&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;datastore-synonym-catalog name="datastore_syn" description="My datastore synonyms"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;datastore-name&gt;orderdb&lt;/datastore-name&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;master-term-column-path&gt;CUSTOMERS.CUSTOMERNAME&lt;/master-term-column-path&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;synonym-column-path&gt;CUSTOMERS.CUSTOMERNUMBER&lt;/synonym-column-path&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;synonym-column-path&gt;CUSTOMERS.PHONE&lt;/synonym-column-path&gt;
+				&#160;&#160;&#160;&#160;&lt;/datastore-synonym-catalog&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/synonym-catalogs&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
 		</section>
+		<section>
+			<title>String patterns</title>
+			<para>Dictionaries are stored within the &lt;string-patterns&gt; element within the reference data section. Two types of string patterns can be added.</para>
+			<para>
+				<emphasis>Regular expression (regex) string patterns</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;string-patterns&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;regex-pattern name="regex danish email" description="Danish email addresses"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;expression&gt;[a-z]+@[a-z]+\.dk&lt;/expression&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;match-entire-string&gt;true&lt;/match-entire-string&gt;
+				&#160;&#160;&#160;&#160;&lt;/regex-pattern&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/string-patterns&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+			<para>
+				<emphasis>Simple string patterns</emphasis>
+			</para>
+			<programlisting lang="xml">
+				&lt;reference-data-catalog&gt;
+				&#160;&#160;&lt;string-patterns&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&#160;&#160;&lt;simple-pattern name="simple email" description="Simple email pattern"&gt;
+				&#160;&#160;&#160;&#160;&#160;&#160;&lt;expression&gt;aaaa@aaaaa.aa&lt;/expression&gt;
+				&#160;&#160;&#160;&#160;&lt;/simple-pattern&gt;
+				&#160;&#160;&#160;...
+				&#160;&#160;&lt;/string-patterns&gt;
+				&lt;/reference-data-catalog&gt;
+			</programlisting>
+		</section>
+	</section>
 
 	<section id="configuration_file_task_runner">
 		<title>Task runner</title>

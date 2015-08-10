@@ -136,7 +136,7 @@ public class DatastoreDescriptorDesktopBindings {
         _iconPaths.put(POSTGRESQL_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/postgresql.png");
         _iconPaths.put(ORACLE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/oracle.png");
         _iconPaths.put(SQLSERVER_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/microsoft.png");
-        _iconPaths.put(COMPOSITE_DATASTORE_DESCRIPTOR, "images/datastore-types/databases/microsoft.png");
+        _iconPaths.put(COMPOSITE_DATASTORE_DESCRIPTOR, IconUtils.COMPOSITE_IMAGEPATH);
     }
 
     static {

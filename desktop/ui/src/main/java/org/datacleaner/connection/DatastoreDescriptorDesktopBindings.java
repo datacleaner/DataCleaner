@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.windows.AbstractDialog;
+import org.datacleaner.windows.AbstractDatastoreDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
@@ -113,7 +113,7 @@ public class DatastoreDescriptorDesktopBindings {
 
     private static Map<DatastoreDescriptor, String> _iconPaths = new HashMap<DatastoreDescriptor, String>();
 
-    private static Map<DatastoreDescriptor, Class<? extends AbstractDialog>> _dialogClasses = new HashMap<>();
+    private static Map<DatastoreDescriptor, Class<? extends AbstractDatastoreDialog<? extends Datastore>>> _dialogClasses = new HashMap<>();
 
     static {
         _iconPaths.put(CSV_DATASTORE_DESCRIPTOR, IconUtils.CSV_IMAGEPATH);
@@ -173,8 +173,8 @@ public class DatastoreDescriptorDesktopBindings {
         return iconPath;
     }
 
-    public static Class<? extends AbstractDialog> getDialogClass(DatastoreDescriptor datastoreDescriptor) {
-        Class<? extends AbstractDialog> dialogClass = _dialogClasses.get(datastoreDescriptor);
+    public static Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDialogClass(DatastoreDescriptor datastoreDescriptor) {
+        Class<? extends AbstractDatastoreDialog<? extends Datastore>> dialogClass = _dialogClasses.get(datastoreDescriptor);
         if (dialogClass == null) {
             if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
                 return JdbcDatastoreDialog.class;

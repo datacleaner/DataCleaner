@@ -48,7 +48,7 @@ import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.Dropzone;
 import org.datacleaner.widgets.PopupButton;
-import org.datacleaner.windows.AbstractDialog;
+import org.datacleaner.windows.AbstractDatastoreDialog;
 import org.datacleaner.windows.JdbcDatastoreDialog;
 
 import com.google.inject.Injector;
@@ -203,7 +203,7 @@ public class AddDatastorePanel extends DCPanel {
     }
 
     private <D extends Datastore> JMenuItem createNewDatastoreButton(final String title, final String description,
-            final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass) {
+            final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDatastoreDialog<? extends Datastore>> dialogClass) {
         final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
         item.setToolTipText(description);
 
@@ -212,17 +212,18 @@ public class AddDatastorePanel extends DCPanel {
             public void actionPerformed(ActionEvent event) {
                 Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
-                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
+                final AbstractDatastoreDialog<? extends Datastore> dialog = injectorWithNullDatastore.getInstance(dialogClass);
 
                 dialog.setVisible(true);
-                // dialog.addWindowListener(new WindowAdapter() {
-                // @Override
-                // public void windowClosed(WindowEvent e) {
-                // if (dialog.getSavedDatastore() != null) {
-                // _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
-                // }
-                // }
-                // });
+
+                dialog.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        if (dialog.getSavedDatastore() != null) {
+                            _datastoreSelectedListener.datastoreSelected(dialog.getSavedDatastore());
+                        }
+                    }
+                });
             }
         });
         return item;

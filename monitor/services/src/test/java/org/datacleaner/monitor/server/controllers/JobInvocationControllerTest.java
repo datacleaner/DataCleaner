@@ -19,17 +19,16 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactory;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class JobInvocationControllerTest extends TestCase {
 

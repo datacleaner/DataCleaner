@@ -19,11 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
-import java.io.InputStream;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.FileHelper;
@@ -36,6 +32,9 @@ import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.file.FileRepository;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.io.File;
+import java.io.InputStream;
 
 public class DatastoresFolderControllerTest extends TestCase {
 

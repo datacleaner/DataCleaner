@@ -19,12 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -35,6 +30,10 @@ import org.datacleaner.repository.Repository;
 import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JobCopyAndDeleteControllerTest extends TestCase {
 

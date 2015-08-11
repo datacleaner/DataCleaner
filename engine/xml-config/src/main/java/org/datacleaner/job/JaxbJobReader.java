@@ -500,7 +500,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 
                 for (ColumnType sourceColumnPath : sourceColumnTypes) {
                     for (InputColumn<?> inputColumn : sourceColumns) {
-                        if ((outputDataStream.getTable().getName() + "." + inputColumn.getName()).equals(sourceColumnPath.getPath())) {
+                        if (inputColumn.getName().equals(sourceColumnPath.getPath())) {
                             inputColumns.put(sourceColumnPath.getId(), inputColumn);
                         }
                     }

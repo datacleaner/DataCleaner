@@ -30,8 +30,8 @@
 				<job>
 					<source>
 						<columns>
-							<column id="col_charset" path="character sets.Character set"/>
-							<column id="col_name" path="character sets.Concat of FIRSTNAME,LASTNAME"/>
+							<column id="col_charset" path="Character set"/>
+							<column id="col_name" path="Concat of FIRSTNAME,LASTNAME"/>
 						</columns>
 					</source>
 					<analysis>

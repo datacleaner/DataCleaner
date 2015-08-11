@@ -107,21 +107,20 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
-        final Job jobType = createJobType(analysisJob);
+        final Job job = new Job();
+        configureJobType(analysisJob, job);
 
         try {
             final Marshaller marshaller = _jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
-            marshaller.marshal(jobType, outputStream);
+            marshaller.marshal(job, outputStream);
         } catch (JAXBException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private Job createJobType(final AnalysisJob analysisJob) {
-        final Job jobType = new Job();
-
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType) {
         try {
             JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
             jobType.setJobMetadata(jobMetadata);
@@ -180,7 +179,6 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         addRequirements(outcomeMappings, transformerMappings, filterMappings, analyzerMappings, columnMappings);
 
         addConfiguration(analysisJob, transformerMappings, filterMappings, analyzerMappings, columnMappings);
-        return jobType;
     }
 
     private String getColumnPath(Column column, String columnPathQualification) {
@@ -533,7 +531,9 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
                 outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
-                outputDataStreamType.setJob(createJobType(outputDataStreamJob.getJob()));
+                final JobType childJobType = new JobType();
+                configureJobType(outputDataStreamJob.getJob(), childJobType);
+                outputDataStreamType.setJob(childJobType);
                 analyzerType.getOutputDataStream().add(outputDataStreamType);
             }
             analysisType.getAnalyzer().add(analyzerType);

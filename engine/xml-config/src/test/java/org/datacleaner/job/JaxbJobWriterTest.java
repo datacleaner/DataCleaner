@@ -362,7 +362,7 @@ public class JaxbJobWriterTest extends TestCase {
             job = jobBuilder.toAnalysisJob();
         }
 
-        assertMatchesBenchmark(job, "example-job-output-dataset.analysis.xml");
+        assertMatchesBenchmark(job, "JaxbJobWriterTest-testReadAndWriteOutputDataStreamsJob.xml");
     }
 
     /**

@@ -11,14 +11,7 @@
 	</source>
 
 	<transformation>
-		<filter>
-			<descriptor ref="Not null" />
-			<input ref="col_supervisor" />
-			<outcome id="is_employee" category="VALID" />
-			<outcome id="is_manager" category="INVALID" />
-		</filter>
-
-		<transformer requires="is_employee">
+		<transformer>
 			<descriptor ref="Concatenator" />
 			<properties>
 				<property name="Separator" value=" " />
@@ -33,12 +26,12 @@
 		<analyzer requires="_any_">
 			<descriptor ref="Character set distribution" />
 			<input ref="col_fullname" />
-			<output-data-stream name="test">
+			<output-data-stream name="character sets">
 				<job>
 					<source>
 						<columns>
-							<column id="col_charset" path="character sets.character set"/>
-							<column id="col_name" path="character sets.col_fullname"/>
+							<column id="col_charset" path="character sets.Character set"/>
+							<column id="col_name" path="character sets.Concat of FIRSTNAME,LASTNAME"/>
 						</columns>
 					</source>
 					<analysis>

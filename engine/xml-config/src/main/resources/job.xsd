@@ -25,19 +25,6 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="outputDatasetJobType">
-		<sequence>
-			<element name="job-metadata" type="ab:jobMetadataType"
-					 minOccurs="0" maxOccurs="1" />
-			<element name="source" type="ab:outputDatasetSourceType" minOccurs="0"
-					 maxOccurs="1" />
-			<element name="transformation" type="ab:transformationType"
-					 minOccurs="0" maxOccurs="1" />
-			<element name="analysis" type="ab:analysisType" minOccurs="0"
-					 maxOccurs="1" />
-		</sequence>
-	</complexType>
-
 	<complexType name="jobMetadataType">
 		<all>
 			<element name="job-name" type="normalizedString" minOccurs="0"
@@ -71,19 +58,10 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="outputDatasetSourceType">
-		<sequence>
-			<element name="columns" type="ab:columnsType" minOccurs="0"
-					 maxOccurs="1" />
-			<element name="variables" type="ab:variablesType" minOccurs="0"
-					 maxOccurs="1" />
-		</sequence>
-	</complexType>
-
 	<complexType name="sourceType">
 		<sequence>
 			<element name="data-context" type="ab:dataContextType"
-				minOccurs="1" maxOccurs="1" />
+				minOccurs="0" maxOccurs="1" />
 			<element name="columns" type="ab:columnsType" minOccurs="0"
 				maxOccurs="1" />
 			<element name="variables" type="ab:variablesType" minOccurs="0"
@@ -193,7 +171,7 @@
 
 	<complexType name="outputDataStreamType">
 		<sequence>
-			<element name="job" type="ab:outputDatasetJobType"/>
+			<element name="job" type="ab:jobType"/>
 		</sequence>
 		<attribute name="name" type="string" use="required" />
 	</complexType>

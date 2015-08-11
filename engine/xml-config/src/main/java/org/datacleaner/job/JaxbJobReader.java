@@ -49,6 +49,7 @@ import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Converter;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.SourceColumnMapping;
@@ -84,6 +85,7 @@ import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
+import org.datacleaner.job.jaxb.OutputDataStreamType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
@@ -446,29 +448,66 @@ public class JaxbJobReader implements JobReader<InputStream> {
             final Map<String, InputColumn<?>> inputColumns = readSourceColumns(sourceColumnMapping, analysisJobBuilder,
                     source);
 
-            final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
-            final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
-
-            final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
-
-            // iterate to create all the initial component builders without any
-            // wiring
-            final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
-            for (ComponentType componentType : allComponentTypes) {
-                final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder,
-                        descriptorProvider, componentType);
-
-                initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType,
-                        componentBuilder);
-            }
-
-            wireInputColumns(inputColumns, componentBuilders);
-
-            wireRequirements(componentBuilders);
+            configureComponents(job, variables, analysisJobBuilder, inputColumns);
 
             return analysisJobBuilder;
         } finally {
             datastoreConnection.close();
+        }
+    }
+
+    private void configureComponents(JobType job, final Map<String, String> variables,
+            final AnalysisJobBuilder analysisJobBuilder, final Map<String, InputColumn<?>> inputColumns) {
+        final StringConverter stringConverter = createStringConverter(analysisJobBuilder);
+        final DescriptorProvider descriptorProvider = _configuration.getEnvironment().getDescriptorProvider();
+
+        final Map<ComponentType, ComponentBuilder> componentBuilders = new HashMap<>();
+
+        // iterate to create all the initial component builders without any
+        // wiring
+        final List<ComponentType> allComponentTypes = getAllComponentTypes(job);
+        for (ComponentType componentType : allComponentTypes) {
+            final ComponentBuilder componentBuilder = createComponentBuilder(analysisJobBuilder, descriptorProvider,
+                    componentType);
+
+            initializeComponentBuilder(variables, stringConverter, componentBuilders, componentType, componentBuilder);
+        }
+
+        wireInputColumns(inputColumns, componentBuilders);
+
+        wireRequirements(componentBuilders);
+
+        wireOutputDataStreams(componentBuilders);
+    }
+
+    private void wireOutputDataStreams(Map<ComponentType, ComponentBuilder> componentBuilders) {
+        for (Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
+            ComponentType componentType = entry.getKey();
+            ComponentBuilder componentBuilder = entry.getValue();
+            for (OutputDataStreamType outputDataStreamType : componentType.getOutputDataStream()) {
+                String name = outputDataStreamType.getName();
+                final OutputDataStream outputDataStream = componentBuilder.getOutputDataStream(name);
+                AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
+                        .getOutputDataStreamJobBuilder(outputDataStream);
+                JobType job = outputDataStreamType.getJob();
+
+                List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
+                
+                List<MetaModelInputColumn> sourceColumns = outputDataStreamJobBuilder.getSourceColumns();
+
+                // map column id's to input columns
+                final Map<String, InputColumn<?>> inputColumns = new HashMap<>();
+                
+                for (ColumnType sourceColumnPath : sourceColumnTypes) {
+                    for (InputColumn<?> inputColumn : sourceColumns) {
+                        if ((outputDataStream.getTable().getName() + "." + inputColumn.getName()).equals(sourceColumnPath.getPath())) {
+                            inputColumns.put(sourceColumnPath.getId(), inputColumn);
+                        }
+                    }
+                }
+
+                configureComponents(job, getVariables(job), outputDataStreamJobBuilder, inputColumns);
+            }
         }
     }
 

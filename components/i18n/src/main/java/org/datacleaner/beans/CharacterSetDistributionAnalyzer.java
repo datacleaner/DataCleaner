@@ -198,7 +198,7 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
 
         streamBuilder.withColumn(CHARACTER_SET_COLUMN, ColumnType.STRING);
         for(InputColumn<String> column : _columns) {
-            streamBuilder.withColumn(column.getName(), ColumnType.STRING);
+            streamBuilder.withColumn(column.getName(), ColumnType.NUMBER);
         }
 
         return new OutputDataStream[]{streamBuilder.toOutputDataStream()};

@@ -366,4 +366,28 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(1, jobBuilder.getAnalyzerComponentBuilders().size());
         assertEquals(0, jobBuilder.getTransformerComponentBuilders().size());
     }
+    
+    public void testReadOutputDataStreams() throws Throwable {
+        JobReader<InputStream> reader = new JaxbJobReader(conf);
+        AnalysisJob job = reader.read(new FileInputStream(
+                new File("src/test/resources/example-job-output-dataset.analysis.xml")));
+
+        assertEquals(1, job.getAnalyzerJobs().size());
+        final AnalyzerJob analyzerJob = job.getAnalyzerJobs().get(0);
+        assertEquals("Character set distribution", analyzerJob.getDescriptor().getDisplayName());
+        
+        assertEquals(1, analyzerJob.getOutputDataStreamJobs().length);
+        OutputDataStreamJob outputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[0];
+        assertEquals("character sets", outputDataStreamJob.getOutputDataStream().getName());
+        assertEquals(2, outputDataStreamJob.getJob().getAnalyzerJobs().size());
+        final AnalyzerJob stringAnalyzer = outputDataStreamJob.getJob().getAnalyzerJobs().get(0);
+        assertEquals("String analyzer", stringAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, stringAnalyzer.getInput().length);
+        assertEquals("Character set", stringAnalyzer.getInput()[0].getName());
+        
+        final AnalyzerJob numberAnalyzer = outputDataStreamJob.getJob().getAnalyzerJobs().get(1);
+        assertEquals("Number analyzer", numberAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, numberAnalyzer.getInput().length);
+        assertEquals("Concat of FIRSTNAME,LASTNAME", numberAnalyzer.getInput()[0].getName());
+    }
 }

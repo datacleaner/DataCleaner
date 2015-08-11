@@ -20,14 +20,17 @@
 package org.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.metamodel.DataContext;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -55,52 +58,10 @@ public class DatastoreSchemaController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-//    @RolesAllowed(SecurityRoles.TASK_QUERY)
-//    @RequestMapping(value = "/{tenant}/datastores/{datastore}.schema2", method = RequestMethod.GET, produces = {
-//            "application/json" })
-//    public void queryDatastoreGet(HttpServletResponse response,
-//            @PathVariable("tenant") final String tenant,
-//            @PathVariable("datastore") String datastoreName) throws IOException {
-//        getSchema(tenant, datastoreName, response);
-//    }
-//
-//    private void getSchema(String tenant, String datastoreName,
-//            HttpServletResponse response) throws IOException {
-//        response.setContentType("application/xhtml+xml");
-//
-//        datastoreName = datastoreName.replaceAll("\\+", " ");
-//
-//        final DataCleanerConfiguration configuration = _tenantContextFactory
-//                .getContext(tenant).getConfiguration();
-//        final Datastore datastore = configuration.getDatastoreCatalog()
-//                .getDatastore(datastoreName);
-//        if (datastore == null) {
-//            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-//                    "No such datastore: " + datastoreName);
-//            return;
-//        }
-//
-//        String username = getUsername();
-//
-//        try (final DatastoreConnection con = datastore.openConnection()) {
-//            final DataContext dataContext = con.getDataContext();
-//            logger.info("Serving schema result of datastore {} to user: {}.",
-//                    new Object[] { datastoreName, username });
-//
-//            final String[] schemaNames = dataContext.getSchemaNames();
-//
-//            final Writer writer = response.getWriter();
-//            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-//            writer.write("\n<schema>");
-//            writer.write(StringEscapeUtils.escapeXml(schemaNames[0]));
-//            writer.write("</schema>");
-//        }
-//    }
-    
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.schemas", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> getSchema(HttpServletResponse response,
+    public Map<String, Object> getSchemas(HttpServletResponse response,
             @PathVariable("tenant") final String tenant,
             @PathVariable("datastore") String datastoreName) throws IOException {
         
@@ -120,104 +81,65 @@ public class DatastoreSchemaController {
 
         final DataContext dataContext = getDataContext(datastore);
 
-        logger.info("Serving schema result of datastore {} to user: {}.",
+        logger.info("Serving schemas in datastore {} to user: {}.",
                 new Object[] { datastoreName, username });
         
-        final String[] schemaNames = dataContext.getSchemaNames();
-        
         final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("schemas", schemaNames);
+        map.put("schemas", createSchemaList(dataContext));
 
         return map;
     }
 
-    @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}/{schema}.tables", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getTables(HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
-            @PathVariable("schema") String schemaName) throws IOException {
-        
-        datastoreName = datastoreName.replaceAll("\\+", " ");
-
-        final DataCleanerConfiguration configuration = _tenantContextFactory
-                .getContext(tenant).getConfiguration();
-        final Datastore datastore = configuration.getDatastoreCatalog()
-                .getDatastore(datastoreName);
-        if (datastore == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such datastore: " + datastoreName);
-            return Collections.emptyMap();
+    private List<Map<String,Object>> createSchemaList(DataContext dataContext) {
+        List<Map<String,Object>> schemas = new ArrayList<Map<String,Object>>();
+        for (Schema schema : dataContext.getSchemas()) {
+            schemas.add(createSchemaMap(schema));
         }
+        return schemas;
+    }
 
-        String username = getUsername();
-
-        final DataContext dataContext = getDataContext(datastore);
-
-        logger.info("Serving tables in schema {} in datastore {} to user: {}.",
-                new Object[] { schemaName, datastoreName, username });
-        
-        final Schema schema  = dataContext.getSchemaByName(schemaName);
-        if (schema == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such schema: " + schemaName);
-            return Collections.emptyMap();
-        }
-
-        final String[] tableNames = schema.getTableNames();
-
+    private Map<String, Object> createSchemaMap(Schema schema) {
         final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("tables", tableNames);
-        
+        map.put("name", schema.getName());
+        map.put("tables", createTableList(schema));
         return map;
     }
-    
-    @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}/{schema}/{table}.columns", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> getColumns(HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
-            @PathVariable("schema") String schemaName,
-            @PathVariable("table") String tableName) throws IOException {
-        
-        datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final DataCleanerConfiguration configuration = _tenantContextFactory
-                .getContext(tenant).getConfiguration();
-        final Datastore datastore = configuration.getDatastoreCatalog()
-                .getDatastore(datastoreName);
-        if (datastore == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such datastore: " + datastoreName);
-            return Collections.emptyMap();
+    private List<Map<String,Object>> createTableList(Schema schema) {
+        List<Map<String,Object>> tables = new ArrayList<Map<String,Object>>();
+        for (Table table : schema.getTables()) {
+            tables.add(createTableMap(table));
         }
+        return tables;
+    }
 
-        String username = getUsername();
-
-        final DataContext dataContext = getDataContext(datastore);
-
-        logger.info("Serving columns of table {} in schema {} in datastore {} to user: {}.",
-                new Object[] { tableName, schemaName, datastoreName, username });
-        
-        final Schema schema = dataContext.getSchemaByName(schemaName);
-        if (schema == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such schema: " + schemaName);
-            return Collections.emptyMap();
-        }
-
-        final Table table = schema.getTableByName(tableName);
-        if (table == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such table: " + tableName);
-            return Collections.emptyMap();
-        }
-        
+    private Map<String, Object> createTableMap(Table table) {
         final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("columns", table.getColumnNames());
+        map.put("name", table.getName());
+        map.put("columns", createColumnList(table));
+        return map;
+    }
 
+    private List<Map<String,Object>> createColumnList(Table table) {
+        List<Map<String,Object>> columns = new ArrayList<Map<String,Object>>();
+        for (Column column : table.getColumns()) {
+            columns.add(createColumnMap(column));
+        }
+        return columns;
+    }
+
+    private Map<String, Object> createColumnMap(Column column) {
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name", column.getName());
+        map.put("type", column.getType().getName());
+        map.put("size", column.getColumnSize().toString());
+        map.put("nativeType", column.getNativeType());
+        map.put("nullable", column.isNullable());
+        String remarks = column.getRemarks();
+        map.put("remarks", remarks == null ? "" : remarks);
+        map.put("indexed", column.isIndexed());
+        map.put("quote", column.getQuote());
+        map.put("primaryKey", column.isPrimaryKey());
         return map;
     }
 

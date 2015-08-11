@@ -25,6 +25,19 @@
 		</sequence>
 	</complexType>
 
+	<complexType name="outputDatasetJobType">
+		<sequence>
+			<element name="job-metadata" type="ab:jobMetadataType"
+					 minOccurs="0" maxOccurs="1" />
+			<element name="source" type="ab:outputDatasetSourceType" minOccurs="0"
+					 maxOccurs="1" />
+			<element name="transformation" type="ab:transformationType"
+					 minOccurs="0" maxOccurs="1" />
+			<element name="analysis" type="ab:analysisType" minOccurs="0"
+					 maxOccurs="1" />
+		</sequence>
+	</complexType>
+
 	<complexType name="jobMetadataType">
 		<all>
 			<element name="job-name" type="normalizedString" minOccurs="0"
@@ -55,6 +68,15 @@
 					</simpleContent>
 				</complexType>
 			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="outputDatasetSourceType">
+		<sequence>
+			<element name="columns" type="ab:columnsType" minOccurs="0"
+					 maxOccurs="1" />
+			<element name="variables" type="ab:variablesType" minOccurs="0"
+					 maxOccurs="1" />
 		</sequence>
 	</complexType>
 
@@ -171,11 +193,9 @@
 
 	<complexType name="outputDataStreamType">
 		<sequence>
-			<element name="job" type="ab:jobType" minOccurs="1"
-				maxOccurs="1" />
+			<element name="job" type="ab:outputDatasetJobType"/>
 		</sequence>
-		<attribute name="id" type="string" use="required" />
-		<attribute name="name" type="string" use="optional" />
+		<attribute name="name" type="string" use="required" />
 	</complexType>
 
 	<complexType name="transformerType">
@@ -230,7 +250,7 @@
 	<complexType name="outputType">
 		<attribute name="id" type="token" use="required" />
 		<attribute name="name" type="string" use="optional" />
-		<attribute name="hidden" type="boolean" use="optional"></attribute>
+		<attribute name="hidden" type="boolean" use="optional" />
 	</complexType>
 
 	<complexType name="outcomeType">

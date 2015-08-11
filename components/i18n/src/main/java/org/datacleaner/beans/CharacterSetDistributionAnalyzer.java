@@ -63,6 +63,8 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
         HasOutputDataStreams {
 
     private static final Map<String, UnicodeSet> UNICODE_SETS = createUnicodeSets();
+    public static final String CHARACTER_SETS = "character sets";
+    public static final String CHARACTER_SET_COLUMN = "Character set";
 
     @Inject
     @Configured
@@ -174,12 +176,12 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
 
         if(_outputRowCollector != null) {
             for (String charsetName : unicodeSetNames) {
-                Object[] values = new Object[_columns.length + 1];
+                final Object[] values = new Object[_columns.length + 1];
                 values[0] = charsetName;
-                CrosstabNavigator<Number> nav = crosstab.navigate().where(measureDimension, charsetName);
+                final CrosstabNavigator<Number> nav = crosstab.navigate().where(measureDimension, charsetName);
 
                 for (int i = 0; i < _columns.length; i++) {
-                    String columnName = _columns[i].getName();
+                    final String columnName = _columns[i].getName();
                     values[i + 1] = nav.where(columnDimension, columnName).get();
                 }
                 _outputRowCollector.putValues(values);
@@ -192,9 +194,9 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
 
     @Override
     public OutputDataStream[] getOutputDataStreams() {
-        final OutputDataStreamBuilder streamBuilder = OutputDataStreams.pushDataStream("character sets");
+        final OutputDataStreamBuilder streamBuilder = OutputDataStreams.pushDataStream(CHARACTER_SETS);
 
-        streamBuilder.withColumn("Character set", ColumnType.STRING);
+        streamBuilder.withColumn(CHARACTER_SET_COLUMN, ColumnType.STRING);
         for(InputColumn<String> column : _columns) {
             streamBuilder.withColumn(column.getName(), ColumnType.STRING);
         }

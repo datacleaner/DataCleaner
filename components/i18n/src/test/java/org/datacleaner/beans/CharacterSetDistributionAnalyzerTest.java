@@ -26,6 +26,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.EqualsBuilder;
 import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
@@ -54,7 +55,6 @@ import org.datacleaner.result.CrosstabNavigator;
 import org.datacleaner.result.ListResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
-import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.test.MockAnalyzer;
 
 import com.ibm.icu.text.UnicodeSet;
@@ -155,8 +155,8 @@ public class CharacterSetDistributionAnalyzerTest extends TestCase {
         final MultiThreadedTaskRunner taskRunner = new MultiThreadedTaskRunner(16);
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
                 .withTaskRunner(taskRunner);
-        final FileResource file = new FileResource("src/test/resources/strings.txt");
-        final Datastore datastore = new CsvDatastore("strings", file);
+        final FileResource file = new FileResource("src/test/resources/testOutputDataStream.csv");
+        final Datastore datastore = new CsvDatastore("testoutputdatastream", file);
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
                 .withEnvironment(environment);
 

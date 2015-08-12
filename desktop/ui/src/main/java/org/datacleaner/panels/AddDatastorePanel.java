@@ -61,14 +61,16 @@ public class AddDatastorePanel extends DCPanel {
     private final DatastoreSelectedListener _datastoreSelectedListener;
     private final Dropzone _dropzone;
     private final DatastoreCatalog _datastoreCatalog;
+    private final DatabaseDriverCatalog _databaseDriverCatalog;
 
-    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog, final DCModule dcModule,
+    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog, final DatabaseDriverCatalog databaseDriverCatalog, final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
             boolean showExistingDatastoresButton) {
         super();
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(10, 10, 10, 10));
         _datastoreCatalog = datastoreCatalog;
+        _databaseDriverCatalog = databaseDriverCatalog;
         _dcModule = dcModule;
         _datastoreSelectedListener = datastoreSelectedListener;
         _dropzone = new Dropzone(datastoreCatalog, datastoreSelectedListener, userPreferences);
@@ -129,7 +131,7 @@ public class AddDatastorePanel extends DCPanel {
     private PopupButton createCloudButton() {
         final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
                 IconUtils.CLOUD_IMAGEPATH);
-        List<DatastoreDescriptor> availableDatastoreDescriptors = _datastoreCatalog.getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = _databaseDriverCatalog.getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Cloud service")) {
@@ -153,7 +155,7 @@ public class AddDatastorePanel extends DCPanel {
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        List<DatastoreDescriptor> availableDatastoreDescriptors = _datastoreCatalog.getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = _databaseDriverCatalog.getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Database")) {

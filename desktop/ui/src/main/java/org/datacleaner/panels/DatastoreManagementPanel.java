@@ -49,6 +49,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
 import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
 import org.datacleaner.user.MutableDatastoreCatalog;
@@ -91,11 +92,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private final DCPanel _datastoreListPanel;
     private final JXTextField _searchDatastoreTextField;
     private final DCModule _dcModule;
+    private final DatabaseDriverCatalog _databaseDriverCatalog;
     private final UserPreferences _userPreferences;
 
     public DatastoreManagementPanel(DataCleanerConfiguration configuration,
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule, UserPreferences userPreferences) {
+            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
         _datastorePanels = new ArrayList<DatastorePanel>();
@@ -103,6 +105,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         _glassPane = glassPane;
         _optionsDialogProvider = optionsDialogProvider;
         _dcModule = dcModule;
+        _databaseDriverCatalog = databaseDriverCatalog;
         _userPreferences = userPreferences;
 
         // initialize "Build job" button
@@ -264,8 +267,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final int panel1ItemsCount = 10;
         final int panel2ItemsCount = 8;
         
-        for (int i = 0; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
-            DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
+        for (int i = 0; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
+            DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.BOTTOM));
@@ -275,8 +278,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        for (int i = panel1ItemsCount; i < Math.min(_datastoreCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount + panel2ItemsCount); i++) {
-            DatastoreDescriptor datastoreDescriptor = _datastoreCatalog.getAvailableDatastoreDescriptors().get(i);
+        for (int i = panel1ItemsCount; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount + panel2ItemsCount); i++) {
+            DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
@@ -284,7 +287,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         }
 
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(_datastoreCatalog.getAvailableDatastoreDescriptors(), panel1ItemsCount + panel2ItemsCount, databaseNames));
+        panel2.add(createMoreDatabasesButton(_databaseDriverCatalog.getAvailableDatastoreDescriptors(), panel1ItemsCount + panel2ItemsCount, databaseNames));
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));

@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.datacleaner.configuration.DatastoreXmlExternalizer;
-import org.datacleaner.connection.AbstractDatastoreCatalog;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.util.StringUtils;
@@ -35,7 +34,7 @@ import org.datacleaner.util.StringUtils;
  * catalog wraps an immutable instance, which typically represents what is
  * configured in datacleaner's xml file.
  */
-public class MutableDatastoreCatalog extends AbstractDatastoreCatalog implements Serializable {
+public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
     private static final long serialVersionUID = 1L;
 

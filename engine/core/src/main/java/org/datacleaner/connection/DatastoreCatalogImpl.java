@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.HasNameMapper;
 
-public class DatastoreCatalogImpl extends AbstractDatastoreCatalog implements DatastoreCatalog {
+public class DatastoreCatalogImpl implements DatastoreCatalog {
 
     private static final long serialVersionUID = 1L;
 

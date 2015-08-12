@@ -35,6 +35,7 @@ import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
 import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
 import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -139,7 +140,9 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     private void populateCreateDatastoreMenu(final JPopupMenu createDatastoreMenu) {
-        List<DatastoreDescriptor> availableDatastoreDescriptors = _datastoreCatalog.getAvailableDatastoreDescriptors();
+        final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(DatabaseDriverCatalog.class);
+        
+        List<DatastoreDescriptor> availableDatastoreDescriptors = databaseDriverCatalog.getAvailableDatastoreDescriptors();
         
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (_onlyUpdatableDatastores) {

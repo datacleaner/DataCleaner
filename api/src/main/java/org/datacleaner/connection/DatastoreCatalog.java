@@ -20,7 +20,6 @@
 package org.datacleaner.connection;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Represents a collection of datastores, referenceable and usable by jobs.
@@ -51,9 +50,4 @@ public interface DatastoreCatalog extends Serializable {
      * @return
      */
     public Datastore getDatastore(String name);
-    
-    /**
-     * Returns the descriptors of datastore types available in DataCleaner.
-     */
-    public List<DatastoreDescriptor> getAvailableDatastoreDescriptors();
 }

@@ -142,7 +142,7 @@ public class DatabaseDriverCatalog implements Serializable {
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
         add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", new HiveDriverPreparer(), "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
-                "jdbc:hive://<hostname>:10000/<database>");
+                "jdbc:hive2://<hostname>:10000/<database>");
 
         Collections.sort(_databaseDrivers);
     }

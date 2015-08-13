@@ -37,6 +37,7 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.monitor.configuration.ComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

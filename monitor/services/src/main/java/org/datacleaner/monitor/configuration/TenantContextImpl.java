@@ -19,12 +19,9 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
@@ -40,9 +37,11 @@ import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default implementation of {@link TenantContext}.
@@ -54,6 +53,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     private final String _tenantId;
     private final Repository _repository;
     private final ConfigurationCache _configurationCache;
+    private final ComponentsStore _componentsStore;
     private final JobEngineManager _jobEngineManager;
     private final LoadingCache<JobIdentifier, JobContext> _jobCache;
 
@@ -62,8 +62,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
      * 
      * @param tenantId
      * @param repository
-     * @param injectionManagerFactory
-     *            the injection manager factory applicable to the whole
+     * @param environment
+     *            Contains the injection manager factory applicable to the whole
      *            application. This injection manager will be decorated/wrapped
      *            with a {@link TenantInjectionManagerFactory} in order to
      *            provide tenant-specific injection options.
@@ -86,6 +86,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
                 .withInjectionManagerFactory(tenantInjectionManagerFactory);
 
         _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
+        _componentsStore = new ComponentsStoreImpl(_repository, _tenantId);
         _jobCache = buildJobCache();
     }
 
@@ -186,6 +187,11 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
         logger.debug("onConfigurationChanged() invoked on tenant: {}", _tenantId);
         _configurationCache.clearCache();
         _jobCache.invalidateAll();
+    }
+
+    @Override
+    public ComponentsStore getComponentsStore() {
+        return _componentsStore;
     }
 
 }

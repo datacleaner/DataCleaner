@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.datacleaner.monitor.configuration.CreateInput;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,7 +78,7 @@ public interface ComponentsController {
      */
     @ResponseBody
     @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MIME_TYPE_JSON)
-    public ProcessOutput processComponent(final String tenant, final int id, final ProcessInput processInput)
+    public ProcessOutput processComponent(final String tenant, final String id, final ProcessInput processInput)
             throws ComponentNotFoundException;
 
     /**
@@ -88,7 +89,7 @@ public interface ComponentsController {
      */
     @ResponseBody
     @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MIME_TYPE_JSON)
-    public ProcessResult getFinalResult(final String tenant, final int id)
+    public ProcessResult getFinalResult(final String tenant, final String id)
             throws ComponentNotFoundException;
 
     /**
@@ -99,6 +100,6 @@ public interface ComponentsController {
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MIME_TYPE_JSON)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteComponent(final String tenant, final int id)
+    public void deleteComponent(final String tenant, final String id)
             throws ComponentNotFoundException;
 }

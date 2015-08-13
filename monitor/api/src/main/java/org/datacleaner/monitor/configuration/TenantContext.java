@@ -155,4 +155,12 @@ public interface TenantContext {
      * the configuration changes.
      */
     public void onConfigurationChanged();
+
+
+    /**
+     * Return the storage for components.
+     *
+     * @return
+     */
+    public ComponentsStore getComponentsStore();
 }

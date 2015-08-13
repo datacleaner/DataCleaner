@@ -19,57 +19,37 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.datacleaner.monitor.server.components.ComponentHandler;
-
-import java.io.Serializable;
 
 /**
- * Class ComponentConfigHolder
- * Object contains all information for execution components.
- *
+ * Class ComponentsStoreHolder
+ * Object for storing to component cache.
+ * 
  * @author k.houzvicka
- * @since 24.7.15
+ * @since 11.8.15
  */
-public class ComponentConfigHolder implements Serializable {
+public class ComponentsStoreHolder {
 
-    long timeoutMs;
-    CreateInput createInput;
-    String componentId;
-    String componentName;
+    private long timeout;
+    private CreateInput createInput;
+    private String componentId;
+    private String componentName;
 
-    @JsonIgnore
-    ComponentHandler handler;
-
-    public ComponentConfigHolder() {
+    public ComponentsStoreHolder() {
     }
 
-    public ComponentConfigHolder(long timeoutMs, CreateInput createInput, String componentId, String componentName, ComponentHandler handler) {
-        this.timeoutMs = timeoutMs;
+    public ComponentsStoreHolder(long timeout, CreateInput createInput, String componentId, String componentName) {
+        this.timeout = timeout;
         this.createInput = createInput;
         this.componentId = componentId;
         this.componentName = componentName;
-        this.handler = handler;
     }
 
-    public void close() {
-        handler.closeComponent();
+    public long getTimeout() {
+        return timeout;
     }
 
-    public long getTimeoutMs() {
-        return timeoutMs;
-    }
-
-    public void setTimeoutMs(long timeoutMs) {
-        this.timeoutMs = timeoutMs;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 
     public CreateInput getCreateInput() {
@@ -80,12 +60,12 @@ public class ComponentConfigHolder implements Serializable {
         this.createInput = createInput;
     }
 
-    public ComponentHandler getHandler() {
-        return handler;
+    public String getComponentId() {
+        return componentId;
     }
 
-    public void setHandler(ComponentHandler handler) {
-        this.handler = handler;
+    public void setComponentId(String componentId) {
+        this.componentId = componentId;
     }
 
     public String getComponentName() {

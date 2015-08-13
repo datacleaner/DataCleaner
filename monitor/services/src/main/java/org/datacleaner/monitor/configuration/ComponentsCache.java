@@ -19,11 +19,9 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import org.datacleaner.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,29 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ComponentsCache {
     private static final Logger logger = LoggerFactory.getLogger(ComponentsCache.class);
 
-    Repository repository;
-    ComponentsStore componentsStore;
-
-    private static final long CHECK_INTERVAL = 60 * 1000;
-    private static final long CLOSE_TIMEOUT = 60 * 1000;
-
     ConcurrentHashMap<String, ComponentsCacheConfigWrapper> data = new ConcurrentHashMap<>();
-
-    Thread checkerThread;
-    TimeoutChecker checker;
-
-    /**
-     * Create cache object with specific repository
-     *
-     * @param repository
-     */
-    public ComponentsCache(Repository repository) {
-        this.repository = repository;
-        this.componentsStore = new ComponentsStore(repository);
-        checker = new TimeoutChecker();
-        checkerThread = new Thread(checker);
-        checkerThread.start();
-    }
 
     /**
      * Put configuration of component to the cache
@@ -66,10 +42,9 @@ public class ComponentsCache {
      * @param componentConfigHolder
      */
     public void putComponent(ComponentConfigHolder componentConfigHolder) {
-        logger.info("Put component. name: {}, componentId: {}.", componentConfigHolder.configuration.getComponentName(), componentConfigHolder.getComponentId());
+        logger.info("Put component. name: {}, componentId: {}.", componentConfigHolder.getComponentName(), componentConfigHolder.getComponentId());
         ComponentsCacheConfigWrapper wrapper = new ComponentsCacheConfigWrapper(componentConfigHolder);
         data.put(componentConfigHolder.componentId, wrapper);
-        componentsStore.storeConfiguration(wrapper);
     }
 
 
@@ -83,13 +58,8 @@ public class ComponentsCache {
         logger.info("Get component with id: " + id);
         ComponentsCacheConfigWrapper ComponentsCacheConfigWrapper = data.get(id);
         if (ComponentsCacheConfigWrapper == null) {
-            ComponentsCacheConfigWrapper = componentsStore.getConfiguration(id);
-            if (ComponentsCacheConfigWrapper == null) {
-                logger.warn("Configuration {} not exists.", id);
-                return null;
-            }
-            logger.info("Component {} was in store. ", id);
-            data.put(id, ComponentsCacheConfigWrapper);
+             logger.warn("Configuration {} not exists in cache.", id);
+             return null;
         }
         ComponentsCacheConfigWrapper.updateExpirationTime();
         return ComponentsCacheConfigWrapper.componentConfigHolder;
@@ -102,8 +72,10 @@ public class ComponentsCache {
      */
     public void removeConfiguration(String id) {
         ComponentConfigHolder config = getConfigHolder(id);
+        if(config == null){
+           return;
+        }
         data.remove(id);
-        componentsStore.removeConfiguration(id);
         config.close();
         logger.info("Component {} was removed from cache and closed.", config.getComponentId());
     }
@@ -115,19 +87,6 @@ public class ComponentsCache {
      */
     public void close() throws InterruptedException {
         logger.info("Closing Components cache.");
-        synchronized (checker) {
-            checker.stop();
-            checker.notifyAll();
-        }
-        long maxTime = System.currentTimeMillis() + CLOSE_TIMEOUT;
-        while (checkerThread.isAlive()) {
-            Thread.sleep(500);
-            if (maxTime < System.currentTimeMillis()) {
-                logger.error("Problem with closing checking thread.");
-                break;
-            }
-        }
-
         for (ComponentsCacheConfigWrapper componentsCacheConfigWrapper : data.values()) {
             componentsCacheConfigWrapper.componentConfigHolder.close();
             logger.info("Component with id: {} was closed.", componentsCacheConfigWrapper.componentConfigHolder.getComponentId());
@@ -136,60 +95,5 @@ public class ComponentsCache {
 
         data.clear();
         logger.info("Components cache was closed.");
-    }
-
-
-    /**
-     * Thread for checking timeout for each components and also do update configuration is store.
-     */
-    private class TimeoutChecker implements Runnable {
-        boolean running = true;
-
-        @Override
-        public void run() {
-            while (running) {
-                long currentTime = System.currentTimeMillis();
-                HashSet<String> keys = new HashSet<>(data.keySet());
-                for (String key : keys) {
-                    ComponentsCacheConfigWrapper wrapper = data.get(key);
-                    if (wrapper != null && wrapper.expirationTime < currentTime) {
-                        // is cache is old configuration
-                        ComponentsCacheConfigWrapper storeWrapper = componentsStore.getConfiguration(key);
-                        // confirm with object from store
-                        if (storeWrapper != null && storeWrapper.expirationTime > currentTime) {
-                            // in store is config
-                            logger.info("CacheChecker: Component is updated from store.", key);
-                            data.put(key, storeWrapper);
-                        } else {
-                            logger.info("CacheChecker: Component {} expired.", key);
-                            data.remove(key);
-                            componentsStore.removeConfiguration(key);
-                            storeWrapper.componentConfigHolder.close();
-                        }
-                    } else if (wrapper != null && wrapper.mustBeUpdated()) {
-                        // update store
-                        logger.info("CacheChecker: Component {} is saved to store.", key);
-                        componentsStore.storeConfiguration(wrapper);
-                        wrapper.updated();
-                    }
-                }
-
-                synchronized (this) {
-                    if (running) {
-                        try {
-                            wait(CHECK_INTERVAL);
-                        } catch (InterruptedException e) {
-                            running = false;
-                            logger.error("Thread for checking component cache was been interrupted.", e);
-                        }
-                    }
-                }
-            }
-            logger.info("CacheChecker close");
-        }
-
-        public void stop() {
-            running = false;
-        }
     }
 }

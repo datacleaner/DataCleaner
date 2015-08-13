@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author k.houzvicka
  * @since 24.7.15
  */
-public class ComponentsStore {
+public class ComponentsStoreImpl implements ComponentsStore {
     private static final Logger logger = LoggerFactory.getLogger(ComponentsStore.class);
 
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
@@ -49,17 +49,15 @@ public class ComponentsStore {
 
     public static final String FOLDER_NAME = "components";
 
-    private Repository repository;
-
     private RepositoryFolder componentsFolder;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public ComponentsStore(Repository repository) {
-        this.repository = repository;
-        componentsFolder = repository.getFolder(FOLDER_NAME);
+    public ComponentsStoreImpl(Repository repository, String tenantId) {
+        RepositoryFolder tenantFolder = repository.getFolder(tenantId);
+        componentsFolder = tenantFolder.getFolder(FOLDER_NAME);
         if (componentsFolder == null) {
-            componentsFolder = repository.createFolder(FOLDER_NAME);
+            componentsFolder = tenantFolder.createFolder(FOLDER_NAME);
         }
 
     }
@@ -70,10 +68,10 @@ public class ComponentsStore {
      * @param componentId
      * @return
      */
-    public ComponentsCacheConfigWrapper getConfiguration(String componentId) {
+    public ComponentsStoreHolder getConfiguration(String componentId) {
         logger.info("Read component with id: {}", componentId);
         readLock.lock();
-        final ComponentsCacheConfigWrapper[] conf = new ComponentsCacheConfigWrapper[1];
+        final ComponentsStoreHolder[] conf = new ComponentsStoreHolder[1];
         try {
             RepositoryFile configFile = componentsFolder.getFile(componentId);
             if (configFile == null) {
@@ -83,7 +81,7 @@ public class ComponentsStore {
                 @Override
                 public void run(InputStream arg) throws Exception {
                     String theString = IOUtils.toString(arg);
-                    conf[0] = objectMapper.readValue(theString, ComponentsCacheConfigWrapper.class);
+                    conf[0] = objectMapper.readValue(theString, ComponentsStoreHolder.class);
                 }
             });
         } finally {
@@ -95,17 +93,17 @@ public class ComponentsStore {
     /**
      * Store configuration to repository in JSON
      *
-     * @param configWrapper
+     * @param configuration
      */
-    public void storeConfiguration(final ComponentsCacheConfigWrapper configWrapper) {
-        logger.info("Store component with id: {}", configWrapper.getComponentConfigHolder().getComponentId());
+    public void storeConfiguration(final ComponentsStoreHolder configuration) {
+        logger.info("Store component with id: {}", configuration.getComponentId());
         writeLock.lock();
         try {
-            componentsFolder.createFile(configWrapper.componentConfigHolder.componentId, new Action<OutputStream>() {
+            componentsFolder.createFile(configuration.getComponentId(), new Action<OutputStream>() {
                 @Override
                 public void run(OutputStream fileOutput) throws Exception {
                     String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
-                            configWrapper);
+                            configuration);
                     InputStream jsonConfStream = IOUtils.toInputStream(jsonConf);
                     FileHelper.copy(jsonConfStream, fileOutput);
                 }
@@ -121,14 +119,15 @@ public class ComponentsStore {
      * @param componentId
      */
     public void removeConfiguration(String componentId) {
-        logger.info("Remove component with id: {}", componentId);
         writeLock.lock();
         try {
             RepositoryFile configFile = componentsFolder.getFile(componentId);
             if (configFile == null) {
+                logger.info("Component with id: {} is not in store.", componentId);
                 return;
             }
             configFile.delete();
+            logger.info("Component {} was removed.", componentId);
         } finally {
             writeLock.unlock();
         }

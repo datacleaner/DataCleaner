@@ -38,6 +38,7 @@ import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.beans.CharacterSetDistributionAnalyzer;
+import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
@@ -348,7 +349,7 @@ public class JaxbJobWriterTest extends TestCase {
         Datastore ds = TestHelper.createSampleDatabaseDatastore("my database");
         SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
         descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
-        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CharacterSetDistributionAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
         descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(NumberAnalyzer.class));
 

@@ -59,12 +59,9 @@ import com.ibm.icu.text.UnicodeSet;
 @Description("Inspects and maps text characters according to character set affinity, such as Latin, Hebrew, Cyrillic, Chinese and more.")
 @ExternalDocumentation({ @DocumentationLink(title = "Internationalization in DataCleaner", url = "https://www.youtube.com/watch?v=ApA-nhtLbhI", type = DocumentationType.VIDEO, version = "3.0") })
 @Concurrent(true)
-public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDistributionResult>,
-        HasOutputDataStreams {
+public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDistributionResult> {
 
     private static final Map<String, UnicodeSet> UNICODE_SETS = createUnicodeSets();
-    public static final String CHARACTER_SETS = "character sets";
-    public static final String CHARACTER_SET_COLUMN = "Character set";
 
     @Inject
     @Configured
@@ -75,7 +72,6 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
     RowAnnotationFactory _annotationFactory;
 
     private final Map<InputColumn<String>, CharacterSetDistributionAnalyzerColumnDelegate> _columnDelegates = new HashMap<InputColumn<String>, CharacterSetDistributionAnalyzerColumnDelegate>();
-    private OutputRowCollector _outputRowCollector;
 
     @Initialize
     public void init() {
@@ -174,39 +170,6 @@ public class CharacterSetDistributionAnalyzer implements Analyzer<CharacterSetDi
             }
         }
 
-        if(_outputRowCollector != null) {
-            for (String charsetName : unicodeSetNames) {
-                final Object[] values = new Object[_columns.length + 1];
-                values[0] = charsetName;
-                final CrosstabNavigator<Number> nav = crosstab.navigate().where(measureDimension, charsetName);
-
-                for (int i = 0; i < _columns.length; i++) {
-                    final String columnName = _columns[i].getName();
-                    values[i + 1] = nav.where(columnDimension, columnName).get();
-                }
-                _outputRowCollector.putValues(values);
-            }
-        }
-
         return new CharacterSetDistributionResult(_columns, unicodeSetNames, crosstab);
-    }
-
-
-    @Override
-    public OutputDataStream[] getOutputDataStreams() {
-        final OutputDataStreamBuilder streamBuilder = OutputDataStreams.pushDataStream(CHARACTER_SETS);
-
-        streamBuilder.withColumn(CHARACTER_SET_COLUMN, ColumnType.STRING);
-        for(InputColumn<String> column : _columns) {
-            streamBuilder.withColumn(column.getName(), ColumnType.NUMBER);
-        }
-
-        return new OutputDataStream[]{streamBuilder.toOutputDataStream()};
-    }
-
-    @Override
-    public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
-            final OutputRowCollector outputRowCollector) {
-        _outputRowCollector = outputRowCollector;
     }
 }

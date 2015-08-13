@@ -24,24 +24,50 @@
 
 	<analysis>
 		<analyzer requires="_any_">
-			<descriptor ref="Character set distribution" />
+			<descriptor ref="Completeness analyzer" />
+			<properties>
+				<property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]" />
+				<property name="Evaluation mode" value="ALL_FIELDS"/>
+			</properties>
 			<input ref="col_fullname" />
-			<output-data-stream name="character sets">
+			<input ref="col_supervisor" />
+			<output-data-stream name="Complete rows">
 				<job>
 					<source>
 						<columns>
-							<column id="col_charset" path="Character set"/>
-							<column id="col_name" path="Concat of FIRSTNAME,LASTNAME"/>
+							<column id="col_supervisor" path="REPORTSTO"/>
+							<column id="col_fullname" path="Concat of FIRSTNAME,LASTNAME"/>
 						</columns>
 					</source>
 					<analysis>
 						<analyzer>
 							<descriptor ref="String analyzer"/>
-							<input ref="col_charset" />
+							<input ref="col_fullname" />
 						</analyzer>
 						<analyzer>
 							<descriptor ref="Number analyzer"/>
-							<input ref="col_name" />
+							<input ref="col_supervisor" />
+						</analyzer>
+					</analysis>
+				</job>
+			</output-data-stream>
+			<output-data-stream name="Incomplete rows">
+				<job>
+					<source>
+						<columns>
+							<!-- Let's switch these around to make sure that there's no name clashes -->
+							<column id="col_fullname" path="REPORTSTO"/>
+							<column id="col_supervisor" path="Concat of FIRSTNAME,LASTNAME"/>
+						</columns>
+					</source>
+					<analysis>
+						<analyzer>
+							<descriptor ref="String analyzer"/>
+							<input ref="col_supervisor" />
+						</analyzer>
+						<analyzer>
+							<descriptor ref="Number analyzer"/>
+							<input ref="col_fullname" />
 						</analyzer>
 					</analysis>
 				</job>

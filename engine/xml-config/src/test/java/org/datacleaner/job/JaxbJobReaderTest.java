@@ -374,20 +374,34 @@ public class JaxbJobReaderTest extends TestCase {
 
         assertEquals(1, job.getAnalyzerJobs().size());
         final AnalyzerJob analyzerJob = job.getAnalyzerJobs().get(0);
-        assertEquals("Character set distribution", analyzerJob.getDescriptor().getDisplayName());
+        assertEquals("Completeness analyzer", analyzerJob.getDescriptor().getDisplayName());
         
-        assertEquals(1, analyzerJob.getOutputDataStreamJobs().length);
-        OutputDataStreamJob outputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[0];
-        assertEquals("character sets", outputDataStreamJob.getOutputDataStream().getName());
-        assertEquals(2, outputDataStreamJob.getJob().getAnalyzerJobs().size());
-        final AnalyzerJob stringAnalyzer = outputDataStreamJob.getJob().getAnalyzerJobs().get(0);
-        assertEquals("String analyzer", stringAnalyzer.getDescriptor().getDisplayName());
-        assertEquals(1, stringAnalyzer.getInput().length);
-        assertEquals("Character set", stringAnalyzer.getInput()[0].getName());
+        assertEquals(2, analyzerJob.getOutputDataStreamJobs().length);
+        OutputDataStreamJob completeOutputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[0];
+        assertEquals("Complete rows", completeOutputDataStreamJob.getOutputDataStream().getName());
+        assertEquals(2, completeOutputDataStreamJob.getJob().getAnalyzerJobs().size());
+        final AnalyzerJob completeStringAnalyzer = completeOutputDataStreamJob.getJob().getAnalyzerJobs().get(0);
+        assertEquals("String analyzer", completeStringAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, completeStringAnalyzer.getInput().length);
+        assertEquals("Concat of FIRSTNAME,LASTNAME", completeStringAnalyzer.getInput()[0].getName());
         
-        final AnalyzerJob numberAnalyzer = outputDataStreamJob.getJob().getAnalyzerJobs().get(1);
-        assertEquals("Number analyzer", numberAnalyzer.getDescriptor().getDisplayName());
-        assertEquals(1, numberAnalyzer.getInput().length);
-        assertEquals("Concat of FIRSTNAME,LASTNAME", numberAnalyzer.getInput()[0].getName());
+        final AnalyzerJob completeNumberAnalyzer = completeOutputDataStreamJob.getJob().getAnalyzerJobs().get(1);
+        assertEquals("Number analyzer", completeNumberAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, completeNumberAnalyzer.getInput().length);
+        assertEquals("REPORTSTO", completeNumberAnalyzer.getInput()[0].getName());
+
+        assertEquals(2, analyzerJob.getOutputDataStreamJobs().length);
+        OutputDataStreamJob incompleteOutputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[1];
+        assertEquals("Incomplete rows", incompleteOutputDataStreamJob.getOutputDataStream().getName());
+        assertEquals(2, incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().size());
+        final AnalyzerJob incompleteStringAnalyzer = incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().get(0);
+        assertEquals("String analyzer", incompleteStringAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, incompleteStringAnalyzer.getInput().length);
+        assertEquals("Concat of FIRSTNAME,LASTNAME", incompleteStringAnalyzer.getInput()[0].getName());
+
+        final AnalyzerJob incompleteNumberAnalyzer = incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().get(1);
+        assertEquals("Number analyzer", incompleteNumberAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, incompleteNumberAnalyzer.getInput().length);
+        assertEquals("REPORTSTO", incompleteNumberAnalyzer.getInput()[0].getName());
     }
 }

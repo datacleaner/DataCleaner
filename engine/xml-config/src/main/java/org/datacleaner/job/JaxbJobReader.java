@@ -482,18 +482,18 @@ public class JaxbJobReader implements JobReader<InputStream> {
 
     private void wireOutputDataStreams(Map<ComponentType, ComponentBuilder> componentBuilders) {
         for (Map.Entry<ComponentType, ComponentBuilder> entry : componentBuilders.entrySet()) {
-            ComponentType componentType = entry.getKey();
-            ComponentBuilder componentBuilder = entry.getValue();
+            final ComponentType componentType = entry.getKey();
+            final ComponentBuilder componentBuilder = entry.getValue();
             for (OutputDataStreamType outputDataStreamType : componentType.getOutputDataStream()) {
-                String name = outputDataStreamType.getName();
+                final String name = outputDataStreamType.getName();
                 final OutputDataStream outputDataStream = componentBuilder.getOutputDataStream(name);
-                AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
+                final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder
                         .getOutputDataStreamJobBuilder(outputDataStream);
-                JobType job = outputDataStreamType.getJob();
+                final JobType job = outputDataStreamType.getJob();
 
-                List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
+                final List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
                 
-                List<MetaModelInputColumn> sourceColumns = outputDataStreamJobBuilder.getSourceColumns();
+                final List<MetaModelInputColumn> sourceColumns = outputDataStreamJobBuilder.getSourceColumns();
 
                 // map column id's to input columns
                 final Map<String, InputColumn<?>> inputColumns = new HashMap<>();

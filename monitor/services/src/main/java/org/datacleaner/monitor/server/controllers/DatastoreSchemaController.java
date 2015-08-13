@@ -85,10 +85,9 @@ public class DatastoreSchemaController {
         logger.info("Serving schemas in datastore {} to user: {}.",
                 new Object[] { datastoreName, username });
         
-        final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("schemas", createSchemaList(dataContext));
-
-        return map;
+        final Map<String, Object> schemas = new HashMap<String, Object>();
+        schemas.put("schemas", createSchemaList(dataContext));
+        return schemas;
     }
 
     private List<Map<String,Object>> createSchemaList(DataContext dataContext) {

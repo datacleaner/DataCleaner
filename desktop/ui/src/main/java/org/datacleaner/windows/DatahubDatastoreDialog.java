@@ -22,6 +22,7 @@ package org.datacleaner.windows;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
@@ -36,6 +37,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
+import org.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
 import com.google.inject.Inject;
@@ -46,6 +48,7 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
 
     private final JXTextField _hostTextField;
     private final JXTextField _portTextField;
+    private final JCheckBox _httpsCheckBox;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
     private final JXTextField _tenantNameTextField;
@@ -68,6 +71,10 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
                 validateAndUpdate();
             }
         };
+        _httpsCheckBox = new JCheckBox("https", false);
+        _httpsCheckBox.setOpaque(false);
+        _httpsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+
         _hostTextField.getDocument().addDocumentListener(genericDocumentListener);
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
@@ -77,6 +84,8 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         if (originalDatastore != null) {
             _hostTextField.setText(originalDatastore.getHost());
             _portTextField.setText(originalDatastore.getPort() + "");
+            _httpsCheckBox.setSelected(originalDatastore.https());
+
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
 
@@ -143,8 +152,10 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
         final String tenantName = _tenantNameTextField.getText();
+        final boolean https = _httpsCheckBox.isSelected();
 
-        return new DatahubDatastore(name, host, port, username, password, tenantName);
+
+        return new DatahubDatastore(name, host, port, username, password, tenantName, https);
     }
 
     @Override
@@ -167,6 +178,7 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         List<Entry<String, JComponent>> result = super.getFormElements();
         result.add(new ImmutableEntry<String, JComponent>("Datahub hostname", _hostTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub portnumber", _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("https", _httpsCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub tenant name", _tenantNameTextField));

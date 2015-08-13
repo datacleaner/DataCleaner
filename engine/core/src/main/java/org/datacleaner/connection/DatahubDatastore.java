@@ -33,16 +33,18 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     private final String _username;
     private final String _password;
     private final String _tenantName;
+    private boolean _https;
 
 
     public DatahubDatastore(String name, String host, Integer port,
-            String username, String password, String tenantName) {
+            String username, String password, String tenantName, boolean https) {
         super(name);
         _host = host;
         _port = port;
         _username = username;
         _password = password;
         _tenantName = tenantName;
+        _https = https;
     }
 
     @Override
@@ -71,6 +73,9 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     public String getTenantName() {
         return _tenantName;
     }
+    public boolean https() {
+        return _https;
+    }
 
     @Override
     public UpdateableDatastoreConnection openConnection() {
@@ -81,7 +86,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
         final DatahubDataContext dataContext = new DatahubDataContext(_host,
-                _port, _username, _password, _tenantName);
+                _port, _username, _password, _tenantName, _https);
         return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
                 dataContext, this);
     }
@@ -89,7 +94,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port
-                + ", username=" + _username + ", tenant=" + _tenantName + "]";
+                + ", username=" + _username + ", tenant=" + _tenantName + "https=" + (_https ? "true" : "false") +  "]";
     }
 
 }

@@ -131,6 +131,7 @@ public class DatastoreSchemaController {
     private Map<String, Object> createColumnMap(Column column) {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", column.getName());
+        map.put("number", column.getColumnNumber());
         map.put("type", column.getType().getName());
         map.put("size", column.getColumnSize().toString());
         map.put("nativeType", column.getNativeType());

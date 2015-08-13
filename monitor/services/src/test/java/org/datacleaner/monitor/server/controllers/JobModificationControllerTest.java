@@ -19,13 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import java.io.File;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -44,6 +38,10 @@ import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.Map;
 
 public class JobModificationControllerTest extends TestCase {
 

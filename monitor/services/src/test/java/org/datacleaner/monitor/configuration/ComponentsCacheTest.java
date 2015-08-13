@@ -19,6 +19,15 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import com.google.common.io.Files;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.File;
+
 /**
  * Class ComponentsCacheTest
  *
@@ -27,35 +36,25 @@ package org.datacleaner.monitor.configuration;
  */
 public class ComponentsCacheTest {
 
-//    @Test
-//    public void testCache() throws Exception {
-//        File tempFolder = Files.createTempDir();
-//        tempFolder.deleteOnExit();
-//
-//        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
-//        Repository repository = new FileRepository(repo.getFile());
-//
-//        ComponentsCache cache = new ComponentsCache(repository);
-//        ComponentConfigHolder conf1 = createConfigHolder("C1");
-//        ComponentConfigHolder conf2 = createConfigHolder("C2");
-//        cache.putComponent(conf1);
-//        cache.putComponent(conf2);
-//        Assert.assertEquals(conf1, cache.getConfigHolder(conf1.componentId));
-//        Assert.assertEquals(conf2, cache.getConfigHolder(conf2.componentId));
-//        cache.close();
-//    }
-//
-//    private ComponentConfigHolder createConfigHolder(String componentId) {
-//        ComponentConfiguration configuration = new ComponentConfiguration();
-//        configuration.setComponentName("TestName");
-//        configuration.setComponentType(ComponentConfiguration.ComponentType.ANALYZER);
-//        configuration.setId(1);
-//        configuration.setStatus(ComponentStatus.CREATED);
-//        configuration.setPropertiesMap(new HashMap<String, String>());
-//        configuration.getPropertiesMap().put("propertyA", "a");
-//        ComponentDescriptor descriptor = EasyMock.createMock(ComponentDescriptor.class);
-//        LifeCycleHelper lifeCycleHelper = null;
-//        Component component = EasyMock.createMock(Component.class);
-//        return new ComponentConfigHolder(1000, componentId, configuration, descriptor, lifeCycleHelper, component);
-//    }
+    @Test
+    public void testCache() throws Exception {
+        File tempFolder = Files.createTempDir();
+        tempFolder.deleteOnExit();
+
+        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
+        Repository repository = new FileRepository(repo.getFile());
+
+        ComponentsCache cache = new ComponentsCache();
+        ComponentConfigHolder conf1 = createConfigHolder("C1");
+        ComponentConfigHolder conf2 = createConfigHolder("C2");
+        cache.putComponent(conf1);
+        cache.putComponent(conf2);
+        Assert.assertEquals(conf1, cache.getConfigHolder(conf1.componentId));
+        Assert.assertEquals(conf2, cache.getConfigHolder(conf2.componentId));
+        cache.close();
+    }
+
+    private ComponentConfigHolder createConfigHolder(String componentId) {
+        return new ComponentConfigHolder(10l, new CreateInput(), componentId, "Component", null);
+    }
 }

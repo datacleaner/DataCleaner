@@ -19,53 +19,51 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import com.google.common.io.Files;
+import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFolder;
+import org.datacleaner.repository.file.FileRepository;
+import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.File;
+
 /**
  * Class ComponentsStoreTest
- *
+ * 
  * @author k.houzvicka
  * @since 28.7.15
  */
 public class ComponentsStoreTest {
 
-//    @Test
-//    public void testStore() throws Exception {
-//        File tempFolder = Files.createTempDir();
-//        tempFolder.deleteOnExit();
-//
-//        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
-//        Repository repository = new FileRepository(repo.getFile());
-//        ComponentsStore store = new ComponentsStore(repository);
-//
-//        ComponentsCacheConfigWrapper conf1 = createWrapper("id1");
-//        store.storeConfiguration(conf1);
-//        File componentFolder = new File(tempFolder, ComponentsStore.FOLDER_NAME);
-//        Assert.assertTrue(componentFolder.exists());
-//        File confFile = new File(componentFolder, "id1");
-//        Assert.assertTrue(confFile.exists());
-//
-//        ComponentsCacheConfigWrapper conf2 = store.getConfiguration("id1");
-//        Assert.assertEquals(conf1.componentConfigHolder.componentId, conf2.componentConfigHolder.componentId);
-//        Assert.assertEquals(conf1.componentConfigHolder.timeoutMs, conf2.componentConfigHolder.timeoutMs);
-//        Assert.assertEquals(conf1.expirationTime, conf2.expirationTime);
-//        Assert.assertEquals(null, store.getConfiguration("id2"));
-//
-//    }
-//
-//    private ComponentsCacheConfigWrapper createWrapper(String componentId) {
-//        ComponentConfiguration configuration = new ComponentConfiguration();
-//        configuration.setComponentName("TestName");
-//        configuration.setComponentType(ComponentConfiguration.ComponentType.ANALYZER);
-//        configuration.setId(1);
-//        configuration.setStatus(ComponentStatus.CREATED);
-//        configuration.setPropertiesMap(new HashMap<String, String>());
-//        configuration.getPropertiesMap().put("propertyA", "a");
-//
-//        ComponentDescriptor descriptor = EasyMock.createMock(ComponentDescriptor.class);
-//        LifeCycleHelper lifeCycleHelper = null;
-//        Component component = EasyMock.createMock(Component.class);
-//
-//        ComponentConfigHolder configHolder = new ComponentConfigHolder(10 * 1000, componentId, configuration, descriptor, lifeCycleHelper, component);
-//        ComponentsCacheConfigWrapper wrapper = new ComponentsCacheConfigWrapper(configHolder);
-//        return wrapper;
-//    }
+    @Test
+    public void testStore() throws Exception {
+        File tempFolder = Files.createTempDir();
+        tempFolder.deleteOnExit();
+
+        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
+        Repository repository = new FileRepository(repo.getFile());
+        RepositoryFolder tenantFolder = repository.createFolder("tenant");
+        ComponentsStore store = new ComponentsStoreImpl(repository, "tenant");
+
+        ComponentsStoreHolder conf1 = createHolder("id1");
+        store.storeConfiguration(conf1);
+
+        File tenantDir = new File(tempFolder, "tenant");
+        File componentFolder = new File(tenantDir, ComponentsStoreImpl.FOLDER_NAME);
+        Assert.assertTrue(componentFolder.exists());
+        File confFile = new File(componentFolder, "id1");
+        Assert.assertTrue(confFile.exists());
+
+        ComponentsStoreHolder conf2 = store.getConfiguration("id1");
+        Assert.assertEquals(conf1.getComponentId(), conf2.getComponentId());
+        Assert.assertEquals(conf1.getTimeout(), conf2.getTimeout());
+        Assert.assertEquals(null, store.getConfiguration("id2"));
+
+    }
+
+    private ComponentsStoreHolder createHolder(String componentId) {
+        return new ComponentsStoreHolder(10l, null, componentId, "componentName");
+    }
 }

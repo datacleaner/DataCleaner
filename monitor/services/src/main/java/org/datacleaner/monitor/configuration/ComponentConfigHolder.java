@@ -53,7 +53,9 @@ public class ComponentConfigHolder implements Serializable {
     }
 
     public void close() {
-        handler.closeComponent();
+        if(handler != null){
+            handler.closeComponent();
+        }
     }
 
     public long getTimeoutMs() {

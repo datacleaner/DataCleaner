@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -84,7 +85,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
                 .addAnalyzer(CreateCsvFileAnalyzer.class);
         csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
         File directory = _userPreferences.getConfiguredFileDirectory();
-        csvOutputAnalyzerBuilder.getComponentInstance().setFile(new File(directory, _table.getName() + ".csv"));
+        File file = new File(directory, _table.getName() + ".csv");
+        csvOutputAnalyzerBuilder.getComponentInstance().setFile(new FileResource(file));
 
         final PropertyWidgetFactory propertyWidgetFactory = _parentModule.createChildInjectorForComponent(
                 csvOutputAnalyzerBuilder).getInstance(PropertyWidgetFactory.class);

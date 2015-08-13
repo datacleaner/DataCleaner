@@ -227,4 +227,9 @@ final class DatastoreOutputWriter implements OutputWriter {
         return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType)
                 || ReflectionUtils.isBoolean(dataType);
     }
+
+    @Override
+    public void addToBuffer(Object[] rowData) {
+        //Do nothing
+    }
 }

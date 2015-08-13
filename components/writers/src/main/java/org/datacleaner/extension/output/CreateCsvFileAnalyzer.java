@@ -21,7 +21,6 @@ package org.datacleaner.extension.output;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,12 +31,12 @@ import javax.inject.Named;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.csv.CsvWriter;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
@@ -60,6 +59,7 @@ import org.datacleaner.descriptors.FilterDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.output.OutputWriter;
+import org.datacleaner.output.csv.CsvOutputWriter;
 import org.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.sort.SortMergeWriter;
@@ -71,14 +71,14 @@ import org.datacleaner.util.sort.SortMergeWriter;
 @Distributed(false)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implements HasLabelAdvice {
 
-    public static final String PROPERTY_FILE = "File";
+    public static final String PROPERTY_FILE = "File Resource";
     public static final String PROPERTY_OVERWRITE_FILE_IF_EXISTS = "Overwrite file if exists";
     public static final String PROPERTY_COLUMN_TO_BE_SORTED_ON = "Column to be sorted on";
 
     @Inject
     @Configured(value = PROPERTY_FILE, order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
-    File file;
+    Resource file;
 
     @Inject
     @Configured(order = 2, required = false)
@@ -108,19 +108,25 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     @Provided
     UserPreferences userPreferences;
 
-    private File _targetFile;
+    private Resource _targetFile;
     private int _indexOfColumnToBeSortedOn = -1;
     private boolean _isColumnToBeSortedOnPresentInInput = true;
+    private String[] _headers;
 
     @Initialize
     public void initTempFile() throws Exception {
+
         if (_targetFile == null) {
             if (columnToBeSortedOn != null) {
-                _targetFile = File.createTempFile("csv_file_analyzer", ".csv");
+                _targetFile = new FileResource(File.createTempFile("csv_file_analyzer", ".csv"));
             } else {
                 _targetFile = file;
+                if (_targetFile instanceof HdfsResource) {
+                    ((HdfsResource) _targetFile).setOverwriteIfExits(overwriteFileIfExists);
+                }
             }
         }
+
     }
 
     @Override
@@ -132,8 +138,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
     }
 
     @Validate
-    public void validate() {
-        if (file.exists() && !overwriteFileIfExists) {
+    public void validate() throws IOException {
+        if (file.isExists() && !overwriteFileIfExists) {
             throw new IllegalStateException(
                     "The file already exists. Please configure the job to overwrite the existing file.");
         }
@@ -144,7 +150,9 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-" + categoryName + ".csv");
+        final File fileTemp = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-"
+                + categoryName + ".csv");
+        file = new FileResource(fileTemp);
     }
 
     @Override
@@ -152,7 +160,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
         final String dsName = ajb.getDatastore().getName();
         final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
         final String displayName = descriptor.getDisplayName();
-        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+        final File fileTemp = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+        file = new FileResource(fileTemp);
     }
 
     @Override
@@ -191,8 +200,10 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             }
         }
 
-        return CsvOutputWriterFactory.getWriter(_targetFile.getPath(), headers.toArray(new String[0]), separatorChar,
-                getSafeQuoteChar(), getSafeEscapeChar(), includeHeader, columns);
+        _headers = headers.toArray(new String[0]);
+
+        return CsvOutputWriterFactory.getWriter(_targetFile, _headers, separatorChar, getSafeQuoteChar(),
+                getSafeEscapeChar(), includeHeader, columns);
     }
 
     private char getSafeQuoteChar() {
@@ -229,46 +240,35 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             final Comparator<? super Row> comparator = SortHelper.createComparator(columnToBeSortedOn,
                     _indexOfColumnToBeSortedOn);
 
-            final CsvWriter csvWriter = new CsvWriter(csvConfiguration);
-            final SortMergeWriter<Row, Writer> sortMergeWriter = new SortMergeWriter<Row, Writer>(comparator) {
+            final SortMergeWriter<Row, OutputWriter> sortMergeWriter = new SortMergeWriter<Row, OutputWriter>(
+                    comparator) {
 
                 @Override
-                protected void writeHeader(Writer writer) throws IOException {
-                    List<String> headers = new ArrayList<String>(Arrays.asList(table.getColumnNames()));
-                    if (!_isColumnToBeSortedOnPresentInInput) {
-                        headers.remove(columnToBeSortedOn.getName());
-                    }
-
-                    final String[] columnNames = headers.toArray(new String[0]);
-                    final String line = csvWriter.buildLine(columnNames);
-                    writer.write(line);
+                protected void writeHeader(OutputWriter writer) throws IOException {
+                    // The header is already written
                 }
 
                 @Override
-                protected void writeRow(Writer writer, Row row, int count) throws IOException {
+                protected void writeRow(OutputWriter writer, Row row, int count) throws IOException {
                     for (int i = 0; i < count; i++) {
                         List<Object> valuesList = new ArrayList<Object>(Arrays.asList(row.getValues()));
                         if (!_isColumnToBeSortedOnPresentInInput) {
                             valuesList.remove(_indexOfColumnToBeSortedOn);
                         }
-
                         final Object[] values = valuesList.toArray(new Object[0]);
-
-                        final String[] stringValues = new String[values.length];
-                        for (int j = 0; j < stringValues.length; j++) {
-                            final Object obj = values[j];
-                            if (obj != null) {
-                                stringValues[j] = obj.toString();
-                            }
-                        }
-                        final String line = csvWriter.buildLine(stringValues);
-                        writer.write(line);
+                        writer.addToBuffer(values);
                     }
                 }
 
                 @Override
-                protected Writer createWriter(File file) {
-                    return FileHelper.getWriter(file, FileHelper.DEFAULT_ENCODING);
+                protected OutputWriter createWriter(Resource file) {
+                    return CsvOutputWriterFactory.getWriter(file, _headers, separatorChar, getSafeQuoteChar(),
+                            getSafeEscapeChar(), includeHeader, columns);
+                }
+
+                @Override
+                protected CsvOutputWriter createWriter(File file) {
+                    return null;
                 }
             };
 
@@ -282,16 +282,14 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer implemen
             } finally {
                 dataSet.close();
             }
-
             sortMergeWriter.write(file);
         }
 
-        final Resource resource = new FileResource(file);
-        final Datastore datastore = new CsvDatastore(file.getName(), resource, csvConfiguration);
+        final Datastore datastore = new CsvDatastore(file.getName(), file, csvConfiguration);
         return new WriteDataResultImpl(rowCount, datastore, null, null);
     }
 
-    public void setFile(File file) {
+    public void setFile(Resource file) {
         this.file = file;
     }
 }

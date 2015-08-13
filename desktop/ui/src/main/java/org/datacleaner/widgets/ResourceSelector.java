@@ -119,16 +119,19 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     }
 
     public void setResource(Resource resource) {
-        final String stringRepresentation = _resourceConverter.toString(resource);
-        final ResourceStructure structure = _resourceConverter.parseStructure(stringRepresentation);
-        final String scheme = structure.getScheme();
-        setScheme(scheme);
+        if (resource != null) {
+            final String stringRepresentation = _resourceConverter.toString(resource);
+            final ResourceStructure structure = _resourceConverter.parseStructure(stringRepresentation);
+            final String scheme = structure.getScheme();
+            setScheme(scheme);
 
-        // we need to do this ugly cast in order to call setResource(...) with a
-        // generic argument
-        @SuppressWarnings("unchecked")
-        final ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
-        presenter.setResource(resource);
+            // we need to do this ugly cast in order to call setResource(...)
+            // with a
+            // generic argument
+            @SuppressWarnings("unchecked")
+            final ResourceTypePresenter<Resource> presenter = (ResourceTypePresenter<Resource>) _currentPresenter;
+            presenter.setResource(resource);
+        }
     }
 
     public Resource getResource() {

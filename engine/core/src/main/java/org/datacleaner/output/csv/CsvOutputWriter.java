@@ -19,30 +19,47 @@
  */
 package org.datacleaner.output.csv;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.AbstractMetaModelOutputWriter;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.schema.Table;
+import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.output.AbstractMetaModelOutputWriter;
 
-final class CsvOutputWriter extends AbstractMetaModelOutputWriter {
+final public class CsvOutputWriter extends AbstractMetaModelOutputWriter {
 
-	private final String _filename;
-	private final Table _table;
+    private final String _filename;
+    private final Table _table;
+    private final Resource _resource;
 
-	public CsvOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
-		super(dataContext, columns, 100);
-		_filename = filename;
-		_table = table;
-	}
+    public CsvOutputWriter(UpdateableDataContext dataContext, String filename, Resource resource, Table table,
+            InputColumn<?>[] columns) {
+        super(dataContext, columns, 100);
+        _filename = filename;
+        _table = table;
+        _resource = resource;
+    }
 
-	@Override
-	public void afterClose() {
-		CsvOutputWriterFactory.release(_filename);
-	}
+    public CsvOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
+        super(dataContext, columns, 100);
+        _filename = filename;
+        _table = table;
+        _resource = null;
+    }
 
-	@Override
-	protected Table getTable() {
-		return _table;
-	}
+    @Override
+    public void afterClose() {
+        if (_resource != null) {
+            if (_resource instanceof HdfsResource) {
+                ((HdfsResource) _resource).replicateFile(3);
+            }
+            CsvOutputWriterFactory.release(_filename);
+        }
+    }
+
+    @Override
+    protected Table getTable() {
+        return _table;
+    }
 
 }

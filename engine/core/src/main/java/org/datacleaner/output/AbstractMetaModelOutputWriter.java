@@ -23,12 +23,12 @@ import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.datacleaner.api.InputColumn;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.insert.RowInsertionBuilder;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,71 +41,73 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractMetaModelOutputWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractMetaModelOutputWriter.class);
 
-	private final UpdateableDataContext _dataContext;
-	private final Queue<Object[]> _buffer;
-	private final InputColumn<?>[] _columns;
+    private final UpdateableDataContext _dataContext;
+    private final Queue<Object[]> _buffer;
+    private final InputColumn<?>[] _columns;
 
-	/**
-	 * Creates a new {@link OutputWriter} based on a data context, a set of
-	 * columns and a buffer size.
-	 * 
-	 * @param dataContext
-	 * @param columns
-	 * @param bufferSize
-	 *            the size of the write buffer. If 0 or negative, an unlimited
-	 *            buffer will be used, meaning that the complete dataset will be
-	 *            held in memory.
-	 */
-	public AbstractMetaModelOutputWriter(UpdateableDataContext dataContext, InputColumn<?>[] columns, int bufferSize) {
-		_dataContext = dataContext;
-		_columns = columns;
-		if (bufferSize > 0) {
-			_buffer = new ArrayBlockingQueue<Object[]>(bufferSize);
-		} else {
-			_buffer = new ConcurrentLinkedQueue<Object[]>();
-		}
-	}
+    /**
+     * Creates a new {@link OutputWriter} based on a data context, a set of
+     * columns and a buffer size.
+     * 
+     * @param dataContext
+     * @param columns
+     * @param bufferSize
+     *            the size of the write buffer. If 0 or negative, an unlimited
+     *            buffer will be used, meaning that the complete dataset will be
+     *            held in memory.
+     */
+    public AbstractMetaModelOutputWriter(UpdateableDataContext dataContext, InputColumn<?>[] columns, int bufferSize) {
+        _dataContext = dataContext;
+        _columns = columns;
+        if (bufferSize > 0) {
+            _buffer = new ArrayBlockingQueue<Object[]>(bufferSize);
+        } else {
+            _buffer = new ConcurrentLinkedQueue<Object[]>();
+        }
+    }
 
-	@Override
-	public final OutputRow createRow() {
-		return new MetaModelOutputRow(this, _columns);
-	}
+    @Override
+    public final OutputRow createRow() {
+        return new MetaModelOutputRow(this, _columns);
+    }
 
-	protected final void addToBuffer(Object[] rowData) {
-		while (!_buffer.offer(rowData)) {
-			flushBuffer();
-		}
-	}
+    @Override
+    public final void addToBuffer(Object[] rowData) {
+        while (!_buffer.offer(rowData)) {
+            flushBuffer();
+        }
+    }
 
-	private synchronized final void flushBuffer() {
-		if (!_buffer.isEmpty()) {
-			logger.info("Flushing {} rows in write buffer", _buffer.size());
-			_dataContext.executeUpdate(new UpdateScript() {
-				@Override
-				public void run(UpdateCallback callback) {
-					for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
-						RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
-						for (int i = 0; i < _columns.length; i++) {
-							Object value = rowData[i];
-							insertBuilder = insertBuilder.value(i, value);
-						}
-						insertBuilder.execute();
-					}
-				}
-			});
-		}
-	}
+    private synchronized final void flushBuffer() {
+        if (!_buffer.isEmpty()) {
+            logger.info("Flushing {} rows in write buffer", _buffer.size());
+            _dataContext.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback callback) {
+                    for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
+                        RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
+                        for (int i = 0; i < _columns.length; i++) {
+                            Object value = rowData[i];
+                            insertBuilder = insertBuilder.value(i, value);
+                        }
+                        insertBuilder.execute();
+                    }
+                }
+            });
+        }
+    }
 
-	protected abstract Table getTable();
+    protected abstract Table getTable();
 
-	@Override
-	public final void close() {
-		flushBuffer();
-		afterClose();
-	}
+    @Override
+    public final void close() {
+        flushBuffer();
+        afterClose();
+    }
 
-	protected void afterClose() {
-	}
+    protected void afterClose() {
+    }
+
 }

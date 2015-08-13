@@ -19,22 +19,30 @@
  */
 package org.datacleaner.output;
 
+import java.io.Closeable;
+
 /**
  * Represents an object which can be used to write rows of data to some output
  * (typically a database or a file).
  */
-public interface OutputWriter {
+public interface OutputWriter extends Closeable {
 
-	/**
-	 * Creates a new row in the output.
-	 * 
-	 * @return
-	 */
-	public OutputRow createRow();
+    /**
+     * Creates a new row in the output.
+     * 
+     * @return
+     */
+    public OutputRow createRow();
 
-	/**
-	 * Closes the output writing sequence. Implementing classes should flush and
-	 * close any outputstreams etc. here.
-	 */
-	public void close();
+    /**
+     * Adds a row to the buffer
+     */
+    public void addToBuffer(Object[] rowData);
+
+    /**
+     * Closes the output writing sequence. Implementing classes should flush and
+     * close any outputstreams etc. here.
+     * 
+     */
+    public void close();
 }

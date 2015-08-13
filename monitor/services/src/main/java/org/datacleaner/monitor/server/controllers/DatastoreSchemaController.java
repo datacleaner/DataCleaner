@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -132,18 +133,22 @@ public class DatastoreSchemaController {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", column.getName());
         map.put("number", column.getColumnNumber());
-        map.put("type", column.getType().getName());
-        map.put("size", column.getColumnSize().toString());
+        map.put("type", getTypeName(column));
+        map.put("size", column.getColumnSize());
         map.put("nativeType", column.getNativeType());
         map.put("nullable", column.isNullable());
-        String remarks = column.getRemarks();
-        map.put("remarks", remarks == null ? "" : remarks);
+        map.put("remarks", column.getRemarks());
         map.put("indexed", column.isIndexed());
         map.put("quote", column.getQuote());
         map.put("primaryKey", column.isPrimaryKey());
         return map;
     }
 
+    private String getTypeName(Column column) {
+        ColumnType type = column.getType();
+        return type == null ? null : type.getName();
+    }
+    
     private DataContext getDataContext(Datastore datastore) {
         try (final DatastoreConnection connection = datastore.openConnection()) {
             return connection.getDataContext();

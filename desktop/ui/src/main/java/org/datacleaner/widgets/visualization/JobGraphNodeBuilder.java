@@ -68,18 +68,17 @@ class JobGraphNodeBuilder {
     public DirectedGraph<Object, JobGraphLink> buildGraph() {
 
         final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
+        final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
 
-        buildGraphInternal(graph, _analysisJobBuilder);
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(_analysisJobBuilder);
+
+        buildGraphInternal(graph, _analysisJobBuilder, sourceColumnFinder, sourceTables);
         return graph;
     }
 
     private void buildGraphInternal(final DirectedGraph<Object, JobGraphLink> graph,
-            final AnalysisJobBuilder analysisJobBuilder) {
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(analysisJobBuilder);
-
-
-        final List<Table> sourceTables = analysisJobBuilder.getSourceTables();
+            final AnalysisJobBuilder analysisJobBuilder, SourceColumnFinder sourceColumnFinder, List<Table> sourceTables) {
         for (Table table : sourceTables) {
             addNodes(graph, sourceColumnFinder, table, -1);
         }
@@ -312,8 +311,12 @@ class JobGraphNodeBuilder {
                 ComponentBuilder componentBuilder = (ComponentBuilder) item;
 
                 for(OutputDataStream outputDataStream : componentBuilder.getOutputDataStreams()){
-                    final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
-                    buildGraphInternal(graph, outputDataStreamJobBuilder);
+                    if(componentBuilder.isOutputDataStreamConsumed(outputDataStream)) {
+                        final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+                        List<Table> sourceTables = outputDataStreamJobBuilder.getSourceTables();
+                        buildGraphInternal(graph, outputDataStreamJobBuilder, scf, sourceTables);
+                        addEdge(graph, item, sourceTables.get(0), null, null);
+                    }
                 }
             }
         }

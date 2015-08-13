@@ -21,6 +21,10 @@
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
+		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<javax.jsp.version>2.0</javax.jsp.version>
+		<javax.el.version>2.2.4</javax.el.version>
+		<javax.annotation.version>1.2</javax.annotation.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

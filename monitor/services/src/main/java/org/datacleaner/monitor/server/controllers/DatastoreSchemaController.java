@@ -85,13 +85,13 @@ public class DatastoreSchemaController {
         logger.info("Serving schemas in datastore {} to user: {}.",
                 new Object[] { datastoreName, username });
         
-        final Map<String, Object> schemas = new HashMap<String, Object>();
+        final Map<String, Object> schemas = new HashMap<>();
         schemas.put("schemas", createSchemaList(dataContext));
         return schemas;
     }
 
     private List<Map<String,Object>> createSchemaList(DataContext dataContext) {
-        List<Map<String,Object>> schemas = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> schemas = new ArrayList<>();
         for (Schema schema : dataContext.getSchemas()) {
             schemas.add(createSchemaMap(schema));
         }
@@ -99,14 +99,14 @@ public class DatastoreSchemaController {
     }
 
     private Map<String, Object> createSchemaMap(Schema schema) {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name", schema.getName());
         map.put("tables", createTableList(schema));
         return map;
     }
 
     private List<Map<String,Object>> createTableList(Schema schema) {
-        List<Map<String,Object>> tables = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> tables = new ArrayList<>();
         for (Table table : schema.getTables()) {
             tables.add(createTableMap(table));
         }
@@ -114,14 +114,14 @@ public class DatastoreSchemaController {
     }
 
     private Map<String, Object> createTableMap(Table table) {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name", table.getName());
         map.put("columns", createColumnList(table));
         return map;
     }
 
     private List<Map<String,Object>> createColumnList(Table table) {
-        List<Map<String,Object>> columns = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> columns = new ArrayList<>();
         for (Column column : table.getColumns()) {
             columns.add(createColumnMap(column));
         }
@@ -129,7 +129,7 @@ public class DatastoreSchemaController {
     }
 
     private Map<String, Object> createColumnMap(Column column) {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("name", column.getName());
         map.put("number", column.getColumnNumber());
         map.put("type", getTypeName(column));

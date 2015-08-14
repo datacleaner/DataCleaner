@@ -27,14 +27,17 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 
+import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
+import org.datacleaner.user.UserPreferencesImpl;
 import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImmutableEntry;
+import org.datacleaner.util.LookAndFeelManager;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
@@ -184,5 +187,15 @@ public class DatahubDatastoreDialog extends AbstractDatastoreDialog<DatahubDatas
         result.add(new ImmutableEntry<String, JComponent>("Datahub tenant name", _tenantNameTextField));
         return result;
     }
+    
+    public static void main(String[] args) {
+        LookAndFeelManager.get().init();
+        UserPreferences userPreferences = new UserPreferencesImpl(null);
+        WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
+        DatahubDatastoreDialog dialog = new DatahubDatastoreDialog(windowContext, null, null, userPreferences);
+
+        dialog.open();
+    }
+
 
 }

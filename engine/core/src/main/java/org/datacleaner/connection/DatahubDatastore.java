@@ -19,7 +19,7 @@
  */
 package org.datacleaner.connection;
 
-import org.apache.metamodel.datahub.DatahubDataContext;
+import org.datacleaner.metamodel.datahub.DatahubDataContext;
 
 public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
         implements UpdateableDatastore, UsernameDatastore {
@@ -35,9 +35,9 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     private final String _tenantName;
     private boolean _https;
 
-
     public DatahubDatastore(String name, String host, Integer port,
-            String username, String password, String tenantName, boolean https) {
+            String username, String password, String tenantName,
+            boolean https) {
         super(name);
         _host = host;
         _port = port;
@@ -73,6 +73,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     public String getTenantName() {
         return _tenantName;
     }
+
     public boolean https() {
         return _https;
     }
@@ -94,7 +95,8 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port
-                + ", username=" + _username + ", tenant=" + _tenantName + "https=" + (_https ? "true" : "false") +  "]";
+                + ", username=" + _username + ", tenant=" + _tenantName
+                + "https=" + (_https ? "true" : "false") + "]";
     }
 
 }

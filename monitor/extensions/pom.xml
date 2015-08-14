@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-monitor</artifactId>
-		<version>4.1-SNAPSHOT</version>
+		<version>4.1-datahub-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-extensions</artifactId>
 	<packaging>pom</packaging>

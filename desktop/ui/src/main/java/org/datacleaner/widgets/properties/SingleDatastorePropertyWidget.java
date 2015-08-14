@@ -34,7 +34,6 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
 import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
-import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
@@ -114,8 +113,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         Datastore currentValue = (Datastore) componentBuilder.getConfiguredProperty(propertyDescriptor);
         setValue(currentValue);
 
-        _createDatastoreButton = WidgetFactory.createSmallPopupButton("",
-                IconUtils.ACTION_CREATE_TABLE);
+        _createDatastoreButton = WidgetFactory.createSmallPopupButton("", IconUtils.ACTION_CREATE_TABLE);
         _createDatastoreButton.setToolTipText("Create datastore");
         final JPopupMenu createDatastoreMenu = _createDatastoreButton.getMenu();
         populateCreateDatastoreMenu(createDatastoreMenu);
@@ -131,7 +129,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
         add(panel);
     }
-    
+
     public void setOnlyUpdatableDatastores(boolean onlyUpdatableDatastores) {
         _onlyUpdatableDatastores = onlyUpdatableDatastores;
         final JPopupMenu menu = _createDatastoreButton.getMenu();
@@ -140,29 +138,30 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
     }
 
     private void populateCreateDatastoreMenu(final JPopupMenu createDatastoreMenu) {
-        final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(DatabaseDriverCatalog.class);
-        
-        List<DatastoreDescriptor> availableDatastoreDescriptors = databaseDriverCatalog.getAvailableDatastoreDescriptors();
-        
+        final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
+                DatabaseDriverCatalog.class);
+
+        List<DatastoreDescriptor> availableDatastoreDescriptors = databaseDriverCatalog
+                .getAvailableDatastoreDescriptors();
+
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (_onlyUpdatableDatastores) {
                 if (!datastoreDescriptor.isUpdatable()) {
                     continue;
                 }
             }
-            
-            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor));
-            if (datastoreDescriptor.getClass().equals(JdbcDatastore.class)) {
-                menuItem.addActionListener(createJdbcActionListener(datastoreDescriptor.getName()));
-            } else {
-                menuItem.addActionListener(createActionListener(datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
-            }
+
+            final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(),
+                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor));
+            menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
+                    datastoreDescriptor.getDatastoreClass(),
+                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
             createDatastoreMenu.add(menuItem);
         }
     }
 
-    private ActionListener createActionListener(final Class<? extends Datastore> datastoreClass,
-            final Class<? extends AbstractDialog> datastoreDialogClass) {
+    private ActionListener createActionListener(final String datastoreName,
+            final Class<? extends Datastore> datastoreClass, final Class<? extends AbstractDialog> datastoreDialogClass) {
         return new ActionListener() {
 
             @Override
@@ -170,22 +169,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
                 final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
                 final AbstractDialog dialog = injectorWithNullDatastore.getInstance(datastoreDialogClass);
+                if (dialog instanceof JdbcDatastoreDialog) {
+                    JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                    jdbcDatastoreDialog.setSelectedDatabase(datastoreName);
+                }
                 dialog.setVisible(true);
             }
 
-        };
-    }
-
-    private ActionListener createJdbcActionListener(final String databaseName) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                final Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null)
-                        .createInjector();
-                final JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
-                dialog.setSelectedDatabase(databaseName);
-                dialog.setVisible(true);
-            }
         };
     }
 

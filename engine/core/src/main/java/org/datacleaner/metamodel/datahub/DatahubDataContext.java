@@ -194,41 +194,52 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
     protected DataSet materializeMainSchemaTable(Table table, Column[] columns,
             int maxRows) {
             
-            String query = createQuery(table, columns, maxRows);
-            return new DatahubDataSet(columns);
+//            String query = createQuery(table, columns, maxRows);
+//            String datastoreName = _schema.getDataStoreName(table.getName());
+//            if (datastoreName == null) {
+//                //throw
+//            }
+//            //orderdb.query?q=
 //            String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
-//                    + datastoreName + ".schemas";
+//                    + datastoreName + ".query?q=" + query;
 //            logger.debug("request {}", uri);
 //            HttpGet request = new HttpGet(uri);
+//            request.addHeader("Accept", "application/json");
+//
 //            try {
 //                HttpResponse response = executeRequest(request);
 //                String result = EntityUtils.toString(response.getEntity());
-//                JsonParserHelper parser = new JsonParserHelper();
-//                DatahubSchema schema = parser.parseJsonSchema(result);
-//                uberSchema.addTables(schema.getTables());
+//                System.out.println(result);
+//                //JsonParserHelper parser = new JsonParserHelper();
 //
 //            } catch (Exception e) {
 //                throw new IllegalStateException(e);
 //            }
+            return new DatahubDataSet(columns);
             
 
     }
-
+    
+    public DataSet testMaterializeMainSchemaTable(Table table, Column[] columns,
+            int maxRows) {
+        return materializeMainSchemaTable(table, columns, maxRows);
+    }
     private String createQuery(Table table, Column[] columns, int maxRows) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("SELECT ");
-        for (int i = 0; i < columns.length; i++) {
-            if (i != 0) {
-                sb.append(',');
-            }
-            sb.append(columns[i].getName());
-        }
-        sb.append(" FROM ");
+        sb.append("SELECT+*+");
+//        for (int i = 0; i < columns.length; i++) {
+//            if (i != 0) {
+//                sb.append(',');
+//            }
+//            sb.append(columns[i].getName());
+//        }
+        sb.append("+FROM+");
         sb.append(table.getName());
 
-        if (maxRows > 0) {
-            sb.append(" LIMIT " + maxRows);
-        }
+//        if (maxRows > 0) {
+//            sb.append(" LIMIT " + maxRows);
+//        }
         return sb.toString();
     }
+
 }

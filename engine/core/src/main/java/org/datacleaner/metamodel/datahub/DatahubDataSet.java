@@ -41,7 +41,7 @@ public class DatahubDataSet extends AbstractDataSet {
     AtomicInteger _index;
     private Object[] record;
 
-    DatahubDataSet(Column[] columns) {
+    public DatahubDataSet(Column[] columns) {
         
         // TODO dummy implementation
         super(columns);

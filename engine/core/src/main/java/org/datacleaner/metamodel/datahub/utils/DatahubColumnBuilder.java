@@ -39,43 +39,49 @@ public class DatahubColumnBuilder {
     boolean _primaryKey;
     Table _table;
     
-    public void withName(String name) {
+    public DatahubColumnBuilder withName(String name) {
         _name = name;
+        return this;
     }
     
-    Column build() {
+    public Column build() {
         return new ImmutableColumn(_name,
                 _type, _table, _number, _size, _nativeType, _nullable,
                 _remarks, _indexed, _quote, _primaryKey);
     }
 
-    public void withIndexed(boolean indexed) {
+    public DatahubColumnBuilder withIndexed(boolean indexed) {
         _indexed = indexed;
+        return this;
     }
 
-    public void withQuote(String quote) {
+    public DatahubColumnBuilder withQuote(String quote) {
         _quote = quote;
+        return this;
         
     }
 
-    public void withPrimaryKey(boolean primaryKey) {
+    public DatahubColumnBuilder withPrimaryKey(boolean primaryKey) {
         _primaryKey = primaryKey;
+        return this;
         
     }
 
-    public void withRemarks(String remarks) {
+    public DatahubColumnBuilder withRemarks(String remarks) {
         _remarks = remarks;
+        return this;
         
     }
 
-    public void withNullable(boolean nullable) {
+    public DatahubColumnBuilder withNullable(boolean nullable) {
         _nullable = nullable;
+        return this;
         
     }
 
-    public void withType(String type) {
+    public DatahubColumnBuilder withType(String type) {
         _type = toColumnType(type);
-        
+        return this;        
     }
 
     private ColumnType toColumnType(String columnType) {
@@ -98,22 +104,26 @@ public class DatahubColumnBuilder {
         return null;
     }
 
-    public void withNativeType(String nativeType) {
+    public DatahubColumnBuilder withNativeType(String nativeType) {
         _nativeType = nativeType;
+        return this;
         
     }
 
-    public void withSize(Integer size) {
+    public DatahubColumnBuilder withSize(Integer size) {
         _size = size;
+        return this;
         
     }
 
-    public void withTable(DatahubTable table) {
+    public DatahubColumnBuilder withTable(DatahubTable table) {
         _table = table;
+        return this;
     }
 
-    public void withNumber(Integer number) {
+    public DatahubColumnBuilder withNumber(Integer number) {
         _number = number;
+        return this;
         
     }
 

@@ -60,7 +60,7 @@ public final class InitializeTask implements Task {
         _lifeCycleHelper.validate(descriptor, component);
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-            activeOutputDataStream.initialize(_publisher.getQuery());
+            activeOutputDataStream.initialize();
         }
         _lifeCycleHelper.initialize(descriptor, component);
         _lifeCycleHelper.initializeReferenceData();

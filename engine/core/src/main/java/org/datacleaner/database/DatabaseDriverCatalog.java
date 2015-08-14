@@ -52,6 +52,7 @@ import org.datacleaner.connection.XmlDatastore;
 import org.datacleaner.user.UserPreferences;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.Predicate;
+import org.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,9 +163,9 @@ public class DatabaseDriverCatalog implements Serializable {
                 "org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
         add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
                 "sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
-        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", "org.apache.hive.jdbc.HiveDriver",
+        add(DATABASE_NAME_HIVE, "images/datastore-types/databases/hive.png", new HiveDriverPreparer(), "org.apache.hive.jdbc.HiveDriver",
                 "http://repo1.maven.org/maven2/org/apache/hive/hive-jdbc/1.2.1/hive-jdbc-1.2.1.jar",
-                "jdbc:hive://<hostname>:10000/<database>");
+                "jdbc:hive2://<hostname>:10000/<database>");
 
         Collections.sort(_databaseDrivers);
     }
@@ -207,8 +208,19 @@ public class DatabaseDriverCatalog implements Serializable {
         } else {
             urls = new String[] { downloadUrl };
         }
-        _databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls,
-                urlTemplates));
+        add(databaseName, iconImagePath, driverClassName, urls, urlTemplates);
+    }
+
+    private static void add(String databaseName, String iconImagePath, DriverPreparer driverPreparer,
+            String driverClassName, String downloadUrl, String... urlTemplates) {
+        if (driverPreparer != null) {
+            try {
+                driverPreparer.prepare();
+            } catch (Exception e) {
+                logger.warn("Could not run driver preparation", e);
+            }
+        }
+        add(databaseName, iconImagePath, driverClassName, downloadUrl, urlTemplates);
     }
 
     public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {

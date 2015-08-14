@@ -37,6 +37,9 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.beans.CharacterSetDistributionAnalyzer;
+import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.dategap.DateGapAnalyzer;
 import org.datacleaner.beans.filter.NullCheckFilter;
@@ -340,6 +343,27 @@ public class JaxbJobWriterTest extends TestCase {
             assertMatchesBenchmark(ajb.toAnalysisJob(), "JaxbJobWriterTest-file6.xml");
 
         }
+    }
+    
+    public void testReadAndWriteOutputDataStreamsJob() throws Exception {
+        Datastore ds = TestHelper.createSampleDatabaseDatastore("my database");
+        SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
+        descriptorProvider.addTransformerBeanDescriptor(Descriptors.ofTransformer(ConcatenatorTransformer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(CompletenessAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(StringAnalyzer.class));
+        descriptorProvider.addAnalyzerBeanDescriptor(Descriptors.ofAnalyzer(NumberAnalyzer.class));
+
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds).withEnvironment(
+                new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
+
+        JaxbJobReader reader = new JaxbJobReader(conf);
+        AnalysisJob job;
+        try (AnalysisJobBuilder jobBuilder = reader.create(new File(
+                "src/test/resources/example-job-output-dataset.analysis.xml"))) {
+            job = jobBuilder.toAnalysisJob();
+        }
+
+        assertMatchesBenchmark(job, "JaxbJobWriterTest-testReadAndWriteOutputDataStreamsJob.xml");
     }
 
     /**

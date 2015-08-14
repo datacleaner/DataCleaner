@@ -17,24 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.widgets.database;
+package org.datacleaner.database;
 
-public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
+import java.io.OutputStream;
 
-    public HiveDatabaseConnectionPresenter() {
-        super("jdbc:hive2://HOSTNAME:PORT/DATABASE");
-    }
-
-    @Override
-    protected int getDefaultPort() {
-        // no port involved
-        return 10000;
-    }
+public class HiveDriverPreparer implements DriverPreparer {
+    public static final OutputStream DEV_NULL = new OutputStream() {
+        public void write(int b) {}
+    };
 
     @Override
-    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-            String param3, String param4) {
-        return "jdbc:hive2://" + hostname + ":" + port + "/" + database;
+    public void prepare() {
+        System.setProperty("derby.stream.error.field", "org.datacleaner.database.HiveDriverPreparer.DEV_NULL");
     }
-
 }

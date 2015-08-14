@@ -17,24 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.widgets.database;
+package org.datacleaner.database;
 
-public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
-
-    public HiveDatabaseConnectionPresenter() {
-        super("jdbc:hive2://HOSTNAME:PORT/DATABASE");
-    }
-
-    @Override
-    protected int getDefaultPort() {
-        // no port involved
-        return 10000;
-    }
-
-    @Override
-    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-            String param3, String param4) {
-        return "jdbc:hive2://" + hostname + ":" + port + "/" + database;
-    }
-
+/**
+ * Simple interface to allow preparing for the driver (i.e. set properties) before loading it.
+ */
+public interface DriverPreparer {
+    void prepare();
 }

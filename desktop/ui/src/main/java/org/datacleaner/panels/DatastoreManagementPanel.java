@@ -48,7 +48,6 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
 import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
-import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
@@ -97,7 +96,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
     public DatastoreManagementPanel(DataCleanerConfiguration configuration,
             AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
+            Provider<OptionsDialog> optionsDialogProvider, DCModule dcModule,
+            DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences) {
         super(analysisJobBuilderWindow);
 
         _datastorePanels = new ArrayList<DatastorePanel>();
@@ -258,36 +258,42 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
     private DCPanel createNewDatastorePanel() {
         final int alignment = Alignment.LEFT.getFlowLayoutAlignment();
         final DCPanel panel1 = new DCPanel();
-        
+
         panel1.setLayout(new FlowLayout(alignment, 10, 10));
-        
+
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();
-        
+
         final int panel1ItemsCount = 10;
         final int panel2ItemsCount = 8;
-        
-        for (int i = 0; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
+
+        for (int i = 0; i < Math
+                .min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
-            panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(),
-                    datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
-                    datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.BOTTOM));
+            panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
+                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getDatastoreClass(),
+                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor),
+                    DCPopupBubble.Position.BOTTOM));
             databaseNames.add(datastoreDescriptor.getName());
         }
-        
+
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        for (int i = panel1ItemsCount; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount + panel2ItemsCount); i++) {
+        for (int i = panel1ItemsCount; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(),
+                panel1ItemsCount + panel2ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
-            panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(),
-                    datastoreDescriptor.getDescription(), DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
-                    datastoreDescriptor.getDatastoreClass(), DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
+            panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
+                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getDatastoreClass(),
+                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
             databaseNames.add(datastoreDescriptor.getName());
         }
 
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(_databaseDriverCatalog.getAvailableDatastoreDescriptors(), panel1ItemsCount + panel2ItemsCount, databaseNames));
+        panel2.add(createMoreDatabasesButton(_databaseDriverCatalog.getAvailableDatastoreDescriptors(),
+                panel1ItemsCount + panel2ItemsCount, databaseNames));
 
         final DCPanel containerPanel = new DCPanel();
         containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
@@ -297,7 +303,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         return containerPanel;
     }
 
-    private Component createMoreDatabasesButton(List<DatastoreDescriptor> availableDatastoreDescriptors, int startIndex, Set<String> databaseNames) {
+    private Component createMoreDatabasesButton(List<DatastoreDescriptor> availableDatastoreDescriptors,
+            int startIndex, Set<String> databaseNames) {
         final PopupButton moreDatastoreTypesButton = WidgetFactory.createDefaultPopupButton("More databases",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         moreDatastoreTypesButton.setMenuPosition(MenuPosition.TOP);
@@ -309,10 +316,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             final String imagePath = DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor);
             final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
-            menuItem.addActionListener(createJdbcActionListener(datastoreDescriptor.getName()));
+            menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
+                    datastoreDescriptor.getDatastoreClass(),
+                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
             moreDatastoreTypesMenu.add(menuItem);
         }
-        
+
         final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
                 imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
         databaseDriversMenuItem.addActionListener(new ActionListener() {
@@ -338,24 +347,22 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 + "</html>", 0, 0, icon, popupPosition);
         popupBubble.attachTo(button);
 
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null).createInjector();
-                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
-                dialog.setVisible(true);
-            }
-        });
+        button.addActionListener(createActionListener(title, datastoreClass, dialogClass));
         return button;
     }
 
-    private ActionListener createJdbcActionListener(final String databaseName) {
+    private <D extends Datastore> ActionListener createActionListener(final String title,
+            final Class<D> datastoreClass, final Class<? extends AbstractDialog> dialogClass) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Injector injectorWithDatastore = _dcModule.createInjectorBuilder().with(JdbcDatastore.class, null).createInjector();
-                JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
-                dialog.setSelectedDatabase(databaseName);
+                final Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
+                        .createInjector();
+                final AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
+                if (dialog instanceof JdbcDatastoreDialog) {
+                    JdbcDatastoreDialog jdbcDatastoreDialog = (JdbcDatastoreDialog) dialog;
+                    jdbcDatastoreDialog.setSelectedDatabase(title);
+                }
                 dialog.setVisible(true);
             }
         };

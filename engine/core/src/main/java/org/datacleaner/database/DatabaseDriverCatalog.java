@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.datacleaner.connection.AccessDatastore;
 import org.datacleaner.connection.CassandraDatastore;
+import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreDescriptor;
@@ -425,7 +426,7 @@ public class DatabaseDriverCatalog implements Serializable {
         final String compositeDatastoreName = "Composite datastore";
         if (!alreadyAddedDatabaseNames.contains(compositeDatastoreName)) {
             DatastoreDescriptor compositeDatastoreDescriptor = new DatastoreDescriptorImpl(compositeDatastoreName,
-                    "Create composite datastore", JdbcDatastore.class);
+                    "Create composite datastore", CompositeDatastore.class);
             datastoreDescriptors.add(compositeDatastoreDescriptor);
         }
 

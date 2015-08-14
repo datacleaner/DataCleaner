@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PreDestroy;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -40,13 +42,11 @@ import java.util.UUID;
  */
 @Controller
 public class ComponentsControllerV1 implements ComponentsController {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
     private static final String TENANT = "tenant";
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-
     ComponentsCache _componentsCache = new ComponentsCache();
 
     @PreDestroy
@@ -60,8 +60,17 @@ public class ComponentsControllerV1 implements ComponentsController {
      * @return
      */
     public ComponentList getAllComponents(@PathVariable(TENANT) final String tenant) {
-        // TODO
-        return null;
+        DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
+                .getDescriptorProvider()
+                .getTransformerDescriptors();
+        ComponentList componentList = new ComponentList();
+
+        for (TransformerDescriptor descriptor : transformerDescriptors) {
+            componentList.add(tenant, descriptor);
+        }
+
+        return componentList;
     }
 
     /**
@@ -115,7 +124,7 @@ public class ComponentsControllerV1 implements ComponentsController {
             ComponentsStore store = tenantContext.getComponentsStore();
             ComponentsStoreHolder storeConfig = store.getConfiguration(id);
             if(storeConfig == null){
-                LOGGER.warn("Component with id {} is not exists.", id);
+                LOGGER.warn("Component with id {} does not exist.", id);
                 throw ComponentNotFoundException.createInstanceNotFound(id);
             }
             ComponentHandler newHandler = createComponent(tenant, storeConfig.getComponentName(), ((CreateInput) storeConfig.getCreateInput()).configuration);
@@ -161,5 +170,4 @@ public class ComponentsControllerV1 implements ComponentsController {
         handler.createComponent(configuration);
         return handler;
     }
-
 }

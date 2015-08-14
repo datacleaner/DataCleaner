@@ -23,10 +23,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class contains configuration and state of a particular component.
@@ -36,12 +33,18 @@ import java.util.Map;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class ComponentConfiguration {
-
     @JsonProperty
     private Map<String, JsonNode> properties = new HashMap<>();
-
     @JsonProperty
-    public List<String> columns;
+    private List<String> columns = new ArrayList<>();
+
+    public Map<String, JsonNode> getProperties() {
+        return properties;
+    }
+
+    public List<String> getColumns() {
+        return columns;
+    }
 
     public JsonNode getProperty(String name) {
         return properties.get(name);

@@ -85,7 +85,7 @@ public class ComponentHandler {
 
         // create "table" according to the columns spcecification (for now only a list of names)
         int index = 0;
-        for (String columnName : componentConfiguration.columns) {
+        for (String columnName : componentConfiguration.getColumns()) {
             MutableColumn column = columns.get(columnName);
             if(column == null) {
                 column = new MutableColumn(columnName, ColumnType.VARCHAR, table, index, true);

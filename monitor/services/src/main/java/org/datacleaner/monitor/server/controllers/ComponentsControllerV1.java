@@ -84,8 +84,9 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(TENANT) final String tenant,
             @PathVariable("name") final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
-        LOGGER.debug("Running '" + name + "'");
-        ComponentHandler handler = createComponent(tenant, name, processStatelessInput.configuration);
+        String decodedName = unURLify(name);
+        LOGGER.debug("Running '" + decodedName + "'");
+        ComponentHandler handler = createComponent(tenant, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();
@@ -100,13 +101,14 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable("name") final String name,
             @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
             @RequestBody final CreateInput createInput) {
-        ComponentHandler handler = createComponent(tenant, name, createInput.configuration);
+        String decodedName = unURLify(name);
+        ComponentHandler handler = createComponent(tenant, decodedName, createInput.configuration);
         String id = UUID.randomUUID().toString();
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentsStore store = tenantContext.getComponentsStore();
         long longTimeout = Long.parseLong(timeout);
-        store.storeConfiguration(new ComponentsStoreHolder(longTimeout, createInput, id, name));
-         _componentsCache.putComponent(new ComponentConfigHolder(longTimeout, createInput, id, name, handler));
+        store.storeConfiguration(new ComponentsStoreHolder(longTimeout, createInput, id, decodedName));
+         _componentsCache.putComponent(new ComponentConfigHolder(longTimeout, createInput, id, decodedName, handler));
         return id;
     }
 
@@ -181,5 +183,9 @@ public class ComponentsControllerV1 implements ComponentsController {
                 componentName);
         handler.createComponent(configuration);
         return handler;
+    }
+
+    private String unURLify(String url) {
+        return url.replace("%2F", "/");
     }
 }

@@ -53,7 +53,7 @@ public class ComponentList {
         ComponentInfo componentInfo = new ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
-                .setUrl(getURLForCreation())
+                .setCreateURL(getURLForCreation())
                 .setPropertyList(propertyList)
                 .setConfiguration(componentConfiguration);
         components.add(componentInfo);
@@ -68,7 +68,7 @@ public class ComponentList {
     }
 
     private String getURLForCreation() {
-        String name = descriptor.getDisplayName();
+        String name = descriptor.getDisplayName().replace("/", "%2F");
         String url = String.format("POST /repository/%s/components/%s", tenant, name);
 
         return url;
@@ -106,7 +106,7 @@ public class ComponentList {
 
         private String name;
         private String description;
-        private String url;
+        private String createURL;
         private List<String[]> propertyList;
         private ComponentConfiguration configuration;
 
@@ -128,12 +128,12 @@ public class ComponentList {
             return this;
         }
 
-        public String getUrl() {
-            return url;
+        public String getCreateURL() {
+            return createURL;
         }
 
-        public ComponentInfo setUrl(String url) {
-            this.url = url;
+        public ComponentInfo setCreateURL(String createURL) {
+            this.createURL = createURL;
             return this;
         }
 

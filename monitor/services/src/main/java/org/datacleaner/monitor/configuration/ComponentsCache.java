@@ -47,6 +47,16 @@ public class ComponentsCache {
         data.put(componentConfigHolder.componentId, wrapper);
     }
 
+    /**
+     * Contains cache component?
+     * 
+     * @param id
+     * @return
+     */
+    public boolean contains(String id) {
+        return data.get(id) != null;
+    }
+
 
     /**
      * Read configuration from cache. If configurationHolder is not in cache, is loaded from repository, but in this case in holder is only configuration

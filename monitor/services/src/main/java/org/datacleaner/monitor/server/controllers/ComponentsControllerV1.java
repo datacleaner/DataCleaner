@@ -157,10 +157,22 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(TENANT) final String tenant,
             @PathVariable("id") final String id)
             throws ComponentNotFoundException {
-        _componentsCache.removeConfiguration(id);
+        boolean inCache = false;
+        boolean inStore = false;
+        if (_componentsCache.contains(id)) {
+            _componentsCache.removeConfiguration(id);
+            inCache = true;
+        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentsStore store = tenantContext.getComponentsStore();
-        store.removeConfiguration(id);
+        if (store.getConfiguration(id) != null) {
+            store.removeConfiguration(id);
+            inStore = true;
+        }
+        if ((inCache || inStore) == false) {
+            LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
+            throw ComponentNotFoundException.createInstanceNotFound(id);
+        }
     }
 
     private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration) {

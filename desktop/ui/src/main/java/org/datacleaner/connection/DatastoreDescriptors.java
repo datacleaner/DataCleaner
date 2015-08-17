@@ -253,7 +253,7 @@ public class DatastoreDescriptors {
             if (!alreadyAddedDatabaseNames.contains(databaseName)) {
                 DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName, "Connect to "
                         + databaseName, JdbcDatastore.class, JdbcDatastoreDialog.class,
-                        IconUtils.GENERIC_DATASTORE_IMAGEPATH);
+                        databaseDriver.getIconImagePath());
                 datastoreDescriptors.add(jdbcDatastoreDescriptor);
             }
         }

@@ -37,7 +37,6 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.beans.CharacterSetDistributionAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.NumberAnalyzer;
 import org.datacleaner.beans.StringAnalyzer;

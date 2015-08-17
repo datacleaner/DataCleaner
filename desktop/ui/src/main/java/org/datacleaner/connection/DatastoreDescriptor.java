@@ -19,8 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import java.util.List;
-
 import org.datacleaner.windows.AbstractDatastoreDialog;
 
 /**
@@ -40,7 +38,5 @@ public interface DatastoreDescriptor {
     public String getIconPath();
     
     public boolean isUpdatable();
-    
-    public List<String> getTags();
     
 }

@@ -19,9 +19,6 @@
  */
 package org.datacleaner.connection;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.datacleaner.windows.AbstractDatastoreDialog;
 
 public class DatastoreDescriptorImpl implements DatastoreDescriptor {
@@ -31,12 +28,11 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     private final Class<? extends Datastore> _datastoreClass;
     private final Class<? extends AbstractDatastoreDialog<? extends Datastore>> _datastoreDialogClass;
     private final String _iconPath;
-    private final List<String> _tags;
 
     public DatastoreDescriptorImpl(final String name, String description,
             final Class<? extends Datastore> datastoreClass,
             final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
-            final String iconPath, final List<String> tags) {
+            final String iconPath) {
         if (name == null) {
             throw new IllegalArgumentException("The name of the datastore cannot be null");
         }
@@ -50,14 +46,6 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         _datastoreClass = datastoreClass;
         _datastoreDialogClass = datastoreDialogClass;
         _iconPath = iconPath;
-        _tags = tags;
-    }
-
-    public DatastoreDescriptorImpl(final String name, String description,
-            final Class<? extends Datastore> datastoreClass,
-            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
-            final String iconPath) {
-        this(name, description, datastoreClass, datastoreDialogClass, iconPath, new ArrayList<String>());
     }
 
     @Override
@@ -94,11 +82,6 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
             }
         }
         return false;
-    }
-
-    @Override
-    public List<String> getTags() {
-        return _tags;
     }
 
     @Override

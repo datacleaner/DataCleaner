@@ -323,6 +323,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                     datastoreDescriptor.getDatastoreDialogClass()));
             moreDatastoreTypesMenu.add(menuItem);
         }
+        
+       moreDatastoreTypesMenu.addSeparator();
 
         final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
                 imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));

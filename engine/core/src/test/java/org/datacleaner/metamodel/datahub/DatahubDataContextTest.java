@@ -19,12 +19,12 @@
  */
  package org.datacleaner.metamodel.datahub;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.metamodel.datahub.utils.DatahubColumnBuilder;
+
+import junit.framework.TestCase;
 
 
 public class DatahubDataContextTest extends TestCase  
@@ -40,8 +40,10 @@ public class DatahubDataContextTest extends TestCase
         String password = "cdi123";
         String tenantId = "mdmregtest";
         boolean https = false;
+        boolean acceptUnverifiedSslPeers = true;
+        String securityMode = "cas";
         
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https);
+        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
         Schema schema = context.testGetMainSchema();
         //assertEquals(4, schema.getTableCount());
         //assertEquals(13, schema.getTableByName("CUSTOMERS").getColumnCount());
@@ -54,9 +56,11 @@ public class DatahubDataContextTest extends TestCase
         String username = "admin";
         String password = "admin";
         String tenantId = "demo";
-        boolean https = false;
-        
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https);
+        boolean https = true;
+        boolean acceptUnverifiedSslPeers = true;
+        String securityMode = "cas";
+
+        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
         Schema schema = context.testGetMainSchema();
         assertEquals(6, schema.getTableCount());
         assertEquals(13, schema.getTableByName("CUSTOMERS").getColumnCount());
@@ -70,8 +74,10 @@ public class DatahubDataContextTest extends TestCase
         String password = "admin";
         String tenantId = "demo";
         boolean https = false;
+        boolean acceptUnverifiedSslPeers = true;
+        String securityMode = "cas";
         
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https);
+        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
         
         DatahubTable table = new DatahubTable();
         table.setName("CUSTOMERS");

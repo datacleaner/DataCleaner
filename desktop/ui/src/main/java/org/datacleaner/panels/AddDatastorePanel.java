@@ -143,7 +143,7 @@ public class AddDatastorePanel extends DCPanel {
                     cloudButton.getMenu().add(
                             createNewDatastoreButton(datastoreDescriptor.getName(),
                                     datastoreDescriptor.getDescription(),
-                                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
+                                    datastoreDescriptor.getIconPath(),
                                     datastoreDescriptor.getDatastoreClass(),
                                     datastoreDescriptor.getDatastoreDialogClass()));
                 }
@@ -168,7 +168,7 @@ public class AddDatastorePanel extends DCPanel {
                     databaseButton.getMenu().add(
                             createNewDatastoreButton(datastoreDescriptor.getName(),
                                     datastoreDescriptor.getDescription(),
-                                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
+                                    datastoreDescriptor.getIconPath(),
                                     datastoreDescriptor.getDatastoreClass(),
                                     datastoreDescriptor.getDatastoreDialogClass()));
                 }

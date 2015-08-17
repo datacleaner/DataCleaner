@@ -152,7 +152,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
             }
 
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(),
-                    DatastoreDescriptors.getIconPath(datastoreDescriptor));
+                    datastoreDescriptor.getIconPath());
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDatastoreClass(),
                     datastoreDescriptor.getDatastoreDialogClass()));

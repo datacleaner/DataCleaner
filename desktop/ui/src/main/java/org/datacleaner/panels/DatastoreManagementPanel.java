@@ -272,7 +272,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 .min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getIconPath(),
                     datastoreDescriptor.getDatastoreClass(),
                     datastoreDescriptor.getDatastoreDialogClass(),
                     DCPopupBubble.Position.BOTTOM));
@@ -286,7 +286,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
                 panel1ItemsCount + panel2ItemsCount); i++) {
             DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
+                    datastoreDescriptor.getIconPath(),
                     datastoreDescriptor.getDatastoreClass(),
                     datastoreDescriptor.getDatastoreDialogClass(),
                     DCPopupBubble.Position.TOP));
@@ -315,7 +315,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         for (int i = startIndex; i < availableDatastoreDescriptors.size(); i++) {
             DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
-            final String imagePath = DatastoreDescriptors.getIconPath(datastoreDescriptor);
+            final String imagePath = datastoreDescriptor.getIconPath();
             final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),

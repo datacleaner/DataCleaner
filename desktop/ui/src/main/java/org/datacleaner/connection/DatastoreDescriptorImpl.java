@@ -30,12 +30,13 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
     private final String _description;
     private final Class<? extends Datastore> _datastoreClass;
     private final Class<? extends AbstractDatastoreDialog<? extends Datastore>> _datastoreDialogClass;
+    private final String _iconPath;
     private final List<String> _tags;
 
     public DatastoreDescriptorImpl(final String name, String description,
             final Class<? extends Datastore> datastoreClass,
             final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
-            final List<String> tags) {
+            final String iconPath, final List<String> tags) {
         if (name == null) {
             throw new IllegalArgumentException("The name of the datastore cannot be null");
         }
@@ -48,13 +49,15 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         _description = description;
         _datastoreClass = datastoreClass;
         _datastoreDialogClass = datastoreDialogClass;
+        _iconPath = iconPath;
         _tags = tags;
     }
 
     public DatastoreDescriptorImpl(final String name, String description,
             final Class<? extends Datastore> datastoreClass,
-            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass) {
-        this(name, description, datastoreClass, datastoreDialogClass, new ArrayList<String>());
+            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
+            final String iconPath) {
+        this(name, description, datastoreClass, datastoreDialogClass, iconPath, new ArrayList<String>());
     }
 
     @Override
@@ -79,8 +82,7 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
 
     @Override
     public String getIconPath() {
-        // TODO Auto-generated method stub
-        return null;
+        return _iconPath;
     }
 
     @Override

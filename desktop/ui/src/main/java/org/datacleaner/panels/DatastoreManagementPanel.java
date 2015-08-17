@@ -47,7 +47,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
-import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
+import org.datacleaner.connection.DatastoreDescriptors;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.guice.DCModule;
 import org.datacleaner.user.DatastoreChangeListener;
@@ -267,13 +267,14 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final int panel1ItemsCount = 10;
         final int panel2ItemsCount = 8;
 
+        final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);
         for (int i = 0; i < Math
-                .min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
-            DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
+                .min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(), panel1ItemsCount); i++) {
+            DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor),
+                    DatastoreDescriptors.getDialogClass(datastoreDescriptor),
                     DCPopupBubble.Position.BOTTOM));
             databaseNames.add(datastoreDescriptor.getName());
         }
@@ -281,18 +282,18 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         final DCPanel panel2 = new DCPanel();
         panel2.setLayout(new FlowLayout(alignment, 10, 10));
 
-        for (int i = panel1ItemsCount; i < Math.min(_databaseDriverCatalog.getAvailableDatastoreDescriptors().size(),
+        for (int i = panel1ItemsCount; i < Math.min(datastoreDescriptors.getAvailableDatastoreDescriptors().size(),
                 panel1ItemsCount + panel2ItemsCount); i++) {
-            DatastoreDescriptor datastoreDescriptor = _databaseDriverCatalog.getAvailableDatastoreDescriptors().get(i);
+            DatastoreDescriptor datastoreDescriptor = datastoreDescriptors.getAvailableDatastoreDescriptors().get(i);
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
-                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
+                    DatastoreDescriptors.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
             databaseNames.add(datastoreDescriptor.getName());
         }
 
         panel2.add(Box.createHorizontalStrut(10));
-        panel2.add(createMoreDatabasesButton(_databaseDriverCatalog.getAvailableDatastoreDescriptors(),
+        panel2.add(createMoreDatabasesButton(datastoreDescriptors.getAvailableDatastoreDescriptors(),
                 panel1ItemsCount + panel2ItemsCount, databaseNames));
 
         final DCPanel containerPanel = new DCPanel();
@@ -313,12 +314,12 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
 
         for (int i = startIndex; i < availableDatastoreDescriptors.size(); i++) {
             DatastoreDescriptor datastoreDescriptor = availableDatastoreDescriptors.get(i);
-            final String imagePath = DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor);
+            final String imagePath = DatastoreDescriptors.getIconPath(datastoreDescriptor);
             final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
             moreDatastoreTypesMenu.add(menuItem);
         }
 

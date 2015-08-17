@@ -35,7 +35,7 @@ import javax.swing.border.EmptyBorder;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreDescriptor;
-import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
+import org.datacleaner.connection.DatastoreDescriptors;
 import org.datacleaner.connection.JdbcDatastore;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
@@ -131,7 +131,7 @@ public class AddDatastorePanel extends DCPanel {
     private PopupButton createCloudButton() {
         final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
                 IconUtils.CLOUD_IMAGEPATH);
-        List<DatastoreDescriptor> availableDatastoreDescriptors = _databaseDriverCatalog.getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog).getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Cloud service")) {
@@ -141,9 +141,9 @@ public class AddDatastorePanel extends DCPanel {
                     cloudButton.getMenu().add(
                             createNewDatastoreButton(datastoreDescriptor.getName(),
                                     datastoreDescriptor.getDescription(),
-                                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
                                     datastoreDescriptor.getDatastoreClass(),
-                                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class AddDatastorePanel extends DCPanel {
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        List<DatastoreDescriptor> availableDatastoreDescriptors = _databaseDriverCatalog.getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog).getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Database")) {
@@ -165,9 +165,9 @@ public class AddDatastorePanel extends DCPanel {
                     databaseButton.getMenu().add(
                             createNewDatastoreButton(datastoreDescriptor.getName(),
                                     datastoreDescriptor.getDescription(),
-                                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor),
+                                    DatastoreDescriptors.getIconPath(datastoreDescriptor),
                                     datastoreDescriptor.getDatastoreClass(),
-                                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
                 }
             }
         }

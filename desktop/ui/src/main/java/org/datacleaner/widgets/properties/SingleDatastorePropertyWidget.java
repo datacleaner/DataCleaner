@@ -33,7 +33,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DatastoreDescriptor;
-import org.datacleaner.connection.DatastoreDescriptorDesktopBindings;
+import org.datacleaner.connection.DatastoreDescriptors;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.guice.DCModule;
@@ -141,7 +141,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
         final DatabaseDriverCatalog databaseDriverCatalog = _dcModule.createInjectorBuilder().getInstance(
                 DatabaseDriverCatalog.class);
 
-        List<DatastoreDescriptor> availableDatastoreDescriptors = databaseDriverCatalog
+        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(databaseDriverCatalog)
                 .getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
@@ -152,10 +152,10 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
             }
 
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(),
-                    DatastoreDescriptorDesktopBindings.getIconPath(datastoreDescriptor));
+                    DatastoreDescriptors.getIconPath(datastoreDescriptor));
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptorDesktopBindings.getDialogClass(datastoreDescriptor)));
+                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
             createDatastoreMenu.add(menuItem);
         }
     }

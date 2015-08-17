@@ -21,6 +21,8 @@ package org.datacleaner.connection;
 
 import java.util.List;
 
+import org.datacleaner.windows.AbstractDatastoreDialog;
+
 /**
  * A descriptor class for a datastore types in DataCleaner. 
  *
@@ -32,6 +34,10 @@ public interface DatastoreDescriptor {
     public String getDescription();
     
     public Class<? extends Datastore> getDatastoreClass();
+    
+    public Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDatastoreDialogClass();
+    
+    public String getIconPath();
     
     public boolean isUpdatable();
     

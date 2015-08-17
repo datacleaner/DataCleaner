@@ -22,47 +22,67 @@ package org.datacleaner.connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.datacleaner.windows.AbstractDatastoreDialog;
+
 public class DatastoreDescriptorImpl implements DatastoreDescriptor {
 
     private final String _name;
     private final String _description;
     private final Class<? extends Datastore> _datastoreClass;
+    private final Class<? extends AbstractDatastoreDialog<? extends Datastore>> _datastoreDialogClass;
     private final List<String> _tags;
-    
-    public DatastoreDescriptorImpl(final String name, String description, final Class<? extends Datastore> datastoreClass, List<String> tags) {
+
+    public DatastoreDescriptorImpl(final String name, String description,
+            final Class<? extends Datastore> datastoreClass,
+            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass,
+            final List<String> tags) {
         if (name == null) {
             throw new IllegalArgumentException("The name of the datastore cannot be null");
         }
-        
+
         if (datastoreClass == null) {
             throw new IllegalArgumentException("The class representing the datastore cannot be null");
         }
-        
+
         _name = name;
         _description = description;
         _datastoreClass = datastoreClass;
+        _datastoreDialogClass = datastoreDialogClass;
         _tags = tags;
     }
 
-    public DatastoreDescriptorImpl(final String name, String description, final Class<? extends Datastore> datastoreClass) {
-        this(name, description, datastoreClass, new ArrayList<String>());
+    public DatastoreDescriptorImpl(final String name, String description,
+            final Class<? extends Datastore> datastoreClass,
+            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> datastoreDialogClass) {
+        this(name, description, datastoreClass, datastoreDialogClass, new ArrayList<String>());
     }
-    
+
     @Override
     public String getName() {
         return _name;
     }
-    
+
     @Override
     public String getDescription() {
         return _description;
     }
-    
+
     @Override
     public Class<? extends Datastore> getDatastoreClass() {
         return _datastoreClass;
     }
-    
+
+    @Override
+    public Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDatastoreDialogClass() {
+        return _datastoreDialogClass;
+    }
+
+    @Override
+    public String getIconPath() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     @Override
     public boolean isUpdatable() {
         Class<?>[] interfaces = _datastoreClass.getInterfaces();
@@ -73,12 +93,12 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         }
         return false;
     }
-    
+
     @Override
     public List<String> getTags() {
         return _tags;
     }
-    
+
     @Override
     public boolean equals(Object that) {
         if (that != null) {
@@ -86,7 +106,7 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
                 DatastoreDescriptor thatDescriptor = (DatastoreDescriptor) that;
                 boolean nameEquals = this.getName().equals(thatDescriptor.getName());
                 boolean datastoreClassEquals = this.getDatastoreClass().equals(thatDescriptor.getDatastoreClass());
-                
+
                 if (nameEquals && datastoreClassEquals) {
                     return true;
                 }
@@ -94,7 +114,7 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -102,5 +122,5 @@ public class DatastoreDescriptorImpl implements DatastoreDescriptor {
         hash = 89 * hash + this._datastoreClass.hashCode();
         return hash;
     }
-    
+
 }

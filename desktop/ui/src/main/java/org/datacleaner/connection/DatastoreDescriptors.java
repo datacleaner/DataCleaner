@@ -30,7 +30,6 @@ import java.util.Set;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.database.DatabaseDriverDescriptor;
 import org.datacleaner.util.IconUtils;
-import org.datacleaner.windows.AbstractDatastoreDialog;
 import org.datacleaner.windows.AccessDatastoreDialog;
 import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
@@ -52,76 +51,77 @@ import org.datacleaner.windows.XmlDatastoreDialog;
 public class DatastoreDescriptors {
 
     private static final DatastoreDescriptor CSV_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("CSV file",
-            "Comma-separated values (CSV) file (or file with other separators)", CsvDatastore.class);
+            "Comma-separated values (CSV) file (or file with other separators)", CsvDatastore.class, CsvDatastoreDialog.class);
 
     private static final DatastoreDescriptor EXCEL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Excel spreadsheet", "Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
-            ExcelDatastore.class);
+            ExcelDatastore.class, ExcelDatastoreDialog.class);
 
     private static final DatastoreDescriptor ACCESS_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "Access database", "Microsoft Access database file (.mdb).", AccessDatastore.class);
+            "Access database", "Microsoft Access database file (.mdb).", AccessDatastore.class, AccessDatastoreDialog.class);
 
     private static final DatastoreDescriptor SAS_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("SAS library",
-            "A directory of SAS library files (.sas7bdat).", SasDatastore.class);
+            "A directory of SAS library files (.sas7bdat).", SasDatastore.class, SasDatastoreDialog.class);
 
     private static final DatastoreDescriptor DBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DBase database",
-            "DBase database file (.dbf)", DbaseDatastore.class);
+            "DBase database file (.dbf)", DbaseDatastore.class, DbaseDatastoreDialog.class);
 
     private static final DatastoreDescriptor FIXEDWIDTH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "Fixed width file",
             "Text file with fixed width values. Each value spans a fixed amount of text characters.",
-            FixedWidthDatastore.class);
+            FixedWidthDatastore.class, FixedWidthDatastoreDialog.class);
 
     private static final DatastoreDescriptor XML_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("XML file",
-            "Extensible Markup Language file (.xml)", XmlDatastore.class);
+            "Extensible Markup Language file (.xml)", XmlDatastore.class, XmlDatastoreDialog.class);
 
     private static final DatastoreDescriptor JSON_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("JSON file",
-            "JavaScript Object NOtation file (.json).", JsonDatastore.class);
+            "JavaScript Object NOtation file (.json).", JsonDatastore.class, JsonDatastoreDialog.class);
 
     private static final DatastoreDescriptor SALESFORCE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "Salesforce.com", "Connect to a Salesforce.com account", SalesforceDatastore.class);
+            "Salesforce.com", "Connect to a Salesforce.com account", SalesforceDatastore.class, SalesforceDatastoreDialog.class, Arrays.asList("Cloud service"));
 
     private static final DatastoreDescriptor SUGARCRM_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("SugarCRM",
-            "Connect to a SugarCRM system", SugarCrmDatastore.class);
+            "Connect to a SugarCRM system", SugarCrmDatastore.class, SugarCrmDatastoreDialog.class, Arrays.asList("Cloud service"));
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "MongoDB database", "Connect to a MongoDB database", MongoDbDatastore.class);
+            "MongoDB database", "Connect to a MongoDB database", MongoDbDatastore.class, MongoDbDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor COUCHDB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "CouchDB database", "Connect to an Apache CouchDB database", CouchDbDatastore.class);
+            "CouchDB database", "Connect to an Apache CouchDB database", CouchDbDatastore.class, CouchDbDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor ELASTICSEARCH_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class);
+            "ElasticSearch index", "Connect to an ElasticSearch index", ElasticSearchDatastore.class, ElasticSearchDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor CASSANDRA_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            "Cassandra database", "Connect to an Apache Cassandra database", CassandraDatastore.class);
+            "Cassandra database", "Connect to an Apache Cassandra database", CassandraDatastore.class, CassandraDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor HBASE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("HBase database",
-            "Connect to an Apache HBase database", HBaseDatastore.class);
+            "Connect to an Apache HBase database", HBaseDatastore.class, HBaseDatastoreDialog.class);
 
     private static final DatastoreDescriptor HIVE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
-            DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database", JdbcDatastore.class);
+            DatabaseDriverCatalog.DATABASE_NAME_HIVE, "Connect to an Apache Hive database", JdbcDatastore.class, JdbcDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor MYSQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
-            "Connect to a MySQL database", JdbcDatastore.class);
+            "Connect to a MySQL database", JdbcDatastore.class, JdbcDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor POSTGRESQL_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-            "Connect to a PostgreSQL database", JdbcDatastore.class);
+            "Connect to a PostgreSQL database", JdbcDatastore.class, JdbcDatastoreDialog.class, Arrays.asList("Database"));
 
     private static final DatastoreDescriptor ORACLE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
-            "Connect to a Oracle database", JdbcDatastore.class);
+            "Connect to a Oracle database", JdbcDatastore.class, JdbcDatastoreDialog.class);
 
     private static final DatastoreDescriptor SQLSERVER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
-            "Connect to a Microsoft SQL Server database", JdbcDatastore.class);
+            "Connect to a Microsoft SQL Server database", JdbcDatastore.class, JdbcDatastoreDialog.class, Arrays.asList("Database"));
     
     private static final DatastoreDescriptor COMPOSITE_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Composite datastore",
-            "Create a composite datastore", CompositeDatastore.class);
+            "Create a composite datastore", CompositeDatastore.class, CompositeDatastoreDialog.class);
+    
+    private static final DatastoreDescriptor OTHER_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Other database",
+            "Connect to other database", JdbcDatastore.class, JdbcDatastoreDialog.class);
     
     private static List<DatastoreDescriptor> _allDatastoreDescriptors = new ArrayList<>();
 
     private static Map<DatastoreDescriptor, String> _iconPaths = new HashMap<DatastoreDescriptor, String>();
-
-    private static Map<DatastoreDescriptor, Class<? extends AbstractDatastoreDialog<? extends Datastore>>> _dialogClasses = new HashMap<>();
 
     static {
         _allDatastoreDescriptors.add(CSV_DATASTORE_DESCRIPTOR);
@@ -171,30 +171,6 @@ public class DatastoreDescriptors {
         _iconPaths.put(COMPOSITE_DATASTORE_DESCRIPTOR, IconUtils.COMPOSITE_IMAGEPATH);
     }
 
-    static {
-        _dialogClasses.put(CSV_DATASTORE_DESCRIPTOR, CsvDatastoreDialog.class);
-        _dialogClasses.put(ACCESS_DATASTORE_DESCRIPTOR, AccessDatastoreDialog.class);
-        _dialogClasses.put(EXCEL_DATASTORE_DESCRIPTOR, ExcelDatastoreDialog.class);
-        _dialogClasses.put(SAS_DATASTORE_DESCRIPTOR, SasDatastoreDialog.class);
-        _dialogClasses.put(DBASE_DATASTORE_DESCRIPTOR, DbaseDatastoreDialog.class);
-        _dialogClasses.put(FIXEDWIDTH_DATASTORE_DESCRIPTOR, FixedWidthDatastoreDialog.class);
-        _dialogClasses.put(XML_DATASTORE_DESCRIPTOR, XmlDatastoreDialog.class);
-        _dialogClasses.put(JSON_DATASTORE_DESCRIPTOR, JsonDatastoreDialog.class);
-        _dialogClasses.put(SALESFORCE_DATASTORE_DESCRIPTOR, SalesforceDatastoreDialog.class);
-        _dialogClasses.put(SUGARCRM_DATASTORE_DESCRIPTOR, SugarCrmDatastoreDialog.class);
-        _dialogClasses.put(MONGODB_DATASTORE_DESCRIPTOR, MongoDbDatastoreDialog.class);
-        _dialogClasses.put(COUCHDB_DATASTORE_DESCRIPTOR, CouchDbDatastoreDialog.class);
-        _dialogClasses.put(ELASTICSEARCH_DATASTORE_DESCRIPTOR, ElasticSearchDatastoreDialog.class);
-        _dialogClasses.put(CASSANDRA_DATASTORE_DESCRIPTOR, CassandraDatastoreDialog.class);
-        _dialogClasses.put(HBASE_DATASTORE_DESCRIPTOR, HBaseDatastoreDialog.class);
-        _dialogClasses.put(HIVE_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
-        _dialogClasses.put(MYSQL_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
-        _dialogClasses.put(POSTGRESQL_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
-        _dialogClasses.put(ORACLE_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
-        _dialogClasses.put(SQLSERVER_DATASTORE_DESCRIPTOR, JdbcDatastoreDialog.class);
-        _dialogClasses.put(COMPOSITE_DATASTORE_DESCRIPTOR, CompositeDatastoreDialog.class);
-    }
-    
     private DatabaseDriverCatalog _databaseDriverCatalog;
     
     public DatastoreDescriptors(DatabaseDriverCatalog databaseDriverCatalog) {
@@ -231,66 +207,21 @@ public class DatastoreDescriptors {
     private List<DatastoreDescriptor> getManualDatastoreDescriptors() {
         List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
 
-        DatastoreDescriptor csvDatastoreDescriptor = new DatastoreDescriptorImpl("CSV file",
-                "Comma-separated values (CSV) file (or file with other separators)", CsvDatastore.class);
-        datastoreDescriptors.add(csvDatastoreDescriptor);
-
-        DatastoreDescriptor excelDatastoreDescriptor = new DatastoreDescriptorImpl("Excel spreadsheet",
-                "Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.", ExcelDatastore.class);
-        datastoreDescriptors.add(excelDatastoreDescriptor);
-
-        DatastoreDescriptor accessDatastoreDescriptor = new DatastoreDescriptorImpl("Access database",
-                "Microsoft Access database file (.mdb).", AccessDatastore.class);
-        datastoreDescriptors.add(accessDatastoreDescriptor);
-
-        DatastoreDescriptor sasDatastoreDescriptor = new DatastoreDescriptorImpl("SAS library",
-                "A directory of SAS library files (.sas7bdat).", SasDatastore.class);
-        datastoreDescriptors.add(sasDatastoreDescriptor);
-
-        DatastoreDescriptor dbaseDatastoreDescriptor = new DatastoreDescriptorImpl("DBase database",
-                "DBase database file (.dbf)", DbaseDatastore.class);
-        datastoreDescriptors.add(dbaseDatastoreDescriptor);
-
-        DatastoreDescriptor fixedWidthDatastoreDescriptor = new DatastoreDescriptorImpl("Fixed width file",
-                "Text file with fixed width values. Each value spans a fixed amount of text characters.",
-                FixedWidthDatastore.class);
-        datastoreDescriptors.add(fixedWidthDatastoreDescriptor);
-
-        DatastoreDescriptor xmlDatastoreDescriptor = new DatastoreDescriptorImpl("XML file",
-                "Extensible Markup Language file (.xml)", XmlDatastore.class);
-        datastoreDescriptors.add(xmlDatastoreDescriptor);
-
-        DatastoreDescriptor jsonDatastoreDescriptor = new DatastoreDescriptorImpl("JSON file",
-                "JavaScript Object NOtation file (.json).", JsonDatastore.class);
-        datastoreDescriptors.add(jsonDatastoreDescriptor);
-        
-        DatastoreDescriptor salesforceDatastoreDescriptor = new DatastoreDescriptorImpl("Salesforce.com",
-                "Connect to a Salesforce.com account", SalesforceDatastore.class, Arrays.asList("Cloud service"));
-        datastoreDescriptors.add(salesforceDatastoreDescriptor);
-        
-        DatastoreDescriptor sugarCrmDatastoreDescriptor = new DatastoreDescriptorImpl("SugarCRM",
-                "Connect to a SugarCRM system", SugarCrmDatastore.class, Arrays.asList("Cloud service"));
-        datastoreDescriptors.add(sugarCrmDatastoreDescriptor);
-
-        DatastoreDescriptor mongoDbDatastoreDescriptor = new DatastoreDescriptorImpl("MongoDB database",
-                "Connect to a MongoDB database", MongoDbDatastore.class, Arrays.asList("Database"));
-        datastoreDescriptors.add(mongoDbDatastoreDescriptor);
-        
-        DatastoreDescriptor couchDbDatastoreDescriptor = new DatastoreDescriptorImpl("CouchDB database",
-                "Connect to an Apache CouchDB database", CouchDbDatastore.class, Arrays.asList("Database"));
-        datastoreDescriptors.add(couchDbDatastoreDescriptor);
-        
-        DatastoreDescriptor elasticSearchDatastoreDescriptor = new DatastoreDescriptorImpl("ElasticSearch index",
-                "Connect to an ElasticSearch index", ElasticSearchDatastore.class, Arrays.asList("Database"));
-        datastoreDescriptors.add(elasticSearchDatastoreDescriptor);
-        
-        DatastoreDescriptor cassandraDatastoreDescriptor = new DatastoreDescriptorImpl("Cassandra database",
-                "Connect to an Apache Cassandra database", CassandraDatastore.class, Arrays.asList("Database"));
-        datastoreDescriptors.add(cassandraDatastoreDescriptor);
-        
-        DatastoreDescriptor hbaseDatastoreDescriptor = new DatastoreDescriptorImpl("HBase database",
-                "Connect to an Apache HBase database", HBaseDatastore.class, Arrays.asList("Database"));
-        datastoreDescriptors.add(hbaseDatastoreDescriptor);
+        datastoreDescriptors.add(CSV_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(EXCEL_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(ACCESS_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(SAS_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(DBASE_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(FIXEDWIDTH_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(XML_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(JSON_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(SALESFORCE_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(CASSANDRA_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(HBASE_DATASTORE_DESCRIPTOR);
         
         return datastoreDescriptors;
     }
@@ -299,33 +230,23 @@ public class DatastoreDescriptors {
         List<DatastoreDescriptor> datastoreDescriptors = new ArrayList<>();
         
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_HIVE)) {
-            DatastoreDescriptor hiveDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_HIVE,
-                    "Connect to an Apache Hive database", JdbcDatastore.class, Arrays.asList("Database"));
-            datastoreDescriptors.add(hiveDatastoreDescriptor);
+            datastoreDescriptors.add(HIVE_DATASTORE_DESCRIPTOR);
         }
         
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-            DatastoreDescriptor mysqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MYSQL,
-                    "Connect to a MySQL database", JdbcDatastore.class, Arrays.asList("Database"));
-            datastoreDescriptors.add(mysqlDatastoreDescriptor);
+            datastoreDescriptors.add(MYSQL_DATASTORE_DESCRIPTOR);
         }
         
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-            DatastoreDescriptor postgresqlDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-                    "Connect to a PostgreSQL database", JdbcDatastore.class, Arrays.asList("Database"));
-            datastoreDescriptors.add(postgresqlDatastoreDescriptor);
+            datastoreDescriptors.add(POSTGRESQL_DATASTORE_DESCRIPTOR);
         }
 
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-            DatastoreDescriptor oracleDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_ORACLE,
-                    "Connect to a Oracle database", JdbcDatastore.class, Arrays.asList("Database"));
-            datastoreDescriptors.add(oracleDatastoreDescriptor);
+            datastoreDescriptors.add(ORACLE_DATASTORE_DESCRIPTOR);
         }
 
         if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-            DatastoreDescriptor sqlServerDatastoreDescriptor = new DatastoreDescriptorImpl(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
-                    "Connect to a Microsoft SQL Server database", JdbcDatastore.class, Arrays.asList("Database"));
-            datastoreDescriptors.add(sqlServerDatastoreDescriptor);
+            datastoreDescriptors.add(SQLSERVER_DATASTORE_DESCRIPTOR);
         }
 
         return datastoreDescriptors;
@@ -339,25 +260,19 @@ public class DatastoreDescriptors {
             final String databaseName = databaseDriver.getDisplayName();
             if (!alreadyAddedDatabaseNames.contains(databaseName)) {
                 DatastoreDescriptor jdbcDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName,
-                        "Connect to " + databaseName, JdbcDatastore.class);
+                        "Connect to " + databaseName, JdbcDatastore.class, JdbcDatastoreDialog.class);
                 datastoreDescriptors.add(jdbcDatastoreDescriptor);
             }
         }
 
         // custom/other jdbc connection
-        final String databaseName = "Other database";
-        if (!alreadyAddedDatabaseNames.contains(databaseName)) {
-            DatastoreDescriptor otherDatastoreDescriptor = new DatastoreDescriptorImpl(databaseName,
-                    "Connect to other database", JdbcDatastore.class);
-            datastoreDescriptors.add(otherDatastoreDescriptor);
+        if (!alreadyAddedDatabaseNames.contains(OTHER_DATASTORE_DESCRIPTOR.getName())) {
+            datastoreDescriptors.add(OTHER_DATASTORE_DESCRIPTOR);
         }
 
         // composite datastore
-        final String compositeDatastoreName = "Composite datastore";
-        if (!alreadyAddedDatabaseNames.contains(compositeDatastoreName)) {
-            DatastoreDescriptor compositeDatastoreDescriptor = new DatastoreDescriptorImpl(compositeDatastoreName,
-                    "Create composite datastore", CompositeDatastore.class);
-            datastoreDescriptors.add(compositeDatastoreDescriptor);
+        if (!alreadyAddedDatabaseNames.contains(COMPOSITE_DATASTORE_DESCRIPTOR)) {
+            datastoreDescriptors.add(COMPOSITE_DATASTORE_DESCRIPTOR);
         }
 
         
@@ -372,16 +287,6 @@ public class DatastoreDescriptors {
             }
         }
         return iconPath;
-    }
-
-    public static Class<? extends AbstractDatastoreDialog<? extends Datastore>> getDialogClass(DatastoreDescriptor datastoreDescriptor) {
-        Class<? extends AbstractDatastoreDialog<? extends Datastore>> dialogClass = _dialogClasses.get(datastoreDescriptor);
-        if (dialogClass == null) {
-            if (datastoreDescriptor.getDatastoreClass().equals(JdbcDatastore.class)) {
-                return JdbcDatastoreDialog.class;
-            }
-        }
-        return dialogClass;
     }
 
 }

@@ -63,7 +63,8 @@ public class AddDatastorePanel extends DCPanel {
     private final DatastoreCatalog _datastoreCatalog;
     private final DatabaseDriverCatalog _databaseDriverCatalog;
 
-    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog, final DatabaseDriverCatalog databaseDriverCatalog, final DCModule dcModule,
+    public AddDatastorePanel(final DatastoreCatalog datastoreCatalog,
+            final DatabaseDriverCatalog databaseDriverCatalog, final DCModule dcModule,
             final DatastoreSelectedListener datastoreSelectedListener, UserPreferences userPreferences,
             boolean showExistingDatastoresButton) {
         super();
@@ -131,7 +132,8 @@ public class AddDatastorePanel extends DCPanel {
     private PopupButton createCloudButton() {
         final PopupButton cloudButton = WidgetFactory.createDefaultPopupButton("Cloud service",
                 IconUtils.CLOUD_IMAGEPATH);
-        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog).getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog)
+                .getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Cloud service")) {
@@ -143,7 +145,7 @@ public class AddDatastorePanel extends DCPanel {
                                     datastoreDescriptor.getDescription(),
                                     DatastoreDescriptors.getIconPath(datastoreDescriptor),
                                     datastoreDescriptor.getDatastoreClass(),
-                                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
+                                    datastoreDescriptor.getDatastoreDialogClass()));
                 }
             }
         }
@@ -155,7 +157,8 @@ public class AddDatastorePanel extends DCPanel {
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);
         databaseButton.setFont(WidgetUtils.FONT_HEADER2);
 
-        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog).getAvailableDatastoreDescriptors();
+        List<DatastoreDescriptor> availableDatastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog)
+                .getAvailableDatastoreDescriptors();
 
         for (DatastoreDescriptor datastoreDescriptor : availableDatastoreDescriptors) {
             if (datastoreDescriptor.getTags().contains("Database")) {
@@ -167,7 +170,7 @@ public class AddDatastorePanel extends DCPanel {
                                     datastoreDescriptor.getDescription(),
                                     DatastoreDescriptors.getIconPath(datastoreDescriptor),
                                     datastoreDescriptor.getDatastoreClass(),
-                                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
+                                    datastoreDescriptor.getDatastoreDialogClass()));
                 }
             }
         }
@@ -205,7 +208,8 @@ public class AddDatastorePanel extends DCPanel {
     }
 
     private <D extends Datastore> JMenuItem createNewDatastoreButton(final String title, final String description,
-            final String imagePath, final Class<D> datastoreClass, final Class<? extends AbstractDatastoreDialog<? extends Datastore>> dialogClass) {
+            final String imagePath, final Class<D> datastoreClass,
+            final Class<? extends AbstractDatastoreDialog<? extends Datastore>> dialogClass) {
         final JMenuItem item = WidgetFactory.createMenuItem(title, imagePath);
         item.setToolTipText(description);
 
@@ -214,7 +218,8 @@ public class AddDatastorePanel extends DCPanel {
             public void actionPerformed(ActionEvent event) {
                 Injector injectorWithNullDatastore = _dcModule.createInjectorBuilder().with(datastoreClass, null)
                         .createInjector();
-                final AbstractDatastoreDialog<? extends Datastore> dialog = injectorWithNullDatastore.getInstance(dialogClass);
+                final AbstractDatastoreDialog<? extends Datastore> dialog = injectorWithNullDatastore
+                        .getInstance(dialogClass);
 
                 dialog.setVisible(true);
 

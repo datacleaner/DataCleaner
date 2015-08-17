@@ -155,7 +155,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
                     DatastoreDescriptors.getIconPath(datastoreDescriptor));
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
+                    datastoreDescriptor.getDatastoreDialogClass()));
             createDatastoreMenu.add(menuItem);
         }
     }

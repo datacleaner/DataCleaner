@@ -274,7 +274,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             panel1.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
                     DatastoreDescriptors.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptors.getDialogClass(datastoreDescriptor),
+                    datastoreDescriptor.getDatastoreDialogClass(),
                     DCPopupBubble.Position.BOTTOM));
             databaseNames.add(datastoreDescriptor.getName());
         }
@@ -288,7 +288,8 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             panel2.add(createNewDatastoreButton(datastoreDescriptor.getName(), datastoreDescriptor.getDescription(),
                     DatastoreDescriptors.getIconPath(datastoreDescriptor),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptors.getDialogClass(datastoreDescriptor), DCPopupBubble.Position.TOP));
+                    datastoreDescriptor.getDatastoreDialogClass(),
+                    DCPopupBubble.Position.TOP));
             databaseNames.add(datastoreDescriptor.getName());
         }
 
@@ -319,7 +320,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
             final JMenuItem menuItem = WidgetFactory.createMenuItem(datastoreDescriptor.getName(), icon);
             menuItem.addActionListener(createActionListener(datastoreDescriptor.getName(),
                     datastoreDescriptor.getDatastoreClass(),
-                    DatastoreDescriptors.getDialogClass(datastoreDescriptor)));
+                    datastoreDescriptor.getDatastoreDialogClass()));
             moreDatastoreTypesMenu.add(menuItem);
         }
 

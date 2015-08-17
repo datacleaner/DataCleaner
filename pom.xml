@@ -40,7 +40,7 @@
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
-		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.</description>
+		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	<modules>
@@ -101,6 +101,15 @@
 		<developer>
 			<name>Kasper Sørensen</name>
 			<email>i.am.kasper.sorensen@gmail.com</email>
+		</developer>
+		<developer>
+			<name>Dennis Du Krøger</name>
+		</developer>
+		<developer>
+			<name>Claudia Peşu</name>
+		</developer>
+		<developer>
+			<name>Tomasz Guziałek</name>
 		</developer>
 	</developers>
 	<contributors>

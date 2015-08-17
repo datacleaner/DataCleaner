@@ -47,13 +47,12 @@ public class SelectDatastoreContainerPanel extends DCSplashPanel implements Data
     private final SelectDatastorePanel _selectDatastorePanel;
     private final MutableDatastoreCatalog _datastoreCatalog;
 
-    public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule,
-            DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
+    public SelectDatastoreContainerPanel(AnalysisJobBuilderWindow window, DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog, MutableDatastoreCatalog datastoreCatalog,
             UserPreferences userPreferences) {
         super(window);
         _datastoreCatalog = datastoreCatalog;
-        _selectDatastorePanel = new SelectDatastorePanel(dcModule, databaseDriverCatalog, datastoreCatalog,
-                userPreferences, this, true);
+        _selectDatastorePanel = new SelectDatastorePanel(dcModule, datastoreCatalog,
+                databaseDriverCatalog, userPreferences, this, true);
 
         setLayout(new BorderLayout());
         final JScrollPane scroll = wrapContent(_selectDatastorePanel);

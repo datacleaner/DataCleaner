@@ -263,4 +263,5 @@ public class DatabaseDriverCatalog implements Serializable {
         }
         return getState(databaseDriver) == DatabaseDriverState.INSTALLED_WORKING;
     }
+    
 }

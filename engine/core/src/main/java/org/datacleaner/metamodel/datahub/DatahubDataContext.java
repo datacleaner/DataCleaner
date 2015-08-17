@@ -53,11 +53,10 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
     private DatahubSchema _schema;
 
     public DatahubDataContext(String host, Integer port, String username,
-            String password, String tenantId, boolean https) {
+            String password, String tenantId, boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
         _connection = new DatahubConnection(host, port, username, password,
-                tenantId, https);
+                tenantId, https, acceptUnverifiedSslPeers, securityMode);
         _schema = getDatahubSchema();
-
     }
 
     public static boolean checkForExternal(String str) {

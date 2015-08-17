@@ -34,10 +34,12 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     private final String _password;
     private final String _tenantName;
     private boolean _https;
+    private boolean _acceptUnverifiedSslPeers;
+    private final String _securityMode;
 
     public DatahubDatastore(String name, String host, Integer port,
             String username, String password, String tenantName,
-            boolean https) {
+            boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
         super(name);
         _host = host;
         _port = port;
@@ -45,6 +47,8 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
         _password = password;
         _tenantName = tenantName;
         _https = https;
+        _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
+        _securityMode = securityMode;
     }
 
     @Override
@@ -78,6 +82,14 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
         return _https;
     }
 
+    public boolean acceptUnverifiedSslPeers() {
+        return _acceptUnverifiedSslPeers;
+    }
+
+    public String getSecurityMode() {
+        return _securityMode;
+    }
+
     @Override
     public UpdateableDatastoreConnection openConnection() {
         DatastoreConnection connection = super.openConnection();
@@ -87,7 +99,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     @Override
     protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
         final DatahubDataContext dataContext = new DatahubDataContext(_host,
-                _port, _username, _password, _tenantName, _https);
+                _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
         return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
                 dataContext, this);
     }
@@ -96,7 +108,10 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port
                 + ", username=" + _username + ", tenant=" + _tenantName
-                + "https=" + (_https ? "true" : "false") + "]";
+                + ", https=" + (_https ? "true" : "false")
+                + ", acceptUnverifiedSslPeers=" + (_acceptUnverifiedSslPeers ? "true" : "false")
+                + ", securityMode=" + _securityMode
+                + "]";
     }
 
 }

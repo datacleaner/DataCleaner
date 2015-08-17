@@ -44,30 +44,29 @@ public class DatahubConnection {
     private final String _contextPath = "/ui";
     private final String _datahubContext = "/datastores/Golden%20record";
     private final String _scheme;
-//    HttpClientContext _context;
+    // HttpClientContext _context;
     private boolean _acceptUnverifiedSslPeers;
+    private final String _securityMode;
 
     public DatahubConnection(String hostname, Integer port, String username,
-            String password, String tenantId, boolean https) {
+            String password, String tenantId, boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+
         _hostname = hostname;
         _port = port;
         _https = https;
         _tenantId = tenantId;
         _username = username;
         _password = password;
-        if (_https) {
-            _scheme = "https";
-        } else {
-            _scheme = "http";
-        }
-        _acceptUnverifiedSslPeers = true;
+        _scheme = _https ? "https" : "http";
+        _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
+        _securityMode = "cas";
 
-//        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-//        credsProvider.setCredentials(
-//                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-//                new UsernamePasswordCredentials(getUsername(), getPassword()));
-//        _context = HttpClientContext.create();
-//        _context.setCredentialsProvider(credsProvider);
+        // CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        // credsProvider.setCredentials(
+        // new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
+        // new UsernamePasswordCredentials(getUsername(), getPassword()));
+        // _context = HttpClientContext.create();
+        // _context.setCredentialsProvider(credsProvider);
     }
 
     public MonitorHttpClient getHttpClient() {
@@ -88,14 +87,8 @@ public class DatahubConnection {
         // SecurityUtils.decodePassword(getEncodedPassword());
         // final String username = getUsername();
 
-//        final String securityMode = System
-//                .getProperty(SystemProperties.MONITOR_SECURITY_MODE);
-        final String securityMode = "cas";
-        if ("CAS".equalsIgnoreCase(securityMode)) {
-//            final String casUrl = System
-//                    .getProperty(SystemProperties.MONITOR_CAS_URL);
-            final String casUrl = "https://mdmregtest.humaninference.com:8443/cas";
-            return new CASMonitorHttpClient(httpClient, casUrl, _username,
+        if ("CAS".equalsIgnoreCase(_securityMode)) {
+            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username,
                     _password, getBaseUrl());
         }
 
@@ -153,6 +146,21 @@ public class DatahubConnection {
         return sb.toString();
     }
 
+    public String getCasServerUrl() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_scheme).append("://" + _hostname);
+
+        if ((_https && _port != 443) || (!_https && _port != 80)) {
+            // only add port if it differs from default ports of HTTP/HTTPS.
+            sb.append(':');
+            sb.append(_port);
+        }
+
+        sb.append("/cas");
+
+        return sb.toString();
+    }
+
     public HttpHost getHttpHost() {
         return new HttpHost(_hostname, _port, _scheme);
     }
@@ -161,8 +169,8 @@ public class DatahubConnection {
         return _datahubContext;
     }
 
-//    public HttpContext getContext() {
-//        return _context;
-//    }
+    // public HttpContext getContext() {
+    // return _context;
+    // }
 
 }

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.wadl;
+package org.datacleaner.monitor.server.controllers.doc;
 
 /**
  * @author j.horcicka (GMC)

@@ -19,6 +19,23 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import org.apache.metamodel.util.Action;
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.monitor.configuration.TenantContext;
+import org.datacleaner.monitor.configuration.TenantContextFactory;
+import org.datacleaner.monitor.shared.model.SecurityRoles;
+import org.datacleaner.repository.RepositoryFile;
+import org.datacleaner.repository.RepositoryFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,28 +45,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import javax.annotation.security.RolesAllowed;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
-import org.datacleaner.monitor.configuration.TenantContext;
-import org.datacleaner.monitor.configuration.TenantContextFactory;
-import org.datacleaner.monitor.shared.model.SecurityRoles;
-import org.datacleaner.repository.RepositoryFile;
-import org.datacleaner.repository.RepositoryFolder;
-import org.apache.metamodel.util.Action;
-import org.apache.metamodel.util.FileHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/{tenant}/zip")
@@ -105,10 +100,16 @@ public class RepositoryZipController {
         
         for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
             final String entryName = entry.getName();
+            int lastSlash = entryName.lastIndexOf('/');
+
             if (entry.isDirectory()) {
-                logger.debug("Omitting directory entry: {}", entryName);
+                if (entry.getSize() > 0L) {
+                    logger.debug("Omitting directory entry: {}", entryName);
+                }
+                else {
+                    getFolder(rootFolder, entryName.substring(0, lastSlash));
+                }
             } else {
-                int lastSlash = entryName.lastIndexOf('/');
                 final String filename;
                 final RepositoryFolder folder;
                 if (lastSlash != -1) {
@@ -167,8 +168,11 @@ public class RepositoryZipController {
 
     private void addToZipOutput(final String path, final RepositoryFolder folder, final ZipOutputStream zipOutput)
             throws IOException {
+        int itemsCount = 0;
+
         final List<RepositoryFile> files = folder.getFiles();
         for (RepositoryFile file : files) {
+            System.out.println("File: " + path + file.getName());
             zipOutput.putNextEntry(new ZipEntry(path + file.getName()));
             file.readFile(new Action<InputStream>() {
                 @Override
@@ -177,12 +181,22 @@ public class RepositoryZipController {
                 }
             });
             zipOutput.closeEntry();
+            itemsCount++;
         }
 
         final List<RepositoryFolder> folders = folder.getFolders();
         for (RepositoryFolder subFolder : folders) {
             String name = subFolder.getName();
+            System.out.println("Directory: " + path + name + "/");
             addToZipOutput(path + name + "/", subFolder, zipOutput);
+            itemsCount++;
+        }
+
+        if (itemsCount == 0 && ! path.equals("")) {
+            String relativePath = path;
+            System.out.println("Empty: " + relativePath);
+            ZipEntry entry = new ZipEntry(relativePath);
+            zipOutput.putNextEntry(entry);
         }
     }
 }

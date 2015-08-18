@@ -414,6 +414,19 @@ public final class AnalysisJobBuilder implements Closeable {
         return builder;
     }
 
+    public ComponentBuilder addComponent(ComponentBuilder builder) {
+        if (builder instanceof FilterComponentBuilder) {
+            return  addFilter((FilterComponentBuilder<?, ?>) builder);
+        } else if (builder instanceof TransformerComponentBuilder) {
+            return addTransformer((TransformerComponentBuilder<?>) builder);
+        } else if (builder instanceof AnalyzerComponentBuilder) {
+            return addAnalyzer((AnalyzerComponentBuilder<?>) builder);
+        } else {
+            throw new UnsupportedOperationException("Unknown component type: " + builder);
+        }
+    }
+
+
     /**
      * Creates a filter job builder like the incoming filter job. Note that
      * input (columns and requirements) will not be mapped since these depend on
@@ -447,6 +460,20 @@ public final class AnalysisJobBuilder implements Closeable {
         }
 
         return builder;
+    }
+
+    public AnalysisJobBuilder removeComponent(ComponentBuilder builder){
+        if (builder instanceof FilterComponentBuilder) {
+            return removeFilter((FilterComponentBuilder<?, ?>) builder);
+        } else if (builder instanceof TransformerComponentBuilder) {
+            return removeTransformer((TransformerComponentBuilder<?>) builder);
+        } else if (builder instanceof AnalyzerComponentBuilder) {
+            return removeAnalyzer((AnalyzerComponentBuilder<?>) builder);
+        } else {
+            throw new UnsupportedOperationException("Unknown component type: " + builder);
+        }
+
+
     }
 
     public <F extends Filter<C>, C extends Enum<C>> FilterComponentBuilder<F, C> addFilter(Class<F> filterClass) {

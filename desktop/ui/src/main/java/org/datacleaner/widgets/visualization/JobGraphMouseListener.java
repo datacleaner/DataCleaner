@@ -19,7 +19,7 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -29,10 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.actions.PreviewSourceDataActionListener;
@@ -41,6 +38,7 @@ import org.datacleaner.actions.RemoveComponentMenuItem;
 import org.datacleaner.actions.RemoveSourceTableMenuItem;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.ComponentSuperCategory;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
@@ -161,6 +159,12 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
             popup.add(createLinkMenuItem(componentBuilder));
         }
 
+        for (OutputDataStream dataStream : componentBuilder.getOutputDataStreams()) {
+            JobGraphLinkPainter.VertexContext vertexContext = new JobGraphLinkPainter.VertexContext(componentBuilder,
+                    componentBuilder.getOutputDataStreamJobBuilder(dataStream), dataStream);
+            popup.add(createLinkMenuItem(vertexContext));
+        }
+
         final Icon renameIcon = ImageManager.get().getImageIcon(IconUtils.ACTION_RENAME, IconUtils.ICON_SIZE_SMALL);
         final JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", renameIcon);
         renameMenuItem.addActionListener(new RenameComponentActionListener(componentBuilder) {
@@ -190,8 +194,20 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
     }
 
     private JMenuItem createLinkMenuItem(final Object from) {
+        return createLinkMenuItem(new JobGraphLinkPainter.VertexContext(from,
+                _graphContext.getMainAnalysisJobBuilder(), null));
+    }
+
+    private JMenuItem createLinkMenuItem(final JobGraphLinkPainter.VertexContext from) {
         final ImageManager imageManager = ImageManager.get();
-        final JMenuItem menuItem = new JMenuItem("Link to ...", imageManager.getImageIcon(IconUtils.ACTION_ADD,
+        final String menuItemText;
+        if(from.getOutputDataStream() == null){
+            menuItemText = "Link to ...";
+        } else {
+            menuItemText = "Link \"" + from.getOutputDataStream().getName() + "\" to ...";
+        }
+
+        final JMenuItem menuItem = new JMenuItem(menuItemText, imageManager.getImageIcon(IconUtils.ACTION_ADD,
                 IconUtils.ICON_SIZE_SMALL));
         menuItem.addActionListener(new ActionListener() {
             @Override

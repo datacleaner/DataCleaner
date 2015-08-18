@@ -21,11 +21,11 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 
+import org.datacleaner.configuration.ContextAwareInjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ActiveOutputDataStream;
 import org.datacleaner.job.runner.RowProcessingConsumer;
-import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,31 +39,40 @@ public final class InitializeTask implements Task {
 
     private final LifeCycleHelper _lifeCycleHelper;
     private final RowProcessingConsumer _consumer;
-    private final RowProcessingPublisher _publisher;
 
-    public InitializeTask(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, RowProcessingPublisher publisher) {
+    public InitializeTask(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer) {
         _lifeCycleHelper = lifeCycleHelper;
         _consumer = consumer;
-        _publisher = publisher;
     }
 
     @Override
     public void execute() throws Exception {
         logger.debug("execute()");
 
-        final ComponentConfiguration configuration = _consumer.getComponentJob().getConfiguration();
-        final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
-        final Object component = _consumer.getComponent();
+        executeInternal(_consumer, _lifeCycleHelper);
+    }
 
-        _lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
-        _lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        _lifeCycleHelper.validate(descriptor, component);
-        final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
+    private void executeInternal(final RowProcessingConsumer consumer, LifeCycleHelper lifeCycleHelper) {
+        final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
+        final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
+        final Object component = consumer.getComponent();
+
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+        lifeCycleHelper.validate(descriptor, component);
+        final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
             activeOutputDataStream.initialize();
+            for (RowProcessingConsumer outputDataStreamConsumer : activeOutputDataStream.getPublisher().getConsumers()) {
+                ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(
+                        lifeCycleHelper.getInjectionManager(), activeOutputDataStream.getOutputDataStreamJob().getJob(),
+                        outputDataStreamConsumer.getComponentJob(), null);
+                LifeCycleHelper outputDataStreamLifeCycleHelper = new LifeCycleHelper(injectionManager, lifeCycleHelper.isIncludeNonDistributedTasks());
+                executeInternal(outputDataStreamConsumer, outputDataStreamLifeCycleHelper);
+            }
         }
-        _lifeCycleHelper.initialize(descriptor, component);
-        _lifeCycleHelper.initializeReferenceData();
+        lifeCycleHelper.initialize(descriptor, component);
+        lifeCycleHelper.initializeReferenceData();
     }
 
     @Override

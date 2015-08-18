@@ -115,8 +115,6 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     private final AtomicInteger _rowCount;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
-    private SimpleDataSetHeader _simpleDataSetHeader;
-
     public CompletenessAnalyzer() {
         _rowCount = new AtomicInteger();
     }
@@ -141,7 +139,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             if (_evaluationMode == EvaluationMode.ANY_FIELD && !valid) {
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);
                 if(_incompleteRowCollector != null) {
-                    _incompleteRowCollector.putRow(new DefaultRow(_simpleDataSetHeader, row.getValues(_valueColumns).toArray()));
+                    _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
                 }
                 return;
             }
@@ -153,13 +151,13 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         if (_evaluationMode == EvaluationMode.ALL_FIELDS && allInvalid) {
             _annotationFactory.annotate(row, distinctCount, _invalidRecords);
             if(_incompleteRowCollector != null) {
-                _incompleteRowCollector.putRow(new DefaultRow(_simpleDataSetHeader, row.getValues(_valueColumns).toArray()));
+                _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
             }
             return;
         }
 
         if(_completeRowCollector != null) {
-            _completeRowCollector.putRow(new DefaultRow(_simpleDataSetHeader, row.getValues(_valueColumns).toArray()));
+            _completeRowCollector.putValues(row.getValues(_valueColumns).toArray());
         }
     }
 
@@ -212,7 +210,6 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Override
     public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
             final OutputRowCollector outputRowCollector) {
-        _simpleDataSetHeader = new SimpleDataSetHeader(query.getSelectClause().getItems());
         if(outputDataStream.getName().equals(OUTPUT_STREAM_COMPLETE)){
             _completeRowCollector = outputRowCollector;
         } else {

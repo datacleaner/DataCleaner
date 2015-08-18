@@ -56,6 +56,6 @@
 	</bean>
 
     <context:component-scan base-package="org.datacleaner.monitor.server">
-        <context:exclude-filter type="regex" expression="org\.datacleaner\.monitor\.server\.controllers\.wadl.*" />
+        <context:exclude-filter type="regex" expression="org\.datacleaner\.monitor\.server\.controllers\.doc.*" />
     </context:component-scan>
 </beans>

@@ -59,7 +59,7 @@ public class DatahubConnection {
         _password = password;
         _scheme = _https ? "https" : "http";
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
-        _securityMode = "cas";
+        _securityMode = securityMode;
 
         // CredentialsProvider credsProvider = new BasicCredentialsProvider();
         // credsProvider.setCredentials(

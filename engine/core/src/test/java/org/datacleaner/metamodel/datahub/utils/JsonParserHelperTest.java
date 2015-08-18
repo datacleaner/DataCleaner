@@ -33,7 +33,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 public class JsonParserHelperTest extends TestCase {
 
-    public void testParseJsonSchema() throws JsonParseException, IOException {
+    public void testShouldParseAllSchemasAndTables() throws JsonParseException, IOException {
 
         String jsonString = "{\"schemas\":["
                 + "{\"tables\":[],\"name\":\"INFORMATION_SCHEMA\"},{\"tables\":["
@@ -78,7 +78,7 @@ public class JsonParserHelperTest extends TestCase {
 
     }
 
-    public void testParseDatastoreArray() throws IOException {
+    public void testShouldOnlyParseGoldenRecordDataStore() throws IOException {
         String jsonString = "[{\"name\":\"CSV datastore for Person Golden Records\",\"description\":\"The CSV datastore containing offboarded golden records for person configuration\",\"type\":\"CsvDatastore\"},"
                 + "{\"name\":\"Enrichment Service Call Logs\",\"description\":\"The CSV data store containing enrichment service call logs\",\"type\":\"CsvDatastore\"},"
                 + "{\"name\":\"Golden records\",\"description\":\"Virtual datastore for Golden Records\",\"type\":\"GoldenRecordDatastore\"},"
@@ -89,7 +89,7 @@ public class JsonParserHelperTest extends TestCase {
                 + "{\"name\":\"MDM datastore\",\"description\":\"Physical datastore of MDM\",\"type\":\"MDMDatastore\"}]";
         JsonParserHelper parser = new JsonParserHelper();
         List<String> names = parser.parseDataStoreArray(jsonString);
-        assertEquals(2, names.size());
+        assertEquals(1, names.size());
     }
 
 }

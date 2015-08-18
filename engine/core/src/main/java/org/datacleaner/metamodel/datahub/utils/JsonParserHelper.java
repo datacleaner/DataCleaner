@@ -35,11 +35,12 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class JsonParserHelper {
 
-    private static final Set<String> dataStoreTypes = new HashSet<String>() {
+    private static final Set<String> datastoreTypes = new HashSet<String>() {
         {
             add("GoldenRecordDatastore");
-            add("MDMDatastore");
-            add("SourceRecordGoldenFormatDatastore");
+            //TODO current we cannot show multiple datastores in the schema browser
+            //add("MDMDatastore");
+            //add("SourceRecordGoldenFormatDatastore");
         }
     };
 
@@ -263,9 +264,7 @@ public class JsonParserHelper {
         if (_currentFieldname.equals("name")) {
             _currentDataStoreName = value;
         } else if (_currentFieldname.equals("type")
-                && !(value.equals("CsvDatastore"))) {
-            // TODO Now showing all non-csv datastores. Should we keep a list
-            // here of datastore types we DO want to show???
+                && datastoreTypes.contains(value)) {
             _dataStoreNames.add(_currentDataStoreName);
         }
 

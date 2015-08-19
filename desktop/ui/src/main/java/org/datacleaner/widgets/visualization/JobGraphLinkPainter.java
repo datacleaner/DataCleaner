@@ -236,9 +236,7 @@ public class JobGraphLinkPainter {
                             logger.debug("createLink(...) returning false - cannot change analysisJobBuilder for a component with configured inputColumns");
                             return false;
                         }
-                        componentBuilder.getAnalysisJobBuilder().removeComponent(componentBuilder);
-                        sourceAnalysisJobBuilder.addComponent(componentBuilder);
-                        componentBuilder.setAnalysisJobBuilder(sourceAnalysisJobBuilder);
+                        sourceAnalysisJobBuilder.moveComponent(componentBuilder);
                     }
 
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder

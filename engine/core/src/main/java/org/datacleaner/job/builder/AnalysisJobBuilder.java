@@ -426,6 +426,17 @@ public final class AnalysisJobBuilder implements Closeable {
         }
     }
 
+    /**
+     * Adds a {@link ComponentBuilder} and removes it from its previous scope.
+     * @param builder The builder to add
+     * @return The same builder
+     */
+    public ComponentBuilder moveComponent(ComponentBuilder builder) {
+        builder.getAnalysisJobBuilder().removeComponent(builder);
+        addComponent(builder);
+        builder.setAnalysisJobBuilder(this);
+        return builder;
+    }
 
     /**
      * Creates a filter job builder like the incoming filter job. Note that

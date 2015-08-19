@@ -30,22 +30,25 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 public class JsonQueryResultParserHelperTest extends TestCase{
     public void testShouldParseQueryResult() throws JsonParseException, IOException {
-        String result = "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\"],\"rows\":[[\"bla1\", \"blieb1\"],[\"bla2\", \"blieb2\"]]}}";
+        String result = "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\",\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
         JsonQueryResultParserHelper parser = new JsonQueryResultParserHelper();
-        Column[] columns = new Column[2];
+        Column[] columns = new Column[3];
         columns[0] = new DatahubColumnBuilder().withName("CUSTOMERNUMBER").withNumber(1).build();
         columns[1] = new DatahubColumnBuilder().withName("CUSTOMERNAME").withNumber(2).build();
+        columns[2] = new DatahubColumnBuilder().withName("LINKAGE").withNumber(3).build();
         DatahubDataSet dataset = parser.parseQueryResult(result, columns);
         assertNotNull(dataset);
         assertTrue( dataset.next());
         Row row = dataset.getRow();
-        assertEquals(2, row.size());
+        assertEquals(3, row.size());
         assertEquals("bla1", row.getValue(0));
-        assertEquals("blieb1", row.getValue(1));
+        assertEquals("null", row.getValue(1));
+        assertEquals("[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]", row.getValue(2));
         assertTrue( dataset.next());
         row = dataset.getRow();
-        assertEquals(2, row.size());
+        assertEquals(3, row.size());
         assertEquals("bla2", row.getValue(0));
         assertEquals("blieb2", row.getValue(1));
+        assertEquals("[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]", row.getValue(2));
     }
 }

@@ -19,7 +19,6 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,30 +36,36 @@ import org.apache.metamodel.schema.Column;
  */
 public class DatahubDataSet extends AbstractDataSet {
 
-    List<Object[]> queryResult;
+    List<Object[]> _queryResult;
     AtomicInteger _index;
     private Object[] record;
 
-    public DatahubDataSet(Column[] columns) {
+/*    public DatahubDataSet(Column[] columns) {
         
         // TODO dummy implementation
         super(columns);
-        queryResult = new ArrayList<Object[]>();
+        _queryResult = new ArrayList<Object[]>();
         for (int y = 0; y < 3; ++y) {
             Object[] row = new Object[columns.length];
             for (int i = 0; i < columns.length; ++i) {
                 row[i] = "row" + y + ":value" + i;
             }
-            queryResult.add(row);
+            _queryResult.add(row);
         }
+        _index = new AtomicInteger();
+    }
+*/
+    public DatahubDataSet(List<Object[]> queryResult, Column[] columns) {
+        super(columns);
+        _queryResult = queryResult;
         _index = new AtomicInteger();
     }
 
     @Override
     public boolean next() {
         int index = _index.getAndIncrement();
-        if (index < queryResult.size()) {
-            record = queryResult.get(index);
+        if (index < _queryResult.size()) {
+            record = _queryResult.get(index);
             return true;
         }
         record = null;

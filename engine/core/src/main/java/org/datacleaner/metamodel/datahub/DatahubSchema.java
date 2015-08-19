@@ -35,16 +35,22 @@ public class DatahubSchema extends AbstractSchema {
      */
     private static final long serialVersionUID = 1L;
     private String _name;
+    private String _datastoreName;
     private List<Table> _tables;
 
     public DatahubSchema() {
         _name = "";
         _tables = new ArrayList<Table>();
+        
     }
 
     @Override
     public String getName() {
         return _name;
+    }
+
+    public String getDatastoreName() {
+        return _datastoreName;
     }
 
     @Override
@@ -59,6 +65,10 @@ public class DatahubSchema extends AbstractSchema {
 
     public void setName(String name) {
         _name = name;        
+    }
+    
+    public void setDatastoreName(String name) {
+        _datastoreName = name;        
     }
     
     public void addTable(DatahubTable table) {

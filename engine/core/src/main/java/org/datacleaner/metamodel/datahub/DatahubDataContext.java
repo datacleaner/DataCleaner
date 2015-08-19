@@ -22,82 +22,75 @@ package org.datacleaner.metamodel.datahub;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.AccessControlException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
-import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.QueryPostprocessDataContext;
+import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonParserHelper;
+import org.datacleaner.metamodel.datahub.utils.JsonQueryResultParserHelper;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatahubDataContext extends QueryPostprocessDataContext implements
+public class DatahubDataContext extends AbstractDataContext implements
         UpdateableDataContext {
     private static final Logger logger = LoggerFactory
             .getLogger(DatahubDataContext.class);
 
     private DatahubConnection _connection;
     
-    private DatahubSchema _schema;
+    Map<String, DatahubSchema> _schemas;
+
 
     public DatahubDataContext(String host, Integer port, String username,
-            String password, String tenantId, boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+            String password, String tenantId, boolean https,
+            boolean acceptUnverifiedSslPeers, String securityMode) {
         _connection = new DatahubConnection(host, port, username, password,
                 tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        _schema = getDatahubSchema();
+        _schemas = getDatahubSchemas();
     }
 
-    public static boolean checkForExternal(String str) {
-        int length = str.length();
-        for (int i = 0; i < length; i++) {
-            if (str.charAt(i) > 0x7F) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static final Pattern COLON = Pattern.compile("%3A", Pattern.LITERAL);
-    private static final Pattern SLASH = Pattern.compile("%2F", Pattern.LITERAL);
-    private static final Pattern QUEST_MARK = Pattern.compile("%3F", Pattern.LITERAL);
-    private static final Pattern EQUAL = Pattern.compile("%3D", Pattern.LITERAL);
+    private static final Pattern COLON = Pattern
+            .compile("%3A", Pattern.LITERAL);
+    private static final Pattern SLASH = Pattern
+            .compile("%2F", Pattern.LITERAL);
+    private static final Pattern QUEST_MARK = Pattern.compile("%3F",
+            Pattern.LITERAL);
+    private static final Pattern EQUAL = Pattern
+            .compile("%3D", Pattern.LITERAL);
     private static final Pattern AMP = Pattern.compile("%26", Pattern.LITERAL);
 
     public static String encodeUrl(String url) {
-//        if (checkForExternal(url)) {
-                String value;
-                try {
-                    value = URLEncoder.encode(url, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new IllegalStateException(e);
-                }
-                value = COLON.matcher(value).replaceAll(":");
-                value = SLASH.matcher(value).replaceAll("/");
-                value = QUEST_MARK.matcher(value).replaceAll("?");
-                value = EQUAL.matcher(value).replaceAll("=");
-                return AMP.matcher(value).replaceAll("&");
-//        } else {
-//            return url;
-//        }
+        // if (checkForExternal(url)) {
+        String value;
+        try {
+            value = URLEncoder.encode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+        value = COLON.matcher(value).replaceAll(":");
+        value = SLASH.matcher(value).replaceAll("/");
+        value = QUEST_MARK.matcher(value).replaceAll("?");
+        value = EQUAL.matcher(value).replaceAll("=");
+        return AMP.matcher(value).replaceAll("&");
     }
-    
-    private DatahubSchema getDatahubSchema() {
+
+    private Map<String, DatahubSchema> getDatahubSchemas() {
+        Map<String, DatahubSchema> schemas = new HashMap<String, DatahubSchema>();
         List<String> datastoreNames = getDataStoreNames();
-        _schema = new DatahubSchema();
         for (String datastoreName : datastoreNames) {
-            // String schemaName = getMainSchemaName();
             String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
                     + datastoreName + ".schemas";
             logger.debug("request {}", uri);
@@ -107,13 +100,15 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
                 String result = EntityUtils.toString(response.getEntity());
                 JsonParserHelper parser = new JsonParserHelper();
                 DatahubSchema schema = parser.parseJsonSchema(result);
-                _schema.addTables(schema.getTables());
+                //schema.setDatastoreName(datastoreName);
+                schema.setName(datastoreName);
+                schemas.put(datastoreName, schema);
 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
-        return _schema;
+        return schemas;
     }
 
     @Override
@@ -124,23 +119,37 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
 
     @Override
     public DataSet executeQuery(final Query query) {
+        //String queryString = query.toString();
         Table table = query.getFromClause().getItem(0).getTable();
-        // TODO dummy implementation
-        return new DatahubDataSet(table.getColumns());
+        Column[] columns = table.getColumns();
+        //TODO we need to use the query object here.....
+        String queryString = createSelectQuery(table, columns, 50);
+        String datastoreName = ((DatahubSchema) table.getSchema()).getName();
+        datastoreName = datastoreName.replaceAll("\\s+", "+");
+
+        String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
+                + datastoreName + ".query?q=" + queryString +
+                "+LIMIT+50+OFFSET+0";
+                //"&page=0&size=" + maxRows;
+        logger.debug("request {}", uri);
+        HttpGet request = new HttpGet(uri);
+        request.addHeader("Accept", "application/json");
+        DatahubDataSet dataset = null;
+        try {
+            HttpResponse response = executeRequest(request);
+            String result = EntityUtils.toString(response.getEntity());
+            System.out.println(result);
+            JsonQueryResultParserHelper parser = new JsonQueryResultParserHelper();
+            dataset = parser.parseQueryResult(result, columns);
+
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return dataset;
+        
 
     }
-
-    @Override
-    protected Number executeCountQuery(Table table,
-            List<FilterItem> whereItems, boolean functionApproximationAllowed) {
-        // TODO dummy implementation
-        return 3;
-    }
-
-    @Override
-    protected Schema getMainSchema() throws MetaModelException {
-        return _schema;
-    }
+    
 
     private List<String> getDataStoreNames() {
         String uri = _connection.getRepositoryUrl() + "/datastores";
@@ -159,14 +168,17 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
     }
 
     public Schema testGetMainSchema() {
-        return getMainSchema();
+        return getDefaultSchema();
     }
 
     private HttpResponse executeRequest(HttpGet request) throws Exception {
 
         MonitorHttpClient httpClient = _connection.getHttpClient();
-        HttpResponse response = httpClient.execute(request/*,
-                _connection.getContext()*/);
+        HttpResponse response = httpClient.execute(request/*
+                                                           * ,
+                                                           * _connection.getContext
+                                                           * ()
+                                                           */);
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 403) {
@@ -184,61 +196,34 @@ public class DatahubDataContext extends QueryPostprocessDataContext implements
         return response;
     }
 
+
+    private String createSelectQuery(Table table, Column[] columns, int maxRows) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("SELECT+");
+        for (int i = 0; i < columns.length; i++) {
+            if (i != 0) {
+                sb.append(',');
+            }
+            sb.append(columns[i].getName());
+        }
+        sb.append("+FROM+");
+        sb.append(table.getName());
+        return sb.toString();
+
+    }
+
     @Override
-    protected String getMainSchemaName() throws MetaModelException {
+    protected String[] getSchemaNamesInternal() {
+        return _schemas.keySet().toArray(new String[_schemas.size()]);
+    }
+
+    @Override
+    protected String getDefaultSchemaName() {
         return "MDM";
     }
 
     @Override
-    protected DataSet materializeMainSchemaTable(Table table, Column[] columns,
-            int maxRows) {
-            
-//            String query = createQuery(table, columns, maxRows);
-//            String datastoreName = _schema.getDataStoreName(table.getName());
-//            if (datastoreName == null) {
-//                //throw
-//            }
-//            //orderdb.query?q=
-//            String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
-//                    + datastoreName + ".query?q=" + query;
-//            logger.debug("request {}", uri);
-//            HttpGet request = new HttpGet(uri);
-//            request.addHeader("Accept", "application/json");
-//
-//            try {
-//                HttpResponse response = executeRequest(request);
-//                String result = EntityUtils.toString(response.getEntity());
-//                System.out.println(result);
-//                //JsonParserHelper parser = new JsonParserHelper();
-//
-//            } catch (Exception e) {
-//                throw new IllegalStateException(e);
-//            }
-            return new DatahubDataSet(columns);
-            
-
+    protected Schema getSchemaByNameInternal(String name) {
+        return _schemas.get(name);
     }
-    
-    public DataSet testMaterializeMainSchemaTable(Table table, Column[] columns,
-            int maxRows) {
-        return materializeMainSchemaTable(table, columns, maxRows);
-    }
-    private String createQuery(Table table, Column[] columns, int maxRows) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("SELECT+*+");
-//        for (int i = 0; i < columns.length; i++) {
-//            if (i != 0) {
-//                sb.append(',');
-//            }
-//            sb.append(columns[i].getName());
-//        }
-        sb.append("+FROM+");
-        sb.append(table.getName());
-
-//        if (maxRows > 0) {
-//            sb.append(" LIMIT " + maxRows);
-//        }
-        return sb.toString();
-    }
-
 }

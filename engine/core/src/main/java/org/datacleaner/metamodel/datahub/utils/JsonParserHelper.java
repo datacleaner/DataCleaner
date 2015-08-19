@@ -38,9 +38,8 @@ public class JsonParserHelper {
     private static final Set<String> datastoreTypes = new HashSet<String>() {
         {
             add("GoldenRecordDatastore");
-            //TODO current we cannot show multiple datastores in the schema browser
-            //add("SourceRecordSourceFormatDatastore");
-            //add("SourceRecordGoldenFormatDatastore");
+            add("SourceRecordSourceFormatDatastore");
+            add("SourceRecordGoldenFormatDatastore");
         }
     };
 

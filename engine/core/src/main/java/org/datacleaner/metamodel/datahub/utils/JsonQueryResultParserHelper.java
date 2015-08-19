@@ -37,11 +37,14 @@ public class JsonQueryResultParserHelper {
     private boolean _parsingRow;
     private ArrayList<Object> _currentRow;
     private String _currentFieldName;
+    private int _arrayCount;
 
     //String result = "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"CONTACTLASTNAME\",\"CONTACTFIRSTNAME\",\"PHONE\",\"ADDRESSLINE1\",\"ADDRESSLINE2\",\"CITY\",\"STATE\",\"POSTALCODE\",\"COUNTRY\",\"SALESREPEMPLOYEENUMBER\",\"CREDITLIMIT\"],\"rows\":[]}}";
 
     public DatahubDataSet parseQueryResult(String result, Column[] columns) throws JsonParseException, IOException {
         _parsingRows = false;
+        _parsingRow= false;
+        _arrayCount = 0;
         List<Object[]> queryResult = new ArrayList<Object[]>();
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(result);
@@ -57,10 +60,15 @@ public class JsonQueryResultParserHelper {
                     _currentRow = new ArrayList<Object>();
                 } else if ("rows".equals(_currentFieldName)) {
                     _parsingRows = true;
-                } 
+                } else if (_parsingRows) {
+                    _arrayCount++;
+                }
                 break;
             case END_ARRAY:
-                if (_parsingRow) {
+                if (_arrayCount > 0) {
+                    _arrayCount--;
+                }
+                else if (_parsingRow) {
                     _parsingRow = false;
                     queryResult.add(_currentRow.toArray(new Object[_currentRow.size()]));
                 } else if (_parsingRows) {
@@ -68,6 +76,11 @@ public class JsonQueryResultParserHelper {
                 }
                 break;
             case VALUE_STRING:
+            if (_parsingRow) {
+                _currentRow.add(parser.getText());
+            } 
+            break;
+            case VALUE_NULL:
             if (_parsingRow) {
                 _currentRow.add(parser.getText());
             } 

@@ -44,12 +44,10 @@ public class DatahubTable extends AbstractTable {
     private String _name;
     private List<Column> _columns;
     private DatahubSchema _schema;
-    private String _dataSourceName;
 
     public DatahubTable() {
         _name = "";
         _columns = new ArrayList<Column>();
-        _dataSourceName = "";
     }
 
 

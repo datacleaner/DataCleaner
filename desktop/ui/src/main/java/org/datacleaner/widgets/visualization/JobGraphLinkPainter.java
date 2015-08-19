@@ -19,11 +19,7 @@
  */
 package org.datacleaner.widgets.visualization;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -35,11 +31,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.CompoundComponentRequirement;
@@ -64,6 +60,29 @@ import edu.uci.ics.jung.visualization.VisualizationServer;
  * {@link JobGraphLink}s.
  */
 public class JobGraphLinkPainter {
+    public static class VertexContext {
+        final private Object _vertex;
+        final private OutputDataStream _outputDataStream;
+        final private AnalysisJobBuilder _analysisJobBuilder;
+
+        VertexContext(Object vertex, AnalysisJobBuilder analysisJobBuilder, OutputDataStream outputDataStream){
+            _vertex = vertex;
+            _outputDataStream = outputDataStream;
+            _analysisJobBuilder = analysisJobBuilder;
+        }
+
+        public Object getVertex() {
+            return _vertex;
+        }
+
+        public OutputDataStream getOutputDataStream() {
+            return _outputDataStream;
+        }
+
+        public AnalysisJobBuilder getAnalysisJobBuilder() {
+            return _analysisJobBuilder;
+        }
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(JobGraphLinkPainter.class);
 
@@ -74,7 +93,7 @@ public class JobGraphLinkPainter {
 
     private Shape _edgeShape;
     private Shape _arrowShape;
-    private Object _startVertex;
+    private VertexContext _startVertex;
     private Point2D _startPoint;
 
     public JobGraphLinkPainter(JobGraphContext graphContext, JobGraphActions actions) {
@@ -84,19 +103,20 @@ public class JobGraphLinkPainter {
         _arrowPaintable = new ArrowPaintable();
     }
 
+
     /**
      * Called when the drawing of a new link/edge is started
      * 
      * @param startVertex
      */
-    public void startLink(Object startVertex) {
+    public void startLink(VertexContext startVertex) {
         if (startVertex == null) {
             return;
         }
 
         final AbstractLayout<Object, JobGraphLink> graphLayout = _graphContext.getGraphLayout();
-        int x = (int) graphLayout.getX(startVertex);
-        int y = (int) graphLayout.getY(startVertex);
+        int x = (int) graphLayout.getX(startVertex.getVertex());
+        int y = (int) graphLayout.getY(startVertex.getVertex());
 
         logger.debug("startLink({})", startVertex);
 
@@ -169,28 +189,36 @@ public class JobGraphLinkPainter {
         }
     }
 
-    private boolean createLink(final Object fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
+    private boolean createLink(final VertexContext fromVertex, final Object toVertex, final MouseEvent mouseEvent) {
         logger.debug("createLink({}, {}, {})", fromVertex, toVertex, mouseEvent);
 
         final List<? extends InputColumn<?>> sourceColumns;
         final Collection<FilterOutcome> filterOutcomes;
 
-        if (fromVertex instanceof Table) {
-            final Table table = (Table) fromVertex;
-            final AnalysisJobBuilder analysisJobBuilder = _graphContext.getJobGraph().getAnalysisJobBuilder();
-            sourceColumns = analysisJobBuilder.getSourceColumnsOfTable(table);
+        final AnalysisJobBuilder sourceAnalysisJobBuilder = fromVertex.getAnalysisJobBuilder();
+
+        if (fromVertex.getVertex() instanceof Table || fromVertex.getOutputDataStream() != null) {
+            final Table table;
+
+            if(fromVertex.getOutputDataStream() != null){
+                sourceColumns = sourceAnalysisJobBuilder.getSourceColumns();
+            } else {
+                table = (Table) fromVertex;
+                sourceColumns = sourceAnalysisJobBuilder.getSourceColumnsOfTable(table);
+            }
+
             filterOutcomes = null;
-        } else if (fromVertex instanceof InputColumnSourceJob) {
-            InputColumn<?>[] outputColumns = null;
+        } else if (fromVertex.getVertex() instanceof InputColumnSourceJob) {
+            InputColumn<?>[] outputColumns;
             try {
-                outputColumns = ((InputColumnSourceJob) fromVertex).getOutput();
+                outputColumns = ((InputColumnSourceJob) fromVertex.getVertex()).getOutput();
             } catch (Exception e) {
                 outputColumns = new InputColumn[0];
             }
             sourceColumns = Arrays.<InputColumn<?>> asList(outputColumns);
             filterOutcomes = null;
-        } else if (fromVertex instanceof HasFilterOutcomes) {
-            final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex;
+        } else if (fromVertex.getVertex() instanceof HasFilterOutcomes) {
+            final HasFilterOutcomes hasFilterOutcomes = (HasFilterOutcomes) fromVertex.getVertex();
             filterOutcomes = hasFilterOutcomes.getFilterOutcomes();
             sourceColumns = null;
         } else {
@@ -201,7 +229,16 @@ public class JobGraphLinkPainter {
         if (toVertex instanceof ComponentBuilder) {
             final ComponentBuilder componentBuilder = (ComponentBuilder) toVertex;
             if (sourceColumns != null && !sourceColumns.isEmpty()) {
+
                 try {
+                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()){
+                        if(componentBuilder.getInput().length > 0) {
+                            logger.debug("createLink(...) returning false - cannot change analysisJobBuilder for a component with configured inputColumns");
+                            return false;
+                        }
+                        sourceAnalysisJobBuilder.moveComponent(componentBuilder);
+                    }
+
                     final ConfiguredPropertyDescriptor inputProperty = componentBuilder
                             .getDefaultConfiguredPropertyForInput();
                     if (inputProperty.isArray()) {

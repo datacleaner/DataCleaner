@@ -51,6 +51,7 @@ public class JsonParserHelperTest extends TestCase {
         JsonParserHelper parser = new JsonParserHelper();
         DatahubSchema schema = parser.parseJsonSchema(jsonString);
         assertNotNull(schema);
+        assertEquals("PUBLIC", schema.getName());
         assertEquals(2, schema.getTableCount());
         Table customersTable = schema.getTableByName("CUSTOMERS");
         assertNotNull(customersTable);
@@ -91,5 +92,5 @@ public class JsonParserHelperTest extends TestCase {
         List<String> names = parser.parseDataStoreArray(jsonString);
         assertEquals(1, names.size());
     }
-
+    
 }

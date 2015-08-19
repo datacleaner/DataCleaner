@@ -39,7 +39,7 @@ public class JsonParserHelper {
         {
             add("GoldenRecordDatastore");
             //TODO current we cannot show multiple datastores in the schema browser
-            //add("MDMDatastore");
+            //add("SourceRecordSourceFormatDatastore");
             //add("SourceRecordGoldenFormatDatastore");
         }
     };
@@ -126,7 +126,6 @@ public class JsonParserHelper {
             }
             token = parser.nextToken();
         }
-
         return _resultSchema;
 
     }
@@ -239,6 +238,16 @@ public class JsonParserHelper {
         }
     }
 
+
+    private void handleDataStoreValue(String value) {
+        if (_currentFieldname.equals("name")) {
+            _currentDataStoreName = value;
+        } else if (_currentFieldname.equals("type")
+                && datastoreTypes.contains(value)) {
+            _dataStoreNames.add(_currentDataStoreName);
+        }
+
+    }
     public List<String> parseDataStoreArray(String result) throws IOException {
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(result);
@@ -260,13 +269,4 @@ public class JsonParserHelper {
         return _dataStoreNames;
     }
 
-    private void handleDataStoreValue(String value) {
-        if (_currentFieldname.equals("name")) {
-            _currentDataStoreName = value;
-        } else if (_currentFieldname.equals("type")
-                && datastoreTypes.contains(value)) {
-            _dataStoreNames.add(_currentDataStoreName);
-        }
-
-    }
 }

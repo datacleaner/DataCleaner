@@ -47,7 +47,7 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-    ComponentsCache _componentsCache = new ComponentsCache();
+    private ComponentsCache _componentsCache = new ComponentsCache();
 
     @PreDestroy
     public void close() throws InterruptedException {

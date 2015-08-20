@@ -83,7 +83,7 @@ public class ComponentHandler {
         component = (Component) descriptor.newInstance();
 
 
-        // create "table" according to the columns spcecification (for now only a list of names)
+        // create "table" according to the columns specification (for now only a list of names)
         int index = 0;
         for (String columnName : componentConfiguration.getColumns()) {
             MutableColumn column = columns.get(columnName);
@@ -132,7 +132,7 @@ public class ComponentHandler {
         DataSetHeader header = new SimpleDataSetHeader(table.getColumns());
         inputRows = new ArrayList<>();
         int id = 0;
-        for (JsonNode row : ((ArrayNode)data)) {
+        for (JsonNode row : data) {
             DefaultRow inputRow = new DefaultRow(header, toRowValues((ArrayNode) row));
             inputRows.add(new MetaModelInputRow(id, inputRow));
             id++;

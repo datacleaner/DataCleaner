@@ -100,15 +100,15 @@ public class ComponentList {
     /**
      * Data storage class for particular component.
      */
-    private static class ComponentInfo {
+    static class ComponentInfo {
         public static final String PROPERTY_IS_REQUIRED = "required";
         public static final String PROPERTY_IS_NOT_REQUIRED = "not required";
 
-        private String name;
-        private String description;
-        private String createURL;
-        private List<String[]> propertyList;
-        private ComponentConfiguration configuration;
+        private String name = "";
+        private String description = "";
+        private String createURL = "";
+        private List<String[]> propertyList = null;
+        private ComponentConfiguration configuration = null;
 
         public String getName() {
             return name;

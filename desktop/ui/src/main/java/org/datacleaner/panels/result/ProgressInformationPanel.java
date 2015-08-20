@@ -180,6 +180,7 @@ public class ProgressInformationPanel extends DCPanel {
             @Override
             public void run() {
                 _progressBarPanel.add(tableProgressInformationPanel);
+                tableProgressInformationPanel.setProgressMaximum(expectedRows);
                 _progressBarPanel.updateUI();
             }
         });

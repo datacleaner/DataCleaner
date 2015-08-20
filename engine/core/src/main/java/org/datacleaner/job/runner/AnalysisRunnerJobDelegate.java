@@ -158,6 +158,8 @@ final class AnalysisRunnerJobDelegate {
                 jobCompletionTaskListener);
 
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
+        logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
+        
         for (RowProcessingPublisher rowProcessingPublisher : rowProcessingPublishers) {
             logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
             rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);

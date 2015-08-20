@@ -494,7 +494,7 @@ public final class RowProcessingPublisher {
 
         // add tasks for collecting results
         final TaskListener getResultTaskListener = new JoinTaskListener(numConsumers, getResultCompletionListener);
-        final List<TaskRunnable> getResultTasks = new ArrayList<TaskRunnable>();
+        final List<TaskRunnable> getResultTasks = new ArrayList<>();
         for (RowProcessingConsumer consumer : configurableConsumers) {
             final Task collectResultTask = createCollectResultTask(consumer, resultQueue);
             if (collectResultTask == null) {
@@ -509,12 +509,15 @@ public final class RowProcessingPublisher {
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
+        if (_parentPublisher == null) {
+            final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
+                    runCompletionListener);
 
-        final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
-                runCompletionListener);
-
-        // kick off the initialization
-        initializeConsumers(initFinishedListener);
+            // kick off the initialization
+            initializeConsumers(initFinishedListener);
+        } else {
+            _taskRunner.run(runTask, runCompletionListener);
+        }
     }
 
     /**
@@ -565,7 +568,7 @@ public final class RowProcessingPublisher {
 
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
         final LifeCycleHelper lifeCycleHelper = getConsumerSpecificLifeCycleHelper(consumer);
-        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer, this);
+        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer);
         return new TaskRunnable(task, listener);
     }
 

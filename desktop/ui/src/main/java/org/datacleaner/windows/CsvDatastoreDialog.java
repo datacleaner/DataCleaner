@@ -89,14 +89,14 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
             DataCleanerConfiguration configuration, UserPreferences userPreferences) {
         super(originalDatastore, mutableDatastoreCatalog, windowContext, configuration, userPreferences);
-        _separatorCharField = new JComboBox<String>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
+        _separatorCharField = new JComboBox<>(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
                 SEPARATOR_PIPE });
         _separatorCharField.setEditable(true);
 
-        _quoteCharField = new JComboBox<String>(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
+        _quoteCharField = new JComboBox<>(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
         _quoteCharField.setEditable(true);
 
-        _escapeCharField = new JComboBox<String>(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
+        _escapeCharField = new JComboBox<>(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
         _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
         _escapeCharField.setEditable(true);
 
@@ -129,13 +129,13 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             Character separatorChar = originalDatastore.getSeparatorChar();
             String separator = null;
             if (separatorChar != null) {
-                if (separatorChar.charValue() == ',') {
+                if (separatorChar == ',') {
                     separator = SEPARATOR_COMMA;
-                } else if (separatorChar.charValue() == ';') {
+                } else if (separatorChar == ';') {
                     separator = SEPARATOR_SEMICOLON;
-                } else if (separatorChar.charValue() == '|') {
+                } else if (separatorChar == '|') {
                     separator = SEPARATOR_PIPE;
-                } else if (separatorChar.charValue() == '\t') {
+                } else if (separatorChar == '\t') {
                     separator = SEPARATOR_TAB;
                 } else {
                     separator = separatorChar.toString();
@@ -148,11 +148,11 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             if (quoteChar == null) {
                 quote = QUOTE_NONE;
             } else {
-                if (quoteChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+                if (quoteChar == CsvDatastore.NOT_A_CHAR) {
                     quote = QUOTE_NONE;
-                } else if (quoteChar.charValue() == '"') {
+                } else if (quoteChar == '"') {
                     quote = QUOTE_DOUBLE_QUOTE;
-                } else if (quoteChar.charValue() == '\'') {
+                } else if (quoteChar == '\'') {
                     quote = QUOTE_SINGLE_QUOTE;
                 } else {
                     quote = quoteChar.toString();
@@ -165,9 +165,9 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
             if (escapeChar == null) {
                 escape = ESCAPE_NONE;
             } else {
-                if (escapeChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+                if (escapeChar == CsvDatastore.NOT_A_CHAR) {
                     escape = ESCAPE_NONE;
-                } else if (escapeChar.charValue() == '\\') {
+                } else if (escapeChar == '\\') {
                     escape = ESCAPE_BACKSLASH;
                 } else {
                     escape = escapeChar.toString();
@@ -240,7 +240,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
                     if (autoDetectEncoding) {
                         configuration = detection.suggestCsvConfiguration();
                     } else {
-                        final String charSet = _encodingComboBox.getSelectedItem().toString();
+                        final String charSet = _encodingComboBox.getSelectedItem();
                         configuration = detection.suggestCsvConfiguration(charSet);
                     }
                 } catch (Exception e) {
@@ -355,7 +355,7 @@ public final class CsvDatastoreDialog extends AbstractResourceBasedDatastoreDial
     }
 
     public String getEncoding() {
-        String encoding = _encodingComboBox.getSelectedItem().toString();
+        String encoding = _encodingComboBox.getSelectedItem();
         if (StringUtils.isNullOrEmpty(encoding)) {
             encoding = FileHelper.UTF_8_ENCODING;
         }

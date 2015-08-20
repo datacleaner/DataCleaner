@@ -120,16 +120,20 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
         _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
             @Override
             protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
+                validateAndUpdateInternal();
             }
         });
     }
-    
+
     protected void validateAndUpdate() {
+        validateAndUpdateInternal();
+    }
+
+    private void validateAndUpdateInternal() {
         boolean valid = validateForm();
         setSaveButtonEnabled(valid);
     }
-    
+
     protected boolean validateForm() {
         final String datastoreName = _datastoreNameTextField.getText();
         if (StringUtils.isNullOrEmpty(datastoreName)) {
@@ -166,7 +170,6 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
      * "edit existing datastore" mode then the existing datastore will be
      * returned, otherwise this method will return null.
      * 
-     * @return
      */
     public D getOriginalDatastore() {
         return _originalDatastore;
@@ -189,7 +192,6 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
      * Method for subclasses to invoke for setting the enabled state of the save
      * button
      * 
-     * @param enabled
      */
     protected void setSaveButtonEnabled(boolean enabled) {
         _saveButton.setEnabled(enabled);
@@ -263,7 +265,7 @@ public abstract class AbstractDatastoreDialog<D extends Datastore> extends Abstr
     }
     
     protected List<Entry<String, JComponent>> getFormElements() {
-        ArrayList<Entry<String, JComponent>> res = new ArrayList<Entry<String, JComponent>>();
+        ArrayList<Entry<String, JComponent>> res = new ArrayList<>();
         res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameTextField));
         return res;
     }

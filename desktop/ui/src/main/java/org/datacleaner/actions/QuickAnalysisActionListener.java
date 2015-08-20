@@ -47,17 +47,17 @@ public class QuickAnalysisActionListener implements ActionListener {
     private final Datastore _datastore;
     private final Table _table;
     private final Column[] _columns;
-    private final DCModule _parentModule;
+    private final DCModule _dcModule;
     private final UserPreferences _userPreferences;
     private final DataCleanerConfiguration _configuration;
 
     @Inject
     protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-            DCModule parentModule, UserPreferences userPreferences, DataCleanerConfiguration configuration) {
+            DCModule dcModule, UserPreferences userPreferences, DataCleanerConfiguration configuration) {
         _datastore = datastore;
         _table = table;
         _columns = columns;
-        _parentModule = parentModule;
+        _dcModule = dcModule;
         _userPreferences = userPreferences;
         _configuration = configuration;
     }
@@ -92,7 +92,7 @@ public class QuickAnalysisActionListener implements ActionListener {
                 throw new IllegalStateException("Unknown job configuration issue!");
             }
 
-            Injector injector = Guice.createInjector(new DCModuleImpl(_parentModule, ajb));
+            Injector injector = Guice.createInjector(new DCModuleImpl(_dcModule, ajb));
 
             RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
             actionListener.actionPerformed(event);

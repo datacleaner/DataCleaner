@@ -30,8 +30,8 @@ import org.apache.metamodel.util.SimpleTableDef;
 import org.datacleaner.bootstrap.SimpleWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.components.tablelookup.TableLookupTransformer;
-import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.PojoDatastore;
@@ -39,6 +39,7 @@ import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.guice.DCModuleImpl;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
@@ -74,7 +75,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         final WindowContext windowContext = new SimpleWindowContext();
 
         final SingleDatastorePropertyWidget datastoreWidget1 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog);
+                datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget1 = new SchemaNamePropertyWidget(tjb, schemaProperty);
         final SingleTableNamePropertyWidget tableWidget1 = new SingleTableNamePropertyWidget(tjb, tableProperty,
                 windowContext);
@@ -83,7 +84,7 @@ public class TableNamePropertyWidgetTest extends TestCase {
         collection1.registerWidget(tableProperty, tableWidget1);
 
         final SingleDatastorePropertyWidget datastoreWidget2 = new SingleDatastorePropertyWidget(tjb,
-                datastoreProperty, datastoreCatalog);
+                datastoreProperty, datastoreCatalog, new DCModuleImpl());
         final SchemaNamePropertyWidget schemaWidget2 = new SchemaNamePropertyWidget(tjb, schemaProperty);
         final SingleTableNamePropertyWidget tableWidget2 = new SingleTableNamePropertyWidget(tjb, tableProperty,
                 windowContext);

@@ -28,14 +28,19 @@ import java.util.Set;
 
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.InputColumnSinkJob;
 import org.datacleaner.job.InputColumnSourceJob;
+import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.OutputDataStreamJobSource;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.util.SourceColumnFinder;
@@ -62,34 +67,38 @@ class JobGraphNodeBuilder {
 
     public DirectedGraph<Object, JobGraphLink> buildGraph() {
 
+        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
+        final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
+
         final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(_analysisJobBuilder);
 
-        final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
+        buildGraphInternal(graph, _analysisJobBuilder, sourceColumnFinder, sourceTables);
+        return graph;
+    }
 
-        final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
+    private void buildGraphInternal(final DirectedGraph<Object, JobGraphLink> graph,
+            final AnalysisJobBuilder analysisJobBuilder, SourceColumnFinder sourceColumnFinder, List<Table> sourceTables) {
         for (Table table : sourceTables) {
             addNodes(graph, sourceColumnFinder, table, -1);
         }
 
-        final List<TransformerComponentBuilder<?>> tjbs = _analysisJobBuilder.getTransformerComponentBuilders();
+        final List<TransformerComponentBuilder<?>> tjbs = analysisJobBuilder.getTransformerComponentBuilders();
         for (TransformerComponentBuilder<?> tjb : tjbs) {
             addNodes(graph, sourceColumnFinder, tjb, -1);
         }
 
-        final List<AnalyzerComponentBuilder<?>> ajbs = _analysisJobBuilder.getAnalyzerComponentBuilders();
+        final List<AnalyzerComponentBuilder<?>> ajbs = analysisJobBuilder.getAnalyzerComponentBuilders();
         for (AnalyzerComponentBuilder<?> ajb : ajbs) {
             addNodes(graph, sourceColumnFinder, ajb, -1);
         }
 
-        final List<FilterComponentBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterComponentBuilders();
+        final List<FilterComponentBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterComponentBuilders();
         for (FilterComponentBuilder<?, ?> fjb : fjbs) {
             addNodes(graph, sourceColumnFinder, fjb, -1);
         }
 
         removeUnnecesaryEdges(graph, sourceColumnFinder);
-
-        return graph;
     }
 
     /**
@@ -235,6 +244,7 @@ class JobGraphNodeBuilder {
             // decrement recurseCount
             recurseCount--;
 
+
             if (item instanceof InputColumnSinkJob) {
                 InputColumn<?>[] inputColumns = ((InputColumnSinkJob) item).getInput();
                 for (InputColumn<?> inputColumn : inputColumns) {
@@ -293,6 +303,19 @@ class JobGraphNodeBuilder {
                     if (table != null) {
                         addNodes(graph, scf, table, recurseCount);
                         addEdge(graph, table, item, null, null);
+                    }
+                }
+            }
+
+            if (item instanceof ComponentBuilder) {
+                ComponentBuilder componentBuilder = (ComponentBuilder) item;
+
+                for(OutputDataStream outputDataStream : componentBuilder.getOutputDataStreams()){
+                    if(componentBuilder.isOutputDataStreamConsumed(outputDataStream)) {
+                        final AnalysisJobBuilder outputDataStreamJobBuilder = componentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+                        List<Table> sourceTables = outputDataStreamJobBuilder.getSourceTables();
+                        buildGraphInternal(graph, outputDataStreamJobBuilder, scf, sourceTables);
+                        addEdge(graph, item, sourceTables.get(0), null, null);
                     }
                 }
             }

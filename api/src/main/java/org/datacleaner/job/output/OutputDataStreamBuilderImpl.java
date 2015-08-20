@@ -22,7 +22,9 @@ package org.datacleaner.job.output;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableSchema;
 import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.OutputDataStream;
 
@@ -33,7 +35,10 @@ final class OutputDataStreamBuilderImpl implements OutputDataStreamBuilder {
 
     public OutputDataStreamBuilderImpl(String name) {
         _name = name;
-        _table = new MutableTable(name);
+        MutableSchema schema = new MutableSchema();
+        schema.setName(null);
+        _table = new MutableTable(name, schema);
+        schema.addTable(_table);
     }
 
     @Override

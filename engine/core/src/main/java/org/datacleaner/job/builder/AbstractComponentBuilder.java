@@ -86,8 +86,9 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private final Map<OutputDataStream, AnalysisJobBuilder> _outputDataStreamJobs = new HashMap<>();
     private final D _descriptor;
     private final E _configurableBean;
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final Map<String, String> _metadataProperties;
+
+    private AnalysisJobBuilder _analysisJobBuilder;
     private ComponentRequirement _componentRequirement;
     private String _name;
 
@@ -822,5 +823,10 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
             }
         }
         return result.toArray(new OutputDataStreamJob[result.size()]);
+    }
+
+    @Override
+    public void setAnalysisJobBuilder(final AnalysisJobBuilder analysisJobBuilder) {
+        _analysisJobBuilder = analysisJobBuilder;
     }
 }

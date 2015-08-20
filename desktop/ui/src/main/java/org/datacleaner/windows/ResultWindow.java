@@ -99,12 +99,15 @@ import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.widgets.tabs.Tab;
 import org.datacleaner.widgets.tabs.VerticalTabbedPane;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Window in which the result (and running progress information) of job
  * execution is shown.
  */
 public final class ResultWindow extends AbstractWindow implements WindowListener {
+    private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
 
     public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(
             0);
@@ -503,6 +506,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             @Override
             public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+                logger.info("rowProcessingBegin: {}", job.getDatastore().getName());
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
                 WidgetUtils.invokeSwingAction(new Runnable() {
@@ -544,11 +548,14 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             @Override
             public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
                     final int currentRow) {
+                logger.info("rowProcessingProgress: {}", job.getDatastore().getName());
+
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
             @Override
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+                logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
                         + " finished. Generating results...");

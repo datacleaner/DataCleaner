@@ -292,7 +292,6 @@ public final class RowProcessingPublisher {
      */
     public void processRows(RowProcessingMetrics rowProcessingMetrics) {
         final AnalysisListener analysisListener = _publishers.getAnalysisListener();
-        analysisListener.rowProcessingBegin(_analysisJob, rowProcessingMetrics);
 
         final boolean success;
         if (_parentPublisher == null) {
@@ -509,12 +508,29 @@ public final class RowProcessingPublisher {
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
+
         if (_parentPublisher == null) {
             final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
                     runCompletionListener);
 
+            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new Task() {
+                @Override
+                public void execute() throws Exception {
+                    getAnalysisListener().rowProcessingBegin(_analysisJob, rowProcessingMetrics);
+                    for (RowProcessingConsumer rowProcessingConsumer : getConsumers()) {
+                        final Collection<ActiveOutputDataStream> activeOutputDataStreams = rowProcessingConsumer.getActiveOutputDataStreams();
+                        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+                            final RowProcessingPublisher activeOutputDataStreamPublisher = activeOutputDataStream.getPublisher();
+                            activeOutputDataStreamPublisher.getAnalysisListener().rowProcessingBegin(
+                                    activeOutputDataStreamPublisher.getAnalysisJob(), activeOutputDataStreamPublisher.getRowProcessingMetrics());
+                        }
+                    }
+                }
+            }, initFinishedListener);
+
+
             // kick off the initialization
-            initializeConsumers(initFinishedListener);
+            initializeConsumers(consumerInitFinishedListener);
         } else {
             _taskRunner.run(runTask, runCompletionListener);
         }

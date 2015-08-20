@@ -34,7 +34,7 @@ public class DatahubDataContextTest extends TestCase
         // there should be at least one test  method
     }
     
-    public void testMDMRepoConnection() {
+    public void xtestMDMRepoConnection() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -52,7 +52,7 @@ public class DatahubDataContextTest extends TestCase
         
     }
 
-    public void testExecuteQuery() {
+    public void xtestExecuteQuery() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -77,22 +77,4 @@ public class DatahubDataContextTest extends TestCase
         assertEquals(columns.length, result.getRow().size());
         
     }
-
-    public void xtestMonitorDemoRepoConnection() {
-        String host = "localhost";
-        Integer port = 8081;
-        String username = "admin";
-        String password = "admin";
-        String tenantId = "demo";
-        boolean https = true;
-        boolean acceptUnverifiedSslPeers = true;
-        String securityMode = "cas";
-
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        Schema schema = context.testGetMainSchema();
-        assertEquals(6, schema.getTableCount());
-        assertEquals(13, schema.getTableByName("CUSTOMERS").getColumnCount());
-        
-    }
-
 }

@@ -106,11 +106,9 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public final class ResultWindow extends AbstractWindow implements WindowListener {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(
+    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(
             0);
-
+    private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
 
     private final VerticalTabbedPane _tabbedPane;
@@ -129,7 +127,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     private AnalysisResult _result;
 
     /**
-     * 
+     *
      * @param configuration
      * @param job
      *            either this or result must be available
@@ -137,7 +135,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      *            either this or job must be available
      * @param jobFilename
      * @param windowContext
-     * @param rendererInitializerProvider
+     * @param userPreferences
+     * @param rendererFactory
      */
     @Inject
     protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job,
@@ -226,7 +225,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                     }
                     menuItem.setBorder(buttonBorder);
                     _saveResultsPopupButton.getMenu().add(menuItem);
-                } else if (component instanceof JMenuItem) {
+                } else if (component instanceof JMenuItem) { // TODO: Not possible. JMenuItem is a subclass of AbstractButton. Reorder or remove?
                     JMenuItem menuItem = (JMenuItem) component;
                     menuItem.setBorder(buttonBorder);
                     _saveResultsPopupButton.getMenu().add(menuItem);
@@ -271,15 +270,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         }
 
         updateButtonVisibility(running);
-    }
-
-    /**
-     * Sets the result, when it is ready for eg. saving
-     * 
-     * @param result
-     */
-    public void setResult(AnalysisResult result) {
-        _result = result;
     }
 
     public void startAnalysis() {
@@ -431,6 +421,15 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return _result;
     }
 
+    /**
+     * Sets the result, when it is ready for eg. saving
+     *
+     * @param result
+     */
+    public void setResult(AnalysisResult result) {
+        _result = result;
+    }
+
     public RendererFactory getRendererFactory() {
         return _rendererFactory;
     }
@@ -524,7 +523,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                                 return 0;
                             }
                         });
-                        
+
                         for (ComponentJob componentJob : componentJobs) {
                             // instantiate result panels
                             getOrCreateResultPanel(componentJob, false);
@@ -561,7 +560,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
+            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob,
+                    final AnalyzerResult result) {
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Component ");
                 sb.append(LabelUtils.getLabel(componentJob));

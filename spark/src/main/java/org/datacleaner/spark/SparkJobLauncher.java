@@ -20,14 +20,20 @@
 package org.datacleaner.spark;
 
 import java.io.InputStream;
+import java.io.Serializable;
+import java.util.List;
 
 import org.apache.metamodel.DataContext;
+import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
@@ -36,8 +42,10 @@ import org.datacleaner.job.JaxbJobReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SparkJobLauncher {
+public class SparkJobLauncher implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     private static final Logger logger = LoggerFactory.getLogger(SparkJobLauncher.class);
 
     private final DataCleanerConfiguration _dataCleanerConfiguration;
@@ -50,7 +58,7 @@ public class SparkJobLauncher {
         _dataCleanerConfiguration = readDataCleanerConfiguration(new HdfsResource(confXmlPath));
     }
 
-    public void launchJob(AnalysisJob analysisJob) {
+    public void launchJob(final AnalysisJob analysisJob) {
         final String datastoreName = analysisJob.getDatastore().getName();
 
         final Datastore datastore = _dataCleanerConfiguration.getDatastoreCatalog().getDatastore(datastoreName);
@@ -63,15 +71,24 @@ public class SparkJobLauncher {
                 DataContext dataContext = datastore.openConnection().getDataContext(); 
                 if (dataContext instanceof CsvDataContext) {
                     CsvDataContext csvDataContext = (CsvDataContext) dataContext;
-                    String datastoreFilePath = csvDataContext.getResource().getQualifiedPath();
+                    final Resource resource = csvDataContext.getResource();
+                    String datastoreFilePath = resource.getQualifiedPath();
+                    
+                    final CsvConfiguration csvConfiguration = csvDataContext.getConfiguration();
             
                     SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
                     sc = new JavaSparkContext(conf);
 
-                    JavaRDD<String> instructionsRDD = sc.textFile(datastoreFilePath);
-                    long lineCount = instructionsRDD.count();
-        
-                    logger.info("Line count: " + lineCount);
+                    JavaRDD<String> inputRDD = sc.textFile(datastoreFilePath);
+                    JavaRDD<InputRow> inputRowRDD = inputRDD.map(new InputRowMapper(analysisJob.getSourceColumns(), csvConfiguration));
+                    List<InputRow> inputRows = inputRowRDD.collect();
+                    logger.info("Input rows: ");
+                    for (InputRow inputRow : inputRows) {
+                        logger.info("\tRow id: " + inputRow.getId());
+                        for (InputColumn<?> inputColumn: inputRow.getInputColumns()) {
+                            logger.info("\t\t" + inputColumn.getName() + ": " + inputRow.getValue(inputColumn));
+                        }
+                    }
                 }
             } finally {
                 if (sc != null) {

@@ -48,6 +48,7 @@ public class ComponentsControllerV1Test {
     @Before
     public void setUp() {
         componentsControllerV1._tenantContextFactory = getTenantContextFactoryMock();
+        componentsControllerV1.init();
     }
 
     private TenantContextFactory getTenantContextFactoryMock() {

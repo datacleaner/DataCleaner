@@ -23,6 +23,7 @@ import org.apache.metamodel.DataContext;
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.util.HdfsResource;
+import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.function.Function;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -32,22 +33,16 @@ import org.datacleaner.job.AnalysisJob;
 public final class InputRowMapper implements Function<String, InputRow> {
     private static final long serialVersionUID = 1L;
 
-    private final String _dataCleanerConfigurationPath;
-    private final String _analysisJobXmlPath;
+    private final SparkDataCleanerContext _sparkDataCleanerContext;
 
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJob _analysisJob;
-
+    
     private final CsvConfiguration _csvConfiguration;
 
-    public InputRowMapper(final String dataCleanerConfigurationPath, final String analysisJobXmlPath) {
-        _dataCleanerConfigurationPath = dataCleanerConfigurationPath;
-        _analysisJobXmlPath = analysisJobXmlPath;
-
-        // _dataCleanerConfiguration = readDataCleanerConfiguration(new
-        // HdfsResource(dataCleanerConfigurationPath));
-        // _analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
-        //
+    public InputRowMapper(final SparkDataCleanerContext sparkDataCleanerContext) {
+        _sparkDataCleanerContext = sparkDataCleanerContext;
+        
         final String datastoreName = getAnalysisJob().getDatastore().getName();
 
         final Datastore datastore = getDataCleanerConfiguration().getDatastoreCatalog().getDatastore(datastoreName);
@@ -72,19 +67,25 @@ public final class InputRowMapper implements Function<String, InputRow> {
     }
 
     private AnalysisJob getAnalysisJob() {
-        // TODO: Check if AnalysisJob is read once per worker or with every
-        // record in the map operation
         if (_analysisJob == null) {
-            _analysisJob = ConfigurationHelper.readAnalysisJob(getDataCleanerConfiguration(), new HdfsResource(_analysisJobXmlPath));
+            @SuppressWarnings("unchecked")
+            final Accumulator<Integer> dataCleanerConfigurationReadsCounter = (Accumulator<Integer>) _sparkDataCleanerContext
+                    .getAccumulator("AnalysisJob reads counter");
+            dataCleanerConfigurationReadsCounter.add(1);
+            _analysisJob = ConfigurationHelper.readAnalysisJob(getDataCleanerConfiguration(), new HdfsResource(
+                    _sparkDataCleanerContext.getAnalysisJobXmlPath()));
         }
         return _analysisJob;
     }
 
     private DataCleanerConfiguration getDataCleanerConfiguration() {
-        // TODO: Check if DataCleanerConfiguration is read once per worker or
-        // with every record in the map operation
         if (_dataCleanerConfiguration == null) {
-            _dataCleanerConfiguration = ConfigurationHelper.readDataCleanerConfiguration(new HdfsResource(_dataCleanerConfigurationPath));
+            @SuppressWarnings("unchecked")
+            final Accumulator<Integer> analysisJobReadsCounter = (Accumulator<Integer>) _sparkDataCleanerContext
+                    .getAccumulator("DataCleanerConfigurationConfiguration reads counter");
+            analysisJobReadsCounter.add(1);
+            _dataCleanerConfiguration = ConfigurationHelper.readDataCleanerConfiguration(new HdfsResource(
+                    _sparkDataCleanerContext.getDataCleanerConfigurationPath()));
         }
         return _dataCleanerConfiguration;
     }

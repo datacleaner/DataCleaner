@@ -172,7 +172,7 @@ public class ProgressInformationPanel extends DCPanel {
         });
     }
 
-    public void setExpectedRows(final Table table, final int expectedRows) {
+    public void addProgressBar(final Table table, final int expectedRows) {
         final TableProgressInformationPanel tableProgressInformationPanel = getTableProgressInformationPanel(table,
                 expectedRows);
         WidgetUtils.invokeSwingAction(new Runnable() {

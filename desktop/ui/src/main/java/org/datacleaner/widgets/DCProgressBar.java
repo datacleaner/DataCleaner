@@ -40,6 +40,7 @@ public class DCProgressBar extends JProgressBar {
     private final ProgressCounter _value;
 
     private Color _progressBarColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
+    private boolean _showAsFull;
 
     public DCProgressBar(int min, int max) {
         super(min, max);
@@ -80,6 +81,14 @@ public class DCProgressBar extends JProgressBar {
         return greater;
     }
 
+    public void setShowAsFull(boolean showAsFull){
+        _showAsFull = showAsFull;
+    }
+
+    public boolean isShowAsFull() {
+        return _showAsFull;
+    }
+
     @Override
     public int getValue() {
         return _value.get();
@@ -102,7 +111,7 @@ public class DCProgressBar extends JProgressBar {
 
         final int width = getWidth();
         final int maximum = getMaximum();
-        if (value > maximum) {
+        if (value > maximum || _showAsFull) {
             return width;
         }
 
@@ -123,6 +132,9 @@ public class DCProgressBar extends JProgressBar {
 
     @Override
     protected void paintComponent(Graphics g) {
+        if(isIndeterminate()){
+
+        }
         final int width = getWidth();
         final int height = getHeight();
 
@@ -131,7 +143,12 @@ public class DCProgressBar extends JProgressBar {
             g.fillRect(0, 0, width, height);
         }
 
-        final int barWidth = getBarWidth(getValue());
+        final int barWidth;
+        if(isIndeterminate()){
+            barWidth = 0;
+        } else {
+            barWidth = getBarWidth(getValue());
+        }
 
         if (barWidth > 0) {
             g.setColor(_progressBarColor);

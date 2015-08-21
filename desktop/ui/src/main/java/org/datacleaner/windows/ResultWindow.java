@@ -534,13 +534,9 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         }
                         _tabbedPane.updateUI();
 
-                        if (expectedRows == -1) {
-                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
-                        } else {
-                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
-                                    + " (approx. " + expectedRows + " rows)");
-                            _progressInformationPanel.setExpectedRows(table, expectedRows);
-                        }
+                        _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
+                                + " (approx. " + expectedRows + " rows)");
+                        _progressInformationPanel.addProgressBar(table, expectedRows);
                     }
                 });
             }

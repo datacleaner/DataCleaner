@@ -64,15 +64,20 @@ class JobGraphNodeBuilder {
         final DirectedGraph<Object, JobGraphLink> graph = new DirectedSparseGraph<Object, JobGraphLink>();
         final List<Table> sourceTables = _analysisJobBuilder.getSourceTables();
 
-        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
-        sourceColumnFinder.addSources(_analysisJobBuilder);
-
-        buildGraphInternal(graph, _analysisJobBuilder, sourceColumnFinder, sourceTables);
+        buildGraphInternal(graph, _analysisJobBuilder, sourceTables);
         return graph;
     }
 
     private void buildGraphInternal(final DirectedGraph<Object, JobGraphLink> graph,
-            final AnalysisJobBuilder analysisJobBuilder, SourceColumnFinder sourceColumnFinder, List<Table> sourceTables) {
+            final AnalysisJobBuilder analysisJobBuilder, List<Table> sourceTables) {
+
+        // note: currently SourceColumnFinder cannot cross links from
+        // OutputDataStreams to the main/parent AnalysisJobBuilder, so we create
+        // a new SourceColumnFinder for each AnalysisJobBuilder instead of
+        // reusing the instance.
+        final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+        sourceColumnFinder.addSources(analysisJobBuilder);
+
         for (Table table : sourceTables) {
             addNodes(graph, sourceColumnFinder, table, -1);
         }
@@ -299,7 +304,7 @@ class JobGraphNodeBuilder {
                                 .getOutputDataStreamJobBuilder(outputDataStream);
 
                         final List<Table> sourceTables = outputDataStreamJobBuilder.getSourceTables();
-                        buildGraphInternal(graph, outputDataStreamJobBuilder, scf, sourceTables);
+                        buildGraphInternal(graph, outputDataStreamJobBuilder, sourceTables);
 
                         // remove the source table and replace with a
                         // JobGraphLink that has an OutputDataStream

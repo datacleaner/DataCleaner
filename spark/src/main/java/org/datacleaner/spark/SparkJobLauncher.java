@@ -19,13 +19,11 @@
  */
 package org.datacleaner.spark;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.metamodel.util.Resource;
 import org.apache.spark.SparkConf;
@@ -34,10 +32,8 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
-import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.JaxbJobReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,11 +49,11 @@ public class SparkJobLauncher implements Serializable {
 
     public SparkJobLauncher(String confXmlPath) {
         _dataCleanerConfigurationPath = confXmlPath;
-        _dataCleanerConfiguration = readDataCleanerConfiguration(new HdfsResource(confXmlPath));
+        _dataCleanerConfiguration = ConfigurationHelper.readDataCleanerConfiguration(new HdfsResource(confXmlPath));
     }
 
     public void launchJob(final String analysisJobXmlPath) {
-        final AnalysisJob analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
+        final AnalysisJob analysisJob = ConfigurationHelper.readAnalysisJob(_dataCleanerConfiguration, new HdfsResource(analysisJobXmlPath));
         
         final String datastoreName = analysisJob.getDatastore().getName();
 
@@ -94,27 +90,6 @@ public class SparkJobLauncher implements Serializable {
                 }
             }
         }
-    }
-
-    private static DataCleanerConfiguration readDataCleanerConfiguration(HdfsResource confXmlHdfsResource) {
-        final InputStream confXmlInputStream = confXmlHdfsResource.read();
-        final JaxbConfigurationReader confReader = new JaxbConfigurationReader();
-        final DataCleanerConfiguration dataCleanerConfiguration = confReader.create(confXmlInputStream);
-
-        return dataCleanerConfiguration;
-    }
-
-    private AnalysisJob readAnalysisJob(HdfsResource analysisJobXmlHdfsResource) {
-        final AnalysisJob analysisJob = analysisJobXmlHdfsResource.read(new Func<InputStream, AnalysisJob>() {
-
-            @Override
-            public AnalysisJob eval(InputStream in) {
-                final JaxbJobReader jobReader = new JaxbJobReader(_dataCleanerConfiguration);
-                final AnalysisJob analysisJob = jobReader.read(in);
-                return analysisJob;
-            }
-        });
-        return analysisJob;
     }
 
     public DataCleanerConfiguration getDataCleanerConfiguration() {

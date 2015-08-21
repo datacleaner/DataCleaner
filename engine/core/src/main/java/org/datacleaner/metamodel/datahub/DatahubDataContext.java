@@ -105,9 +105,8 @@ public class DatahubDataContext extends AbstractDataContext implements
                 String result = EntityUtils.toString(response.getEntity());
                 JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
                 DatahubSchema schema = parser.parseJsonSchema(result);
-                // schema.setDatastoreName(datastoreName);
-                schema.setName(datastoreName);
-                schemas.put(datastoreName, schema);
+                schema.setDatastoreName(datastoreName);
+                schemas.put(schema.getName(), schema);
 
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -135,7 +134,7 @@ public class DatahubDataContext extends AbstractDataContext implements
         
         String internalSchemaName = table.getSchema().getName();
         String queryString = getQueryString(query, table, internalSchemaName);        
-        String dataStoreName = internalSchemaName.replaceAll("\\s+", "+");
+        String dataStoreName = ((DatahubSchema) table.getSchema()).getDatastoreName().replaceAll("\\s+", "+");
 
         List<NameValuePair> params = new ArrayList<>();
         //params.add(new BasicNameValuePair("q", queryString));

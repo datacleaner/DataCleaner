@@ -37,7 +37,7 @@ public class DatahubDataContextTest extends TestCase
         // there should be at least one test  method
     }
     
-    public void xtestMDMRepoConnection() {
+    public void testMDMRepoGetSchema() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -48,14 +48,14 @@ public class DatahubDataContextTest extends TestCase
         String password = "cdi123";
         
         DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        Schema schema = context.getSchemaByName("Golden records");
+        Schema schema = context.getSchemaByName("GoldenRecords");
         assertEquals(2, schema.getTableCount());
-        assertEquals(163, schema.getTableByName("person").getColumnCount());
-        assertEquals(154, schema.getTableByName("organization").getColumnCount());
+        assertEquals(162, schema.getTableByName("person").getColumnCount());
+        assertEquals(153, schema.getTableByName("organization").getColumnCount());
         
     }
 
-    public void testExecuteQuery() {
+    public void xtestExecuteQuery() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -66,13 +66,12 @@ public class DatahubDataContextTest extends TestCase
         String password = "cdi123";
         
         DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        Schema schema = context.getSchemaByName("Golden records");
+        Schema schema = context.getSchemaByName("GoldenRecords");
         Table personTable = schema.getTableByName("person");
         Column[] columns = personTable.getColumns();
 
         Query query = new Query();
         query.select(columns);
-        //query.selectAll();
         query.from(personTable);
         DataSet result = context.executeQuery(query);
         List<Row> rows = result.toRows();

@@ -208,7 +208,7 @@ public final class Crosstab<E extends Serializable> implements Serializable {
     /**
      * Returns a string representation with a maximum restraint on the amount of
      * crosstab entries to include.
-     *
+     * 
      * @param maxEntries
      *            the maximum amount of crosstab entries to include, or negative
      *            if all entries should be included.

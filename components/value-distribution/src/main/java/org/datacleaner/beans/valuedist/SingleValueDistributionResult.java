@@ -58,9 +58,9 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
 
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-                                         Collection<String> uniqueValues, int uniqueValueCount, int distinctCount, int totalCount,
-                                         Map<String, RowAnnotation> annotations, RowAnnotation nullValueAnnotation,
-                                         RowAnnotationFactory annotationFactory, InputColumn<?>[] highlightedColumns) {
+            Collection<String> uniqueValues, int uniqueValueCount, int distinctCount, int totalCount,
+            Map<String, RowAnnotation> annotations, RowAnnotation nullValueAnnotation,
+            RowAnnotationFactory annotationFactory, InputColumn<?>[] highlightedColumns) {
         _groupName = groupName;
         _topValues = topValues;
         _bottomValues = bottomValues;
@@ -76,9 +76,9 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     }
 
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-                                         int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
-                                         RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
-                                         InputColumn<?>[] highlightedColumns) {
+            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+            InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, bottomValues, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }

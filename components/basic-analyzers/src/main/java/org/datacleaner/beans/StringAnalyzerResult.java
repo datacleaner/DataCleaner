@@ -27,8 +27,8 @@ import org.datacleaner.result.CrosstabResult;
 
 /**
  * Result type of the StringAnalyzer
- *
- *
+ * 
+ * 
  */
 @Distributed(reducer = StringAnalyzerResultReducer.class)
 public class StringAnalyzerResult extends CrosstabResult {

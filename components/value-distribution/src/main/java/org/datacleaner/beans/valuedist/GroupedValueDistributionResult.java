@@ -29,15 +29,15 @@ import org.datacleaner.result.ValueCountingAnalyzerResult;
 
 /**
  * Represents the result of the {@link ValueDistributionAnalyzer}.
- *
+ * 
  * A value distribution result has two basic forms: Grouped or ungrouped. To
  * find out which type a particular instance has, use the
  * {@link #isGroupingEnabled()} method.
- *
+ * 
  * Ungrouped results only contain a single/global value distribution. A grouped
  * result contain multiple value distributions, based on groups.
- *
- *
+ * 
+ * 
  */
 public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult implements
         GroupedValueCountingAnalyzerResult {
@@ -49,7 +49,7 @@ public class GroupedValueDistributionResult extends ValueDistributionAnalyzerRes
     private final Collection<? extends ValueCountingAnalyzerResult> _result;
 
     public GroupedValueDistributionResult(InputColumn<?> column, InputColumn<String> groupColumn,
-                                          Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
+            Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
         _column = column;
         _groupColumn = groupColumn;
         _result = groupedResult;

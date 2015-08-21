@@ -19,8 +19,9 @@
  */
 package org.datacleaner.widgets.visualization;
 
+import java.util.Objects;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
@@ -73,13 +74,7 @@ final class JobGraphLink {
 
     @Override
     public int hashCode() {
-        final HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-        hashCodeBuilder.append(_filterOutcome);
-        hashCodeBuilder.append(_from);
-        hashCodeBuilder.append(_requirement);
-        hashCodeBuilder.append(_to);
-        hashCodeBuilder.append(_outputDataStream);
-        return hashCodeBuilder.toHashCode();
+        return Objects.hash(_filterOutcome, _from, _requirement, _to, _outputDataStream);
     }
 
     @Override

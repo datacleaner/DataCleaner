@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.metamodel.DataContext;
-import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.HdfsResource;
@@ -49,16 +48,17 @@ public class SparkJobLauncher implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(SparkJobLauncher.class);
 
     private final DataCleanerConfiguration _dataCleanerConfiguration;
-
-    public SparkJobLauncher(DataCleanerConfiguration dataCleanerConfiguration) {
-        _dataCleanerConfiguration = dataCleanerConfiguration;
-    }
+    
+    private final String _dataCleanerConfigurationPath;
 
     public SparkJobLauncher(String confXmlPath) {
+        _dataCleanerConfigurationPath = confXmlPath;
         _dataCleanerConfiguration = readDataCleanerConfiguration(new HdfsResource(confXmlPath));
     }
 
-    public void launchJob(final AnalysisJob analysisJob) {
+    public void launchJob(final String analysisJobXmlPath) {
+        final AnalysisJob analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
+        
         final String datastoreName = analysisJob.getDatastore().getName();
 
         final Datastore datastore = _dataCleanerConfiguration.getDatastoreCatalog().getDatastore(datastoreName);
@@ -74,13 +74,11 @@ public class SparkJobLauncher implements Serializable {
                     final Resource resource = csvDataContext.getResource();
                     String datastoreFilePath = resource.getQualifiedPath();
                     
-                    final CsvConfiguration csvConfiguration = csvDataContext.getConfiguration();
-            
                     SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
                     sc = new JavaSparkContext(conf);
 
                     JavaRDD<String> inputRDD = sc.textFile(datastoreFilePath);
-                    JavaRDD<InputRow> inputRowRDD = inputRDD.map(new InputRowMapper(analysisJob.getSourceColumns(), csvConfiguration));
+                    JavaRDD<InputRow> inputRowRDD = inputRDD.map(new InputRowMapper(_dataCleanerConfigurationPath, analysisJobXmlPath));
                     List<InputRow> inputRows = inputRowRDD.collect();
                     logger.info("Input rows: ");
                     for (InputRow inputRow : inputRows) {
@@ -96,11 +94,6 @@ public class SparkJobLauncher implements Serializable {
                 }
             }
         }
-    }
-
-    public void launchJob(String analysisJobXmlPath) {
-        final AnalysisJob analysisJob = readAnalysisJob(new HdfsResource(analysisJobXmlPath));
-        launchJob(analysisJob);
     }
 
     private static DataCleanerConfiguration readDataCleanerConfiguration(HdfsResource confXmlHdfsResource) {

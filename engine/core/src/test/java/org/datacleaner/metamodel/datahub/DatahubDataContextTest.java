@@ -19,9 +19,12 @@
  */
  package org.datacleaner.metamodel.datahub;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
@@ -45,14 +48,14 @@ public class DatahubDataContextTest extends TestCase
         String password = "cdi123";
         
         DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        Schema schema = context.testGetMainSchema();
+        Schema schema = context.getSchemaByName("Golden records");
         assertEquals(2, schema.getTableCount());
         assertEquals(163, schema.getTableByName("person").getColumnCount());
         assertEquals(154, schema.getTableByName("organization").getColumnCount());
         
     }
 
-    public void xtestExecuteQuery() {
+    public void testExecuteQuery() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -63,15 +66,17 @@ public class DatahubDataContextTest extends TestCase
         String password = "cdi123";
         
         DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
-        
-        Schema schema = context.testGetMainSchema();
+        Schema schema = context.getSchemaByName("Golden records");
         Table personTable = schema.getTableByName("person");
         Column[] columns = personTable.getColumns();
 
         Query query = new Query();
         query.select(columns);
+        //query.selectAll();
         query.from(personTable);
         DataSet result = context.executeQuery(query);
+        List<Row> rows = result.toRows();
+        assertEquals(50, rows.size());
         assertNotNull(result);
         assertTrue(result.next());
         assertEquals(columns.length, result.getRow().size());

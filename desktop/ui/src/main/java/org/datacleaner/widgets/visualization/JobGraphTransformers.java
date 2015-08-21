@@ -190,22 +190,29 @@ public class JobGraphTransformers {
             public <T> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
                     boolean isSelected, T edge) {
                 final String labelText;
+                final String iconPath;
 
                 if (edge instanceof JobGraphLink) {
                     final JobGraphLink link = (JobGraphLink) edge;
-                    if (isCompoundRequirementLink(link)) {
+                    if (link.getOutputDataStream() != null) {
+                        labelText = link.getLinkLabel();
+                        iconPath = IconUtils.OUTPUT_DATA_STREAM_PATH;
+                    } else if (isCompoundRequirementLink(link)) {
                         final HasFilterOutcomes from = (HasFilterOutcomes) link.getFrom();
                         final CompoundComponentRequirement req = (CompoundComponentRequirement) link.getRequirement();
                         final Set<FilterOutcome> outcomesFrom = req.getOutcomesFrom(from);
                         labelText = new CompoundComponentRequirement(outcomesFrom).getSimpleName();
+                        iconPath = IconUtils.FILTER_OUTCOME_PATH;
                     } else {
-                        labelText = value + "";
+                        labelText = link.getLinkLabel();
+                        iconPath = IconUtils.FILTER_OUTCOME_PATH;
                     }
                 } else {
                     labelText = value + "";
+                    iconPath = IconUtils.FILTER_OUTCOME_PATH;
                 }
 
-                final Icon icon = imageManager.getImageIcon(IconUtils.FILTER_OUTCOME_PATH, IconUtils.ICON_SIZE_SMALL);
+                final Icon icon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_SMALL);
                 final JLabel label = new JLabel(labelText, icon, JLabel.LEFT);
                 label.setFont(_normalFont);
                 return label;

@@ -21,6 +21,7 @@ package org.datacleaner.job.builder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +34,7 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
@@ -351,6 +353,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     public boolean isMultipleJobsSupported() {
         return _multipleJobsSupported;
+    }
+    
+    @Override
+    public List<OutputDataStream> getOutputDataStreams() {
+        if (isMultipleJobsSupported()) {
+            return Collections.emptyList();
+        }
+        return super.getOutputDataStreams();
     }
 
     /**

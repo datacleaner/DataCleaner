@@ -129,8 +129,8 @@ public class ComponentsControllerV1 implements ComponentsController {
                 LOGGER.warn("Component with id {} does not exist.", id);
                 throw ComponentNotFoundException.createInstanceNotFound(id);
             }
-            ComponentHandler newHandler = createComponent(tenant, storeConfig.getComponentName(), ((CreateInput) storeConfig.getCreateInput()).configuration);
-            config = new ComponentConfigHolder(storeConfig.getTimeout(), (CreateInput) storeConfig.getCreateInput(), storeConfig.getComponentId(), storeConfig.getComponentName(), newHandler);
+            ComponentHandler newHandler = createComponent(tenant, storeConfig.getComponentName(), storeConfig.getCreateInput().configuration);
+            config = new ComponentConfigHolder(storeConfig.getTimeout(), storeConfig.getCreateInput(), storeConfig.getComponentId(), storeConfig.getComponentName(), newHandler);
             _componentsCache.putComponent(config);
         }
 

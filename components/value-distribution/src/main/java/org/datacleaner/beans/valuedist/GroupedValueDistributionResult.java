@@ -21,8 +21,6 @@ package org.datacleaner.beans.valuedist;
 
 import java.util.Collection;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.GroupedValueCountingAnalyzerResult;
@@ -31,34 +29,27 @@ import org.datacleaner.result.ValueCountingAnalyzerResult;
 
 /**
  * Represents the result of the {@link ValueDistributionAnalyzer}.
- * 
+ *
  * A value distribution result has two basic forms: Grouped or ungrouped. To
  * find out which type a particular instance has, use the
  * {@link #isGroupingEnabled()} method.
- * 
+ *
  * Ungrouped results only contain a single/global value distribution. A grouped
  * result contain multiple value distributions, based on groups.
- * 
- * 
+ *
+ *
  */
-@JsonAutoDetect(
-        fieldVisibility= JsonAutoDetect.Visibility.ANY,
-        getterVisibility= JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
-        setterVisibility=JsonAutoDetect.Visibility.NONE)
 public class GroupedValueDistributionResult extends ValueDistributionAnalyzerResult implements
         GroupedValueCountingAnalyzerResult {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
     private final InputColumn<?> _column;
-    @JsonIgnore
     private final InputColumn<String> _groupColumn;
     private final Collection<? extends ValueCountingAnalyzerResult> _result;
 
     public GroupedValueDistributionResult(InputColumn<?> column, InputColumn<String> groupColumn,
-            Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
+                                          Collection<? extends ValueCountingAnalyzerResult> groupedResult) {
         _column = column;
         _groupColumn = groupColumn;
         _result = groupedResult;

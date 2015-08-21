@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CompositeValueFrequency;
@@ -41,11 +39,6 @@ import org.datacleaner.util.NullTolerableComparator;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 
-@JsonAutoDetect(
-        fieldVisibility= JsonAutoDetect.Visibility.ANY,
-        getterVisibility= JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
-        setterVisibility=JsonAutoDetect.Visibility.NONE)
 public class SingleValueDistributionResult extends ValueDistributionAnalyzerResult implements
         Comparable<SingleValueDistributionResult> {
 
@@ -56,7 +49,6 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final Collection<String> _uniqueValues;
     private final Map<String, RowAnnotation> _annotations;
     private final RowAnnotation _nullValueAnnotation;
-    @JsonIgnore
     private final InputColumn<?>[] _highlightedColumns;
     private final int _uniqueValueCount;
     private final String _groupName;
@@ -66,9 +58,9 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
 
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-            Collection<String> uniqueValues, int uniqueValueCount, int distinctCount, int totalCount,
-            Map<String, RowAnnotation> annotations, RowAnnotation nullValueAnnotation,
-            RowAnnotationFactory annotationFactory, InputColumn<?>[] highlightedColumns) {
+                                         Collection<String> uniqueValues, int uniqueValueCount, int distinctCount, int totalCount,
+                                         Map<String, RowAnnotation> annotations, RowAnnotation nullValueAnnotation,
+                                         RowAnnotationFactory annotationFactory, InputColumn<?>[] highlightedColumns) {
         _groupName = groupName;
         _topValues = topValues;
         _bottomValues = bottomValues;
@@ -84,9 +76,9 @@ public class SingleValueDistributionResult extends ValueDistributionAnalyzerResu
     }
 
     public SingleValueDistributionResult(String groupName, ValueCountList topValues, ValueCountList bottomValues,
-            int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
-            RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
-            InputColumn<?>[] highlightedColumns) {
+                                         int uniqueValueCount, int distinctCount, int totalCount, Map<String, RowAnnotation> annotations,
+                                         RowAnnotation nullValueAnnotation, RowAnnotationFactory annotationFactory,
+                                         InputColumn<?>[] highlightedColumns) {
         this(groupName, topValues, bottomValues, null, uniqueValueCount, distinctCount, totalCount, annotations,
                 nullValueAnnotation, annotationFactory, highlightedColumns);
     }

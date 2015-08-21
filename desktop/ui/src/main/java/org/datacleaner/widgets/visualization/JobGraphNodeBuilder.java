@@ -304,7 +304,7 @@ class JobGraphNodeBuilder {
                                 .getOutputDataStreamJobBuilder(outputDataStream);
 
                         final List<Table> sourceTables = outputDataStreamJobBuilder.getSourceTables();
-                        buildGraphInternal(graph, outputDataStreamJobBuilder, scf, sourceTables);
+                        buildGraphInternal(graph, outputDataStreamJobBuilder, sourceTables);
 
                         // remove the source table and replace with a
                         // JobGraphLink that has an OutputDataStream

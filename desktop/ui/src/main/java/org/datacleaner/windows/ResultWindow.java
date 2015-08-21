@@ -509,6 +509,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                 logger.info("rowProcessingBegin: {}", job.getDatastore().getName());
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
+
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
@@ -534,8 +535,15 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                         }
                         _tabbedPane.updateUI();
 
-                        _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
-                                + " (approx. " + expectedRows + " rows)");
+                        final String startingProcessingString = "Starting processing of " + table.getName();
+
+                        if (expectedRows != -1) {
+                            _progressInformationPanel.addUserLog(startingProcessingString
+                                    + " (approx. " + expectedRows + " rows)");
+                        } else {
+                            _progressInformationPanel.addUserLog(startingProcessingString);
+                        }
+
                         _progressInformationPanel.addProgressBar(table, expectedRows);
                     }
                 });

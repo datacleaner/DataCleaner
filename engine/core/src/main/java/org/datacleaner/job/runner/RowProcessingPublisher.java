@@ -513,20 +513,7 @@ public final class RowProcessingPublisher {
             final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
                     runCompletionListener);
 
-            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new Task() {
-                @Override
-                public void execute() throws Exception {
-                    getAnalysisListener().rowProcessingBegin(_analysisJob, rowProcessingMetrics);
-                    for (RowProcessingConsumer rowProcessingConsumer : getConsumers()) {
-                        final Collection<ActiveOutputDataStream> activeOutputDataStreams = rowProcessingConsumer.getActiveOutputDataStreams();
-                        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
-                            final RowProcessingPublisher activeOutputDataStreamPublisher = activeOutputDataStream.getPublisher();
-                            activeOutputDataStreamPublisher.getAnalysisListener().rowProcessingBegin(
-                                    activeOutputDataStreamPublisher.getAnalysisJob(), activeOutputDataStreamPublisher.getRowProcessingMetrics());
-                        }
-                    }
-                }
-            }, initFinishedListener);
+            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
 
 
             // kick off the initialization

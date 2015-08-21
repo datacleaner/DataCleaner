@@ -64,7 +64,7 @@ public class DCProgressBar extends JProgressBar {
     /**
      * Sets the value of the progress bar, if the new value is greater than the
      * previous value.
-     * 
+     *
      * @param newValue
      * @return whether or not the value was greater, and thus updated
      */
@@ -81,7 +81,7 @@ public class DCProgressBar extends JProgressBar {
         return greater;
     }
 
-    public void setShowAsFull(boolean showAsFull){
+    public void setShowAsFull(boolean showAsFull) {
         _showAsFull = showAsFull;
     }
 
@@ -132,9 +132,6 @@ public class DCProgressBar extends JProgressBar {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if(isIndeterminate()){
-
-        }
         final int width = getWidth();
         final int height = getHeight();
 
@@ -144,7 +141,7 @@ public class DCProgressBar extends JProgressBar {
         }
 
         final int barWidth;
-        if(isIndeterminate()){
+        if (isIndeterminate()) {
             barWidth = 0;
         } else {
             barWidth = getBarWidth(getValue());

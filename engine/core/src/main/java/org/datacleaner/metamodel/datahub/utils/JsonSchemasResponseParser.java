@@ -20,6 +20,7 @@
 package org.datacleaner.metamodel.datahub.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +34,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class JsonParserHelper {
+public class JsonSchemasResponseParser {
 
     private static final Set<String> datastoreTypes = new HashSet<String>() {
         {
@@ -81,7 +82,7 @@ public class JsonParserHelper {
     private String _currentDataStoreName;
     List<String> _dataStoreNames = new ArrayList<String>();
 
-    public JsonParserHelper() {
+    public JsonSchemasResponseParser() {
 
     }
 
@@ -247,9 +248,9 @@ public class JsonParserHelper {
         }
 
     }
-    public List<String> parseDataStoreArray(String result) throws IOException {
+    public List<String> parseDataStoreArray(InputStream inputStream) throws IOException {
         JsonFactory factory = new JsonFactory();
-        JsonParser parser = factory.createParser(result);
+        JsonParser parser = factory.createParser(inputStream);
         JsonToken token = parser.nextToken();
         while (token != null) {
             switch (parser.getCurrentToken()) {

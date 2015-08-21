@@ -19,10 +19,10 @@
  */
 package org.datacleaner.metamodel.datahub.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
@@ -30,6 +30,8 @@ import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.DatahubSchema;
 
 import com.fasterxml.jackson.core.JsonParseException;
+
+import junit.framework.TestCase;
 
 public class JsonParserHelperTest extends TestCase {
 
@@ -48,7 +50,7 @@ public class JsonParserHelperTest extends TestCase {
                 + "{\"indexed\":false,\"quote\":\"\\\"\",\"primaryKey\":false,\"name\":\"SUPPLIERNAME\",\"remarks\":\"\",\"nullable\":false,\"type\":\"VARCHAR\",\"nativeType\":\"VARCHAR\",\"size\":\"50\",\"number\":1},"
                 + "{\"indexed\":false,\"quote\":\"\\\"\",\"primaryKey\":false,\"name\":\"ACTIVE\",\"remarks\":\"\",\"nullable\":false,\"type\":\"BOOLEAN\",\"nativeType\":\"VARCHAR\",\"size\":\"50\",\"number\":2}]}"
                 + "],\"name\":\"PUBLIC\"}]}";
-        JsonParserHelper parser = new JsonParserHelper();
+        JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
         DatahubSchema schema = parser.parseJsonSchema(jsonString);
         assertNotNull(schema);
         assertEquals("PUBLIC", schema.getName());
@@ -76,7 +78,6 @@ public class JsonParserHelperTest extends TestCase {
                 suppliersTable.getColumnByName("SUPPLIERNAME").getType());
         assertEquals(ColumnType.BOOLEAN,
                 suppliersTable.getColumnByName("ACTIVE").getType());
-
     }
 
     public void testShouldOnlyParseGoldenRecordDataStore() throws IOException {
@@ -88,8 +89,11 @@ public class JsonParserHelperTest extends TestCase {
                 + "{\"name\":\"Golden_records20150810133835556.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
                 + "{\"name\":\"Golden_records20150810133955872.CSV\",\"description\":null,\"type\":\"CsvDatastore\"},"
                 + "{\"name\":\"MDM datastore\",\"description\":\"Physical datastore of MDM\",\"type\":\"MDMDatastore\"}]";
-        JsonParserHelper parser = new JsonParserHelper();
-        List<String> names = parser.parseDataStoreArray(jsonString);
+        InputStream is = new ByteArrayInputStream(jsonString.getBytes());
+        JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
+        
+        List<String> names = parser.parseDataStoreArray(is);
+
         assertEquals(1, names.size());
     }
     

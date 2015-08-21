@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -43,8 +44,8 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.metamodel.datahub.utils.JsonParserHelper;
-import org.datacleaner.metamodel.datahub.utils.JsonQueryResultParserHelper;
+import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
+import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,7 @@ public class DatahubDataContext extends AbstractDataContext implements
             try {
                 HttpResponse response = executeRequest(request);
                 String result = EntityUtils.toString(response.getEntity());
-                JsonParserHelper parser = new JsonParserHelper();
+                JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
                 DatahubSchema schema = parser.parseJsonSchema(result);
                 // schema.setDatastoreName(datastoreName);
                 schema.setName(datastoreName);
@@ -147,22 +148,17 @@ public class DatahubDataContext extends AbstractDataContext implements
 
         String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
                 + dataStoreName + ".query?q=" + queryString + "&" + paramString;
-
-        HttpGet request = new HttpGet(uri);
+        
+        HttpGet request = new HttpGet(encodeUrl(uri));
         request.addHeader("Accept", "application/json");
-        DatahubDataSet dataset = null;
+        HttpResponse response = executeRequest(request);
+        HttpEntity entity = response.getEntity();
+        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         try {
-            HttpResponse response = executeRequest(request);
-            String result = EntityUtils.toString(response.getEntity());
-            System.out.println(result);
-            JsonQueryResultParserHelper parser = new JsonQueryResultParserHelper();
-            dataset = parser.parseQueryResult(result, columns);
-
+            return parser.parseQueryResult(entity.getContent(), columns);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        return dataset;
-
     }
 
     private String getQueryString(final Query query, Table table,
@@ -179,14 +175,12 @@ public class DatahubDataContext extends AbstractDataContext implements
     private List<String> getDataStoreNames() {
         String uri = _connection.getRepositoryUrl() + "/datastores";
         logger.debug("request {}", uri);
-        HttpGet request = new HttpGet(uri);
+        HttpGet request = new HttpGet(encodeUrl(uri));
+        HttpResponse response = executeRequest(request);
+        HttpEntity entity = response.getEntity();
+        JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
         try {
-            HttpResponse response = executeRequest(request);
-            String result = EntityUtils.toString(response.getEntity());
-            JsonParserHelper parser = new JsonParserHelper();
-            List<String> datastoreNames = parser.parseDataStoreArray(result);
-            return datastoreNames;
-
+            return parser.parseDataStoreArray(entity.getContent());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -196,14 +190,15 @@ public class DatahubDataContext extends AbstractDataContext implements
         return getDefaultSchema();
     }
 
-    private HttpResponse executeRequest(HttpGet request) throws Exception {
+    private HttpResponse executeRequest(HttpGet request) {
 
         MonitorHttpClient httpClient = _connection.getHttpClient();
-        HttpResponse response = httpClient.execute(request/*
-                                                           * ,
-                                                           * _connection.getContext
-                                                           * ()
-                                                           */);
+        HttpResponse response;
+        try {
+            response = httpClient.execute(request);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 403) {

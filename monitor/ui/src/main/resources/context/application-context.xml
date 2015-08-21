@@ -56,6 +56,8 @@
 	</bean>
 
     <context:component-scan base-package="org.datacleaner.monitor.server">
-        <context:exclude-filter type="regex" expression="org\.datacleaner\.monitor\.server\.controllers\.wadl.*" />
+        <!-- We don't want these beans in the parent application context - they are loaded
+             from repository-browser-servlet.xml-->
+        <context:exclude-filter type="regex" expression="org\.datacleaner\.monitor\.server\.controllers\..*" />
     </context:component-scan>
 </beans>

@@ -53,7 +53,7 @@ public class ComponentList {
         ComponentInfo componentInfo = new ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
-                .setUrl(getURLForCreation())
+                .setCreateURL(getURLForCreation())
                 .setPropertyList(propertyList)
                 .setConfiguration(componentConfiguration);
         components.add(componentInfo);
@@ -68,7 +68,7 @@ public class ComponentList {
     }
 
     private String getURLForCreation() {
-        String name = descriptor.getDisplayName();
+        String name = descriptor.getDisplayName().replace("/", "%2F");
         String url = String.format("POST /repository/%s/components/%s", tenant, name);
 
         return url;
@@ -100,15 +100,15 @@ public class ComponentList {
     /**
      * Data storage class for particular component.
      */
-    private static class ComponentInfo {
+    static class ComponentInfo {
         public static final String PROPERTY_IS_REQUIRED = "required";
         public static final String PROPERTY_IS_NOT_REQUIRED = "not required";
 
-        private String name;
-        private String description;
-        private String url;
-        private List<String[]> propertyList;
-        private ComponentConfiguration configuration;
+        private String name = "";
+        private String description = "";
+        private String createURL = "";
+        private List<String[]> propertyList = null;
+        private ComponentConfiguration configuration = null;
 
         public String getName() {
             return name;
@@ -128,12 +128,12 @@ public class ComponentList {
             return this;
         }
 
-        public String getUrl() {
-            return url;
+        public String getCreateURL() {
+            return createURL;
         }
 
-        public ComponentInfo setUrl(String url) {
-            this.url = url;
+        public ComponentInfo setCreateURL(String createURL) {
+            this.createURL = createURL;
             return this;
         }
 

@@ -30,18 +30,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.datacleaner.util.ReflectionUtils;
 import org.apache.metamodel.util.Ref;
 import org.apache.metamodel.util.SerializableRef;
 
-@JsonAutoDetect(
-        fieldVisibility= JsonAutoDetect.Visibility.ANY,
-        getterVisibility= JsonAutoDetect.Visibility.NONE,
-        isGetterVisibility=JsonAutoDetect.Visibility.NONE,
-        setterVisibility=JsonAutoDetect.Visibility.NONE)
 public final class Crosstab<E extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,7 +41,6 @@ public final class Crosstab<E extends Serializable> implements Serializable {
     private final List<CrosstabDimension> dimensions;
     private final Map<String, E> values = new HashMap<String, E>();
     private final Class<E> valueClass;
-    @JsonIgnore
     private final Map<String, Ref<ResultProducer>> resultProducers = new HashMap<String, Ref<ResultProducer>>();
 
     public Crosstab(Class<E> valueClass, CrosstabDimension... dimensions) {

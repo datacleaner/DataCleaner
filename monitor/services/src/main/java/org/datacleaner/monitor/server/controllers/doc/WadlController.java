@@ -17,9 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.controllers.wadl;
+package org.datacleaner.monitor.server.controllers.doc;
 
 /**
+ * WADL generator for provided REST API.
  * @author j.horcicka (GMC)
  * @since 13. 08. 2015
  */
@@ -51,7 +52,7 @@ import java.util.Set;
 public class WadlController {
     String xs_namespace="http://www.w3.org/2001/XMLSchema" ;
     @Autowired
-    private RequestMappingHandlerMapping handlerMapping;
+    RequestMappingHandlerMapping handlerMapping;
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -65,9 +66,9 @@ public class WadlController {
         String url = getBaseUrl(request);
         wadResources.setBase(url);
 
-        Map<RequestMappingInfo, HandlerMethod> handletMethods = handlerMapping.getHandlerMethods();
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods = handlerMapping.getHandlerMethods();
 
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handletMethods.entrySet()) {
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
             HandlerMethod handlerMethod = entry.getValue();
             RequestMappingInfo mappingInfo = entry.getKey();
 
@@ -162,6 +163,7 @@ public class WadlController {
 
         return result;
     }
+
     private QName convertJavaToXMLType(Class<?> type) {
         QName nm = new QName("");
         String classname=type.toString();
@@ -173,6 +175,7 @@ public class WadlController {
         }
         return nm;
     }
+
     private Resource createOrFind(String uri, Resources wadResources) {
         List<Resource> current = wadResources.getResource();
         for(Resource resource:current) {
@@ -184,6 +187,7 @@ public class WadlController {
         current.add(wadlResource);
         return wadlResource;
     }
+
     private String getBaseUrl (HttpServletRequest request) {
         String requestUri = request.getRequestURI();
         return request.getScheme()+"://"+ request.getServerName()+":"+ request.getServerPort() + requestUri;

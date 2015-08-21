@@ -50,6 +50,7 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
+  
 
     @PostConstruct
     public void init() {
@@ -91,9 +92,10 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(TENANT) final String tenant,
             @PathVariable("name") final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
-        LOGGER.debug("Running '" + name + "'");
+        String decodedName = unURLify(name);
+        LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentsFactory.createComponent(tenantContext, name, processStatelessInput.configuration);
+        ComponentHandler handler =  ComponentsFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();
@@ -108,13 +110,14 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable("name") final String name,                            //1 day
             @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
+        String decodedName = unURLify(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
         _componentsCache.putComponent(
                 tenant,
                 tenantContext,
-                new ComponentsStoreHolder(longTimeout, createInput, id, name)
+                new ComponentsStoreHolder(longTimeout, createInput, id, decodedName)
         );
         return id;
     }
@@ -164,5 +167,8 @@ public class ComponentsControllerV1 implements ComponentsController {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
+    }
+    private String unURLify(String url) {
+        return url.replace("%2F", "/");
     }
 }

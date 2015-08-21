@@ -27,6 +27,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.Datastore;
 
 public final class CsvInputRowMapper extends AbstractSparkDataCleanerAction implements Function<String, InputRow> {
+    
     private static final long serialVersionUID = 1L;
 
     private final CsvConfiguration _csvConfiguration;

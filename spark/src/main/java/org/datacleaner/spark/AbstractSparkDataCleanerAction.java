@@ -19,13 +19,17 @@
  */
 package org.datacleaner.spark;
 
+import java.io.Serializable;
+
 import org.apache.metamodel.util.HdfsResource;
 import org.apache.spark.Accumulator;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
 
-public abstract class AbstractSparkDataCleanerAction {
+public abstract class AbstractSparkDataCleanerAction implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     protected final SparkDataCleanerContext _sparkDataCleanerContext;
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJob _analysisJob;

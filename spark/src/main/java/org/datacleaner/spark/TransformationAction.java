@@ -27,6 +27,7 @@ import org.datacleaner.job.runner.ConsumeRowHandler;
 import org.datacleaner.job.runner.ConsumeRowResult;
 
 public final class TransformationAction extends AbstractSparkDataCleanerAction implements FlatMapFunction<InputRow, InputRow> {
+    
     private static final long serialVersionUID = 1L;
 
     public TransformationAction(final SparkDataCleanerContext sparkDataCleanerContext) {

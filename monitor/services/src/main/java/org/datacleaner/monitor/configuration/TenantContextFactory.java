@@ -21,6 +21,8 @@ package org.datacleaner.monitor.configuration;
 
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 
+import java.util.Set;
+
 /**
  * Factory object for {@link TenantContext} objects
  */
@@ -29,4 +31,6 @@ public interface TenantContextFactory {
     public TenantContext getContext(TenantIdentifier tenant);
     
     public TenantContext getContext(String tenantId);
+
+    public Set<String> getAllTenantsName();
 }

@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -117,20 +119,48 @@ public class ComponentsStoreImpl implements ComponentsStore {
      * Delete file from repository
      *
      * @param componentId
+     * @return
      */
-    public void removeConfiguration(String componentId) {
+    public boolean removeConfiguration(String componentId) {
         writeLock.lock();
         try {
             RepositoryFile configFile = componentsFolder.getFile(componentId);
             if (configFile == null) {
                 logger.info("Component with id: {} is not in store.", componentId);
-                return;
+                return false;
             }
             configFile.delete();
             logger.info("Component {} was removed.", componentId);
         } finally {
             writeLock.unlock();
         }
+        return true;
     }
 
+
+    /**
+     * Read all files from repository
+     *
+     * @return
+     */
+    @Override
+    public List<ComponentsStoreHolder> getAllConfiguration() {
+        readLock.lock();
+        final List<ComponentsStoreHolder> holderList = new ArrayList<>();
+        try {
+            List<RepositoryFile> files = componentsFolder.getFiles();
+            for (RepositoryFile file : files) {
+                file.readFile(new Action<InputStream>() {
+                    @Override
+                    public void run(InputStream arg) throws Exception {
+                        String theString = IOUtils.toString(arg);
+                        holderList.add(objectMapper.readValue(theString, ComponentsStoreHolder.class));
+                    }
+                });
+            }
+        } finally {
+            readLock.unlock();
+        }
+        return holderList;
+    }
 }

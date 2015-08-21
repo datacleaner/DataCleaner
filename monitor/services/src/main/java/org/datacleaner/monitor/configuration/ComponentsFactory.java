@@ -19,21 +19,28 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.util.List;
+import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
- * Class ComponentsStore
+ * Class ComponentsFactory
  *
  * @author k.houzvicka
- * @since 11.8.15
+ * @since 18.8.15
  */
-public interface ComponentsStore {
-
-    public ComponentsStoreHolder getConfiguration(String componentId);
-
-    public void storeConfiguration(final ComponentsStoreHolder configuration);
-
-    public boolean removeConfiguration(String componentId);
-
-    public List<ComponentsStoreHolder> getAllConfiguration();
+public class ComponentsFactory {
+    /**
+     * Creates new Handler from configuration
+     *
+     * @param tenantContext
+     * @param componentName
+     * @param configuration
+     * @return
+     */
+    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName, ComponentConfiguration configuration) {
+        ComponentHandler handler = new ComponentHandler(
+                tenantContext.getConfiguration(),
+                componentName);
+        handler.createComponent(configuration);
+        return handler;
+    }
 }

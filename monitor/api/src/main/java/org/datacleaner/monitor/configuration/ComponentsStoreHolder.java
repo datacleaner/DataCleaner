@@ -20,6 +20,8 @@
 package org.datacleaner.monitor.configuration;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Class ComponentsStoreHolder
  * Object for storing to component cache.
@@ -30,6 +32,7 @@ package org.datacleaner.monitor.configuration;
 public class ComponentsStoreHolder {
 
     private long timeout;
+    private long useTimestamp;
     private CreateInput createInput;
     private String componentId;
     private String componentName;
@@ -42,6 +45,7 @@ public class ComponentsStoreHolder {
         this.createInput = createInput;
         this.componentId = componentId;
         this.componentName = componentName;
+        this.useTimestamp = System.currentTimeMillis();
     }
 
     public long getTimeout() {
@@ -50,6 +54,14 @@ public class ComponentsStoreHolder {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public long getUseTimestamp() {
+        return useTimestamp;
+    }
+
+    public void setUseTimestamp(long useTimestamp) {
+        this.useTimestamp = useTimestamp;
     }
 
     public CreateInput getCreateInput() {
@@ -74,5 +86,20 @@ public class ComponentsStoreHolder {
 
     public void setComponentName(String componentName) {
         this.componentName = componentName;
+    }
+
+    public void updateTimeStamp(){
+        useTimestamp = System.currentTimeMillis();
+    }
+
+    /**
+     * Check expiration of configuration
+     *
+     * @return
+     */
+    @JsonIgnore
+    public boolean isValid() {
+        long now = System.currentTimeMillis();
+        return now < useTimestamp + timeout;
     }
 }

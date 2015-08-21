@@ -31,8 +31,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.*;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -44,10 +46,15 @@ import java.util.*;
 public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
     private static final String TENANT = "tenant";
+    private ComponentsCache _componentsCache = null;
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-    ComponentsCache _componentsCache = new ComponentsCache();
+
+    @PostConstruct
+    public void init() {
+        _componentsCache = new ComponentsCache(_tenantContextFactory);
+    }
 
     @PreDestroy
     public void close() throws InterruptedException {
@@ -85,7 +92,8 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable("name") final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         LOGGER.debug("Running '" + name + "'");
-        ComponentHandler handler = createComponent(tenant, name, processStatelessInput.configuration);
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentHandler handler =  ComponentsFactory.createComponent(tenantContext, name, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();
@@ -97,16 +105,17 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public String createComponent(
             @PathVariable(TENANT) final String tenant,
-            @PathVariable("name") final String name,
-            @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
+            @PathVariable("name") final String name,                            //1 day
+            @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
-        ComponentHandler handler = createComponent(tenant, name, createInput.configuration);
-        String id = UUID.randomUUID().toString();
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentsStore store = tenantContext.getComponentsStore();
+        String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
-        store.storeConfiguration(new ComponentsStoreHolder(longTimeout, createInput, id, name));
-         _componentsCache.putComponent(new ComponentConfigHolder(longTimeout, createInput, id, name, handler));
+        _componentsCache.putComponent(
+                tenant,
+                tenantContext,
+                new ComponentsStoreHolder(longTimeout, createInput, id, name)
+        );
         return id;
     }
 
@@ -118,20 +127,12 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable("id") final String id,
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
-        ComponentConfigHolder config = _componentsCache.getConfigHolder(id);
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentsCacheConfigWrapper config = _componentsCache.getConfigHolder(id, tenant, tenantContext);
         if(config == null){
-            TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-            ComponentsStore store = tenantContext.getComponentsStore();
-            ComponentsStoreHolder storeConfig = store.getConfiguration(id);
-            if(storeConfig == null){
-                LOGGER.warn("Component with id {} does not exist.", id);
-                throw ComponentNotFoundException.createInstanceNotFound(id);
-            }
-            ComponentHandler newHandler = createComponent(tenant, storeConfig.getComponentName(), ((CreateInput) storeConfig.getCreateInput()).configuration);
-            config = new ComponentConfigHolder(storeConfig.getTimeout(), (CreateInput) storeConfig.getCreateInput(), storeConfig.getComponentId(), storeConfig.getComponentName(), newHandler);
-            _componentsCache.putComponent(config);
+            LOGGER.warn("Component with id {} does not exist.", id);
+            throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -157,29 +158,11 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(TENANT) final String tenant,
             @PathVariable("id") final String id)
             throws ComponentNotFoundException {
-        boolean inCache = false;
-        boolean inStore = false;
-        if (_componentsCache.contains(id)) {
-            _componentsCache.removeConfiguration(id);
-            inCache = true;
-        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentsStore store = tenantContext.getComponentsStore();
-        if (store.getConfiguration(id) != null) {
-            store.removeConfiguration(id);
-            inStore = true;
-        }
-        if ((inCache || inStore) == false) {
+        boolean isHere = _componentsCache.removeConfiguration(id, tenantContext);
+        if (!isHere) {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-    }
-
-    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration) {
-        ComponentHandler handler = new ComponentHandler(
-                _tenantContextFactory.getContext(tenant).getConfiguration(),
-                componentName);
-        handler.createComponent(configuration);
-        return handler;
     }
 }

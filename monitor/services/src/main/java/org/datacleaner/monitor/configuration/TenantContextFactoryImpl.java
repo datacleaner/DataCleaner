@@ -19,23 +19,27 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.monitor.job.JobEngineManager;
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.datacleaner.repository.Repository;
+import org.datacleaner.repository.RepositoryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Factory and tenant-wise cache for {@link TenantContext} objects.
@@ -133,6 +137,15 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
             }
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public Set<String> getAllTenantsName() {
+        Set<String> tenants = new HashSet<>();
+        for (RepositoryFolder repositoryFolder : _repository.getFolders()) {
+            tenants.add(repositoryFolder.getName());
+        }
+        return tenants;
     }
 
     private String getStandardizedTenantName(final String tenantId) {

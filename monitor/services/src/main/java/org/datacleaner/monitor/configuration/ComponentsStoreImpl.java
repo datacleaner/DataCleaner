@@ -100,6 +100,11 @@ public class ComponentsStoreImpl implements ComponentsStore {
     public void storeConfiguration(final ComponentsStoreHolder configuration) {
         logger.info("Store component with id: {}", configuration.getComponentId());
         writeLock.lock();
+        RepositoryFile configFile = componentsFolder.getFile(configuration.getComponentId());
+        if (configFile != null) {
+            // I must delete old file.
+            configFile.delete();
+        }
         try {
             componentsFolder.createFile(configuration.getComponentId(), new Action<OutputStream>() {
                 @Override

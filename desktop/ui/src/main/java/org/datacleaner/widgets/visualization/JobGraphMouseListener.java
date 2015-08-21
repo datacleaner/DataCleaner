@@ -195,7 +195,7 @@ public class JobGraphMouseListener extends MouseAdapter implements GraphMouseLis
 
     private JMenuItem createLinkMenuItem(final Object from) {
         return createLinkMenuItem(new JobGraphLinkPainter.VertexContext(from,
-                _graphContext.getMainAnalysisJobBuilder(), null));
+                _graphContext.getAnalysisJobBuilder(from), null));
     }
 
     private JMenuItem createLinkMenuItem(final JobGraphLinkPainter.VertexContext from) {

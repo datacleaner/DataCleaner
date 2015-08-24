@@ -22,6 +22,7 @@ package org.datacleaner.monitor.server.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.datacleaner.api.WSPrivateProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
@@ -81,6 +82,10 @@ public class ComponentList {
         JsonNode valuePlaceholder = jsonNodeFactory.textNode("<VALUE_PLACEHOLDER>");
 
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
+            if (propertyDescriptor.getAnnotation(WSPrivateProperty.class) != null) {
+                continue;
+            }
+
             if (propertyDescriptor.isInputColumn()) {
                 componentConfiguration.getColumns().add(propertyDescriptor.getName());
             }

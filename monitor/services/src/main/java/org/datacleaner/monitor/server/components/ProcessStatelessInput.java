@@ -28,7 +28,6 @@ import java.io.Serializable;
 
 /**
  * Crate for a component processing input.
- * @author j.neubauer
  * @since 9. 7. 2015
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

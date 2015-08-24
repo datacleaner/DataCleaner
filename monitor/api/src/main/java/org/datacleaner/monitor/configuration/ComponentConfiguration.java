@@ -27,7 +27,6 @@ import java.util.*;
 
 /**
  * This class contains configuration and state of a particular component.
- * @author k.houzvicka
  * @since 9. 7. 2015
  */
 

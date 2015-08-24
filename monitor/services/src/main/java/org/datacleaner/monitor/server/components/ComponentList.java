@@ -33,7 +33,6 @@ import java.util.Set;
 
 /**
  * List of component details.
- * @author j.horcicka (GMC)
  * @since 24. 07. 2015
  */
 public class ComponentList {

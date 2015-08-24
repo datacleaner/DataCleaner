@@ -27,7 +27,6 @@ import java.io.Serializable;
  * Class ComponentsCacheConfigWrapper
  * Simple wrapper for store to cache with expiration time.
  *
- * @author k.houzvicka
  * @since 28.7.15
  */
 public class ComponentsCacheConfigWrapper implements Serializable {

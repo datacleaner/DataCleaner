@@ -48,7 +48,6 @@ import java.util.Map;
 
 /**
  * This class is a component type independent wrapper that decides the proper handler and provides its results.
- * @author j.horcicka (GMC)
  * @since 14. 07. 2015
  */
 public class ComponentHandler {

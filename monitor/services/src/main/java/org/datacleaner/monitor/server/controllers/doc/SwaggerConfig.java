@@ -30,7 +30,6 @@ import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 
 /**
  * Configuration class for Swagger library.
- * @author j.horcicka (GMC)
  * @since 17. 08. 2015
  */
 @Configuration

@@ -28,7 +28,6 @@ import java.io.Serializable;
  * Class ComponentConfigHolder
  * Object contains all information for execution components.
  *
- * @author k.houzvicka
  * @since 24.7.15
  */
 public class ComponentConfigHolder implements Serializable {

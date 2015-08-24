@@ -31,7 +31,6 @@ import java.io.File;
 /**
  * Class ComponentsCacheTest
  *
- * @author k.houzvicka
  * @since 28.7.15
  */
 public class ComponentsCacheTest {

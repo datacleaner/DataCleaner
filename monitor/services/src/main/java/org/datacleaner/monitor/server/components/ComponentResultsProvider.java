@@ -20,11 +20,9 @@
 package org.datacleaner.monitor.server.components;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * This interface specifies a component results provider.
- * @author j.horcicka (GMC)
  * @since 14. 07. 2015
  */
 public interface ComponentResultsProvider {

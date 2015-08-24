@@ -37,7 +37,6 @@ import java.util.*;
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore configuration.
- * @author k.houzvicka, j.horcicka
  * @since 8. 7. 2015
  */
 @Controller

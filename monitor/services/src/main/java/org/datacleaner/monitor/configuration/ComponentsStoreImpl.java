@@ -37,7 +37,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Class is for storing components.
  *
- * @author k.houzvicka
  * @since 24.7.15
  */
 public class ComponentsStoreImpl implements ComponentsStore {

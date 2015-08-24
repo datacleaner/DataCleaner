@@ -22,7 +22,6 @@ package org.datacleaner.monitor.server.components;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @Author jakub
  * @Since 7/31/15
  */
 

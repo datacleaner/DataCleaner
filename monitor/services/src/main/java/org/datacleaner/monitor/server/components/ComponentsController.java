@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore dcConfiguration.
- * @author j.horcicka (GMC)
  * @since 24. 07. 2015
  */
 @RequestMapping("/{tenant}/components")

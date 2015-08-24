@@ -73,31 +73,17 @@ public class ComponentHandler {
         columns = new HashMap<>();
         inputColumns = new HashMap<>();
         descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName);
-
-        if (descriptor == null) {
+        table = new MyMutableTable("inputData");
+        if(descriptor == null) {
             descriptor = dcConfiguration.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorByDisplayName(componentName);
         }
-
-        if (descriptor == null) {
+        if(descriptor == null) {
             throw ComponentNotFoundException.createTypeNotFound(componentName);
         }
-
         component = (Component) descriptor.newInstance();
-        createTable(componentConfiguration);
-        setConfiguredProperties(componentConfiguration);
 
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
-        lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        lifeCycleHelper.validate(descriptor, component);
-        lifeCycleHelper.initialize(descriptor, component);
-    }
 
-    /**
-     * It creates table according to the columns specification (for now only a list of names).
-     * @param componentConfiguration
-     */
-    private void createTable(ComponentConfiguration componentConfiguration) {
-        table = new MyMutableTable("inputData");
+        // create "table" according to the columns specification (for now only a list of names)
         int index = 0;
         for (String columnName : componentConfiguration.getColumns()) {
             MutableColumn column = columns.get(columnName);
@@ -110,15 +96,15 @@ public class ComponentHandler {
             table.addColumn(index, column);
             index++;
         }
-    }
 
-    /**
-     * It sets configured properties and skips WS private ones.
-     * @param componentConfiguration
-     */
-    private void setConfiguredProperties(ComponentConfiguration componentConfiguration) {
-        for (String propertyName : componentConfiguration.getPropertiesNames()) {
+        // Set the configured properties
+
+        for(String propertyName: componentConfiguration.getPropertiesNames()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
+            if(propDesc == null) {
+                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
+                continue;
+            }
 
             if (propDesc == null) {
                 LOGGER.debug("Unknown configuration property '" + propertyName + "'");
@@ -126,18 +112,11 @@ public class ComponentHandler {
             }
 
             JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
-
-            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
-                LOGGER.debug("WS private property '" + propertyName + "' is skipped. ");
-                continue;
-            }
-
-            if (userPropValue != null) {
-                if (propDesc.isInputColumn()) {
+            if(userPropValue != null) {
+                if(propDesc.isInputColumn()) {
                     List<String> colNames = convertToStringArray(userPropValue);
                     List<InputColumn> inputCols = new ArrayList<>();
-
-                    for (String columnName : colNames) {
+                    for(String columnName: colNames) {
                         inputCols.add(getOrCreateInputColumn(columnName));
                     }
                     propDesc.setValue(component, inputCols.toArray(new InputColumn[inputCols.size()]));
@@ -147,6 +126,11 @@ public class ComponentHandler {
                 }
             }
         }
+
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+        lifeCycleHelper.validate(descriptor, component);
+        lifeCycleHelper.initialize(descriptor, component);
     }
 
     public List<Object[]> runComponent(JsonNode data) {

@@ -26,7 +26,11 @@ import org.datacleaner.api.WSPrivateProperty;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +40,7 @@ import java.util.Set;
  * @since 24. 07. 2015
  */
 public class ComponentList {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentList.class);
     private List<ComponentInfo> components = new ArrayList<>();
     @JsonIgnore
     private String tenant;
@@ -68,10 +73,16 @@ public class ComponentList {
     }
 
     private String getURLForCreation() {
-        String name = descriptor.getDisplayName().replace("/", "%2F");
-        String url = String.format("POST /repository/%s/components/%s", tenant, name);
+        String name = descriptor.getDisplayName();
 
-        return url;
+        try {
+            name = URLEncoder.encode(name, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            LOGGER.warn(e.getMessage());
+        }
+
+        return String.format("POST /repository/%s/components/%s", tenant, name);
     }
 
     private void fillPropertyListAndComponentConfiguration() {

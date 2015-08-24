@@ -32,7 +32,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PreDestroy;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -185,6 +188,13 @@ public class ComponentsControllerV1 implements ComponentsController {
     }
 
     private String unURLify(String url) {
-        return url.replace("%2F", "/");
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            LOGGER.warn(e.getMessage());
+        }
+
+        return url;
     }
 }

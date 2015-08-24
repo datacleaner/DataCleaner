@@ -24,10 +24,13 @@ import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.server.components.ComponentList.ComponentInfo;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ComponentListTest {
     private static final int COMPONENTS_COUNT = 5;
@@ -35,6 +38,21 @@ public class ComponentListTest {
     private ComponentList componentList = new ComponentList();
     private ComponentDescriptor componentDescriptorMock = null;
     private ConfiguredPropertyDescriptor configuredPropertyDescriptorMock = null;
+
+    @Test
+    public void testUrl() {
+        try {
+            String encoding = "UTF-8";
+            String url = "a/b.net";
+            String encoded = URLEncoder.encode(url, encoding);
+            assertFalse(encoded.contains("/"));
+            String decoded = URLDecoder.decode(encoded, encoding);
+            assertTrue(decoded.equals(url));
+        }
+        catch (UnsupportedEncodingException e) {
+            fail();
+        }
+    }
 
     @Test
     public void testAdd() throws Exception {

@@ -49,7 +49,6 @@ import java.util.zip.ZipOutputStream;
 @Controller
 @RequestMapping("/{tenant}/zip")
 public class RepositoryZipController {
-
     private static final Logger logger = LoggerFactory.getLogger(RepositoryZipController.class);
 
     @Autowired
@@ -172,7 +171,7 @@ public class RepositoryZipController {
 
         final List<RepositoryFile> files = folder.getFiles();
         for (RepositoryFile file : files) {
-            System.out.println("File: " + path + file.getName());
+            logger.info("File: " + path + file.getName());
             zipOutput.putNextEntry(new ZipEntry(path + file.getName()));
             file.readFile(new Action<InputStream>() {
                 @Override
@@ -187,14 +186,14 @@ public class RepositoryZipController {
         final List<RepositoryFolder> folders = folder.getFolders();
         for (RepositoryFolder subFolder : folders) {
             String name = subFolder.getName();
-            System.out.println("Directory: " + path + name + "/");
+            logger.info("Directory: " + path + name + "/");
             addToZipOutput(path + name + "/", subFolder, zipOutput);
             itemsCount++;
         }
 
         if (itemsCount == 0 && ! path.equals("")) {
             String relativePath = path;
-            System.out.println("Empty: " + relativePath);
+            logger.info("Empty: " + relativePath);
             ZipEntry entry = new ZipEntry(relativePath);
             zipOutput.putNextEntry(entry);
         }

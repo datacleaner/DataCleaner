@@ -136,8 +136,8 @@ public class ComponentHandler {
                 continue;
             }
 
-            if (propDesc == null) {
-                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
+            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
+                LOGGER.debug("WS private property '" + propertyName + "' is skipped. ");
                 continue;
             }
 

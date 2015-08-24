@@ -47,6 +47,14 @@ public final class CsvInputRowMapper extends AbstractSparkDataCleanerAction impl
         if (dataContext instanceof CsvDataContext) {
             CsvDataContext csvDataContext = (CsvDataContext) dataContext;
             _csvConfiguration = csvDataContext.getConfiguration();
+            
+            if (_csvConfiguration.isMultilineValues()) {
+                throw new IllegalStateException("Multiline CSV files are not supported");
+            }
+            
+            if (!_csvConfiguration.getEncoding().equalsIgnoreCase("UTF-8")) {
+                throw new IllegalStateException("CSV files must be UTF-8 encoded");
+            }
         } else {
             throw new IllegalArgumentException("Only CSV datastores are supported");
         }

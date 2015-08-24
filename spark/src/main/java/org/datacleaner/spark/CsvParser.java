@@ -47,14 +47,6 @@ public class CsvParser implements Serializable {
                     + " did not match the number of columns defined in the job (" + jobColumns.size() + ")");
         }
         
-        if (csvConfiguration.isMultilineValues()) {
-            throw new IllegalStateException("Multiline CSV files are not supported");
-        }
-        
-        if (!csvConfiguration.getEncoding().equalsIgnoreCase("UTF-8")) {
-            throw new IllegalStateException("CSV files must be UTF-8 encoded");
-        }
-
         Iterator<InputColumn<?>> jobColumnsIterator = jobColumns.iterator();
 
         MockInputRow row = new MockInputRow();

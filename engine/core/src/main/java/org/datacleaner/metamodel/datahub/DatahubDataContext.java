@@ -34,7 +34,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
@@ -57,7 +56,7 @@ public class DatahubDataContext extends AbstractDataContext implements
 
     private DatahubConnection _connection;
 
-    Map<String, DatahubSchema> _schemas;
+    private Map<String, DatahubSchema> _schemas;
 
     public DatahubDataContext(String host, Integer port, String username,
             String password, String tenantId, boolean https,
@@ -100,14 +99,13 @@ public class DatahubDataContext extends AbstractDataContext implements
                     + datastoreName + ".schemas";
             logger.debug("request {}", uri);
             HttpGet request = new HttpGet(encodeUrl(uri));
+            HttpResponse response = executeRequest(request);
+            HttpEntity entity = response.getEntity();
+            JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
-                HttpResponse response = executeRequest(request);
-                String result = EntityUtils.toString(response.getEntity());
-                JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
-                DatahubSchema schema = parser.parseJsonSchema(result);
+                DatahubSchema schema = parser.parseJsonSchema(entity.getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
-
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
@@ -118,37 +116,29 @@ public class DatahubDataContext extends AbstractDataContext implements
     @Override
     public void executeUpdate(UpdateScript arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public DataSet executeQuery(final Query query) {
         Table table = query.getFromClause().getItem(0).getTable();
-        final List<SelectItem> selectItems = query.getSelectClause().getItems();
-        final Column[] columns = new Column[selectItems.size()];
-        int i = 0;
-        for (SelectItem selectItem : selectItems) {
-            columns[i] = selectItem.getColumn();
-            i++;
-        }
+        final Column[] columns = createColumns(query);
         
         String internalSchemaName = table.getSchema().getName();
         String queryString = getQueryString(query, table, internalSchemaName);        
-        String dataStoreName = ((DatahubSchema) table.getSchema()).getDatastoreName().replaceAll("\\s+", "+");
+        String dataStoreName = ((DatahubSchema) table.getSchema()).getDatastoreName();//.replaceAll("\\s+", "+");
 
         List<NameValuePair> params = new ArrayList<>();
-        //params.add(new BasicNameValuePair("q", queryString));
-        final Integer maxRows = query.getMaxRows();
-        //if (maxRows == null || maxRows == 0) {
-            params.add(new BasicNameValuePair("page", "0"));
-            params.add(new BasicNameValuePair("size", "50"));
-        //}
+        final Integer firstRow = (query.getFirstRow() == null ? 1 : query.getFirstRow());
+        final Integer maxRows = (query.getMaxRows() == null ? -1 : query.getMaxRows());
+        params.add(new BasicNameValuePair("q", queryString));
+        params.add(new BasicNameValuePair("f", firstRow.toString()));
+        params.add(new BasicNameValuePair("m", maxRows.toString()));
         String paramString = URLEncodedUtils.format(params, "utf-8");
 
-        String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
-                + dataStoreName + ".query?q=" + queryString + "&" + paramString;
+        String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores" + "/"
+                + dataStoreName + ".query?") + paramString;
         
-        HttpGet request = new HttpGet(encodeUrl(uri));
+        HttpGet request = new HttpGet(uri);
         request.addHeader("Accept", "application/json");
         HttpResponse response = executeRequest(request);
         HttpEntity entity = response.getEntity();
@@ -160,16 +150,25 @@ public class DatahubDataContext extends AbstractDataContext implements
         }
     }
 
+    private Column[] createColumns(final Query query) {
+        final List<SelectItem> selectItems = query.getSelectClause().getItems();
+        final Column[] columns = new Column[selectItems.size()];
+        int i = 0;
+        for (SelectItem selectItem : selectItems) {
+            columns[i++] = selectItem.getColumn();
+        }
+        return columns;
+    }
+
     private String getQueryString(final Query query, Table table,
             String internalSchemaName) {
         String queryString = query.toSql();
         queryString = queryString.replace(internalSchemaName + ".", "");
         queryString = queryString.replace(table.getName() + ".", "");        
         queryString = queryString.replace(", ", ",");
-        queryString = queryString.replaceAll("\\s+", "+");
+//        queryString = queryString.replaceAll("\\s+", "+");
         return queryString;
     }
-
 
     private List<String> getDataStoreNames() {
         String uri = _connection.getRepositoryUrl() + "/datastores";

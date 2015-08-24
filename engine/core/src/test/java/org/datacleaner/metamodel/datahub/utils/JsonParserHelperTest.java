@@ -50,8 +50,9 @@ public class JsonParserHelperTest extends TestCase {
                 + "{\"indexed\":false,\"quote\":\"\\\"\",\"primaryKey\":false,\"name\":\"SUPPLIERNAME\",\"remarks\":\"\",\"nullable\":false,\"type\":\"VARCHAR\",\"nativeType\":\"VARCHAR\",\"size\":\"50\",\"number\":1},"
                 + "{\"indexed\":false,\"quote\":\"\\\"\",\"primaryKey\":false,\"name\":\"ACTIVE\",\"remarks\":\"\",\"nullable\":false,\"type\":\"BOOLEAN\",\"nativeType\":\"VARCHAR\",\"size\":\"50\",\"number\":2}]}"
                 + "],\"name\":\"PUBLIC\"}]}";
+        InputStream is = new ByteArrayInputStream(jsonString.getBytes());
         JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
-        DatahubSchema schema = parser.parseJsonSchema(jsonString);
+        DatahubSchema schema = parser.parseJsonSchema(is);
         assertNotNull(schema);
         assertEquals("PUBLIC", schema.getName());
         assertEquals(2, schema.getTableCount());

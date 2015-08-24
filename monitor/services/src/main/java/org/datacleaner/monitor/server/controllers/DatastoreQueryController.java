@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.query.parser.QueryParserException;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
@@ -104,17 +105,45 @@ public class DatastoreQueryController {
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "page", "size" }, method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "f", "m" }, method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
     @ResponseBody
     public Map<String, Object> jsonPaginatedGet(
             @PathVariable("tenant") final String tenant,
             @PathVariable("datastore") String datastoreName,
             @RequestParam("q") String query,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size, UriComponentsBuilder uriBuilder, HttpServletResponse response) throws IOException {
+            @RequestParam("f") int firstRow,
+            @RequestParam("m") int maxRows, UriComponentsBuilder uriBuilder, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
-        query = query + " LIMIT " + size + " OFFSET " + (size * page);
-        return getJsonResult(tenant, datastoreName, query, response);
+        // should test for a sensible page size
+        
+        datastoreName = datastoreName.replaceAll("\\+", " ");
+
+        final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+        if (ds == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);
+            return null;
+        }
+
+        String username = getUsername();
+
+        if (StringUtils.isNullOrEmpty(query)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No query defined");
+            return null;
+        }
+
+        logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
+                datastoreName, username, query });
+
+        try (final DatastoreConnection con = ds.openConnection()) {
+            final DataContext dataContext = con.getDataContext();
+            Query pagedQuery = dataContext.parseQuery(query);
+            pagedQuery.setFirstRow(firstRow);
+            pagedQuery.setMaxRows(maxRows);
+            try (final DataSet dataSet = dataContext.executeQuery(pagedQuery)) {
+                return getJsonResult(dataSet);
+            }
+        }
     }
 
     private Map<String, Object> getJsonResult(String tenant, String datastoreName, String query, HttpServletResponse response) throws IOException {
@@ -137,31 +166,29 @@ public class DatastoreQueryController {
         logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
                 datastoreName, username, query });
 
-        Map<String, Object> map = null;
         try (final DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
             try (final DataSet dataSet = dataContext.executeQuery(query)) {
-                map = getJsonResult(dataSet);
+                return getJsonResult(dataSet);
             }
         }
-        return map;
     }
     
     private Map<String, Object> getJsonResult(DataSet dataSet) throws IOException {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("table", createTableMap(dataSet));
         return map;
     }
 
     private Object createTableMap(DataSet dataSet) {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put("header", createColumnHeaderList(dataSet.getSelectItems()));
         map.put("rows", createRowList(dataSet));
         return map;
     }
 
     private List<String> createColumnHeaderList(SelectItem[] selectItems) {
-        final List<String> columns = new ArrayList<String>();
+        final List<String> columns = new ArrayList<>();
         for (SelectItem selectItem : selectItems) {
             final String label = selectItem.getSuperQueryAlias(false);
             columns.add(label);
@@ -170,7 +197,7 @@ public class DatastoreQueryController {
     }
 
     private List<List<String>> createRowList(DataSet dataSet) {
-        final List<List<String>> rows = new ArrayList<List<String>>();
+        final List<List<String>> rows = new ArrayList<>();
         while (dataSet.next()) {
             rows.add(createRowValueList(dataSet));
         }
@@ -178,7 +205,7 @@ public class DatastoreQueryController {
     }
 
     private List<String> createRowValueList(DataSet dataSet) {
-        final List<String> values = new ArrayList<String>();
+        final List<String> values = new ArrayList<>();
         Row row = dataSet.getRow();
         for (int i = 0; i < dataSet.getSelectItems().length; i++) {
             Object value = row.getValue(i);

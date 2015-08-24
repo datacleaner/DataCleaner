@@ -73,25 +73,20 @@ public class JsonSchemasResponseParser {
 
     private DatastoreObject _currentObject;
     private String _currentFieldname;
-    DatahubSchema _currentSchema;
+    private DatahubSchema _currentSchema;
     private DatahubTable _currentTable;
     private DatahubColumnBuilder _currentColumnBuilder;
-    private String _schemaName;
     private DatahubSchema _resultSchema;
 
     private String _currentDataStoreName;
-    List<String> _dataStoreNames = new ArrayList<String>();
+    private List<String> _dataStoreNames = new ArrayList<String>();
 
-    public JsonSchemasResponseParser() {
-
-    }
-
-    public DatahubSchema parseJsonSchema(String result)
+    public DatahubSchema parseJsonSchema(InputStream is)
             throws JsonParseException, IOException {
         _currentObject = DatastoreObject.DATASTORE;
         _currentFieldname = "";
         JsonFactory factory = new JsonFactory();
-        JsonParser parser = factory.createParser(result);
+        JsonParser parser = factory.createParser(is);
         JsonToken token = parser.nextToken();
         while (token != null) {
             switch (parser.getCurrentToken()) {
@@ -127,7 +122,6 @@ public class JsonSchemasResponseParser {
             token = parser.nextToken();
         }
         return _resultSchema;
-
     }
 
     private void addObjectToSchema() {
@@ -204,7 +198,6 @@ public class JsonSchemasResponseParser {
         if (fieldName.equals("number")) {
             _currentColumnBuilder.withNumber(fieldValue);
         }
-
     }
 
     private void handleColumnField(String fieldName, String fieldValue) {
@@ -246,8 +239,8 @@ public class JsonSchemasResponseParser {
                 && datastoreTypes.contains(value)) {
             _dataStoreNames.add(_currentDataStoreName);
         }
-
     }
+
     public List<String> parseDataStoreArray(InputStream inputStream) throws IOException {
         JsonFactory factory = new JsonFactory();
         JsonParser parser = factory.createParser(inputStream);

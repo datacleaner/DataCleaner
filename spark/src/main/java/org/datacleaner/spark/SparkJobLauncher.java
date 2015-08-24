@@ -85,7 +85,7 @@ public class SparkJobLauncher implements Serializable {
                     
                     JavaRDD<String> inputRDD = sc.textFile(datastoreFilePath);
                     JavaRDD<InputRow> inputRowRDD = inputRDD.map(new CsvInputRowMapper(sparkDataCleanerContext));
-                    JavaRDD<InputRow> transformationRDD = inputRowRDD.flatMap(new TransformationAction(sparkDataCleanerContext));
+                    JavaRDD<InputRow> transformationRDD = inputRowRDD.mapPartitions(new TransformationAction(sparkDataCleanerContext));
                     List<InputRow> transformedRows = transformationRDD.collect();
                     logger.info("Transformed rows (limit 10): ");
                     int counter = 0;

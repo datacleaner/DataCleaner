@@ -35,14 +35,24 @@ public class CsvParser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static InputRow prepareInputRow(Collection<InputColumn<?>> jobColumns, CsvConfiguration csvConfiguration, String csvLine) throws IOException {
-        CSVParser openCsvParser = new CSVParser(csvConfiguration.getSeparatorChar(), csvConfiguration.getQuoteChar(), csvConfiguration.getEscapeChar());
-        
+    public static InputRow prepareInputRow(Collection<InputColumn<?>> jobColumns, CsvConfiguration csvConfiguration,
+            String csvLine) throws IOException {
+        CSVParser openCsvParser = new CSVParser(csvConfiguration.getSeparatorChar(), csvConfiguration.getQuoteChar(),
+                csvConfiguration.getEscapeChar());
+
         String[] values = openCsvParser.parseLine(csvLine);
-        
+
         if (values.length != jobColumns.size()) {
             throw new IllegalStateException("The number of values in the row (" + values.length
                     + " did not match the number of columns defined in the job (" + jobColumns.size() + ")");
+        }
+        
+        if (csvConfiguration.isMultilineValues()) {
+            throw new IllegalStateException("Multiline CSV files are not supported");
+        }
+        
+        if (!csvConfiguration.getEncoding().equalsIgnoreCase("UTF-8")) {
+            throw new IllegalStateException("CSV files must be UTF-8 encoded");
         }
 
         Iterator<InputColumn<?>> jobColumnsIterator = jobColumns.iterator();

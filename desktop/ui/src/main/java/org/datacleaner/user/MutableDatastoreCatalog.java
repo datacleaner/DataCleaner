@@ -142,4 +142,5 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
     public void removeListener(DatastoreChangeListener listener) {
         _listeners.remove(listener);
     }
+    
 }

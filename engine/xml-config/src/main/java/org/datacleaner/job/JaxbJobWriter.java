@@ -41,6 +41,7 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ComponentDescriptor;
@@ -62,6 +63,7 @@ import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
+import org.datacleaner.job.jaxb.OutputDataStreamType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
@@ -105,8 +107,20 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
-        final Job jobType = new Job();
+        final Job job = new Job();
+        configureJobType(analysisJob, job);
 
+        try {
+            final Marshaller marshaller = _jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setEventHandler(new JaxbValidationEventHandler());
+            marshaller.marshal(job, outputStream);
+        } catch (JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType) {
         try {
             JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
             jobType.setJobMetadata(jobMetadata);
@@ -119,14 +133,15 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         jobType.setSource(sourceType);
 
         final Datastore datastore = analysisJob.getDatastore();
-        final DataContextType dataContextType = new DataContextType();
-        if (datastore == null) {
-            logger.warn("No datastore specified for analysis job: {}", analysisJob);
-        } else {
-            dataContextType.setRef(datastore.getName());
+        if (!(datastore instanceof OutputDataStreamDatastore)) {
+            final DataContextType dataContextType = new DataContextType();
+            if (datastore == null) {
+                logger.warn("No datastore specified for analysis job: {}", analysisJob);
+            } else {
+                dataContextType.setRef(datastore.getName());
+            }
+            sourceType.setDataContext(dataContextType);
         }
-        sourceType.setDataContext(dataContextType);
-
         // mappings for lookup of ID's
         final BiMap<InputColumn<?>, String> columnMappings = HashBiMap.create(50);
         final Map<FilterOutcome, String> outcomeMappings = new LinkedHashMap<FilterOutcome, String>();
@@ -164,15 +179,6 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         addRequirements(outcomeMappings, transformerMappings, filterMappings, analyzerMappings, columnMappings);
 
         addConfiguration(analysisJob, transformerMappings, filterMappings, analyzerMappings, columnMappings);
-
-        try {
-            final Marshaller marshaller = _jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.setEventHandler(new JaxbValidationEventHandler());
-            marshaller.marshal(jobType, outputStream);
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private String getColumnPath(Column column, String columnPathQualification) {
@@ -520,6 +526,16 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             AnalyzerType analyzerType = new AnalyzerType();
             analyzerType.setName(analyzerJob.getName());
             setDescriptor(analyzerType, analyzerJob.getDescriptor());
+            final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
+            
+            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
+                outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
+                final JobType childJobType = new JobType();
+                configureJobType(outputDataStreamJob.getJob(), childJobType);
+                outputDataStreamType.setJob(childJobType);
+                analyzerType.getOutputDataStream().add(outputDataStreamType);
+            }
             analysisType.getAnalyzer().add(analyzerType);
             analyzerMappings.put(analyzerJob, analyzerType);
         }

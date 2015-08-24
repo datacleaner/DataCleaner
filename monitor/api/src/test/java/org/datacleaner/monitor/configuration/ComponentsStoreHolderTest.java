@@ -31,6 +31,15 @@ public class ComponentsStoreHolderTest {
     private String componentName = "componentName";
 
     @Test
+    public void testConstructor() {
+        ComponentsStoreHolder storeHolder = new ComponentsStoreHolder(timeout, createInput, componentId, componentName);
+        assertEquals(timeout, storeHolder.getTimeout());
+        assertEquals(createInput, storeHolder.getCreateInput());
+        assertEquals(componentId, storeHolder.getComponentId());
+        assertEquals(componentName, storeHolder.getComponentName());
+    }
+
+    @Test
     public void testTimeoutAccessors() throws Exception {
         assertEquals(0L, componentsStoreHolder.getTimeout());
         componentsStoreHolder.setTimeout(timeout);

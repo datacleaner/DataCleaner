@@ -66,7 +66,7 @@ public class UpdateTableJobBuilderPresenterRenderer implements
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(ajb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new UpdateTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration);
+        return new UpdateTableJobBuilderPresenter(ajb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }
 
 }

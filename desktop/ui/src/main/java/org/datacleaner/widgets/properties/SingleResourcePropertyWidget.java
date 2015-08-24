@@ -61,7 +61,8 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             extensions = fileProperty.extension();
         }
 
-        _resourceTextField = new ResourceSelector(getResourceConverter(), userPreferences, openMode);
+        final ResourceConverter resourceConverter = getResourceConverter();
+        _resourceTextField = new ResourceSelector(resourceConverter, userPreferences, openMode);
 
         if (extensions != null && extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);

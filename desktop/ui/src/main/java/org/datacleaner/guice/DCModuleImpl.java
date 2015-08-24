@@ -79,6 +79,7 @@ import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
@@ -230,7 +231,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
-
+    
     @Provides
     public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
             DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
@@ -418,11 +419,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());
+        handlers.add(new HdfsResourceTypeHandler());
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
 
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
+    }
+    
+    @Override
+    public InjectorBuilder createInjectorBuilder() {
+        return new InjectorBuilder(this, Guice.createInjector(this));
     }
 
     @Override

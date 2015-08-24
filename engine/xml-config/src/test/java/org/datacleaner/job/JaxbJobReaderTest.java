@@ -29,9 +29,14 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
+import org.apache.metamodel.util.UrlResource;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.beans.CompletenessAnalyzer;
+import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
 import org.datacleaner.beans.dategap.DateGapTextRenderer;
@@ -40,6 +45,7 @@ import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.configuration.SourceColumnMapping;
 import org.datacleaner.connection.CsvDatastore;
@@ -54,11 +60,14 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.CrosstabResult;
+import org.datacleaner.result.ListResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
+import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 
 public class JaxbJobReaderTest extends TestCase {
@@ -365,5 +374,78 @@ public class JaxbJobReaderTest extends TestCase {
         assertEquals(3, jobBuilder.getFilterComponentBuilders().size());
         assertEquals(1, jobBuilder.getAnalyzerComponentBuilders().size());
         assertEquals(0, jobBuilder.getTransformerComponentBuilders().size());
+    }
+    
+    public void testReadAndExecuteOutputDataStreams() throws Throwable {
+        JobReader<InputStream> reader = new JaxbJobReader(conf);
+        AnalysisJob job = reader.read(new FileInputStream(
+                new File("src/test/resources/example-job-output-dataset.analysis.xml")));
+
+        assertEquals(1, job.getAnalyzerJobs().size());
+        final AnalyzerJob analyzerJob = job.getAnalyzerJobs().get(0);
+        assertEquals("Completeness analyzer", analyzerJob.getDescriptor().getDisplayName());
+        
+        assertEquals(2, analyzerJob.getOutputDataStreamJobs().length);
+        OutputDataStreamJob completeOutputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[0];
+        assertEquals("Complete rows", completeOutputDataStreamJob.getOutputDataStream().getName());
+        assertEquals(2, completeOutputDataStreamJob.getJob().getAnalyzerJobs().size());
+        final AnalyzerJob completeStringAnalyzer = completeOutputDataStreamJob.getJob().getAnalyzerJobs().get(0);
+        assertEquals("String analyzer", completeStringAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, completeStringAnalyzer.getInput().length);
+        assertEquals("Concat of FIRSTNAME,LASTNAME", completeStringAnalyzer.getInput()[0].getName());
+        
+        final AnalyzerJob completeNumberAnalyzer = completeOutputDataStreamJob.getJob().getAnalyzerJobs().get(1);
+        assertEquals("Number analyzer", completeNumberAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, completeNumberAnalyzer.getInput().length);
+        assertEquals("REPORTSTO", completeNumberAnalyzer.getInput()[0].getName());
+
+        assertEquals(2, analyzerJob.getOutputDataStreamJobs().length);
+        OutputDataStreamJob incompleteOutputDataStreamJob = analyzerJob.getOutputDataStreamJobs()[1];
+        assertEquals("Incomplete rows", incompleteOutputDataStreamJob.getOutputDataStream().getName());
+        assertEquals(2, incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().size());
+        final AnalyzerJob incompleteStringAnalyzer = incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().get(0);
+        assertEquals("String analyzer", incompleteStringAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, incompleteStringAnalyzer.getInput().length);
+        assertEquals("Concat of FIRSTNAME,LASTNAME", incompleteStringAnalyzer.getInput()[0].getName());
+
+        final AnalyzerJob incompleteNumberAnalyzer = incompleteOutputDataStreamJob.getJob().getAnalyzerJobs().get(1);
+        assertEquals("Number analyzer", incompleteNumberAnalyzer.getDescriptor().getDisplayName());
+        assertEquals(1, incompleteNumberAnalyzer.getInput().length);
+        assertEquals("REPORTSTO", incompleteNumberAnalyzer.getInput()[0].getName());
+
+        final MultiThreadedTaskRunner taskRunner = new MultiThreadedTaskRunner(16);
+        final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl()
+                .withTaskRunner(taskRunner);
+        final Datastore datastore = TestHelper.createSampleDatabaseDatastore("testoutputdatastream");
+        final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withDatastores(datastore)
+                .withEnvironment(environment);
+
+        final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
+        final AnalyzerJob analyzerJob2 = outputDataStreamJobs[0].getJob().getAnalyzerJobs().get(0);
+        final AnalyzerJob analyzerJob3 = outputDataStreamJobs[1].getJob().getAnalyzerJobs().get(0);
+
+        // now run the job(s)
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
+        final AnalysisResultFuture resultFuture = runner.run(job);
+        resultFuture.await();
+
+        if (resultFuture.isErrornous()) {
+            throw resultFuture.getErrors().get(0);
+        }
+
+        assertEquals(5, resultFuture.getResults().size());
+
+        final CompletenessAnalyzerResult result1 = (CompletenessAnalyzerResult) resultFuture.getResult(analyzerJob);
+        assertNotNull(result1);
+        assertEquals(23, result1.getValidRowCount());
+        assertEquals(0, result1.getInvalidRowCount());
+        final StringAnalyzerResult result2 = (StringAnalyzerResult) resultFuture.getResult(analyzerJob2);
+        assertNotNull(result2);
+        assertEquals(23, result2.getRowCount(result2.getColumns()[0]));
+        assertEquals(0, result2.getNullCount(result2.getColumns()[0]));
+
+        final StringAnalyzerResult result3 = (StringAnalyzerResult) resultFuture.getResult(analyzerJob3);
+        assertNotNull(result3);
+        assertEquals(0, result3.getRowCount(result3.getColumns()[0]));
     }
 }

@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -27,13 +28,14 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.ComponentList;
-import org.datacleaner.monitor.server.components.ComponentNotFoundException;
 import org.datacleaner.monitor.server.components.ProcessInput;
 import org.datacleaner.monitor.server.components.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
@@ -41,7 +43,7 @@ import static org.easymock.EasyMock.*;
 public class ComponentsControllerV1Test {
     private String tenant = "demo";
     private String id = "component-id";
-    private String componentName = "Generate ID";
+    private String componentName = "Concatenator";
     private String timeout = "42";
     private ComponentsControllerV1 componentsControllerV1 = new ComponentsControllerV1();
 
@@ -69,10 +71,28 @@ public class ComponentsControllerV1Test {
 
     private ComponentsStore getComponentsStoreMock() {
         ComponentsStore componentsStore = createNiceMock(ComponentsStore.class);
-        expect(componentsStore.getConfiguration(id)).andReturn(null).anyTimes();
+        expect(componentsStore.getConfiguration(id)).andReturn(getComponentsStoreHolder()).anyTimes();
         replay(componentsStore);
 
         return componentsStore;
+    }
+
+    private ComponentsStoreHolder getComponentsStoreHolder() {
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = getComponentConfigurationMock();
+        long timeoutMs = 1000L;
+        ComponentsStoreHolder componentsStoreHolder = new ComponentsStoreHolder(timeoutMs, createInput, id, componentName);
+
+        return componentsStoreHolder;
+    }
+
+    private ComponentConfiguration getComponentConfigurationMock() {
+        ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
+        expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        replay(componentConfiguration);
+
+        return componentConfiguration;
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
@@ -102,8 +122,11 @@ public class ComponentsControllerV1Test {
 
     private DescriptorProvider getDescriptorProviderMock() {
         DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
-        expect(descriptorProvider.getTransformerDescriptors()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(getTransformerDescriptorMock()).anyTimes();
+        Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
+        TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
+        transformerDescriptorSet.add(transformerDescriptorMock);
+        expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
+        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(transformerDescriptorMock).anyTimes();
         replay(descriptorProvider);
 
         return descriptorProvider;
@@ -115,9 +138,21 @@ public class ComponentsControllerV1Test {
         expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
         replay(transformerDescriptor);
 
         return transformerDescriptor;
+    }
+
+    private JsonNode getJsonNodeMock() {
+        JsonNode jsonNode = createNiceMock(JsonNode.class);
+        Set set = new HashSet();
+        expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
+        replay(jsonNode);
+
+        return jsonNode;
     }
 
     @Test
@@ -128,14 +163,15 @@ public class ComponentsControllerV1Test {
     @Test
     public void testGetAllComponents() throws Exception {
         ComponentList componentList = componentsControllerV1.getAllComponents(tenant);
-        assertTrue(componentList.getComponents().isEmpty());
+        assertTrue(componentList.getComponents().size() > 0);
     }
 
-    @Test(expected = ComponentNotFoundException.class)
+    @Test
     public void testProcessStateless() throws Exception {
         ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
         processStatelessInput.configuration = new ComponentConfiguration();
-        componentsControllerV1.processStateless(tenant, id, processStatelessInput);
+        processStatelessInput.data = getJsonNodeMock();
+        componentsControllerV1.processStateless(tenant, componentName, processStatelessInput);
     }
 
     @Test
@@ -145,10 +181,10 @@ public class ComponentsControllerV1Test {
         componentsControllerV1.createComponent(tenant, componentName, timeout, createInput);
     }
 
-    @Test(expected = ComponentNotFoundException.class)
+    @Test
     public void testProcessComponent() throws Exception {
         ProcessInput processInput = new ProcessInput();
-        processInput.data = createNiceMock(JsonNode.class);
+        processInput.data = getJsonNodeMock();
 
         componentsControllerV1.processComponent(tenant, id, processInput);
     }
@@ -159,7 +195,7 @@ public class ComponentsControllerV1Test {
 
     }
 
-    @Test(expected = ComponentNotFoundException.class)
+    @Test
     public void testDeleteComponent() throws Exception {
         componentsControllerV1.deleteComponent(tenant, id);
     }

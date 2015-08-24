@@ -135,6 +135,12 @@ public class ComponentHandler {
                 LOGGER.debug("Unknown configuration property '" + propertyName + "'");
                 continue;
             }
+
+            if (propDesc == null) {
+                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
+                continue;
+            }
+
             JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
             if(userPropValue != null) {
                 if(propDesc.isInputColumn()) {

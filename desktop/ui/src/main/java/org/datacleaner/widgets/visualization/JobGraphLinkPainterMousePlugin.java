@@ -79,7 +79,8 @@ public class JobGraphLinkPainterMousePlugin extends AbstractGraphMousePlugin imp
             final Object vertex = _graphContext.getVertex(me);
             if (vertex != null) {
                 me.consume();
-                _linkPainter.startLink(vertex);
+                _linkPainter.startLink(new JobGraphLinkPainter.VertexContext(vertex,
+                        _graphContext.getMainAnalysisJobBuilder(), null));
             }
         }
     }

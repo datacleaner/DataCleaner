@@ -69,12 +69,12 @@ public class ComponentsControllerV1Test {
         return tenantContext;
     }
 
-    private ComponentsStore getComponentsStoreMock() {
-        ComponentsStore componentsStore = createNiceMock(ComponentsStore.class);
-        expect(componentsStore.getConfiguration(id)).andReturn(getComponentsStoreHolder()).anyTimes();
-        replay(componentsStore);
+    private ComponentStore getComponentsStoreMock() {
+        ComponentStore componentStore = createNiceMock(ComponentStore.class);
+        expect(componentStore.getConfiguration(id)).andReturn(getComponentsStoreHolder()).anyTimes();
+        replay(componentStore);
 
-        return componentsStore;
+        return componentStore;
     }
 
     private ComponentsStoreHolder getComponentsStoreHolder() {

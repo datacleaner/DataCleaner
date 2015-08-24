@@ -24,7 +24,7 @@ package org.datacleaner.monitor.configuration;
  *
  * @since 11.8.15
  */
-public interface ComponentsStore {
+public interface ComponentStore {
 
     public ComponentsStoreHolder getConfiguration(String componentId);
 

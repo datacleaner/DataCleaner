@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ComponentsStoreHolderTest {
+public class ComponentStoreHolderTest {
     private ComponentsStoreHolder componentsStoreHolder = new ComponentsStoreHolder();
     private long timeout = 1000L;
     private CreateInput createInput = new CreateInput();

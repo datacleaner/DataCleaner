@@ -104,7 +104,7 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentHandler handler = createComponent(tenant, decodedName, createInput.configuration);
         String id = UUID.randomUUID().toString();
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentsStore store = tenantContext.getComponentsStore();
+        ComponentStore store = tenantContext.getComponentsStore();
         long longTimeout = Long.parseLong(timeout);
         store.storeConfiguration(new ComponentsStoreHolder(longTimeout, createInput, id, decodedName));
          _componentsCache.putComponent(new ComponentConfigHolder(longTimeout, createInput, id, decodedName, handler));
@@ -122,7 +122,7 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentConfigHolder config = _componentsCache.getConfigHolder(id);
         if(config == null){
             TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-            ComponentsStore store = tenantContext.getComponentsStore();
+            ComponentStore store = tenantContext.getComponentsStore();
             ComponentsStoreHolder storeConfig = store.getConfiguration(id);
             if(storeConfig == null){
                 LOGGER.warn("Component with id {} does not exist.", id);
@@ -165,7 +165,7 @@ public class ComponentsControllerV1 implements ComponentsController {
             inCache = true;
         }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentsStore store = tenantContext.getComponentsStore();
+        ComponentStore store = tenantContext.getComponentsStore();
         if (store.getConfiguration(id) != null) {
             store.removeConfiguration(id);
             inStore = true;

@@ -53,7 +53,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     private final String _tenantId;
     private final Repository _repository;
     private final ConfigurationCache _configurationCache;
-    private final ComponentsStore _componentsStore;
+    private final ComponentStore _componentStore;
     private final JobEngineManager _jobEngineManager;
     private final LoadingCache<JobIdentifier, JobContext> _jobCache;
 
@@ -86,7 +86,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
                 .withInjectionManagerFactory(tenantInjectionManagerFactory);
 
         _configurationCache = new ConfigurationCache(tenantEnvironment, this, repository);
-        _componentsStore = new ComponentsStoreImpl(_repository, _tenantId);
+        _componentStore = new ComponentStoreImpl(_repository, _tenantId);
         _jobCache = buildJobCache();
     }
 
@@ -190,8 +190,8 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    public ComponentsStore getComponentsStore() {
-        return _componentsStore;
+    public ComponentStore getComponentsStore() {
+        return _componentStore;
     }
 
 }

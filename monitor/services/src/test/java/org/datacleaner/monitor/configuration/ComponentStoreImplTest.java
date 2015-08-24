@@ -27,14 +27,14 @@ import org.junit.Test;
 
 import static org.easymock.EasyMock.*;
 
-public class ComponentsStoreImplTest {
-    private ComponentsStoreImpl componentsStoreImpl = null;
+public class ComponentStoreImplTest {
+    private ComponentStoreImpl componentsStoreImpl = null;
     private String tenantId = "demo";
     private String componentId = "componentId";
 
     @Before
     public void setUp() {
-        componentsStoreImpl = new ComponentsStoreImpl(getRepositoryMock(), tenantId);
+        componentsStoreImpl = new ComponentStoreImpl(getRepositoryMock(), tenantId);
     }
 
     private Repository getRepositoryMock() {
@@ -47,7 +47,7 @@ public class ComponentsStoreImplTest {
 
     private RepositoryFolder getRepositoryFolderMock() {
         RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
-        expect(repositoryFolder.getFolder(ComponentsStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock()).anyTimes();
+        expect(repositoryFolder.getFolder(ComponentStoreImpl.FOLDER_NAME)).andReturn(getComponentsFolderMock()).anyTimes();
         replay(repositoryFolder);
 
         return repositoryFolder;

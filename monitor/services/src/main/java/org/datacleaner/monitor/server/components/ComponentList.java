@@ -86,7 +86,10 @@ public class ComponentList {
             }
 
             if (propertyDescriptor.isInputColumn()) {
-                componentConfiguration.getColumns().add(propertyDescriptor.getName());
+                // TODO: Do we really want to provide info about expected columns? For some cases could work,
+                // e.g. when transformer has simple InputColumn properties.
+                // But when it has e.g. InputColumn array? Or Mapped property? What to provide here?
+                // componentConfiguration.getColumns().add(propertyDescriptor.getName());
             }
 
             propertyList.add(new String[]{

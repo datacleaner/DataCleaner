@@ -19,32 +19,37 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.SimpleDataSetHeader;
-import org.apache.metamodel.schema.Column;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.MutableColumn;
-import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.*;
 import org.datacleaner.api.*;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.descriptors.PropertyDescriptor;
+import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
+import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.*;
 
 /**
  * This class is a component type independent wrapper that decides the proper handler and provides its results.
@@ -53,6 +58,8 @@ import java.util.Map;
 public class ComponentHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentHandler.class);
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     private final String componentName;
     private DataCleanerConfiguration dcConfiguration;
@@ -84,20 +91,43 @@ public class ComponentHandler {
 
         // create "table" according to the columns specification (for now only a list of names)
         int index = 0;
-        for (String columnName : componentConfiguration.getColumns()) {
-            MutableColumn column = columns.get(columnName);
-            if(column == null) {
-                column = new MutableColumn(columnName, ColumnType.VARCHAR, table, index, true);
-                columns.put(columnName, column);
+        for (JsonNode columnSpec : componentConfiguration.getColumns()) {
+            String columnName;
+            String columnTypeName;
+            if(columnSpec.isObject()) {
+                ObjectNode columnSpecO = (ObjectNode)columnSpec;
+                columnName = columnSpecO.get("name").asText();
+                columnTypeName = columnSpecO.get("type").asText();
             } else {
-                column.setColumnNumber(index);
+                columnName = columnSpec.asText();
+                columnTypeName = ColumnType.VARCHAR.getName();
             }
+
+            MutableColumn column = columns.get(columnName);
+            if(column != null) {
+                throw new RuntimeException("Multiple column definition of name '" + columnName + "'");
+            }
+            ColumnType columnType = ColumnTypeImpl.valueOf(columnTypeName);
+            if(columnType == null) {
+                throw new RuntimeException("Column '" + columnName + "' has unknown type '" + columnTypeName + "'");
+            }
+            column = new MutableColumn(columnName, columnType, table, index, true);
+            columns.put(columnName, column);
             table.addColumn(index, column);
             index++;
         }
 
         // Set the configured properties
 
+        // First, copy current values = the defaults
+        Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
+        Set<ConfiguredPropertyDescriptor> props = descriptor.getConfiguredProperties();
+        for(ConfiguredPropertyDescriptor propDesc: props) {
+            Object defaultValue = propDesc.getValue(component);
+            if(defaultValue != null) {
+                configuredProperties.put(propDesc, defaultValue);
+            }
+        }
         for(String propertyName: componentConfiguration.getPropertiesNames()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {
@@ -105,8 +135,8 @@ public class ComponentHandler {
                 continue;
             }
 
-            if (propDesc == null) {
-                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
+            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
+                LOGGER.debug("WS private property '" + propertyName + "' is skipped. ");
                 continue;
             }
 
@@ -116,17 +146,19 @@ public class ComponentHandler {
                     List<String> colNames = convertToStringArray(userPropValue);
                     List<InputColumn> inputCols = new ArrayList<>();
                     for(String columnName: colNames) {
-                        inputCols.add(getOrCreateInputColumn(columnName));
+                        inputCols.add(getOrCreateInputColumn(columnName, propertyName));
                     }
-                    propDesc.setValue(component, inputCols.toArray(new InputColumn[inputCols.size()]));
+                    configuredProperties.put(propDesc, inputCols.toArray(new InputColumn[inputCols.size()]));
                 } else {
                     Object value = convertPropertyValue(propDesc, userPropValue);
-                    propDesc.setValue(component, value);
+                    configuredProperties.put(propDesc, value);
                 }
             }
         }
+        org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
 
         LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
         lifeCycleHelper.assignProvidedProperties(descriptor, component);
         lifeCycleHelper.validate(descriptor, component);
         lifeCycleHelper.initialize(descriptor, component);
@@ -143,7 +175,6 @@ public class ComponentHandler {
             id++;
         }
 
-        // TODO: run with the engine thread-pool executor
         if(component instanceof Transformer) {
             List results = new ArrayList();
             for (InputRow inputRow : inputRows) {
@@ -170,13 +201,12 @@ public class ComponentHandler {
         }
     }
 
-    private InputColumn getOrCreateInputColumn(String columnName) {
+    private InputColumn getOrCreateInputColumn(String columnName, String propertyName) {
         MutableColumn column = columns.get(columnName);
-        InputColumn inputColumn;
         if(column == null) {
-            columns.put(columnName, column = new MutableColumn(columnName, ColumnType.VARCHAR, table, columns.size(), true));
+            throw new RuntimeException("Column '" + columnName + "' specified in property '" + propertyName + "' was not found in table columns specification");
         }
-        inputColumn = inputColumns.get(columnName);
+        InputColumn inputColumn = inputColumns.get(columnName);
         if(inputColumn == null) {
             inputColumns.put(columnName, inputColumn = new MetaModelInputColumn(column));
         }
@@ -193,26 +223,33 @@ public class ComponentHandler {
             }
             Column col = table.getColumn(i);
             values.add(convertTableValue(col.getType().getJavaEquivalentClass(), value));
+            i++;
         }
         return values.toArray(new Object[values.size()]);
     }
 
-    private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode userPropValue) {
-        // TODO: other properties type. Find some generic way to convert JsonNode to the specific property type
+    private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class type = propDesc.getType();
-        if(String.class.isAssignableFrom(type)) {
-            return toString(userPropValue);
-        } else {
-            return null;
+        try {
+            if(value.isArray() || value.isObject()) {
+                return mapper.readValue(value.traverse(), type);
+            } else {
+                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value.toString());
         }
     }
 
     private Object convertTableValue(Class type, JsonNode value) {
-        if(String.class.isAssignableFrom(type)) {
-            return toString(value);
-        } else {
-            // TODO: various data types. But for now user cannot specify column data type. So the type is only String for now.
-            return toString(value);
+        try {
+            if(value.isArray() || value.isObject()) {
+                return mapper.readValue(value.traverse(), type);
+            } else {
+                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString());
         }
     }
 

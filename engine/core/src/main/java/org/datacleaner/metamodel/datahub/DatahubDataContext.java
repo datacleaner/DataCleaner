@@ -123,9 +123,9 @@ public class DatahubDataContext extends AbstractDataContext implements
     public DataSet executeQuery(final Query query) {
         Table table = query.getFromClause().getItem(0).getTable();
         final Column[] columns = createColumns(query);
-        String queryString = getQueryString(table, columns, query);
         String dataStoreName = ((DatahubSchema) table.getSchema())
                 .getDatastoreName();
+        String queryString = getQueryString(table, query);
 
         List<NameValuePair> params = new ArrayList<>();
         final Integer firstRow = (query.getFirstRow() == null ? 1 : query
@@ -153,25 +153,13 @@ public class DatahubDataContext extends AbstractDataContext implements
         }
     }
 
-    private String getQueryString(Table table, Column[] columns, Query query) {
-        StringBuilder sb = new StringBuilder();
+    private String getQueryString(Table table, Query query) {
+        String queryString = query.toSql();
+        queryString = queryString.replace(table.getName() + ".", "");        
+        return queryString;
 
-        // try {
-        sb.append(" SELECT ");
-        for (int i = 0; i < columns.length; ++i ) {
-            if (i != 0) {
-                sb.append(",");
-            }
-            sb.append(columns[i].getName());
-        }
-
-        sb.append(" FROM ");
-        sb.append(table.getName());
-
-        // TODO WHERE
-        // TODO ORDERBY
-        return sb.toString();
     }
+    
 
 
     private Column[] createColumns(final Query query) {

@@ -36,6 +36,8 @@ import org.apache.metamodel.csv.CsvDataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 
 public final class CsvOutputWriterFactory {
 
@@ -70,20 +72,30 @@ public final class CsvOutputWriterFactory {
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar,
-            char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
-        CsvOutputWriter outputWriter;
+    public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar, char quoteChar,
+            char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+        return getWriter(new FileResource(filename), headers, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar,
+                escapeChar, includeHeader, columns);
+    }
+
+    public static OutputWriter getWriter(Resource resource, final String[] headers, String encoding,
+            char separatorChar, char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+        final CsvOutputWriter outputWriter;
+        final String qualifiedPath = resource.getQualifiedPath();
         synchronized (dataContexts) {
-            UpdateableDataContext dataContext = dataContexts.get(filename);
+            UpdateableDataContext dataContext = dataContexts.get(qualifiedPath);
             if (dataContext == null) {
 
-                File file = new File(filename);
-                File parentFile = file.getParentFile();
-                if (parentFile != null && !parentFile.exists()) {
-                    parentFile.mkdirs();
+                if (resource instanceof FileResource) {
+                    final File file = ((FileResource) resource).getFile();
+                    final File parentFile = file.getParentFile();
+                    if (parentFile != null && !parentFile.exists()) {
+                        parentFile.mkdirs();
+                    }
                 }
-                dataContext = new CsvDataContext(file, getConfiguration(separatorChar, quoteChar, escapeChar,
-                        includeHeader));
+
+                dataContext = new CsvDataContext(resource, getConfiguration(encoding, separatorChar, quoteChar,
+                        escapeChar, includeHeader));
 
                 final Schema schema = dataContext.getDefaultSchema();
                 dataContext.executeUpdate(new UpdateScript() {
@@ -97,32 +109,32 @@ public final class CsvOutputWriterFactory {
                     }
                 });
 
-                Table table = dataContext.getDefaultSchema().getTables()[0];
+                final Table table = dataContext.getDefaultSchema().getTables()[0];
 
-                dataContexts.put(filename, dataContext);
-                counters.put(filename, new AtomicInteger(1));
-                outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
+                dataContexts.put(qualifiedPath, dataContext);
+                counters.put(qualifiedPath, new AtomicInteger(1));
+                outputWriter = new CsvOutputWriter(dataContext, qualifiedPath, table, columns);
 
                 // write the headers
             } else {
                 Table table = dataContext.getDefaultSchema().getTables()[0];
-                outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
-                counters.get(filename).incrementAndGet();
+                outputWriter = new CsvOutputWriter(dataContext, qualifiedPath, table, columns);
+                counters.get(qualifiedPath).incrementAndGet();
             }
         }
 
         return outputWriter;
     }
 
-    private static CsvConfiguration getConfiguration(char separatorChar, char quoteChar, char escapeChar,
-            boolean includeHeader) {
+    private static CsvConfiguration getConfiguration(String encoding, char separatorChar, char quoteChar,
+            char escapeChar, boolean includeHeader) {
         final int headerLine;
         if (includeHeader) {
             headerLine = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
         } else {
             headerLine = CsvConfiguration.NO_COLUMN_NAME_LINE;
         }
-        return new CsvConfiguration(headerLine, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar);
+        return new CsvConfiguration(headerLine, encoding, separatorChar, quoteChar, escapeChar);
     }
 
     protected static void release(String filename) {

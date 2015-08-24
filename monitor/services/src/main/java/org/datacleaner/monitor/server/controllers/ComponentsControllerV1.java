@@ -42,7 +42,7 @@ import java.util.*;
 @Controller
 public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
-    private static final String TENANT = "tenant";
+    private static final String PARAMETER_NAME_TENANT = "tenant";
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -58,7 +58,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * @param tenant
      * @return
      */
-    public ComponentList getAllComponents(@PathVariable(TENANT) final String tenant) {
+    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider()
@@ -80,7 +80,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * @return
      */
     public ProcessStatelessOutput processStateless(
-            @PathVariable(TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
@@ -96,7 +96,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It runs the component and returns the results.
      */
     public String createComponent(
-            @PathVariable(TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("name") final String name,
             @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
             @RequestBody final CreateInput createInput) {
@@ -115,7 +115,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It returns the continuous result of the component for the provided input data.
      */
     public ProcessOutput processComponent(
-            @PathVariable(TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("id") final String id,
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
@@ -143,7 +143,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It returns the component's final result.
      */
     public ProcessResult getFinalResult(
-            @PathVariable(TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("id") final String id)
             throws ComponentNotFoundException {
         // TODO - only for analyzers, implement it later after the architecture
@@ -155,7 +155,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It deletes the component.
      */
     public void deleteComponent(
-            @PathVariable(TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable("id") final String id)
             throws ComponentNotFoundException {
         boolean inCache = false;

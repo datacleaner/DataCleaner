@@ -86,30 +86,4 @@ public class ComponentInfoTest {
         componentInfo.setCreateURL(createURL);
         assertTrue(componentInfo.getCreateURL().equals(createURL));
     }
-
-    @Test
-    public void testGetPropertyList() throws Exception {
-        assertTrue(componentInfo.getPropertyList() == null);
-        componentInfo.setPropertyList(propertyList);
-        assertTrue(componentInfo.getPropertyList() != null);
-    }
-
-    @Test
-    public void testSetPropertyList() throws Exception {
-        componentInfo.setPropertyList(propertyList);
-        assertTrue(componentInfo.getPropertyList() != null);
-    }
-
-    @Test
-    public void testGetConfiguration() throws Exception {
-        assertTrue(componentInfo.getConfiguration() == null);
-        componentInfo.setConfiguration(componentConfigurationMock);
-        assertTrue(componentInfo.getConfiguration() != null);
-    }
-
-    @Test
-    public void testSetConfiguration() throws Exception {
-        componentInfo.setConfiguration(componentConfigurationMock);
-        assertTrue(componentInfo.getConfiguration() != null);
-    }
 }

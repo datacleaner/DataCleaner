@@ -20,16 +20,17 @@
 package org.datacleaner.monitor.server.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.datacleaner.api.WSPrivateProperty;
+import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.monitor.configuration.ComponentConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.util.*;
 
 /**
  * List of component details.
@@ -37,86 +38,91 @@ import java.util.Set;
  * @since 24. 07. 2015
  */
 public class ComponentList {
+
     private List<ComponentInfo> components = new ArrayList<>();
-    @JsonIgnore
-    private String tenant;
-    @JsonIgnore
-    private ComponentDescriptor descriptor;
-    @JsonIgnore
-    private List<String[]> propertyList;
-    @JsonIgnore
-    private ComponentConfiguration componentConfiguration;
 
     public void add(String tenant, ComponentDescriptor descriptor) {
-        this.tenant = tenant;
-        this.descriptor = descriptor;
-        fillPropertyListAndComponentConfiguration();
-        ComponentInfo componentInfo = new ComponentInfo()
+        components.add(createComponentInfo(tenant, descriptor));
+    }
+
+    public ComponentInfo createComponentInfo(String tenant, ComponentDescriptor descriptor) {
+        return new ComponentInfo()
                 .setName(descriptor.getDisplayName())
                 .setDescription(descriptor.getDescription())
-                .setCreateURL(getURLForCreation())
-                .setPropertyList(propertyList)
-                .setConfiguration(componentConfiguration);
-        components.add(componentInfo);
+                .setCreateURL(getURLForCreation(tenant, descriptor))
+                .setProperties(createPropertiesInfo(descriptor));
     }
 
     public List<ComponentInfo> getComponents() {
         return components;
     }
 
-    public void setComponents(List<ComponentInfo> components) {
-        this.components = components;
+    private String getURLForCreation(String tenant, ComponentDescriptor descriptor) {
+        try {
+            return String.format(
+                    "/repository/%s/components/%s",
+                    URLEncoder.encode(tenant, "UTF8"),
+                    URLEncoder.encode(descriptor.getDisplayName(), "UTF8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-    private String getURLForCreation() {
-        String name = descriptor.getDisplayName().replace("/", "%2F");
-        String url = String.format("POST /repository/%s/components/%s", tenant, name);
-
-        return url;
-    }
-
-    private void fillPropertyListAndComponentConfiguration() {
-        propertyList = new ArrayList<>();
-        componentConfiguration = new ComponentConfiguration();
-        JsonNodeFactory jsonNodeFactory = new JsonNodeFactory(false);
-        JsonNode valuePlaceholder = jsonNodeFactory.textNode("<VALUE_PLACEHOLDER>");
-
+    
+    private Map<String, PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
+        Map<String, PropertyInfo> result = new HashMap<>();
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
             if (propertyDescriptor.getAnnotation(WSPrivateProperty.class) != null) {
                 continue;
             }
 
-            if (propertyDescriptor.isInputColumn()) {
-                // TODO: Do we really want to provide info about expected columns? For some cases could work,
-                // e.g. when transformer has simple InputColumn properties.
-                // But when it has e.g. InputColumn array? Or Mapped property? What to provide here?
-                // componentConfiguration.getColumns().add(propertyDescriptor.getName());
+
+            PropertyInfo propInfo = new PropertyInfo();
+            propInfo.setName(propertyDescriptor.getName());
+            propInfo.setDescription(propertyDescriptor.getDescription());
+            propInfo.setRequired(propertyDescriptor.isRequired());
+            propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
+            propInfo.setType(getPropertyType(descriptor, propertyDescriptor));
+            if(propertyDescriptor.getType().isEnum()) {
+                propInfo.setEnumValues(toStringArray(propertyDescriptor.getType().getEnumConstants()));
             }
-
-            propertyList.add(new String[]{
-                    propertyDescriptor.getName(),
-                    (propertyDescriptor.getDescription() == null) ?
-                            "" : propertyDescriptor.getDescription(),
-                    propertyDescriptor.isRequired() ?
-                            ComponentInfo.PROPERTY_IS_REQUIRED : ComponentInfo.PROPERTY_IS_NOT_REQUIRED,
-            });
-
-            componentConfiguration.getProperties().put(propertyDescriptor.getName(), valuePlaceholder);
+            result.put(propInfo.getName(), propInfo);
         }
+        return result;
+    }
+
+    private String[] toStringArray(Object[] array) {
+        String[] result = new String[array.length];
+        for(int i = 0; i < array.length; i++) {
+            result[i] = String.valueOf(array[i]);
+        }
+        return result;
+    }
+
+    private String getPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor) {
+        // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
+        Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
+        return f.getGenericType().getTypeName();
     }
 
     /**
      * Data storage class for particular component.
      */
-    static class ComponentInfo {
-        public static final String PROPERTY_IS_REQUIRED = "required";
-        public static final String PROPERTY_IS_NOT_REQUIRED = "not required";
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ComponentInfo {
 
         private String name = "";
         private String description = "";
         private String createURL = "";
-        private List<String[]> propertyList = null;
-        private ComponentConfiguration configuration = null;
+        private Map<String, PropertyInfo> properties = new HashMap<>();
+
+        public ComponentInfo setProperties(Map<String, PropertyInfo> properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public Map<String, PropertyInfo> getProperties() {
+            return properties;
+        }
 
         public String getName() {
             return name;
@@ -144,23 +150,71 @@ public class ComponentList {
             this.createURL = createURL;
             return this;
         }
+    }
 
-        public List<String[]> getPropertyList() {
-            return propertyList;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonPropertyOrder({ "name", "type", "description", "required", "isInputColumn", "enumValues" })
+    public static class PropertyInfo {
+        private String name;
+        private String type;
+        private String description;
+        private boolean required;
+        private boolean isInputColumn;
+        private String[] enumValues;
+
+        public void setIsInputColumn(boolean inputColumn) {
+            isInputColumn = inputColumn;
         }
 
-        public ComponentInfo setPropertyList(List<String[]> propertyList) {
-            this.propertyList = propertyList;
-            return this;
+        public boolean isInputColumn() {
+            return isInputColumn;
         }
 
-        public ComponentConfiguration getConfiguration() {
-            return configuration;
+        public void setInputColumn(boolean inputColumn) {
+            isInputColumn = inputColumn;
         }
 
-        public ComponentInfo setConfiguration(ComponentConfiguration configuration) {
-            this.configuration = configuration;
-            return this;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        // We don't need name in the property info, since it is used a a key in the properties map.
+        @JsonIgnore
+        public String getName() {
+            return name;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setRequired(boolean required) {
+            this.required = required;
+        }
+
+        public boolean isRequired() {
+            return required;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String[] getEnumValues() {
+            return enumValues;
+        }
+
+        public void setEnumValues(String[] enumValues) {
+            this.enumValues = enumValues;
         }
     }
+
 }

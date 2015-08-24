@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.controllers;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
@@ -32,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PreDestroy;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -61,16 +64,25 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public ComponentList getAllComponents(@PathVariable(TENANT) final String tenant) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
-        Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
+        Collection<TransformerDescriptor<?>> transformerDescriptors = configuration
+                .getEnvironment()
                 .getDescriptorProvider()
                 .getTransformerDescriptors();
         ComponentList componentList = new ComponentList();
-
         for (TransformerDescriptor descriptor : transformerDescriptors) {
             componentList.add(tenant, descriptor);
         }
-
         return componentList;
+    }
+
+    public ComponentList.ComponentInfo getComponentInfo(
+            @PathVariable(TENANT) final String tenant,
+            @PathVariable("name") String name) {
+        name = unURLify(name);
+        LOGGER.debug("Informing about '" + name + "'");
+        DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
+        ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
+        return new ComponentList().createComponentInfo(tenant, descriptor);
     }
 
     /**
@@ -186,6 +198,10 @@ public class ComponentsControllerV1 implements ComponentsController {
     }
 
     private String unURLify(String url) {
-        return url.replace("%2F", "/");
+        try {
+            return URLDecoder.decode(url, "UTF8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

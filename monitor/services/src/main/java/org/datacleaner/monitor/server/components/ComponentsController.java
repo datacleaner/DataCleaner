@@ -42,6 +42,10 @@ public interface ComponentsController {
     @RequestMapping(method = RequestMethod.GET, produces = MIME_TYPE_JSON)
     public ComponentList getAllComponents(final String tenant);
 
+    @ResponseBody
+    @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MIME_TYPE_JSON)
+    public ComponentList.ComponentInfo getComponentInfo(final String tenant, final String name);
+
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
      * @param tenant

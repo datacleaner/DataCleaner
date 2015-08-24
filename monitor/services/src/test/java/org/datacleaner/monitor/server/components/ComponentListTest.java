@@ -72,31 +72,4 @@ public class ComponentListTest {
         return propertiesSet;
     }
 
-    @Test
-    public void testGetComponents() throws Exception {
-        assertTrue(componentList.getComponents().isEmpty());
-        componentList.setComponents(getComponentList());
-        assertTrue(componentList.getComponents().size() == ComponentListTest.COMPONENTS_COUNT);
-    }
-
-    private List<ComponentInfo> getComponentList() {
-        List<ComponentInfo> componentInfoList = new ArrayList<>();
-
-        for (int i = 0; i < ComponentListTest.COMPONENTS_COUNT; i++) {
-            componentInfoList.add(getComponentInfo(i));
-        }
-
-        return componentInfoList;
-    }
-
-    private ComponentInfo getComponentInfo(int id) {
-        ComponentInfo componentInfo = new ComponentInfo();
-        componentInfo.setName("name" + id);
-        componentInfo.setDescription("description of " + id);
-        componentInfo.setCreateURL("create URL" + id);
-        String[][] properties = { { "propertyName" + id, "propertyDescription" + id, "required" } };
-        componentInfo.setPropertyList(Arrays.asList(properties));
-
-        return componentInfo;
-    }
 }

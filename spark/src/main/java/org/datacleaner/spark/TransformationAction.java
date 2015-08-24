@@ -19,6 +19,8 @@
  */
 package org.datacleaner.spark;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -26,22 +28,35 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.job.runner.ConsumeRowHandler;
 import org.datacleaner.job.runner.ConsumeRowResult;
 
-public final class TransformationAction extends AbstractSparkDataCleanerAction implements FlatMapFunction<InputRow, InputRow> {
+public final class TransformationAction extends AbstractSparkDataCleanerAction implements FlatMapFunction<Iterator<InputRow>, InputRow> {
     
     private static final long serialVersionUID = 1L;
+    
+    private transient ConsumeRowHandler _consumeRowHandler;
 
     public TransformationAction(final SparkDataCleanerContext sparkDataCleanerContext) {
         super(sparkDataCleanerContext);
     }
 
     @Override
-    public List<InputRow> call(InputRow inputRow) throws Exception {
-        ConsumeRowHandler.Configuration configuration = new ConsumeRowHandler.Configuration();
-        configuration.includeAnalyzers = false;
-        ConsumeRowHandler consumeRowHandler = new ConsumeRowHandler(getAnalysisJob(), getDataCleanerConfiguration(),
-                configuration);
-        ConsumeRowResult consumeRowResult = consumeRowHandler.consumeRow(inputRow);
-        return consumeRowResult.getRows();
+    public List<InputRow> call(Iterator<InputRow> inputRowIterator) throws Exception {
+        List<InputRow> transformedInputRows = new ArrayList<>(); 
+        while (inputRowIterator.hasNext()) {
+            InputRow inputRow = inputRowIterator.next();
+            ConsumeRowResult consumeRowResult = getConsumeRowHandler().consumeRow(inputRow);
+            transformedInputRows.addAll(consumeRowResult.getRows());
+        }
+        return transformedInputRows;
+    }
+    
+    private ConsumeRowHandler getConsumeRowHandler() {
+        if (_consumeRowHandler == null) {
+            ConsumeRowHandler.Configuration configuration = new ConsumeRowHandler.Configuration();
+            configuration.includeAnalyzers = false;
+            _consumeRowHandler = new ConsumeRowHandler(getAnalysisJob(), getDataCleanerConfiguration(),
+                    configuration);
+        }
+        return _consumeRowHandler;
     }
 
 }

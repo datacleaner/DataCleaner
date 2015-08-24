@@ -30,7 +30,11 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 
-
+/**
+ * Integration test, can only run if mdm is running on the expected host and port
+ * @author hetty
+ *
+ */
 public class DatahubDataContextTest extends TestCase  
 {
     public void testDummy() {
@@ -55,7 +59,7 @@ public class DatahubDataContextTest extends TestCase
         
     }
 
-    public void xtestExecuteQuery() {
+    public void testExecuteQuery() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -73,6 +77,8 @@ public class DatahubDataContextTest extends TestCase
         Query query = new Query();
         query.select(columns);
         query.from(personTable);
+        query.setMaxRows(50);
+        query.setFirstRow(1);
         DataSet result = context.executeQuery(query);
         List<Row> rows = result.toRows();
         assertEquals(50, rows.size());

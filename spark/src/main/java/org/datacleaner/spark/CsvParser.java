@@ -36,7 +36,7 @@ public class CsvParser implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static InputRow prepareInputRow(Collection<InputColumn<?>> jobColumns, CsvConfiguration csvConfiguration, String csvLine) throws IOException {
-        CSVParser openCsvParser = new CSVParser(csvConfiguration.getSeparatorChar(), csvConfiguration.getQuoteChar());
+        CSVParser openCsvParser = new CSVParser(csvConfiguration.getSeparatorChar(), csvConfiguration.getQuoteChar(), csvConfiguration.getEscapeChar());
         
         String[] values = openCsvParser.parseLine(csvLine);
         

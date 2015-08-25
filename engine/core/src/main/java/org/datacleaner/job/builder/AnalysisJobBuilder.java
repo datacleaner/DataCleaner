@@ -1243,7 +1243,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return childJobBuilders;
     }
 
-    private List<AnalysisJobBuilder> getDescendants() {
+    public List<AnalysisJobBuilder> getDescendants() {
         List<AnalysisJobBuilder> descendants = new ArrayList<>();
         for(AnalysisJobBuilder child : getChildren()){
             descendants.add(child);
@@ -1251,13 +1251,5 @@ public final class AnalysisJobBuilder implements Closeable {
         }
 
         return descendants;
-    }
-
-    public List<AnalysisJobBuilder> getAllAnalysisJobBuilders() {
-        List<AnalysisJobBuilder> jobBuilders = new ArrayList<>();
-        AnalysisJobBuilder topLevelBuilder = getTopLevelJobBuilder();
-        jobBuilders.add(topLevelBuilder);
-        jobBuilders.addAll(topLevelBuilder.getDescendants());
-        return jobBuilders;
     }
 }

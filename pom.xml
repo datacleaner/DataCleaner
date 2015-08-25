@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -7,11 +8,12 @@
 		<scala.version>2.11.4</scala.version>
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
-		<hadoop.version>2.6.0</hadoop.version>
+		<hadoop.version>2.7.1</hadoop.version>
 		<spark.version>1.4.1</spark.version>
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
+		<curator.version>2.6.0</curator.version>
 		<metamodel.version>4.4.0-SNAPSHOT</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
@@ -20,7 +22,7 @@
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
-		<jackson.version>2.6.1</jackson.version>
+		<jackson.version>2.4.6</jackson.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<javax.jsp.version>2.0</javax.jsp.version>
 		<javax.el.version>2.2.4</javax.el.version>
@@ -736,7 +738,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.1</version>
+				<version>2.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -761,6 +763,26 @@
 						<artifactId>maven-scm-provider-svnexe</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-client</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-framework</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-recipes</artifactId>
+				<version>${curator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.curator</groupId>
+				<artifactId>curator-test</artifactId>
+				<version>${curator.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>

@@ -23,6 +23,7 @@ import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.server.components.ComponentList.ComponentInfo;
+import org.easymock.IExpectationSetters;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -93,6 +94,8 @@ public class ComponentListTest {
         expect(configuredPropertyDescriptorMock.isInputColumn()).andReturn(true).anyTimes();
         expect(configuredPropertyDescriptorMock.getDescription()).andReturn("property description").anyTimes();
         expect(configuredPropertyDescriptorMock.isRequired()).andReturn(true).anyTimes();
+        IExpectationSetters getTypeExpectation = expect(configuredPropertyDescriptorMock.getType());
+        getTypeExpectation.andReturn(String.class).anyTimes();
 
         Set<ConfiguredPropertyDescriptor> propertiesSet = new HashSet<>();
         propertiesSet.add(configuredPropertyDescriptorMock);
@@ -103,7 +106,7 @@ public class ComponentListTest {
     @Test
     public void testGetComponents() throws Exception {
         assertTrue(componentList.getComponents().isEmpty());
-        componentList.setComponents(getComponentList());
+        componentList.getComponents().addAll(getComponentList());
         assertTrue(componentList.getComponents().size() == ComponentListTest.COMPONENTS_COUNT);
     }
 
@@ -123,8 +126,13 @@ public class ComponentListTest {
         componentInfo.setDescription("description of " + id);
         componentInfo.setCreateURL("create URL" + id);
         String[][] properties = { { "propertyName" + id, "propertyDescription" + id, "required" } };
-        componentInfo.setPropertyList(Arrays.asList(properties));
-
+        Map<String, ComponentList.PropertyInfo> props = new HashMap<>();
+        ComponentList.PropertyInfo prop = new ComponentList.PropertyInfo();
+        prop.setName("propertyName" + id);
+        prop.setDescription("propertyDescription" + id);
+        prop.setRequired(true);
+        props.put(prop.getName(), prop);
+        componentInfo.setProperties(props);
         return componentInfo;
     }
 }

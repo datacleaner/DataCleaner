@@ -34,7 +34,6 @@ import java.util.*;
 
 /**
  * List of component details.
- * @author j.horcicka (GMC)
  * @since 24. 07. 2015
  */
 public class ComponentList {
@@ -100,8 +99,12 @@ public class ComponentList {
 
     private String getPropertyType(ComponentDescriptor descriptor, ConfiguredPropertyDescriptor propertyDescriptor) {
         // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
-        Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
-        return f.getGenericType().getTypeName();
+        if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
+            Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
+            return f.getGenericType().getTypeName();
+        } else {
+            return propertyDescriptor.getType().getCanonicalName();
+        }
     }
 
     /**

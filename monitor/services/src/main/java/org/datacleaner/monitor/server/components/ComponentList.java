@@ -101,7 +101,7 @@ public class ComponentList {
         // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
         if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
             Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
-            return f.getGenericType().getTypeName();
+            return f.getGenericType().toString();
         } else {
             return propertyDescriptor.getType().getCanonicalName();
         }

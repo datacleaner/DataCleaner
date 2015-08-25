@@ -19,25 +19,19 @@
  */
 package org.datacleaner.extension.networktools;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @Named("Resolve hostname")
 @Categorized(NetworkToolsCategory.class)
 @Description("Resolves the IP of a hostname")
+@WSStatelessComponent
 public class ResolveHostnameTransformer implements Transformer {
 
 	private static final Logger logger = LoggerFactory

@@ -47,7 +47,6 @@ import java.util.*;
 
 /**
  * This class is a component type independent wrapper that decides the proper handler and provides its results.
- * @author j.horcicka (GMC)
  * @since 14. 07. 2015
  */
 public class ComponentHandler {
@@ -83,47 +82,7 @@ public class ComponentHandler {
         }
         component = (Component) descriptor.newInstance();
 
-        buildTableDefinition(componentConfiguration);
-        org.datacleaner.job.ComponentConfiguration config = buildComponentConfiguration(componentConfiguration);
-        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
-        lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
-        lifeCycleHelper.assignProvidedProperties(descriptor, component);
-        lifeCycleHelper.validate(descriptor, component);
-        lifeCycleHelper.initialize(descriptor, component);
-    }
 
-    private org.datacleaner.job.ComponentConfiguration buildComponentConfiguration(ComponentConfiguration componentConfiguration) {
-        // First, copy current values = the defaults
-        Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
-        Set<ConfiguredPropertyDescriptor> props = descriptor.getConfiguredProperties();
-        for(ConfiguredPropertyDescriptor propDesc: props) {
-            Object defaultValue = propDesc.getValue(component);
-            if(defaultValue != null) {
-                configuredProperties.put(propDesc, defaultValue);
-            }
-        }
-        for(String propertyName: componentConfiguration.getPropertiesNames()) {
-            ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
-            if(propDesc == null) {
-                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
-                continue;
-            }
-
-            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
-                LOGGER.debug("WS private property '" + propertyName + "' is skipped. ");
-                continue;
-            }
-
-            JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
-            if(userPropValue != null) {
-                Object value = convertPropertyValue(propDesc, userPropValue);
-                configuredProperties.put(propDesc, value);
-            }
-        }
-        return new ImmutableComponentConfiguration(configuredProperties);
-    }
-
-    private void buildTableDefinition(ComponentConfiguration componentConfiguration) {
         // create "table" according to the columns specification (for now only a list of names)
         int index = 0;
         for (JsonNode columnSpec : componentConfiguration.getColumns()) {
@@ -152,6 +111,51 @@ public class ComponentHandler {
             index++;
         }
 
+        // Set the configured properties
+
+        // First, copy current values = the defaults
+        Map<PropertyDescriptor, Object> configuredProperties = new HashMap<>();
+        Set<ConfiguredPropertyDescriptor> props = descriptor.getConfiguredProperties();
+        for(ConfiguredPropertyDescriptor propDesc: props) {
+            Object defaultValue = propDesc.getValue(component);
+            if(defaultValue != null) {
+                configuredProperties.put(propDesc, defaultValue);
+            }
+        }
+        for(String propertyName: componentConfiguration.getPropertiesNames()) {
+            ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
+            if(propDesc == null) {
+                LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
+                continue;
+            }
+
+            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
+                LOGGER.debug("WS private property '{}' is skipped. ", propertyName);
+                continue;
+            }
+
+            JsonNode userPropValue = componentConfiguration.getProperty(propDesc.getName());
+            if(userPropValue != null) {
+                if(propDesc.isInputColumn()) {
+                    List<String> colNames = convertToStringArray(userPropValue);
+                    List<InputColumn> inputCols = new ArrayList<>();
+                    for(String columnName: colNames) {
+                        inputCols.add(getOrCreateInputColumn(columnName, propertyName));
+                    }
+                    configuredProperties.put(propDesc, inputCols.toArray(new InputColumn[inputCols.size()]));
+                } else {
+                    Object value = convertPropertyValue(propDesc, userPropValue);
+                    configuredProperties.put(propDesc, value);
+                }
+            }
+        }
+        org.datacleaner.job.ComponentConfiguration config = new ImmutableComponentConfiguration(configuredProperties);
+
+        LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(dcConfiguration, null, false);
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, config);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+        lifeCycleHelper.validate(descriptor, component);
+        lifeCycleHelper.initialize(descriptor, component);
     }
 
     public List<Object[]> runComponent(JsonNode data) {
@@ -221,16 +225,6 @@ public class ComponentHandler {
     private Object convertPropertyValue(ConfiguredPropertyDescriptor propDesc, JsonNode value) {
         Class type = propDesc.getType();
         try {
-            // special case - input columns are specified by name, referring to column specified in a "configuration" part of JSON request
-            if(propDesc.isInputColumn()) {
-                List<String> colNames = convertToStringArray(value);
-                List<InputColumn> inputCols = new ArrayList<>();
-                for(String columnName: colNames) {
-                    inputCols.add(getOrCreateInputColumn(columnName, propDesc.getName()));
-                }
-                // We lay on that the AssignConfiguredPropertiesHelper will convert array of InputColumns for non-array properties.
-                return inputCols.toArray(new InputColumn[inputCols.size()]);
-            }
             if(value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), type);
             } else {

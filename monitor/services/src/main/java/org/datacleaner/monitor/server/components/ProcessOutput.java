@@ -22,7 +22,6 @@ package org.datacleaner.monitor.server.components;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author j.horcicka (GMC)
  * @since 24. 07. 2015
  */
 public class ProcessOutput {

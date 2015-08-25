@@ -19,23 +19,17 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.StringManipulationCategory;
 
 import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
 @Categorized(StringManipulationCategory.class)
+@WSStatelessComponent
 public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)

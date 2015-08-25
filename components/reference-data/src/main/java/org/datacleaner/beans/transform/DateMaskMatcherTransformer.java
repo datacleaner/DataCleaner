@@ -19,26 +19,19 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.Arrays;
-
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.Initialize;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.DateAndTimeCategory;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import javax.inject.Named;
+import java.util.Arrays;
+
 @Named("Date mask matcher")
 @Description("Matches String values against a set of date masks, producing a corresponding set of output columns, specifying whether or not the strings could be interpreted as dates given those date masks")
 @Categorized({ MatchingAndStandardizationCategory.class, DateAndTimeCategory.class })
+@WSStatelessComponent
 public class DateMaskMatcherTransformer implements Transformer {
 
 	public static final String[] DEFAULT_DATE_MASKS = new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy",

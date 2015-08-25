@@ -67,7 +67,7 @@ public class ComponentList {
             throw new RuntimeException(e);
         }
     }
-    
+
     private Map<String, PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
         Map<String, PropertyInfo> result = new HashMap<>();
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {

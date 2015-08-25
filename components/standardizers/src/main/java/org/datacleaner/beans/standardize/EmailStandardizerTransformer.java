@@ -22,13 +22,7 @@ package org.datacleaner.beans.standardize;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
@@ -36,12 +30,11 @@ import org.datacleaner.util.NamedPatternMatch;
 
 /**
  * Tokenizes/standardizes the components of an email: Username and Domain
- * 
- * 
  */
 @Named("Email standardizer")
 @Description("Retrieve the username or domain from an email address.")
 @Categorized({ MatchingAndStandardizationCategory.class })
+@WSStatelessComponent
 public class EmailStandardizerTransformer implements Transformer {
 
 	public static final NamedPattern<EmailPart> EMAIL_PATTERN = new NamedPattern<EmailPart>("USERNAME@DOMAIN",

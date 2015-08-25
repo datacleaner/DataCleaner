@@ -21,30 +21,27 @@ package org.datacleaner.monitor.server.components;
 
 import org.datacleaner.monitor.configuration.CreateInput;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore dcConfiguration.
- * @author j.horcicka (GMC)
  * @since 24. 07. 2015
  */
 @RequestMapping("/{tenant}/components")
 public interface ComponentsController {
-    public static final String MIME_TYPE_JSON = "application/json";
-
     /**
      * It returns a list of all components and their configurations.
      * @param tenant
      * @return
      */
     @ResponseBody
-    @RequestMapping(method = RequestMethod.GET, produces = MIME_TYPE_JSON)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ComponentList getAllComponents(final String tenant);
-
-    @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.GET, produces = MIME_TYPE_JSON)
-    public ComponentList.ComponentInfo getComponentInfo(final String tenant, final String name);
 
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
@@ -54,7 +51,7 @@ public interface ComponentsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MIME_TYPE_JSON, produces = MIME_TYPE_JSON)
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(final String tenant, final String name,
         final ProcessStatelessInput processStatelessInput);
 
@@ -68,7 +65,7 @@ public interface ComponentsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.POST, produces = MIME_TYPE_JSON)
+    @RequestMapping(value = "/{name}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public String createComponent(final String tenant, final String name, final String timeout,
         final CreateInput config);
@@ -81,7 +78,7 @@ public interface ComponentsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MIME_TYPE_JSON)
+    @RequestMapping(value = "/_instance/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessOutput processComponent(final String tenant, final String id, final ProcessInput processInput)
             throws ComponentNotFoundException;
 
@@ -92,7 +89,7 @@ public interface ComponentsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MIME_TYPE_JSON)
+    @RequestMapping(value = "/{id}/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessResult getFinalResult(final String tenant, final String id)
             throws ComponentNotFoundException;
 
@@ -102,7 +99,7 @@ public interface ComponentsController {
      * @param id
      */
     @ResponseBody
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MIME_TYPE_JSON)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteComponent(final String tenant, final String id)
             throws ComponentNotFoundException;

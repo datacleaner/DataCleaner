@@ -17,15 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.server.components;
+package org.datacleaner.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @Since 7/31/15
+ * Components with the {@link org.datacleaner.api.WSStatelessComponent} annotation are provided
+ * in a web service for components.
  */
-
-public class ProcessResult {
-    @JsonProperty
-    Object result;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+public @interface WSStatelessComponent {
 }

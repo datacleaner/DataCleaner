@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.controllers.doc;
 
 /**
  * WADL generator for provided REST API.
- * @author j.horcicka (GMC)
  * @since 13. 08. 2015
  */
 import org.jvnet.ws.wadl.*;

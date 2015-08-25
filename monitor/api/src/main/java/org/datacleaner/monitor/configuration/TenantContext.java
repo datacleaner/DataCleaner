@@ -162,5 +162,5 @@ public interface TenantContext {
      *
      * @return
      */
-    public ComponentsStore getComponentsStore();
+    public ComponentStore getComponentsStore();
 }

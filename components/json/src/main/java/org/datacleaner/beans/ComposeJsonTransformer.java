@@ -22,14 +22,7 @@ package org.datacleaner.beans;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.Initialize;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.DataStructuresCategory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 @Named("Compose & write JSON document")
 @Description("Creates a string representation of a data structure as a JSON (JavaScript Object Notation) document")
 @Categorized(DataStructuresCategory.class)
+@WSStatelessComponent
 public class ComposeJsonTransformer implements Transformer {
 
     @Inject

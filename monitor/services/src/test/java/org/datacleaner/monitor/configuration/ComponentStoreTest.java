@@ -31,10 +31,9 @@ import java.io.File;
 /**
  * Class ComponentsStoreTest
  * 
- * @author k.houzvicka
  * @since 28.7.15
  */
-public class ComponentsStoreTest {
+public class ComponentStoreTest {
     private final String tenantId = "tenant";
     private final String componentName = "componentName";
     private final String componentId1 = "id1";
@@ -48,13 +47,13 @@ public class ComponentsStoreTest {
         FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
         Repository repository = new FileRepository(repo.getFile());
         repository.createFolder(tenantId);
-        ComponentsStore store = new ComponentsStoreImpl(repository, tenantId);
+        ComponentStore store = new ComponentStoreImpl(repository, tenantId);
 
         ComponentsStoreHolder conf1 = createHolder(componentId1);
         store.storeConfiguration(conf1);
 
         File tenantDir = new File(tempFolder, tenantId);
-        File componentFolder = new File(tenantDir, ComponentsStoreImpl.FOLDER_NAME);
+        File componentFolder = new File(tenantDir, ComponentStoreImpl.FOLDER_NAME);
         Assert.assertTrue(componentFolder.exists());
         File confFile = new File(componentFolder, componentId1);
         Assert.assertTrue(confFile.exists());

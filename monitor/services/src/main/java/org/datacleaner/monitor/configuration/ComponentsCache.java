@@ -28,7 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Class ComponentsCache
  * For caching and storing Components and configuration
  *
- * @author k.houzvicka
  * @since 24.7.15
  */
 public class ComponentsCache {

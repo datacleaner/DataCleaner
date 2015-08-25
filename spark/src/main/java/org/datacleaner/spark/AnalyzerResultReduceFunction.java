@@ -24,10 +24,13 @@ import java.util.Arrays;
 import org.apache.spark.api.java.function.Function2;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.AnalyzerResultReducer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.ResultDescriptor;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.lifecycle.LifeCycleHelper;
 
 public final class AnalyzerResultReduceFunction implements
         Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {
@@ -57,16 +60,35 @@ public final class AnalyzerResultReduceFunction implements
         final Class<? extends AnalyzerResultReducer<?>> resultReducerClass = rd.getResultReducerClass();
 
         if (resultReducerClass == null) {
-            throw new IllegalStateException("The analyzer (" + analyzerResult1 + ") is not reducable!");
+            throw new IllegalStateException("The analyzer (" + analyzerResult1 + ") is not distributable!");
         }
 
-        @SuppressWarnings("unchecked")
-        AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) resultReducerClass
-                .newInstance();
+        AnalyzerResultReducer<AnalyzerResult> reducer = initializeReducer(resultReducerClass);
+        
         AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1, analyzerResult2));
 
         NamedAnalyzerResult reducedTuple = new NamedAnalyzerResult(key, reducedAnalyzerResult);
         return reducedTuple;
+    }
+
+    private AnalyzerResultReducer<AnalyzerResult> initializeReducer(
+            final Class<? extends AnalyzerResultReducer<?>> resultReducerClass) {
+
+        final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration, _sparkJobContext.getAnalysisJob());
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
+
+        final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor = Descriptors
+                .ofComponent(resultReducerClass);
+        
+        @SuppressWarnings("unchecked")
+        AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) reducerDescriptor.newInstance();
+        
+        lifeCycleHelper.assignProvidedProperties(reducerDescriptor, reducer);
+        lifeCycleHelper.initialize(reducerDescriptor, reducer);
+        
+        return reducer;
     }
 
     protected ResultDescriptor getResultDescriptor(ComponentJob componentJob, AnalyzerResult analyzerResult) {

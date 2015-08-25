@@ -416,7 +416,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     public ComponentBuilder addComponent(ComponentBuilder builder) {
         if (builder instanceof FilterComponentBuilder) {
-            return  addFilter((FilterComponentBuilder<?, ?>) builder);
+            return addFilter((FilterComponentBuilder<?, ?>) builder);
         } else if (builder instanceof TransformerComponentBuilder) {
             return addTransformer((TransformerComponentBuilder<?>) builder);
         } else if (builder instanceof AnalyzerComponentBuilder) {
@@ -428,11 +428,18 @@ public final class AnalysisJobBuilder implements Closeable {
 
     /**
      * Adds a {@link ComponentBuilder} and removes it from its previous scope.
-     * @param builder The builder to add
+     * 
+     * @param builder
+     *            The builder to add
      * @return The same builder
      */
     public ComponentBuilder moveComponent(ComponentBuilder builder) {
         builder.getAnalysisJobBuilder().removeComponent(builder);
+
+        // when moving the component to a different scope we need to first reset
+        // the prior input
+        builder.clearInputColumns();
+
         addComponent(builder);
         builder.setAnalysisJobBuilder(this);
         return builder;
@@ -473,7 +480,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return builder;
     }
 
-    public AnalysisJobBuilder removeComponent(ComponentBuilder builder){
+    public AnalysisJobBuilder removeComponent(ComponentBuilder builder) {
         if (builder instanceof FilterComponentBuilder) {
             return removeFilter((FilterComponentBuilder<?, ?>) builder);
         } else if (builder instanceof TransformerComponentBuilder) {
@@ -483,7 +490,6 @@ public final class AnalysisJobBuilder implements Closeable {
         } else {
             throw new UnsupportedOperationException("Unknown component type: " + builder);
         }
-
 
     }
 

@@ -42,8 +42,11 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
     private final CachingDataSetHeader _dataSetHeader;
     private final AtomicInteger _rowCounter;
     private final ConsumeRowHandler _consumeRowHandler;
+    private final RowProcessingPublisher _publisher;
 
-    public OutputDataStreamRowCollector(List<SelectItem> selectItems, ConsumeRowHandler consumeRowHandler) {
+    public OutputDataStreamRowCollector(final RowProcessingPublisher publisher, List<SelectItem> selectItems,
+            ConsumeRowHandler consumeRowHandler) {
+        _publisher = publisher;
         _dataSetHeader = new CachingDataSetHeader(selectItems);
         _consumeRowHandler = consumeRowHandler;
         _rowCounter = new AtomicInteger();
@@ -57,7 +60,9 @@ public class OutputDataStreamRowCollector implements OutputRowCollector {
 
     @Override
     public void putRow(Row row) {
-        final MetaModelInputRow inputRow = new MetaModelInputRow(_rowCounter.incrementAndGet(), row);
+        final int rowNumber = _rowCounter.incrementAndGet();
+        final MetaModelInputRow inputRow = new MetaModelInputRow(rowNumber, row);
         _consumeRowHandler.consumeRow(inputRow);
+        _publisher.getAnalysisListener().rowProcessingProgress(_publisher.getAnalysisJob(), _publisher.getRowProcessingMetrics(), inputRow, rowNumber);
     }
 }

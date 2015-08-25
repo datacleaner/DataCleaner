@@ -65,7 +65,7 @@ public class JobGraphLinkPainter {
         final private OutputDataStream _outputDataStream;
         final private AnalysisJobBuilder _analysisJobBuilder;
 
-        VertexContext(Object vertex, AnalysisJobBuilder analysisJobBuilder, OutputDataStream outputDataStream){
+        public VertexContext(Object vertex, AnalysisJobBuilder analysisJobBuilder, OutputDataStream outputDataStream) {
             _vertex = vertex;
             _outputDataStream = outputDataStream;
             _analysisJobBuilder = analysisJobBuilder;
@@ -102,7 +102,6 @@ public class JobGraphLinkPainter {
         _edgePaintable = new EdgePaintable();
         _arrowPaintable = new ArrowPaintable();
     }
-
 
     /**
      * Called when the drawing of a new link/edge is started
@@ -197,16 +196,12 @@ public class JobGraphLinkPainter {
 
         final AnalysisJobBuilder sourceAnalysisJobBuilder = fromVertex.getAnalysisJobBuilder();
 
-        if (fromVertex.getVertex() instanceof Table || fromVertex.getOutputDataStream() != null) {
-            final Table table;
-
-            if(fromVertex.getOutputDataStream() != null){
-                sourceColumns = sourceAnalysisJobBuilder.getSourceColumns();
-            } else {
-                table = (Table) fromVertex;
-                sourceColumns = sourceAnalysisJobBuilder.getSourceColumnsOfTable(table);
-            }
-
+        if (fromVertex.getOutputDataStream() != null) {
+            sourceColumns = sourceAnalysisJobBuilder.getSourceColumns();
+            filterOutcomes = null;
+        } else if (fromVertex.getVertex() instanceof Table) {
+            final Table table = (Table) fromVertex.getVertex();
+            sourceColumns = sourceAnalysisJobBuilder.getSourceColumnsOfTable(table);
             filterOutcomes = null;
         } else if (fromVertex.getVertex() instanceof InputColumnSourceJob) {
             InputColumn<?>[] outputColumns;
@@ -231,11 +226,7 @@ public class JobGraphLinkPainter {
             if (sourceColumns != null && !sourceColumns.isEmpty()) {
 
                 try {
-                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()){
-                        if(componentBuilder.getInput().length > 0) {
-                            logger.debug("createLink(...) returning false - cannot change analysisJobBuilder for a component with configured inputColumns");
-                            return false;
-                        }
+                    if (sourceAnalysisJobBuilder != componentBuilder.getAnalysisJobBuilder()) {
                         sourceAnalysisJobBuilder.moveComponent(componentBuilder);
                     }
 

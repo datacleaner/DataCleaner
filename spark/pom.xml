@@ -51,6 +51,8 @@
 										<exclude>org.apache.spark:*:*:*:compile</exclude>
 										<exclude>com.fasterxml.jackson.core:*:*:*:compile</exclude>
 										<exclude>org.apache.curator:*:*:*:compile</exclude>
+										<exclude>org.scala-lang:*:*:*:compile</exclude>
+										<exclude>org.scala-lang.modules:*:*:*:compile</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>
@@ -143,6 +145,21 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-html-rendering</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.scala-lang</groupId>
+					<artifactId>scala-library</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.scala-lang.modules</groupId>
+					<artifactId>scala-xml_2.11</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-hadoop</artifactId>
 			<exclusions>
@@ -179,7 +196,7 @@
 			</exclusions>
 		</dependency>
 
-		<!-- DataCleaner components -->
+		<!-- Components used in test -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-basic-transformers</artifactId>

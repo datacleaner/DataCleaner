@@ -27,7 +27,7 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
-                    + " <path_to_configuration_xml_file_in_hdfs> <path_to_analysis_job_xml_file_in_hdfs>");
+                    + " <path_to_configuration_xml_file> <path_to_analysis_job_xml_file>");
         }
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
@@ -36,11 +36,11 @@ public class Main {
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 
-        final SparkJobContext sparkDataCleanerContext = new SparkJobContext(sparkContext, confXmlPath,
+        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath,
                 analysisJobXmlPath);
 
-        final SparkAnalysisRunner sparkJobLauncher = new SparkAnalysisRunner(sparkContext, sparkDataCleanerContext);
-        sparkJobLauncher.run();
+        final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
+        sparkAnalysisRunner.run();
 
         sparkContext.stop();
     }

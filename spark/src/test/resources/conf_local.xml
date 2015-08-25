@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<csv-datastore name="local_person_names">
+		<csv-datastore name="person_names">
 			<filename>src/test/resources/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
 		</csv-datastore>

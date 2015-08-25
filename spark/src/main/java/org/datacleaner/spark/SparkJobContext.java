@@ -122,4 +122,9 @@ public class SparkJobContext implements Serializable {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    public ComponentJob getComponentByKey(String key) {
+        // TODO
+        return null;
+    }
 }

@@ -34,6 +34,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.slf4j.Logger;
@@ -52,29 +53,33 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         _sparkContext = sparkContext;
         _sparkJobContext = sparkJobContext;
     }
-    
+
     public void run() {
         run(_sparkJobContext.getAnalysisJob());
     }
-    
+
     @Override
     public AnalysisResultFuture run(AnalysisJob job) {
         assert job == _sparkJobContext.getAnalysisJob();
-        
+
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
         final Datastore datastore = analysisJob.getDatastore();
 
         final JavaRDD<InputRow> inputRowsRDD = openSourceDatastore(datastore);
 
-        final JavaPairRDD<String, AnalyzerResult> analyzerResultsRDD = inputRowsRDD
+        final JavaPairRDD<String, Tuple2<AnalyzerResult, ComponentJob>> namedAnalyzerResultsRDD = inputRowsRDD
                 .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
 
-        logger.info("Finished! Number of AnalyzerResult objects: {}", analyzerResultsRDD.count());
-        
-        // TODO: Reduce the analyzer results by key
+        JavaPairRDD<String, Tuple2<AnalyzerResult, ComponentJob>> reducedNamedAnalyzerResultsRDD = namedAnalyzerResultsRDD
+                .reduceByKey(new AnalyzerResultReduceFunction());
+
+        JavaRDD<Tuple2<String, AnalyzerResult>> finalAnalyzerResultsRDD = reducedNamedAnalyzerResultsRDD
+                .map(new ExtractAnalyzerResultFromTupleFunction());
 
         // log analyzer results
-        final List<Tuple2<String, AnalyzerResult>> results = analyzerResultsRDD.collect();
+        logger.info("Finished! Number of AnalyzerResult objects: {}", finalAnalyzerResultsRDD.count());
+
+        final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
         for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;
@@ -88,7 +93,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final Accumulator<Integer> accumulator = entry.getValue();
             logger.info("Accumulator: {} -> {}", name, accumulator.value());
         }
-        
+
         return new SparkAnalysisResultFuture(results);
     }
 

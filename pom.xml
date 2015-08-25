@@ -303,7 +303,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.3.1</version>
 				<executions>
 					<execution>
 						<id>enforce-versions</id>
@@ -394,6 +393,11 @@
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>net.alchim31.maven</groupId>
@@ -519,12 +523,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-hadoop</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-full</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-csv</artifactId>
+				<version>${metamodel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.metamodel</groupId>
+				<artifactId>MetaModel-json</artifactId>
 				<version>${metamodel.version}</version>
 			</dependency>
 			<dependency>

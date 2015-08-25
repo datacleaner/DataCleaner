@@ -3,7 +3,7 @@
 
 	<datastore-catalog>
 		<csv-datastore name="person_names">
-			<filename>hdfs://bigdatavm:9000/user/vagrant/person_names.txt</filename>
+			<filename>hdfs://bigdatavm:9000/datacleaner/test/person_names.txt</filename>
 			<multiline-values>false</multiline-values>
 		</csv-datastore>
 	</datastore-catalog>

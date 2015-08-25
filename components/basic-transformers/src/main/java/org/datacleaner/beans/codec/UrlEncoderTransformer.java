@@ -19,25 +19,19 @@
  */
 package org.datacleaner.beans.codec;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
-import org.datacleaner.data.MockInputColumn;
-import org.apache.metamodel.util.HasName;
-
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
+import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.StringManipulationCategory;
+import org.datacleaner.data.MockInputColumn;
+
+import javax.inject.Named;
 
 @Named("URL encoder")
 @Description("Encodes/escapes a URL or part of a URL")
 @Categorized(StringManipulationCategory.class)
+@WSStatelessComponent
 public class UrlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat implements HasName {

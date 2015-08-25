@@ -19,26 +19,19 @@
  */
 package org.datacleaner.extension.networktools;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
+
 @Named("Convert IP to number")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
+@WSStatelessComponent
 public class IpToNumberConverter implements Transformer {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(IpToNumberConverter.class);
+	private static final Logger logger = LoggerFactory.getLogger(IpToNumberConverter.class);
 
 	@Configured("IP string column")
 	InputColumn<String> ipColumn;

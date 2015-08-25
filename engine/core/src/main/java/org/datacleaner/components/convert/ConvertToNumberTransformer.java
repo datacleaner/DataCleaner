@@ -26,13 +26,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.Percentage;
 import org.datacleaner.util.StringUtils;
@@ -45,6 +39,7 @@ import org.slf4j.LoggerFactory;
 @Named("Convert to number")
 @Description("Converts anything to a number (or null if not possible).")
 @Categorized(ConversionCategory.class)
+@WSStatelessComponent
 public class ConvertToNumberTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertToNumberTransformer.class);

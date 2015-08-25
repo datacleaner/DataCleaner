@@ -19,29 +19,22 @@
  */
 package org.datacleaner.beans.transform;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.ExternalDocumentation;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import org.datacleaner.api.*;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.reference.Dictionary;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import javax.inject.Named;
 
 @Named("Remove dictionary matches")
 @Description("Removes any part of a string that is matched against a dictionary. Use it to standardize or prepare values, for instance by removing adjectives that make comparison of similar terms difficult.")
 @ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
 @Categorized({ MatchingAndStandardizationCategory.class })
+@WSStatelessComponent
 public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     public static final String PROPERTY_DICTIONARY = "Dictionary";

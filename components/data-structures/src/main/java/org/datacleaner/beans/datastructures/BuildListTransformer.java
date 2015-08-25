@@ -26,13 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.DataStructuresCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +37,7 @@ import org.slf4j.LoggerFactory;
 @Named("Build list")
 @Description("Build a list containing a variable amount of elements. Adds the capability to save multiple values in a single field.")
 @Categorized(DataStructuresCategory.class)
+@WSStatelessComponent
 public class BuildListTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);

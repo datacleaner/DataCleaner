@@ -19,30 +19,18 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.StringTokenizer;
-
-import javax.inject.Named;
-
-import org.datacleaner.api.Alias;
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.*;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
-import org.datacleaner.api.HasLabelAdvice;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ImproveSuperCategory;
 import org.datacleaner.reference.SynonymCatalog;
+
+import javax.inject.Named;
+import java.util.StringTokenizer;
 
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with
  * it's master term.
- * 
- * 
  */
 @Named("Synonym lookup")
 @Alias("Synonym replacement")
@@ -51,6 +39,7 @@ import org.datacleaner.reference.SynonymCatalog;
         @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
         @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
 @Categorized(superCategory = ImproveSuperCategory.class)
+@WSStatelessComponent
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured

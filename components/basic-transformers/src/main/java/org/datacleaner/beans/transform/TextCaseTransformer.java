@@ -19,23 +19,17 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.StringTokenizer;
+import org.apache.metamodel.util.HasName;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.StringManipulationCategory;
 
 import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
-import org.apache.metamodel.util.HasName;
+import java.util.StringTokenizer;
 
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(StringManipulationCategory.class)
+@WSStatelessComponent
 public class TextCaseTransformer implements Transformer {
 
     /**

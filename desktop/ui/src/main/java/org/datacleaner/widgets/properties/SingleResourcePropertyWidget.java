@@ -89,7 +89,9 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
         }
 
         final Resource currentValue = getCurrentValue();
-        _resourceTextField.setResource(currentValue);
+        if (currentValue != null) {
+            _resourceTextField.setResource(currentValue);
+        }
 
         _resourceTextField.addListener(new ResourceTypePresenter.Listener() {
 

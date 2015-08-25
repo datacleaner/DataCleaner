@@ -25,24 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.OutputWriter;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.create.TableCreationBuilder;
 import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.output.OutputWriter;
 
 public final class CsvOutputWriterFactory {
 
     private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-    private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
+    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<String, CsvOutputWriter>();
 
     /**
      * Creates a CSV output writer with default configuration
@@ -80,11 +73,14 @@ public final class CsvOutputWriterFactory {
 
     public static OutputWriter getWriter(Resource resource, final String[] headers, String encoding,
             char separatorChar, char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
-        final CsvOutputWriter outputWriter;
+        final CsvConfiguration csvConfiguration = getConfiguration(encoding, separatorChar, quoteChar, escapeChar,
+                includeHeader);
+
+        CsvOutputWriter outputWriter;
         final String qualifiedPath = resource.getQualifiedPath();
-        synchronized (dataContexts) {
-            UpdateableDataContext dataContext = dataContexts.get(qualifiedPath);
-            if (dataContext == null) {
+        synchronized (outputWritersPerPath) {
+            outputWriter = outputWritersPerPath.get(qualifiedPath);
+            if (outputWriter == null) {
 
                 if (resource instanceof FileResource) {
                     final File file = ((FileResource) resource).getFile();
@@ -94,31 +90,13 @@ public final class CsvOutputWriterFactory {
                     }
                 }
 
-                dataContext = new CsvDataContext(resource, getConfiguration(encoding, separatorChar, quoteChar,
-                        escapeChar, includeHeader));
-
-                final Schema schema = dataContext.getDefaultSchema();
-                dataContext.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback callback) {
-                        TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
-                        for (String header : headers) {
-                            tableBuilder.withColumn(header);
-                        }
-                        tableBuilder.execute();
-                    }
-                });
-
-                final Table table = dataContext.getDefaultSchema().getTables()[0];
-
-                dataContexts.put(qualifiedPath, dataContext);
+                outputWritersPerPath.put(qualifiedPath, outputWriter);
                 counters.put(qualifiedPath, new AtomicInteger(1));
-                outputWriter = new CsvOutputWriter(dataContext, qualifiedPath, table, columns);
+                outputWriter = new CsvOutputWriter(resource, csvConfiguration, headers, columns);
 
                 // write the headers
             } else {
-                Table table = dataContext.getDefaultSchema().getTables()[0];
-                outputWriter = new CsvOutputWriter(dataContext, qualifiedPath, table, columns);
+                outputWriter = new CsvOutputWriter(resource, csvConfiguration, headers, columns);
                 counters.get(qualifiedPath).incrementAndGet();
             }
         }
@@ -138,10 +116,10 @@ public final class CsvOutputWriterFactory {
     }
 
     protected static void release(String filename) {
-        int count = counters.get(filename).decrementAndGet();
+        final int count = counters.get(filename).decrementAndGet();
         if (count == 0) {
-            synchronized (dataContexts) {
-                dataContexts.remove(filename);
+            synchronized (outputWritersPerPath) {
+                outputWritersPerPath.remove(filename);
             }
         }
     }

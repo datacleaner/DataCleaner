@@ -20,6 +20,7 @@
 package org.datacleaner.monitor.server.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -33,6 +34,7 @@ import org.datacleaner.monitor.server.components.ProcessStatelessInput;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -141,9 +143,17 @@ public class ComponentsControllerV1Test {
         expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
+        expect(transformerDescriptor.getAnnotation(WSStatelessComponent.class)).andReturn(getAnnotationMock()).anyTimes();
         replay(transformerDescriptor);
 
         return transformerDescriptor;
+    }
+
+    private Annotation getAnnotationMock() {
+        Annotation annotation = createNiceMock(Annotation.class);
+        replay(annotation);
+
+        return annotation;
     }
 
     private JsonNode getJsonNodeMock() {

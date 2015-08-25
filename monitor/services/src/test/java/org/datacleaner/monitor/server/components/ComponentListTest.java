@@ -19,12 +19,14 @@
  */
 package org.datacleaner.monitor.server.components;
 
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.server.components.ComponentList.ComponentInfo;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
@@ -73,8 +75,16 @@ public class ComponentListTest {
         componentDescriptorMock = createNiceMock(ComponentDescriptor.class);
         expect(componentDescriptorMock.getConfiguredProperties()).andReturn(getConfiguredPropertiesMock());
         expect(componentDescriptorMock.getDisplayName()).andReturn("descriptor display name").anyTimes();
+        expect(componentDescriptorMock.getAnnotation(WSStatelessComponent.class)).andReturn(getAnnotationMock()).anyTimes();
 
         return componentDescriptorMock;
+    }
+
+    private Annotation getAnnotationMock() {
+        Annotation annotation = createNiceMock(Annotation.class);
+        replay(annotation);
+
+        return annotation;
     }
 
     private Set<ConfiguredPropertyDescriptor> getConfiguredPropertiesMock() {

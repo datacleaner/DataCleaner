@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.datacleaner.api.WSPrivateProperty;
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
@@ -52,6 +53,12 @@ public class ComponentList {
     private ComponentConfiguration componentConfiguration;
 
     public void add(String tenant, ComponentDescriptor descriptor) {
+        if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+            LOGGER.info("Component {} is skipped (not annotated by {})",
+                    descriptor.getDisplayName(), WSStatelessComponent.class.toString());
+            return;
+        }
+
         this.tenant = tenant;
         this.descriptor = descriptor;
         fillPropertyListAndComponentConfiguration();

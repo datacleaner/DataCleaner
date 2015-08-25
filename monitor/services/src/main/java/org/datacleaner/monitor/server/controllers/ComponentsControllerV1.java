@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
@@ -46,6 +47,8 @@ import java.util.UUID;
 public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
     private static final String PARAMETER_NAME_TENANT = "tenant";
+    private static final String PARAMETER_NAME_ID = "id";
+    private static final String PARAMETER_NAME_NAME = "name";
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -84,7 +87,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public ProcessStatelessOutput processStateless(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("name") final String name,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
@@ -100,7 +103,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public String createComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("name") final String name,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = unURLify(name);
@@ -119,7 +122,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public ProcessOutput processComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("id") final String id,
+            @PathVariable(PARAMETER_NAME_ID) final String id,
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
         ComponentConfigHolder config = _componentsCache.getConfigHolder(id);
@@ -147,7 +150,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public ProcessResult getFinalResult(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("id") final String id)
+            @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         // TODO - only for analyzers, implement it later after the architecture
         // decisions regarding the load-balancing and failover.
@@ -159,7 +162,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public void deleteComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable("id") final String id)
+            @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         boolean inCache = false;
         boolean inStore = false;
@@ -179,11 +182,22 @@ public class ComponentsControllerV1 implements ComponentsController {
         }
     }
 
-    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration) {
+    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
+            throws RuntimeException {
+        boolean isStateless = _tenantContextFactory.getContext(tenant).getConfiguration().getEnvironment()
+                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
+                .getAnnotation(WSStatelessComponent.class) != null;
+
+        if (! isStateless) {
+            throw new RuntimeException(
+                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
+        }
+
         ComponentHandler handler = new ComponentHandler(
                 _tenantContextFactory.getContext(tenant).getConfiguration(),
                 componentName);
         handler.createComponent(configuration);
+
         return handler;
     }
 

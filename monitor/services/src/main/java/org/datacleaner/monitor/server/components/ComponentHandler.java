@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -44,11 +43,6 @@ import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericDeclaration;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 /**
@@ -131,12 +125,12 @@ public class ComponentHandler {
         for(String propertyName: componentConfiguration.getPropertiesNames()) {
             ConfiguredPropertyDescriptor propDesc = descriptor.getConfiguredProperty(propertyName);
             if(propDesc == null) {
-                LOGGER.debug("Unknown configuration property '" + propertyName + "'");
+                LOGGER.debug("Unknown configuration property '{}'. ", propertyName);
                 continue;
             }
 
             if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
-                LOGGER.debug("WS private property '" + propertyName + "' is skipped. ");
+                LOGGER.debug("WS private property '{}' is skipped. ", propertyName);
                 continue;
             }
 

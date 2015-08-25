@@ -202,13 +202,6 @@ public class ComponentsControllerV1 implements ComponentsController {
     }
 
     private String unURLify(String url) {
-        try {
-            url = URLDecoder.decode(url, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            LOGGER.warn(e.getMessage());
-        }
-
-        return url;
+        return url.replace("_@_", "/");
     }
 }

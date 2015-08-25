@@ -26,10 +26,10 @@ import org.datacleaner.api.WSPrivateProperty;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -60,8 +60,8 @@ public class ComponentList {
         try {
             return String.format(
                     "/repository/%s/components/%s",
-                    URLEncoder.encode(tenant, "UTF8"),
-                    URLEncoder.encode(descriptor.getDisplayName(), "UTF8"));
+                    UriUtils.encodePathSegment(tenant, "UTF8"),
+                    UriUtils.encodePathSegment(descriptor.getDisplayName().replace("/", "_@_"), "UTF8"));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

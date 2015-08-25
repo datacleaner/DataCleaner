@@ -221,17 +221,20 @@ public class AnalysisJobBuilderTest extends TestCase {
             analyzer1Analyzer1.setName("analyzer1Analyzer1");
             analyzer1Analyzer1.addInputColumn(analyzer0DataStream1JobBuilder.getSourceColumns().get(0));
 
-            // Any random analyzer should work:
-            assertEquals(17, analyzer1Analyzer0.getAnalysisJobBuilder().getAllAnalysisJobBuilders().size());
-            assertEquals(17, analyzer0Analyzer0Analyzer0.getAnalysisJobBuilder().getAllAnalysisJobBuilders().size());
-            assertEquals(17, analyzer0.getAnalysisJobBuilder().getAllAnalysisJobBuilders().size());
-            assertEquals(17, analyzer0Analyzer0.getAnalysisJobBuilder().getAllAnalysisJobBuilders().size());
 
-            // First should be top-level
-            assertEquals(ajb, analyzer0Analyzer0DataStream0JobBuilder.getAllAnalysisJobBuilders().get(0));
+            // Any random analyzer should work:
+            assertEquals(ajb, analyzer1Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
+            assertEquals(ajb, analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
+
+            assertEquals(16, ajb.getDescendants().size());
+
+            // First should be a0 stream 0
+            assertEquals(analyzer0DataStream0JobBuilder, ajb.getDescendants().get(0));
 
             // Last should be a1a1 stream 1
-            assertEquals(analyzer1Analyzer1.getOutputDataStreamJobBuilder(analyzer1Analyzer1.getOutputDataStreams().get(1)), analyzer0Analyzer0DataStream0JobBuilder.getAllAnalysisJobBuilders().get(16));
+            assertEquals(analyzer1Analyzer1.getOutputDataStreamJobBuilder(analyzer1Analyzer1.getOutputDataStreams().get(1)), ajb.getDescendants().get(15));
         }
     }
 }

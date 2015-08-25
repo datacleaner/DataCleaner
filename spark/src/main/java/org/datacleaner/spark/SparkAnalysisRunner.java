@@ -34,7 +34,6 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
-import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.slf4j.Logger;
@@ -67,11 +66,11 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
         final JavaRDD<InputRow> inputRowsRDD = openSourceDatastore(datastore);
 
-        final JavaPairRDD<String, Tuple2<AnalyzerResult, ComponentJob>> namedAnalyzerResultsRDD = inputRowsRDD
+        final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD = inputRowsRDD
                 .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
 
-        JavaPairRDD<String, Tuple2<AnalyzerResult, ComponentJob>> reducedNamedAnalyzerResultsRDD = namedAnalyzerResultsRDD
-                .reduceByKey(new AnalyzerResultReduceFunction());
+        JavaPairRDD<String, NamedAnalyzerResult> reducedNamedAnalyzerResultsRDD = namedAnalyzerResultsRDD
+                .reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
 
         JavaRDD<Tuple2<String, AnalyzerResult>> finalAnalyzerResultsRDD = reducedNamedAnalyzerResultsRDD
                 .map(new ExtractAnalyzerResultFromTupleFunction());

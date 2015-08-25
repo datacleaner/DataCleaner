@@ -19,18 +19,28 @@
  */
 package org.datacleaner.spark;
 
-import org.apache.spark.api.java.function.Function;
+import java.io.Serializable;
+
 import org.datacleaner.api.AnalyzerResult;
 
-import scala.Tuple2;
+public class NamedAnalyzerResult implements Serializable {
 
-public final class ExtractAnalyzerResultFromTupleFunction implements
-        Function<Tuple2<String, NamedAnalyzerResult>, Tuple2<String, AnalyzerResult>> {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public Tuple2<String, AnalyzerResult> call(
-            Tuple2<String, NamedAnalyzerResult> tuple) throws Exception {
-        return new Tuple2<String, AnalyzerResult>(tuple._1, tuple._2.getAnalyzerResult());
+    private final String _name;
+    private final AnalyzerResult _analyzerResult;
+    
+    public NamedAnalyzerResult(final String name, final AnalyzerResult analyzerResult) {
+        _name = name;
+        _analyzerResult = analyzerResult;
     }
+    
+    public String getName() {
+        return _name;
+    }
+    
+    public AnalyzerResult getAnalyzerResult() {
+        return _analyzerResult;
+    }
+    
 }

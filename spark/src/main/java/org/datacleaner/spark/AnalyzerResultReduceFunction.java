@@ -29,27 +29,33 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.ResultDescriptor;
 import org.datacleaner.job.ComponentJob;
 
-import scala.Tuple2;
+public final class AnalyzerResultReduceFunction implements
+        Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {
 
-public final class AnalyzerResultReduceFunction
-        implements
-        Function2<Tuple2<AnalyzerResult, ComponentJob>, Tuple2<AnalyzerResult, ComponentJob>, Tuple2<AnalyzerResult, ComponentJob>> {
     private static final long serialVersionUID = 1L;
 
+    private final SparkJobContext _sparkJobContext;
+
+    public AnalyzerResultReduceFunction(SparkJobContext sparkJobContext) {
+        _sparkJobContext = sparkJobContext;
+    }
+
     @Override
-    public Tuple2<AnalyzerResult, ComponentJob> call(Tuple2<AnalyzerResult, ComponentJob> tuple1,
-            Tuple2<AnalyzerResult, ComponentJob> tuple2) throws Exception {
-        ComponentJob componentJob1 = tuple1._2;
-        ComponentJob componentJob2 = tuple2._2;
+    public NamedAnalyzerResult call(NamedAnalyzerResult namedAnalyzerResult1, NamedAnalyzerResult namedAnalyzerResult2)
+            throws Exception {
 
-        assert componentJob1.equals(componentJob2);
+        assert namedAnalyzerResult1.getName().equals(namedAnalyzerResult2.getName());
 
-        final AnalyzerResult analyzerResult1 = tuple1._1;
-        final AnalyzerResult analyzerResult2 = tuple2._1;
+        String key = namedAnalyzerResult1.getName();
 
-        ResultDescriptor rd = getResultDescriptor(componentJob1, analyzerResult1);
+        ComponentJob componentJob = _sparkJobContext.getComponentByKey(key);
+
+        final AnalyzerResult analyzerResult1 = namedAnalyzerResult1.getAnalyzerResult();
+        final AnalyzerResult analyzerResult2 = namedAnalyzerResult2.getAnalyzerResult();
+
+        ResultDescriptor rd = getResultDescriptor(componentJob, analyzerResult1);
         final Class<? extends AnalyzerResultReducer<?>> resultReducerClass = rd.getResultReducerClass();
-        
+
         if (resultReducerClass == null) {
             throw new IllegalStateException("The analyzer (" + analyzerResult1 + ") is not reducable!");
         }
@@ -57,22 +63,18 @@ public final class AnalyzerResultReduceFunction
         @SuppressWarnings("unchecked")
         AnalyzerResultReducer<AnalyzerResult> reducer = (AnalyzerResultReducer<AnalyzerResult>) resultReducerClass
                 .newInstance();
-        AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1,
-                analyzerResult2));
+        AnalyzerResult reducedAnalyzerResult = reducer.reduce(Arrays.asList(analyzerResult1, analyzerResult2));
 
-        Tuple2<AnalyzerResult, ComponentJob> reducedTuple = new Tuple2<AnalyzerResult, ComponentJob>(
-                reducedAnalyzerResult, componentJob1);
+        NamedAnalyzerResult reducedTuple = new NamedAnalyzerResult(key, reducedAnalyzerResult);
         return reducedTuple;
     }
 
-    protected ResultDescriptor getResultDescriptor(ComponentJob componentJob,
-            AnalyzerResult analyzerResult) {
+    protected ResultDescriptor getResultDescriptor(ComponentJob componentJob, AnalyzerResult analyzerResult) {
         final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
         if (descriptor instanceof ResultDescriptor) {
             return (ResultDescriptor) descriptor;
         }
-        // slightly more expensive, but potentially also better
-        // / more specific!
+        // slightly more expensive, but potentially also better / more specific!
         return Descriptors.ofResult(analyzerResult);
     }
 }

@@ -22,6 +22,7 @@ package org.datacleaner.spark;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.metamodel.util.FileResource;
@@ -33,6 +34,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.JaxbJobReader;
 
@@ -119,12 +121,16 @@ public class SparkJobContext implements Serializable {
     }
 
     public String getComponentKey(ComponentJob componentJob) {
-        // TODO Auto-generated method stub
-        return null;
+        return componentJob.getDescriptor().getDisplayName();
     }
     
     public ComponentJob getComponentByKey(String key) {
-        // TODO
+        final List<AnalyzerJob> analyzerJobs = getAnalysisJob().getAnalyzerJobs();
+        for (AnalyzerJob analyzerJob : analyzerJobs) {
+            if (key.equals(analyzerJob.getDescriptor().getDisplayName())) {
+                return analyzerJob;
+            }
+        }
         return null;
     }
 }

@@ -153,7 +153,7 @@ public class ComponentList {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonPropertyOrder({ "name", "type", "description", "required", "isInputColumn", "enumValues" })
+    @JsonPropertyOrder({ "name", "type", "description", "required", "inputColumn", "enumValues" })
     public static class PropertyInfo {
         private String name;
         private String type;

@@ -79,9 +79,9 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
 
         // log analyzer results
-        logger.info("Finished! Number of AnalyzerResult objects: {}", finalAnalyzerResultsRDD.count());
-
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
+
+        logger.info("Finished! Number of AnalyzerResult objects: {}", results.size());
         for (Tuple2<String, AnalyzerResult> analyzerResultTuple : results) {
             final String key = analyzerResultTuple._1;
             final AnalyzerResult result = analyzerResultTuple._2;

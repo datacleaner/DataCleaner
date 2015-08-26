@@ -37,6 +37,7 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.util.LabelUtils;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -121,13 +122,13 @@ public class SparkJobContext implements Serializable {
     }
 
     public String getComponentKey(ComponentJob componentJob) {
-        return componentJob.getDescriptor().getDisplayName();
+        return LabelUtils.getLabel(componentJob);
     }
     
     public ComponentJob getComponentByKey(String key) {
         final List<AnalyzerJob> analyzerJobs = getAnalysisJob().getAnalyzerJobs();
         for (AnalyzerJob analyzerJob : analyzerJobs) {
-            if (key.equals(analyzerJob.getDescriptor().getDisplayName())) {
+            if (key.equals(LabelUtils.getLabel(analyzerJob))) {
                 return analyzerJob;
             }
         }

@@ -14,7 +14,7 @@
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
 		<curator.version>2.6.0</curator.version>
-		<metamodel.version>4.4.0-SNAPSHOT</metamodel.version>
+		<metamodel.version>4.4.0-RC1</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
@@ -35,6 +35,15 @@
 		<artifactId>oss-parent</artifactId>
 		<version>9</version>
 	</parent>
+	
+	<repositories>
+		<repository>
+			<id>eobjects-repo</id>
+			<url>http://repo.eobjects.org</url>
+		</repository>
+	</repositories>
+	
+	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>4.1-SNAPSHOT</version>

@@ -22,7 +22,6 @@ package org.datacleaner.monitor.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @Author j.neubauer
  * @Since 7/31/15
  *
  * Simple holder for configuration data. It is used for creating components.

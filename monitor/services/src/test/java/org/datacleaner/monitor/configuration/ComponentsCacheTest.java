@@ -42,7 +42,6 @@ import static org.easymock.EasyMock.replay;
 /**
  * Class ComponentsCacheTest
  *
- * @author k.houzvicka
  * @since 28.7.15
  */
 public class ComponentsCacheTest {

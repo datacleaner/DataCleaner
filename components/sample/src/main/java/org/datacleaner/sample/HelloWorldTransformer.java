@@ -19,19 +19,11 @@
  */
 package org.datacleaner.sample;
 
-import java.util.Random;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.StringManipulationCategory;
 
 import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Concurrent;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.StringManipulationCategory;
+import java.util.Random;
 
 /**
  * A sample transformer that appends a greeting to a name column's values.
@@ -65,6 +57,7 @@ import org.datacleaner.components.categories.StringManipulationCategory;
 @Categorized(StringManipulationCategory.class)
 @Description("Put your description of your transformer here")
 @Concurrent(true)
+@WSStatelessComponent
 public class HelloWorldTransformer implements Transformer {
 
 	// REQUIRED: One or more InputColumn based

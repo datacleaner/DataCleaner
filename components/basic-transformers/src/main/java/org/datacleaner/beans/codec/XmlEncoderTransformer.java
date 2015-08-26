@@ -19,24 +19,18 @@
  */
 package org.datacleaner.beans.codec;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import com.google.common.escape.Escaper;
+import com.google.common.xml.XmlEscapers;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.StringManipulationCategory;
 import org.datacleaner.data.MockInputColumn;
 
-import com.google.common.escape.Escaper;
-import com.google.common.xml.XmlEscapers;
+import javax.inject.Named;
 
 @Named("XML encoder")
 @Description("Encodes/escapes plain text into XML content")
 @Categorized(StringManipulationCategory.class)
+@WSStatelessComponent
 public class XmlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat {

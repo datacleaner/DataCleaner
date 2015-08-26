@@ -22,7 +22,7 @@ package org.datacleaner.widgets.database;
 public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
     public HiveDatabaseConnectionPresenter() {
-        super("jdbc:hive://HOSTNAME:PORT/DATABASE");
+        super("jdbc:hive2://HOSTNAME:PORT/DATABASE");
     }
 
     @Override
@@ -34,7 +34,7 @@ public class HiveDatabaseConnectionPresenter extends UrlTemplateDatabaseConnecti
     @Override
     protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
             String param3, String param4) {
-        return "jdbc:hive://" + hostname + ":" + port + "/" + database;
+        return "jdbc:hive2://" + hostname + ":" + port + "/" + database;
     }
 
 }

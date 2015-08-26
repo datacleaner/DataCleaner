@@ -23,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * @author j.horcicka (GMC)
  * @since 14. 07. 2015
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "There is no such component.")

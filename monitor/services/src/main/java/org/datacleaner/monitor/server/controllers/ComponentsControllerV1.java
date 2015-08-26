@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
@@ -35,6 +36,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Collection;
 import java.util.UUID;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
@@ -47,6 +52,9 @@ public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
     private static final String TENANT = "tenant";
     private ComponentsCache _componentsCache = null;
+    private static final String PARAMETER_NAME_TENANT = "tenant";
+    private static final String PARAMETER_NAME_ID = "id";
+    private static final String PARAMETER_NAME_NAME = "name";
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -67,7 +75,7 @@ public class ComponentsControllerV1 implements ComponentsController {
      * @param tenant
      * @return
      */
-    public ComponentList getAllComponents(@PathVariable(TENANT) final String tenant) {
+    public ComponentList getAllComponents(@PathVariable(PARAMETER_NAME_TENANT) final String tenant) {
         DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         Collection<TransformerDescriptor<?>> transformerDescriptors = configuration.getEnvironment()
                 .getDescriptorProvider()
@@ -89,8 +97,8 @@ public class ComponentsControllerV1 implements ComponentsController {
      * @return
      */
     public ProcessStatelessOutput processStateless(
-            @PathVariable(TENANT) final String tenant,
-            @PathVariable("name") final String name,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
@@ -106,9 +114,9 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It runs the component and returns the results.
      */
     public String createComponent(
-            @PathVariable(TENANT) final String tenant,
-            @PathVariable("name") final String name,                            //1 day
-            @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,
+            @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = unURLify(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -126,8 +134,8 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It returns the continuous result of the component for the provided input data.
      */
     public ProcessOutput processComponent(
-            @PathVariable(TENANT) final String tenant,
-            @PathVariable("id") final String id,
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id,
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -146,8 +154,8 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It returns the component's final result.
      */
     public ProcessResult getFinalResult(
-            @PathVariable(TENANT) final String tenant,
-            @PathVariable("id") final String id)
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         // TODO - only for analyzers, implement it later after the architecture
         // decisions regarding the load-balancing and failover.
@@ -158,8 +166,8 @@ public class ComponentsControllerV1 implements ComponentsController {
      * It deletes the component.
      */
     public void deleteComponent(
-            @PathVariable(TENANT) final String tenant,
-            @PathVariable("id") final String id)
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         boolean isHere = _componentsCache.removeConfiguration(id, tenantContext);
@@ -168,7 +176,27 @@ public class ComponentsControllerV1 implements ComponentsController {
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
     }
+
+    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
+            throws RuntimeException {
+        boolean isStateless = _tenantContextFactory.getContext(tenant).getConfiguration().getEnvironment()
+                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
+                .getAnnotation(WSStatelessComponent.class) != null;
+
+        if (! isStateless) {
+            throw new RuntimeException(
+                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
+        }
+
+        ComponentHandler handler = new ComponentHandler(
+                _tenantContextFactory.getContext(tenant).getConfiguration(),
+                componentName);
+        handler.createComponent(configuration);
+
+        return handler;
+    }
+
     private String unURLify(String url) {
-        return url.replace("%2F", "/");
+        return url.replace("_@_", "/");
     }
 }

@@ -19,19 +19,14 @@
  */
 package org.datacleaner.extension.networktools;
 
-import javax.inject.Named;
+import org.datacleaner.api.*;
 
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import javax.inject.Named;
 
 @Named("Convert number to IP")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts a number representation of an IPv4 address to it's regular string representation.")
+@WSStatelessComponent
 public class NumberToIpConverter implements Transformer {
 
 	@Configured("IP number column")

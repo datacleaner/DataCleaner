@@ -21,8 +21,8 @@ package org.datacleaner.job.runner;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,6 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
@@ -53,7 +52,6 @@ import org.datacleaner.util.SourceColumnFinder;
  * {@link RowProcessingPublisher}s.
  */
 public final class RowProcessingPublishers {
-
     private final AnalysisJob _analysisJob;
     private final AnalysisListener _analysisListener;
     private final TaskRunner _taskRunner;
@@ -75,7 +73,10 @@ public final class RowProcessingPublishers {
             _sourceColumnFinder = sourceColumnFinder;
         }
 
-        _rowProcessingPublishers = new HashMap<Table, RowProcessingPublisher>();
+        // note that insertion and extraction order consistency is important
+        // since OutputDataStreamJobs should be initialized after their parent
+        // jobs. For this reason we use a LinkedHashMap and not a regular HashMap.
+        _rowProcessingPublishers = new LinkedHashMap<Table, RowProcessingPublisher>();
 
         registerAll();
     }
@@ -258,26 +259,11 @@ public final class RowProcessingPublishers {
         return _sourceColumnFinder;
     }
 
-    @Deprecated
-    protected AnalysisJob getAnalysisJob() {
-        return _analysisJob;
-    }
-
     protected AnalysisListener getAnalysisListener() {
         return _analysisListener;
     }
 
     protected LifeCycleHelper getLifeCycleHelper() {
         return _lifeCycleHelper;
-    }
-
-    /**
-     * 
-     * @return
-     * @deprecated use {@link RowProcessingPublisher#getDatastore()} instead
-     */
-    @Deprecated
-    public Datastore getDatastore() {
-        return _analysisJob.getDatastore();
     }
 }

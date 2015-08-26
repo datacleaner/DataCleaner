@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Class ComponentsStoreHolder
  * Object for storing to component cache.
  * 
- * @author k.houzvicka
  * @since 11.8.15
  */
 public class ComponentsStoreHolder {

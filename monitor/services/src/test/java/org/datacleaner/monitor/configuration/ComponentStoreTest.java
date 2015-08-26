@@ -21,7 +21,6 @@ package org.datacleaner.monitor.configuration;
 
 import com.google.common.io.Files;
 import org.datacleaner.repository.Repository;
-import org.datacleaner.repository.RepositoryFolder;
 import org.datacleaner.repository.file.FileRepository;
 import org.datacleaner.repository.file.FileRepositoryFolder;
 import org.junit.Assert;
@@ -32,10 +31,13 @@ import java.io.File;
 /**
  * Class ComponentsStoreTest
  * 
- * @author k.houzvicka
  * @since 28.7.15
  */
-public class ComponentsStoreTest {
+public class ComponentStoreTest {
+    private final String tenantId = "tenant";
+    private final String componentName = "componentName";
+    private final String componentId1 = "id1";
+    private final String componentId2 = "id2";
 
     @Test
     public void testStore() throws Exception {
@@ -44,26 +46,27 @@ public class ComponentsStoreTest {
 
         FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
         Repository repository = new FileRepository(repo.getFile());
-        RepositoryFolder tenantFolder = repository.createFolder("tenant");
-        ComponentsStore store = new ComponentsStoreImpl(repository, "tenant");
+        repository.createFolder(tenantId);
+        ComponentStore store = new ComponentStoreImpl(repository, tenantId);
 
-        ComponentsStoreHolder conf1 = createHolder("id1");
+        ComponentsStoreHolder conf1 = createHolder(componentId1);
         store.storeConfiguration(conf1);
 
-        File tenantDir = new File(tempFolder, "tenant");
-        File componentFolder = new File(tenantDir, ComponentsStoreImpl.FOLDER_NAME);
+        File tenantDir = new File(tempFolder, tenantId);
+        File componentFolder = new File(tenantDir, ComponentStoreImpl.FOLDER_NAME);
         Assert.assertTrue(componentFolder.exists());
-        File confFile = new File(componentFolder, "id1");
+        File confFile = new File(componentFolder, componentId1);
         Assert.assertTrue(confFile.exists());
 
-        ComponentsStoreHolder conf2 = store.getConfiguration("id1");
+        ComponentsStoreHolder conf2 = store.getConfiguration(componentId1);
         Assert.assertEquals(conf1.getComponentId(), conf2.getComponentId());
         Assert.assertEquals(conf1.getTimeout(), conf2.getTimeout());
-        Assert.assertEquals(null, store.getConfiguration("id2"));
-
+        Assert.assertEquals(null, store.getConfiguration(componentId2));
+        store.removeConfiguration(componentId1);
+        Assert.assertEquals(null, store.getConfiguration(componentId1));
     }
 
     private ComponentsStoreHolder createHolder(String componentId) {
-        return new ComponentsStoreHolder(10l, null, componentId, "componentName");
+        return new ComponentsStoreHolder(10l, null, componentId, componentName);
     }
 }

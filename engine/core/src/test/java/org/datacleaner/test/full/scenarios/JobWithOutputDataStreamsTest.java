@@ -62,6 +62,7 @@ public class JobWithOutputDataStreamsTest extends TestCase {
 
             ajb.addSourceColumns("customers.contactfirstname");
             ajb.addSourceColumns("customers.contactlastname");
+            ajb.addSourceColumns("customers.city");
 
             final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 = ajb
                     .addAnalyzer(MockOutputDataStreamAnalyzer.class);

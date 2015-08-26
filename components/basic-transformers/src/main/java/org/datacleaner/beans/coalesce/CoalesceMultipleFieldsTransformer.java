@@ -19,23 +19,15 @@
  */
 package org.datacleaner.beans.coalesce;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Named;
-
-import org.datacleaner.api.Alias;
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.CompositionCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Named("Fuse / Coalesce fields")
 @Alias("Coalesce multiple fields")
@@ -43,6 +35,7 @@ import org.slf4j.LoggerFactory;
         + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
         + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
+@WSStatelessComponent
 public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);

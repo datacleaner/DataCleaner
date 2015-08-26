@@ -23,12 +23,21 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ComponentsStoreHolderTest {
+public class ComponentStoreHolderTest {
     private ComponentsStoreHolder componentsStoreHolder = new ComponentsStoreHolder();
     private long timeout = 1000L;
     private CreateInput createInput = new CreateInput();
     private String componentId = "componentId";
     private String componentName = "componentName";
+
+    @Test
+    public void testConstructor() {
+        ComponentsStoreHolder storeHolder = new ComponentsStoreHolder(timeout, createInput, componentId, componentName);
+        assertEquals(timeout, storeHolder.getTimeout());
+        assertEquals(createInput, storeHolder.getCreateInput());
+        assertEquals(componentId, storeHolder.getComponentId());
+        assertEquals(componentName, storeHolder.getComponentName());
+    }
 
     @Test
     public void testTimeoutAccessors() throws Exception {

@@ -27,7 +27,6 @@ import java.util.*;
 
 /**
  * This class contains configuration and state of a particular component.
- * @author k.houzvicka
  * @since 9. 7. 2015
  */
 
@@ -36,13 +35,13 @@ public class ComponentConfiguration {
     @JsonProperty
     private Map<String, JsonNode> properties = new HashMap<>();
     @JsonProperty
-    private List<String> columns = new ArrayList<>();
+    private List<JsonNode> columns = new ArrayList<>();
 
     public Map<String, JsonNode> getProperties() {
         return properties;
     }
 
-    public List<String> getColumns() {
+    public List<JsonNode> getColumns() {
         return columns;
     }
 

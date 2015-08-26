@@ -19,22 +19,15 @@
  */
 package org.datacleaner.beans.transform;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.StringProperty;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.api.Validate;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.StringManipulationCategory;
+
+import javax.inject.Named;
 
 @Named("Plain search/replace")
 @Description("Search and replace text in String values.")
 @Categorized(StringManipulationCategory.class)
+@WSStatelessComponent
 public class PlainSearchReplaceTransformer implements Transformer{
 
     @Configured(value = "Value", order = 1)

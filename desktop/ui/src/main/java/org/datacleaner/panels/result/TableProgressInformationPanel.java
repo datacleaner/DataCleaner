@@ -61,7 +61,7 @@ public class TableProgressInformationPanel extends DCPanel {
         _progressBar = new DCProgressBar(0, expectedRows);
         _progressStatusLabel = DCLabel.bright("");
         _progressCountLabel = DCLabel.bright("0");
-        _progressExpectationLabel = DCLabel.bright(" of approx. " + formatNumber(expectedRows) + " rows");
+        _progressExpectationLabel = DCLabel.bright("");
 
         _progressStatusLabel.setFont(FONT);
         _progressCountLabel.setFont(FONT);
@@ -132,6 +132,13 @@ public class TableProgressInformationPanel extends DCPanel {
         return result;
     }
 
+    public void setProgressMaximum(int maximum) {
+        if (maximum != -1) {
+            _progressBar.setMaximum(maximum);
+            _progressExpectationLabel.setText(" of approx. " + formatNumber(maximum) + " rows");
+        }
+    }
+
     public void setProgressStopped(boolean failure) {
         _progressStatusLabel.setText("Stopped! - ");
         _progressBar.setEnabled(false);
@@ -141,7 +148,7 @@ public class TableProgressInformationPanel extends DCPanel {
     }
 
     public void setProgressFinished() {
-        int maximum = _progressBar.getValue();
+        final int maximum = _progressBar.getValue();
         setProgressFinished(maximum);
     }
 

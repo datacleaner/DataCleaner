@@ -39,11 +39,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Class is for storing components.
  *
- * @author k.houzvicka
  * @since 24.7.15
  */
-public class ComponentsStoreImpl implements ComponentsStore {
-    private static final Logger logger = LoggerFactory.getLogger(ComponentsStore.class);
+public class ComponentStoreImpl implements ComponentStore {
+    private static final Logger logger = LoggerFactory.getLogger(ComponentStore.class);
 
     private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock(true);
     private final Lock readLock = rwLock.readLock();
@@ -55,7 +54,7 @@ public class ComponentsStoreImpl implements ComponentsStore {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public ComponentsStoreImpl(Repository repository, String tenantId) {
+    public ComponentStoreImpl(Repository repository, String tenantId) {
         RepositoryFolder tenantFolder = repository.getFolder(tenantId);
         componentsFolder = tenantFolder.getFolder(FOLDER_NAME);
         if (componentsFolder == null) {

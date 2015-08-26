@@ -19,17 +19,10 @@
  */
 package org.datacleaner.beans.numbers;
 
-import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.NumberProperty;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
+import org.datacleaner.api.*;
 import org.datacleaner.components.categories.NumbersCategory;
+
+import javax.inject.Named;
 
 /**
  * Simple transformer for rounding a number
@@ -37,6 +30,7 @@ import org.datacleaner.components.categories.NumbersCategory;
 @Named("Round number")
 @Description("Transformation for rounding a number, typically to the nearest integer, nearest ten, hundred or thousand.")
 @Categorized(NumbersCategory.class)
+@WSStatelessComponent
 public class RoundNumberTransformer implements Transformer {
 
     @Configured

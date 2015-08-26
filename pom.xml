@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -9,10 +8,11 @@
 		<slf4j.version>1.7.10</slf4j.version>
 		<junit.version>4.12</junit.version>
 		<hadoop.version>2.6.0</hadoop.version>
+		<spark.version>1.4.1</spark.version>
 		<easymock.version>3.3.1</easymock.version>
 		<httpcomponents.version>4.4.1</httpcomponents.version>
 		<guava.version>16.0.1</guava.version>
-		<metamodel.version>4.3.5</metamodel.version>
+		<metamodel.version>4.3.6</metamodel.version>
 		<metamodel.extras.version>4.3.1</metamodel.extras.version>
 		<gwt.version>2.7.0</gwt.version>
 		<spring.core.version>4.1.7.RELEASE</spring.core.version>
@@ -20,6 +20,11 @@
 		<quartz.version>2.1.7</quartz.version>
 		<freemarker.version>2.3.22</freemarker.version>
 		<icu4j.version>55.1</icu4j.version>
+		<jackson.version>2.6.1</jackson.version>
+		<javax.servlet.version>3.0.1</javax.servlet.version>
+		<javax.jsp.version>2.0</javax.jsp.version>
+		<javax.el.version>2.2.4</javax.el.version>
+		<javax.annotation.version>1.2</javax.annotation.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->
@@ -34,11 +39,12 @@
 	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze, profile, diagnose and monitor the state of your data. DataCleaner works with
-		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.</description>
+		almost any kind of data, eg. CSV files, databases, Excel spreadsheets, NoSQL databases and more.</description>
 	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
+		<module>spark</module>
 	</modules>
 	<profiles>
 		<profile>
@@ -94,6 +100,15 @@
 		<developer>
 			<name>Kasper Sørensen</name>
 			<email>i.am.kasper.sorensen@gmail.com</email>
+		</developer>
+		<developer>
+			<name>Dennis Du Krøger</name>
+		</developer>
+		<developer>
+			<name>Claudia Peşu</name>
+		</developer>
+		<developer>
+			<name>Tomasz Guziałek</name>
 		</developer>
 	</developers>
 	<contributors>
@@ -255,7 +270,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5</version><!--$NO-MVN-MAN-VER$-->
+				<version>2.5</version><!--$NO-MVN-MAN-VER$ -->
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
@@ -493,6 +508,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.4</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.metamodel</groupId>
 				<artifactId>MetaModel-core</artifactId>
@@ -551,6 +571,21 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-client</artifactId>
+				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-auth</artifactId>
 				<version>${hadoop.version}</version>
 			</dependency>
@@ -558,6 +593,12 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -756,9 +797,9 @@
 				<artifactId>scala-actors</artifactId>
 				<version>${scala.version}</version>
 			</dependency>
-			
-			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
-			by HTTP components (4.x) at some point. -->
+
+			<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be 
+				replaced by HTTP components (4.x) at some point. -->
 			<dependency>
 				<groupId>commons-httpclient</groupId>
 				<artifactId>commons-httpclient</artifactId>
@@ -784,6 +825,22 @@
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>${freemarker.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 
 			<!-- logging dependencies -->
@@ -812,7 +869,7 @@
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-			
+
 			<!-- Test dependencies -->
 			<dependency>
 				<groupId>junit</groupId>

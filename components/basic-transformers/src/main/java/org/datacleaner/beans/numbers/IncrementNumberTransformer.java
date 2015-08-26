@@ -19,20 +19,12 @@
  */
 package org.datacleaner.beans.numbers;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.NumbersCategory;
 
 import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.NumberProperty;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.NumbersCategory;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * Simple transformer for incrementing a number
@@ -40,6 +32,7 @@ import org.datacleaner.components.categories.NumbersCategory;
 @Named("Increment number")
 @Description("Increment an id, a version or any other number.")
 @Categorized(NumbersCategory.class)
+@WSStatelessComponent
 public class IncrementNumberTransformer implements Transformer {
 
     @Configured

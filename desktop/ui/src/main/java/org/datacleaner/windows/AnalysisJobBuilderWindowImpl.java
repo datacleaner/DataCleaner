@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -68,17 +70,25 @@ import org.datacleaner.actions.RunAnalysisActionListener;
 import org.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.datacleaner.components.maxrows.MaxRowsFilter;
+import org.datacleaner.components.maxrows.MaxRowsFilter.Category;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.database.DatabaseDriverCatalog;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.guice.InjectorBuilder;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.guice.JobFile;
 import org.datacleaner.guice.Nullable;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentValidationException;
+import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.JaxbJobWriter;
+import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.AnalyzerChangeListener;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
@@ -89,6 +99,7 @@ import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.builder.UnconfiguredConfiguredPropertyException;
+import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.panels.DCGlassPane;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.panels.DatastoreManagementPanel;
@@ -110,7 +121,6 @@ import org.datacleaner.util.WindowSizePreferences;
 import org.datacleaner.widgets.CollapsibleTreePanel;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DCPersistentSizedPanel;
-import org.datacleaner.widgets.DCPopupBubble;
 import org.datacleaner.widgets.LicenceAndEditionStatusLabel;
 import org.datacleaner.widgets.PopupButton;
 import org.datacleaner.widgets.tabs.JobClassicView;
@@ -149,7 +159,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final JButton _saveButton;
     private final JButton _saveAsButton;
     private final JButton _executeButton;
-    private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
+    private final JButton _executionAlternativesButton;
     private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
     private final Provider<NewAnalysisJobActionListener> _newAnalysisJobActionListenerProvider;
     private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
@@ -161,7 +171,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DatastoreManagementPanel _datastoreManagementPanel;
     private final SelectDatastoreContainerPanel _selectDatastorePanel;
     private final UserPreferences _userPreferences;
-    private final InjectorBuilder _injectorBuilder;
+    private final DCModule _dcModule;
     private final JToggleButton _classicViewButton;
     private final JToggleButton _graphViewButton;
     private final JobGraph _graph;
@@ -179,9 +189,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(DataCleanerConfiguration configuration, WindowContext windowContext,
-            SchemaTreePanel schemaTreePanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
-            AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder, UserPreferences userPreferences,
-            @Nullable @JobFile FileObject jobFilename,
+            SchemaTreePanel schemaTreePanel, AnalysisJobBuilder analysisJobBuilder, DCModule dcModule,
+            UserPreferences userPreferences, @Nullable @JobFile FileObject jobFilename,
             Provider<NewAnalysisJobActionListener> newAnalysisJobActionListenerProvider,
             Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
@@ -192,7 +201,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         super(windowContext);
         _jobFilename = jobFilename;
         _configuration = configuration;
-        _runAnalysisActionProvider = runAnalysisActionProvider;
+        _dcModule = dcModule;
         _newAnalysisJobActionListenerProvider = newAnalysisJobActionListenerProvider;
         _openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
         _saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
@@ -217,7 +226,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _datastoreSelectionEnabled = true;
         _presenterRendererFactory = new RendererFactory(configuration);
         _glassPane = new DCGlassPane(this);
-        _injectorBuilder = injectorBuilder;
 
         _graph = new JobGraph(windowContext, userPreferences, analysisJobBuilder, _presenterRendererFactory,
                 usageLogger);
@@ -227,18 +235,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(createFilterChangeListener());
         _analysisJobBuilder.getSourceColumnListeners().add(createSourceColumnChangeListener());
 
-        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT, null);
-        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT, null);
+        _saveButton = createToolbarButton("Save", IconUtils.ACTION_SAVE_BRIGHT);
+        _saveAsButton = createToolbarButton("Save As...", IconUtils.ACTION_SAVE_BRIGHT);
 
-        _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE, null);
+        _executeButton = createToolbarButton("Execute", IconUtils.MENU_EXECUTE);
+        _executionAlternativesButton = createToolbarButton("\uf0d7", null);
+        _executionAlternativesButton.setFont(WidgetUtils.FONT_FONTAWESOME);
 
         _welcomePanel = new WelcomePanel(this, _userPreferences, _openAnalysisJobActionListenerProvider.get(),
-                _injectorBuilder);
+                _dcModule);
 
         _datastoreManagementPanel = new DatastoreManagementPanel(_configuration, this, _glassPane,
-                _optionsDialogProvider, _injectorBuilder, databaseDriverCatalog, _userPreferences);
-        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, injectorBuilder, databaseDriverCatalog,
-                (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
+                _optionsDialogProvider, _dcModule, databaseDriverCatalog, _userPreferences);
+        _selectDatastorePanel = new SelectDatastoreContainerPanel(this, _dcModule, databaseDriverCatalog, (MutableDatastoreCatalog) configuration.getDatastoreCatalog(), _userPreferences);
 
         _editingContentView = new DCPanel();
         _editingContentView.setLayout(new BorderLayout());
@@ -328,7 +337,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         return true;
     }
 
-    private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
+    private JButton createToolbarButton(String text, String iconPath) {
         final ImageIcon icon;
         if (iconPath == null) {
             icon = null;
@@ -348,16 +357,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             }
         });
 
-        if (icon == null) {
-            button.setBorder(new EmptyBorder(10, 8, 10, 8));
-        } else {
-            button.setBorder(new EmptyBorder(10, 4, 10, 4));
-        }
         WidgetUtils.setDarkButtonStyle(button);
-        if (popupDescription != null) {
-            DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
-            popupBubble.attachTo(button);
-        }
         return button;
     }
 
@@ -539,6 +539,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         }
 
         _executeButton.setEnabled(executeable);
+        _executionAlternativesButton.setEnabled(executeable);
     }
 
     @Override
@@ -740,29 +741,39 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
 
         // Run analysis
-        final RunAnalysisActionListener runAnalysisActionListener = _runAnalysisActionProvider.get();
-        _executeButton.addActionListener(new ActionListener() {
+        _executeButton.addActionListener(execute(_analysisJobBuilder));
+
+        _executionAlternativesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                applyPropertyValues();
+                final JMenuItem executeNormallyMenutItem = WidgetFactory.createMenuItem("Run normally",
+                        IconUtils.ACTION_EXECUTE);
+                executeNormallyMenutItem.addActionListener(execute(_analysisJobBuilder));
 
-                if (_analysisJobBuilder.getAnalyzerComponentBuilders().isEmpty()) {
-                    // Present choices to user to write file somewhere,
-                    // and then run a copy of the job based on that.
-                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
-                            _injectorBuilder, getWindowContext(), _analysisJobBuilder, _userPreferences);
-                    executeJobWithoutAnalyzersPanel.open();
-                    return;
-                }
+                final JMenuItem executePreviewMenuItem = WidgetFactory.createMenuItem("Run first N records",
+                        IconUtils.ACTION_PREVIEW);
+                executePreviewMenuItem.addActionListener(executePreview());
 
-                runAnalysisActionListener.actionPerformed(e);
+                final JMenuItem executeSingleThreadedMenuItem = WidgetFactory.createMenuItem("Run single-threaded",
+                        IconUtils.MODEL_ROW);
+                executeSingleThreadedMenuItem.addActionListener(executeSingleThreaded());
+
+                final JPopupMenu menu = new JPopupMenu();
+                menu.add(executeNormallyMenutItem);
+                menu.addSeparator();
+                menu.add(executePreviewMenuItem);
+                menu.add(executeSingleThreadedMenuItem);
+
+                final int horizontalPosition = -1 * menu.getPreferredSize().width
+                        + _executionAlternativesButton.getWidth();
+                menu.show(_executionAlternativesButton, horizontalPosition, _executionAlternativesButton.getHeight());
             }
         });
 
-        final JButton newJobButton = createToolbarButton("New", IconUtils.MENU_NEW, null);
+        final JButton newJobButton = createToolbarButton("New", IconUtils.MENU_NEW);
         newJobButton.addActionListener(_newAnalysisJobActionListenerProvider.get());
 
-        final JButton openJobButton = createToolbarButton("Open", IconUtils.MENU_OPEN, null);
+        final JButton openJobButton = createToolbarButton("Open", IconUtils.MENU_OPEN);
         openJobButton.addActionListener(_openAnalysisJobActionListenerProvider.get());
 
         final JToggleButton moreButton = createMoreMenuButton();
@@ -788,6 +799,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_executeButton);
+        toolBar.add(DCLabel.bright("|"));
+        toolBar.add(_executionAlternativesButton);
 
         final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
         statusBar.add(_classicViewButton);
@@ -817,6 +830,75 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         WidgetUtils.centerOnScreen(this);
         return panel;
+    }
+
+    private ActionListener execute(final AnalysisJobBuilder analysisJobBuilder) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyPropertyValues();
+
+                if (analysisJobBuilder.getAnalyzerComponentBuilders().isEmpty()) {
+                    // Present choices to user to write file somewhere,
+                    // and then run a copy of the job based on that.
+                    ExecuteJobWithoutAnalyzersDialog executeJobWithoutAnalyzersPanel = new ExecuteJobWithoutAnalyzersDialog(
+                            _dcModule, getWindowContext(), analysisJobBuilder, _userPreferences);
+                    executeJobWithoutAnalyzersPanel.open();
+                    return;
+                }
+
+                final RunAnalysisActionListener runAnalysis = new RunAnalysisActionListener(_dcModule,
+                        analysisJobBuilder);
+                runAnalysis.run();
+            }
+        };
+    }
+
+    private ActionListener executeSingleThreaded() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl(_configuration)
+                        .withEnvironment(new DataCleanerEnvironmentImpl(_configuration.getEnvironment())
+                                .withTaskRunner(new SingleThreadedTaskRunner()));
+
+                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(configuration, jobCopy);
+
+                execute(jobBuilderCopy).actionPerformed(e);
+            }
+        };
+    }
+
+    private ActionListener executePreview() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final String maxRowsString = JOptionPane.showInputDialog("How many records do you want to process?",
+                        "100");
+                final Number maxRows = ConvertToNumberTransformer.transformValue(maxRowsString);
+                if (maxRows == null || maxRows.intValue() < 1) {
+                    WidgetUtils.showErrorMessage("Not a valid number", "Please enter a valid number of records.");
+                    return;
+                }
+
+                final AnalysisJob jobCopy = _analysisJobBuilder.toAnalysisJob(false);
+                final AnalysisJobBuilder jobBuilderCopy = new AnalysisJobBuilder(_configuration, jobCopy);
+                final FilterComponentBuilder<MaxRowsFilter, Category> maxRowsFilter = jobBuilderCopy
+                        .addFilter(MaxRowsFilter.class);
+                maxRowsFilter.getComponentInstance().setMaxRows(maxRows.intValue());
+                maxRowsFilter.addInputColumn(jobBuilderCopy.getSourceColumns().get(0));
+                final FilterOutcome filterOutcome = maxRowsFilter.getFilterOutcome(MaxRowsFilter.Category.VALID);
+                final Collection<ComponentBuilder> componentBuilders = jobBuilderCopy.getComponentBuilders();
+                for (ComponentBuilder componentBuilder : componentBuilders) {
+                    if (componentBuilder != maxRowsFilter && componentBuilder.getComponentRequirement() == null) {
+                        componentBuilder.setComponentRequirement(new SimpleComponentRequirement(filterOutcome));
+                    }
+                }
+
+                execute(jobBuilderCopy).actionPerformed(e);
+            }
+        };
     }
 
     private JToggleButton createMoreMenuButton() {

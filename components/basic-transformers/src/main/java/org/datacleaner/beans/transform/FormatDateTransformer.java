@@ -19,23 +19,17 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.DateAndTimeCategory;
 
 import javax.inject.Named;
-
-import org.datacleaner.api.Categorized;
-import org.datacleaner.api.Configured;
-import org.datacleaner.api.Description;
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.InputRow;
-import org.datacleaner.api.OutputColumns;
-import org.datacleaner.api.Transformer;
-import org.datacleaner.components.categories.DateAndTimeCategory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Named("Format date")
 @Description("Allows you to format a date as a string by applying your own date format.")
 @Categorized(DateAndTimeCategory.class)
+@WSStatelessComponent
 public class FormatDateTransformer implements Transformer {
 
     @Configured("Date")

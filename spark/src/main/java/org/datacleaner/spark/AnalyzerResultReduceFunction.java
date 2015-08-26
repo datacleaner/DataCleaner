@@ -77,7 +77,7 @@ public final class AnalyzerResultReduceFunction implements
         final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
         final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration, _sparkJobContext.getAnalysisJob());
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
 
         final ComponentDescriptor<? extends AnalyzerResultReducer<?>> reducerDescriptor = Descriptors
                 .ofComponent(resultReducerClass);

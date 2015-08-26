@@ -36,6 +36,7 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
+import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.monitor.configuration.ComponentConfiguration;
@@ -80,8 +81,13 @@ public class ComponentHandler {
         if(descriptor == null) {
             throw ComponentNotFoundException.createTypeNotFound(componentName);
         }
-        component = (Component) descriptor.newInstance();
 
+        if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+            throw new ComponentConfigurationException(
+                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
+        }
+
+        component = (Component) descriptor.newInstance();
 
         // create "table" according to the columns specification (for now only a list of names)
         int index = 0;

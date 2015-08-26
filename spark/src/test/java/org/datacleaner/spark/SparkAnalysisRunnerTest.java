@@ -38,7 +38,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
-            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, "src/test/resources/conf.xml",
+            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, "src/test/resources/conf_local.xml",
                     "src/test/resources/vanilla-job.analysis.xml");
             final AnalysisJob job = sparkJobContext.getAnalysisJob();
             assertNotNull(job);

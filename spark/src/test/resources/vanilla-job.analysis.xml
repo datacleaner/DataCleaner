@@ -2,7 +2,7 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<source>
-		<data-context ref="local_person_names" />
+		<data-context ref="person_names" />
 		<columns>
 			<column id="col_country" path="country" />
 			<column id="col_company" path="company" />

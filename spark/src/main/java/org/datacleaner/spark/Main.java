@@ -19,6 +19,8 @@
  */
 package org.datacleaner.spark;
 
+import java.util.Arrays;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -27,17 +29,17 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
             throw new IllegalArgumentException("The number of arguments is incorrect. Usage:\n"
-                    + " <path_to_configuration_xml_file> <path_to_analysis_job_xml_file>");
+                    + " <path_to_configuration_xml_file> <path_to_analysis_job_xml_file>\n" + "Got: "
+                    + Arrays.toString(args));
         }
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
-
+        
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 
-        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath,
-                analysisJobXmlPath);
+        final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext, confXmlPath, analysisJobXmlPath);
 
         final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
         sparkAnalysisRunner.run();

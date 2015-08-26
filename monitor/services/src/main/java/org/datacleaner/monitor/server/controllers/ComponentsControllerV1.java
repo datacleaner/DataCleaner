@@ -22,7 +22,6 @@ package org.datacleaner.monitor.server.controllers;
 import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
 import org.slf4j.Logger;
@@ -34,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PreDestroy;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -73,6 +70,11 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
+            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
+                continue;
+            }
+
             componentList.add(tenant, descriptor);
         }
 
@@ -185,15 +187,6 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
             throws RuntimeException {
-        boolean isStateless = _tenantContextFactory.getContext(tenant).getConfiguration().getEnvironment()
-                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
-                .getAnnotation(WSStatelessComponent.class) != null;
-
-        if (! isStateless) {
-            throw new ComponentConfigurationException(
-                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
-        }
-
         ComponentHandler handler = new ComponentHandler(
                 _tenantContextFactory.getContext(tenant).getConfiguration(),
                 componentName);

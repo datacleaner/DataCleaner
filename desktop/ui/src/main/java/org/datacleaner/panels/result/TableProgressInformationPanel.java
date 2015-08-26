@@ -135,7 +135,11 @@ public class TableProgressInformationPanel extends DCPanel {
     public void setProgressMaximum(int maximum) {
         if (maximum != -1) {
             _progressBar.setMaximum(maximum);
+            _progressBar.setIndeterminate(false);
             _progressExpectationLabel.setText(" of approx. " + formatNumber(maximum) + " rows");
+        } else {
+            _progressBar.setIndeterminate(true);
+            _progressExpectationLabel.setText(" rows");
         }
     }
 
@@ -154,7 +158,8 @@ public class TableProgressInformationPanel extends DCPanel {
 
     public void setProgressFinished(int finalNumberOfRows) {
         _progressStatusLabel.setText("Finished! - ");
-        _progressBar.setMaximum(finalNumberOfRows);
+        _progressBar.setShowAsFull(true);
+        _progressBar.setIndeterminate(false);
         _progressExpectationLabel.setText(" of  " + formatNumber(finalNumberOfRows) + " rows");
     }
 

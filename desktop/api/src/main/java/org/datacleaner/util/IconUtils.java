@@ -81,6 +81,7 @@ public final class IconUtils {
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
     public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
+    public static final String OUTPUT_DATA_STREAM_PATH = "images/component-types/output-data-stream.png";
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";

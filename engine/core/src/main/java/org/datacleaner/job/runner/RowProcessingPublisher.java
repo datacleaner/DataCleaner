@@ -292,7 +292,6 @@ public final class RowProcessingPublisher {
      */
     public void processRows(RowProcessingMetrics rowProcessingMetrics) {
         final AnalysisListener analysisListener = _publishers.getAnalysisListener();
-        analysisListener.rowProcessingBegin(_analysisJob, rowProcessingMetrics);
 
         final boolean success;
         if (_parentPublisher == null) {
@@ -509,12 +508,16 @@ public final class RowProcessingPublisher {
 
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
+
         if (_parentPublisher == null) {
             final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
                     runCompletionListener);
 
+            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
+
+
             // kick off the initialization
-            initializeConsumers(initFinishedListener);
+            initializeConsumers(consumerInitFinishedListener);
         } else {
             _taskRunner.run(runTask, runCompletionListener);
         }
@@ -572,7 +575,7 @@ public final class RowProcessingPublisher {
         return new TaskRunnable(task, listener);
     }
 
-    private LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
+    public LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
         final LifeCycleHelper outerLifeCycleHelper = _publishers.getLifeCycleHelper();
         final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
         final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();

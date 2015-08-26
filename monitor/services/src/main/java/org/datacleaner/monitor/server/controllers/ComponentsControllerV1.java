@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
@@ -39,7 +40,6 @@ import java.util.UUID;
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore configuration.
- * @author k.houzvicka, j.horcicka
  * @since 8. 7. 2015
  */
 @Controller
@@ -77,6 +77,11 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
+            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
+                continue;
+            }
+
             componentList.add(tenant, descriptor);
         }
 

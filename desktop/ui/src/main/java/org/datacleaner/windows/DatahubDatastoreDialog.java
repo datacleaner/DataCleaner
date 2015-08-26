@@ -21,6 +21,8 @@ package org.datacleaner.windows;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -68,6 +71,9 @@ public class DatahubDatastoreDialog
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DatahubDatastoreDialog.class);
 
+    public static final String CAS_MODE = "cas";
+    public static final String DEFAULT_MODE = "default";
+    
     private static final long serialVersionUID = 1L;
 
     private final JXTextField _hostTextField;
@@ -77,7 +83,8 @@ public class DatahubDatastoreDialog
     private final JPasswordField _passwordTextField;
     private final JXTextField _tenantNameTextField;
     private final JCheckBox _acceptUnverifiedSslPeersCheckBox;
-    private final JXTextField _securityModeTextField;
+    //private final JXTextField _securityModeTextField;
+    private final JComboBox<String> _securityModeSelector;
     private final JButton _testButton;
     private final DCLabel _urlLabel;
 //    private final JXTextField _contextPathTextField;
@@ -106,7 +113,7 @@ public class DatahubDatastoreDialog
                 /* _contextPathTextField.getText(), */_httpsCheckBox
                         .isSelected(),
                 _acceptUnverifiedSslPeersCheckBox.isSelected(),
-                _securityModeTextField.getText());
+                _securityModeSelector.getSelectedItem().toString());
     }
 
     private void updateUrlLabel() {
@@ -127,8 +134,9 @@ public class DatahubDatastoreDialog
         _passwordTextField = WidgetFactory.createPasswordField();
         _tenantNameTextField = WidgetFactory.createTextField("Tenant id");
 //        _contextPathTextField = WidgetFactory.createTextField("Context path");
-        _securityModeTextField = WidgetFactory.createTextField("Security mode");
-
+        _securityModeSelector = new JComboBox<>(new String[] { DEFAULT_MODE, CAS_MODE });
+        _securityModeSelector.setEditable(false);
+        
         _urlLabel = DCLabel.bright("");
         _urlLabel.setForeground(WidgetUtils.BG_COLOR_LESS_BRIGHT);
         _urlLabel.setBorder(new EmptyBorder(5, 0, 5, 0));
@@ -159,7 +167,13 @@ public class DatahubDatastoreDialog
         _portTextField.getDocument().addDocumentListener(genericDocumentListener);
         _usernameTextField.getDocument().addDocumentListener(genericDocumentListener);
         _passwordTextField.getDocument().addDocumentListener(genericDocumentListener);
-        _securityModeTextField.getDocument().addDocumentListener(genericDocumentListener);
+        _securityModeSelector.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                validateAndUpdate();
+                updateUrlLabel();
+            }
+        });
 
         _testButton = WidgetFactory.createDefaultButton("Test connection", IconUtils.ACTION_REFRESH);
         _testButton.addActionListener(new ActionListener() {
@@ -209,7 +223,11 @@ public class DatahubDatastoreDialog
             _portTextField.setText(originalDatastore.getPort() + "");
             _httpsCheckBox.setSelected(originalDatastore.https());
             _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
-            _securityModeTextField.setText(originalDatastore.getSecurityMode());
+            if(originalDatastore.getSecurityMode().equalsIgnoreCase(CAS_MODE)) {
+                _securityModeSelector.setSelectedIndex(1);
+            } else {
+                _securityModeSelector.setSelectedIndex(0);
+            }
 
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
@@ -283,7 +301,7 @@ public class DatahubDatastoreDialog
         final boolean https = _httpsCheckBox.isSelected();
         final boolean acceptUnverifiedSslPeersCheckBox = _acceptUnverifiedSslPeersCheckBox
                 .isSelected();
-        final String securityMode = _securityModeTextField.getText();
+        final String securityMode = _securityModeSelector.getSelectedItem().toString();
 
         return new DatahubDatastore(name, host, port, username, password,
                 tenantName, https, acceptUnverifiedSslPeersCheckBox,
@@ -312,7 +330,7 @@ public class DatahubDatastoreDialog
         result.add(new ImmutableEntry<String, JComponent>("Datahub port",  _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _acceptUnverifiedSslPeersCheckBox));
-        result.add(new ImmutableEntry<String, JComponent>("Security mode",_securityModeTextField));
+        result.add(new ImmutableEntry<String, JComponent>("Security mode",_securityModeSelector));
         result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
         result.add(new ImmutableEntry<String, JComponent>("Datahub tenant name", _tenantNameTextField));

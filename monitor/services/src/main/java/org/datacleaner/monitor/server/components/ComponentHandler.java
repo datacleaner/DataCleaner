@@ -97,7 +97,11 @@ public class ComponentHandler {
             if(columnSpec.isObject()) {
                 ObjectNode columnSpecO = (ObjectNode)columnSpec;
                 columnName = columnSpecO.get("name").asText();
-                columnTypeName = columnSpecO.get("type").asText();
+                if(columnSpecO.get("type") == null) {
+                    columnTypeName = ColumnType.VARCHAR.getName();
+                } else {
+                    columnTypeName = columnSpecO.get("type").asText();
+                }
             } else {
                 columnName = columnSpec.asText();
                 columnTypeName = ColumnType.VARCHAR.getName();

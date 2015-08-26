@@ -37,7 +37,8 @@ import org.datacleaner.lifecycle.LifeCycleHelper;
 
 import scala.Tuple2;
 
-public final class RowProcessingFunction implements PairFlatMapFunction<Iterator<InputRow>, String, AnalyzerResult> {
+public final class RowProcessingFunction implements
+        PairFlatMapFunction<Iterator<InputRow>, String, NamedAnalyzerResult> {
 
     private static final long serialVersionUID = 1L;
     private final SparkJobContext _sparkJobContext;
@@ -47,7 +48,8 @@ public final class RowProcessingFunction implements PairFlatMapFunction<Iterator
     }
 
     @Override
-    public Iterable<Tuple2<String, AnalyzerResult>> call(Iterator<InputRow> inputRowIterator) throws Exception {
+    public Iterable<Tuple2<String, NamedAnalyzerResult>> call(Iterator<InputRow> inputRowIterator)
+            throws Exception {
         final DataCleanerConfiguration configuration = _sparkJobContext.getConfiguration();
         final AnalysisJob analysisJob = _sparkJobContext.getAnalysisJob();
 
@@ -67,24 +69,29 @@ public final class RowProcessingFunction implements PairFlatMapFunction<Iterator
         }
 
         // collect results
-        final List<Tuple2<String, AnalyzerResult>> analyzerResults = new ArrayList<>();
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = new ArrayList<>();
         for (RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
             if (consumer.isResultProducer()) {
                 final HasAnalyzerResult<?> resultProducer = (HasAnalyzerResult<?>) consumer.getComponent();
                 final AnalyzerResult analyzerResult = resultProducer.getResult();
                 final String key = _sparkJobContext.getComponentKey(consumer.getComponentJob());
-                final Tuple2<String, AnalyzerResult> tuple = new Tuple2<>(key, analyzerResult);
+                final NamedAnalyzerResult namedAnalyzerResult = new NamedAnalyzerResult(key, analyzerResult);
+                final Tuple2<String, NamedAnalyzerResult> tuple = new Tuple2<>(key,
+                        namedAnalyzerResult);
                 analyzerResults.add(tuple);
             }
         }
 
         // await any future results
-        for (ListIterator<Tuple2<String, AnalyzerResult>> it = analyzerResults.listIterator(); it.hasNext();) {
-            final Tuple2<String, AnalyzerResult> tuple = it.next();
-            final AnalyzerResult analyzerResult = tuple._2;
+        for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it
+                .hasNext();) {
+            final Tuple2<String, NamedAnalyzerResult> tuple = it.next();
+            final NamedAnalyzerResult namedAnalyzerResult = tuple._2;
+            final AnalyzerResult analyzerResult = namedAnalyzerResult.getAnalyzerResult();
             if (analyzerResult instanceof AnalyzerResultFuture) {
                 final AnalyzerResult awaitedResult = ((AnalyzerResultFuture<?>) analyzerResult).get();
-                it.set(new Tuple2<>(tuple._1, awaitedResult));
+                final NamedAnalyzerResult awaitedResultTuple = new NamedAnalyzerResult(namedAnalyzerResult.getName(), awaitedResult);
+                it.set(new Tuple2<>(tuple._1, awaitedResultTuple));
             }
         }
 

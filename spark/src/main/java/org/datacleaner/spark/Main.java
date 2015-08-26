@@ -35,7 +35,7 @@ public class Main {
 
         final SparkConf conf = new SparkConf().setAppName("DataCleaner-spark");
         final JavaSparkContext sparkContext = new JavaSparkContext(conf);
-
+        
         final String confXmlPath = args[0];
         final String analysisJobXmlPath = args[1];
 

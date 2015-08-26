@@ -47,22 +47,56 @@ import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientSideLauncher {
+import com.google.common.base.Strings;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientSideLauncher.class);
+public class ApplicationDriver {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationDriver.class);
 
     private static final String PRIMARY_JAR_FILENAME_PREFIX = "DataCleaner-spark";
 
     private final String _hostname;
     private final int _port;
     private final String _jarDirectoryPath;
+    private final String _sparkHome;
 
-    public ClientSideLauncher(String hostname, int port, String jarDirectoryPath) {
+    public ApplicationDriver(String hostname, int port, String jarDirectoryPath) {
+        this(hostname, port, jarDirectoryPath, determineSparkHome());
+    }
+
+    private static String determineSparkHome() {
+        String sparkHome = System.getProperty("SPARK_HOME");
+
+        if (Strings.isNullOrEmpty(sparkHome)) {
+            sparkHome = System.getenv("SPARK_HOME");
+        }
+
+        if (Strings.isNullOrEmpty(sparkHome)) {
+            throw new IllegalStateException(
+                    "Could not determine SPARK_HOME. Please set the environment variable, system property or provide it as a "
+                            + ApplicationDriver.class.getSimpleName() + " constructor argument");
+        }
+
+        return sparkHome;
+    }
+
+    public ApplicationDriver(String hostname, int port, String jarDirectoryPath, String sparkHome) {
         _hostname = hostname;
         _port = port;
         _jarDirectoryPath = jarDirectoryPath;
+        _sparkHome = sparkHome;
     }
 
+    /**
+     * Launches and waits for the execution of a DataCleaner job on Spark.
+     * 
+     * @param configurationHdfsPath
+     *            configuration file path (on HDFS)
+     * @param jobHdfsPath
+     *            job file path (on HDFS)
+     * @return the exit code of the spark-submit process
+     * @throws Exception
+     */
     public int launch(String configurationHdfsPath, String jobHdfsPath) throws Exception {
         // create hadoop configuration directory
         final File hadoopConfDir = createTemporaryHadoopConfDir();
@@ -113,8 +147,7 @@ public class ClientSideLauncher {
 
         final SparkLauncher sparkLauncher = new SparkLauncher(env);
 
-        // TODO: Remove this hardcoded stuff
-        sparkLauncher.setSparkHome("C:\\dev\\spark-1.3.1-bin-hadoop2.6");
+        sparkLauncher.setSparkHome(_sparkHome);
         sparkLauncher.setMaster("yarn-cluster");
         sparkLauncher.setAppName("DataCleaner");
 
@@ -186,8 +219,8 @@ public class ClientSideLauncher {
             try (final Writer writer = FileHelper.getWriter(coreSiteFile)) {
                 String line = reader.readLine();
                 while (line != null) {
-                    line = StringUtils.replaceAll(line, "${HOSTNAME}", _hostname);
-                    line = StringUtils.replaceAll(line, "${PORT}", _port + "");
+                    line = StringUtils.replaceAll(line, "${HDFS_HOSTNAME}", _hostname);
+                    line = StringUtils.replaceAll(line, "${HDFS_PORT}", _port + "");
                     writer.write(line);
 
                     line = reader.readLine();

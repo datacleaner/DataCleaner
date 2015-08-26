@@ -33,7 +33,7 @@ public class ExampleLaunch {
     private static String DATA_LOCATION = "/datacleaner/test/person_names.txt";
 
     public static void main(String[] args) throws Exception {
-        final ClientSideLauncher launcher = new ClientSideLauncher(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
+        final ApplicationDriver launcher = new ApplicationDriver(HDFS_HOSTNAME, HDFS_PORT, HDFS_JAR_LOCATION);
 
         // copy test files to the desired location
         launcher.copyFileToHdfs(new File("src/test/resources/person_names.txt"), DATA_LOCATION, false);

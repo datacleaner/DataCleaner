@@ -23,9 +23,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.metamodel.schema.Column;
-import org.datacleaner.metamodel.datahub.DatahubDataSet;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -42,8 +39,7 @@ public class JsonQueryDatasetResponseParser {
     // String result =
     // "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"CONTACTLASTNAME\",\"CONTACTFIRSTNAME\",\"PHONE\",\"ADDRESSLINE1\",\"ADDRESSLINE2\",\"CITY\",\"STATE\",\"POSTALCODE\",\"COUNTRY\",\"SALESREPEMPLOYEENUMBER\",\"CREDITLIMIT\"],\"rows\":[]}}";
 
-    public DatahubDataSet parseQueryResult(InputStream inputStream,
-            Column[] columns) throws JsonParseException, IOException {
+    public List<Object[]> parseQueryResult(InputStream inputStream) throws JsonParseException, IOException {
         _parsingRows = false;
         _parsingRow = false;
         _arrayCount = 0;
@@ -93,7 +89,7 @@ public class JsonQueryDatasetResponseParser {
             token = parser.nextToken();
         }
 
-        return new DatahubDataSet(queryResult, columns);
+        return queryResult;
     }
 
 }

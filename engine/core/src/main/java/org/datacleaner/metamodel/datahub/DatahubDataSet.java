@@ -19,68 +19,157 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.data.AbstractDataSet;
-import org.apache.metamodel.data.DataSetHeader;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
-import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.query.Query;
+import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
+import org.datacleaner.util.http.MonitorHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * dataset with fixed query result of 3 rows
+ * Datahub dataset
  * 
  * @author hetty
  *
  */
 public class DatahubDataSet extends AbstractDataSet {
 
-    List<Object[]> _queryResult;
-    AtomicInteger _index;
-    private Object[] record;
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DatahubDataSet.class);
 
-/*    public DatahubDataSet(Column[] columns) {
-        
-        // TODO dummy implementation
-        super(columns);
-        _queryResult = new ArrayList<Object[]>();
-        for (int y = 0; y < 3; ++y) {
-            Object[] row = new Object[columns.length];
-            for (int i = 0; i < columns.length; ++i) {
-                row[i] = "row" + y + ":value" + i;
-            }
-            _queryResult.add(row);
-        }
-        _index = new AtomicInteger();
-    }
-*/
-    public DatahubDataSet(List<Object[]> queryResult, Column[] columns) {
-        super(columns);
-        _queryResult = queryResult;
-        _index = new AtomicInteger();
+    private final Query _query;
+    private final DatahubConnection _connection;
+    private Iterator<Object[]> _resultSetIterator;
+
+    private Row _row;
+    private boolean _closed;
+
+    private String _uri;
+    private Integer _pagedFirstRow;
+    private Integer _pagedMaxRows;
+
+    private String _queryString;
+
+    
+    /**
+     * Constructor used for regular query execution.
+     * 
+     * @param query
+     * @param jdbcDataContext
+     * @param connection
+     * @param statement
+     * @param resultSet
+     */
+    public DatahubDataSet(String uri, Query query, String queryString, DatahubConnection connection) {
+        super(query.getSelectClause().getItems());
+        // if (query == null) {
+        // throw new IllegalArgumentException("Arguments cannot be null");
+        // }
+        _uri = uri;
+        _queryString = queryString;
+        _query = query;
+        _connection = connection;
+        _pagedFirstRow = 1;
+        _pagedMaxRows = 10000;
+        _resultSetIterator = getBatch();
     }
 
-    @Override
-    public boolean next() {
-        int index = _index.getAndIncrement();
-        if (index < _queryResult.size()) {
-            record = _queryResult.get(index);
-            return true;
-        }
-        record = null;
-        _index.set(0);
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Row getRow() {
-        if (record != null) {
-            final DataSetHeader header = super.getHeader();
-            return new DefaultRow(header, record);
-        }
-        return null;
+        return _row;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean next() {
+        Object[] values = null;
+        if (!_resultSetIterator.hasNext()) {
+            _resultSetIterator = getBatch();
+            if (!_resultSetIterator.hasNext()) {
+                _row = null;
+                return false;
+            }
+        }
+        values = _resultSetIterator.next();            
+//        if (values == null) {
+//            values = _resultSetIterator.next();
+//        }
+//        if (values == null) {
+//            _row = null;
+//            return false;
+//        }
+        _row = new DefaultRow(getHeader(), values);
+        return true;
+    }
+
+    private Iterator<Object[]> getBatch() {
+      final Integer firstRow = (_query.getFirstRow() == null ? _pagedFirstRow : _query.getFirstRow());
+      final Integer maxRows = (_query.getMaxRows() == null ? _pagedMaxRows : _query.getMaxRows());
+      
+      _pagedFirstRow = _pagedFirstRow + _pagedMaxRows;
+
+      List<NameValuePair> params = new ArrayList<>();
+      params.add(new BasicNameValuePair("q", _queryString));
+      params.add(new BasicNameValuePair("f", firstRow.toString()));
+      params.add(new BasicNameValuePair("m", maxRows.toString()));
+      String paramString = URLEncodedUtils.format(params, "utf-8");
+
+      String uri = _uri + paramString;
+      
+      HttpGet request = new HttpGet(uri);
+      request.addHeader("Accept", "application/json");
+      HttpResponse response = executeRequest(request);
+      HttpEntity entity = response.getEntity();
+      JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
+      try {
+          return parser.parseQueryResult(entity.getContent()).iterator();
+      } catch (Exception e) {
+          throw new IllegalStateException(e);
+      }
+    }
+    
+    private HttpResponse executeRequest(HttpGet request) {
+
+        MonitorHttpClient httpClient = _connection.getHttpClient();
+        HttpResponse response;
+        try {
+            response = httpClient.execute(request);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 403) {
+            throw new AccessControlException(
+                    "You are not authorized to access the service");
+        }
+        if (statusCode == 404) {
+            throw new AccessControlException(
+                    "Could not connect to Datahub: not found");
+        }
+        if (statusCode != 200) {
+            throw new IllegalStateException("Unexpected response status code: "
+                    + statusCode);
+        }
+        return response;
     }
 
 }

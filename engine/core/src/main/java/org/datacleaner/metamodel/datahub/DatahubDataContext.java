@@ -22,7 +22,6 @@ package org.datacleaner.metamodel.datahub;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.AccessControlException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
@@ -43,7 +39,6 @@ import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
@@ -127,27 +122,33 @@ public class DatahubDataContext extends AbstractDataContext implements
         String queryString = getQueryString(query, table, internalSchemaName);        
         String dataStoreName = ((DatahubSchema) table.getSchema()).getDatastoreName();//.replaceAll("\\s+", "+");
 
-        List<NameValuePair> params = new ArrayList<>();
-        final Integer firstRow = (query.getFirstRow() == null ? 1 : query.getFirstRow());
-        final Integer maxRows = (query.getMaxRows() == null ? -1 : query.getMaxRows());
-        params.add(new BasicNameValuePair("q", queryString));
-        params.add(new BasicNameValuePair("f", firstRow.toString()));
-        params.add(new BasicNameValuePair("m", maxRows.toString()));
-        String paramString = URLEncodedUtils.format(params, "utf-8");
+//        final Integer firstRow = (query.getFirstRow() == null ? 1 : query.getFirstRow());
+//        final Integer maxRows = (query.getMaxRows() == null ? -1 : query.getMaxRows());
+//
+//        List<NameValuePair> params = new ArrayList<>();
+//        params.add(new BasicNameValuePair("q", queryString));
+//        params.add(new BasicNameValuePair("f", firstRow.toString()));
+//        params.add(new BasicNameValuePair("m", maxRows.toString()));
+//        String paramString = URLEncodedUtils.format(params, "utf-8");
+//
+//        String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores" + "/"
+//                + dataStoreName + ".query?") + paramString;
+//        
+//        HttpGet request = new HttpGet(uri);
+//        request.addHeader("Accept", "application/json");
+//        HttpResponse response = executeRequest(request);
+//        HttpEntity entity = response.getEntity();
+//        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
+//        try {
+//            return parser.parseQueryResult(entity.getContent(), columns);
+//        } catch (Exception e) {
+//            throw new IllegalStateException(e);
+//        }
 
         String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores" + "/"
-                + dataStoreName + ".query?") + paramString;
-        
-        HttpGet request = new HttpGet(uri);
-        request.addHeader("Accept", "application/json");
-        HttpResponse response = executeRequest(request);
-        HttpEntity entity = response.getEntity();
-        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
-        try {
-            return parser.parseQueryResult(entity.getContent(), columns);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+                + dataStoreName + ".query?");
+
+        return new DatahubDataSet(uri, query, queryString, _connection);
     }
 
     private Column[] createColumns(final Query query) {

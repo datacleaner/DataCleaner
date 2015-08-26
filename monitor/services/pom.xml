@@ -122,6 +122,12 @@
 		</dependency>
 
 		<!-- Middleware: Spring, Quartz etc. -->
+<!-- 		<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-commons</artifactId>
+    <version>1.10.2.RELEASE</version>
+</dependency> -->
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>

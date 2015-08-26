@@ -21,14 +21,14 @@
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
+
+import junit.framework.TestCase;
 
 
 public class DatahubDataContextTest extends TestCase  
@@ -37,7 +37,7 @@ public class DatahubDataContextTest extends TestCase
         // there should be at least one test  method
     }
     
-    public void testMDMRepoGetSchema() {
+    public void xtestMDMRepoGetSchema() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";

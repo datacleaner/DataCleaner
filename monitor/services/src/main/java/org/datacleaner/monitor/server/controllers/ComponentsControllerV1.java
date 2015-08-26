@@ -21,7 +21,6 @@ package org.datacleaner.monitor.server.controllers;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
 import org.slf4j.Logger;
@@ -46,7 +45,6 @@ import java.util.UUID;
 @Controller
 public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
-    private static final String TENANT = "tenant";
     private ComponentsCache _componentsCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ID = "id";
@@ -171,25 +169,6 @@ public class ComponentsControllerV1 implements ComponentsController {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-    }
-
-    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
-            throws RuntimeException {
-        boolean isStateless = _tenantContextFactory.getContext(tenant).getConfiguration().getEnvironment()
-                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
-                .getAnnotation(WSStatelessComponent.class) != null;
-
-        if (! isStateless) {
-            throw new RuntimeException(
-                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
-        }
-
-        ComponentHandler handler = new ComponentHandler(
-                _tenantContextFactory.getContext(tenant).getConfiguration(),
-                componentName);
-        handler.createComponent(configuration);
-
-        return handler;
     }
 
     private String unURLify(String url) {

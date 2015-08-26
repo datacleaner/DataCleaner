@@ -76,7 +76,7 @@ public class ComponentsCache {
         ComponentsCacheConfigWrapper componentsCacheConfigWrapper = data.get(id);
         if (componentsCacheConfigWrapper == null) {
             logger.warn("Configuration {} does not exist in cache.", id);
-            ComponentsStore store = tenantContext.getComponentsStore();
+            ComponentStore store = tenantContext.getComponentsStore();
             ComponentsStoreHolder storeConfig = store.getConfiguration(id);
             if (storeConfig == null) {
                 logger.warn("Configuration {} does not exist in store.", id);
@@ -117,7 +117,7 @@ public class ComponentsCache {
     }
 
     private boolean removeConfigurationOnlyFromStore(String id, TenantContext tenantContext) {
-        ComponentsStore store = tenantContext.getComponentsStore();
+        ComponentStore store = tenantContext.getComponentsStore();
         return store.removeConfiguration(id);
     }
 

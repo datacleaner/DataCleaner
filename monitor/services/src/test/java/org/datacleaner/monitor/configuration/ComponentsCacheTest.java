@@ -19,7 +19,8 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.datacleaner.api.WSStatelessComponent;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
@@ -30,14 +31,13 @@ import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 
 /**
  * Class ComponentsCacheTest
@@ -53,12 +53,12 @@ public class ComponentsCacheTest {
         String tenantName = "tenant";
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
-        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext);
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName)));
+        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
 
-        ComponentsStore store = EasyMock.createMock(ComponentsStore.class);
-        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store);
-        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock());
+        ComponentStore store = EasyMock.createMock(ComponentStore.class);
+        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
+        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
         final boolean[] ok = {false};
         EasyMock.expectLastCall().andAnswer(new IAnswer() {
@@ -83,12 +83,12 @@ public class ComponentsCacheTest {
         String componentID = "id";
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
-        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext);
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName)));
+        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
 
-        ComponentsStore store = EasyMock.createMock(ComponentsStore.class);
+        ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
-        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock());
+        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
 
         store.removeConfiguration(EasyMock.anyString());
@@ -109,6 +109,25 @@ public class ComponentsCacheTest {
         cache.putComponent(tenantName, mockTenantContext, componentStoreHolder );
         cache.removeConfiguration(componentID, mockTenantContext);
         Assert.assertTrue(ok[0]);
+    }
+
+
+    private TenantContext getTenantContextMock() {
+        TenantContext tenantContext = createNiceMock(TenantContext.class);
+        expect(tenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
+        replay(tenantContext);
+
+        return tenantContext;
+    }
+
+
+    private ComponentConfiguration getComponentConfigurationMock() {
+        ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
+        expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        replay(componentConfiguration);
+
+        return componentConfiguration;
     }
 
     private DataCleanerConfiguration getDCConfigurationMock() {
@@ -154,23 +173,21 @@ public class ComponentsCacheTest {
         expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
         expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
-        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
-        Class<? extends TransformerDescriptor> clazz = transformerDescriptor.getClass();
-        //expect(transformerDescriptor.getClass()).andReturn().anyTimes(); // mytodo
-        //expect(transformerDescriptor.getClass()).andReturn((Class) clazz).anyTimes();
         expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
+        expect(transformerDescriptor.getAnnotation(WSStatelessComponent.class)).andReturn(getAnnotationMock()).anyTimes();
         replay(transformerDescriptor);
 
         return transformerDescriptor;
     }
 
-    private JsonNode getJsonNodeMock() {
-        JsonNode jsonNode = createNiceMock(JsonNode.class);
-        Set set = new HashSet();
-        expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
-        replay(jsonNode);
+    private Annotation getAnnotationMock() {
+        Annotation annotation = createNiceMock(Annotation.class);
+        replay(annotation);
 
-        return jsonNode;
+        return annotation;
     }
+
 
 }

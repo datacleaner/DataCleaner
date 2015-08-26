@@ -19,6 +19,7 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
@@ -28,19 +29,31 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
  * @since 18.8.15
  */
 public class ComponentsFactory {
+
     /**
      * Creates new Handler from configuration
-     *
      * @param tenantContext
      * @param componentName
      * @param configuration
      * @return
+     * @throws RuntimeException
      */
-    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName, ComponentConfiguration configuration) {
+    public static ComponentHandler createComponent(TenantContext tenantContext, String componentName, ComponentConfiguration configuration)
+            throws RuntimeException {
+        boolean isStateless = tenantContext.getConfiguration().getEnvironment()
+                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
+                .getAnnotation(WSStatelessComponent.class) != null;
+
+        if (! isStateless) {
+            throw new RuntimeException(
+                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
+        }
+
         ComponentHandler handler = new ComponentHandler(
                 tenantContext.getConfiguration(),
                 componentName);
         handler.createComponent(configuration);
+
         return handler;
     }
 }

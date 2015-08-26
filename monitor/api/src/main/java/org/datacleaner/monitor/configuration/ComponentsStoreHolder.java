@@ -22,13 +22,15 @@ package org.datacleaner.monitor.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
+
 /**
  * Class ComponentsStoreHolder
  * Object for storing to component cache.
  * 
  * @since 11.8.15
  */
-public class ComponentsStoreHolder {
+public class ComponentsStoreHolder implements Serializable {
 
     private long timeout;
     private long useTimestamp;

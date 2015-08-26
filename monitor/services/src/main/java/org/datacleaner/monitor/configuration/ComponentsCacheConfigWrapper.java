@@ -80,6 +80,4 @@ public class ComponentsCacheConfigWrapper {
     public boolean isValid() {
         return componentsStoreHolder.isValid();
     }
-
-
 }

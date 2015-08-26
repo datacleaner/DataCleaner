@@ -29,6 +29,7 @@ import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.ComponentList;
+import org.datacleaner.monitor.server.components.ComponentNotFoundException;
 import org.datacleaner.monitor.server.components.ProcessInput;
 import org.datacleaner.monitor.server.components.ProcessStatelessInput;
 import org.junit.Before;
@@ -206,7 +207,7 @@ public class ComponentsControllerV1Test {
 
     }
 
-    @Test
+    @Test(expected = ComponentNotFoundException.class)
     public void testDeleteComponent() throws Exception {
         componentsControllerV1.deleteComponent(tenant, id);
     }

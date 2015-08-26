@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
@@ -34,10 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Collection;
-import java.util.UUID;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -115,8 +110,8 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public String createComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
+            @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = unURLify(name);
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -175,25 +170,6 @@ public class ComponentsControllerV1 implements ComponentsController {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-    }
-
-    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
-            throws RuntimeException {
-        boolean isStateless = _tenantContextFactory.getContext(tenant).getConfiguration().getEnvironment()
-                .getDescriptorProvider().getTransformerDescriptorByDisplayName(componentName)
-                .getAnnotation(WSStatelessComponent.class) != null;
-
-        if (! isStateless) {
-            throw new RuntimeException(
-                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
-        }
-
-        ComponentHandler handler = new ComponentHandler(
-                _tenantContextFactory.getContext(tenant).getConfiguration(),
-                componentName);
-        handler.createComponent(configuration);
-
-        return handler;
     }
 
     private String unURLify(String url) {

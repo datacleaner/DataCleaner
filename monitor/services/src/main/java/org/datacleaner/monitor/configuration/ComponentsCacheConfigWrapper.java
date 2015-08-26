@@ -19,66 +19,65 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.io.Serializable;
+import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
- * Class ComponentsCacheConfigWrapper
- * Simple wrapper for store to cache with expiration time.
- *
+ * Class ComponentsCacheConfigWrapper Simple wrapper for store to cache with expiration time.
+ * 
+ * @author k.houzvicka
  * @since 28.7.15
  */
-public class ComponentsCacheConfigWrapper implements Serializable {
+public class ComponentsCacheConfigWrapper {
+    private String tenantName;
 
+    private ComponentsStoreHolder componentsStoreHolder;
 
-    ComponentConfigHolder componentConfigHolder;
-
-    long expirationTime;
-
-    @JsonIgnore
-    private boolean update = false;
+    private ComponentHandler handler;
 
     public ComponentsCacheConfigWrapper() {
     }
 
-    public ComponentsCacheConfigWrapper(ComponentConfigHolder componentConfigHolder) {
-        expirationTime = componentConfigHolder.timeoutMs + System.currentTimeMillis();
-        this.componentConfigHolder = componentConfigHolder;
+    public ComponentsCacheConfigWrapper(String tenantName, ComponentsStoreHolder componentsStoreHolder, ComponentHandler handler) {
+        this.tenantName = tenantName;
+        this.componentsStoreHolder = componentsStoreHolder;
+        this.handler = handler;
+        componentsStoreHolder.updateTimeStamp();
     }
 
-    public ComponentConfigHolder getComponentConfigHolder() {
-        return componentConfigHolder;
+    public String getTenantName() {
+        return tenantName;
     }
 
-    public void setComponentConfigHolder(ComponentConfigHolder componentConfigHolder) {
-        this.componentConfigHolder = componentConfigHolder;
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
     }
 
-    public long getExpirationTime() {
-        return expirationTime;
+    public ComponentsStoreHolder getComponentsStoreHolder() {
+        return componentsStoreHolder;
     }
 
-    public void setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
+    public void setComponentsStoreHolder(ComponentsStoreHolder componentsStoreHolder) {
+        this.componentsStoreHolder = componentsStoreHolder;
     }
 
-    public void updateStore() {
-        update = true;
+    public ComponentHandler getHandler() {
+        return handler;
     }
 
-    public boolean mustBeUpdated() {
-        return update;
+    public void setHandler(ComponentHandler handler) {
+        this.handler = handler;
     }
 
-    public void updated() {
-        update = false;
+    public void updateTimeStamp(){
+        componentsStoreHolder.updateTimeStamp();
     }
 
-    public void updateExpirationTime() {
-        expirationTime = componentConfigHolder.timeoutMs + System.currentTimeMillis();
-        updateStore();
+    /**
+     * Check expiration of configuration
+     *
+     * @return
+     */
+    public boolean isValid() {
+        return componentsStoreHolder.isValid();
     }
-
-
 }

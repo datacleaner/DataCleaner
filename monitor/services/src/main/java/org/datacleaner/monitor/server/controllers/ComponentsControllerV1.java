@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Collection;
 import java.util.UUID;
@@ -39,18 +39,25 @@ import java.util.UUID;
 /**
  * Controller for DataCleaner components (transformers and analyzers). It enables to use a particular component
  * and provide the input data separately without any need of the whole job or datastore configuration.
+ * @author k.houzvicka, j.horcicka
  * @since 8. 7. 2015
  */
 @Controller
 public class ComponentsControllerV1 implements ComponentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
+    private ComponentsCache _componentsCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-    private ComponentsCache _componentsCache = new ComponentsCache();
+  
+
+    @PostConstruct
+    public void init() {
+        _componentsCache = new ComponentsCache(_tenantContextFactory);
+    }
 
     @PreDestroy
     public void close() throws InterruptedException {
@@ -70,11 +77,6 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
-                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
-                continue;
-            }
-
             componentList.add(tenant, descriptor);
         }
 
@@ -94,7 +96,8 @@ public class ComponentsControllerV1 implements ComponentsController {
             @RequestBody final ProcessStatelessInput processStatelessInput) {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
-        ComponentHandler handler = createComponent(tenant, decodedName, processStatelessInput.configuration);
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentHandler handler =  ComponentsFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();
@@ -106,17 +109,18 @@ public class ComponentsControllerV1 implements ComponentsController {
      */
     public String createComponent(
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
-            @PathVariable(PARAMETER_NAME_NAME) final String name,
-            @RequestParam(value = "timeout", required = false, defaultValue = "60000") final String timeout,
+            @PathVariable(PARAMETER_NAME_NAME) final String name,              //1 day
+            @RequestParam(value = "timeout", required = false, defaultValue = "86400000") final String timeout,
             @RequestBody final CreateInput createInput) {
         String decodedName = unURLify(name);
-        ComponentHandler handler = createComponent(tenant, decodedName, createInput.configuration);
-        String id = UUID.randomUUID().toString();
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentStore store = tenantContext.getComponentsStore();
+        String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
-        store.storeConfiguration(new ComponentsStoreHolder(longTimeout, createInput, id, decodedName));
-         _componentsCache.putComponent(new ComponentConfigHolder(longTimeout, createInput, id, decodedName, handler));
+        _componentsCache.putComponent(
+                tenant,
+                tenantContext,
+                new ComponentsStoreHolder(longTimeout, createInput, id, decodedName)
+        );
         return id;
     }
 
@@ -128,20 +132,12 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(PARAMETER_NAME_ID) final String id,
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
-        ComponentConfigHolder config = _componentsCache.getConfigHolder(id);
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        ComponentsCacheConfigWrapper config = _componentsCache.getConfigHolder(id, tenant, tenantContext);
         if(config == null){
-            TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-            ComponentStore store = tenantContext.getComponentsStore();
-            ComponentsStoreHolder storeConfig = store.getConfiguration(id);
-            if(storeConfig == null){
-                LOGGER.warn("Component with id {} does not exist.", id);
-                throw ComponentNotFoundException.createInstanceNotFound(id);
-            }
-            ComponentHandler newHandler = createComponent(tenant, storeConfig.getComponentName(), storeConfig.getCreateInput().configuration);
-            config = new ComponentConfigHolder(storeConfig.getTimeout(), storeConfig.getCreateInput(), storeConfig.getComponentId(), storeConfig.getComponentName(), newHandler);
-            _componentsCache.putComponent(config);
+            LOGGER.warn("Component with id {} does not exist.", id);
+            throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -167,32 +163,12 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
             @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
-        boolean inCache = false;
-        boolean inStore = false;
-        if (_componentsCache.contains(id)) {
-            _componentsCache.removeConfiguration(id);
-            inCache = true;
-        }
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentStore store = tenantContext.getComponentsStore();
-        if (store.getConfiguration(id) != null) {
-            store.removeConfiguration(id);
-            inStore = true;
-        }
-        if ((inCache || inStore) == false) {
+        boolean isHere = _componentsCache.removeConfiguration(id, tenantContext);
+        if (!isHere) {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
         }
-    }
-
-    private ComponentHandler createComponent(String tenant, String componentName, ComponentConfiguration configuration)
-            throws RuntimeException {
-        ComponentHandler handler = new ComponentHandler(
-                _tenantContextFactory.getContext(tenant).getConfiguration(),
-                componentName);
-        handler.createComponent(configuration);
-
-        return handler;
     }
 
     private String unURLify(String url) {

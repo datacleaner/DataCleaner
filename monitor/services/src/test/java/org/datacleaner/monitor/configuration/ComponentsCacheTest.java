@@ -19,14 +19,25 @@
  */
 package org.datacleaner.monitor.configuration;
 
-import com.google.common.io.Files;
-import org.datacleaner.repository.Repository;
-import org.datacleaner.repository.file.FileRepository;
-import org.datacleaner.repository.file.FileRepositoryFolder;
+import org.datacleaner.api.WSStatelessComponent;
+import org.datacleaner.beans.transform.ConcatenatorTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.InjectionManagerFactory;
+import org.datacleaner.descriptors.DescriptorProvider;
+import org.datacleaner.descriptors.TransformerDescriptor;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * Class ComponentsCacheTest
@@ -35,25 +46,148 @@ import java.io.File;
  */
 public class ComponentsCacheTest {
 
+    private String componentName = "name";
+
     @Test
-    public void testCache() throws Exception {
-        File tempFolder = Files.createTempDir();
-        tempFolder.deleteOnExit();
+    public void testCacheStoreNewConfiguration() throws Exception {
+        String tenantName = "tenant";
+        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
+        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
+        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
 
-        FileRepositoryFolder repo = new FileRepositoryFolder(null, tempFolder);
-        Repository repository = new FileRepository(repo.getFile());
-
-        ComponentsCache cache = new ComponentsCache();
-        ComponentConfigHolder conf1 = createConfigHolder("C1");
-        ComponentConfigHolder conf2 = createConfigHolder("C2");
-        cache.putComponent(conf1);
-        cache.putComponent(conf2);
-        Assert.assertEquals(conf1, cache.getConfigHolder(conf1.componentId));
-        Assert.assertEquals(conf2, cache.getConfigHolder(conf2.componentId));
-        cache.close();
+        ComponentStore store = EasyMock.createMock(ComponentStore.class);
+        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
+        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
+        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
+        final boolean[] ok = {false};
+        EasyMock.expectLastCall().andAnswer(new IAnswer() {
+            public Object answer() {
+                ok[0] = true;
+                 return null;
+            }
+        });
+        EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
+        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = new ComponentConfiguration();
+        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, "id", componentName);
+        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder);
+        Assert.assertTrue(ok[0]);
+        Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentsStoreHolder());
     }
 
-    private ComponentConfigHolder createConfigHolder(String componentId) {
-        return new ComponentConfigHolder(10l, new CreateInput(), componentId, "Component", null);
+    @Test
+    public void testCacheRemoveConfig() throws Exception {
+        String tenantName = "tenant";
+        String componentID = "id";
+        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
+        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
+        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
+
+        ComponentStore store = EasyMock.createMock(ComponentStore.class);
+        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
+        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
+        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
+
+        store.removeConfiguration(EasyMock.anyString());
+        final boolean[] ok = {false};
+        EasyMock.expectLastCall().andAnswer(new IAnswer() {
+            public Object answer() {
+                ok[0] = true;
+                return true;
+            }
+        });
+
+        EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
+        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = new ComponentConfiguration();
+
+        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, componentID, componentName);
+        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder );
+        cache.removeConfiguration(componentID, mockTenantContext);
+        Assert.assertTrue(ok[0]);
     }
+
+
+    private TenantContext getTenantContextMock() {
+        TenantContext tenantContext = createNiceMock(TenantContext.class);
+        expect(tenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
+        replay(tenantContext);
+
+        return tenantContext;
+    }
+
+
+    private ComponentConfiguration getComponentConfigurationMock() {
+        ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
+        expect(componentConfiguration.getColumns()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        expect(componentConfiguration.getPropertiesNames()).andReturn(Collections.EMPTY_LIST).anyTimes();
+        replay(componentConfiguration);
+
+        return componentConfiguration;
+    }
+
+    private DataCleanerConfiguration getDCConfigurationMock() {
+        DataCleanerConfiguration dataCleanerConfiguration = createNiceMock(DataCleanerConfiguration.class);
+        expect(dataCleanerConfiguration.getEnvironment()).andReturn(getEnvironmentMock()).anyTimes();
+        replay(dataCleanerConfiguration);
+
+        return dataCleanerConfiguration;
+    }
+
+    private DataCleanerEnvironment getEnvironmentMock() {
+        DataCleanerEnvironment dataCleanerEnvironment = createNiceMock(DataCleanerEnvironment.class);
+        expect(dataCleanerEnvironment.getDescriptorProvider()).andReturn(getDescriptorProviderMock()).anyTimes();
+        expect(dataCleanerEnvironment.getInjectionManagerFactory()).andReturn(getInjectionManagerFactoryMock()).anyTimes();
+        replay(dataCleanerEnvironment);
+
+        return dataCleanerEnvironment;
+    }
+
+    private InjectionManagerFactory getInjectionManagerFactoryMock() {
+        InjectionManagerFactory injectionManagerFactory = createNiceMock(InjectionManagerFactory.class);
+        expect(injectionManagerFactory.getInjectionManager(null)).andReturn(null).anyTimes();
+        replay(injectionManagerFactory);
+
+        return injectionManagerFactory;
+    }
+
+    private DescriptorProvider getDescriptorProviderMock() {
+        DescriptorProvider descriptorProvider = createNiceMock(DescriptorProvider.class);
+        Set<TransformerDescriptor<?>> transformerDescriptorSet = new HashSet<>();
+        TransformerDescriptor transformerDescriptorMock = getTransformerDescriptorMock();
+        transformerDescriptorSet.add(transformerDescriptorMock);
+        expect(descriptorProvider.getTransformerDescriptors()).andReturn(transformerDescriptorSet).anyTimes();
+        expect(descriptorProvider.getTransformerDescriptorByDisplayName(componentName)).andReturn(transformerDescriptorMock).anyTimes();
+        replay(descriptorProvider);
+
+        return descriptorProvider;
+    }
+
+    private TransformerDescriptor getTransformerDescriptorMock() {
+        TransformerDescriptor transformerDescriptor = createNiceMock(TransformerDescriptor.class);
+        expect(transformerDescriptor.getDisplayName()).andReturn(componentName).anyTimes();
+        expect(transformerDescriptor.getProvidedProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getValidateMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getInitializeMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getCloseMethods()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.getConfiguredProperties()).andReturn(Collections.EMPTY_SET).anyTimes();
+        expect(transformerDescriptor.newInstance()).andReturn(new ConcatenatorTransformer()).anyTimes();
+        expect(transformerDescriptor.getAnnotation(WSStatelessComponent.class)).andReturn(getAnnotationMock()).anyTimes();
+        replay(transformerDescriptor);
+
+        return transformerDescriptor;
+    }
+
+    private Annotation getAnnotationMock() {
+        Annotation annotation = createNiceMock(Annotation.class);
+        replay(annotation);
+
+        return annotation;
+    }
+
+
 }

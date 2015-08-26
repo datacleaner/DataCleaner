@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import java.util.List;
+
 /**
  * Class ComponentsStore
  *
@@ -30,5 +32,7 @@ public interface ComponentStore {
 
     public void storeConfiguration(final ComponentsStoreHolder configuration);
 
-    public void removeConfiguration(String componentId);
+    public boolean removeConfiguration(String componentId);
+
+    public List<ComponentsStoreHolder> getAllConfiguration();
 }

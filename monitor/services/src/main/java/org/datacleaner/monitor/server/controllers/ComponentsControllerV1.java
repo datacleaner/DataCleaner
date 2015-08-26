@@ -22,6 +22,7 @@ package org.datacleaner.monitor.server.controllers;
 import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
 import org.slf4j.Logger;
@@ -189,7 +190,7 @@ public class ComponentsControllerV1 implements ComponentsController {
                 .getAnnotation(WSStatelessComponent.class) != null;
 
         if (! isStateless) {
-            throw new RuntimeException(
+            throw new ComponentConfigurationException(
                     "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
         }
 

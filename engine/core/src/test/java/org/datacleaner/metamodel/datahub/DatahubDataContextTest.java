@@ -25,19 +25,21 @@ import junit.framework.TestCase;
 
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
+import org.apache.metamodel.query.OperatorType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 
-
+/**
+ * Integration test, can only run if mdm is running on the expected host and port
+ * @author hetty
+ *
+ */
 public class DatahubDataContextTest extends TestCase  
 {
-    public void testDummy() {
-        // there should be at least one test  method
-    }
-    
-    public void testMDMRepoGetSchema() {
+
+    private DatahubDataContext createContext() {
         String host = "mdmregtest.humaninference.com";
         Integer port = 8443;
         String tenantId = "mdmregtest";
@@ -46,8 +48,16 @@ public class DatahubDataContextTest extends TestCase
         String securityMode = "cas";
         String username = "cdiadmin";
         String password = "cdi123";
+        return new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
+    }
+
+    public void testDummy() {
         
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
+    }
+
+    public void testMDMRepoGetSchema() {
+        
+        DatahubDataContext context = createContext();
         Schema schema = context.getSchemaByName("GoldenRecords");
         assertEquals(2, schema.getTableCount());
         assertEquals(162, schema.getTableByName("person").getColumnCount());
@@ -55,17 +65,8 @@ public class DatahubDataContextTest extends TestCase
         
     }
 
-    public void xtestExecuteQuery() {
-        String host = "mdmregtest.humaninference.com";
-        Integer port = 8443;
-        String tenantId = "mdmregtest";
-        boolean https = true;
-        boolean acceptUnverifiedSslPeers = true;
-        String securityMode = "cas";
-        String username = "cdiadmin";
-        String password = "cdi123";
-        
-        DatahubDataContext context = new DatahubDataContext(host, port, username, password, tenantId, https, acceptUnverifiedSslPeers, securityMode);
+    public void testExecuteQuery() {
+        DatahubDataContext context = createContext();
         Schema schema = context.getSchemaByName("GoldenRecords");
         Table personTable = schema.getTableByName("person");
         Column[] columns = personTable.getColumns();
@@ -73,12 +74,39 @@ public class DatahubDataContextTest extends TestCase
         Query query = new Query();
         query.select(columns);
         query.from(personTable);
+        query.setMaxRows(50);
+        query.setFirstRow(1);
         DataSet result = context.executeQuery(query);
         List<Row> rows = result.toRows();
         assertEquals(50, rows.size());
-        assertNotNull(result);
         assertTrue(result.next());
         assertEquals(columns.length, result.getRow().size());
         
     }
+    
+    public void testExecuteQueryWithWhereClause() {
+        
+        DatahubDataContext context = createContext();
+        Schema schema = context.getSchemaByName("GoldenRecords");
+        Table personTable = schema.getTableByName("person");
+        Column[] columns = personTable.getColumns();
+        Column whereColumn = personTable.getColumnByName("name1.name");
+
+        Query query = new Query();
+        query.select(columns);
+        query.from(personTable);
+        query.setMaxRows(50);
+        query.setFirstRow(1);
+        query.where(whereColumn, OperatorType.EQUALS_TO, "Dimmendaal");
+        
+        DataSet result = context.executeQuery(query);
+        
+        List<Row> rows = result.toRows();
+        assertEquals(1, rows.size());
+        assertTrue(result.next());
+        Row resultRow = result.getRow();
+        assertEquals("Dimmendaal", resultRow.getValue(whereColumn));
+        
+    }
+
 }

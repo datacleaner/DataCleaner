@@ -103,7 +103,8 @@ public class DatahubDataContext extends AbstractDataContext implements
             HttpEntity entity = response.getEntity();
             JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
-                DatahubSchema schema = parser.parseJsonSchema(entity.getContent());
+                DatahubSchema schema = parser.parseJsonSchema(entity
+                        .getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
             } catch (Exception e) {
@@ -117,27 +118,29 @@ public class DatahubDataContext extends AbstractDataContext implements
     public void executeUpdate(UpdateScript arg0) {
         // TODO Auto-generated method stub
     }
-
+    
     @Override
     public DataSet executeQuery(final Query query) {
         Table table = query.getFromClause().getItem(0).getTable();
         final Column[] columns = createColumns(query);
-        
-        String internalSchemaName = table.getSchema().getName();
-        String queryString = getQueryString(query, table, internalSchemaName);        
-        String dataStoreName = ((DatahubSchema) table.getSchema()).getDatastoreName();//.replaceAll("\\s+", "+");
+        String dataStoreName = ((DatahubSchema) table.getSchema())
+                .getDatastoreName();
+        String queryString = getQueryString(table, query);
 
         List<NameValuePair> params = new ArrayList<>();
-        final Integer firstRow = (query.getFirstRow() == null ? 1 : query.getFirstRow());
-        final Integer maxRows = (query.getMaxRows() == null ? -1 : query.getMaxRows());
+        final Integer firstRow = (query.getFirstRow() == null ? 1 : query
+                .getFirstRow());
+        final Integer maxRows = (query.getMaxRows() == null ? -1 : query
+                .getMaxRows());
         params.add(new BasicNameValuePair("q", queryString));
         params.add(new BasicNameValuePair("f", firstRow.toString()));
         params.add(new BasicNameValuePair("m", maxRows.toString()));
         String paramString = URLEncodedUtils.format(params, "utf-8");
 
-        String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores" + "/"
-                + dataStoreName + ".query?") + paramString;
-        
+        String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores"
+                + "/" + dataStoreName + ".query?")
+                + paramString;
+
         HttpGet request = new HttpGet(uri);
         request.addHeader("Accept", "application/json");
         HttpResponse response = executeRequest(request);
@@ -150,6 +153,15 @@ public class DatahubDataContext extends AbstractDataContext implements
         }
     }
 
+    private String getQueryString(Table table, Query query) {
+        String queryString = query.toSql();
+        queryString = queryString.replace(table.getName() + ".", "");        
+        return queryString;
+
+    }
+    
+
+
     private Column[] createColumns(final Query query) {
         final List<SelectItem> selectItems = query.getSelectClause().getItems();
         final Column[] columns = new Column[selectItems.size()];
@@ -158,16 +170,6 @@ public class DatahubDataContext extends AbstractDataContext implements
             columns[i++] = selectItem.getColumn();
         }
         return columns;
-    }
-
-    private String getQueryString(final Query query, Table table,
-            String internalSchemaName) {
-        String queryString = query.toSql();
-        queryString = queryString.replace(internalSchemaName + ".", "");
-        queryString = queryString.replace(table.getName() + ".", "");        
-        queryString = queryString.replace(", ", ",");
-//        queryString = queryString.replaceAll("\\s+", "+");
-        return queryString;
     }
 
     private List<String> getDataStoreNames() {

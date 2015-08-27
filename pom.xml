@@ -43,7 +43,6 @@
 		</repository>
 	</repositories>
 	
-	
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>4.1-SNAPSHOT</version>

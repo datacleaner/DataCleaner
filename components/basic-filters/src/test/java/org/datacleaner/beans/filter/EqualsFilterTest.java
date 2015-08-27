@@ -33,6 +33,12 @@ import org.datacleaner.test.TestHelper;
 public class EqualsFilterTest extends TestCase {
     
     private Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
+    
+    public void testCompareToEnum() throws Exception {
+        EqualsFilter f = new EqualsFilter(new String[] { "VALID" }, new MockInputColumn<String>("col", String.class));
+        assertEquals(ValidationCategory.VALID, f.filter(ValidationCategory.VALID));
+        assertEquals(ValidationCategory.INVALID, f.filter(ValidationCategory.INVALID));
+    }
 
     public void testSingleString() throws Exception {
         EqualsFilter f = new EqualsFilter(new String[] { "hello" }, new MockInputColumn<String>("col", String.class));

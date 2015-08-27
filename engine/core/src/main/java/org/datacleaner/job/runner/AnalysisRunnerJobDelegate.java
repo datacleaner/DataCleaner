@@ -19,9 +19,7 @@
  */
 package org.datacleaner.job.runner;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Queue;
 
 import org.apache.metamodel.schema.Table;
@@ -34,13 +32,10 @@ import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.TransformerJob;
-import org.datacleaner.job.concurrent.ForkTaskListener;
 import org.datacleaner.job.concurrent.JobCompletionTaskListener;
 import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.TaskListener;
-import org.datacleaner.job.concurrent.TaskRunnable;
 import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.tasks.CloseReferenceDataTaskListener;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
@@ -126,7 +121,7 @@ final class AnalysisRunnerJobDelegate {
             // A task listener that will register either succesfull executions
             // or unexpected errors (which will be delegated to the
             // errorListener)
-            JobCompletionTaskListener jobCompletionTaskListener = new JobCompletionTaskListener(analysisJobMetrics,
+            final JobCompletionTaskListener jobCompletionTaskListener = new JobCompletionTaskListener(analysisJobMetrics,
                     _analysisListener, 1);
 
             _analysisListener.jobBegin(_job, analysisJobMetrics);
@@ -141,7 +136,7 @@ final class AnalysisRunnerJobDelegate {
 
             return new AnalysisResultFutureImpl(_resultQueue, jobCompletionTaskListener, _errorAware);
         } catch (RuntimeException e) {
-            _analysisListener.errorUknown(_job, e);
+            _analysisListener.errorUnknown(_job, e);
             throw e;
         }
 
@@ -158,19 +153,13 @@ final class AnalysisRunnerJobDelegate {
     private void scheduleRowProcessing(RowProcessingPublishers publishers, LifeCycleHelper lifeCycleHelper,
             JobCompletionTaskListener jobCompletionTaskListener, AnalysisJobMetrics analysisJobMetrics) {
 
-        logger.info("Created {} row processor publishers", publishers.size());
-
-        final List<TaskRunnable> finalTasks = new ArrayList<TaskRunnable>(2);
-        finalTasks.add(new TaskRunnable(null, jobCompletionTaskListener));
-        finalTasks.add(new TaskRunnable(null, new CloseReferenceDataTaskListener(lifeCycleHelper)));
-
-        final ForkTaskListener finalTaskListener = new ForkTaskListener("All row consumers finished", _taskRunner,
-                finalTasks);
-
+        logger.info("Created {} row processor publisher(s)", publishers.size());
         final TaskListener rowProcessorPublishersDoneCompletionListener = new JoinTaskListener(publishers.size(),
-                finalTaskListener);
+                jobCompletionTaskListener);
 
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
+        logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
+        
         for (RowProcessingPublisher rowProcessingPublisher : rowProcessingPublishers) {
             logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
             rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);

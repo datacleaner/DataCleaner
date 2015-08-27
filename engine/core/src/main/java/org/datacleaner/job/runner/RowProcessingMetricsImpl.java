@@ -23,6 +23,7 @@ import org.datacleaner.components.convert.ConvertToNumberTransformer;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Table;
@@ -61,6 +62,11 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
         final Integer expectedRows = _expectedRows.get();
         return expectedRows.intValue();
     }
+    
+    @Override
+    public ComponentJob[] getResultProducers() {
+        return _publisher.getResultProducers();
+    }
 
     @Override
     public AnalyzerJob[] getAnalyzerJobs() {
@@ -83,7 +89,7 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
                     countQuery.selectCount();
                     countQuery.getSelectClause().getItem(0).setFunctionApproximationAllowed(true);
 
-                    final Datastore datastore = _publishers.getDatastore();
+                    final Datastore datastore = _publisher.getDatastore();
                     try (final DatastoreConnection connection = datastore.openConnection()) {
                         try (final DataSet countDataSet = connection.getDataContext().executeQuery(countQuery)) {
                             if (countDataSet.next()) {
@@ -106,5 +112,4 @@ final class RowProcessingMetricsImpl implements RowProcessingMetrics {
             }
         };
     }
-
 }

@@ -28,9 +28,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.panels.ComponentBuilderPresenter;
@@ -42,6 +42,7 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.ChangeRequirementButton;
+import org.datacleaner.widgets.ChangeRequirementMenu;
 import org.datacleaner.widgets.visualization.JobGraph;
 
 /**
@@ -56,7 +57,7 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
     private final ComponentBuilder _componentBuilder;
 
     public ComponentConfigurationDialog(WindowContext windowContext, ComponentBuilder componentBuilder,
-            AnalysisJobBuilder analysisJobBuilder, ComponentBuilderPresenter presenter) {
+            ComponentBuilderPresenter presenter) {
         // super(null,
         // ImageManager.get().getImage("images/window/banner-logo.png"));
         super(windowContext, getBannerImage(componentBuilder));
@@ -109,7 +110,15 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             }
         });
 
-        banner.add(new ChangeRequirementButton(_componentBuilder));
+        final JButton documentationButton = WidgetFactory.createDefaultButton("Documentation",
+                IconUtils.MENU_DOCUMENTATION);
+        documentationButton.addActionListener(new ComponentReferenceDocumentationActionListener(_componentBuilder
+                .getAnalysisJobBuilder().getConfiguration(), _componentBuilder.getDescriptor()));
+
+        banner.add(documentationButton);
+        if (ChangeRequirementMenu.isRelevant(_componentBuilder)) {
+            banner.add(new ChangeRequirementButton(_componentBuilder));
+        }
         banner.add(renameButton);
 
         return banner;

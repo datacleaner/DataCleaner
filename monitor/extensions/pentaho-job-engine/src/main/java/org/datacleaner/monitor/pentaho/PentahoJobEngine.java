@@ -394,11 +394,15 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
                 final PentahoJobContext pentahoJobContext = (PentahoJobContext) job;
                 final PentahoJobType pentahoJobType = pentahoJobContext.getPentahoJobType();
                 final PentahoCarteClient client = new PentahoCarteClient(pentahoJobType);
-                final String url = client.getUrl("transStatus");
-                final HttpResponse response = client.execute(new HttpGet(url));
-                final Document document = client.parse(response.getEntity());
-                final String documentString = createDocumentString(document);
-                pentahoJobResult = new PentahoJobResult(documentString);
+                try {
+                    final String url = client.getUrl("transStatus");
+                    final HttpResponse response = client.execute(new HttpGet(url));
+                    final Document document = client.parse(response.getEntity());
+                    final String documentString = createDocumentString(document);
+                    pentahoJobResult = new PentahoJobResult(documentString);
+                } finally {
+                    client.close();
+                }
             } else {
                 // we'll fetch the step names locally from the result file
                 final AnalysisResult analysisResult = result.getAnalysisResult();

@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.OutputWriter;
 import org.apache.metamodel.UpdateCallback;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
@@ -34,65 +32,76 @@ import org.apache.metamodel.excel.ExcelDataContext;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.MutableRef;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.output.OutputWriter;
 
 public final class ExcelOutputWriterFactory {
 
-	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-	private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
+    private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
+    private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
 
-	public static OutputWriter getWriter(String filename, String sheetName, final InputColumn<?>... columns) {
-		ExcelOutputWriter outputWriter;
-		synchronized (dataContexts) {
-			UpdateableDataContext dataContext = dataContexts.get(filename);
-			if (dataContext == null) {
+    public static OutputWriter getWriter(String filename, String sheetName, String[] columnNames,
+            final InputColumn<?>... columns) {
+        ExcelOutputWriter outputWriter;
 
-				File file = new File(filename);
-				dataContext = new ExcelDataContext(file);
+        if (columnNames == null || columnNames.length != columns.length) {
+            columnNames = new String[columns.length];
+            for (int i = 0; i < columns.length; i++) {
+                columnNames[i] = columns[i].getName();
+            }
+        }
 
-				Table table = getTable(dataContext, sheetName, columns);
+        synchronized (dataContexts) {
+            UpdateableDataContext dataContext = dataContexts.get(filename);
+            if (dataContext == null) {
 
-				dataContexts.put(filename, dataContext);
-				counters.put(filename, new AtomicInteger(1));
-				outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
+                File file = new File(filename);
+                dataContext = new ExcelDataContext(file);
 
-				// write the headers
-			} else {
-				Table table = getTable(dataContext, sheetName, columns);
-				outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
-				counters.get(filename).incrementAndGet();
-			}
-		}
+                Table table = getTable(dataContext, sheetName, columnNames);
 
-		return outputWriter;
-	}
+                dataContexts.put(filename, dataContext);
+                counters.put(filename, new AtomicInteger(1));
+                outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
 
-	private static Table getTable(UpdateableDataContext dataContext, final String sheetName, final InputColumn<?>[] columns) {
-		final Schema schema = dataContext.getDefaultSchema();
-		Table table = schema.getTableByName(sheetName);
-		if (table == null) {
-			final MutableRef<Table> tableRef = new MutableRef<Table>();
-			dataContext.executeUpdate(new UpdateScript() {
-				@Override
-				public void run(UpdateCallback callback) {
-					TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
-					for (InputColumn<?> inputColumn : columns) {
-						tableBuilder.withColumn(inputColumn.getName());
-					}
-					tableRef.set(tableBuilder.execute());
-				}
-			});
-			table = tableRef.get();
-		}
-		return table;
-	}
+                // write the headers
+            } else {
+                Table table = getTable(dataContext, sheetName, columnNames);
+                outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
+                counters.get(filename).incrementAndGet();
+            }
+        }
 
-	protected static void release(String filename) {
-		int count = counters.get(filename).decrementAndGet();
-		if (count == 0) {
-			synchronized (dataContexts) {
-				dataContexts.remove(filename);
-			}
-		}
-	}
+        return outputWriter;
+    }
+
+    private static Table getTable(UpdateableDataContext dataContext, final String sheetName, final String[] columnNames) {
+        final Schema schema = dataContext.getDefaultSchema();
+        Table table = schema.getTableByName(sheetName);
+        if (table == null) {
+            final MutableRef<Table> tableRef = new MutableRef<Table>();
+            dataContext.executeUpdate(new UpdateScript() {
+                @Override
+                public void run(UpdateCallback callback) {
+                    TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
+                    for (String columnName : columnNames) {
+                        tableBuilder.withColumn(columnName);
+                    }
+                    tableRef.set(tableBuilder.execute());
+                }
+            });
+            table = tableRef.get();
+        }
+        return table;
+    }
+
+    protected static void release(String filename) {
+        int count = counters.get(filename).decrementAndGet();
+        if (count == 0) {
+            synchronized (dataContexts) {
+                dataContexts.remove(filename);
+            }
+        }
+    }
 
 }

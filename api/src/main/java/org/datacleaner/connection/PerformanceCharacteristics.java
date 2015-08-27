@@ -19,12 +19,14 @@
  */
 package org.datacleaner.connection;
 
+import java.io.Serializable;
+
 /**
  * Represents the performance characteristics of a {@link Datastore}.
  * Performance characteristics can be used to optimize the execution plan of a
  * job or interaction with the datastore.
  */
-public interface PerformanceCharacteristics {
+public interface PerformanceCharacteristics extends Serializable {
 
     /**
      * If the datastore has it's own (native) query engine, it is often best to

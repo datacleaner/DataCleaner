@@ -25,8 +25,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 
 /**
  * Default {@link DisplayChartCallback} implementation.
- * 
- * @author Kasper Sørensen
  */
 public class DisplayChartCallbackImpl implements DisplayChartCallback {
 

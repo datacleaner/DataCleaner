@@ -83,7 +83,7 @@ public class UniqueKeyCheckAnalyzerResultSwingRenderer extends AbstractRenderer<
         chart.setSubtitles(subTitles);
 
         ChartUtils.applyStyles(chart);
-        ChartPanel chartPanel = new ChartPanel(chart);
+        ChartPanel chartPanel = ChartUtils.createPanel(chart, false);
 
         final DCPanel leftPanel = new DCPanel();
         leftPanel.setLayout(new VerticalLayout());

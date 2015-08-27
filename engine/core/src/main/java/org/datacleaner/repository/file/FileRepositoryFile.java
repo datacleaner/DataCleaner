@@ -60,6 +60,16 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
         _lock = new ReentrantReadWriteLock();
     }
 
+    /**
+     * Gets the physical {@link File} that is backing this
+     * {@link RepositoryFile} instance.
+     * 
+     * @return
+     */
+    public File getFile() {
+        return _file;
+    }
+
     @Override
     public RepositoryFolder getParent() {
         return _parent;
@@ -146,6 +156,16 @@ public final class FileRepositoryFile extends AbstractRepositoryNode implements 
             }
         } finally {
             readLock.unlock();
+        }
+    }
+    
+
+    @Override
+    public OutputStream writeFile(boolean append) {
+        try {
+            return new FileOutputStream(_file, append);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
         }
     }
 

@@ -33,6 +33,7 @@ import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.guice.DCModule;
 import org.datacleaner.job.builder.AnalyzerComponentBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.panels.AnalyzerComponentBuilderPanel;
@@ -68,10 +69,10 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
     private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
     private final ConfiguredPropertyDescriptor _bufferSizeProperty;
     private final ConfiguredPropertyDescriptor _truncateTableProperty;
-
+    
     public InsertIntoTableJobBuilderPresenter(AnalyzerComponentBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
             WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
-            DataCleanerConfiguration configuration) {
+            DataCleanerConfiguration configuration, DCModule dcModule) {
         super(analyzerJobBuilder, propertyWidgetFactory);
         _overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
@@ -93,7 +94,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         assert _datastoreProperty != null;
         assert _datastoreProperty.getType() == Datastore.class;
         final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
-                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
+                analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog(), dcModule);
+        datastorePropertyWidget.setOnlyUpdatableDatastores(true);
         _overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
         // The schema name (String) property
@@ -102,8 +104,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
         _overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
 
         // The table name (String) property
-        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(analyzerJobBuilder,
-                _tableNameProperty);
+        final SingleTableNamePropertyWidget tableNamePropertyWidget = new SingleTableNamePropertyWidget(
+                analyzerJobBuilder, _tableNameProperty, windowContext);
         _overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
         // the InputColumn<?>[] property
@@ -133,7 +135,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerComponentBuilderPanel {
 
         // initialize
         schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
-        tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+        tableNamePropertyWidget.setSchema(datastorePropertyWidget.getValue(), schemaNamePropertyWidget.getSchema());
         inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
     }
 

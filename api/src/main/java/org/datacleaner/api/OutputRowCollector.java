@@ -21,9 +21,12 @@ package org.datacleaner.api;
 
 import javax.inject.Inject;
 
+import org.apache.metamodel.data.Row;
+
 /**
  * An {@link OutputRowCollector} is a consumer of output rows from
- * {@link Transformer}s.
+ * {@link Transformer}s, as well as {@link Analyzer}s implementing
+ * {@link HasOutputDataStreams}.
  * 
  * Usually {@link Transformer}s don't need to interact directly with an
  * {@link OutputRowCollector}, because the returned values of the
@@ -40,12 +43,20 @@ import javax.inject.Inject;
  */
 public interface OutputRowCollector {
 
-	/**
-	 * Puts transformed values into an output row.
-	 * 
-	 * @param values
-	 *            an array of output values, equivalent to the return type of
-	 *            {@link Transformer#transform(org.datacleaner.data.InputRow)}
-	 */
-	public void putValues(Object... values);
+    /**
+     * Puts transformed values into the output stream.
+     * 
+     * @param values
+     *            an array of output values, equivalent to the return type of
+     *            {@link Transformer#transform(org.datacleaner.data.InputRow)}
+     */
+    public void putValues(Object... values);
+
+    /**
+     * Puts a row (containing values) into the output stream.
+     * 
+     * @param row
+     *            a row containing values to put into the output stream.
+     */
+    public void putRow(Row row);
 }

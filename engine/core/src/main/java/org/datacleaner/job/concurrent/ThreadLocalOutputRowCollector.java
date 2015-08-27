@@ -20,6 +20,7 @@
 package org.datacleaner.job.concurrent;
 
 import org.datacleaner.api.OutputRowCollector;
+import org.datacleaner.job.AbstractOutputRowCollector;
 
 /**
  * Thread local implementation of the {@link OutputRowCollector} interface.
@@ -28,7 +29,7 @@ import org.datacleaner.api.OutputRowCollector;
  * to the collector. Consumers should register a listener and remove it after
  * invocation.
  */
-public class ThreadLocalOutputRowCollector implements OutputRowCollector {
+public class ThreadLocalOutputRowCollector extends AbstractOutputRowCollector {
 
 	/**
 	 * Listener interface to be implemented by users of the output row

@@ -21,6 +21,7 @@ package org.datacleaner.job.builder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,9 +30,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.AnalysisJobImmutabilizer;
@@ -40,9 +43,9 @@ import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.ImmutableAnalyzerJob;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReflectionUtils;
-import org.apache.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +111,7 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
     }
 
     public AnalyzerJob toAnalyzerJob(boolean validate) throws IllegalStateException {
-        AnalyzerJob[] analyzerJobs = toAnalyzerJobs();
+        AnalyzerJob[] analyzerJobs = toAnalyzerJobs(validate);
 
         if (analyzerJobs == null || analyzerJobs.length == 0) {
             return null;
@@ -141,8 +144,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         final ComponentRequirement componentRequirement = immutabilizer.load(getComponentRequirement());
 
         if (!_multipleJobsSupported) {
-            ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+            final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
+            final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
         }
 
@@ -182,8 +187,10 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
         if (originatingTables.size() == 1 && _inputProperty.isArray()) {
             // there's only a single table involved - leave the input columns
             // untouched
+            final OutputDataStreamJob[] outputDataStreamJobs = immutabilizer.load(getOutputDataStreamJobs(), validate);
             ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
-                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement, getMetadataProperties());
+                    new ImmutableComponentConfiguration(configuredProperties), componentRequirement,
+                    getMetadataProperties(), outputDataStreamJobs);
             return new AnalyzerJob[] { job };
         }
 
@@ -191,8 +198,8 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
             entry.getValue().addAll(tableLessColumns);
         }
 
-        List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
-        Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
+        final List<AnalyzerJob> jobs = new ArrayList<AnalyzerJob>();
+        final Set<Entry<Table, List<InputColumn<?>>>> entrySet = originatingTables.entrySet();
         for (Iterator<Entry<Table, List<InputColumn<?>>>> iterator = entrySet.iterator(); iterator.hasNext();) {
             Entry<Table, List<InputColumn<?>>> entry = (Entry<Table, List<InputColumn<?>>>) iterator.next();
             List<InputColumn<?>> columns = entry.getValue();
@@ -251,19 +258,26 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     private AnalyzerJob createPartitionedJob(Object columnValue,
             Map<ConfiguredPropertyDescriptor, Object> configuredProperties) {
-        Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
+        final Map<ConfiguredPropertyDescriptor, Object> jobProperties = new HashMap<ConfiguredPropertyDescriptor, Object>(
                 configuredProperties);
         jobProperties.put(_inputProperty, columnValue);
-        ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer().load(getComponentRequirement());
-        ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(), new ImmutableComponentConfiguration(
-                jobProperties), componentRequirement, getMetadataProperties());
+
+        // we do not currently support this combination of multiple analyzer
+        // jobs and having output data streams
+        final OutputDataStreamJob[] outputDataStreamJobs = new OutputDataStreamJob[0];
+
+        final ComponentRequirement componentRequirement = new AnalysisJobImmutabilizer()
+                .load(getComponentRequirement());
+        final ImmutableAnalyzerJob job = new ImmutableAnalyzerJob(getName(), getDescriptor(),
+                new ImmutableComponentConfiguration(jobProperties), componentRequirement, getMetadataProperties(),
+                outputDataStreamJobs);
         return job;
     }
 
     @Override
     public String toString() {
-        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns=" + getInputColumns()
-                + "]";
+        return "AnalyzerComponentBuilder[analyzer=" + getDescriptor().getDisplayName() + ",inputColumns="
+                + getInputColumns() + "]";
     }
 
     @Override
@@ -339,6 +353,14 @@ public final class AnalyzerComponentBuilder<A extends Analyzer<?>> extends
 
     public boolean isMultipleJobsSupported() {
         return _multipleJobsSupported;
+    }
+    
+    @Override
+    public List<OutputDataStream> getOutputDataStreams() {
+        if (isMultipleJobsSupported()) {
+            return Collections.emptyList();
+        }
+        return super.getOutputDataStreams();
     }
 
     /**

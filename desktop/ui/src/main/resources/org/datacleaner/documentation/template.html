@@ -34,8 +34,13 @@ h3 {
 	font-size: 16px;
 }
 
-.jumbotron {
-	padding: 20px 0;
+.panel {
+	border-radius: 2px;
+}
+
+.container .jumbotron {
+	padding: 20px;
+	border-radius: 2px;
 }
 
 .jumbotron p {
@@ -45,6 +50,7 @@ h3 {
 .label {
 	font-size: 0.9em;
 	font-weight: normal;
+	border-radius: 2px;
 }
 </style>
 </head>
@@ -72,7 +78,18 @@ h3 {
 					<h1>
 						<img src="${icon}" alt="" /> <span>${component.name}</span>
 					</h1>
-					${component.description}
+					<div>${component.description}</div>
+					
+					<#list component.documentationLinks as link>
+					<div>
+						<#if link.type().name() == 'VIDEO'>
+						<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+						<#else>
+						<span class="glyphicon glyphicon-book" aria-hidden="true"></span>
+						</#if>
+						<a href="${link.url()}">${link.title()}</a>
+					</div>
+					</#list>
 				</div>
 
 				<div>

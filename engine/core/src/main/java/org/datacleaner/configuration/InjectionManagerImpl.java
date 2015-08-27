@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.util.LazyRef;
 import org.apache.metamodel.util.Ref;
+import org.datacleaner.api.ComponentContext;
 import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.api.Provided;
 import org.datacleaner.connection.Datastore;
@@ -35,12 +36,15 @@ import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskRunner;
 import org.datacleaner.job.concurrent.ThreadLocalOutputRowCollector;
+import org.datacleaner.job.runner.ComponentContextImpl;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.result.renderer.RendererFactory;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.CollectionFactoryImpl;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotationHandler;
+import org.datacleaner.storage.RowAnnotationSampleContainer;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,8 +123,11 @@ public class InjectionManagerImpl implements InjectionManager {
             return new CollectionFactoryImpl(_configuration.getEnvironment().getStorageProvider());
         } else if (baseType == RendererFactory.class) {
             return new RendererFactory(_configuration);
-        } else if (baseType == RowAnnotationFactory.class) {
+        } else if (baseType == RowAnnotationFactory.class || baseType == RowAnnotationSampleContainer.class
+                || baseType == RowAnnotationHandler.class) {
             return _rowAnntationFactoryRef.get();
+        } else if (baseType == RowAnnotation.class) {
+            return _rowAnntationFactoryRef.get().createAnnotation();
         } else if (baseType == AnalyzerBeansConfiguration.class) {
             if (_configuration instanceof AnalyzerBeansConfiguration) {
                 return _configuration;
@@ -144,8 +151,9 @@ public class InjectionManagerImpl implements InjectionManager {
                 return new StringConverter(this);
             }
             return new StringConverter(_configuration, _job);
-        } else if (baseType == RowAnnotation.class) {
-            return _rowAnntationFactoryRef.get().createAnnotation();
+        } else if (baseType == ComponentContext.class) {
+            final ComponentContext componentContext = new ComponentContextImpl(_job);
+            return componentContext;
         } else if (baseType == Datastore.class && _job != null) {
             return _job.getDatastore();
         } else if (baseType == DatastoreConnection.class && _job != null) {

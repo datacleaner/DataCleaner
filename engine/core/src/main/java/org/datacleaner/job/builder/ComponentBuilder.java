@@ -20,11 +20,14 @@
 package org.datacleaner.job.builder;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Renderable;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -34,13 +37,14 @@ import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.ComponentValidationException;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.job.OutputDataStreamJobSource;
 import org.datacleaner.metadata.HasMetadataProperties;
 
 /**
  * Represents a builder object for components in a {@link AnalysisJob}.
  */
-public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, HasComponentRequirement, HasName,
-        Renderable {
+public interface ComponentBuilder extends HasMetadataProperties, InputColumnSinkJob, OutputDataStreamJobSource,
+        HasComponentRequirement, HasName, Renderable {
 
     /**
      * Determines if the underlying component is fully configured or not. This
@@ -234,4 +238,50 @@ public interface ComponentBuilder extends HasMetadataProperties, InputColumnSink
      * @return true if the listener was found and removed.
      */
     public boolean removeRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener);
+
+    /**
+     * Gets an {@link OutputDataStream} by name.
+     * 
+     * @param name
+     * @return
+     */
+    public OutputDataStream getOutputDataStream(String name);
+
+    /**
+     * Gets an {@link OutputDataStream} by the reference to it's {@link Table}.
+     * 
+     * @param dataStreamTable
+     */
+    public OutputDataStream getOutputDataStream(Table dataStreamTable);
+
+    /**
+     * Gets the {@link OutputDataStream}s that are available for this component
+     * 
+     * @return
+     */
+    public List<OutputDataStream> getOutputDataStreams();
+
+    /**
+     * Determines if a particular {@link OutputDataStream} is currently being
+     * consumed or not
+     * 
+     * @param outputDataStream
+     * @return
+     */
+    public boolean isOutputDataStreamConsumed(OutputDataStream outputDataStream);
+
+    /**
+     * Gets (or creates if non-existing) a job builder for the consumption of a
+     * particular {@link OutputDataStream}
+     * 
+     * @param outputDataStream
+     * @return
+     */
+    public AnalysisJobBuilder getOutputDataStreamJobBuilder(OutputDataStream outputDataStream);
+
+    /**
+     * Updates the {@link AnalysisJobBuilder} that this component belongs to.
+     * @param analysisJobBuilder the new {@link }AnalysisJobBuilder}
+     */
+    public void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder);
 }

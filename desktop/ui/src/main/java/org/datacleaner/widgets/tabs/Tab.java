@@ -24,35 +24,26 @@ import java.awt.Component;
 import javax.swing.Icon;
 
 /**
- * Represents the state of a tab in a {@link CloseableTabbedPane}.
+ * Represents the state of a tab in a tabbed pane.
+ *
+ * @param <C>
+ *            the component type that is shown in this tab's content pane
  */
-public class Tab {
+public interface Tab<C extends Component> {
 
-    private final String _title;
-    private final Icon _icon;
-    private final Component _contents;
-    private final boolean _closeable;
+    public C getContents();
 
-    public Tab(String title, Icon icon, Component contents, boolean closeable) {
-        _title = title;
-        _icon = icon;
-        _contents = contents;
-        _closeable = closeable;
-    }
+    public Icon getIcon();
 
-    public Component getContents() {
-        return _contents;
-    }
+    public void setIcon(Icon icon);
 
-    public Icon getIcon() {
-        return _icon;
-    }
+    public String getTooltip();
 
-    public String getTitle() {
-        return _title;
-    }
+    public void setTooltip(String tooltip);
 
-    public boolean isCloseable() {
-        return _closeable;
-    }
+    public String getTitle();
+
+    public void setTitle(String title);
+
+    public boolean isCloseable();
 }

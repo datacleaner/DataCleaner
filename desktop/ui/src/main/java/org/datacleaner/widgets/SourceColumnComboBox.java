@@ -26,6 +26,7 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
+import org.apache.metamodel.MetaModelHelper;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
@@ -143,7 +144,7 @@ public class SourceColumnComboBox extends DCComboBox<Object> {
 
             for (Schema schema : schemas) {
                 comboBoxList.add(schema);
-                if (!SchemaComparator.isInformationSchema(schema)) {
+                if (!MetaModelHelper.isInformationSchema(schema)) {
                     Table[] tables = schema.getTables();
                     for (Table table : tables) {
                         try {

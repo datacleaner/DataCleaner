@@ -51,7 +51,7 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, InputRow row, int currentRow) {
         rowProcessingProgress(job, metrics, currentRow);
     }
-    
+
     @Override
     public void onComponentMessage(AnalysisJob job, ComponentJob componentJob, ComponentMessage message) {
         // do nothing
@@ -140,6 +140,21 @@ public class AnalysisListenerAdaptor implements AnalysisListener {
     }
 
     @Override
+    public void errorUnknown(AnalysisJob job, Throwable throwable) {
+        errorUknown(job, throwable);
+    }
+
+    /**
+     * Represents the previous typo in the method name of the errorUnknown
+     * method.
+     * 
+     * @param job
+     * @param throwable
+     * 
+     * @deprecated use {@link #errorUnknown(AnalysisJob, Throwable)} (this method
+     *             retained for forward-going compatibility).
+     */
+    @Deprecated
     public void errorUknown(AnalysisJob job, Throwable throwable) {
     }
 }

@@ -8,18 +8,18 @@
     <source>
         <data-context ref="my db"/>
         <columns>
-            <column id="col_0" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
-            <column id="col_1" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
-            <column id="col_2" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
+            <column id="col_firstname" path="EMPLOYEES.FIRSTNAME" type="VARCHAR"/>
+            <column id="col_lastname" path="EMPLOYEES.LASTNAME" type="VARCHAR"/>
+            <column id="col_email" path="EMPLOYEES.EMAIL" type="VARCHAR"/>
         </columns>
     </source>
     <transformation>
         <transformer name="trans1">
             <descriptor ref="Email standardizer"/>
             <properties/>
-            <input ref="col_2"/>
-            <output id="col_3" name="Username"/>
-            <output id="col_4" name="Domain"/>
+            <input ref="col_email"/>
+            <output id="col_username" name="Username"/>
+            <output id="col_domain" name="Domain"/>
         </transformer>
         <filter name="fjb1">
             <descriptor ref="Null check"/>
@@ -27,13 +27,13 @@
                 <property name="Consider empty string as null" value="false"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
             </properties>
-            <input ref="col_0"/>
+            <input ref="col_firstname"/>
             <outcome id="outcome_0" category="NOT_NULL"/>
         </filter>
         <filter name="fjb2">
             <descriptor ref="Single word"/>
             <properties/>
-            <input ref="col_3"/>
+            <input ref="col_username"/>
             <outcome id="outcome_1" category="INVALID"/>
         </filter>
     </transformation>
@@ -41,10 +41,10 @@
         <analyzer requires="outcome_0">
             <descriptor ref="String analyzer"/>
             <properties/>
-            <input ref="col_0"/>
-            <input ref="col_1"/>
-            <input ref="col_3"/>
-            <input ref="col_4"/>
+            <input ref="col_firstname"/>
+            <input ref="col_lastname"/>
+            <input ref="col_username"/>
+            <input ref="col_domain"/>
         </analyzer>
         <analyzer name="pf 1">
             <descriptor ref="Pattern finder"/>
@@ -62,7 +62,7 @@
                 <property name="Thousands separator" value="&amp;#44;"/>
                 <property name="Minus sign" value="-"/>
             </properties>
-            <input ref="col_0" name="Column"/>
+            <input ref="col_firstname" name="Column"/>
         </analyzer>
         <analyzer name="pf 1">
             <descriptor ref="Pattern finder"/>
@@ -80,7 +80,7 @@
                 <property name="Thousands separator" value="&amp;#44;"/>
                 <property name="Minus sign" value="-"/>
             </properties>
-            <input ref="col_3" name="Column"/>
+            <input ref="col_username" name="Column"/>
         </analyzer>
         <analyzer requires="outcome_1" name="pf 2">
             <descriptor ref="Pattern finder"/>
@@ -98,7 +98,7 @@
                 <property name="Thousands separator" value="&amp;#44;"/>
                 <property name="Minus sign" value="-"/>
             </properties>
-            <input ref="col_4" name="Column"/>
+            <input ref="col_domain" name="Column"/>
         </analyzer>
     </analysis>
 </job>

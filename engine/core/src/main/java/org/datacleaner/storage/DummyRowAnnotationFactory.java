@@ -20,9 +20,8 @@
 package org.datacleaner.storage;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
-import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 
 /**
@@ -30,46 +29,10 @@ import org.datacleaner.api.InputRow;
  * it is usually not very useful to the user but can function as a stub for
  * situations where the row data is irrelevant.
  */
-public class DummyRowAnnotationFactory implements RowAnnotationFactory {
+public class DummyRowAnnotationFactory extends AbstractRowAnnotationFactory2 {
 
     @Override
-    public RowAnnotation createAnnotation() {
-        return new RowAnnotationImpl();
+    public List<InputRow> getSampleRows(RowAnnotation annotation) {
+        return Collections.emptyList();
     }
-
-    @Override
-    public void annotate(InputRow[] rows, RowAnnotation annotation) {
-        RowAnnotationImpl a = (RowAnnotationImpl) annotation;
-        a.incrementRowCount(rows.length);
-    }
-
-    @Override
-    public void annotate(InputRow row, int distinctCount, RowAnnotation annotation) {
-        RowAnnotationImpl a = (RowAnnotationImpl) annotation;
-        a.incrementRowCount(distinctCount);
-    }
-
-    @Override
-    public void reset(RowAnnotation annotation) {
-        RowAnnotationImpl a = (RowAnnotationImpl) annotation;
-        a.resetRowCount();
-    }
-
-    @Override
-    public InputRow[] getRows(RowAnnotation annotation) {
-        return new InputRow[0];
-    }
-
-    @Override
-    public Map<Object, Integer> getValueCounts(RowAnnotation annotation, InputColumn<?> inputColumn) {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public void transferAnnotations(RowAnnotation from, RowAnnotation to) {
-        RowAnnotationImpl a1 = (RowAnnotationImpl) from;
-        RowAnnotationImpl a2 = (RowAnnotationImpl) to;
-        a2.incrementRowCount(a1.getRowCount());
-    }
-
 }

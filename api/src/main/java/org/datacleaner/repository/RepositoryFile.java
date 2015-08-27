@@ -41,11 +41,22 @@ public interface RepositoryFile extends RepositoryNode {
      * Opens up an {@link InputStream} to read from the file.
      * 
      * @return an {@link InputStream} to read from the file.
-     * @deprecated use {@link #readFile(Action)} or {@link #readFile(Func)}
-     *             instead.
+     * @deprecated prefer to use {@link #readFile(Action)} or
+     *             {@link #readFile(Func)} instead.
      */
     @Deprecated
     public InputStream readFile();
+
+    /**
+     * Opens up an {@link OutputStream} to write to the file.
+     * 
+     * @param append
+     *            whether or not to append to the existing contents of the file.
+     * @return prefer to use {@link #writeFile(Action)} or
+     *         {@link #writeFile(Action, boolean)} instead.
+     */
+    @Deprecated
+    public OutputStream writeFile(boolean append);
 
     /**
      * Gets the size (in number of bytes) of this file's data. An approximated

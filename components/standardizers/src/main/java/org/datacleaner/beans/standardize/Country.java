@@ -43,7 +43,7 @@ public enum Country implements HasName, HasAliases {
 
     ÅLAND("AX", "ALA", "Åland", "Åland Islands"),
 
-    ALBANIA("AL", "ALB", "Albania"),
+    ALBANIA("AL", "ALB", "Albania", "Albanie", "Albanië"),
 
     ALGERIA("DZ", "DZA", "Algeria"),
 
@@ -67,7 +67,7 @@ public enum Country implements HasName, HasAliases {
 
     AUSTRALIA("AU", "AUS", "Australia"),
 
-    AUSTRIA("AT", "AUT", "Austria"),
+    AUSTRIA("AT", "AUT", "Austria", "Oostenrijk"),
 
     AZERBAIJAN("AZ", "AZE", "Azerbaijan"),
 
@@ -81,7 +81,7 @@ public enum Country implements HasName, HasAliases {
 
     BELARUS("BY", "BLR", "Belarus"),
 
-    BELGIUM("BE", "BEL", "Belgium", "Kingdom of Belgium"),
+    BELGIUM("BE", "BEL", "Belgium", "Kingdom of Belgium", "Belgie", "België", "Belgique"),
 
     BELIZE("BZ", "BLZ", "Belize"),
 
@@ -93,7 +93,7 @@ public enum Country implements HasName, HasAliases {
 
     BOLIVIA("BO", "BOL", "Bolivia", "Plurinational State of Bolivia", "Bolivia (Plurinational State of)"),
 
-    BONAIRE_SAINT_EUSTATIUS_AND_SABA("BQ", "BES", "Bonaire, Saint Eustatius and Saba"),
+    BONAIRE_SAINT_EUSTATIUS_AND_SABA("BQ", "BES", "Bonaire, Saint Eustatius and Saba", "Bonaire", "Saba", "Sint Eustatius"),
 
     BOSNIA_AND_HERZEGOVINA("BA", "BIH", "Bosnia and Herzegovina"),
 
@@ -105,9 +105,9 @@ public enum Country implements HasName, HasAliases {
 
     BRITISH_INDIAN_OCEAN_TERRITORY("IO", "IOT", "British Indian Ocean Territory"),
 
-    BRUNEI_DARUSSALAM("BN", "BRN", "Brunei Darussalam"),
+    BRUNEI_DARUSSALAM("BN", "BRN", "Brunei", "Brunei Darussalam"),
 
-    BULGARIA("BG", "BGR", "Bulgaria"),
+    BULGARIA("BG", "BGR", "Bulgaria", "Bulgarije"),
 
     BURKINA_FASO("BF", "BFA", "Burkina Faso"),
 
@@ -117,7 +117,7 @@ public enum Country implements HasName, HasAliases {
 
     CAMEROON("CM", "CMR", "Cameroon"),
 
-    CANADA("CA", "CAN", "Canada"),
+    CANADA("CA", "CAN", "Canada", "Kanada"),
 
     CAPE_VERDE("CV", "CPV", "Cape Verde", "Cabo Verde"),
 
@@ -149,17 +149,17 @@ public enum Country implements HasName, HasAliases {
 
     COTE_D_IVOIRE("CI", "CIV", "Côte d'Ivoire", "Cote d'Ivoire", "Ivory Coast"),
 
-    CROATIA("HR", "HRV", "Croatia"),
+    CROATIA("HR", "HRV", "Croatia", "Kroatie", "Kroatië"),
 
     CUBA("CU", "CUB", "Cuba"),
 
-    CURAÇAO("CW", "CUW", "Curaçao"),
+    CURAÇAO("CW", "CUW", "Curaçao", "Curacao"),
 
     CYPRUS("CY", "CYP", "Cyprus"),
 
-    CZECH_REPUBLIC("CZ", "CZE", "Czech Republic", "Česká Republika", "Česko", "Czech"),
+    CZECH_REPUBLIC("CZ", "CZE", "Czech Republic", "Česká Republika", "Česko", "Czech", "Tsjechie", "Tsjechië"),
 
-    DENMARK("DK", "DNK", "Denmark", "Danmark", "Dinamarca"),
+    DENMARK("DK", "DNK", "Denmark", "Danmark", "Dinamarca", "Dänemark", "Denemarken"),
 
     DJIBOUTI("DJ", "DJI", "Djibouti"),
 
@@ -177,11 +177,12 @@ public enum Country implements HasName, HasAliases {
 
     ERITREA("ER", "ERI", "Eritrea"),
 
-    ESTONIA("EE", "EST", "Estonia"),
+    ESTONIA("EE", "EST", "Estonia", "Estland"),
 
     ETHIOPIA("ET", "ETH", "Ethiopia"),
 
-    FALKLAND_ISLANDS("FK", "FLK", "Falkland Islands", "Falkland Islands (Malvinas)", "Malvinas", "Falklands", "Islas Malvinas"),
+    FALKLAND_ISLANDS("FK", "FLK", "Falkland Islands", "Falkland Islands (Malvinas)", "Malvinas", "Falklands",
+            "Islas Malvinas"),
 
     FAROE_ISLANDS("FO", "FRO", "Faroe Islands", "Faeroe Islands"),
 
@@ -189,7 +190,7 @@ public enum Country implements HasName, HasAliases {
 
     FINLAND("FI", "FIN", "Finland"),
 
-    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise"),
+    FRANCE("FR", "FRA", "France", "French Republic", "République Française", "Republique Francaise", "Frankrijk"),
 
     FRENCH_GUIANA("GF", "GUF", "French Guiana"),
 
@@ -203,13 +204,13 @@ public enum Country implements HasName, HasAliases {
 
     GEORGIA("GE", "GEO", "Georgia"),
 
-    GERMANY("DE", "DEU", "Germany", "Deutschland", "GER"),
+    GERMANY("DE", "DEU", "Germany", "Deutschland", "Duitsland", "GER"),
 
     GHANA("GH", "GHA", "Ghana"),
 
     GIBRALTAR("GI", "GIB", "Gibraltar"),
 
-    GREECE("GR", "GRC", "Greece"),
+    GREECE("GR", "GRC", "Greece", "Griekenland"),
 
     GREENLAND("GL", "GRL", "Greenland"),
 
@@ -237,9 +238,9 @@ public enum Country implements HasName, HasAliases {
 
     HONG_KONG("HK", "HKG", "Hong Kong", "China, Hong Kong SAR", "Hong Kong SAR"),
 
-    HUNGARY("HU", "HUN", "Hungary"),
+    HUNGARY("HU", "HUN", "Hungary", "Hongarije"),
 
-    ICELAND("IS", "ISL", "Iceland"),
+    ICELAND("IS", "ISL", "Iceland", "IJsland"),
 
     INDIA("IN", "IND", "India"),
 
@@ -249,13 +250,13 @@ public enum Country implements HasName, HasAliases {
 
     IRAQ("IQ", "IRQ", "Iraq", "Irak"),
 
-    IRELAND("IE", "IRL", "Ireland"),
+    IRELAND("IE", "IRL", "Ireland", "Eire", "Eir", "Éire", "Airlann", "Ire", "Ierland"),
 
     ISLE_OF_MAN("IM", "IMN", "Isle of Man"),
 
-    ISRAEL("IL", "ISR", "Israel"),
+    ISRAEL("IL", "ISR", "Israel", "Israël"),
 
-    ITALY("IT", "ITA", "Italy", "Italia"),
+    ITALY("IT", "ITA", "Italy", "Italia", "Italie", "Italië"),
 
     JAMAICA("JM", "JAM", "Jamaica"),
 
@@ -281,7 +282,7 @@ public enum Country implements HasName, HasAliases {
 
     LAOS("LA", "LAO", "Laos", "Lao People's Democratic Republic"),
 
-    LATVIA("LV", "LVA", "Latvia"),
+    LATVIA("LV", "LVA", "Latvia", "Letland"),
 
     LEBANON("LB", "LBN", "Lebanon"),
 
@@ -293,13 +294,13 @@ public enum Country implements HasName, HasAliases {
 
     LIECHTENSTEIN("LI", "LIE", "Liechtenstein"),
 
-    LITHUANIA("LT", "LTU", "Lithuania"),
+    LITHUANIA("LT", "LTU", "Lithuania", "Litouwen"),
 
-    LUXEMBOURG("LU", "LUX", "Luxembourg", "Luxemborg"),
+    LUXEMBOURG("LU", "LUX", "Luxembourg", "Luxemborg", "Luxemburg"),
 
     MACAU("MO", "MAC", "Macau", "China, Macao SAR", "Macao SAR"),
 
-    MACEDONIA("MK", "MKD", "Macedonia", ""),
+    MACEDONIA("MK", "MKD", "Macedonia", "Macedonie", "Macedonië"),
 
     MADAGASCAR("MG", "MDG", "Madagascar"),
 
@@ -337,7 +338,7 @@ public enum Country implements HasName, HasAliases {
 
     MONTSERRAT("MS", "MSR", "Montserrat"),
 
-    MOROCCO("MA", "MAR", "Morocco", "Marocco", "Maroc"),
+    MOROCCO("MA", "MAR", "Morocco", "Marocco", "Maroc", "Marokko"),
 
     MOZAMBIQUE("MZ", "MOZ", "Mozambique"),
 
@@ -367,7 +368,7 @@ public enum Country implements HasName, HasAliases {
 
     NORTHERN_MARIANA_ISLANDS("MP", "MNP", "Northern Mariana Islands"),
 
-    NORWAY("NO", "NOR", "Norway", "Norge"),
+    NORWAY("NO", "NOR", "Norway", "Norge", "Noorwegen"),
 
     OMAN("OM", "OMN", "Oman"),
 
@@ -389,7 +390,7 @@ public enum Country implements HasName, HasAliases {
 
     PITCAIRN("PN", "PCN", "Pitcairn"),
 
-    POLAND("PL", "POL", "Poland"),
+    POLAND("PL", "POL", "Poland", "Polen"),
 
     PORTUGAL("PT", "PRT", "Portugal"),
 
@@ -399,9 +400,9 @@ public enum Country implements HasName, HasAliases {
 
     REUNION("RE", "REU", "Reunion"),
 
-    ROMANIA("RO", "ROU", "Romania"),
+    ROMANIA("RO", "ROU", "Romania", "Roemenië", "Roemenie"),
 
-    RUSSIAN_FEDERATION("RU", "RUS", "Russian Federation", "Russia", "USSR"),
+    RUSSIAN_FEDERATION("RU", "RUS", "Russian Federation", "Russia", "USSR", "Rusland"),
 
     RWANDA("RW", "RWA", "Rwanda"),
 
@@ -439,9 +440,9 @@ public enum Country implements HasName, HasAliases {
 
     SINT_MAARTEN("SX", "SXM", "Sint Maarten"),
 
-    SLOVAKIA("SK", "SVK", "Slovakia"),
+    SLOVAKIA("SK", "SVK", "Slovakia", "Slowakije"),
 
-    SLOVENIA("SI", "SVN", "Slovenia"),
+    SLOVENIA("SI", "SVN", "Slovenia", "Slovenie", "Slovenië"),
 
     SOLOMON_ISLANDS("SB", "SLB", "Solomon Islands"),
 
@@ -451,7 +452,7 @@ public enum Country implements HasName, HasAliases {
 
     SOUTH_GEORGIA_AND_SOUTH_SANDWICH_ISLANDS("GS", "SGS", "South Georgia and South Sandwich Islands"),
 
-    SPAIN("ES", "ESP", "Spain", "Espana", "España"),
+    SPAIN("ES", "ESP", "Spain", "Espana", "España", "Spanje"),
 
     SRI_LANKA("LK", "LKA", "Sri Lanka"),
 
@@ -463,9 +464,9 @@ public enum Country implements HasName, HasAliases {
 
     SWAZILAND("SZ", "SWZ", "Swaziland"),
 
-    SWEDEN("SE", "SWE", "Sweden", "Sverige"),
+    SWEDEN("SE", "SWE", "Sweden", "Sverige", "Zweden"),
 
-    SWITZERLAND("CH", "CHE", "Switzerland", "Swiss", "Schweiz", "Suisse", "Swiss Confederation"),
+    SWITZERLAND("CH", "CHE", "Switzerland", "Swiss", "Schweiz", "Suisse", "Swiss Confederation", "Zwitserland"),
 
     SYRIA("SY", "SYR", "Syria", "Syrian Arab Republic"),
 
@@ -489,7 +490,7 @@ public enum Country implements HasName, HasAliases {
 
     TUNISIA("TN", "TUN", "Tunisia", "Tunisie", "Tūnis", "Tunis"),
 
-    TURKEY("TR", "TUR", "Turkey"),
+    TURKEY("TR", "TUR", "Turkey", "Turkije"),
 
     TURKMENISTAN("TM", "TKM", "Turkmenistan"),
 
@@ -499,16 +500,18 @@ public enum Country implements HasName, HasAliases {
 
     UGANDA("UG", "UGA", "Uganda"),
 
-    UKRAINE("UA", "UKR", "Ukraine"),
+    UKRAINE("UA", "UKR", "Ukraine", "Oekraine"),
 
     UNITED_ARAB_EMIRATES("AE", "ARE", "United Arab Emirates"),
 
     UNITED_KINGDOM("GB", "GBR", "United Kingdom", "Great Britain", "United Kingdom of Great Britain",
-            "United Kingdom of Great Britain and Northern Ireland", "England", "Scotland", "Wales", "Northern Ireland", "UK"),
+            "United Kingdom of Great Britain and Northern Ireland", "England", "Scotland", "Wales", "Northern Ireland",
+            "Engeland", "Groot Britannie", "Groot Britannië", "Verenigd Koninkrijk", "VK",
+            "UK"),
 
     UNITED_STATES_MINOR_OUTLYING_ISLANDS("UM", "UMI", "United States Minor Outlying Islands"),
 
-    UNITED_STATES_OF_AMERICA("US", "USA", "United States of America", "United States"),
+    UNITED_STATES_OF_AMERICA("US", "USA", "United States of America", "United States", "Verenigde Staten", "Verenigde Staten", "VS"),
 
     URUGUAY("UY", "URY", "Uruguay"),
 

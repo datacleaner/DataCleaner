@@ -29,10 +29,9 @@ import org.apache.metamodel.util.Month;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.configuration.AnalyzerBeansConfiguration;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.Datastore;
-import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
@@ -69,7 +68,7 @@ public class DateRangeFilterTest extends TestCase {
     @SuppressWarnings("resource")
     public void testQueryOptimize() throws Throwable {
         Datastore ds = TestHelper.createSampleDatabaseDatastore("orderdb");
-        AnalyzerBeansConfiguration conf = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(ds));
+        DataCleanerConfiguration conf = new DataCleanerConfigurationImpl().withDatastores(ds);
         AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
         ajb.setDatastore(ds);
         ajb.addSourceColumns("orders.orderdate");

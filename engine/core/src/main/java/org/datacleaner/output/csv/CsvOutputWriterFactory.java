@@ -25,22 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.output.OutputWriter;
-import org.apache.metamodel.UpdateCallback;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.create.TableCreationBuilder;
-import org.apache.metamodel.csv.CsvConfiguration;
-import org.apache.metamodel.csv.CsvDataContext;
-import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.util.FileHelper;
 
 public final class CsvOutputWriterFactory {
 
     private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-    private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
+    private static final Map<String, CsvOutputWriter> outputWritersPerPath = new HashMap<String, CsvOutputWriter>();
 
     /**
      * Creates a CSV output writer with default configuration
@@ -70,75 +65,61 @@ public final class CsvOutputWriterFactory {
      * @param columns
      * @return
      */
-    public static OutputWriter getWriter(String filename, final String[] headers, Character separatorChar,
-            Character quoteChar, Character escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+    public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar, char quoteChar,
+            char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+        return getWriter(new FileResource(filename), headers, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar,
+                escapeChar, includeHeader, columns);
+    }
+
+    public static OutputWriter getWriter(Resource resource, final String[] headers, String encoding,
+            char separatorChar, char quoteChar, char escapeChar, boolean includeHeader, final InputColumn<?>... columns) {
+        final CsvConfiguration csvConfiguration = getConfiguration(encoding, separatorChar, quoteChar, escapeChar,
+                includeHeader);
+
         CsvOutputWriter outputWriter;
-        synchronized (dataContexts) {
-            UpdateableDataContext dataContext = dataContexts.get(filename);
-            if (dataContext == null) {
+        final String qualifiedPath = resource.getQualifiedPath();
+        synchronized (outputWritersPerPath) {
+            outputWriter = outputWritersPerPath.get(qualifiedPath);
+            if (outputWriter == null) {
 
-                File file = new File(filename);
-                File parentFile = file.getParentFile();
-                if (parentFile != null && !parentFile.exists()) {
-                    parentFile.mkdirs();
-                }
-                dataContext = new CsvDataContext(file, getConfiguration(separatorChar, quoteChar, escapeChar,
-                        includeHeader));
-
-                final Schema schema = dataContext.getDefaultSchema();
-                dataContext.executeUpdate(new UpdateScript() {
-                    @Override
-                    public void run(UpdateCallback callback) {
-                        TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
-                        for (String header : headers) {
-                            tableBuilder.withColumn(header);
-                        }
-                        tableBuilder.execute();
+                if (resource instanceof FileResource) {
+                    final File file = ((FileResource) resource).getFile();
+                    final File parentFile = file.getParentFile();
+                    if (parentFile != null && !parentFile.exists()) {
+                        parentFile.mkdirs();
                     }
-                });
+                }
 
-                Table table = dataContext.getDefaultSchema().getTables()[0];
-
-                dataContexts.put(filename, dataContext);
-                counters.put(filename, new AtomicInteger(1));
-                outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
+                outputWritersPerPath.put(qualifiedPath, outputWriter);
+                counters.put(qualifiedPath, new AtomicInteger(1));
+                outputWriter = new CsvOutputWriter(resource, csvConfiguration, headers, columns);
 
                 // write the headers
             } else {
-                Table table = dataContext.getDefaultSchema().getTables()[0];
-                outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
-                counters.get(filename).incrementAndGet();
+                outputWriter = new CsvOutputWriter(resource, csvConfiguration, headers, columns);
+                counters.get(qualifiedPath).incrementAndGet();
             }
         }
 
         return outputWriter;
     }
 
-    private static CsvConfiguration getConfiguration(Character separatorChar, Character quoteChar, Character escapeChar,
-            boolean includeHeader) {
-        if (separatorChar == null) {
-            separatorChar = CsvConfiguration.NOT_A_CHAR;
-        }
-        if (quoteChar == null) {
-            quoteChar = CsvConfiguration.NOT_A_CHAR;
-        }
-        if (escapeChar == null) {
-            escapeChar = CsvConfiguration.NOT_A_CHAR;
-        }
+    private static CsvConfiguration getConfiguration(String encoding, char separatorChar, char quoteChar,
+            char escapeChar, boolean includeHeader) {
         final int headerLine;
         if (includeHeader) {
             headerLine = CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
         } else {
             headerLine = CsvConfiguration.NO_COLUMN_NAME_LINE;
         }
-        return new CsvConfiguration(headerLine, FileHelper.DEFAULT_ENCODING, separatorChar, quoteChar, escapeChar);
+        return new CsvConfiguration(headerLine, encoding, separatorChar, quoteChar, escapeChar);
     }
 
     protected static void release(String filename) {
-        int count = counters.get(filename).decrementAndGet();
+        final int count = counters.get(filename).decrementAndGet();
         if (count == 0) {
-            synchronized (dataContexts) {
-                dataContexts.remove(filename);
+            synchronized (outputWritersPerPath) {
+                outputWritersPerPath.remove(filename);
             }
         }
     }

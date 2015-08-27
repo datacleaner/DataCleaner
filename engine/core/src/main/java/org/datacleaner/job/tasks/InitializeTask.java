@@ -19,40 +19,63 @@
  */
 package org.datacleaner.job.tasks;
 
+import java.util.Collection;
+
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
+import org.datacleaner.job.runner.ActiveOutputDataStream;
+import org.datacleaner.job.runner.RowProcessingConsumer;
+import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Task that runs for every component to initialize it before execution of a job
+ */
 public final class InitializeTask implements Task {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(InitializeTask.class);
 
-	private final LifeCycleHelper _lifeCycleHelper;
-	private final ComponentDescriptor<?> _componentDescriptor;
-	private final Object _component;
-	private final ComponentConfiguration _beanConfiguration;
+    private final LifeCycleHelper _lifeCycleHelper;
+    private final RowProcessingConsumer _consumer;
 
-	public InitializeTask(LifeCycleHelper lifeCycleHelper, ComponentDescriptor<?> componentDescriptor, Object component,
-			ComponentConfiguration beanConfiguration) {
-		_lifeCycleHelper = lifeCycleHelper;
-		_componentDescriptor = componentDescriptor;
-		_component = component;
-		_beanConfiguration = beanConfiguration;
-	}
+    public InitializeTask(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer) {
+        _lifeCycleHelper = lifeCycleHelper;
+        _consumer = consumer;
+    }
 
-	@Override
-	public void execute() throws Exception {
-		logger.debug("execute()");
+    @Override
+    public void execute() throws Exception {
+        logger.debug("execute()");
 
-		_lifeCycleHelper.assignConfiguredProperties(_componentDescriptor, _component, _beanConfiguration);
-		_lifeCycleHelper.assignProvidedProperties(_componentDescriptor, _component);
-		_lifeCycleHelper.initialize(_componentDescriptor, _component);
-	}
+        executeInternal(_consumer, _lifeCycleHelper);
+    }
 
-	@Override
-	public String toString() {
-		return "AssignCallbacksAndInitializeTasks[" + _component + "]";
-	}
+    private static void executeInternal(final RowProcessingConsumer consumer, LifeCycleHelper lifeCycleHelper) {
+        final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
+        final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
+        final Object component = consumer.getComponent();
+
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, configuration);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+        lifeCycleHelper.validate(descriptor, component);
+        final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
+        for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
+            activeOutputDataStream.initialize();
+            final RowProcessingPublisher publisher = activeOutputDataStream.getPublisher();
+            for (RowProcessingConsumer outputDataStreamConsumer : publisher.getConsumers()) {
+                final LifeCycleHelper outputDataStreamLifeCycleHelper = publisher
+                        .getConsumerSpecificLifeCycleHelper(consumer);
+                executeInternal(outputDataStreamConsumer, outputDataStreamLifeCycleHelper);
+            }
+        }
+        lifeCycleHelper.initialize(descriptor, component);
+        lifeCycleHelper.initializeReferenceData();
+    }
+
+    @Override
+    public String toString() {
+        return "InitializeTask[" + _consumer + "]";
+    }
 }

@@ -20,6 +20,7 @@
 package org.datacleaner.test.full.scenarios;
 
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -59,7 +60,7 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
     public void testScenario() throws Throwable {
         final TaskRunner taskRunner = new MultiThreadedTaskRunner(5);
         final DataCleanerEnvironment environment = new DataCleanerEnvironmentImpl().withTaskRunner(taskRunner);
-        
+
         final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl().withEnvironment(environment);
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("ds");
@@ -101,13 +102,14 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
             // pattern finder result tests
             {
-                PatternFinderResult result = (PatternFinderResult) resultFuture.getResult(pf.toAnalyzerJob());
-                String[] resultLines = new PatternFinderResultTextRenderer().render(result).split("\n");
+                final PatternFinderResult result = (PatternFinderResult) resultFuture.getResult(pf.toAnalyzerJob());
+                final String resultString = new PatternFinderResultTextRenderer().render(result);
+                final String[] resultLines = resultString.split("\n");
 
-                assertEquals(5, resultLines.length);
+                assertEquals(resultString, 5, resultLines.length);
 
-                assertEquals("                            Match count Sample      ", resultLines[0]);
-                assertTrue(resultLines[1].startsWith("aaaaa aaaaaaaaa                      19"));
+                assertEquals(resultString, "                            Match count Sample      ", resultLines[0]);
+                assertTrue(resultString, resultLines[1].startsWith("aaaaa aaaaaaaaa                      19"));
 
                 ResultProducer resultProducer = result.getSingleCrosstab().where("Pattern", "aaaaa aaaaaaaaa")
                         .where("Measures", "Match count").explore();
@@ -117,12 +119,12 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
 
                 AnnotatedRowsResult annotatedRowsResult = (AnnotatedRowsResult) result2;
                 assertEquals(19, annotatedRowsResult.getAnnotatedRowCount());
-                InputRow[] rows = annotatedRowsResult.getRows();
-                assertEquals(19, rows.length);
+                List<InputRow> rows = annotatedRowsResult.getSampleRows();
+                assertEquals(19, rows.size());
 
                 String[] values = new String[19];
                 for (int i = 0; i < values.length; i++) {
-                    values[i] = (String) rows[i].getValue(jobtitleInputColumn);
+                    values[i] = (String) rows.get(i).getValue(jobtitleInputColumn);
                 }
 
                 Arrays.sort(values);
@@ -158,9 +160,9 @@ public class PatternFinderAndStringAnalyzerDrillToDetailTest extends TestCase {
                 assertEquals(AnnotatedRowsResult.class, result2.getClass());
 
                 AnnotatedRowsResult arr = (AnnotatedRowsResult) result2;
-                InputRow[] rows = arr.getRows();
-                assertEquals(1, rows.length);
-                assertEquals("wpatterson@classicmodelcars.com", rows[0].getValue(emailInputColumn).toString());
+                List<InputRow> rows = arr.getSampleRows();
+                assertEquals(1, rows.size());
+                assertEquals("wpatterson@classicmodelcars.com", rows.get(0).getValue(emailInputColumn).toString());
             }
 
         } finally {

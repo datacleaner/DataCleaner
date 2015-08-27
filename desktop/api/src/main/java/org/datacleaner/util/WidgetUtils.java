@@ -89,6 +89,8 @@ public final class WidgetUtils {
     public static final Font FONT_OPENSANS_ITALIC;
     public static final Font FONT_OPENSANS_BOLD_ITALIC;
 
+    public static final Font FONT_FONTAWESOME;
+
     static {
         fonts = new HashMap<String, Font>();
 
@@ -108,6 +110,8 @@ public final class WidgetUtils {
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
         FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
         FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
+        
+        FONT_FONTAWESOME = createFont("fonts/FontAwesome-4.3.0.ttf").deriveFont(14f);
 
         fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
         fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
@@ -121,6 +125,8 @@ public final class WidgetUtils {
     public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
     public static final Font FONT_TABLE_HEADER = FONT_NORMAL.deriveFont(Font.BOLD);
 
+    public static final int SCROLL_UNIT_INCREMENT = 20;
+
     // blue base color of DC styling (#3b76bc)
     public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(59, 118, 188);
     public static final Color BG_COLOR_BLUE_BRIGHT = slightlyBrighter(BG_COLOR_BLUE_MEDIUM);
@@ -132,14 +138,14 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_DARK = slightlyDarker(BG_COLOR_ORANGE_MEDIUM);
 
     // white with 10% alpha/opacity
-    public static final Color BG_SEMI_TRANSPARENT = new Color(0.0f, 0.0f, 0.0f, 0.05f);
+    public static final Color BG_SEMI_TRANSPARENT = new ColorUIResource(new Color(0.0f, 0.0f, 0.0f, 0.05f));
 
     // pale yellow color which work fine for information/help text fields.
     // #f4f4d3
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
 
     // white
-    public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
+    public static final Color BG_COLOR_BRIGHTEST = new ColorUIResource(Color.WHITE);
 
     // #e1e1e1 (silver-ish)
     public static final Color BG_COLOR_BRIGHT = new ColorUIResource(245, 245, 245);
@@ -154,7 +160,7 @@ public final class WidgetUtils {
 
     public static final Color BG_COLOR_DARK = new ColorUIResource(33, 33, 33);
 
-    public static final Color BG_COLOR_DARKEST = ColorUIResource.BLACK;
+    public static final Color BG_COLOR_DARKEST = new ColorUIResource(Color.BLACK);
 
     public static final Color COLOR_DEFAULT_BACKGROUND = BG_COLOR_BRIGHTEST;
     public static final Color COLOR_WELL_BACKGROUND = BG_COLOR_BRIGHT;
@@ -177,8 +183,15 @@ public final class WidgetUtils {
 
     public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 
-    public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
-    public static final Border BORDER_WIDE_BRIGHTEST = new LineBorder(BG_COLOR_BRIGHTEST, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_ALTERNATIVE = new LineBorder(COLOR_ALTERNATIVE_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_DEFAULT = new LineBorder(COLOR_DEFAULT_BACKGROUND, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_WIDE_WELL = new LineBorder(COLOR_WELL_BACKGROUND, BORDER_WIDE_WIDTH);
+
+    @Deprecated
+    public static final Border BORDER_WIDE = BORDER_WIDE_ALTERNATIVE;
+
+    @Deprecated
+    public static final Border BORDER_WIDE_BRIGHTEST = BORDER_WIDE_DEFAULT;
 
     public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
             WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
@@ -451,7 +464,7 @@ public final class WidgetUtils {
         if (comp != null) {
             scroll.setViewportView(comp);
         }
-        scroll.getVerticalScrollBar().setUnitIncrement(20);
+        scroll.getVerticalScrollBar().setUnitIncrement(SCROLL_UNIT_INCREMENT);
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
         return scroll;

@@ -32,18 +32,24 @@ import javax.xml.transform.stream.StreamResult;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.ExcelDatastore;
-import org.datacleaner.connection.JdbcDatastore;
 import org.apache.metamodel.schema.TableType;
 import org.apache.metamodel.util.ClasspathResource;
 import org.apache.metamodel.util.FileResource;
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.connection.CouchDbDatastore;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.connection.ExcelDatastore;
+import org.datacleaner.connection.JdbcDatastore;
+import org.datacleaner.connection.MongoDbDatastore;
+import org.datacleaner.connection.SalesforceDatastore;
 import org.w3c.dom.Element;
 
 public class DatastoreXmlExternalizerTest extends TestCase {
 
     private DatastoreXmlExternalizer externalizer;
+
+    private static final String PASSWORD_ENCODED = "00em6E9KEO9FG42CH0yrVQ==";
 
     @Override
     protected void setUp() throws Exception {
@@ -124,15 +130,55 @@ public class DatastoreXmlExternalizerTest extends TestCase {
         final Element datastoreCatalogElement = externalizer.getDocument().getDocumentElement();
         assertEquals("<configuration><datastore-catalog>" + str1 + str2 + "</datastore-catalog></configuration>",
                 transform(datastoreCatalogElement));
-        
+
         boolean removed = externalizer.removeDatastore("foo ds");
         assertFalse(removed);
-        
+
         removed = externalizer.removeDatastore("foo ds 1");
         assertTrue(removed);
-        
+
         assertEquals("<configuration><datastore-catalog>" + str2 + "</datastore-catalog></configuration>",
                 transform(datastoreCatalogElement));
+    }
+
+    public void testExternalizeJdbcDatastoreWithPassword() throws Exception {
+        Datastore ds1 = new JdbcDatastore("name", "jdbcUrl", "driverClass", "username", "password", true,
+                new TableType[] { TableType.ALIAS }, "catalogName");
+
+        Element externalized = externalizer.externalize(ds1);
+        assertEquals(
+                "<jdbc-datastore name=\"name\"><url>jdbcUrl</url><driver>driverClass</driver><username>username</username><password>enc:"
+                        + PASSWORD_ENCODED
+                        + "</password>"
+                        + "<multiple-connections>true</multiple-connections><table-types><table-type>ALIAS</table-type></table-types><catalog-name>catalogName</catalog-name></jdbc-datastore>",
+                transform(externalized));
+    }
+
+    public void testExternalizeMongoDbDatastoreWithPassword() throws Exception {
+        Datastore ds1 = new MongoDbDatastore("name", "hostname", 1234, "database", "user", "password");
+
+        Element externalized = externalizer.externalize(ds1);
+        assertEquals("<mongodb-datastore name=\"name\"><hostname>hostname</hostname><port>1234</port>"
+                + "<database-name>database</database-name><username>user</username>" + "<password>enc:"
+                + PASSWORD_ENCODED + "</password></mongodb-datastore>", transform(externalized));
+    }
+
+    public void testExternalizeCouchDbDatastoreWithPassword() throws Exception {
+        Datastore ds1 = new CouchDbDatastore("name", "hostname", 1234, "user", "password", true, null);
+
+        Element externalized = externalizer.externalize(ds1);
+        assertEquals("<couchdb-datastore name=\"name\"><hostname>hostname</hostname><port>1234</port>"
+                + "<username>user</username><password>enc:" + PASSWORD_ENCODED + "</password>"
+                + "<ssl>true</ssl></couchdb-datastore>", transform(externalized));
+    }
+
+    public void testExternalizeSalesforceDatastoreWithPassword() throws Exception {
+        Datastore ds1 = new SalesforceDatastore("name", "username", "password", "securityToken");
+
+        Element externalized = externalizer.externalize(ds1);
+        assertEquals("<salesforce-datastore name=\"name\"><username>username</username>" + "<password>enc:"
+                + PASSWORD_ENCODED + "</password>"
+                + "<security-token>securityToken</security-token></salesforce-datastore>", transform(externalized));
     }
 
     private String transform(Element elem) throws Exception {

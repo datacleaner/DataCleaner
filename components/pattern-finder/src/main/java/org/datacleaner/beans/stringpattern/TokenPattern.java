@@ -25,8 +25,6 @@ import java.util.List;
 /**
  * Represents a pattern of token symbols that are matchable against a series of
  * concrete tokens.
- * 
- * 
  */
 public interface TokenPattern extends Serializable {
 

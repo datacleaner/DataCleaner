@@ -39,9 +39,9 @@ import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabDimension;
 import org.datacleaner.result.CrosstabNavigator;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.ValueCombination;
 
 @Named("Boolean analyzer")
@@ -83,7 +83,7 @@ public class BooleanAnalyzer implements Analyzer<BooleanAnalyzerResult> {
 
     public BooleanAnalyzer(InputColumn<Boolean>[] columns) {
         _columns = columns;
-        _annotationFactory = new InMemoryRowAnnotationFactory();
+        _annotationFactory = RowAnnotations.getDefaultFactory();
     }
 
     public BooleanAnalyzer() {

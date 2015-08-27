@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Named;
 
+import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
@@ -38,35 +39,59 @@ import org.datacleaner.components.categories.NumbersCategory;
 @Categorized(NumbersCategory.class)
 public class GenerateIdTransformer implements Transformer {
 
-	@Configured
-	@Description("A column which represent the scope for which the ID will be generated. "
-			+ "If eg. a source column is selected, an ID will be generated for each source record. "
-			+ "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
-	InputColumn<?> columnInScope;
+    public enum IdType implements HasName {
+        SEQUENCE("Sequence"), ROW_NUMBER("Row number");
+        
+        private final String name;
+        
+        private IdType(String name) {
+            this.name = name;
+        }
 
-	@Configured
-	int offset = 0;
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
 
-	private final AtomicInteger _counter;
+    @Configured
+    @Description("A type of ID which will be generated for each record in scope. Current options: sequential numbers or row number.")
+    IdType idType = IdType.SEQUENCE;
 
-	public GenerateIdTransformer() {
-		_counter = new AtomicInteger();
-	}
+    @Configured
+    @Description("A column which represent the scope for which the ID will be generated. "
+            + "If eg. a source column is selected, an ID will be generated for each source record. "
+            + "If a transformed column is selected, an ID will be generated for each record generated that has this column.")
+    InputColumn<?> columnInScope;
 
-	@Initialize
-	public void init() {
-		_counter.set(offset);
-	}
+    @Configured
+    int offset = 0;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		return new OutputColumns(Integer.class, "Generated ID");
-	}
+    private final AtomicInteger _counter;
 
-	@Override
-	public Integer[] transform(InputRow inputRow) {
-		int id = _counter.incrementAndGet();
-		return new Integer[] { id };
-	}
+    public GenerateIdTransformer() {
+        _counter = new AtomicInteger();
+    }
+
+    @Initialize
+    public void init() {
+        _counter.set(offset);
+    }
+
+    @Override
+    public OutputColumns getOutputColumns() {
+        return new OutputColumns(Integer.class, "Generated ID");
+    }
+
+    @Override
+    public Integer[] transform(InputRow inputRow) {
+        final int id;
+        if (IdType.ROW_NUMBER == idType) {
+            id = inputRow.getId();
+        } else {
+            id = _counter.incrementAndGet();
+        }
+        return new Integer[] { id };
+    }
 
 }

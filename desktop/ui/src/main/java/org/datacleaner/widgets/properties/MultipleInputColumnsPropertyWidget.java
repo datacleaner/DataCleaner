@@ -462,6 +462,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
             public void run() {
                 final List<InputColumn<?>> valueList = new ArrayList<>();
                 for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+                    if (cb.getValue() instanceof MutableInputColumn) {
+                        final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) cb.getValue();
+                        if (mutableInputColumn.isHidden()) {
+                            // skip hidden columns
+                            continue;
+                        }
+                    }
                     if (cb.isEnabled()) {
                         cb.setSelected(true);
                         valueList.add(cb.getValue());

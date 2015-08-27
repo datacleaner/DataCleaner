@@ -26,6 +26,7 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.MappedProperty;
 import org.datacleaner.beans.writers.WriteDataResult;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.output.OutputRow;
@@ -34,11 +35,16 @@ import org.datacleaner.output.OutputWriter;
 public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteDataResult>, PrecedingComponentConsumer {
 
     public static final String PROPERTY_COLUMNS = "Columns";
+    public static final String PROPERTY_FIELD_NAMES = "Fields";
     
 	private final AtomicInteger rowCount = new AtomicInteger(0);
 
 	@Configured(PROPERTY_COLUMNS)
 	InputColumn<?>[] columns;
+	
+	@Configured(value = PROPERTY_FIELD_NAMES, required = false)
+    @MappedProperty(PROPERTY_COLUMNS)
+    String[] fields;
 
 	protected OutputWriter outputWriter;
 

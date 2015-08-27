@@ -29,7 +29,7 @@ import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
 
 public class ChangeRequirementMenu extends JMenu {
-    
+
     private static final long serialVersionUID = 1L;
 
     public ChangeRequirementMenu(ComponentBuilder componentBuilder) {
@@ -46,5 +46,17 @@ public class ChangeRequirementMenu extends JMenu {
             setEnabled(false);
         }
 
+    }
+
+    /**
+     * Determines if changing requirements for a particular
+     * {@link ComponentBuilder} is relevant or not. If no filters exist, it is
+     * not relevant to even show the ability to set requirements.
+     * 
+     * @param componentBuilder
+     * @return
+     */
+    public static boolean isRelevant(ComponentBuilder componentBuilder) {
+        return !componentBuilder.getAnalysisJobBuilder().getFilterComponentBuilders().isEmpty();
     }
 }

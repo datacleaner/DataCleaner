@@ -25,12 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.OutputRowCollector;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
-
-import junit.framework.TestCase;
+import org.datacleaner.job.AbstractOutputRowCollector;
 
 public class ReadFromMapTransformerTest extends TestCase {
 
@@ -41,7 +41,7 @@ public class ReadFromMapTransformerTest extends TestCase {
 		trans.mapColumn = col;
 		trans.valueType = Integer.class;
 		trans.verifyTypes = true;
-		trans.outputRowCollector = new OutputRowCollector() {
+		trans.outputRowCollector = new AbstractOutputRowCollector() {
 			@Override
 			public void putValues(Object... values) {
 				result.add(values);

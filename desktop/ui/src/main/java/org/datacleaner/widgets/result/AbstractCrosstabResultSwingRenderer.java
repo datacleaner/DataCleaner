@@ -177,7 +177,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
                 final JFreeChart chart = ChartFactory.createBarChart("", "", measureName, dataset,
                         PlotOrientation.VERTICAL, true, true, false);
                 ChartUtils.applyStyles(chart);
-                final ChartPanel chartPanel = new ChartPanel(chart);
+                final ChartPanel chartPanel = ChartUtils.createPanel(chart, true);
                 displayChartCallback.displayChart(chartPanel);
             }
         };

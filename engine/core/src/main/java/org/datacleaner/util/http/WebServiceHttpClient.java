@@ -19,13 +19,18 @@
  */
 package org.datacleaner.util.http;
 
+import java.io.Closeable;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * Defines a HTTP client for external web service connectivity over HTTP.
  */
-public interface WebServiceHttpClient {
+public interface WebServiceHttpClient extends Closeable {
 
     public HttpResponse execute(HttpUriRequest request) throws Exception;
+    
+    @Override
+    public void close();
 }

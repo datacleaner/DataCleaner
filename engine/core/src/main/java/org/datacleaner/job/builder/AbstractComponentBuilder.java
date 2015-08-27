@@ -32,12 +32,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.CollectionUtils;
 import org.apache.metamodel.util.EqualsBuilder;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Component;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Renderable;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.InjectionManager;
+import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
@@ -49,6 +55,7 @@ import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.HasFilterOutcomes;
 import org.datacleaner.job.ImmutableComponentConfiguration;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.job.SimpleComponentRequirement;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.util.CollectionUtils2;
@@ -75,10 +82,13 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     private static final Logger logger = LoggerFactory.getLogger(AbstractComponentBuilder.class);
 
     private final List<ComponentRemovalListener<ComponentBuilder>> _removalListeners;
+    private final List<OutputDataStream> _outputDataStreams = new ArrayList<OutputDataStream>();
+    private final Map<OutputDataStream, AnalysisJobBuilder> _outputDataStreamJobs = new HashMap<>();
     private final D _descriptor;
     private final E _configurableBean;
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final Map<String, String> _metadataProperties;
+
+    private AnalysisJobBuilder _analysisJobBuilder;
     private ComponentRequirement _componentRequirement;
     private String _name;
 
@@ -688,5 +698,135 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
     @Override
     public boolean removeRemovalListener(ComponentRemovalListener<ComponentBuilder> componentRemovalListener) {
         return _removalListeners.remove(componentRemovalListener);
+    }
+
+    protected Component getComponentInstanceForQuestioning() {
+        if (!isConfigured()) {
+            // as long as the component is not configured we cannot proceed
+            return null;
+        }
+
+        final Component component = getComponentInstance();
+        final D descriptor = getDescriptor();
+
+        final DataCleanerConfiguration configuration = getAnalysisJobBuilder().getConfiguration();
+        final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
+                .getInjectionManager(configuration);
+
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);
+
+        // mimic the configuration of a real component instance
+        final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());
+        lifeCycleHelper.assignConfiguredProperties(descriptor, component, beanConfiguration);
+        lifeCycleHelper.assignProvidedProperties(descriptor, component);
+
+        // only validate, don't initialize
+        lifeCycleHelper.validate(descriptor, component);
+
+        return component;
+    }
+
+    @Override
+    public AnalysisJobBuilder getOutputDataStreamJobBuilder(OutputDataStream outputDataStream) {
+        AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
+        if (analysisJobBuilder == null) {
+            assert _outputDataStreams.contains(outputDataStream);
+
+            final Table table = outputDataStream.getTable();
+
+            analysisJobBuilder = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration());
+            analysisJobBuilder.setDatastore(new OutputDataStreamDatastore(outputDataStream));
+            analysisJobBuilder.addSourceColumns(table.getColumns());
+
+            _outputDataStreamJobs.put(outputDataStream, analysisJobBuilder);
+        }
+        return analysisJobBuilder;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream(Table dataStreamTable) {
+        if (dataStreamTable == null) {
+            return null;
+        }
+        final List<OutputDataStream> streams = getOutputDataStreams();
+        for (final OutputDataStream outputDataStream : streams) {
+            if (dataStreamTable.equals(outputDataStream.getTable())) {
+                return outputDataStream;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public OutputDataStream getOutputDataStream(final String name) {
+        if (name == null) {
+            return null;
+        }
+        final List<OutputDataStream> streams = getOutputDataStreams();
+        for (final OutputDataStream outputDataStream : streams) {
+            if (name.equals(outputDataStream.getName())) {
+                return outputDataStream;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<OutputDataStream> getOutputDataStreams() {
+        final Component component = getComponentInstanceForQuestioning();
+        if (component == null) {
+            // as long as the component is not configured, just return an
+            // empty list
+            return Collections.emptyList();
+        }
+
+        if (component instanceof HasOutputDataStreams) {
+            final OutputDataStream[] outputDataStreams = ((HasOutputDataStreams) component).getOutputDataStreams();
+            final List<OutputDataStream> newList = Arrays.asList(outputDataStreams);
+            if (!_outputDataStreams.equals(newList)) {
+                // This can be improved - maybe the list only slightly changes
+                // in which case we would want to only change the elements that
+                // are different. See
+                // TransformerComponentBuilder.getOutputColumns() as
+                // inspiration.
+                _outputDataStreams.clear();
+                _outputDataStreamJobs.clear();
+                _outputDataStreams.addAll(newList);
+            }
+            return Collections.unmodifiableList(_outputDataStreams);
+        }
+
+        // component isn't capable of having output data streams
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isOutputDataStreamConsumed(OutputDataStream outputDataStream) {
+        final AnalysisJobBuilder analysisJobBuilder = _outputDataStreamJobs.get(outputDataStream);
+        if (analysisJobBuilder == null) {
+            return false;
+        }
+        return analysisJobBuilder.getComponentCount() > 0;
+    }
+
+    @Override
+    public OutputDataStreamJob[] getOutputDataStreamJobs() {
+        final List<OutputDataStream> outputDataStreams = getOutputDataStreams();
+        if (outputDataStreams == null || outputDataStreams.isEmpty()) {
+            return new OutputDataStreamJob[0];
+        }
+        final List<OutputDataStreamJob> result = new ArrayList<>();
+        for (OutputDataStream outputDataStream : outputDataStreams) {
+            if (isOutputDataStreamConsumed(outputDataStream)) {
+                result.add(new LazyOutputDataStreamJob(outputDataStream,
+                        getOutputDataStreamJobBuilder(outputDataStream)));
+            }
+        }
+        return result.toArray(new OutputDataStreamJob[result.size()]);
+    }
+
+    @Override
+    public void setAnalysisJobBuilder(final AnalysisJobBuilder analysisJobBuilder) {
+        _analysisJobBuilder = analysisJobBuilder;
     }
 }

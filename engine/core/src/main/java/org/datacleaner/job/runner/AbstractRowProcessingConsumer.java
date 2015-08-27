@@ -19,19 +19,27 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
+import org.datacleaner.api.HasAnalyzerResult;
+import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnyComponentRequirement;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.ComponentRequirement;
+import org.datacleaner.job.FilterOutcome;
 import org.datacleaner.job.FilterOutcomes;
 import org.datacleaner.job.HasComponentRequirement;
 import org.datacleaner.job.InputColumnSinkJob;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.SourceColumnFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +58,12 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     private final HasComponentRequirement _hasComponentRequirement;
     private final Set<HasComponentRequirement> _sourceJobsOfInputColumns;
     private final boolean _alwaysSatisfiedForConsume;
+    private final List<ActiveOutputDataStream> _outputDataStreams;
 
-    protected AbstractRowProcessingConsumer(RowProcessingPublishers publishers, HasComponentRequirement outcomeSinkJob,
+    protected AbstractRowProcessingConsumer(RowProcessingPublisher publisher, HasComponentRequirement outcomeSinkJob,
             InputColumnSinkJob inputColumnSinkJob) {
-        this(publishers.getAnalysisJob(), publishers.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob,
-                publishers.getSourceColumnFinder());
+        this(publisher.getAnalysisJob(), publisher.getAnalysisListener(), outcomeSinkJob, inputColumnSinkJob, publisher
+                .getSourceColumnFinder());
     }
 
     protected AbstractRowProcessingConsumer(AnalysisJob analysisJob, AnalysisListener analysisListener,
@@ -70,6 +79,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         _analysisListener = analysisListener;
         _hasComponentRequirement = outcomeSinkJob;
         _sourceJobsOfInputColumns = sourceJobsOfInputColumns;
+        _outputDataStreams = new ArrayList<>(2);
         _alwaysSatisfiedForConsume = isAlwaysSatisfiedForConsume();
     }
 
@@ -89,7 +99,7 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         if (componentRequirement == null) {
             return false;
         }
-        
+
         if (componentRequirement instanceof AnyComponentRequirement) {
             return true;
         }
@@ -132,6 +142,11 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
     public InputColumn<?>[] getOutputColumns() {
         return new InputColumn[0];
     }
+    
+    @Override
+    public boolean isResultProducer() {
+        return getComponent() instanceof HasAnalyzerResult;
+    }
 
     @Override
     public final void consume(InputRow row, int distinctCount, FilterOutcomes outcomes, RowProcessingChain chain) {
@@ -157,7 +172,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
      * @param outcomes
      * @param chain
      */
-    protected abstract void consumeInternal(InputRow row, int distinctCount, FilterOutcomes outcomes, RowProcessingChain chain);
+    protected abstract void consumeInternal(InputRow row, int distinctCount, FilterOutcomes outcomes,
+            RowProcessingChain chain);
 
     private boolean satisfiedInputsForConsume(InputRow row, FilterOutcomes outcomes) {
         if (_alwaysSatisfiedForConsume) {
@@ -170,7 +186,8 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
                 // if any of the source jobs is satisfied, then continue
                 if (sourceJobsOfInputColumn instanceof HasComponentRequirement) {
                     final HasComponentRequirement hasComponentRequirement = (HasComponentRequirement) sourceJobsOfInputColumn;
-                    final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(hasComponentRequirement, row, outcomes);
+                    final boolean satisfiedOutcomesForConsume = satisfiedOutcomesForConsume(hasComponentRequirement,
+                            row, outcomes);
                     if (satisfiedOutcomesForConsume) {
                         return true;
                     }
@@ -184,9 +201,9 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
 
     private boolean satisfiedOutcomesForConsume(HasComponentRequirement component, InputRow row, FilterOutcomes outcomes) {
         boolean isSatisfiedOutcomes = false;
-        
+
         final ComponentRequirement componentRequirement = component.getComponentRequirement();
-        
+
         if (componentRequirement == null) {
             isSatisfiedOutcomes = true;
         } else {
@@ -208,6 +225,28 @@ abstract class AbstractRowProcessingConsumer implements RowProcessingConsumer {
         if (componentRequirement == null) {
             return true;
         }
+
+        final Collection<FilterOutcome> dependencies = componentRequirement.getProcessingDependencies();
+        for (FilterOutcome filterOutcome : dependencies) {
+            boolean contains = outcomes.contains(filterOutcome);
+            if (!contains) {
+                return false;
+            }
+        }
+
         return componentRequirement.isSatisfied(null, outcomes);
+    }
+
+    @Override
+    public List<ActiveOutputDataStream> getActiveOutputDataStreams() {
+        return Collections.unmodifiableList(_outputDataStreams);
+    }
+
+    @Override
+    public void registerOutputDataStream(OutputDataStreamJob outputDataStreamJob,
+            RowProcessingPublisher publisherForOutputDataStream) {
+        final HasOutputDataStreams component = (HasOutputDataStreams) getComponent();
+        _outputDataStreams
+                .add(new ActiveOutputDataStream(outputDataStreamJob, publisherForOutputDataStream, component));
     }
 }

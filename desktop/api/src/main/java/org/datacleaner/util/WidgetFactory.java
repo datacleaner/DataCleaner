@@ -101,7 +101,7 @@ public final class WidgetFactory {
         final ImageIcon icon = ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_BUTTON);
         return icon;
     }
-    
+
     public static PopupButton createDarkPopupButton(String text, String imagePath) {
         PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
@@ -113,6 +113,21 @@ public final class WidgetFactory {
         PopupButton b = new PopupButton(text, getButtonIcon(imagePath));
         b.setFocusPainted(false);
         WidgetUtils.setDefaultButtonStyle(b);
+        return b;
+    }
+
+    public static PopupButton createSmallPopupButton(final String text, final String imagePath) {
+        final PopupButton b = new PopupButton(text, ImageManager.get().getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL));
+
+        b.setFont(WidgetUtils.FONT_SMALL);
+        b.setMargin(new Insets(0, 0, 0, 0));
+        b.setUI(new MetalButtonUI());
+        b.setBackground(WidgetUtils.COLOR_WELL_BACKGROUND);
+
+        final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+        b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+        b.setFocusPainted(false);
+
         return b;
     }
 
@@ -267,7 +282,7 @@ public final class WidgetFactory {
         DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
         return taskPaneContainer;
     }
-    
+
     public static JXTaskPane createTaskPane(String title, String imagePath) {
         final ImageIcon icon;
         if (Strings.isNullOrEmpty(imagePath)) {

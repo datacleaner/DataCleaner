@@ -23,8 +23,11 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.configuration.AnalyzerBeansConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.Descriptors;
@@ -34,14 +37,13 @@ import org.datacleaner.result.html.HtmlFragment;
 import org.datacleaner.result.html.HtmlRenderingContext;
 import org.datacleaner.result.renderer.AnnotatedRowsHtmlRenderer;
 import org.datacleaner.result.renderer.RendererFactory;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
-import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.storage.RowAnnotations;
 
 public class PatternFinderResultHtmlRendererTest extends TestCase {
 
     private final SimpleDescriptorProvider descriptorProvider = new SimpleDescriptorProvider();
-    private final AnalyzerBeansConfigurationImpl conf = new AnalyzerBeansConfigurationImpl()
-            .replace(descriptorProvider);
+    private final DataCleanerConfiguration conf = new DataCleanerConfigurationImpl()
+            .withEnvironment(new DataCleanerEnvironmentImpl().withDescriptorProvider(descriptorProvider));
     private final RendererFactory rendererFactory = new RendererFactory(conf);
     private HtmlRenderingContext context;
 
@@ -51,15 +53,15 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
         descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(AnnotatedRowsHtmlRenderer.class));
         context = new DefaultHtmlRenderingContext();
     }
-    
+
     public void testNoPatterns() throws Exception {
         InputColumn<String> col1 = new MockInputColumn<String>("email username", String.class);
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
-        
+
         PatternFinderResult result = analyzer.getResult();
 
         HtmlFragment htmlFragment = new PatternFinderResultHtmlRenderer(rendererFactory).render(result);
@@ -77,7 +79,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
 
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
         analyzer.run(new MockInputRow().put(col1, "kasper"), 1);
@@ -106,7 +108,7 @@ public class PatternFinderResultHtmlRendererTest extends TestCase {
         PatternFinderAnalyzer analyzer = new PatternFinderAnalyzer();
         analyzer.setColumn(col1);
         analyzer.setGroupColumn(col2);
-        analyzer.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+        analyzer.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
         analyzer.init();
 
         analyzer.run(new MockInputRow().put(col1, "kasper").put(col2, "eobjects.dk"), 1);

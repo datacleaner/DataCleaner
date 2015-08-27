@@ -19,77 +19,50 @@
  */
 package org.datacleaner.widgets.properties;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.FileProperty;
 import org.datacleaner.api.FileProperty.FileAccessMode;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.builder.ComponentBuilder;
-import org.datacleaner.util.StringUtils;
-import org.datacleaner.util.VfsResource;
-import org.datacleaner.util.convert.ResourceConverter;
-import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
-import org.datacleaner.util.DCDocumentListener;
 import org.datacleaner.util.ExtensionFilter;
 import org.datacleaner.util.FileFilters;
-import org.datacleaner.util.WidgetFactory;
-import org.datacleaner.widgets.Alignment;
-import org.datacleaner.widgets.DCComboBox;
-import org.datacleaner.widgets.DCComboBox.Listener;
-import org.datacleaner.widgets.DCLabel;
-import org.datacleaner.widgets.FileSelectionListener;
+import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.widgets.FilenameTextField;
-import org.apache.metamodel.util.ClasspathResource;
-import org.apache.metamodel.util.FileResource;
-import org.apache.metamodel.util.Resource;
-import org.apache.metamodel.util.UrlResource;
-import org.jdesktop.swingx.JXTextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.datacleaner.widgets.ResourceSelector;
+import org.datacleaner.widgets.ResourceTypePresenter;
 
 /**
  * Property widget for a single {@link Resource} field.
  */
 public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<Resource> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SingleResourcePropertyWidget.class);
-
-    private final FilenameTextField _filenameField;
-    private final UserPreferences _userPreferences;
-    private final DCComboBox<String> _resourceTypeComboBox;
-    private final JXTextField _otherPathTextField;
-
-    // if the resource is of a type which is not catered for by the widget, then
-    // this field will hold it's value and the widget will be read only.
-    private final Resource _immutableValue;
+    private final ResourceSelector _resourceTextField;
 
     @Inject
     public SingleResourcePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
             ComponentBuilder componentBuilder, UserPreferences userPreferences) {
         super(componentBuilder, propertyDescriptor);
-        _userPreferences = userPreferences;
 
-        boolean openFileDialog = true;
+        boolean openMode = true;
         String[] extensions = null;
 
-        FileProperty fileProperty = propertyDescriptor.getAnnotation(FileProperty.class);
+        final FileProperty fileProperty = propertyDescriptor.getAnnotation(FileProperty.class);
         if (fileProperty != null) {
-            openFileDialog = fileProperty.accessMode() == FileAccessMode.OPEN;
+            openMode = fileProperty.accessMode() == FileAccessMode.OPEN;
 
             extensions = fileProperty.extension();
         }
 
-        _resourceTypeComboBox = new DCComboBox<String>(new String[] { "file", "url", "classpath", "vfs" });
-        _filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
-        _otherPathTextField = WidgetFactory.createTextField();
+        final ResourceConverter resourceConverter = getResourceConverter();
+        _resourceTextField = new ResourceSelector(resourceConverter, userPreferences, openMode);
 
         if (extensions != null && extensions.length > 0) {
             List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
@@ -102,76 +75,38 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
                 }
                 FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", extensionWithDot);
                 filters.add(filter);
-                _filenameField.addChoosableFileFilter(filter);
+                _resourceTextField.addChoosableFileFilter(filter);
             }
             if (filters.size() == 1) {
-                _filenameField.setSelectedFileFilter(filters.get(0));
+                _resourceTextField.setSelectedFileFilter(filters.get(0));
             } else {
                 FileFilter filter = FileFilters.combined("All suggested file formats",
                         filters.toArray(new FileFilter[filters.size()]));
-                _filenameField.setSelectedFileFilter(filter);
+                _resourceTextField.setSelectedFileFilter(filter);
             }
         } else {
-            _filenameField.setSelectedFileFilter(FileFilters.ALL);
+            _resourceTextField.setSelectedFileFilter(FileFilters.ALL);
         }
 
         final Resource currentValue = getCurrentValue();
-        if (currentValue == null) {
-            _otherPathTextField.setVisible(false);
-            _immutableValue = null;
-        } else if (currentValue instanceof FileResource) {
-            _otherPathTextField.setVisible(false);
-            _filenameField.setFile(((FileResource) currentValue).getFile());
-            _immutableValue = null;
-        } else if (currentValue instanceof UrlResource || currentValue instanceof VfsResource
-                || currentValue instanceof ClasspathResource) {
-            _filenameField.setVisible(false);
-            _immutableValue = null;
-        } else {
-            _filenameField.setVisible(false);
-            _immutableValue = currentValue;
+        if (currentValue != null) {
+            _resourceTextField.setResource(currentValue);
         }
 
-        if (_immutableValue == null) {
-            _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-                @Override
-                protected void onChange(DocumentEvent e) {
-                    fireValueChanged();
-                }
-            });
+        _resourceTextField.addListener(new ResourceTypePresenter.Listener() {
 
-            _filenameField.addFileSelectionListener(new FileSelectionListener() {
-                @Override
-                public void onSelected(FilenameTextField filenameTextField, File file) {
-                    File dir = file.getParentFile();
-                    _userPreferences.setConfiguredFileDirectory(dir);
-                    fireValueChanged();
-                }
-            });
+            @Override
+            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
+                fireValueChanged();
+            }
 
-            _otherPathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-                @Override
-                protected void onChange(DocumentEvent event) {
-                    fireValueChanged();
-                }
-            });
-            _resourceTypeComboBox.addListener(new Listener<String>() {
-                @Override
-                public void onItemSelected(String item) {
-                    boolean isFileMode = "file".equals(item);
-                    _filenameField.setVisible(isFileMode);
-                    _otherPathTextField.setVisible(!isFileMode);
+            @Override
+            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+                fireValueChanged();
+            }
+        });
 
-                    fireValueChanged();
-                }
-            });
-
-            final DCPanel panel = DCPanel.flow(Alignment.LEFT, 0, 0, _resourceTypeComboBox, _filenameField,
-                    _otherPathTextField);
-            add(panel);
-        } else {
-            add(DCLabel.dark("- Resource: " + _immutableValue.getName() + " -"));
-        }
+        add(_resourceTextField);
     }
 
     /**
@@ -190,72 +125,31 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
         return getValue() != null;
     }
 
+    /**
+     * 
+     * @return
+     * @deprecated use {@link #getResourceTextField()} instead
+     */
+    @Deprecated
     public FilenameTextField getFilenameField() {
-        return _filenameField;
+        final ResourceTypePresenter<?> presenter = _resourceTextField.getResourceTypePresenter("file");
+        if (presenter instanceof FilenameTextField) {
+            return (FilenameTextField) presenter;
+        }
+        return null;
+    }
+
+    public ResourceSelector getResourceTextField() {
+        return _resourceTextField;
     }
 
     @Override
     public Resource getValue() {
-        if (_immutableValue != null) {
-            return _immutableValue;
-        }
-
-        String path;
-        String resourceType = _resourceTypeComboBox.getSelectedItem();
-        if ("file".equals(resourceType)) {
-            path = _filenameField.getFilename();
-        } else {
-            path = _otherPathTextField.getText();
-        }
-
-        if (StringUtils.isNullOrEmpty(path)) {
-            return null;
-        }
-
-        final String resourceString = resourceType + "://" + path;
-        try {
-            Resource resource = getResourceConverter().fromString(Resource.class, resourceString);
-            return resource;
-        } catch (Exception e) {
-            // sometimes an exception can occur because the path is not valid (a
-            // URL with a wrong pattern or so).
-            if (logger.isDebugEnabled()) {
-                logger.debug("Could not create resource from string: " + resourceString, e);
-            }
-            return null;
-        }
+        return _resourceTextField.getResource();
     }
 
     @Override
     protected void setValue(Resource value) {
-        if (value == null) {
-            _filenameField.setFilename("");
-            _otherPathTextField.setText("");
-            return;
-        }
-
-        if (value instanceof FileResource) {
-            _resourceTypeComboBox.setSelectedItem("file");
-            File existingFile = _filenameField.getFile();
-            File newFile = ((FileResource) value).getFile();
-            if (existingFile != null && existingFile.getAbsoluteFile().equals(newFile.getAbsoluteFile())) {
-                return;
-            }
-            _filenameField.setFile(newFile);
-        } else if (value instanceof UrlResource) {
-            _resourceTypeComboBox.setSelectedItem("url");
-            final String url = ((UrlResource) value).getUri().toString();
-            _otherPathTextField.setText(url);
-        } else if (value instanceof ClasspathResource) {
-            _resourceTypeComboBox.setSelectedItem("classpath");
-            final String resourcePath = ((ClasspathResource) value).getResourcePath();
-            _otherPathTextField.setText(resourcePath);
-        } else if (value instanceof VfsResource) {
-            _resourceTypeComboBox.setSelectedItem("vfs");
-            final String path = ((VfsResource) value).getFileObject().getName().getURI();
-            _otherPathTextField.setText(path);
-        } else {
-            throw new UnsupportedOperationException("Unsupported resource type: " + value);
-        }
+        _resourceTextField.setResource(value);
     }
 }

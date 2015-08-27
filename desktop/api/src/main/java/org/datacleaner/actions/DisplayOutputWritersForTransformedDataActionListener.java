@@ -21,13 +21,15 @@ package org.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JComponent;
 
 import org.datacleaner.api.Component;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.desktop.api.PrecedingComponentConsumer;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
@@ -57,11 +59,17 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
                     _transformerJobBuilder.getDescriptor());
         }
 
-        List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
-        List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-        componentBuilder.clearInputColumns();
-        componentBuilder.addInputColumns(inputColumns);
-        componentBuilder.addInputColumns(outputColumns);
+        final Set<ConfiguredPropertyDescriptor> inputProperties = componentBuilder.getDescriptor()
+                .getConfiguredPropertiesForInput(false);
+        if (!inputProperties.isEmpty()) {
+            final ConfiguredPropertyDescriptor property = inputProperties.iterator().next();
+
+            final List<InputColumn<?>> inputColumnsToAdd = new ArrayList<InputColumn<?>>();
+            inputColumnsToAdd.addAll(_transformerJobBuilder.getInputColumns());
+            inputColumnsToAdd.addAll(_transformerJobBuilder.getOutputColumns());
+
+            componentBuilder.addInputColumns(inputColumnsToAdd, property);
+        }
     }
 
     @Override

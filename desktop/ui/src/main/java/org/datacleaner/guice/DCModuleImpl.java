@@ -34,7 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.ImmutableRef;
 import org.apache.metamodel.util.LazyRef;
@@ -79,6 +79,7 @@ import org.datacleaner.util.VfsResource;
 import org.datacleaner.util.convert.ClasspathResourceTypeHandler;
 import org.datacleaner.util.convert.DummyRepositoryResourceFileTypeHandler;
 import org.datacleaner.util.convert.FileResourceTypeHandler;
+import org.datacleaner.util.convert.HdfsResourceTypeHandler;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.datacleaner.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.datacleaner.util.convert.UrlResourceTypeHandler;
@@ -178,7 +179,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
             }
 
-            final FileObject userPreferencesFile = dataCleanerHome.resolveFile("userpreferences.dat");
+            final FileObject userPreferencesFile = dataCleanerHome.resolveFile(UserPreferencesImpl.DEFAULT_FILENAME);
 
             return new LazyRef<UserPreferences>() {
                 @Override
@@ -230,7 +231,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
-
+    
     @Provides
     public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
             DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
@@ -404,7 +405,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public HttpClient getHttpClient(UserPreferences userPreferences) {
+    public CloseableHttpClient getHttpClient(UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
     }
 
@@ -418,11 +419,17 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
         handlers.add(new UrlResourceTypeHandler());
         handlers.add(new ClasspathResourceTypeHandler());
         handlers.add(new VfsResourceTypeHandler());
+        handlers.add(new HdfsResourceTypeHandler());
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
 
         final ResourceConverter resourceConverter = new ResourceConverter(handlers,
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
+    }
+    
+    @Override
+    public InjectorBuilder createInjectorBuilder() {
+        return new InjectorBuilder(this, Guice.createInjector(this));
     }
 
     @Override

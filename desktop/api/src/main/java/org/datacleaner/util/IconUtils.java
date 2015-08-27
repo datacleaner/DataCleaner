@@ -81,6 +81,7 @@ public final class IconUtils {
     public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
     public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
     public static final String FILTER_OUTCOME_PATH = "images/component-types/filter-outcome.png";
+    public static final String OUTPUT_DATA_STREAM_PATH = "images/component-types/output-data-stream.png";
 
     public static final String MODEL_SCHEMA = "images/model/schema.png";
     public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
@@ -102,6 +103,7 @@ public final class IconUtils {
     public static final String MENU_EXECUTE = "images/menu/execute.png";
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
+    public static final String MENU_DOCUMENTATION = "images/menu/documentation.png";
 
     public static final String ACTION_EXECUTE = "images/menu/execute.png";
     public static final String ACTION_EDIT = "images/actions/edit.png";
@@ -134,6 +136,10 @@ public final class IconUtils {
     public static final String ACTION_STOP = "images/actions/stop.png";
     public static final String ACTION_LOG = "images/actions/log.png";
     public static final String ACTION_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
+    public static final String ACTION_DOWNLOAD = "images/actions/download.png";
+    public static final String ACTION_DELETE = "images/actions/delete.png";
+    public static final String ACTION_DROP_TABLE = "images/actions/drop_table.png";
+    public static final String ACTION_CREATE_TABLE = "images/actions/create_table.png";
 
     public static final String APPLICATION_ICON = "images/window/app-icon.png";
     public static final String WEBSITE = "images/actions/website.png";

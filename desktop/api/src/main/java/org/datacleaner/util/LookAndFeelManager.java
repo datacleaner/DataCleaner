@@ -172,6 +172,7 @@ public final class LookAndFeelManager {
         // Input fields
         UIManager.put("TextField.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
+        UIManager.put("TextField.disabledBackground", WidgetUtils.BG_COLOR_BRIGHT);
 
         UIManager.put("TextArea.border", WidgetUtils.BORDER_INPUT);
         UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -202,9 +203,9 @@ public final class LookAndFeelManager {
         UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_MEDIUM);
 
         // tool tip colors
-        UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);
+        UIManager.put("ToolTip.background", WidgetUtils.COLOR_ALTERNATIVE_BACKGROUND);
         UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHT);
-        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE);
+        UIManager.put("ToolTip.border", WidgetUtils.BORDER_WIDE_ALTERNATIVE);
 
         // task pane colors
         UIManager.put("TaskPaneContainer.background", WidgetUtils.COLOR_WELL_BACKGROUND);
@@ -231,7 +232,6 @@ public final class LookAndFeelManager {
         UIManager.put("ScrollBar.trackHighlightForeground", WidgetUtils.COLOR_DEFAULT_BACKGROUND);
         UIManager.put("ScrollBarUI", DCScrollBarUI.class.getName());
 
-      
         // progressbar color
         UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 

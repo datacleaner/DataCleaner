@@ -32,20 +32,24 @@ import org.datacleaner.api.ColumnProperty;
 import org.datacleaner.api.Concurrent;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.storage.CollectionFactory;
 import org.datacleaner.storage.CollectionFactoryImpl;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
 import org.datacleaner.storage.InMemoryStorageProvider;
 import org.datacleaner.storage.RowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 import org.datacleaner.util.NullTolerableComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("Value distribution")
 @Description("Gets the distributions of values that occur in a dataset.\nOften used as an initial way to see if a lot of repeated values are to be expected, if nulls occur and if a few un-repeated values add exceptions to the typical usage-pattern.")
+@ExternalDocumentation({ @DocumentationLink(title = "Analyzer rundown", url = "https://www.youtube.com/watch?v=hZWxB_eu_A0", type = DocumentationType.VIDEO, version = "4.0") })
 @Concurrent(true)
 public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnalyzerResult> {
 
@@ -125,7 +129,7 @@ public class ValueDistributionAnalyzer implements Analyzer<ValueDistributionAnal
         _topFrequentValues = topFrequentValues;
         _bottomFrequentValues = bottomFrequentValues;
         _collectionFactory = new CollectionFactoryImpl(new InMemoryStorageProvider());
-        _annotationFactory = new InMemoryRowAnnotationFactory();
+        _annotationFactory = RowAnnotations.getDefaultFactory();
     }
 
     /**

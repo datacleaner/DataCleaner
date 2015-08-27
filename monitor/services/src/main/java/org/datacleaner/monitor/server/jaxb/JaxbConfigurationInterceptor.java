@@ -48,6 +48,7 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.Ref;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.configuration.JaxbPojoDatastoreAdaptor;
 import org.datacleaner.configuration.jaxb.AbstractDatastoreType;
 import org.datacleaner.configuration.jaxb.ClasspathScannerType;
@@ -240,18 +241,40 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             }
         }
 
-        return interceptDatastoreCatalog(datastoreCatalog, datastoreUsage);
+        return interceptDatastoreCatalog(context, datastoreUsage);
     }
 
+    public DatastoreCatalogType interceptDatastoreCatalog(TenantContext context,
+            Map<String, MutableSchema> datastoreUsage) {
+        return interceptDatastoreCatalog(context.getConfiguration(), datastoreUsage);
+    }
+
+    /**
+     * 
+     * @param datastoreCatalog
+     * @param datastoreUsage
+     * @return
+     * 
+     * @deprecated use {@link #interceptDatastoreCatalog(TenantContext, Map)}
+     *             instead
+     */
+    @Deprecated
     public DatastoreCatalogType interceptDatastoreCatalog(final DatastoreCatalog datastoreCatalog,
             final Map<String, MutableSchema> datastoreUsage) {
+        return interceptDatastoreCatalog(new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog),
+                datastoreUsage);
+    }
+
+    private DatastoreCatalogType interceptDatastoreCatalog(DataCleanerConfiguration configuration,
+            final Map<String, MutableSchema> datastoreUsage) {
+
         final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
         final Set<Entry<String, MutableSchema>> datastoreUsageEntries = datastoreUsage.entrySet();
         for (final Entry<String, MutableSchema> entry : datastoreUsageEntries) {
             final String name = entry.getKey();
             Schema schema = entry.getValue();
 
-            final Datastore datastore = datastoreCatalog.getDatastore(name);
+            final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(name);
             if (datastore != null) {
                 // a comparator that takes the column number into account.
                 final Comparator<Column> columnComparator = new Comparator<Column>() {
@@ -269,7 +292,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
                 try (final DatastoreConnection connection = datastore.openConnection()) {
                     final DataContext dataContext = connection.getDataContext();
-                    final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+                    final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor(configuration);
                     final Collection<PojoTableType> pojoTables = new ArrayList<PojoTableType>();
 
                     Table[] usageTables = schema.getTables();

@@ -39,7 +39,7 @@ class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyze
     
     ChartUtils.applyStyles(chart);
     
-    val chartPanel = new ChartPanel(chart);
+    val chartPanel = ChartUtils.createPanel(chart, true);
     
     return chartPanel
   }

@@ -29,17 +29,19 @@ import java.util.Map;
 
 import javax.swing.SwingWorker;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MIME;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.job.tasks.Task;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.tasks.Task;
 import org.datacleaner.user.MonitorConnection;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.WidgetUtils;
@@ -139,8 +141,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             }
         });
 
-        final MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-        final ContentBody uploadFilePart = new AbstractContentBody("application/octet-stream") {
+        final ContentBody uploadFilePart = new AbstractContentBody(ContentType.APPLICATION_OCTET_STREAM) {
 
             @Override
             public String getCharset() {
@@ -188,7 +189,8 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             }
         };
 
-        entity.addPart("file", uploadFilePart);
+        final HttpEntity entity = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                .addPart("file", uploadFilePart).build();
         request.setEntity(entity);
 
         try (final MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient()) {

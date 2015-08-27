@@ -22,6 +22,7 @@ package org.datacleaner.result;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,15 +31,18 @@ import java.util.TreeSet;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.metamodel.util.CollectionUtils;
+import org.apache.metamodel.util.Predicate;
+import org.apache.metamodel.util.Ref;
+import org.apache.metamodel.util.SerializableRef;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.storage.RowAnnotation;
 import org.datacleaner.storage.RowAnnotationFactory;
-import org.apache.metamodel.util.Ref;
-import org.apache.metamodel.util.SerializableRef;
+import org.datacleaner.storage.RowAnnotations;
 
 /**
  * Represents a typical "drill to detail" result consisting of a set of
@@ -57,9 +61,30 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
     private final Ref<RowAnnotationFactory> _annotationFactoryRef;
     private final InputColumn<?>[] _highlightedColumns;
     private final RowAnnotation _annotation;
-    private transient InputRow[] _rows;
+    private transient List<InputRow> _rows;
     private transient TableModel _tableModel;
     private transient List<InputColumn<?>> _inputColumns;
+
+    /**
+     * Factory method for {@link AnnotatedRowsResult} that will return non-null
+     * ONLY if the {@link RowAnnotation} passed in has any sample rows according
+     * to the {@link RowAnnotationFactory}.
+     * 
+     * Otherwise returning null has the benefit that usually it makes it easy to
+     * filter out unnecesary drill-to-detail result objects.
+     * 
+     * @param annotation
+     * @param annotationFactory
+     * @param column
+     * @return
+     */
+    public static AnnotatedRowsResult createIfSampleRowsAvailable(RowAnnotation annotation,
+            RowAnnotationFactory annotationFactory, InputColumn<?>... columns) {
+        if (annotationFactory.hasSampleRows(annotation)) {
+            return new AnnotatedRowsResult(annotation, annotationFactory, columns);
+        }
+        return null;
+    }
 
     public AnnotatedRowsResult(RowAnnotation annotation, RowAnnotationFactory annotationFactory,
             InputColumn<?>... highlightedColumns) {
@@ -70,10 +95,22 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
 
     public List<InputColumn<?>> getInputColumns() {
         if (_inputColumns == null) {
-            InputRow[] rows = getRows();
-            if (rows.length > 0) {
-                InputRow firstRow = rows[0];
-                _inputColumns = firstRow.getInputColumns();
+            final List<InputRow> rows = getSampleRows();
+            if (!rows.isEmpty()) {
+                final InputRow firstRow = rows.iterator().next();
+                final List<InputColumn<?>> inputColumns = firstRow.getInputColumns();
+                _inputColumns = CollectionUtils.filter(inputColumns, new Predicate<InputColumn<?>>() {
+                    @Override
+                    public Boolean eval(InputColumn<?> col) {
+                        if (col instanceof MutableInputColumn) {
+                            if (((MutableInputColumn<?>) col).isHidden()) {
+                                // avoid hidden columns in the
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                });
             } else {
                 _inputColumns = new ArrayList<InputColumn<?>>(0);
             }
@@ -81,14 +118,24 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
         return _inputColumns;
     }
 
+    /**
+     * 
+     * @return
+     * @deprecated use {@link #getSampleRows()} instead
+     **/
+    @Deprecated
     public InputRow[] getRows() {
+        return getSampleRows().toArray(new InputRow[0]);
+    }
+
+    public List<InputRow> getSampleRows() {
         if (_rows == null) {
-            RowAnnotationFactory annotationFactory = _annotationFactoryRef.get();
+            final RowAnnotationFactory annotationFactory = _annotationFactoryRef.get();
             if (annotationFactory != null) {
-                _rows = annotationFactory.getRows(getAnnotation());
+                _rows = annotationFactory.getSampleRows(getAnnotation());
             }
             if (_rows == null) {
-                _rows = new InputRow[0];
+                _rows = Collections.emptyList();
             }
         }
         return _rows;
@@ -110,7 +157,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
         if (annotationFactory == null) {
             valueCounts = Collections.emptyMap();
         } else {
-            valueCounts = annotationFactory.getValueCounts(getAnnotation(), inputColumnOfInterest);
+            valueCounts = getValueCounts(annotationFactory, getAnnotation(), inputColumnOfInterest);
         }
         DefaultTableModel tableModel = new DefaultTableModel(new String[] { inputColumnOfInterest.getName(),
                 "Count in dataset" }, valueCounts.size());
@@ -139,6 +186,27 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
         return tableModel;
     }
 
+    private Map<Object, Integer> getValueCounts(RowAnnotationFactory annotationFactory, RowAnnotation annotation,
+            InputColumn<?> inputColumn) {
+        final List<InputRow> rows = annotationFactory.getSampleRows(annotation);
+
+        if (rows == null || rows.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        HashMap<Object, Integer> map = new HashMap<Object, Integer>();
+        for (InputRow row : rows) {
+            Object value = row.getValue(inputColumn);
+            Integer count = map.get(value);
+            if (count == null) {
+                count = 0;
+            }
+            count = count.intValue() + 1;
+            map.put(value, count);
+        }
+        return map;
+    }
+
     /**
      * 
      * @param maxRows
@@ -149,14 +217,14 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
             maxRows = Integer.MAX_VALUE;
         }
 
-        final InputRow[] rows = getRows();
+        final List<InputRow> rows = getSampleRows();
         final List<InputColumn<?>> inputColumns = getInputColumns();
         final String[] headers = new String[inputColumns.size()];
         for (int i = 0; i < headers.length; i++) {
             headers[i] = inputColumns.get(i).getName();
         }
 
-        final int actualRows = Math.min(maxRows, rows.length);
+        final int actualRows = Math.min(maxRows, rows.size());
         final TableModel tableModel = new DefaultTableModel(headers, actualRows);
         int row = 0;
         for (InputRow inputRow : rows) {
@@ -200,7 +268,7 @@ public class AnnotatedRowsResult implements AnalyzerResult, TableModelResult {
     public RowAnnotation getAnnotation() {
         if (_annotation == null) {
             // only occurs for deserialized instances
-            return new InMemoryRowAnnotationFactory().createAnnotation();
+            return RowAnnotations.getDefaultFactory().createAnnotation();
         }
         return _annotation;
     }

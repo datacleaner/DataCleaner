@@ -25,7 +25,7 @@ import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.descriptors.AnalyzerDescriptor;
 import org.datacleaner.descriptors.Descriptors;
-import org.datacleaner.storage.InMemoryRowAnnotationFactory;
+import org.datacleaner.storage.RowAnnotations;
 
 public class PatternFinderAnalyzerTest extends TestCase {
 
@@ -39,7 +39,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 		PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
 		MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
 
-		pf.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+		pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
 		pf.setColumn(column);
 
 		pf.init();
@@ -54,7 +54,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 		PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
 		MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
 
-		pf.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+		pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
 		pf.setColumn(column);
 		pf.setDiscriminateTextCase(true);
 
@@ -98,7 +98,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 		PatternFinderAnalyzer pf = new PatternFinderAnalyzer();
 		MockInputColumn<String> column = new MockInputColumn<String>("title", String.class);
 
-		pf.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+		pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
 		pf.setColumn(column);
 		pf.setDiscriminateTextCase(true);
 
@@ -126,7 +126,7 @@ public class PatternFinderAnalyzerTest extends TestCase {
 		MockInputColumn<String> col1 = new MockInputColumn<String>("username", String.class);
 		MockInputColumn<String> col2 = new MockInputColumn<String>("domain", String.class);
 
-		pf.setRowAnnotationFactory(new InMemoryRowAnnotationFactory());
+		pf.setRowAnnotationFactory(RowAnnotations.getDefaultFactory());
 		pf.setColumn(col1);
 		pf.setGroupColumn(col2);
 		pf.setDiscriminateTextCase(true);

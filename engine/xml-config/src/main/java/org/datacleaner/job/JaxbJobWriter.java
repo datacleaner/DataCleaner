@@ -41,29 +41,32 @@ import org.datacleaner.api.InputColumn;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
+import org.datacleaner.connection.OutputDataStreamDatastore;
 import org.datacleaner.connection.SchemaNavigator;
 import org.datacleaner.data.MutableInputColumn;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.jaxb.AnalysisType;
-import org.datacleaner.job.jaxb.AnalyzerDescriptorType;
 import org.datacleaner.job.jaxb.AnalyzerType;
 import org.datacleaner.job.jaxb.ColumnType;
 import org.datacleaner.job.jaxb.ColumnsType;
+import org.datacleaner.job.jaxb.ComponentType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType;
 import org.datacleaner.job.jaxb.ConfiguredPropertiesType.Property;
 import org.datacleaner.job.jaxb.DataContextType;
-import org.datacleaner.job.jaxb.FilterDescriptorType;
+import org.datacleaner.job.jaxb.DescriptorType;
 import org.datacleaner.job.jaxb.FilterType;
 import org.datacleaner.job.jaxb.InputType;
 import org.datacleaner.job.jaxb.Job;
 import org.datacleaner.job.jaxb.JobMetadataType;
+import org.datacleaner.job.jaxb.JobType;
 import org.datacleaner.job.jaxb.MetadataProperties;
 import org.datacleaner.job.jaxb.ObjectFactory;
 import org.datacleaner.job.jaxb.OutcomeType;
+import org.datacleaner.job.jaxb.OutputDataStreamType;
 import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
-import org.datacleaner.job.jaxb.TransformerDescriptorType;
 import org.datacleaner.job.jaxb.TransformerType;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
@@ -71,6 +74,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class JaxbJobWriter implements JobWriter<OutputStream> {
 
@@ -102,8 +107,20 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
-        final Job jobType = new Job();
+        final Job job = new Job();
+        configureJobType(analysisJob, job);
 
+        try {
+            final Marshaller marshaller = _jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setEventHandler(new JaxbValidationEventHandler());
+            marshaller.marshal(job, outputStream);
+        } catch (JAXBException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType) {
         try {
             JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
             jobType.setJobMetadata(jobMetadata);
@@ -116,16 +133,17 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         jobType.setSource(sourceType);
 
         final Datastore datastore = analysisJob.getDatastore();
-        final DataContextType dataContextType = new DataContextType();
-        if (datastore == null) {
-            logger.warn("No datastore specified for analysis job: {}", analysisJob);
-        } else {
-            dataContextType.setRef(datastore.getName());
+        if (!(datastore instanceof OutputDataStreamDatastore)) {
+            final DataContextType dataContextType = new DataContextType();
+            if (datastore == null) {
+                logger.warn("No datastore specified for analysis job: {}", analysisJob);
+            } else {
+                dataContextType.setRef(datastore.getName());
+            }
+            sourceType.setDataContext(dataContextType);
         }
-        sourceType.setDataContext(dataContextType);
-
         // mappings for lookup of ID's
-        final Map<InputColumn<?>, String> columnMappings = new LinkedHashMap<InputColumn<?>, String>();
+        final BiMap<InputColumn<?>, String> columnMappings = HashBiMap.create(50);
         final Map<FilterOutcome, String> outcomeMappings = new LinkedHashMap<FilterOutcome, String>();
 
         // mappings for lookup of component's elements
@@ -140,7 +158,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             final ColumnType jaxbColumn = new ColumnType();
             final Column physicalColumn = inputColumn.getPhysicalColumn();
             jaxbColumn.setPath(getColumnPath(physicalColumn, columnPathQualification));
-            jaxbColumn.setId(getId(inputColumn, columnMappings));
+            jaxbColumn.setId(getColumnId(inputColumn, columnMappings));
 
             final org.apache.metamodel.schema.ColumnType columnType = physicalColumn.getType();
             if (columnType != null) {
@@ -161,15 +179,6 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         addRequirements(outcomeMappings, transformerMappings, filterMappings, analyzerMappings, columnMappings);
 
         addConfiguration(analysisJob, transformerMappings, filterMappings, analyzerMappings, columnMappings);
-
-        try {
-            final Marshaller marshaller = _jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.setEventHandler(new JaxbValidationEventHandler());
-            marshaller.marshal(jobType, outputStream);
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private String getColumnPath(Column column, String columnPathQualification) {
@@ -219,7 +228,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     private void addConfiguration(final AnalysisJob analysisJob,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings,
-            final Map<InputColumn<?>, String> columnMappings) {
+            final BiMap<InputColumn<?>, String> columnMappings) {
 
         final StringConverter stringConverter = new StringConverter(_configuration, analysisJob);
 
@@ -291,7 +300,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     }
 
     private List<InputType> createInputConfiguration(final ComponentConfiguration configuration,
-            Set<ConfiguredPropertyDescriptor> configuredProperties, final Map<InputColumn<?>, String> columnMappings,
+            Set<ConfiguredPropertyDescriptor> configuredProperties, final BiMap<InputColumn<?>, String> columnMappings,
             final StringConverter stringConverter) {
 
         // sort the properties in order to make the result deterministic
@@ -320,7 +329,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                                 inputType
                                         .setValue(stringConverter.serialize(columnValue, property.getCustomConverter()));
                             } else {
-                                inputType.setRef(getId(inputColumn, columnMappings));
+                                inputType.setRef(getColumnId(inputColumn, columnMappings));
                             }
                             if (numInputProperties != 1) {
                                 inputType.setName(property.getName());
@@ -366,7 +375,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return configuredPropertiesType;
     }
 
-    private void addTransformedColumns(final Map<InputColumn<?>, String> columnMappings,
+    private void addTransformedColumns(final BiMap<InputColumn<?>, String> columnMappings,
             final Map<TransformerJob, TransformerType> transformerMappings) {
         // register all transformed columns
         for (Entry<TransformerJob, TransformerType> entry : transformerMappings.entrySet()) {
@@ -374,7 +383,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             final TransformerType transformerType = entry.getValue();
             final InputColumn<?>[] columns = transformerJob.getOutput();
             for (InputColumn<?> inputColumn : columns) {
-                final String id = getId(inputColumn, columnMappings);
+                final String id = getColumnId(inputColumn, columnMappings);
                 final OutputType outputType = new OutputType();
                 outputType.setId(id);
                 outputType.setName(inputColumn.getName());
@@ -482,7 +491,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         return id;
     }
 
-    private void addComponents(final Job jobType, final AnalysisJob analysisJob,
+    private void addComponents(final JobType jobType, final AnalysisJob analysisJob,
             final Map<TransformerJob, TransformerType> transformerMappings,
             final Map<FilterJob, FilterType> filterMappings, final Map<AnalyzerJob, AnalyzerType> analyzerMappings) {
         final TransformationType transformationType = new TransformationType();
@@ -496,9 +505,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (TransformerJob transformerJob : transformerJobs) {
             TransformerType transformerType = new TransformerType();
             transformerType.setName(transformerJob.getName());
-            TransformerDescriptorType descriptorType = new TransformerDescriptorType();
-            descriptorType.setRef(transformerJob.getDescriptor().getDisplayName());
-            transformerType.setDescriptor(descriptorType);
+            setDescriptor(transformerType, transformerJob.getDescriptor());
             transformationType.getTransformerOrFilter().add(transformerType);
             transformerMappings.put(transformerJob, transformerType);
         }
@@ -508,9 +515,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (FilterJob filterJob : filterJobs) {
             FilterType filterType = new FilterType();
             filterType.setName(filterJob.getName());
-            FilterDescriptorType descriptorType = new FilterDescriptorType();
-            descriptorType.setRef(filterJob.getDescriptor().getDisplayName());
-            filterType.setDescriptor(descriptorType);
+            setDescriptor(filterType, filterJob.getDescriptor());
             transformationType.getTransformerOrFilter().add(filterType);
             filterMappings.put(filterJob, filterType);
         }
@@ -520,23 +525,51 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             AnalyzerType analyzerType = new AnalyzerType();
             analyzerType.setName(analyzerJob.getName());
-            AnalyzerDescriptorType descriptorType = new AnalyzerDescriptorType();
-            descriptorType.setRef(analyzerJob.getDescriptor().getDisplayName());
-            analyzerType.setDescriptor(descriptorType);
+            setDescriptor(analyzerType, analyzerJob.getDescriptor());
+            final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
+            
+            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
+                outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
+                final JobType childJobType = new JobType();
+                configureJobType(outputDataStreamJob.getJob(), childJobType);
+                outputDataStreamType.setJob(childJobType);
+                analyzerType.getOutputDataStream().add(outputDataStreamType);
+            }
             analysisType.getAnalyzer().add(analyzerType);
             analyzerMappings.put(analyzerJob, analyzerType);
         }
     }
 
-    private static String getId(InputColumn<?> inputColumn, Map<InputColumn<?>, String> columnMappings) {
+    private void setDescriptor(ComponentType componentType, ComponentDescriptor<?> descriptor) {
+        DescriptorType descriptorType = new DescriptorType();
+        descriptorType.setRef(descriptor.getDisplayName());
+        componentType.setDescriptor(descriptorType);
+    }
+
+    private static String getColumnId(InputColumn<?> inputColumn, BiMap<InputColumn<?>, String> columnMappings) {
         if (inputColumn == null) {
             throw new IllegalArgumentException("InputColumn cannot be null");
         }
+
         String id = columnMappings.get(inputColumn);
         if (id == null) {
-            id = "col_" + columnMappings.size();
+            final String baseColumnId = getBaseColumnId(inputColumn);
+            id = baseColumnId;
+            int addition = 1;
+            while (columnMappings.containsValue(id)) {
+                addition++;
+                id = baseColumnId + addition;
+            }
             columnMappings.put(inputColumn, id);
         }
         return id;
+    }
+
+    private static String getBaseColumnId(InputColumn<?> inputColumn) {
+        String cleansedColumnName = "col_" + Strings.nullToEmpty(inputColumn.getName());
+        cleansedColumnName = cleansedColumnName.toLowerCase().trim();
+        cleansedColumnName = cleansedColumnName.replaceAll("[^a-z0-9_]", "");
+        return cleansedColumnName;
     }
 }

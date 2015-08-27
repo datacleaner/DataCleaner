@@ -77,7 +77,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD
                     .reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
         } else {
-            logger.info("Running the job in non-distributed mode");
+            logger.warn("Running the job in non-distributed mode");
             JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
             namedAnalyzerResultsRDD = coalescedInputRowsRDD 
                     .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));

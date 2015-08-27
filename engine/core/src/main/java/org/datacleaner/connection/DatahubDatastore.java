@@ -53,8 +53,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformanceCharacteristicsImpl(true, false);
     }
 
     public String getHost() {

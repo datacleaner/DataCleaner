@@ -184,6 +184,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             _indexNameTextField.setText(originalDatastore.getIndexName());
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordField.setText(originalDatastore.getPassword());
+            _sslCheckBox.setSelected(originalDatastore.getSsl());
         }
     }
 

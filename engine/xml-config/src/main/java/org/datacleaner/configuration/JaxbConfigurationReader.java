@@ -758,6 +758,9 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private Datastore createDatastore(String name, ElasticSearchDatastoreType datastoreType) {
         final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
+        final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
 
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         if (port == null) {
@@ -800,8 +803,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        // TODO: Add username, password and SSL to the Configuration
-        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName, tableDefs, null, null, false);
+        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName, tableDefs, username, password, ssl);
     }
 
     private Datastore createDatastore(String name, JsonDatastoreType datastoreType) {

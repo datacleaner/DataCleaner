@@ -516,6 +516,9 @@
 							</sequence>
 						</complexType>
 					</element>
+					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
 				</sequence>
 			</extension>
 		</complexContent>

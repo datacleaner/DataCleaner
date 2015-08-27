@@ -17,12 +17,13 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
 import org.apache.spark.api.java.function.Function;
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.spark.NamedAnalyzerResult;
 
-public final class ExtractAnalyzerResultFromTupleFunction implements
+public final class ExtractAnalyzerResultFunction implements
         Function<NamedAnalyzerResult, AnalyzerResult> {
     private static final long serialVersionUID = 1L;
 

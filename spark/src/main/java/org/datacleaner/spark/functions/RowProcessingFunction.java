@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +34,8 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.ConsumeRowHandler;
 import org.datacleaner.job.runner.RowProcessingConsumer;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.spark.NamedAnalyzerResult;
+import org.datacleaner.spark.SparkJobContext;
 
 import scala.Tuple2;
 

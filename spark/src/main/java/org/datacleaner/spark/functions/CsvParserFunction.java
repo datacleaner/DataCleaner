@@ -17,20 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
 import org.apache.metamodel.csv.CsvConfiguration;
 import org.apache.spark.api.java.function.Function;
 
 import au.com.bytecode.opencsv.CSVParser;
 
-public final class CsvParserMapper implements Function<String, Object[]> {
+public final class CsvParserFunction implements Function<String, Object[]> {
 
     private static final long serialVersionUID = 1L;
 
     private final CsvConfiguration _csvConfiguration;
 
-    public CsvParserMapper(final CsvConfiguration csvConfiguration) {
+    public CsvParserFunction(final CsvConfiguration csvConfiguration) {
         if (csvConfiguration.isMultilineValues()) {
             throw new IllegalStateException("Multiline CSV files are not supported");
         }

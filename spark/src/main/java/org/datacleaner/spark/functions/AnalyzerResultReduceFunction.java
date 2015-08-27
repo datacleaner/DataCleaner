@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
 import java.util.Arrays;
 
@@ -31,6 +31,8 @@ import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.ResultDescriptor;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.lifecycle.LifeCycleHelper;
+import org.datacleaner.spark.NamedAnalyzerResult;
+import org.datacleaner.spark.SparkJobContext;
 
 public final class AnalyzerResultReduceFunction implements
         Function2<NamedAnalyzerResult, NamedAnalyzerResult, NamedAnalyzerResult> {

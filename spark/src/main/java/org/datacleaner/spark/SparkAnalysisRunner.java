@@ -38,6 +38,11 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
+import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
+import org.datacleaner.spark.functions.CsvParserFunction;
+import org.datacleaner.spark.functions.ExtractAnalyzerResultFunction;
+import org.datacleaner.spark.functions.RowProcessingFunction;
+import org.datacleaner.spark.functions.ValuesToInputRowFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +89,7 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
 
         JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
-                .mapValues(new ExtractAnalyzerResultFromTupleFunction());
+                .mapValues(new ExtractAnalyzerResultFunction());
         
         finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
 
@@ -127,8 +132,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
             final CsvConfiguration csvConfiguration = csvDatastore.getCsvConfiguration();
 
             final JavaRDD<String> rawInput = _sparkContext.textFile(datastorePath);
-            final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserMapper(csvConfiguration));
-            final JavaRDD<InputRow> inputRowsRDD = parsedInput.map(new ValuesToInputRowMapper(_sparkJobContext));
+            final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
+            final JavaRDD<InputRow> inputRowsRDD = parsedInput.map(new ValuesToInputRowFunction(_sparkJobContext));
 
             return inputRowsRDD;
         }

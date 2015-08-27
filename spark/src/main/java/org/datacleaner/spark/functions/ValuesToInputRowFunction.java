@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.spark;
+package org.datacleaner.spark.functions;
 
 import java.util.List;
 
@@ -26,6 +26,7 @@ import org.apache.spark.api.java.function.Function;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.spark.SparkJobContext;
 
 /**
  * Mapper function that changes takes Object arrays representing physical
@@ -36,13 +37,13 @@ import org.datacleaner.data.MockInputRow;
  * 
  * It is assumed that the job is based on a single source {@link Table}.
  */
-public class ValuesToInputRowMapper implements Function<Object[], InputRow> {
+public class ValuesToInputRowFunction implements Function<Object[], InputRow> {
 
     private static final long serialVersionUID = 1L;
 
     private final SparkJobContext _sparkJobContext;
 
-    public ValuesToInputRowMapper(SparkJobContext sparkJobContext) {
+    public ValuesToInputRowFunction(SparkJobContext sparkJobContext) {
         _sparkJobContext = sparkJobContext;
     }
 

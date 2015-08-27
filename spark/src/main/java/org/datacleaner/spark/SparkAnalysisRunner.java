@@ -35,6 +35,7 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.slf4j.Logger;
@@ -66,14 +67,23 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         final Datastore datastore = analysisJob.getDatastore();
 
         final JavaRDD<InputRow> inputRowsRDD = openSourceDatastore(datastore);
+        
+        final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD;
+        if (isDistributable(job)) {
+            logger.info("Running the job in distributed mode");
+            final JavaPairRDD<String, NamedAnalyzerResult> partialNamedAnalyzerResultsRDD = inputRowsRDD
+                    .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
+            
+            namedAnalyzerResultsRDD = partialNamedAnalyzerResultsRDD
+                    .reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
+        } else {
+            logger.warn("Running the job in non-distributed mode");
+            JavaRDD<InputRow> coalescedInputRowsRDD = inputRowsRDD.coalesce(1);
+            namedAnalyzerResultsRDD = coalescedInputRowsRDD 
+                    .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
+        }
 
-        final JavaPairRDD<String, NamedAnalyzerResult> namedAnalyzerResultsRDD = inputRowsRDD
-                .mapPartitionsToPair(new RowProcessingFunction(_sparkJobContext));
-
-        JavaPairRDD<String, NamedAnalyzerResult> reducedNamedAnalyzerResultsRDD = namedAnalyzerResultsRDD
-                .reduceByKey(new AnalyzerResultReduceFunction(_sparkJobContext));
-
-        JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = reducedNamedAnalyzerResultsRDD
+        JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFromTupleFunction());
         
         finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
@@ -97,6 +107,15 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         }
 
         return new SparkAnalysisResultFuture(results);
+    }
+
+    private boolean isDistributable(AnalysisJob job) {
+        for (AnalyzerJob analyzerJob : job.getAnalyzerJobs()) {
+            if (!analyzerJob.getDescriptor().isDistributable()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private JavaRDD<InputRow> openSourceDatastore(Datastore datastore) {

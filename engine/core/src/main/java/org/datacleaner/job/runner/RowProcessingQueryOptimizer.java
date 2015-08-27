@@ -26,7 +26,6 @@ import java.util.Set;
 import org.apache.metamodel.query.Query;
 import org.datacleaner.api.QueryOptimizedFilter;
 import org.datacleaner.job.FilterOutcome;
-import org.scalatest.Outcome;
 
 /**
  * Optimizer that will apply possible optimizations coming from
@@ -61,7 +60,7 @@ public interface RowProcessingQueryOptimizer {
     public Set<? extends RowProcessingConsumer> getEliminatedConsumers();
 
     /**
-     * Gets the {@link Outcome}s that has been optimized by the query.
+     * Gets the {@link FilterOutcome}s that has been optimized by the query.
      * 
      * @return
      */

@@ -113,6 +113,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore.ClientType;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -799,7 +800,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, tableDefs);
+        // TODO: Add username, password and SSL to the Configuration
+        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName, tableDefs, null, null, false);
     }
 
     private Datastore createDatastore(String name, JsonDatastoreType datastoreType) {

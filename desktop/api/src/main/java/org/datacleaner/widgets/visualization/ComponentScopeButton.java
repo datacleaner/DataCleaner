@@ -29,7 +29,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
@@ -37,7 +36,6 @@ import org.datacleaner.util.ImageManager;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.ChangeRequirementMenuBuilder;
-import org.datacleaner.windows.AbstractDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +61,9 @@ public class ComponentScopeButton extends JButton implements ActionListener {
         super(ChangeRequirementMenuBuilder.NO_REQUIREMENT_TEXT, scopeIcon);
         _componentBuilder = componentBuilder;
         _menuBuilder = menuBuilder;
-        _topLevelJobBuilder = componentBuilder.getAnalysisJobBuilder().getTopLevelJobBuilder();
+        _topLevelJobBuilder = componentBuilder.getAnalysisJobBuilder().getRootJobBuilder();
         addActionListener(this);
-        updateText();
+        updateText(_componentBuilder.getAnalysisJobBuilder(), _menuBuilder.findComponentBuilder(_componentBuilder.getAnalysisJobBuilder()));
         WidgetUtils.setDefaultButtonStyle(this);
     }
 
@@ -82,17 +80,16 @@ public class ComponentScopeButton extends JButton implements ActionListener {
         popup.show(this, 0, getHeight());
     }
 
-    public void updateText() {
+    public void updateText(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
         logger.debug("updateText()");
 
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final AnalysisJobBuilder analysisJobBuilder = _componentBuilder.getAnalysisJobBuilder();
-                if (analysisJobBuilder == _topLevelJobBuilder) {
+                if (osJobBuilder == _topLevelJobBuilder) {
                     setText(ComponentScopeMenuBuilder.DEFAULT_SCOPE_TEXT);
                 } else {
-                    setText(analysisJobBuilder.getDatastore().getName());
+                    setText(LabelUtils.getLabel(osComponentBuilder) + ": " + osJobBuilder.getDatastore().getName());
                 }
             }
         };
@@ -118,6 +115,6 @@ public class ComponentScopeButton extends JButton implements ActionListener {
      *
      */
     public boolean isRelevant() {
-        return _topLevelJobBuilder.getDescendants().size() > 0;
+        return _menuBuilder.getComponentBuildersWithOutputDataStreams(_topLevelJobBuilder).size() > 0;
     }
 }

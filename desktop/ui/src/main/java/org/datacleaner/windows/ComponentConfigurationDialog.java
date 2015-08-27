@@ -32,6 +32,7 @@ import org.datacleaner.actions.ComponentReferenceDocumentationActionListener;
 import org.datacleaner.actions.RenameComponentActionListener;
 import org.datacleaner.api.Renderer;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.ComponentRemovalListener;
 import org.datacleaner.panels.ComponentBuilderPresenter;
@@ -73,15 +74,14 @@ public class ComponentConfigurationDialog extends AbstractDialog implements Comp
             @Override
             protected void onScopeChangeStart() {
                 _changingScope = true;
-                _componentScopeButton.updateText();
             }
 
             @Override
-            protected void onScopeChangeComplete() {
+            protected void onScopeChangeComplete(final AnalysisJobBuilder osJobBuilder, final ComponentBuilder osComponentBuilder) {
                 _changingScope = false;
+                _componentScopeButton.updateText(osJobBuilder, osComponentBuilder);
                 initialize();
             }
-
         };
 
         _componentScopeButton = new ComponentScopeButton(_componentBuilder, menuBuilder);

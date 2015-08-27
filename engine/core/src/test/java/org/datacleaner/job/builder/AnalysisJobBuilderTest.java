@@ -223,18 +223,10 @@ public class AnalysisJobBuilderTest extends TestCase {
 
 
             // Any random analyzer should work:
-            assertEquals(ajb, analyzer1Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
-            assertEquals(ajb, analyzer0Analyzer0Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
-            assertEquals(ajb, analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
-            assertEquals(ajb, analyzer0Analyzer0.getAnalysisJobBuilder().getTopLevelJobBuilder());
-
-            assertEquals(16, ajb.getDescendants().size());
-
-            // First should be a0 stream 0
-            assertEquals(analyzer0DataStream0JobBuilder, ajb.getDescendants().get(0));
-
-            // Last should be a1a1 stream 1
-            assertEquals(analyzer1Analyzer1.getOutputDataStreamJobBuilder(analyzer1Analyzer1.getOutputDataStreams().get(1)), ajb.getDescendants().get(15));
+            assertEquals(ajb, analyzer1Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
         }
     }
 }

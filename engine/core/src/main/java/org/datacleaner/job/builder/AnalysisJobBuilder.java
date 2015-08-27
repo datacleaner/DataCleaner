@@ -1220,7 +1220,7 @@ public final class AnalysisJobBuilder implements Closeable {
         return result;
     }
 
-    public AnalysisJobBuilder getTopLevelJobBuilder(){
+    public AnalysisJobBuilder getRootJobBuilder(){
         AnalysisJobBuilder builder = this;
         AnalysisJobBuilder tempBuilder = builder._parentBuilder;
         while(tempBuilder != null){
@@ -1229,27 +1229,5 @@ public final class AnalysisJobBuilder implements Closeable {
         }
 
         return builder;
-    }
-
-    private List<AnalysisJobBuilder> getChildren() {
-        List<AnalysisJobBuilder> childJobBuilders = new ArrayList<>();
-
-        for (ComponentBuilder componentBuilder : getComponentBuilders()) {
-            for (OutputDataStream outputDataStream : componentBuilder.getOutputDataStreams()) {
-                childJobBuilders.add(componentBuilder.getOutputDataStreamJobBuilder(outputDataStream));
-            }
-        }
-
-        return childJobBuilders;
-    }
-
-    public List<AnalysisJobBuilder> getDescendants() {
-        List<AnalysisJobBuilder> descendants = new ArrayList<>();
-        for(AnalysisJobBuilder child : getChildren()){
-            descendants.add(child);
-            descendants.addAll(child.getDescendants());
-        }
-
-        return descendants;
     }
 }

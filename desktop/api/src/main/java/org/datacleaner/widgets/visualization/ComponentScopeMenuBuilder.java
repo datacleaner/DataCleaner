@@ -25,13 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.util.IconUtils;
 import org.datacleaner.util.ImageManager;
+import org.datacleaner.util.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,11 +52,47 @@ public class ComponentScopeMenuBuilder {
             IconUtils.ICON_SIZE_SMALL);
 
     private final ComponentBuilder _componentBuilder;
-    private final AnalysisJobBuilder _topLevelJobBuilder;
+    private final AnalysisJobBuilder _rootJobBuilder;
 
     public ComponentScopeMenuBuilder(ComponentBuilder componentBuilder) {
         _componentBuilder = componentBuilder;
-        _topLevelJobBuilder = _componentBuilder.getAnalysisJobBuilder().getTopLevelJobBuilder();
+        _rootJobBuilder = _componentBuilder.getAnalysisJobBuilder().getRootJobBuilder();
+    }
+
+    public List<ComponentBuilder> getComponentBuildersWithOutputDataStreams(AnalysisJobBuilder jobBuilder) {
+        List<ComponentBuilder> descendants = new ArrayList<>();
+        for (ComponentBuilder child : jobBuilder.getComponentBuilders()) {
+            if (child != _componentBuilder && child.getOutputDataStreams().size() > 0) {
+                descendants.add(child);
+                for (OutputDataStream outputDataStream : child.getOutputDataStreams()) {
+                    descendants.addAll(getComponentBuildersWithOutputDataStreams(child.getOutputDataStreamJobBuilder(outputDataStream)));
+                }
+            }
+        }
+
+        return descendants;
+    }
+
+    /**
+     * Will find the {@link ComponentBuilder} that has a certain {@link AnalysisJobBuilder}. Since this method.
+     *
+     * @param analysisJobBuilder The job builder in
+     * @return
+     */
+    public ComponentBuilder findComponentBuilder(AnalysisJobBuilder analysisJobBuilder) {
+        if (analysisJobBuilder == _rootJobBuilder) {
+            return null;
+        }
+        for (ComponentBuilder osComponenBuilder : getComponentBuildersWithOutputDataStreams(_rootJobBuilder)) {
+            for (OutputDataStream outputDataStream : osComponenBuilder.getOutputDataStreams()) {
+                AnalysisJobBuilder osJobBuilder = osComponenBuilder.getOutputDataStreamJobBuilder(outputDataStream);
+                if (osJobBuilder == analysisJobBuilder) {
+                    return osComponenBuilder;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("No builder holding that osJobBuilder");
     }
 
     public List<JMenuItem> createMenuItems() {
@@ -61,44 +100,53 @@ public class ComponentScopeMenuBuilder {
         logger.info("Current requirement: {}", currentComponentRequirement);
 
         final List<JMenuItem> popup = new ArrayList<>();
-        final JMenuItem topLevelMenuItem = new JMenuItem(DEFAULT_SCOPE_TEXT);
-        topLevelMenuItem
-                .setToolTipText("Use the top level scope for this component");
-        topLevelMenuItem.addActionListener(new ActionListener() {
+        final JMenuItem rootMenuItem = new JMenuItem(DEFAULT_SCOPE_TEXT);
+        rootMenuItem.setToolTipText("Use the default scope for this component");
+        rootMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onScopeChangeStart();
-                _topLevelJobBuilder.moveComponent(_componentBuilder);
+                _rootJobBuilder.moveComponent(_componentBuilder);
                 _componentBuilder.setComponentRequirement(null);
-                onScopeChangeComplete();
+                onScopeChangeComplete(_rootJobBuilder, null);
             }
         });
 
-        if(_topLevelJobBuilder == _componentBuilder.getAnalysisJobBuilder()){
-            topLevelMenuItem.setIcon(selectedScopeIcon);
+        if (_rootJobBuilder == _componentBuilder.getAnalysisJobBuilder()) {
+            rootMenuItem.setIcon(selectedScopeIcon);
         }
 
-        popup.add(topLevelMenuItem);
+        popup.add(rootMenuItem);
 
-        final List<AnalysisJobBuilder> allJobBuilders = _topLevelJobBuilder.getDescendants();
+        final List<ComponentBuilder> osComponentBuilders = getComponentBuildersWithOutputDataStreams(_rootJobBuilder);
 
-        for (final AnalysisJobBuilder ajb : allJobBuilders) {
-            final JMenuItem scopeMenuItem = new JMenuItem(ajb.getDatastore().getName());
+        for (final ComponentBuilder osComponentBuilder : osComponentBuilders) {
+            final JMenu componentMenu = new JMenu(LabelUtils.getLabel(osComponentBuilder));
 
-            if(ajb == _componentBuilder.getAnalysisJobBuilder()){
-                scopeMenuItem.setIcon(selectedScopeIcon);
-            }
+            for (final OutputDataStream outputDataStream : osComponentBuilder.getOutputDataStreams()) {
+                final AnalysisJobBuilder osJobBuilder =
+                        osComponentBuilder.getOutputDataStreamJobBuilder(outputDataStream);
 
-            scopeMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    onScopeChangeStart();
-                    ajb.moveComponent(_componentBuilder);
-                    _componentBuilder.setComponentRequirement(null);
-                    onScopeChangeComplete();
+                final JMenuItem scopeMenuItem = new JMenuItem(osJobBuilder.getDatastore().getName());
+
+                if (osJobBuilder == _componentBuilder.getAnalysisJobBuilder()) {
+                    componentMenu.setIcon(selectedScopeIcon);
+                    scopeMenuItem.setIcon(selectedScopeIcon);
                 }
-            });
-            popup.add(scopeMenuItem);
+
+                scopeMenuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        onScopeChangeStart();
+                        osJobBuilder.moveComponent(_componentBuilder);
+                        _componentBuilder.setComponentRequirement(null);
+                        onScopeChangeComplete(osJobBuilder, osComponentBuilder);
+                    }
+                });
+                componentMenu.add(scopeMenuItem);
+            }
+            popup.add(componentMenu);
         }
 
         return popup;
@@ -107,7 +155,8 @@ public class ComponentScopeMenuBuilder {
     protected void onScopeChangeStart() {
     }
 
-    protected void onScopeChangeComplete() {
+    protected void onScopeChangeComplete(final AnalysisJobBuilder analysisJobBuilder,
+            final ComponentBuilder componentBuilder) {
     }
 
 }

@@ -58,7 +58,7 @@ public final class RowProcessingFunction implements
         {
             final ConsumeRowHandler.Configuration handlerConfiguration = new ConsumeRowHandler.Configuration();
             handlerConfiguration.includeAnalyzers = true;
-            handlerConfiguration.includeNonDistributedTasks = false;
+            handlerConfiguration.includeNonDistributedTasks = true;
             consumeRowHandler = new ConsumeRowHandler(analysisJob, configuration, handlerConfiguration);
         }
 

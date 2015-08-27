@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -177,6 +179,11 @@ public class ComponentsControllerV1 implements ComponentsController {
     }
 
     private String unURLify(String url) {
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //Nothing to do
+        }
         return url.replace("_@_", "/");
     }
 }

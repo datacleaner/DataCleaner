@@ -614,12 +614,6 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.servlet</groupId>
-						<artifactId>servlet-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
@@ -629,6 +623,16 @@
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-mapreduce-client-core</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-server-common</artifactId>
+				<version>${hadoop.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.hadoop</groupId>
+				<artifactId>hadoop-yarn-server-resourcemanager</artifactId>
 				<version>${hadoop.version}</version>
 			</dependency>
 			<dependency>
@@ -663,7 +667,11 @@
 				<artifactId>httpmime</artifactId>
 				<version>${httpcomponents.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${javax.servlet.version}</version>
+			</dependency>
 			<dependency>
 				<artifactId>xml-apis</artifactId>
 				<groupId>xml-apis</groupId>

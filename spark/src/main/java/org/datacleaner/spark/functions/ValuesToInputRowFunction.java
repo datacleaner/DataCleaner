@@ -28,6 +28,8 @@ import org.datacleaner.api.InputRow;
 import org.datacleaner.data.MockInputRow;
 import org.datacleaner.spark.SparkJobContext;
 
+import scala.Tuple2;
+
 /**
  * Mapper function that changes takes Object arrays representing physical
  * records into the format of an {@link InputRow}.
@@ -37,7 +39,7 @@ import org.datacleaner.spark.SparkJobContext;
  * 
  * It is assumed that the job is based on a single source {@link Table}.
  */
-public class ValuesToInputRowFunction implements Function<Object[], InputRow> {
+public class ValuesToInputRowFunction implements Function<Tuple2<Object[], Long>, InputRow> {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,8 +50,11 @@ public class ValuesToInputRowFunction implements Function<Object[], InputRow> {
     }
 
     @Override
-    public InputRow call(Object[] values) throws Exception {
-        final MockInputRow inputRow = new MockInputRow();
+    public InputRow call(Tuple2<Object[], Long> tuple) throws Exception {
+        final Object[] values = tuple._1;
+        final Long rowNumber = tuple._2;
+        
+        final MockInputRow inputRow = new MockInputRow(rowNumber.intValue());
         final List<InputColumn<?>> sourceColumns = _sparkJobContext.getAnalysisJob().getSourceColumns();
         for (InputColumn<?> sourceColumn : sourceColumns) {
             assert sourceColumn.isPhysicalColumn();

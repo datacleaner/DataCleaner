@@ -53,9 +53,9 @@ import com.google.inject.Inject;
  * Datastore dialog for Salesforce.com datastores
  */
 public class SalesforceDatastoreDialog extends AbstractDatastoreDialog<SalesforceDatastore> {
-    private static final String DEFAULT_SALESFORCE_LABEL = "Default SalesForce.com endpoint";
+    private static final String DEFAULT_SALESFORCE_LABEL = "Default Salesforce.com endpoint";
     private static final String DEFAULT_SALESFORCE_URL = "";
-    private static final String TEST_SALESFORCE_LABEL = "Test SalesForce.com endpoint";
+    private static final String TEST_SALESFORCE_LABEL = "Test Salesforce.com endpoint";
     private static final String TEST_SALESFORCE_URL = "https://test.salesforce.com/services/Soap/u/28.0";
 
     private static final long serialVersionUID = 1L;

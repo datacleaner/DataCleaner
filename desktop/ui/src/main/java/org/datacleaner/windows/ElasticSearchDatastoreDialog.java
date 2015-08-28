@@ -91,6 +91,9 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _usernameTextField = WidgetFactory.createTextField();
         _passwordField = WidgetFactory.createPasswordField();
         _keystorePathField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
+        // FIXME: Hack-ish way to make it fit...
+        final double columns = WidgetFactory.TEXT_FIELD_COLUMNS * 0.6;
+        _keystorePathField.getTextField().setColumns((int) columns);
         _keystorePathField.disable();
         _keystorePasswordField = WidgetFactory.createPasswordField();
         WidgetUtils.disableComponent(_keystorePasswordField);

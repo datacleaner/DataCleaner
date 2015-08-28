@@ -51,7 +51,8 @@ public interface ComponentsController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ProcessStatelessOutput processStateless(final String tenant, final String name,
         final ProcessStatelessInput processStatelessInput);
 

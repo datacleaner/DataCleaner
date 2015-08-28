@@ -41,21 +41,20 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         UpdateableDatastore {
 
     public enum ClientType {
-        NODE("Join cluster as a node"), 
-        TRANSPORT("Connect via Transport protocol");
-        
+        NODE("Join cluster as a node"), TRANSPORT("Connect via Transport protocol");
+
         private String _humanReadableName;
-        
+
         private ClientType(String humanReadableName) {
-            _humanReadableName = humanReadableName; 
+            _humanReadableName = humanReadableName;
         }
-        
+
         @Override
         public String toString() {
             return _humanReadableName;
         }
     }
-    
+
     private static final long serialVersionUID = 1L;
 
     public static final int DEFAULT_PORT = 9300;
@@ -70,17 +69,19 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _password;
     private final boolean _ssl;
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName, boolean ssl) {
-        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, ssl);
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName,
-            String username, String password, boolean ssl) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName, String username, String password, boolean ssl) {
         this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl);
     }
 
-    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs, String username, String password, boolean ssl) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName, SimpleTableDef[] tableDefs, String username, String password,
+            boolean ssl) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -121,7 +122,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             settingsBuilder.put("name", "DataCleaner");
             settingsBuilder.put("shield.enabled", false);
             final Settings settings = settingsBuilder.build();
-            
+
             // .client(true) means no shards are stored on this node
             final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
             client = node.client();
@@ -145,7 +146,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public SimpleTableDef[] getTableDefs() {
         return _tableDefs;
     }
-    
+
     public ClientType getClientType() {
         return _clientType;
     }
@@ -173,7 +174,7 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     public String getPassword() {
         return _password;
     }
-    
+
     public boolean getSsl() {
         return _ssl;
     }

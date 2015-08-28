@@ -90,7 +90,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _sslCheckBox = new JCheckBox("SSL", DEFAULT_SSL);
         _sslCheckBox.setOpaque(false);
         _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-        
+
         _clientTypeComboBox.addItemListener(new ItemListener() {
 
             @Override
@@ -263,7 +263,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final ElasticSearchDatastore.ClientType selectedClientType = (ClientType) _clientTypeComboBox.getSelectedItem();
         final Integer port;
         if (ElasticSearchDatastore.ClientType.TRANSPORT.equals(selectedClientType)) {
-            port = Integer.parseInt(_portTextField.getText());    
+            port = Integer.parseInt(_portTextField.getText());
         } else {
             port = null;
         }
@@ -273,10 +273,10 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String password = new String(_passwordField.getPassword());
         final boolean ssl = _sslCheckBox.isSelected();
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)) {
-            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName, ssl);
+            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName);
         } else {
-            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName, username, password,
-                    ssl);
+            return new ElasticSearchDatastore(name, selectedClientType, hostname, port, clusterName, indexName,
+                    username, password, ssl);
         }
     }
 

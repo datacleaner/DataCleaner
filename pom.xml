@@ -35,14 +35,14 @@
 		<artifactId>oss-parent</artifactId>
 		<version>9</version>
 	</parent>
-	
+
 	<repositories>
 		<repository>
 			<id>eobjects-repo</id>
 			<url>http://repo.eobjects.org</url>
 		</repository>
 	</repositories>
-	
+
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>4.1-SNAPSHOT</version>
@@ -614,6 +614,12 @@
 				<groupId>org.apache.hadoop</groupId>
 				<artifactId>hadoop-yarn-common</artifactId>
 				<version>${hadoop.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.hadoop</groupId>

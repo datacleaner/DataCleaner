@@ -49,7 +49,7 @@ public class ComponentStoreTest {
         repository.createFolder(tenantId);
         ComponentStore store = new ComponentStoreImpl(repository, tenantId);
 
-        ComponentsStoreHolder conf1 = createHolder(componentId1);
+        ComponentStoreHolder conf1 = createHolder(componentId1);
         store.storeConfiguration(conf1);
 
         File tenantDir = new File(tempFolder, tenantId);
@@ -58,7 +58,7 @@ public class ComponentStoreTest {
         File confFile = new File(componentFolder, componentId1);
         Assert.assertTrue(confFile.exists());
 
-        ComponentsStoreHolder conf2 = store.getConfiguration(componentId1);
+        ComponentStoreHolder conf2 = store.getConfiguration(componentId1);
         Assert.assertEquals(conf1.getComponentId(), conf2.getComponentId());
         Assert.assertEquals(conf1.getTimeout(), conf2.getTimeout());
         Assert.assertEquals(null, store.getConfiguration(componentId2));
@@ -66,7 +66,7 @@ public class ComponentStoreTest {
         Assert.assertEquals(null, store.getConfiguration(componentId1));
     }
 
-    private ComponentsStoreHolder createHolder(String componentId) {
-        return new ComponentsStoreHolder(10l, null, componentId, componentName);
+    private ComponentStoreHolder createHolder(String componentId) {
+        return new ComponentStoreHolder(10l, null, componentId, componentName);
     }
 }

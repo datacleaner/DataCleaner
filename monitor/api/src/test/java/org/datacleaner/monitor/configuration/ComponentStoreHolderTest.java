@@ -24,7 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ComponentStoreHolderTest {
-    private ComponentsStoreHolder componentsStoreHolder = new ComponentsStoreHolder();
+    private ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder();
     private long timeout = 1000L;
     private CreateInput createInput = new CreateInput();
     private String componentId = "componentId";
@@ -32,7 +32,7 @@ public class ComponentStoreHolderTest {
 
     @Test
     public void testConstructor() {
-        ComponentsStoreHolder storeHolder = new ComponentsStoreHolder(timeout, createInput, componentId, componentName);
+        ComponentStoreHolder storeHolder = new ComponentStoreHolder(timeout, createInput, componentId, componentName);
         assertEquals(timeout, storeHolder.getTimeout());
         assertEquals(createInput, storeHolder.getCreateInput());
         assertEquals(componentId, storeHolder.getComponentId());
@@ -41,29 +41,29 @@ public class ComponentStoreHolderTest {
 
     @Test
     public void testTimeoutAccessors() throws Exception {
-        assertEquals(0L, componentsStoreHolder.getTimeout());
-        componentsStoreHolder.setTimeout(timeout);
-        assertEquals(timeout, componentsStoreHolder.getTimeout());
+        assertEquals(0L, componentStoreHolder.getTimeout());
+        componentStoreHolder.setTimeout(timeout);
+        assertEquals(timeout, componentStoreHolder.getTimeout());
     }
 
     @Test
     public void testCreateInputAccessors() throws Exception {
-        assertNull(componentsStoreHolder.getCreateInput());
-        componentsStoreHolder.setCreateInput(createInput);
-        assertEquals(createInput, componentsStoreHolder.getCreateInput());
+        assertNull(componentStoreHolder.getCreateInput());
+        componentStoreHolder.setCreateInput(createInput);
+        assertEquals(createInput, componentStoreHolder.getCreateInput());
     }
 
     @Test
     public void testComponentId() throws Exception {
-        assertNull(componentsStoreHolder.getComponentId());
-        componentsStoreHolder.setComponentId(componentId);
-        assertEquals(componentId, componentsStoreHolder.getComponentId());
+        assertNull(componentStoreHolder.getComponentId());
+        componentStoreHolder.setComponentId(componentId);
+        assertEquals(componentId, componentStoreHolder.getComponentId());
     }
 
     @Test
     public void testComponentName() throws Exception {
-        assertNull(componentsStoreHolder.getComponentName());
-        componentsStoreHolder.setComponentName(componentName);
-        assertEquals(componentName, componentsStoreHolder.getComponentName());
+        assertNull(componentStoreHolder.getComponentName());
+        componentStoreHolder.setComponentName(componentName);
+        assertEquals(componentName, componentStoreHolder.getComponentName());
     }
 }

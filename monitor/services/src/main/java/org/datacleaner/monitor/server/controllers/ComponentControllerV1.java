@@ -45,9 +45,9 @@ import java.util.UUID;
  * @since 8. 7. 2015
  */
 @Controller
-public class ComponentsControllerV1 implements ComponentsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentsControllerV1.class);
-    private ComponentsCache _componentsCache = null;
+public class ComponentControllerV1 implements ComponentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentControllerV1.class);
+    private ComponentCache _componentCache = null;
     private static final String PARAMETER_NAME_TENANT = "tenant";
     private static final String PARAMETER_NAME_ID = "id";
     private static final String PARAMETER_NAME_NAME = "name";
@@ -58,12 +58,12 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     @PostConstruct
     public void init() {
-        _componentsCache = new ComponentsCache(_tenantContextFactory);
+        _componentCache = new ComponentCache(_tenantContextFactory);
     }
 
     @PreDestroy
     public void close() throws InterruptedException {
-        _componentsCache.close();
+        _componentCache.close();
     }
 
     /**
@@ -104,7 +104,7 @@ public class ComponentsControllerV1 implements ComponentsController {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentsFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
+        ComponentHandler handler =  ComponentFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();
@@ -123,10 +123,10 @@ public class ComponentsControllerV1 implements ComponentsController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
-        _componentsCache.putComponent(
+        _componentCache.putComponent(
                 tenant,
                 tenantContext,
-                new ComponentsStoreHolder(longTimeout, createInput, id, decodedName)
+                new ComponentStoreHolder(longTimeout, createInput, id, decodedName)
         );
         return id;
     }
@@ -140,7 +140,7 @@ public class ComponentsControllerV1 implements ComponentsController {
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentsCacheConfigWrapper config = _componentsCache.getConfigHolder(id, tenant, tenantContext);
+        ComponentCacheConfigWrapper config = _componentCache.getConfigHolder(id, tenant, tenantContext);
         if(config == null){
             LOGGER.warn("Component with id {} does not exist.", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
@@ -171,7 +171,7 @@ public class ComponentsControllerV1 implements ComponentsController {
             @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        boolean isHere = _componentsCache.removeConfiguration(id, tenantContext);
+        boolean isHere = _componentCache.removeConfiguration(id, tenantContext);
         if (!isHere) {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);

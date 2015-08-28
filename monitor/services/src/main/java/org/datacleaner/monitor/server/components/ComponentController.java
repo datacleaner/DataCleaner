@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @since 24. 07. 2015
  */
 @RequestMapping("/{tenant}/components")
-public interface ComponentsController {
+public interface ComponentController {
     /**
      * It returns a list of all components and their configurations.
      * @param tenant

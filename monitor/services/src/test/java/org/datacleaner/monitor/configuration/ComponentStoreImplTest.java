@@ -78,12 +78,12 @@ public class ComponentStoreImplTest {
         componentsStoreImpl.storeConfiguration(getComponentsStoreHolderMock());
     }
 
-    private ComponentsStoreHolder getComponentsStoreHolderMock() {
-        ComponentsStoreHolder componentsStoreHolder = createNiceMock(ComponentsStoreHolder.class);
-        expect(componentsStoreHolder.getComponentId()).andReturn(componentId).anyTimes();
-        replay(componentsStoreHolder);
+    private ComponentStoreHolder getComponentsStoreHolderMock() {
+        ComponentStoreHolder componentStoreHolder = createNiceMock(ComponentStoreHolder.class);
+        expect(componentStoreHolder.getComponentId()).andReturn(componentId).anyTimes();
+        replay(componentStoreHolder);
 
-        return componentsStoreHolder;
+        return componentStoreHolder;
     }
 
     @Test

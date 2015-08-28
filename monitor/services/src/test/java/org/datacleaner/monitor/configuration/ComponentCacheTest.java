@@ -44,7 +44,7 @@ import static org.easymock.EasyMock.*;
  *
  * @since 28.7.15
  */
-public class ComponentsCacheTest {
+public class ComponentCacheTest {
 
     private String componentName = "name";
 
@@ -59,7 +59,7 @@ public class ComponentsCacheTest {
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
+        store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
         final boolean[] ok = {false};
         EasyMock.expectLastCall().andAnswer(new IAnswer() {
             public Object answer() {
@@ -68,13 +68,13 @@ public class ComponentsCacheTest {
             }
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCache(mockTenantContextFactory);
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
-        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, "id", componentName);
+        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
         cache.putComponent(tenantName, mockTenantContext, componentStoreHolder);
         Assert.assertTrue(ok[0]);
-        Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentsStoreHolder());
+        Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentStoreHolder());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ComponentsCacheTest {
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
+        store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
 
         store.removeConfiguration(EasyMock.anyString());
         final boolean[] ok = {false};
@@ -101,11 +101,11 @@ public class ComponentsCacheTest {
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCache(mockTenantContextFactory);
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 
-        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, componentID, componentName);
+        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, componentID, componentName);
         cache.putComponent(tenantName, mockTenantContext, componentStoreHolder );
         cache.removeConfiguration(componentID, mockTenantContext);
         Assert.assertTrue(ok[0]);

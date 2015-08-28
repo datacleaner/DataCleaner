@@ -43,17 +43,17 @@ import java.util.Set;
 import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
 
-public class ComponentsControllerV1Test {
+public class ComponentControllerV1Test {
     private String tenant = "demo";
     private String id = "component-id";
     private String componentName = "Concatenator";
     private String timeout = "42";
-    private ComponentsControllerV1 componentsControllerV1 = new ComponentsControllerV1();
+    private ComponentControllerV1 componentControllerV1 = new ComponentControllerV1();
 
     @Before
     public void setUp() {
-        componentsControllerV1._tenantContextFactory = getTenantContextFactoryMock();
-        componentsControllerV1.init();
+        componentControllerV1._tenantContextFactory = getTenantContextFactoryMock();
+        componentControllerV1.init();
     }
 
     private TenantContextFactory getTenantContextFactoryMock() {
@@ -81,13 +81,13 @@ public class ComponentsControllerV1Test {
         return componentStore;
     }
 
-    private ComponentsStoreHolder getComponentsStoreHolder() {
+    private ComponentStoreHolder getComponentsStoreHolder() {
         CreateInput createInput = new CreateInput();
         createInput.configuration = getComponentConfigurationMock();
         long timeoutMs = 1000L;
-        ComponentsStoreHolder componentsStoreHolder = new ComponentsStoreHolder(timeoutMs, createInput, id, componentName);
+        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
 
-        return componentsStoreHolder;
+        return componentStoreHolder;
     }
 
     private ComponentConfiguration getComponentConfigurationMock() {
@@ -169,12 +169,12 @@ public class ComponentsControllerV1Test {
 
     @Test
     public void testClose() throws Exception {
-        componentsControllerV1.close();
+        componentControllerV1.close();
     }
 
     @Test
     public void testGetAllComponents() throws Exception {
-        ComponentList componentList = componentsControllerV1.getAllComponents(tenant);
+        ComponentList componentList = componentControllerV1.getAllComponents(tenant);
         assertTrue(componentList.getComponents().size() > 0);
     }
 
@@ -183,14 +183,14 @@ public class ComponentsControllerV1Test {
         ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
         processStatelessInput.configuration = new ComponentConfiguration();
         processStatelessInput.data = getJsonNodeMock();
-        componentsControllerV1.processStateless(tenant, componentName, processStatelessInput);
+        componentControllerV1.processStateless(tenant, componentName, processStatelessInput);
     }
 
     @Test
     public void testCreateComponent() throws Exception {
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
-        componentsControllerV1.createComponent(tenant, componentName, timeout, createInput);
+        componentControllerV1.createComponent(tenant, componentName, timeout, createInput);
     }
 
     @Test
@@ -198,17 +198,17 @@ public class ComponentsControllerV1Test {
         ProcessInput processInput = new ProcessInput();
         processInput.data = getJsonNodeMock();
 
-        componentsControllerV1.processComponent(tenant, id, processInput);
+        componentControllerV1.processComponent(tenant, id, processInput);
     }
 
     @Test
     public void testGetFinalResult() throws Exception {
-        componentsControllerV1.getFinalResult(tenant, id);
+        componentControllerV1.getFinalResult(tenant, id);
 
     }
 
     @Test(expected = ComponentNotFoundException.class)
     public void testDeleteComponent() throws Exception {
-        componentsControllerV1.deleteComponent(tenant, id);
+        componentControllerV1.deleteComponent(tenant, id);
     }
 }

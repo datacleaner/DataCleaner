@@ -337,6 +337,8 @@ public class DatastoreXmlExternalizer {
         appendElement(ds, "username", datastore.getUsername());
         appendElement(ds, "password", encodePassword(datastore.getPassword()));
         appendElement(ds, "ssl", datastore.getSsl());
+        appendElement(ds, "keystorePath", datastore.getKeystorePath());
+        appendElement(ds, "keystorePassword", encodePassword(datastore.getKeystorePassword()));
 
         return ds;
     }

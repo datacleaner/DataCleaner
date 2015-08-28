@@ -68,20 +68,22 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
     private final String _username;
     private final String _password;
     private final boolean _ssl;
+    private final String _keystorePath;
+    private final String _keystorePassword;
 
     public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
             String clusterName, String indexName) {
-        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false);
+        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
     public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
-            String clusterName, String indexName, String username, String password, boolean ssl) {
-        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl);
+            String clusterName, String indexName, String username, String password, boolean ssl, String keystorePath, String keystorePassword) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath, keystorePassword);
     }
 
     public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
             String clusterName, String indexName, SimpleTableDef[] tableDefs, String username, String password,
-            boolean ssl) {
+            boolean ssl, String keystorePath, String keystorePassword) {
         super(name);
         _hostname = hostname;
         _port = port;
@@ -92,6 +94,8 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         _password = password;
         _ssl = ssl;
         _clientType = clientType;
+        _keystorePath = keystorePath;
+        _keystorePassword = keystorePassword;
     }
 
     @Override
@@ -110,7 +114,9 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
             if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
                 settingsBuilder.put("shield.user", _username + ":" + _password);
                 if (_ssl) {
-                    // TODO: All all the necessary properties
+                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
+                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    settingsBuilder.put("shield.transport.ssl", "true");
                 }
             }
             final Settings settings = settingsBuilder.build();
@@ -177,6 +183,14 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     public boolean getSsl() {
         return _ssl;
+    }
+    
+    public String getKeystorePath() {
+        return _keystorePath;
+    }
+    
+    public String getKeystorePassword() {
+        return _keystorePassword;
     }
 
     @Override

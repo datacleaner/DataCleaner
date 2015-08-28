@@ -159,9 +159,12 @@ body>div {
 	text-decoration: underline !important;
 }
 
+.chapter .toc dd dl dd dl dt .section, .part .toc dd dl dd dl dt .section {
+	padding: 7px 20px 7px 60px;
+}
+
 .chapter .toc dd .section, .book .toc dd dd dd .section {
-	display: none;
-	visibility: hidden;
+	padding: 7px 20px 7px 60px;
 }
 
 .toc .section a {

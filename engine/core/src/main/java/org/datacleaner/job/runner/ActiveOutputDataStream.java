@@ -25,6 +25,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.api.HasOutputDataStreams;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -57,10 +58,14 @@ public class ActiveOutputDataStream implements Closeable {
         return _outputDataStreamJob;
     }
 
-    public void initialize(Query query) {
+    public void initialize() {
+        final Table table = _outputDataStreamJob.getOutputDataStream().getTable();
+        final Query query = new Query();
+        query.from(table).selectAll();
+
         final List<SelectItem> selectItems = query.getSelectClause().getItems();
         final ConsumeRowHandler consumeRowHandler = _publisher.createConsumeRowHandler();
-        _outputRowCollector = new OutputDataStreamRowCollector(selectItems, consumeRowHandler);
+        _outputRowCollector = new OutputDataStreamRowCollector(_publisher, selectItems, consumeRowHandler);
         final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
         _component.initializeOutputDataStream(outputDataStream, query, _outputRowCollector);
     }

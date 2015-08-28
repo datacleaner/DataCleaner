@@ -19,6 +19,10 @@
  */
 package org.datacleaner.widgets.visualization;
 
+import java.util.Objects;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.job.ComponentRequirement;
 import org.datacleaner.job.FilterOutcome;
 
@@ -32,12 +36,15 @@ final class JobGraphLink {
     private final Object _to;
     private final ComponentRequirement _requirement;
     private final FilterOutcome _filterOutcome;
+    private final OutputDataStream _outputDataStream;
 
-    public JobGraphLink(Object from, Object to, ComponentRequirement requirement, FilterOutcome filterOutcome) {
+    public JobGraphLink(Object from, Object to, ComponentRequirement requirement, FilterOutcome filterOutcome,
+            OutputDataStream outputDataStream) {
         _from = from;
         _to = to;
         _requirement = requirement;
         _filterOutcome = filterOutcome;
+        _outputDataStream = outputDataStream;
     }
 
     public FilterOutcome getFilterOutcome() {
@@ -55,6 +62,10 @@ final class JobGraphLink {
     public Object getTo() {
         return _to;
     }
+    
+    public OutputDataStream getOutputDataStream() {
+        return _outputDataStream;
+    }
 
     @Override
     public String toString() {
@@ -63,45 +74,23 @@ final class JobGraphLink {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_filterOutcome == null) ? 0 : _filterOutcome.hashCode());
-        result = prime * result + ((_from == null) ? 0 : _from.hashCode());
-        result = prime * result + ((_requirement == null) ? 0 : _requirement.hashCode());
-        result = prime * result + ((_to == null) ? 0 : _to.hashCode());
-        return result;
+        return Objects.hash(_filterOutcome, _from, _requirement, _to, _outputDataStream);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (!(obj instanceof JobGraphLink)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        JobGraphLink other = (JobGraphLink) obj;
-        if (_filterOutcome == null) {
-            if (other._filterOutcome != null)
-                return false;
-        } else if (!_filterOutcome.equals(other._filterOutcome))
-            return false;
-        if (_from == null) {
-            if (other._from != null)
-                return false;
-        } else if (!_from.equals(other._from))
-            return false;
-        if (_requirement == null) {
-            if (other._requirement != null)
-                return false;
-        } else if (!_requirement.equals(other._requirement))
-            return false;
-        if (_to == null) {
-            if (other._to != null)
-                return false;
-        } else if (!_to.equals(other._to))
-            return false;
-        return true;
+        }
+        final JobGraphLink other = (JobGraphLink) obj;
+        final EqualsBuilder equalsBuilder = new EqualsBuilder();
+        equalsBuilder.append(_filterOutcome, other._filterOutcome);
+        equalsBuilder.append(_from, other._from);
+        equalsBuilder.append(_requirement, other._requirement);
+        equalsBuilder.append(_to, other._to);
+        equalsBuilder.append(_outputDataStream, other._outputDataStream);
+        return equalsBuilder.isEquals();
+
     }
 
     /**
@@ -117,6 +106,10 @@ final class JobGraphLink {
         final ComponentRequirement req = getRequirement();
         if (req != null) {
             return req.getSimpleName();
+        }
+        final OutputDataStream outputDataStream = getOutputDataStream();
+        if (outputDataStream != null) {
+            return outputDataStream.getName();
         }
         return null;
     }

@@ -48,6 +48,8 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Inject;
+
 public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeDatastore> {
 
     private static final long serialVersionUID = 1L;
@@ -64,6 +66,7 @@ public class CompositeDatastoreDialog extends AbstractDatastoreDialog<CompositeD
         return "Composite datastore";
     }
 
+    @Inject
     public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext,
             UserPreferences userPreferences) {
         this(null, mutableDatastoreCatalog, windowContext, userPreferences);

@@ -30,7 +30,6 @@ import javax.swing.DefaultComboBoxModel;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
@@ -50,12 +49,11 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private final DCComboBox<InputColumn<?>> _comboBox;
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final Class<?> _dataType;
     private volatile List<InputColumn<?>> _inputColumns;
 
     @Inject
-    public SingleInputColumnComboBoxPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
+    public SingleInputColumnComboBoxPropertyWidget(
             ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _comboBox = new DCComboBox<InputColumn<?>>();
@@ -66,9 +64,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
                 fireValueChanged();
             }
         });
-        _analysisJobBuilder = analysisJobBuilder;
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
-        _analysisJobBuilder.getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
+        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
         _dataType = propertyDescriptor.getTypeArgument(0);
 
         updateComponents();
@@ -82,7 +79,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     }
 
     private void updateComponents(InputColumn<?> currentValue) {
-        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getComponentBuilder(), _dataType);
+        _inputColumns = getAnalysisJobBuilder().getAvailableInputColumns(getComponentBuilder(), _dataType);
 
         if (currentValue != null) {
             if (!_inputColumns.contains(currentValue)) {
@@ -170,8 +167,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        _analysisJobBuilder.getSourceColumnListeners().remove(this);
-        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
+        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
+        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
 
         for (InputColumn<?> column : _inputColumns) {
             if (column instanceof MutableInputColumn) {

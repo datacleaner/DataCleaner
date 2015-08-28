@@ -39,6 +39,7 @@ import org.apache.metamodel.drop.DropTable;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
 import org.datacleaner.api.Configured;
@@ -268,8 +269,10 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
                 comparator) {
 
             @Override
-            protected ExcelDataContextWriter createWriter(File file) {
-                return new ExcelDataContextWriter(file, sheetName);
+            protected ExcelDataContextWriter createWriter(Resource resource) {
+                assert resource instanceof FileResource;
+                final FileResource fileResource = (FileResource) resource;
+                return new ExcelDataContextWriter(fileResource.getFile(), sheetName);
             }
 
             @Override

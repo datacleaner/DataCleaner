@@ -19,7 +19,6 @@
  */
 package org.datacleaner.reference;
 
-import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,55 +26,42 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
-import org.datacleaner.util.ChangeAwareObjectInputStream;
-
 public class SimpleSynonymCatalogTest extends TestCase {
 
     public void testGetMasterTerm() throws Exception {
-        SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
+        final    SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
-        assertEquals("DNK", sc.getMasterTerm("DNK"));
-        assertEquals("NLD", sc.getMasterTerm("NLD"));
-        assertEquals("DNK", sc.getMasterTerm("Denmark"));
-        assertEquals("NLD", sc.getMasterTerm("The netherlands"));
-        assertNull(sc.getMasterTerm("Danemark"));
-    }
-
-    public void testDeserializePreviousVersion() throws Exception {
-        SynonymCatalog sc;
-        try (FileInputStream in = new FileInputStream(
-                "src/test/resources/analyzerbeans-0.34-simple-synonym-catalog.ser")) {
-            ChangeAwareObjectInputStream changeAware = new ChangeAwareObjectInputStream(in);
-            sc = (SynonymCatalog) changeAware.readObject();
-            changeAware.close();
+        try (SynonymCatalogConnection connection = sc.openConnection()) {
+            assertEquals("DNK", connection.getMasterTerm("DNK"));
+            assertEquals("NLD", connection.getMasterTerm("NLD"));
+            assertEquals("DNK", connection.getMasterTerm("Denmark"));
+            assertEquals("NLD", connection.getMasterTerm("The netherlands"));
+            assertNull(connection.getMasterTerm("Danemark"));
         }
-
-        assertEquals("DNK", sc.getMasterTerm("DNK"));
-        assertEquals("NLD", sc.getMasterTerm("NLD"));
-        assertEquals("DNK", sc.getMasterTerm("Denmark"));
-        assertEquals("NLD", sc.getMasterTerm("The netherlands"));
-        assertNull(sc.getMasterTerm("Danemark"));
     }
 
     public void testGetSynonyms() throws Exception {
-        SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
+        final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
-        Collection<? extends Synonym> synonyms = sc.getSynonyms();
+        final SynonymCatalogConnection connection = sc.openConnection();
+        final Collection<? extends Synonym> synonyms = connection.getSynonyms();
+        connection.close();
+
         assertEquals(2, synonyms.size());
 
-        Iterator<? extends Synonym> it = synonyms.iterator();
+        final Iterator<? extends Synonym> it = synonyms.iterator();
         assertTrue(it.hasNext());
-        Synonym s1 = it.next();
+        final Synonym s1 = it.next();
         assertNotNull(s1);
         assertEquals("DNK", s1.getMasterTerm());
-        assertEquals("[DNK, Danmark, Denmark]", new TreeSet<>(s1.getSynonyms().getValues()).toString());
+        assertEquals("[DNK, Danmark, Denmark]", new TreeSet<>(s1.getSynonyms()).toString());
 
         assertTrue(it.hasNext());
-        Synonym s2 = it.next();
+        final Synonym s2 = it.next();
         assertEquals("NLD", s2.getMasterTerm());
-        assertEquals("[NLD, The netherlands]", new TreeSet<>(s2.getSynonyms().getValues()).toString());
+        assertEquals("[NLD, The netherlands]", new TreeSet<>(s2.getSynonyms()).toString());
 
         assertFalse(it.hasNext());
     }

@@ -30,51 +30,51 @@ import org.apache.metamodel.util.FileHelper;
 
 public class TextFileDictionaryTest extends TestCase {
 
-	public void testThreadSafety() throws Exception {
-		final TextFileDictionary dict = new TextFileDictionary("foobar", "src/test/resources/lastnames.txt", "UTF-8");
+    public void testThreadSafety() throws Exception {
+        final TextFileDictionary dict = new TextFileDictionary("foobar", "src/test/resources/lastnames.txt", "UTF-8");
 
-		dict.init();
-		final Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				assertTrue(dict.containsValue("Ellison"));
-				assertTrue(dict.containsValue("Gates"));
-				assertFalse(dict.containsValue("John Doe"));
-				assertTrue(dict.containsValue("Jobs"));
-				assertFalse(dict.containsValue("Foobar"));
-			}
-		};
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try (DictionaryConnection connection = dict.openConnection()) {
+                    assertTrue(connection.containsValue("Ellison"));
+                    assertTrue(connection.containsValue("Gates"));
+                    assertFalse(connection.containsValue("John Doe"));
+                    assertTrue(connection.containsValue("Jobs"));
+                    assertFalse(connection.containsValue("Foobar"));
+                }
+            }
+        };
 
-		ExecutorService threadPool = Executors.newFixedThreadPool(20);
-		Future<?>[] futures = new Future[20];
+        ExecutorService threadPool = Executors.newFixedThreadPool(20);
+        Future<?>[] futures = new Future[20];
 
-		for (int i = 0; i < futures.length; i++) {
-			futures[i] = threadPool.submit(r);
-		}
+        for (int i = 0; i < futures.length; i++) {
+            futures[i] = threadPool.submit(r);
+        }
 
-		for (int i = 0; i < futures.length; i++) {
-			futures[i].get();
-		}
-	}
+        for (int i = 0; i < futures.length; i++) {
+            futures[i].get();
+        }
+    }
 
-	public void testModificationsClearCache() throws Exception {
-		File file = new File("target/TextBasedDictionaryTest-modification.txt");
-		FileHelper.writeStringAsFile(file, "foo\nbar");
+    public void testChangesInbetweenUsage() throws Exception {
+        File file = new File("target/TextBasedDictionaryTest-modification.txt");
+        FileHelper.writeStringAsFile(file, "foo\nbar");
 
-		TextFileDictionary dict = new TextFileDictionary("dict", file.getPath(), "UTF-8");
-		dict.init();
-		assertTrue(dict.containsValue("foo"));
-		assertTrue(dict.containsValue("bar"));
-		assertFalse(dict.containsValue("foobar"));
+        TextFileDictionary dict = new TextFileDictionary("dict", file.getPath(), "UTF-8");
+        try (DictionaryConnection connection = dict.openConnection()) {
+            assertTrue(connection.containsValue("foo"));
+            assertTrue(connection.containsValue("bar"));
+            assertFalse(connection.containsValue("foobar"));
+        }
 
-		// sleep to make sure the file monitor will catch a file change
-		Thread.sleep(2000);
-		
-		FileHelper.writeStringAsFile(file, "foo\nfoobar");
-		dict.init();
-
-		assertTrue(dict.containsValue("foo"));
-		assertFalse(dict.containsValue("bar"));
-		assertTrue(dict.containsValue("foobar"));
-	}
+        FileHelper.writeStringAsFile(file, "foo\nfoobar");
+        
+        try (DictionaryConnection connection = dict.openConnection()) {
+            assertTrue(connection.containsValue("foo"));
+            assertFalse(connection.containsValue("bar"));
+            assertTrue(connection.containsValue("foobar"));
+        }
+    }
 }

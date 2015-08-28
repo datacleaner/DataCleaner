@@ -71,7 +71,6 @@ public final class InitializeTask implements Task {
             }
         }
         lifeCycleHelper.initialize(descriptor, component);
-        lifeCycleHelper.initializeReferenceData();
     }
 
     @Override

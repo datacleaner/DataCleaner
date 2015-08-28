@@ -21,61 +21,68 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
+import java.util.Objects;
 
 import org.datacleaner.util.ReadObjectBuilder;
-import org.datacleaner.util.ReadObjectBuilder.Moved;
-import org.apache.metamodel.util.BaseObject;
 
-public abstract class AbstractReferenceData extends BaseObject implements ReferenceData {
+public abstract class AbstractReferenceData implements ReferenceData {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Moved
-	private final String _name;
+    private final String _name;
+    private String _description;
 
-	private String _description;
+    public AbstractReferenceData(String name) {
+        _name = name;
+    }
 
-	public AbstractReferenceData(String name) {
-		_name = name;
-	}
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, AbstractReferenceData.class).readObject(stream);
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, AbstractReferenceData.class).readObject(stream);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getDescription() {
+        return _description;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getDescription() {
-		return _description;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getName() {
+        return _name;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getName() {
-		return _name;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setDescription(String description) {
+        _description = description;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void setDescription(String description) {
-		_description = description;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getDescription());
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		identifiers.add(getName());
-		identifiers.add(getDescription());
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof AbstractReferenceData)) {
+            return false;
+        }
+        final AbstractReferenceData other = (AbstractReferenceData) obj;
+        return Objects.equals(getClass(), other.getClass()) && Objects.equals(getName(), other.getName());
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "[name=" + getName() + "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[name=" + getName() + "]";
+    }
 }

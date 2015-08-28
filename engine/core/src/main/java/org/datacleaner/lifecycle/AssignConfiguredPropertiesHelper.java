@@ -25,19 +25,12 @@ import java.util.Set;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
-import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class AssignConfiguredPropertiesHelper {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final ReferenceDataActivationManager _referenceDataActivationManager;
-
-    public AssignConfiguredPropertiesHelper(ReferenceDataActivationManager referenceDataActivationManager) {
-        _referenceDataActivationManager = referenceDataActivationManager;
-    }
 
     public void assignProperties(Object component, ComponentDescriptor<?> descriptor,
             ComponentConfiguration configuration) {
@@ -67,11 +60,6 @@ final class AssignConfiguredPropertiesHelper {
     }
 
     protected void setValue(ConfiguredPropertyDescriptor property, Object component, Object value) {
-        if (_referenceDataActivationManager != null) {
-            if (_referenceDataActivationManager.accepts(value)) {
-                _referenceDataActivationManager.register(value);
-            }
-        }
         property.setValue(component, value);
     }
 

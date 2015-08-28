@@ -713,7 +713,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
         final InjectionManager injectionManager = configuration.getEnvironment().getInjectionManagerFactory()
                 .getInjectionManager(configuration);
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, false);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, false);
 
         // mimic the configuration of a real component instance
         final ComponentConfiguration beanConfiguration = new ImmutableComponentConfiguration(getConfiguredProperties());

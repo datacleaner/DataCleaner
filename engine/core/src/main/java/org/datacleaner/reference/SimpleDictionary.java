@@ -19,53 +19,61 @@
  */
 package org.datacleaner.reference;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
 
-import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+
+import com.google.common.collect.Sets;
 
 /**
- * The simplest possible Dictionary implementation. Based on an in-memory set of
- * values.
- * 
- * 
+ * The simplest possible Dictionary implementation. Based on an in-memory
+ * {@link Set} of values.
  */
 public final class SimpleDictionary extends AbstractReferenceData implements Dictionary {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final SimpleReferenceValues<String> _values;
+    private final Set<String> _values;
 
-	public SimpleDictionary(String name, String... values) {
-		super(name);
-		_values = new SimpleReferenceValues<String>(values);
-	}
+    public SimpleDictionary(String name, String... values) {
+        super(name);
+        _values = Sets.newHashSet(values);
+    }
 
-	public SimpleDictionary(String name, Collection<String> values) {
-		super(name);
-		_values = new SimpleReferenceValues<String>(values.toArray(new String[values.size()]));
-	}
+    public SimpleDictionary(String name, Collection<String> values) {
+        super(name);
+        _values = Sets.newHashSet(values);
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, SimpleDictionary.class).readObject(stream);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final SimpleDictionary other = (SimpleDictionary) obj;
+            return Objects.equals(_values, other._values);
+        }
+        return false;
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_values);
-	}
+    @Override
+    public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
+        return new DictionaryConnection() {
+            @Override
+            public Iterator<String> getAllValues() {
+                return _values.iterator();
+            }
 
-	@Override
-	public ReferenceValues<String> getValues() {
-		return _values;
-	}
+            @Override
+            public boolean containsValue(String value) {
+                return _values.contains(value);
+            }
 
-	@Override
-	public boolean containsValue(String value) {
-		return _values.containsValue(value);
-	}
+            @Override
+            public void close() {
+            }
+        };
+    }
 
 }

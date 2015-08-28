@@ -19,7 +19,6 @@
  */
 package org.datacleaner.lifecycle;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.datacleaner.api.Configured;
@@ -32,13 +31,11 @@ import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.configuration.InjectionPoint;
 import org.datacleaner.descriptors.CloseMethodDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
-import org.datacleaner.descriptors.Descriptors;
 import org.datacleaner.descriptors.InitializeMethodDescriptor;
 import org.datacleaner.descriptors.ProvidedPropertyDescriptor;
 import org.datacleaner.descriptors.ValidateMethodDescriptor;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.ComponentConfiguration;
-import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +48,6 @@ public final class LifeCycleHelper {
     private static final Logger logger = LoggerFactory.getLogger(LifeCycleHelper.class);
 
     private final InjectionManager _injectionManager;
-    private final ReferenceDataActivationManager _referenceDataActivationManager;
     private boolean _includeNonDistributedTasks;
 
     /**
@@ -62,25 +58,13 @@ public final class LifeCycleHelper {
      */
     @Deprecated
     public LifeCycleHelper(InjectionManager injectionManager) {
-        this(injectionManager, null, true);
-    }
-
-    /**
-     * @param injectionManager
-     * 
-     * @deprecated use
-     *             {@link #LifeCycleHelper(InjectionManager, ReferenceDataActivationManager, boolean)}
-     *             instead
-     */
-    @Deprecated
-    public LifeCycleHelper(InjectionManager injectionManager,
-            ReferenceDataActivationManager referenceDataActivationManager) {
-        this(injectionManager, referenceDataActivationManager, true);
+        this(injectionManager, true);
     }
 
     /**
      * 
      * @param injectionManager
+     * @param referenceDataActivationManager
      * @param includeNonDistributedTasks
      *            whether or not non-distributed methods (such as
      *            {@link Initialize} or {@link Cloneable} methods that are
@@ -89,24 +73,7 @@ public final class LifeCycleHelper {
      *            nodes in a cluster, this will typically be false.
      */
     public LifeCycleHelper(InjectionManager injectionManager, boolean includeNonDistributedTasks) {
-        this(injectionManager, null, includeNonDistributedTasks);
-    }
-
-    /**
-     * 
-     * @param injectionManager
-     * @param referenceDataActivationManager
-     * @param includeNonDistributedTasks
-     *            whether or not non-distributed methods (such as
-     *            {@link Initialize} or {@link Cloneable} methods that are
-     *            marked with distributed=false) should be included or not. On
-     *            single-node executions, this will typically be true, on slave
-     *            nodes in a cluster, this will typically be false.
-     */
-    public LifeCycleHelper(InjectionManager injectionManager,
-            ReferenceDataActivationManager referenceDataActivationManager, boolean includeNonDistributedTasks) {
         _injectionManager = injectionManager;
-        _referenceDataActivationManager = referenceDataActivationManager;
         _includeNonDistributedTasks = includeNonDistributedTasks;
     }
 
@@ -114,6 +81,7 @@ public final class LifeCycleHelper {
      * 
      * @param configuration
      * @param job
+     * @param referenceDataActivationManager
      * @param includeNonDistributedTasks
      *            whether or not non-distributed methods (such as
      *            {@link Initialize} or {@link Cloneable} methods that are
@@ -122,23 +90,6 @@ public final class LifeCycleHelper {
      *            nodes in a cluster, this will typically be false.
      */
     public LifeCycleHelper(DataCleanerConfiguration configuration, AnalysisJob job, boolean includeNonDistributedTasks) {
-        this(configuration, job, null, includeNonDistributedTasks);
-    }
-
-    /**
-     * 
-     * @param configuration
-     * @param job
-     * @param referenceDataActivationManager
-     * @param includeNonDistributedTasks
-     *            whether or not non-distributed methods (such as
-     *            {@link Initialize} or {@link Cloneable} methods that are
-     *            marked with distributed=false) should be included or not. On
-     *            single-node executions, this will typically be true, on slave
-     *            nodes in a cluster, this will typically be false.
-     */
-    public LifeCycleHelper(DataCleanerConfiguration configuration, AnalysisJob job,
-            ReferenceDataActivationManager referenceDataActivationManager, boolean includeNonDistributedTasks) {
         if (configuration == null) {
             _injectionManager = null;
         } else {
@@ -150,7 +101,6 @@ public final class LifeCycleHelper {
                 _injectionManager = injectionManagerFactory.getInjectionManager(configuration, job);
             }
         }
-        _referenceDataActivationManager = referenceDataActivationManager;
         _includeNonDistributedTasks = includeNonDistributedTasks;
     }
 
@@ -162,10 +112,6 @@ public final class LifeCycleHelper {
         return _injectionManager;
     }
 
-    public ReferenceDataActivationManager getReferenceDataActivationManager() {
-        return _referenceDataActivationManager;
-    }
-
     /**
      * Assigns/injects {@link Configured} property values to a component.
      * 
@@ -175,7 +121,7 @@ public final class LifeCycleHelper {
      */
     public void assignConfiguredProperties(ComponentDescriptor<?> descriptor, Object component,
             ComponentConfiguration componentConfiguration) {
-        final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper(_referenceDataActivationManager);
+        final AssignConfiguredPropertiesHelper helper = new AssignConfiguredPropertiesHelper();
         helper.assignProperties(component, descriptor, componentConfiguration);
     }
 
@@ -269,35 +215,5 @@ public final class LifeCycleHelper {
     @Deprecated
     public void close(ComponentDescriptor<?> descriptor, Object component) {
         close(descriptor, component, true);
-    }
-
-    /**
-     * Closes all reference data used in this life cycle helper
-     */
-    public void closeReferenceData() {
-        if (_referenceDataActivationManager == null) {
-            return;
-        }
-        final Collection<Object> referenceData = _referenceDataActivationManager.getAllReferenceData();
-        for (Object object : referenceData) {
-            ComponentDescriptor<? extends Object> descriptor = Descriptors.ofComponent(object.getClass());
-            close(descriptor, object, true);
-        }
-    }
-
-    /**
-     * Initializes all reference data used in this life cycle helper
-     */
-    public void initializeReferenceData() {
-        if (_referenceDataActivationManager == null) {
-            return;
-        }
-        final Collection<Object> referenceDataCollection = _referenceDataActivationManager.getAllReferenceData();
-        for (Object referenceData : referenceDataCollection) {
-            ComponentDescriptor<? extends Object> descriptor = Descriptors.ofComponent(referenceData.getClass());
-
-            assignProvidedProperties(descriptor, referenceData);
-            initialize(descriptor, referenceData);
-        }
     }
 }

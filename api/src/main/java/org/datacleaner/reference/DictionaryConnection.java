@@ -19,29 +19,15 @@
  */
 package org.datacleaner.reference;
 
-import java.io.Serializable;
+import java.io.Closeable;
+import java.util.Iterator;
 
-final class TextFileSynonym implements Synonym, Serializable {
+public interface DictionaryConnection extends Closeable {
 
-	private static final long serialVersionUID = 1L;
+    public boolean containsValue(String value);
 
-	private final String[] _synonyms;
-	private final boolean _caseSensitive;
+    public Iterator<String> getAllValues();
 
-	public TextFileSynonym(String line, boolean caseSensitive) {
-		String[] split = line.split("\\,");
-		_synonyms = split;
-		_caseSensitive = caseSensitive;
-	}
-
-	@Override
-	public String getMasterTerm() {
-		return _synonyms[0];
-	}
-
-	@Override
-	public ReferenceValues<String> getSynonyms() {
-		return new SimpleStringReferenceValues(_synonyms, _caseSensitive);
-	}
-
+    @Override
+    public void close();
 }

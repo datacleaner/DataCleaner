@@ -34,52 +34,61 @@ public class TextFileSynonymCatalogTest extends TestCase {
     public void testCountrySynonyms() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
                 "UTF-8");
-        assertNull(cat.getMasterTerm("foobar"));
-        assertEquals("DNK", cat.getMasterTerm("Denmark"));
-        assertEquals("GBR", cat.getMasterTerm("England"));
 
-        assertEquals("GBR", cat.getMasterTerm("GBR"));
-        assertEquals("DNK", cat.getMasterTerm("DNK"));
+        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+
+            assertNull(scConnection.getMasterTerm("foobar"));
+            assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
+            assertEquals("GBR", scConnection.getMasterTerm("England"));
+
+            assertEquals("GBR", scConnection.getMasterTerm("GBR"));
+            assertEquals("DNK", scConnection.getMasterTerm("DNK"));
+        }
     }
 
     public void testSerializationAndDeserialization() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
                 "UTF-8");
-        assertEquals("DNK", cat.getMasterTerm("Denmark"));
+        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+            assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
 
-        byte[] bytes;
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream os = new ObjectOutputStream(baos)) {
-            os.writeObject(cat);
-            os.flush();
-            bytes = baos.toByteArray();
+            byte[] bytes;
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ObjectOutputStream os = new ObjectOutputStream(baos)) {
+                os.writeObject(cat);
+                os.flush();
+                bytes = baos.toByteArray();
+            }
+
+            assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
+            cat = null;
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream is = new ObjectInputStream(bais);
+            cat = (SynonymCatalog) is.readObject();
+
+            assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
         }
-
-        assertEquals("DNK", cat.getMasterTerm("Denmark"));
-        cat = null;
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        ObjectInputStream is = new ObjectInputStream(bais);
-        cat = (SynonymCatalog) is.readObject();
-
-        assertEquals("DNK", cat.getMasterTerm("Denmark"));
     }
 
     public void testModificationsClearCache() throws Exception {
         File file = new File("target/TextBasedSynonymCatalogTest-modification.txt");
         FileHelper.writeStringAsFile(file, "foo,fooo,fo\nbar,baar,br");
         SynonymCatalog cat = new TextFileSynonymCatalog("sc", file, true, "UTF-8");
-        assertEquals("foo", cat.getMasterTerm("fooo"));
-        assertEquals("bar", cat.getMasterTerm("br"));
-        assertEquals(null, cat.getMasterTerm("foob"));
 
-        // sleep for two seconds because some filesystems only support
-        // modification dating for the nearest second.
-        Thread.sleep(2000);
+        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+            assertEquals("foo", scConnection.getMasterTerm("fooo"));
+            assertEquals("bar", scConnection.getMasterTerm("br"));
+            assertEquals(null, scConnection.getMasterTerm("foob"));
 
-        FileHelper.writeStringAsFile(file, "foo,fooo,fo\nfoobar,foob");
-        assertEquals("foo", cat.getMasterTerm("fooo"));
-        assertEquals(null, cat.getMasterTerm("br"));
-        assertEquals("foobar", cat.getMasterTerm("foob"));
+            // sleep for two seconds because some filesystems only support
+            // modification dating for the nearest second.
+            Thread.sleep(2000);
+
+            FileHelper.writeStringAsFile(file, "foo,fooo,fo\nfoobar,foob");
+            assertEquals("foo", scConnection.getMasterTerm("fooo"));
+            assertEquals(null, scConnection.getMasterTerm("br"));
+            assertEquals("foobar", scConnection.getMasterTerm("foob"));
+        }
     }
 }

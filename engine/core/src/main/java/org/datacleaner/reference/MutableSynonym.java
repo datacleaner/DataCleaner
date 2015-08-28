@@ -19,6 +19,7 @@
  */
 package org.datacleaner.reference;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ import java.util.Set;
  * Simple, mutable implementation of the Synonym interface
  */
 public class MutableSynonym implements Synonym {
-    
+
     private final String _masterTerm;
     private final Set<String> _synonyms;
 
@@ -34,7 +35,7 @@ public class MutableSynonym implements Synonym {
         _masterTerm = masterTerm;
         _synonyms = new HashSet<String>();
     }
-    
+
     public void addSynonym(String synonym) {
         _synonyms.add(synonym);
     }
@@ -45,8 +46,8 @@ public class MutableSynonym implements Synonym {
     }
 
     @Override
-    public ReferenceValues<String> getSynonyms() {
-        return new SimpleStringReferenceValues(_synonyms, true);
+    public Collection<String> getSynonyms() {
+        return _synonyms;
     }
 
 }

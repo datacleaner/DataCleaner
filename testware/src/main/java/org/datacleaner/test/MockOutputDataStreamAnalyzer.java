@@ -45,26 +45,37 @@ import org.junit.Assert;
 @Named("Mock output data stream analyzer")
 public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer>>, HasOutputDataStreams {
 
-    private final OutputDataStream stream1 = OutputDataStreams.pushDataStream("foo bar records")
+    public static final String PROPERTY_IDENTIFIER = "Identifier";
+    public static final String STREAM_NAME1 = "foo bar records";
+    public static final String STREAM_NAME2 = "counter records";
+
+    private final OutputDataStream stream1 = OutputDataStreams.pushDataStream(STREAM_NAME1)
             .withColumn("foo", ColumnType.STRING).withColumn("bar", ColumnType.TIMESTAMP).toOutputDataStream();
 
-    private final OutputDataStream stream2 = OutputDataStreams.pushDataStream("counter records")
+    private final OutputDataStream stream2 = OutputDataStreams.pushDataStream(STREAM_NAME2)
             .withColumn("count", ColumnType.INTEGER).withColumn("uuid", ColumnType.STRING).toOutputDataStream();
 
     private OutputRowCollector collector1;
     private OutputRowCollector collector2;
     private AtomicInteger counter;
     private List<Integer> list;
+    private boolean _hasBeenValidated = false;
 
     @Configured
     InputColumn<?> column;
 
+    @Configured(value = PROPERTY_IDENTIFIER, required = false)
+    String identifier;
+
     @Validate
     public void validate() {
-        Assert.assertNull("Spec defines that initializeOutputDataStream(...) is not called before validation time",
-                collector1);
-        Assert.assertNull("Spec defines that initializeOutputDataStream(...) is not called before validation time",
-                collector2);
+        if (!_hasBeenValidated) {
+            Assert.assertNull("Spec defines that initializeOutputDataStream(...) is not called before validation time",
+                    collector1);
+            Assert.assertNull("Spec defines that initializeOutputDataStream(...) is not called before validation time",
+                    collector2);
+        }
+        _hasBeenValidated = true;
     }
 
     @Initialize
@@ -96,6 +107,11 @@ public class MockOutputDataStreamAnalyzer implements Analyzer<ListResult<Integer
 
     @Override
     public void run(InputRow row, int distinctCount) {
+        if (list == null) {
+            throw new IllegalStateException("It seems that initialize() has not been invoked on component: "
+                    + identifier);
+        }
+
         final int id = row.getId();
         if (id % 3 == 0) {
             // one third of the times we will write to our result list

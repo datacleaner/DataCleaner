@@ -29,13 +29,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.metamodel.util.Resource;
 import org.apache.metamodel.util.ToStringComparator;
-import org.apache.metamodel.util.UrlResource;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.OutputDataStream;
-import org.datacleaner.beans.CompletenessAnalyzer;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.dategap.DateGapAnalyzerResult;
@@ -65,9 +61,7 @@ import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.CrosstabResult;
-import org.datacleaner.result.ListResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
-import org.datacleaner.test.MockAnalyzer;
 import org.datacleaner.test.TestHelper;
 
 public class JaxbJobReaderTest extends TestCase {

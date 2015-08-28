@@ -19,6 +19,8 @@
  */
 package org.datacleaner.job.runner;
 
+import java.util.Objects;
+
 import org.apache.metamodel.schema.Table;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.OutputDataStreamJob;
@@ -66,32 +68,18 @@ public class RowProcessingStream {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_analysisJob == null) ? 0 : _analysisJob.hashCode());
-        result = prime * result + ((_table == null) ? 0 : _table.hashCode());
-        return result;
+        return Objects.hash(_analysisJob, _table);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null || !(obj instanceof RowProcessingStream)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RowProcessingStream other = (RowProcessingStream) obj;
-        if (_analysisJob == null) {
-            if (other._analysisJob != null)
-                return false;
-        } else if (!_analysisJob.equals(other._analysisJob))
-            return false;
-        if (_table == null) {
-            if (other._table != null)
-                return false;
-        } else if (!_table.equals(other._table))
-            return false;
-        return true;
+        }
+        final RowProcessingStream other = (RowProcessingStream) obj;
+        return Objects.equals(_analysisJob, other._analysisJob) && Objects.equals(_table, other._table);
     }
 }

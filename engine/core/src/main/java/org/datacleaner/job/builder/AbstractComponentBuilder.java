@@ -734,7 +734,7 @@ public abstract class AbstractComponentBuilder<D extends ComponentDescriptor<E>,
 
             final Table table = outputDataStream.getTable();
 
-            analysisJobBuilder = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration());
+            analysisJobBuilder = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration(), _analysisJobBuilder);
             analysisJobBuilder.setDatastore(new OutputDataStreamDatastore(outputDataStream));
             analysisJobBuilder.addSourceColumns(table.getColumns());
 

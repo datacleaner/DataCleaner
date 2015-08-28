@@ -35,11 +35,6 @@
             <input ref="col_reportsto"/>
             <output-data-stream name="Complete rows">
                 <job>
-                    <job-metadata>
-                        <job-version>2.0</job-version>
-                        <author>John Doe</author>
-                        <created-date>2010-11-12Z</created-date>
-                    </job-metadata>
                     <source>
                         <columns>
                             <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>
@@ -65,11 +60,6 @@
             </output-data-stream>
             <output-data-stream name="Incomplete rows">
                 <job>
-                    <job-metadata>
-                        <job-version>2.0</job-version>
-                        <author>John Doe</author>
-                        <created-date>2010-11-12Z</created-date>
-                    </job-metadata>
                     <source>
                         <columns>
                             <column id="col_concatoffirstnamelastname" path="Concat of FIRSTNAME,LASTNAME" type="VARCHAR"/>

@@ -108,7 +108,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
         final Job job = new Job();
-        configureJobType(analysisJob, job);
+        configureJobType(analysisJob, job, true);
 
         try {
             final Marshaller marshaller = _jaxbContext.createMarshaller();
@@ -120,12 +120,14 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
         }
     }
 
-    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType) {
-        try {
-            JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
-            jobType.setJobMetadata(jobMetadata);
-        } catch (Exception e) {
-            logger.warn("Exception occurred while creating job metadata", e);
+    private void configureJobType(final AnalysisJob analysisJob, final JobType jobType, boolean includeMetadata) {
+        if (includeMetadata) {
+            try {
+                JobMetadataType jobMetadata = _jobMetadataFactory.create(analysisJob);
+                jobType.setJobMetadata(jobMetadata);
+            } catch (Exception e) {
+                logger.warn("Exception occurred while creating job metadata", e);
+            }
         }
 
         final SourceType sourceType = new SourceType();
@@ -532,7 +534,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
                 final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
                 outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());
                 final JobType childJobType = new JobType();
-                configureJobType(outputDataStreamJob.getJob(), childJobType);
+                configureJobType(outputDataStreamJob.getJob(), childJobType, false);
                 outputDataStreamType.setJob(childJobType);
                 analyzerType.getOutputDataStream().add(outputDataStreamType);
             }

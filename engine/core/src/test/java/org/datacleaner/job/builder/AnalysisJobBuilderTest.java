@@ -21,22 +21,23 @@ package org.datacleaner.job.builder;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
+import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.test.MockFilter;
 import org.datacleaner.test.MockFilter.Category;
+import org.datacleaner.test.MockOutputDataStreamAnalyzer;
 import org.datacleaner.test.MockTransformer;
 import org.datacleaner.test.mock.MockDatastore;
-import org.junit.Test;
 
 public class AnalysisJobBuilderTest extends TestCase {
 
-    @Test
     public void testGetAvailableInputColumnsForComponentPreventsCyclicDependencies() throws Exception {
         final MutableTable table = new MutableTable("table");
         final MutableColumn column = new MutableColumn("foo").setTable(table);
@@ -144,6 +145,88 @@ public class AnalysisJobBuilderTest extends TestCase {
                             + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[MetaModelInputColumn[table.foo]]], "
                             + "TransformerComponentBuilder[transformer=Mock transformer,inputColumns=[TransformedInputColumn[id=trans-0001-0002,name=mock output]]]]",
                     componentBuilders.toString());
+        }
+    }
+
+    public void testGetAllJobBuilders() {
+        MutableTable table = new MutableTable("table");
+        MutableColumn column = new MutableColumn("foo").setTable(table);
+        table.addColumn(column);
+
+        // set up
+        try (final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new DataCleanerConfigurationImpl())) {
+            final MockDatastore datastore = new MockDatastore();
+            ajb.setDatastore(datastore);
+            ajb.addSourceColumn(new MetaModelInputColumn(column));
+
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer0.setName("analyzer0");
+            analyzer0.addInputColumn(ajb.getSourceColumns().get(0));
+
+            final List<OutputDataStream> analyzer0OutputDataStreams = analyzer0.getOutputDataStreams();
+
+            final AnalysisJobBuilder analyzer0DataStream0JobBuilder =
+                    analyzer0.getOutputDataStreamJobBuilder(analyzer0OutputDataStreams.get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0Analyzer0 =
+                    analyzer0DataStream0JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer0Analyzer0.setName("analyzer0Analyzer0");
+            analyzer0Analyzer0.addInputColumn(analyzer0DataStream0JobBuilder.getSourceColumns().get(0));
+
+            final List<OutputDataStream> analyzer0Analyzer0OutputDataStreams =
+                    analyzer0Analyzer0.getOutputDataStreams();
+
+            final AnalysisJobBuilder analyzer0Analyzer0DataStream0JobBuilder =
+                    analyzer0Analyzer0.getOutputDataStreamJobBuilder(analyzer0Analyzer0OutputDataStreams.get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0Analyzer0Analyzer0 =
+                    analyzer0Analyzer0DataStream0JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer0Analyzer0Analyzer0.setName("analyzer0Analyzer0Analyzer0");
+            analyzer0Analyzer0Analyzer0.addInputColumn(analyzer0Analyzer0DataStream0JobBuilder.getSourceColumns().get(0));
+
+            final AnalysisJobBuilder analyzer0DataStream1JobBuilder =
+                    analyzer0.getOutputDataStreamJobBuilder(analyzer0Analyzer0OutputDataStreams.get(1));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer0Analyzer1 =
+                    analyzer0DataStream1JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer0Analyzer1.setName("analyzer0Analyzer1");
+            analyzer0Analyzer1.addInputColumn(analyzer0DataStream1JobBuilder.getSourceColumns().get(0));
+
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1 =
+                    ajb.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer1.setName("analyzer1");
+            analyzer1.addInputColumn(ajb.getSourceColumns().get(0));
+
+            final List<OutputDataStream> analyzer1OutputDataStreams = analyzer1.getOutputDataStreams();
+
+            final AnalysisJobBuilder analyzer1DataStream0JobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(analyzer1OutputDataStreams.get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1Analyzer0 =
+                    analyzer1DataStream0JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer1Analyzer0.setName("analyzer1Analyzer0");
+            analyzer1Analyzer0.addInputColumn(analyzer1DataStream0JobBuilder.getSourceColumns().get(0));
+
+            final List<OutputDataStream> analyzer1Analyzer0OutputDataStreams =
+                    analyzer1Analyzer0.getOutputDataStreams();
+
+            final AnalysisJobBuilder analyzer1Analyzer0DataStream0JobBuilder =
+                    analyzer1Analyzer0.getOutputDataStreamJobBuilder(analyzer1Analyzer0OutputDataStreams.get(0));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1Analyzer0Analyzer0 =
+                    analyzer1Analyzer0DataStream0JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer1Analyzer0Analyzer0.setName("analyzer1Analyzer0Analyzer0");
+            analyzer1Analyzer0Analyzer0.addInputColumn(analyzer0Analyzer0DataStream0JobBuilder.getSourceColumns().get(0));
+
+            final AnalysisJobBuilder analyzer1DataStream1JobBuilder =
+                    analyzer1.getOutputDataStreamJobBuilder(analyzer1Analyzer0OutputDataStreams.get(1));
+            final AnalyzerComponentBuilder<MockOutputDataStreamAnalyzer> analyzer1Analyzer1 =
+                    analyzer1DataStream1JobBuilder.addAnalyzer(MockOutputDataStreamAnalyzer.class);
+            analyzer1Analyzer1.setName("analyzer1Analyzer1");
+            analyzer1Analyzer1.addInputColumn(analyzer0DataStream1JobBuilder.getSourceColumns().get(0));
+
+
+            // Any random analyzer should work:
+            assertEquals(ajb, analyzer1Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
+            assertEquals(ajb, analyzer0Analyzer0.getAnalysisJobBuilder().getRootJobBuilder());
         }
     }
 }

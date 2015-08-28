@@ -93,7 +93,7 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
-        boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
+        final boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
         if (!alreadyRegisteredError) {
             _analysisListener.errorUnknown(_analysisJob, throwable);
         }

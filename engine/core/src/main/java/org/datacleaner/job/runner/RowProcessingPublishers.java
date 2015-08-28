@@ -141,12 +141,19 @@ public final class RowProcessingPublishers {
         return physicalColumnsArray;
     }
 
+    /**
+     * 
+     * @param componentJob
+     * @return
+     * @deprecated use {@link #getTables(SourceColumnFinder, ComponentJob)}
+     *             instead
+     */
     @Deprecated
     public Table[] getTables(ComponentJob componentJob) {
         RowProcessingPublisher publisher = getRowProcessingPublisher(componentJob);
         return getTables(publisher.getSourceColumnFinder(), componentJob, null);
     }
-    
+
     private RowProcessingPublisher getRowProcessingPublisher(ComponentJob componentJob) {
         final Collection<RowProcessingPublisher> publishers = _rowProcessingPublishers.values();
         for (RowProcessingPublisher rowProcessingPublisher : publishers) {
@@ -157,7 +164,6 @@ public final class RowProcessingPublishers {
         return null;
     }
 
-    
     public Table[] getTables(SourceColumnFinder sourceColumnFinder, ComponentJob componentJob) {
         return getTables(sourceColumnFinder, componentJob, null);
     }

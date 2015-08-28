@@ -68,10 +68,8 @@ public class JobGraphActions {
                 .getRenderer(componentBuilder, ComponentBuilderPresenterRenderingFormat.class);
 
         if (renderer != null) {
-            final ComponentBuilderPresenter presenter = renderer.render(componentBuilder);
-
             final ComponentConfigurationDialog dialog = new ComponentConfigurationDialog(_windowContext,
-                    componentBuilder, presenter);
+                    componentBuilder, renderer);
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {

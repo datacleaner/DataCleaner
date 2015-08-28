@@ -175,7 +175,7 @@ public class ConsumeRowHandler {
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
             @SuppressWarnings("deprecation")
-            RowProcessingPublisher tablePublisher = rowProcessingPublishers
+            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
                     .getRowProcessingPublisher(rowConsumeConfiguration.table);
             if (tablePublisher == null) {
                 throw new IllegalArgumentException("Job does not consume records from table: "

@@ -36,6 +36,7 @@ import org.datacleaner.data.MetaModelInputRow;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
 import org.datacleaner.descriptors.PropertyDescriptor;
+import org.datacleaner.desktop.api.HiddenProperty;
 import org.datacleaner.job.ComponentConfigurationException;
 import org.datacleaner.job.ImmutableComponentConfiguration;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -139,8 +140,8 @@ public class ComponentHandler {
                 continue;
             }
 
-            if (propDesc.getAnnotation(WSPrivateProperty.class) != null) {
-                LOGGER.debug("WS private property '{}' is skipped. ", propertyName);
+            if (propDesc.getAnnotation(HiddenProperty.class) != null) {
+                LOGGER.debug("Hidden property '{}' is skipped. ", propertyName);
                 continue;
             }
 

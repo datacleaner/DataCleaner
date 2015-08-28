@@ -21,6 +21,7 @@ package org.datacleaner.windows;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -48,6 +49,7 @@ import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.FileSelectionListener;
 import org.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
 
@@ -168,11 +170,13 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 if (stateChange == ItemEvent.SELECTED) {
                     _keystorePathField.enable();
                     WidgetUtils.enableComponent(_keystorePasswordField);
+                    validateAndUpdate();
                 }
 
                 if (stateChange == ItemEvent.DESELECTED) {
                     _keystorePathField.disable();
                     WidgetUtils.disableComponent(_keystorePasswordField);
+                    validateAndUpdate();
                 }
             }
         });
@@ -202,6 +206,33 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             }
         });
         _indexNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _passwordField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        });
+        _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
+            
+            @Override
+            public void onSelected(FilenameTextField filenameTextField, File file) {
+                validateAndUpdate();
+                
+            }
+        });
+        _keystorePathField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
+            
             @Override
             protected void onChange(DocumentEvent event) {
                 validateAndUpdate();
@@ -270,6 +301,23 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         if (StringUtils.isNullOrEmpty(indexName)) {
             setStatusError("Please enter index name");
             return false;
+        }
+        
+        if (_sslCheckBox.isSelected()) {
+            if (StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
+                setStatusError("Please enter the username");
+                return false;
+            }
+            
+            if (StringUtils.isNullOrEmpty(new String(_passwordField.getPassword()))) {
+                setStatusError("Please enter the password");
+                return false;
+            }
+            
+            if (StringUtils.isNullOrEmpty(_keystorePathField.getFilename())) {
+                setStatusError("Please enter the keystore path");
+                return false;
+            }
         }
 
         setStatusValid();

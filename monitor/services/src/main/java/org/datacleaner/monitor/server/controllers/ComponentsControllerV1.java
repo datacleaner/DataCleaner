@@ -21,6 +21,7 @@ package org.datacleaner.monitor.server.controllers;
 
 import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.monitor.configuration.*;
 import org.datacleaner.monitor.server.components.*;
@@ -54,7 +55,7 @@ public class ComponentsControllerV1 implements ComponentsController {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-  
+
 
     @PostConstruct
     public void init() {
@@ -89,6 +90,17 @@ public class ComponentsControllerV1 implements ComponentsController {
 
         return componentList;
     }
+
+    public ComponentList.ComponentInfo getComponentInfo(
+            @PathVariable(PARAMETER_NAME_TENANT) final String tenant,
+            @PathVariable("name") String name) {
+        name = unURLify(name);
+        LOGGER.debug("Informing about '" + name + "'");
+        DataCleanerConfiguration dcConfig = _tenantContextFactory.getContext(tenant).getConfiguration();
+        ComponentDescriptor descriptor = dcConfig.getEnvironment().getDescriptorProvider().getTransformerDescriptorByDisplayName(name);
+        return new ComponentList().createComponentInfo(tenant, descriptor);
+    }
+
 
     /**
      * It creates a new component with the provided configuration, runs it and returns the result.
@@ -142,9 +154,9 @@ public class ComponentsControllerV1 implements ComponentsController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         ComponentsCacheConfigWrapper config = _componentsCache.getConfigHolder(id, tenant, tenantContext);
         if(config == null){
-            LOGGER.warn("Component with id {} does not exist.", id);
-            throw ComponentNotFoundException.createInstanceNotFound(id);
-        }
+                LOGGER.warn("Component with id {} does not exist.", id);
+                throw ComponentNotFoundException.createInstanceNotFound(id);
+            }
         ComponentHandler handler = config.getHandler();
         ProcessOutput out = new ProcessOutput();
         out.rows = handler.runComponent(processInput.data);
@@ -179,11 +191,6 @@ public class ComponentsControllerV1 implements ComponentsController {
     }
 
     private String unURLify(String url) {
-        try {
-            url = URLDecoder.decode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            //Nothing to do
-        }
         return url.replace("_@_", "/");
     }
 }

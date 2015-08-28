@@ -26,15 +26,16 @@ import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
+import org.datacleaner.repository.RepositoryFolder;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.easymock.EasyMock.*;
@@ -45,16 +46,15 @@ import static org.easymock.EasyMock.*;
  * @since 28.7.15
  */
 public class ComponentCacheTest {
-
+    private String tenantName = "tenant";
     private String componentName = "name";
 
     @Test
     public void testCacheStoreNewConfiguration() throws Exception {
-        String tenantName = "tenant";
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
@@ -77,14 +77,28 @@ public class ComponentCacheTest {
         Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentStoreHolder());
     }
 
+    private Iterator<RepositoryFolder> getRepositoryFolderIterator() {
+        Set<RepositoryFolder> tenantNames = new HashSet<>();
+        tenantNames.add(getRepositoryFolderMock());
+
+        return tenantNames.iterator();
+    }
+
+    private RepositoryFolder getRepositoryFolderMock() {
+        RepositoryFolder repositoryFolder = EasyMock.createNiceMock(RepositoryFolder.class);
+        EasyMock.expect(repositoryFolder.getName()).andReturn(tenantName).anyTimes();
+        EasyMock.replay(repositoryFolder);
+
+        return repositoryFolder;
+    }
+
     @Test
     public void testCacheRemoveConfig() throws Exception {
-        String tenantName = "tenant";
         String componentID = "id";
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
+        EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();

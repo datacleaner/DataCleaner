@@ -20,10 +20,14 @@
 package org.datacleaner.monitor.configuration;
 
 import org.datacleaner.monitor.server.components.ComponentHandler;
+import org.datacleaner.repository.RepositoryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,7 +63,7 @@ public class ComponentCache {
      */
     public void putComponent(String tenant, TenantContext tenantContext, ComponentStoreHolder componentsHolder) {
         logger.info("Put component. name: {}, componentId: {}.", componentsHolder.getComponentName(), componentsHolder.getComponentId());
-        ComponentHandler handler = ComponentFactory.createComponent(tenantContext, componentsHolder.getComponentName(), componentsHolder.getCreateInput().configuration);
+        ComponentHandler handler = ComponentHandlerFactory.createComponent(tenantContext, componentsHolder.getComponentName(), componentsHolder.getCreateInput().configuration);
         ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
         data.put(componentsHolder.getComponentId(), wrapper);
         tenantContext.getComponentsStore().storeConfiguration(wrapper.getComponentStoreHolder());
@@ -82,7 +86,7 @@ public class ComponentCache {
                 logger.warn("Configuration {} does not exist in store.", id);
                 return null;
             } else {
-                ComponentHandler componentHandler = ComponentFactory.createComponent(tenantContext, storeConfig.getComponentName(), storeConfig.getCreateInput().configuration);
+                ComponentHandler componentHandler = ComponentHandlerFactory.createComponent(tenantContext, storeConfig.getComponentName(), storeConfig.getCreateInput().configuration);
                 componentCacheConfigWrapper = new ComponentCacheConfigWrapper(tenant, storeConfig, componentHandler);
                 data.put(id, componentCacheConfigWrapper);
             }
@@ -166,10 +170,12 @@ public class ComponentCache {
                 if (firstRun) {
                     firstRun = false;
                 } else {
-                    Set<String> tenants = _tenantContextFactory.getAllTenantsName();
+                    Iterator<RepositoryFolder> repositoryFolderIterator = _tenantContextFactory.getRepositoryFolderIterator();
                     Set<String> allIdInCache = new HashSet<>(data.keySet());
-                    for (String tenant : tenants) {
-                        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+
+                    while (repositoryFolderIterator.hasNext()) {
+                        String tenantName = repositoryFolderIterator.next().getName();
+                        TenantContext tenantContext = _tenantContextFactory.getContext(tenantName);
                         List<ComponentStoreHolder> configurationList = tenantContext.getComponentsStore().getAllConfiguration();
                         for (ComponentStoreHolder storeHolder : configurationList) {
                             String componentId = storeHolder.getComponentId();

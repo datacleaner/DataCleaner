@@ -104,7 +104,7 @@ public class ComponentControllerV1 implements ComponentController {
         String decodedName = unURLify(name);
         LOGGER.debug("Running '" + decodedName + "'");
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentHandler handler =  ComponentFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
+        ComponentHandler handler =  ComponentHandlerFactory.createComponent(tenantContext, decodedName, processStatelessInput.configuration);
         ProcessStatelessOutput output = new ProcessStatelessOutput();
         output.rows = handler.runComponent(processStatelessInput.data);
         output.result = handler.closeComponent();

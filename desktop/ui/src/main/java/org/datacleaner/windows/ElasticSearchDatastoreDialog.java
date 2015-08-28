@@ -48,6 +48,7 @@ import org.datacleaner.util.SchemaFactory;
 import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
+import org.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
 
 public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<ElasticSearchDatastore> implements
@@ -66,7 +67,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordField;
     private final JCheckBox _sslCheckBox;
-    private final JXTextField _keystorePathField;
+    private final FilenameTextField _keystorePathField;
     private final JPasswordField _keystorePasswordField;
 
     @Inject
@@ -89,8 +90,8 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         _portTextField.setDocument(new NumberDocument(false));
         _usernameTextField = WidgetFactory.createTextField();
         _passwordField = WidgetFactory.createPasswordField();
-        _keystorePathField = WidgetFactory.createTextField();
-        WidgetUtils.disableComponent(_keystorePathField);
+        _keystorePathField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
+        _keystorePathField.disable();
         _keystorePasswordField = WidgetFactory.createPasswordField();
         WidgetUtils.disableComponent(_keystorePasswordField);
 
@@ -112,7 +113,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         _passwordField.setText("");
                         _sslCheckBox.setEnabled(false);
                         _sslCheckBox.setSelected(DEFAULT_SSL);
-                        WidgetUtils.disableComponent(_keystorePathField);
+                        _keystorePathField.disable();
                         WidgetUtils.disableComponent(_keystorePasswordField);
                     } else {
                         WidgetUtils.enableComponent(_hostnameTextField);
@@ -121,7 +122,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                         WidgetUtils.enableComponent(_passwordField);
                         _sslCheckBox.setEnabled(true);
                         if (_sslCheckBox.isSelected()) {
-                            WidgetUtils.enableComponent(_keystorePathField);
+                            _keystorePathField.enable();
                             WidgetUtils.enableComponent(_keystorePasswordField);
                         }
 
@@ -139,7 +140,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                             _usernameTextField.setText(originalDatastore.getUsername());
                             _passwordField.setText(originalDatastore.getPassword());
                             _sslCheckBox.setSelected(originalDatastore.getSsl());
-                            _keystorePathField.setText(originalDatastore.getKeystorePath());
+                            _keystorePathField.setFilename(originalDatastore.getKeystorePath());
                             _keystorePasswordField.setText(originalDatastore.getKeystorePassword());
                         } else {
                             _hostnameTextField.setText("localhost");
@@ -162,12 +163,12 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 int stateChange = e.getStateChange();
 
                 if (stateChange == ItemEvent.SELECTED) {
-                    WidgetUtils.enableComponent(_keystorePathField);
+                    _keystorePathField.enable();
                     WidgetUtils.enableComponent(_keystorePasswordField);
                 }
 
                 if (stateChange == ItemEvent.DESELECTED) {
-                    WidgetUtils.disableComponent(_keystorePathField);
+                    _keystorePathField.disable();
                     WidgetUtils.disableComponent(_keystorePasswordField);
                 }
             }
@@ -218,7 +219,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordField.setText(originalDatastore.getPassword());
             _sslCheckBox.setSelected(originalDatastore.getSsl());
-            _keystorePathField.setText(originalDatastore.getKeystorePath());
+            _keystorePathField.setFilename(originalDatastore.getKeystorePath());
             _keystorePasswordField.setText(originalDatastore.getKeystorePassword());
         }
     }
@@ -307,7 +308,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         final String username = _usernameTextField.getText();
         final String password = new String(_passwordField.getPassword());
         final boolean ssl = _sslCheckBox.isSelected();
-        final String keystorePath = _keystorePathField.getText();
+        final String keystorePath = _keystorePathField.getFilename();
         final String keystorePassword = new String(_keystorePasswordField.getPassword());
         if (StringUtils.isNullOrEmpty(username) && StringUtils.isNullOrEmpty(password)
                 && StringUtils.isNullOrEmpty(keystorePath) && StringUtils.isNullOrEmpty(keystorePassword)) {

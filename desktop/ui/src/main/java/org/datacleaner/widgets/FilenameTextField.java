@@ -177,6 +177,16 @@ public final class FilenameTextField extends DCPanel implements ResourceTypePres
     public String getFilename() {
         return _textField.getText();
     }
+    
+    public void enable() {
+        WidgetUtils.enableComponent(_browseButton);
+        WidgetUtils.enableComponent(_textField);
+    }
+    
+    public void disable() {
+        WidgetUtils.disableComponent(_browseButton);
+        WidgetUtils.disableComponent(_textField);
+    }
 
     public void setFilename(String filename) {
         _textField.setText(filename);

@@ -23,13 +23,18 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.components.categories.FilterCategory;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.DictionaryConnection;
 
 @Named("Validate in dictionary")
 @Alias("Dictionary lookup")
@@ -47,6 +52,11 @@ public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
     @Configured
     Dictionary dictionary;
 
+    @Provided
+    DataCleanerConfiguration configuration;
+
+    private DictionaryConnection dictionaryConnection;
+
     public DictionaryFilter() {
     }
 
@@ -55,12 +65,25 @@ public class DictionaryFilter implements Filter<DictionaryFilter.Category> {
         this.column = column;
         this.dictionary = dictionary;
     }
+    
+    @Initialize
+    public void init() {
+        dictionaryConnection = dictionary.openConnection(configuration);
+    }
+    
+    @Close
+    public void close() {
+        if (dictionaryConnection != null) {
+            dictionaryConnection.close();
+            dictionaryConnection = null;
+        }
+    }
 
     @Override
     public Category categorize(InputRow inputRow) {
         String value = inputRow.getValue(column);
         if (value != null) {
-            if (dictionary.containsValue(value)) {
+            if (dictionaryConnection.containsValue(value)) {
                 return Category.VALID;
             }
         }

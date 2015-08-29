@@ -74,12 +74,13 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
     private List<InputColumn<Boolean>> _matchColumns;
 
     public ReferenceDataMatcherAnalyzer(InputColumn<?>[] columns, Dictionary[] dictionaries,
-            SynonymCatalog[] synonymCatalogs, StringPattern[] stringPatterns) {
+            SynonymCatalog[] synonymCatalogs, StringPattern[] stringPatterns, DataCleanerConfiguration configuration) {
         this();
         this.columns = columns;
         this.dictionaries = dictionaries;
         this.stringPatterns = stringPatterns;
         this.synonymCatalogs = synonymCatalogs;
+        this.configuration = configuration;
     }
 
     public ReferenceDataMatcherAnalyzer() {
@@ -116,7 +117,7 @@ public class ReferenceDataMatcherAnalyzer implements Analyzer<BooleanAnalyzerRes
                 _synonymCatalogConnections = new SynonymCatalogConnection[synonymCatalogs.length];
                 for (int j = 0; j < synonymCatalogs.length; j++) {
                     SynonymCatalog synonymCatalog = synonymCatalogs[j];
-                    _synonymCatalogConnections[i] = synonymCatalog.openConnection(configuration);
+                    _synonymCatalogConnections[j] = synonymCatalog.openConnection(configuration);
                     outputColumns.setColumnName(j, columns[i].getName() + " in " + synonymCatalog.getName());
                 }
                 addMatchColumns(outputColumns);

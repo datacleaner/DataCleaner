@@ -80,11 +80,12 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     }
 
     public SynonymLookupTransformer(InputColumn<String> column, SynonymCatalog synonymCatalog,
-            boolean retainOriginalValue) {
+            boolean retainOriginalValue, DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.synonymCatalog = synonymCatalog;
         this.retainOriginalValue = retainOriginalValue;
+        this.configuration = configuration;
     }
 
     @Override

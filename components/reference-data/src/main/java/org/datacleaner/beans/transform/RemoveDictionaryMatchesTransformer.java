@@ -59,7 +59,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     InputColumn<String> _column;
 
     @Provided
-    DataCleanerConfiguration configuration;
+    DataCleanerConfiguration _configuration;
     
     private DictionaryConnection dictionaryConnection;
 
@@ -68,10 +68,11 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public RemoveDictionaryMatchesTransformer() {
     }
 
-    public RemoveDictionaryMatchesTransformer(InputColumn<String> column, Dictionary dictionary) {
+    public RemoveDictionaryMatchesTransformer(InputColumn<String> column, Dictionary dictionary, DataCleanerConfiguration configuration) {
         this();
         _column = column;
         _dictionary = dictionary;
+        _configuration = configuration;
     }
 
     @Override
@@ -82,7 +83,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     
     @Initialize
     public void init() {
-        dictionaryConnection = _dictionary.openConnection(configuration);
+        dictionaryConnection = _dictionary.openConnection(_configuration);
     }
     
     @Close

@@ -22,17 +22,22 @@ package org.datacleaner.beans.transform;
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.Dictionary;
+import org.datacleaner.reference.DictionaryConnection;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
@@ -53,6 +58,11 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     @Configured(value = PROPERTY_COLUMN)
     InputColumn<String> _column;
 
+    @Provided
+    DataCleanerConfiguration configuration;
+    
+    private DictionaryConnection dictionaryConnection;
+
     private final Splitter SPLITTER = Splitter.on(CharMatcher.WHITESPACE).omitEmptyStrings();
 
     public RemoveDictionaryMatchesTransformer() {
@@ -68,6 +78,19 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
     public OutputColumns getOutputColumns() {
         final String name = _column.getName() + " (" + _dictionary.getName() + " removed)";
         return new OutputColumns(String.class, new String[] { name });
+    }
+    
+    @Initialize
+    public void init() {
+        dictionaryConnection = _dictionary.openConnection(configuration);
+    }
+    
+    @Close
+    public void close() {
+        if (dictionaryConnection != null) {
+            dictionaryConnection.close();
+            dictionaryConnection = null;
+        }
     }
 
     @Override
@@ -85,7 +108,7 @@ public class RemoveDictionaryMatchesTransformer implements Transformer {
         final StringBuilder sb = new StringBuilder();
         final Iterable<String> tokens = SPLITTER.split(value);
         for (String token : tokens) {
-            if (!_dictionary.containsValue(token)) {
+            if (!dictionaryConnection.containsValue(token)) {
                 if (sb.length() != 0) {
                     sb.append(' ');
                 }

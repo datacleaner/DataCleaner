@@ -52,14 +52,15 @@ public class StringPatternMatcherTransformer implements Transformer {
     MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
 
     @Provided
-    DataCleanerConfiguration configuration;
+    DataCleanerConfiguration _configuration;
 
     private StringPatternConnection[] stringPatternConnections;
 
-    public StringPatternMatcherTransformer(InputColumn<?> column, StringPattern[] stringPatterns) {
+    public StringPatternMatcherTransformer(InputColumn<?> column, StringPattern[] stringPatterns, DataCleanerConfiguration configuration) {
         this();
         _column = column;
         _stringPatterns = stringPatterns;
+        _configuration = configuration;
     }
 
     public StringPatternMatcherTransformer() {
@@ -69,7 +70,7 @@ public class StringPatternMatcherTransformer implements Transformer {
     public void init() {
         stringPatternConnections = new StringPatternConnection[_stringPatterns.length];
         for (int i = 0; i < _stringPatterns.length; i++) {
-            stringPatternConnections[i] = _stringPatterns[i].openConnection(configuration);
+            stringPatternConnections[i] = _stringPatterns[i].openConnection(_configuration);
         }
     }
 

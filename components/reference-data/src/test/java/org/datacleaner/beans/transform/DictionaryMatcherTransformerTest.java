@@ -131,7 +131,7 @@ public class DictionaryMatcherTransformerTest extends TestCase {
 		Dictionary[] dictionaries = new Dictionary[] {
 				new SimpleDictionary("danish male names", "kasper", "kim", "asbjørn"),
 				new SimpleDictionary("danish female names", "trine", "kim", "lene") };
-		DictionaryMatcherTransformer transformer = new DictionaryMatcherTransformer(null, dictionaries);
+		DictionaryMatcherTransformer transformer = new DictionaryMatcherTransformer(null, dictionaries, new DataCleanerConfigurationImpl());
 		assertEquals("[true, false]", Arrays.toString(transformer.transform("kasper")));
 		assertEquals("[false, false]", Arrays.toString(transformer.transform("foobar")));
 		assertEquals("[false, true]", Arrays.toString(transformer.transform("trine")));

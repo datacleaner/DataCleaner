@@ -22,12 +22,16 @@ package org.datacleaner.reference;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.convert.ResourceConverter;
 
 import au.com.bytecode.opencsv.CSVParser;
 
@@ -69,26 +73,38 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
 
     @Override
     public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
-        final Map<String, String> synonyms = new HashMap<>();
+        final ResourceConverter rc = new ResourceConverter(configuration);
+        final Resource resource = rc.fromString(Resource.class, _filename);
 
-        final CSVParser parser = new CSVParser(',', '"', '\\');
-        final File file = new File(_filename);
-        final BufferedReader reader = FileHelper.getBufferedReader(file, _encoding);
-        try {
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                line = line.trim();
-                final String[] values = parser.parseLine(line);
-                if (values.length > 1) {
-                    for (int i = 1; i < values.length; i++) {
-                        synonyms.put(values[i], values[0]);
+        final Map<String, String> synonyms = resource.read(new Func<InputStream, Map<String, String>>() {
+            @Override
+            public Map<String, String> eval(InputStream in) {
+                final Map<String, String> synonyms = new HashMap<>();
+
+                final CSVParser parser = new CSVParser(',', '"', '\\');
+                final BufferedReader reader = FileHelper.getBufferedReader(in, _encoding);
+                try {
+                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                        line = line.trim();
+                        final String[] values = parser.parseLine(line);
+                        if (values.length > 0) {
+                            synonyms.put(values[0], values[0]);
+                        }
+                        if (values.length > 1) {
+                            for (int i = 1; i < values.length; i++) {
+                                synonyms.put(values[i], values[0]);
+                            }
+                        }
                     }
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                } finally {
+                    FileHelper.safeClose(reader);
                 }
+
+                return synonyms;
             }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            FileHelper.safeClose(reader);
-        }
+        });
 
         return new SimpleSynonymCatalog(getName(), synonyms).openConnection(configuration);
     }

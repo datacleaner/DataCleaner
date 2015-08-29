@@ -88,13 +88,13 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
         return new SynonymCatalogConnection() {
 
             @Override
-            public Collection<? extends Synonym> getSynonyms() {
-                final Map<String, MutableSynonym> synonyms = new TreeMap<String, MutableSynonym>();
+            public Collection<Synonym> getSynonyms() {
+                final Map<String, Synonym> synonyms = new TreeMap<String, Synonym>();
                 for (Entry<String, String> synonymEntry : _synonymMap.entrySet()) {
                     final String masterTerm = synonymEntry.getValue();
                     final String synonymValue = synonymEntry.getKey();
 
-                    MutableSynonym synonym = synonyms.get(masterTerm);
+                    MutableSynonym synonym = (MutableSynonym) synonyms.get(masterTerm);
                     if (synonym == null) {
                         synonym = new MutableSynonym(masterTerm);
                         synonyms.put(masterTerm, synonym);

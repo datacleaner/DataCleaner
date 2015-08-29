@@ -26,16 +26,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 
 import junit.framework.TestCase;
 
 public class TextFileSynonymCatalogTest extends TestCase {
 
+    private final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl();
+
     public void testCountrySynonyms() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
                 "UTF-8");
 
-        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+        try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
 
             assertNull(scConnection.getMasterTerm("foobar"));
             assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
@@ -49,7 +52,7 @@ public class TextFileSynonymCatalogTest extends TestCase {
     public void testSerializationAndDeserialization() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
                 "UTF-8");
-        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+        try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
             assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
 
             byte[] bytes;
@@ -76,16 +79,15 @@ public class TextFileSynonymCatalogTest extends TestCase {
         FileHelper.writeStringAsFile(file, "foo,fooo,fo\nbar,baar,br");
         SynonymCatalog cat = new TextFileSynonymCatalog("sc", file, true, "UTF-8");
 
-        try (SynonymCatalogConnection scConnection = cat.openConnection()) {
+        try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
             assertEquals("foo", scConnection.getMasterTerm("fooo"));
             assertEquals("bar", scConnection.getMasterTerm("br"));
             assertEquals(null, scConnection.getMasterTerm("foob"));
+        }
 
-            // sleep for two seconds because some filesystems only support
-            // modification dating for the nearest second.
-            Thread.sleep(2000);
+        FileHelper.writeStringAsFile(file, "foo,fooo,fo\nfoobar,foob");
 
-            FileHelper.writeStringAsFile(file, "foo,fooo,fo\nfoobar,foob");
+        try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
             assertEquals("foo", scConnection.getMasterTerm("fooo"));
             assertEquals(null, scConnection.getMasterTerm("br"));
             assertEquals("foobar", scConnection.getMasterTerm("foob"));

@@ -27,7 +27,7 @@ public interface SynonymCatalogConnection extends Closeable {
     /**
      * @return all synonyms contained within this catalog
      */
-    public Collection<? extends Synonym> getSynonyms();
+    public Collection<Synonym> getSynonyms();
 
     /**
      * Searches the catalog for a replacement (master) term for a given term

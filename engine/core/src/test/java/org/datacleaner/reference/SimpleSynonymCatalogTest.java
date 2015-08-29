@@ -32,7 +32,7 @@ public class SimpleSynonymCatalogTest extends TestCase {
         final    SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
-        try (SynonymCatalogConnection connection = sc.openConnection()) {
+        try (SynonymCatalogConnection connection = sc.openConnection(null)) {
             assertEquals("DNK", connection.getMasterTerm("DNK"));
             assertEquals("NLD", connection.getMasterTerm("NLD"));
             assertEquals("DNK", connection.getMasterTerm("Denmark"));
@@ -45,7 +45,7 @@ public class SimpleSynonymCatalogTest extends TestCase {
         final SimpleSynonymCatalog sc = new SimpleSynonymCatalog("countries", Arrays.asList(new Synonym[] {
                 new SimpleSynonym("DNK", "Denmark", "Danmark"), new SimpleSynonym("NLD", "The netherlands") }));
 
-        final SynonymCatalogConnection connection = sc.openConnection();
+        final SynonymCatalogConnection connection = sc.openConnection(null);
         final Collection<? extends Synonym> synonyms = connection.getSynonyms();
         connection.close();
 

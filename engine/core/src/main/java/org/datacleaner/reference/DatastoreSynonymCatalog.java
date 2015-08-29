@@ -66,7 +66,7 @@ public final class DatastoreSynonymCatalog extends AbstractReferenceData impleme
             final DatastoreSynonymCatalog other = (DatastoreSynonymCatalog) obj;
             return Objects.equals(_datastoreName, other._datastoreName)
                     && Objects.equals(_masterTermColumnPath, other._masterTermColumnPath)
-                    && Objects.equals(_synonymColumnPaths, other._synonymColumnPaths)
+                    && Arrays.equals(_synonymColumnPaths, other._synonymColumnPaths)
                     && Objects.equals(_loadIntoMemory, other._loadIntoMemory);
         }
         return false;

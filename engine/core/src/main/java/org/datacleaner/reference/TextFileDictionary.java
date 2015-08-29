@@ -20,12 +20,16 @@
 package org.datacleaner.reference;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.convert.ResourceConverter;
 import org.elasticsearch.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +38,6 @@ import org.slf4j.LoggerFactory;
  * Dictionary based on a simple text file containing the values of the
  * dictionary. Each line of the file will be treated as a value within the
  * dictionary.
- * 
- * 
  */
 public final class TextFileDictionary extends AbstractReferenceData implements Dictionary {
 
@@ -56,25 +58,37 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final TextFileDictionary other = (TextFileDictionary) obj;
-            return Objects.equal(_filename, other._encoding) && Objects.equal(_encoding, other._encoding);
+            return Objects.equal(_filename, other._filename) && Objects.equal(_encoding, other._encoding);
         }
         return false;
     }
 
     @Override
     public DictionaryConnection openConnection(DataCleanerConfiguration configuration) {
-        final Set<String> values = new HashSet<>();
-        final File file = new File(_filename);
-        try (BufferedReader reader = FileHelper.getBufferedReader(file, getEncoding())) {
-            String line = reader.readLine();
-            while (line != null) {
-                values.add(line);
-                line = reader.readLine();
+        final ResourceConverter rc = new ResourceConverter(configuration);
+        final Resource resource = rc.fromString(Resource.class, _filename);
+        final Set<String> values = resource.read(new Func<InputStream, Set<String>>() {
+            @Override
+            public Set<String> eval(InputStream in) {
+                final Set<String> values = new HashSet<>();
+                final BufferedReader reader = FileHelper.getBufferedReader(in, getEncoding());
+                try {
+                    String line = reader.readLine();
+                    while (line != null) {
+                        values.add(line);
+                        line = reader.readLine();
+                    }
+                } catch (IOException e) {
+                    logger.error("Failed to read line from resource: {}", resource, e);
+                } finally {
+                    FileHelper.safeClose(reader);
+                }
+                return values;
             }
-        } catch (Exception e) {
-            logger.error("Unexpected error while reading text file dictionary", e);
-        }
-        return new SimpleDictionary(getName(), values).openConnection(configuration);
+        });
+
+        final SimpleDictionary simpleDictionary = new SimpleDictionary(getName(), values);
+        return simpleDictionary.openConnection(configuration);
     }
 
     @Override

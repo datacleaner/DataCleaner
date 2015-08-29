@@ -39,7 +39,7 @@ final class DatastoreSynonymCatalogConnection implements SynonymCatalogConnectio
     }
 
     @Override
-    public Collection<? extends Synonym> getSynonyms() {
+    public Collection<Synonym> getSynonyms() {
         final SimpleSynonymCatalog simpleSynonymCatalog = _synonymCatalog.loadIntoMemory(_datastoreConnection);
         return simpleSynonymCatalog.openConnection(null).getSynonyms();
     }

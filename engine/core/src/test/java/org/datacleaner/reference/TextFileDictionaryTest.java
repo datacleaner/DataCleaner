@@ -27,8 +27,12 @@ import java.util.concurrent.Future;
 import junit.framework.TestCase;
 
 import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 
 public class TextFileDictionaryTest extends TestCase {
+
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
     public void testThreadSafety() throws Exception {
         final TextFileDictionary dict = new TextFileDictionary("foobar", "src/test/resources/lastnames.txt", "UTF-8");
@@ -36,7 +40,7 @@ public class TextFileDictionaryTest extends TestCase {
         final Runnable r = new Runnable() {
             @Override
             public void run() {
-                try (DictionaryConnection connection = dict.openConnection()) {
+                try (DictionaryConnection connection = dict.openConnection(configuration)) {
                     assertTrue(connection.containsValue("Ellison"));
                     assertTrue(connection.containsValue("Gates"));
                     assertFalse(connection.containsValue("John Doe"));
@@ -63,15 +67,15 @@ public class TextFileDictionaryTest extends TestCase {
         FileHelper.writeStringAsFile(file, "foo\nbar");
 
         TextFileDictionary dict = new TextFileDictionary("dict", file.getPath(), "UTF-8");
-        try (DictionaryConnection connection = dict.openConnection()) {
+        try (DictionaryConnection connection = dict.openConnection(configuration)) {
             assertTrue(connection.containsValue("foo"));
             assertTrue(connection.containsValue("bar"));
             assertFalse(connection.containsValue("foobar"));
         }
 
         FileHelper.writeStringAsFile(file, "foo\nfoobar");
-        
-        try (DictionaryConnection connection = dict.openConnection()) {
+
+        try (DictionaryConnection connection = dict.openConnection(configuration)) {
             assertTrue(connection.containsValue("foo"));
             assertFalse(connection.containsValue("bar"));
             assertTrue(connection.containsValue("foobar"));

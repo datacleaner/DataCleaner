@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
@@ -31,34 +32,39 @@ import org.junit.Test;
 
 public class DatastoreSynonymCatalogTest {
 
-	private DatastoreSynonymCatalog _dataStoreBasedSynonymCatalog;
+    private DatastoreSynonymCatalog _synonymCatalog;
+    private DataCleanerConfigurationImpl _configuration;
 
-	@Before
-	public void createCsvDataStore() {
-		CsvDatastore csvDatastore = new CsvDatastore("region datastore",
-				"src/test/resources/datastore-synonym-countries.csv");
-		DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(csvDatastore);
-		_dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog("my synonym catalog", "region datastore", "region",
-				new String[] { "firstsynonym", "secondsynonym", "thirdsynonym" });
-		_dataStoreBasedSynonymCatalog._datastoreCatalog = datastoreCatalog;
-	}
+    @Before
+    public void createCsvDataStore() {
+        final CsvDatastore csvDatastore = new CsvDatastore("region datastore",
+                "src/test/resources/datastore-synonym-countries.csv");
+        final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(csvDatastore);
+        _synonymCatalog = new DatastoreSynonymCatalog("my synonym catalog", "region datastore", "region", new String[] {
+                "firstsynonym", "secondsynonym", "thirdsynonym" });
+        _configuration = new DataCleanerConfigurationImpl().withDatastoreCatalog(datastoreCatalog);
+    }
 
-	@Test
-	public void shouldReturnCorrectMasterTerm() {
-		assertEquals(null, _dataStoreBasedSynonymCatalog.getMasterTerm("region"));
-		assertEquals("DNK", _dataStoreBasedSynonymCatalog.getMasterTerm("Denmark"));
-		assertEquals("GBR", _dataStoreBasedSynonymCatalog.getMasterTerm("Great Britain"));
-		assertEquals("DNK", _dataStoreBasedSynonymCatalog.getMasterTerm("DK"));
-	}
+    @Test
+    public void shouldReturnCorrectMasterTerm() {
+        final SynonymCatalogConnection connection = _synonymCatalog.openConnection(_configuration);
+        assertEquals(null, connection.getMasterTerm("region"));
+        assertEquals("DNK", connection.getMasterTerm("Denmark"));
+        assertEquals("GBR", connection.getMasterTerm("Great Britain"));
+        assertEquals("DNK", connection.getMasterTerm("DK"));
+        connection.close();
+    }
 
-	@Test
-	public void shouldReturnAllSynonyms() {
-		Collection<Synonym> synonyms = _dataStoreBasedSynonymCatalog.getSynonyms();
-		org.junit.Assert.assertEquals(3, synonyms.size());
-	}
+    @Test
+    public void shouldReturnAllSynonyms() {
+        final SynonymCatalogConnection connection = _synonymCatalog.openConnection(_configuration);
+        final Collection<Synonym> synonyms = connection.getSynonyms();
+        connection.close();
+        org.junit.Assert.assertEquals(3, synonyms.size());
+    }
 
-	@Test
-	public void shouldReturnNameOfTheCatalog() {
-		org.junit.Assert.assertSame("my synonym catalog", _dataStoreBasedSynonymCatalog.getName());
-	}
+    @Test
+    public void shouldReturnNameOfTheCatalog() {
+        org.junit.Assert.assertSame("my synonym catalog", _synonymCatalog.getName());
+    }
 }

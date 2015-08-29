@@ -37,7 +37,7 @@ public class RegexStringPatternTest extends TestCase {
 		RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", true);
 		assertEquals("Danish email", rsp.getName());
 		
-		try (StringPatternConnection rspConnection = rsp.openConnection()) {
+		try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
 		    assertTrue(rspConnection.matches("kasper@eobjects.dk"));
 		    assertFalse(rspConnection.matches("kasper@eobjects.org"));
 		    assertFalse(rspConnection.matches("kasper[at]eobjects.org"));
@@ -54,7 +54,7 @@ public class RegexStringPatternTest extends TestCase {
 		RegexStringPattern rsp = new RegexStringPattern("Danish email", "[a-z]+@[a-z]+\\.dk", false);
 		assertEquals("Danish email", rsp.getName());
 
-	      try (StringPatternConnection rspConnection = rsp.openConnection()) {
+	      try (StringPatternConnection rspConnection = rsp.openConnection(null)) {
 	          assertTrue(rspConnection.matches("kasper@eobjects.dk"));
 	          assertFalse(rspConnection.matches("kasper@eobjects.org"));
 	          assertFalse(rspConnection.matches("kasper[at]eobjects.org"));

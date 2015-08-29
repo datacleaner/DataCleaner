@@ -124,7 +124,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(maxRowsBuilder, publisher));
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         assertTrue(optimizer.isOptimizable());
 
@@ -140,7 +140,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         publisher = createPublisher();
         consumers.add(createConsumer(maxRowsBuilder, publisher));
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         assertTrue(optimizer.isOptimizable());
 
@@ -149,7 +149,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         publisher = createPublisher();
         consumers.add(0, createConsumer(fjb, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 
@@ -172,7 +172,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(emailStdBuilder, publisher));
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
 
         // not optimizable because the transformer doesn't have the requirement
         assertFalse(optimizer.isOptimizable());
@@ -184,7 +184,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(emailStdBuilder, publisher));
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
 
         // even without the requirement, the string analyzer should still be
@@ -194,7 +194,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         publisher = createPublisher();
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
     }
 
@@ -207,7 +207,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
         consumers.add(createConsumer(patternFinderBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 
@@ -226,7 +226,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(notNullBuilder, publisher));
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertTrue(optimizer.isOptimizable());
 
         List<RowProcessingConsumer> optimizedConsumers = optimizer.getOptimizedConsumers();
@@ -249,7 +249,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         consumers.add(createConsumer(stringAnalyzerBuilder, publisher));
         consumers.add(createConsumer(patternFinderBuilder, publisher));
 
-        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore, consumers, baseQuery);
+        RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizerImpl(datastore, consumers, baseQuery);
         assertFalse(optimizer.isOptimizable());
     }
 

@@ -19,6 +19,11 @@
  */
 package org.datacleaner.reference;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputStream.GetField;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +33,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Adaptor;
 import org.elasticsearch.common.base.Objects;
 
 /**
@@ -76,6 +83,19 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
         for (Synonym synonym : synonyms) {
             addSynonym(synonym);
         }
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Adaptor adaptor = new Adaptor() {
+            @Override
+            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+                final boolean caseSensitive = getField.get("_caseSensitive", true);
+                Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
+                field.setAccessible(true);
+                field.set(serializable, caseSensitive);
+            }
+        };
+        ReadObjectBuilder.create(this, SimpleSynonymCatalog.class).readObject(stream, adaptor);
     }
 
     private void addSynonym(Synonym synonym) {
@@ -136,5 +156,13 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
             public void close() {
             }
         };
+    }
+
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
+    }
+
+    public Map<String, String> getSynonymMap() {
+        return _synonymMap;
     }
 }

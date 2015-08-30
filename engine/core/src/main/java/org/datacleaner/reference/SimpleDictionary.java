@@ -19,13 +19,21 @@
  */
 package org.datacleaner.reference;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectInputStream.GetField;
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Adaptor;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 /**
@@ -36,7 +44,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
 
     private static final long serialVersionUID = 1L;
 
-    private final Set<String> _values;
+    private final Set<String> _valueSet;
     private final boolean _caseSensitive;
 
     public SimpleDictionary(String name, String... values) {
@@ -44,7 +52,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     }
 
     public SimpleDictionary(String name, boolean caseSensitive, String... values) {
-        this(name, Sets.newHashSet(values), caseSensitive);
+        this(name, createValueSet(values, caseSensitive), caseSensitive);
     }
 
     public SimpleDictionary(String name, Collection<String> values) {
@@ -54,21 +62,68 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     public SimpleDictionary(String name, Collection<String> values, boolean caseSensitive) {
         super(name);
         if (caseSensitive) {
-            _values = Sets.newHashSet(values);
+            _valueSet = Sets.newHashSet(values);
         } else {
-            _values = Sets.newHashSet();
-            for (String value : values) {
-                _values.add(value.toLowerCase());
-            }
+            _valueSet = createValueSet(values.iterator(), caseSensitive);
         }
         _caseSensitive = caseSensitive;
+    }
+
+    private static Set<String> createValueSet(Object[] array, boolean caseSensitive) {
+        return createValueSet(Iterators.forArray(array), caseSensitive);
+    }
+
+    private static Set<String> createValueSet(Iterator<?> iterator, boolean caseSensitive) {
+        final Set<String> valueSet = Sets.newHashSet();
+        while (iterator.hasNext()) {
+            final Object value = iterator.next();
+            if (value != null) {
+                if (caseSensitive) {
+                    valueSet.add(value.toString());
+                } else {
+                    valueSet.add(value.toString().toLowerCase());
+                }
+            }
+        }
+        return valueSet;
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Adaptor adaptor = new Adaptor() {
+            @Override
+            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+                final boolean caseSensitive = getField.get("_caseSensitive", true);
+
+                // handle potentially missing caseSensitive flag
+                {
+                    final Field caseSensitiveField = SimpleDictionary.class.getDeclaredField("_caseSensitive");
+                    caseSensitiveField.setAccessible(true);
+                    caseSensitiveField.set(serializable, caseSensitive);
+                }
+
+                // handle legacy SimpleReferenceValues based data
+                final Object oldValues = getField.get("_values", null);
+                if (oldValues != null) {
+                    @SuppressWarnings("deprecation")
+                    SimpleReferenceValues srv = (SimpleReferenceValues) oldValues;
+                    @SuppressWarnings("deprecation")
+                    final Object[] values = srv.getValues();
+                    final Set<String> valueSet = createValueSet(values, caseSensitive);
+
+                    final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
+                    valuesField.setAccessible(true);
+                    valuesField.set(serializable, valueSet);
+                }
+            }
+        };
+        ReadObjectBuilder.create(this, SimpleDictionary.class).readObject(stream, adaptor);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final SimpleDictionary other = (SimpleDictionary) obj;
-            return Objects.equals(_values, other._values) && Objects.equals(_caseSensitive, other._caseSensitive);
+            return Objects.equals(_valueSet, other._valueSet) && Objects.equals(_caseSensitive, other._caseSensitive);
         }
         return false;
     }
@@ -78,7 +133,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
         return new DictionaryConnection() {
             @Override
             public Iterator<String> getAllValues() {
-                return _values.iterator();
+                return _valueSet.iterator();
             }
 
             @Override
@@ -89,7 +144,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
                 if (!_caseSensitive) {
                     value = value.toLowerCase();
                 }
-                return _values.contains(value);
+                return _valueSet.contains(value);
             }
 
             @Override
@@ -98,10 +153,10 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
         };
     }
 
-    public Set<String> getValues() {
-        return _values;
+    public Set<String> getValueSet() {
+        return _valueSet;
     }
-    
+
     public boolean isCaseSensitive() {
         return _caseSensitive;
     }

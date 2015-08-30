@@ -22,6 +22,10 @@ package org.datacleaner.reference;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.io.ObjectInputStream.GetField;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +33,8 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Adaptor;
 import org.datacleaner.util.convert.ResourceConverter;
 import org.elasticsearch.common.base.Objects;
 import org.slf4j.Logger;
@@ -58,6 +64,19 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
         _filename = filename;
         _encoding = encoding;
         _caseSensitive = caseSensitive;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Adaptor adaptor = new Adaptor() {
+            @Override
+            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+                final boolean caseSensitive = getField.get("_caseSensitive", true);
+                Field field = TextFileDictionary.class.getDeclaredField("_caseSensitive");
+                field.setAccessible(true);
+                field.set(serializable, caseSensitive);
+            }
+        };
+        ReadObjectBuilder.create(this, TextFileDictionary.class).readObject(stream, adaptor);
     }
 
     @Override

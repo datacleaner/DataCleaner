@@ -56,9 +56,9 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
     private final String _filename;
     private final boolean _caseSensitive;
     private final String _encoding;
-    
+
     public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
-        this(name, file.getParent(), caseSensitive, encoding);
+        this(name, file.getPath(), caseSensitive, encoding);
     }
 
     public TextFileSynonymCatalog(String name, String filename, boolean caseSensitive, String encoding) {
@@ -83,7 +83,12 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
                 try {
                     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                         line = line.trim();
-                        final String[] values = parser.parseLine(line);
+                        final String[] values;
+                        try {
+                            values = parser.parseLine(line);
+                        } catch (Exception e) {
+                            throw new IllegalStateException("Failed to parse line: " + line, e);
+                        }
                         if (values.length > 0) {
                             synonyms.put(values[0], values[0]);
                         }

@@ -34,7 +34,7 @@ public class TextFileSynonymCatalogTest extends TestCase {
 
     private final DataCleanerConfigurationImpl configuration = new DataCleanerConfigurationImpl();
 
-    public void testCountrySynonyms() throws Exception {
+    public void testCountrySynonymsCaseSensitive() throws Exception {
         SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", true,
                 "UTF-8");
 
@@ -46,6 +46,25 @@ public class TextFileSynonymCatalogTest extends TestCase {
 
             assertEquals("GBR", scConnection.getMasterTerm("GBR"));
             assertEquals("DNK", scConnection.getMasterTerm("DNK"));
+            assertNull(scConnection.getMasterTerm("dnk"));
+            assertNull(scConnection.getMasterTerm("denmark"));
+        }
+    }
+
+    public void testCountrySynonymsCaseInsensitive() throws Exception {
+        SynonymCatalog cat = new TextFileSynonymCatalog("foobar", "src/test/resources/synonym-countries.txt", false,
+                "UTF-8");
+
+        try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {
+
+            assertNull(scConnection.getMasterTerm("foobar"));
+            assertEquals("DNK", scConnection.getMasterTerm("Denmark"));
+            assertEquals("GBR", scConnection.getMasterTerm("England"));
+
+            assertEquals("GBR", scConnection.getMasterTerm("GBR"));
+            assertEquals("DNK", scConnection.getMasterTerm("DNK"));
+            assertEquals("DNK", scConnection.getMasterTerm("dnk"));
+            assertEquals("DNK", scConnection.getMasterTerm("denmark"));
         }
     }
 
@@ -76,7 +95,7 @@ public class TextFileSynonymCatalogTest extends TestCase {
 
     public void testModificationsClearCache() throws Exception {
         File file = new File("target/TextBasedSynonymCatalogTest-modification.txt");
-        FileHelper.writeStringAsFile(file, "foo,fooo,fo\nbar,baar,br");
+        FileHelper.writeStringAsFile(file, "foo,fooo,fo\nbar,baar,br", "UTF-8");
         SynonymCatalog cat = new TextFileSynonymCatalog("sc", file, true, "UTF-8");
 
         try (SynonymCatalogConnection scConnection = cat.openConnection(configuration)) {

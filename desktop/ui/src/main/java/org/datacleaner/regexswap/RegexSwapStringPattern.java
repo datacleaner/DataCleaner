@@ -19,8 +19,6 @@
  */
 package org.datacleaner.regexswap;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Objects;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -28,7 +26,6 @@ import org.datacleaner.reference.AbstractReferenceData;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 import org.datacleaner.reference.StringPatternConnection;
-import org.datacleaner.util.ReadObjectBuilder;
 
 /**
  * A specialized type of string pattern, based on a regex downloaded from the
@@ -44,10 +41,6 @@ public final class RegexSwapStringPattern extends AbstractReferenceData implemen
         super(regex.getName());
         setDescription(regex.getDescription());
         _regex = regex;
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        ReadObjectBuilder.create(this, RegexSwapStringPattern.class).readObject(stream);
     }
 
     @Override

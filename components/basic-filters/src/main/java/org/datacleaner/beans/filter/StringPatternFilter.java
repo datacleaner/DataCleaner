@@ -28,8 +28,11 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.Provided;
 import org.datacleaner.components.categories.FilterCategory;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.StringPatternConnection;
 
 @Named("Validate with string pattern")
 @Alias("String pattern match")
@@ -37,46 +40,67 @@ import org.datacleaner.reference.StringPattern;
 @Categorized(FilterCategory.class)
 public class StringPatternFilter implements Filter<ValidationCategory> {
 
-	@Configured
-	InputColumn<String> column;
+    @Configured
+    InputColumn<String> column;
 
-	@Configured
-	StringPattern[] stringPatterns;
+    @Configured
+    StringPattern[] stringPatterns;
 
-	@Configured
-	@Description("Require values to match all or just any of the string patterns?")
-	MatchFilterCriteria matchCriteria = MatchFilterCriteria.ANY;
+    @Configured
+    @Description("Require values to match all or just any of the string patterns?")
+    MatchFilterCriteria matchCriteria = MatchFilterCriteria.ANY;
 
-	public StringPatternFilter(InputColumn<String> column,
-			StringPattern[] stringPatterns, MatchFilterCriteria matchCriteria) {
-		this();
-		this.column = column;
-		this.stringPatterns = stringPatterns;
-		this.matchCriteria = matchCriteria;
-	}
+    @Provided
+    DataCleanerConfiguration configuration;
 
-	public StringPatternFilter() {
-	}
+    private StringPatternConnection[] stringPatternConnections;
 
-	@Override
-	public ValidationCategory categorize(InputRow inputRow) {
-		String value = inputRow.getValue(column);
-		if (value != null) {
-			int matches = 0;
-			for (StringPattern stringPattern : stringPatterns) {
-				if (stringPattern.matches(value)) {
-					matches++;
-					if (matchCriteria == MatchFilterCriteria.ANY) {
-						return ValidationCategory.VALID;
-					}
-				}
-			}
-			if (matchCriteria == MatchFilterCriteria.ALL) {
-				return ValidationCategory
-						.valueOf(matches == stringPatterns.length);
-			}
-		}
-		return ValidationCategory.INVALID;
-	}
+    public StringPatternFilter(InputColumn<String> column, StringPattern[] stringPatterns,
+            MatchFilterCriteria matchCriteria, DataCleanerConfiguration configuration) {
+        this();
+        this.column = column;
+        this.stringPatterns = stringPatterns;
+        this.matchCriteria = matchCriteria;
+        this.configuration = configuration;
+    }
+
+    public StringPatternFilter() {
+    }
+
+    public void init() {
+        stringPatternConnections = new StringPatternConnection[stringPatterns.length];
+        for (int i = 0; i < stringPatterns.length; i++) {
+            stringPatternConnections[i] = stringPatterns[i].openConnection(configuration);
+        }
+    }
+
+    public void close() {
+        if (stringPatternConnections != null) {
+            for (StringPatternConnection connection : stringPatternConnections) {
+                connection.close();
+            }
+            stringPatternConnections = null;
+        }
+    }
+
+    @Override
+    public ValidationCategory categorize(InputRow inputRow) {
+        String value = inputRow.getValue(column);
+        if (value != null) {
+            int matches = 0;
+            for (StringPatternConnection connection : stringPatternConnections) {
+                if (connection.matches(value)) {
+                    matches++;
+                    if (matchCriteria == MatchFilterCriteria.ANY) {
+                        return ValidationCategory.VALID;
+                    }
+                }
+            }
+            if (matchCriteria == MatchFilterCriteria.ALL) {
+                return ValidationCategory.valueOf(matches == stringPatterns.length);
+            }
+        }
+        return ValidationCategory.INVALID;
+    }
 
 }

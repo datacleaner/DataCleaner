@@ -102,17 +102,21 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
                 }
 
                 // handle legacy SimpleReferenceValues based data
-                final Object oldValues = getField.get("_values", null);
-                if (oldValues != null) {
-                    @SuppressWarnings("deprecation")
-                    SimpleReferenceValues srv = (SimpleReferenceValues) oldValues;
-                    @SuppressWarnings("deprecation")
-                    final Object[] values = srv.getValues();
-                    final Set<String> valueSet = createValueSet(values, caseSensitive);
+                try {
+                    final Object oldValues = getField.get("_values", null);
+                    if (oldValues != null) {
+                        @SuppressWarnings("deprecation")
+                        SimpleReferenceValues srv = (SimpleReferenceValues) oldValues;
+                        @SuppressWarnings("deprecation")
+                        final Object[] values = srv.getValues();
+                        final Set<String> valueSet = createValueSet(values, caseSensitive);
 
-                    final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
-                    valuesField.setAccessible(true);
-                    valuesField.set(serializable, valueSet);
+                        final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
+                        valuesField.setAccessible(true);
+                        valuesField.set(serializable, valueSet);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // happens for newer versions of the object type.
                 }
             }
         };

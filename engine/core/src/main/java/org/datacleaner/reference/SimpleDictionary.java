@@ -76,4 +76,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
         };
     }
 
+    public Set<String> getValues() {
+        return _values;
+    }
 }

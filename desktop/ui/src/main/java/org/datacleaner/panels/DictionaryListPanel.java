@@ -248,7 +248,8 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
             DatastoreDictionary datastoreDictionary = (DatastoreDictionary) dictionary;
             return datastoreDictionary.getDatastoreName() + ": " + datastoreDictionary.getQualifiedColumnName();
         } else if (dictionary instanceof SimpleDictionary) {
-            Collection<String> values = dictionary.getValues().getValues();
+            SimpleDictionary simpleDictionary = (SimpleDictionary) dictionary;
+            Collection<String> values = simpleDictionary.getValues();
             StringBuilder sb = new StringBuilder();
             for (String value : values) {
                 if (sb.length() > 0) {

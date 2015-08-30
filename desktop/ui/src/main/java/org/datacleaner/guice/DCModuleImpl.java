@@ -60,7 +60,6 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.concurrent.TaskRunner;
-import org.datacleaner.job.runner.ReferenceDataActivationManager;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.ReferenceDataCatalog;
 import org.datacleaner.result.AnalysisResult;
@@ -231,7 +230,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     public final ReferenceDataCatalog getReferenceDataCatalog(DataCleanerConfiguration conf) {
         return conf.getReferenceDataCatalog();
     }
-    
+
     @Provides
     public final InjectionManager getInjectionManager(InjectionManagerFactory injectionManagerFactory,
             DataCleanerConfiguration configuration, @Nullable AnalysisJob job) {
@@ -239,9 +238,8 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
     }
 
     @Provides
-    public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager,
-            @Nullable ReferenceDataActivationManager referenceDataActivationManager) {
-        return new LifeCycleHelper(injectionManager, referenceDataActivationManager, true);
+    public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager) {
+        return new LifeCycleHelper(injectionManager, true);
     }
 
     @Provides
@@ -293,7 +291,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                             c.getDatastoreCatalog(), createDatastoreXmlExternalizer(), userPreferences);
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
-                                    injectionManagerFactory.getInjectionManager(c, null), null, true));
+                                    injectionManagerFactory.getInjectionManager(c, null), true));
                     final DescriptorProvider descriptorProvider = c.getEnvironment().getDescriptorProvider();
 
                     final ExtensionReader extensionReader = new ExtensionReader();
@@ -426,7 +424,7 @@ public class DCModuleImpl extends AbstractModule implements DCModule {
                 ResourceConverter.DEFAULT_DEFAULT_SCHEME);
         return resourceConverter;
     }
-    
+
     @Override
     public InjectorBuilder createInjectorBuilder() {
         return new InjectorBuilder(this, Guice.createInjector(this));

@@ -47,18 +47,25 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
 
     private final String _filename;
     private final String _encoding;
+    private final boolean _caseSensitive;
 
     public TextFileDictionary(String name, String filename, String encoding) {
+        this(name, filename, encoding, true);
+    }
+
+    public TextFileDictionary(String name, String filename, String encoding, boolean caseSensitive) {
         super(name);
         _filename = filename;
         _encoding = encoding;
+        _caseSensitive = caseSensitive;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final TextFileDictionary other = (TextFileDictionary) obj;
-            return Objects.equal(_filename, other._filename) && Objects.equal(_encoding, other._encoding);
+            return Objects.equal(_filename, other._filename) && Objects.equal(_encoding, other._encoding)
+                    && Objects.equal(_caseSensitive, other._caseSensitive);
         }
         return false;
     }
@@ -75,6 +82,9 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
                 try {
                     String line = reader.readLine();
                     while (line != null) {
+                        if (!_caseSensitive) {
+                            line = line.toLowerCase();
+                        }
                         values.add(line);
                         line = reader.readLine();
                     }
@@ -87,7 +97,7 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
             }
         });
 
-        final SimpleDictionary simpleDictionary = new SimpleDictionary(getName(), values);
+        final SimpleDictionary simpleDictionary = new SimpleDictionary(getName(), values, _caseSensitive);
         return simpleDictionary.openConnection(configuration);
     }
 
@@ -102,5 +112,9 @@ public final class TextFileDictionary extends AbstractReferenceData implements D
 
     public String getEncoding() {
         return _encoding;
+    }
+
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
     }
 }

@@ -56,17 +56,14 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
     private final String _filename;
     private final boolean _caseSensitive;
     private final String _encoding;
+    
+    public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
+        this(name, file.getParent(), caseSensitive, encoding);
+    }
 
     public TextFileSynonymCatalog(String name, String filename, boolean caseSensitive, String encoding) {
         super(name);
         _filename = filename;
-        _caseSensitive = caseSensitive;
-        _encoding = encoding;
-    }
-
-    public TextFileSynonymCatalog(String name, File file, boolean caseSensitive, String encoding) {
-        super(name);
-        _filename = file.getPath();
         _caseSensitive = caseSensitive;
         _encoding = encoding;
     }
@@ -106,7 +103,7 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
             }
         });
 
-        return new SimpleSynonymCatalog(getName(), synonyms).openConnection(configuration);
+        return new SimpleSynonymCatalog(getName(), synonyms, _caseSensitive).openConnection(configuration);
     }
 
     @Override

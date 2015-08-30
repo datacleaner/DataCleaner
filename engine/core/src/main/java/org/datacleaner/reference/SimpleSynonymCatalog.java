@@ -24,12 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.elasticsearch.common.base.Objects;
-
-import com.google.common.base.Strings;
 
 /**
  * The simplest implementation of {@link SynonymCatalog}. Based on an in-memory
@@ -40,15 +39,29 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     private static final long serialVersionUID = 1L;
 
     private final Map<String, String> _synonymMap;
+    private final boolean _caseSensitive;
 
     public SimpleSynonymCatalog(String name) {
-        super(name);
-        _synonymMap = new HashMap<String, String>();
+        this(name, new HashMap<String, String>());
     }
 
     public SimpleSynonymCatalog(String name, Map<String, String> synonyms) {
+        this(name, synonyms, false);
+    }
+
+    public SimpleSynonymCatalog(String name, Map<String, String> synonyms, boolean caseSensitive) {
         super(name);
-        _synonymMap = synonyms;
+        if (caseSensitive) {
+            _synonymMap = synonyms;
+        } else {
+            _synonymMap = new HashMap<String, String>();
+            final Set<Entry<String, String>> entries = synonyms.entrySet();
+            for (Entry<String, String> entry : entries) {
+                final String key = entry.getKey().toLowerCase();
+                _synonymMap.put(key, entry.getValue());
+            }
+        }
+        _caseSensitive = caseSensitive;
     }
 
     public SimpleSynonymCatalog(String name, Synonym... synonyms) {
@@ -67,10 +80,14 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
 
     private void addSynonym(Synonym synonym) {
         final String masterTerm = synonym.getMasterTerm();
-        _synonymMap.put(masterTerm, masterTerm);
+        {
+            final String key = _caseSensitive ? masterTerm : masterTerm.toLowerCase();
+            _synonymMap.put(key, masterTerm);
+        }
         final Collection<String> values = synonym.getSynonyms();
         for (String value : values) {
-            _synonymMap.put(value, masterTerm);
+            final String key = _caseSensitive ? value : value.toLowerCase();
+            _synonymMap.put(key, masterTerm);
         }
     }
 
@@ -78,7 +95,7 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             SimpleSynonymCatalog other = (SimpleSynonymCatalog) obj;
-            return Objects.equal(_synonymMap, other._synonymMap);
+            return Objects.equal(_synonymMap, other._synonymMap) && Objects.equal(_caseSensitive, other._caseSensitive);
         }
         return false;
     }
@@ -107,10 +124,11 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
 
             @Override
             public String getMasterTerm(String term) {
-                if (Strings.isNullOrEmpty(term)) {
+                if (term == null) {
                     return null;
                 }
-                final String masterTerm = _synonymMap.get(term);
+                final String key = _caseSensitive ? term : term.toLowerCase();
+                final String masterTerm = _synonymMap.get(key);
                 return masterTerm;
             }
 

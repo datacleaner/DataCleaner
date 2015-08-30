@@ -37,22 +37,38 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     private static final long serialVersionUID = 1L;
 
     private final Set<String> _values;
+    private final boolean _caseSensitive;
 
     public SimpleDictionary(String name, String... values) {
-        super(name);
-        _values = Sets.newHashSet(values);
+        this(name, false, values);
+    }
+
+    public SimpleDictionary(String name, boolean caseSensitive, String... values) {
+        this(name, Sets.newHashSet(values), caseSensitive);
     }
 
     public SimpleDictionary(String name, Collection<String> values) {
+        this(name, values, false);
+    }
+
+    public SimpleDictionary(String name, Collection<String> values, boolean caseSensitive) {
         super(name);
-        _values = Sets.newHashSet(values);
+        if (caseSensitive) {
+            _values = Sets.newHashSet(values);
+        } else {
+            _values = Sets.newHashSet();
+            for (String value : values) {
+                _values.add(value.toLowerCase());
+            }
+        }
+        _caseSensitive = caseSensitive;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             final SimpleDictionary other = (SimpleDictionary) obj;
-            return Objects.equals(_values, other._values);
+            return Objects.equals(_values, other._values) && Objects.equals(_caseSensitive, other._caseSensitive);
         }
         return false;
     }
@@ -67,6 +83,12 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
 
             @Override
             public boolean containsValue(String value) {
+                if (value == null) {
+                    return false;
+                }
+                if (!_caseSensitive) {
+                    value = value.toLowerCase();
+                }
                 return _values.contains(value);
             }
 
@@ -78,5 +100,9 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
 
     public Set<String> getValues() {
         return _values;
+    }
+    
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
     }
 }

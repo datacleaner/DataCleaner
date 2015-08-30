@@ -34,6 +34,26 @@ public class TextFileDictionaryTest extends TestCase {
 
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
+    public void testCaseSensitiveAndCaseInsensitive() throws Exception {
+        final TextFileDictionary caseSensitiveDict = new TextFileDictionary("foobar",
+                "src/test/resources/lastnames.txt", "UTF-8", true);
+        final TextFileDictionary caseInsensitiveDict = new TextFileDictionary("foobar",
+                "src/test/resources/lastnames.txt", "UTF-8", false);
+
+        try (DictionaryConnection connection = caseSensitiveDict.openConnection(configuration)) {
+            assertTrue(connection.containsValue("Ellison"));
+            assertTrue(connection.containsValue("Gates"));
+            assertFalse(connection.containsValue("ellison"));
+            assertFalse(connection.containsValue("gates"));
+        }
+        try (DictionaryConnection connection = caseInsensitiveDict.openConnection(configuration)) {
+            assertTrue(connection.containsValue("Ellison"));
+            assertTrue(connection.containsValue("Gates"));
+            assertTrue(connection.containsValue("ellison"));
+            assertTrue(connection.containsValue("gates"));
+        }
+    }
+
     public void testThreadSafety() throws Exception {
         final TextFileDictionary dict = new TextFileDictionary("foobar", "src/test/resources/lastnames.txt", "UTF-8");
 

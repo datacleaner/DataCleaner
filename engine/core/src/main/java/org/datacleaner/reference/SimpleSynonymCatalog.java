@@ -46,7 +46,7 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
     }
 
     public SimpleSynonymCatalog(String name, Map<String, String> synonyms) {
-        this(name, synonyms, false);
+        this(name, synonyms, true);
     }
 
     public SimpleSynonymCatalog(String name, Map<String, String> synonyms, boolean caseSensitive) {

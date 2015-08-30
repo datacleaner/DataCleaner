@@ -19,8 +19,6 @@
  */
 package org.datacleaner.job.runner;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -39,23 +37,12 @@ import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.test.TestHelper;
 
-public class ReferenceDataActivationManagerTest extends TestCase {
+public class ReferenceDataInJobIntegrationTest extends TestCase {
 
-    public void testInvocationThroughAnalysisRunner() throws Throwable {
+    public void testScenario() throws Throwable {
         MockMonitoredDictionary dict1 = new MockMonitoredDictionary();
         MockMonitoredDictionary dict2 = new MockMonitoredDictionary();
         MockMonitoredDictionary dict3 = new MockMonitoredDictionary();
-        assertEquals(0, dict1.getInitCount());
-        assertEquals(0, dict1.getCloseCount());
-        assertEquals(0, dict2.getInitCount());
-        assertEquals(0, dict2.getCloseCount());
-        assertEquals(0, dict3.getInitCount());
-        assertEquals(0, dict3.getCloseCount());
-
-        Collection<Dictionary> dictionaries = new ArrayList<Dictionary>();
-        dictionaries.add(dict1);
-        dictionaries.add(dict2);
-        dictionaries.add(dict3);
 
         Datastore datastore = TestHelper.createSampleDatabaseDatastore("db");
 
@@ -92,32 +79,10 @@ public class ReferenceDataActivationManagerTest extends TestCase {
             throw result.getErrors().get(0);
         }
 
-        // sleep to ensure that close is invoked (happens after results are
-        // returned)
-        Thread.sleep(700);
-
-        assertEquals(1, dict1.getInitCount());
-        assertEquals(1, dict1.getCloseCount());
-        assertEquals(1, dict2.getInitCount());
-        assertEquals(1, dict2.getCloseCount());
-        assertEquals(1, dict3.getInitCount());
-        assertEquals(1, dict3.getCloseCount());
-
         result = runner.run(job);
 
         if (!result.isSuccessful()) {
             throw result.getErrors().get(0);
         }
-
-        // sleep to ensure that close is invoked (happens after results are
-        // returned)
-        Thread.sleep(700);
-
-        assertEquals(2, dict1.getInitCount());
-        assertEquals(2, dict1.getCloseCount());
-        assertEquals(2, dict2.getInitCount());
-        assertEquals(2, dict2.getCloseCount());
-        assertEquals(2, dict3.getInitCount());
-        assertEquals(2, dict3.getCloseCount());
     }
 }

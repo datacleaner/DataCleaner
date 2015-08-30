@@ -40,7 +40,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     private final boolean _caseSensitive;
 
     public SimpleDictionary(String name, String... values) {
-        this(name, false, values);
+        this(name, true, values);
     }
 
     public SimpleDictionary(String name, boolean caseSensitive, String... values) {

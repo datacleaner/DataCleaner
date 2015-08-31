@@ -761,8 +761,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
         final String username = getStringVariable("username", datastoreType.getUsername());
         final String password = getPasswordVariable("password", datastoreType.getPassword());
         final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
-        final String keystorePath = getStringVariable("keystorePath", datastoreType.getKeystorePath());
-        final String keystorePassword = getPasswordVariable("keystorePassword", datastoreType.getKeystorePassword());
+        final String keystorePath = getStringVariable("keystore-path", datastoreType.getKeystorePath());
+        final String keystorePassword = getPasswordVariable("keystore-password", datastoreType.getKeystorePassword());
 
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         if (port == null) {

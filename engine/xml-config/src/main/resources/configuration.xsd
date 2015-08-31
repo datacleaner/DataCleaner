@@ -519,8 +519,8 @@
 					<element name="username" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="password" minOccurs="0" maxOccurs="1" type="string" />
 					<element name="ssl" minOccurs="0" maxOccurs="1" type="boolean" />
-					<element name="keystorePath" minOccurs="0" maxOccurs="1" type="string" />
-					<element name="keystorePassword" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="keystore-path" minOccurs="0" maxOccurs="1" type="string" />
+					<element name="keystore-password" minOccurs="0" maxOccurs="1" type="string" />
 				</sequence>
 			</extension>
 		</complexContent>

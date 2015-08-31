@@ -37,20 +37,20 @@ public interface ComponentCache {
      * It returns the component's configuration. If it is not in the cache then it is loaded from the repository
      * (In this case component store holder contains only the configuration).
      *
-     * @param componentId
+     * @param instanceId
      * @param tenantName
      * @param tenantContext
      * @return
      */
-    public ComponentCacheConfigWrapper get(String componentId, String tenantName, TenantContext tenantContext);
+    public ComponentCacheConfigWrapper get(String instanceId, String tenantName, TenantContext tenantContext);
 
     /**
      * It removes the configuration from both, the memory and the store. Component is not available anymore.
      *
-     * @param componentId
+     * @param instanceId
      * @param tenantContext
      */
-    public boolean remove(String componentId, TenantContext tenantContext);
+    public boolean remove(String instanceId, TenantContext tenantContext);
 
     /**
      * It closes all components in the memory. All component configurations are still in the repository.

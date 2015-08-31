@@ -75,7 +75,7 @@ public class ComponentControllerV1Test {
 
     private ComponentStore getComponentsStoreMock() {
         ComponentStore componentStore = createNiceMock(ComponentStore.class);
-        expect(componentStore.getConfiguration(id)).andReturn(getComponentsStoreHolder()).anyTimes();
+        expect(componentStore.get(id)).andReturn(getComponentsStoreHolder()).anyTimes();
         replay(componentStore);
 
         return componentStore;

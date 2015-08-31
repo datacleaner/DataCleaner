@@ -60,13 +60,13 @@ public class ComponentCacheMapImpl implements ComponentCache {
      * @param componentsHolder
      */
     public void put(String tenant, TenantContext tenantContext, ComponentStoreHolder componentsHolder) {
-        logger.info("Put component. name: {}, componentId: {}.", componentsHolder.getComponentName(),
-                componentsHolder.getComponentId());
+        logger.info("Put component. name: {}, instanceId: {}.", componentsHolder.getComponentName(),
+                componentsHolder.getInstanceId());
         ComponentHandler handler = ComponentHandlerFactory.createComponent(
                 tenantContext, componentsHolder.getComponentName(), componentsHolder.getCreateInput().configuration);
         ComponentCacheConfigWrapper wrapper = new ComponentCacheConfigWrapper(tenant, componentsHolder, handler);
-        data.put(componentsHolder.getComponentId(), wrapper);
-        tenantContext.getComponentStore().storeConfiguration(wrapper.getComponentStoreHolder());
+        data.put(componentsHolder.getInstanceId(), wrapper);
+        tenantContext.getComponentStore().store(wrapper.getComponentStoreHolder());
     }
 
     /**
@@ -82,7 +82,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
         if (componentCacheConfigWrapper == null) {
             logger.warn("Configuration {} does not exist in cache.", id);
             ComponentStore store = tenantContext.getComponentStore();
-            ComponentStoreHolder storeConfig = store.getConfiguration(id);
+            ComponentStoreHolder storeConfig = store.get(id);
             if (storeConfig == null) {
                 logger.warn("Configuration {} does not exist in store.", id);
                 return null;
@@ -124,7 +124,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
     private boolean removeConfigurationOnlyFromStore(String id, TenantContext tenantContext) {
         ComponentStore store = tenantContext.getComponentStore();
-        return store.removeConfiguration(id);
+        return store.remove(id);
     }
 
     /**
@@ -150,7 +150,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
         for (ComponentCacheConfigWrapper componentCacheConfigWrapper : data.values()) {
             componentCacheConfigWrapper.getHandler().closeComponent();
-            logger.info("Component with id: {} was closed.", componentCacheConfigWrapper.getComponentStoreHolder().getComponentId());
+            logger.info("Component with id: {} was closed.", componentCacheConfigWrapper.getComponentStoreHolder().getInstanceId());
             // Configuration is still in store.
         }
 
@@ -178,45 +178,45 @@ public class ComponentCacheMapImpl implements ComponentCache {
                     while (repositoryFolderIterator.hasNext()) {
                         String tenantName = repositoryFolderIterator.next().getName();
                         TenantContext tenantContext = _tenantContextFactory.getContext(tenantName);
-                        List<ComponentStoreHolder> configurationList = tenantContext.getComponentStore().getAllConfiguration();
+                        List<ComponentStoreHolder> configurationList = tenantContext.getComponentStore().getList();
                         for (ComponentStoreHolder storeHolder : configurationList) {
-                            String componentId = storeHolder.getComponentId();
-                            allIdInCache.remove(componentId);
+                            String instanceId = storeHolder.getInstanceId();
+                            allIdInCache.remove(instanceId);
                             //is in cache?
-                            ComponentCacheConfigWrapper cache = data.get(componentId);
+                            ComponentCacheConfigWrapper cache = data.get(instanceId);
                             if (cache == null) {
                                 //is only in store
                                 if (!storeHolder.isValid()) {
                                     //remove from store
-                                    logger.info("CacheChecker - Remove old configuration {} from store of tenant {}.", componentId, tenantContext.getTenantId());
-                                    removeConfigurationOnlyFromStore(componentId, tenantContext);
+                                    logger.info("CacheChecker - Remove old configuration {} from store of tenant {}.", instanceId, tenantContext.getTenantId());
+                                    removeConfigurationOnlyFromStore(instanceId, tenantContext);
                                 }
                             } else {
                                 long maxTimestamp = Math.max(cache.getComponentStoreHolder().getUseTimestamp(), storeHolder.getUseTimestamp());
                                 if (maxTimestamp + storeHolder.getTimeout() < System.currentTimeMillis()) {
                                     // too old
-                                    logger.info("CacheChecker - Remove old configuration {} from store and cache of tenant {}.", componentId, tenantContext.getTenantId());
-                                    removeConfigurationOnlyFromCache(componentId);
-                                    removeConfigurationOnlyFromStore(componentId, tenantContext);
+                                    logger.info("CacheChecker - Remove old configuration {} from store and cache of tenant {}.", instanceId, tenantContext.getTenantId());
+                                    removeConfigurationOnlyFromCache(instanceId);
+                                    removeConfigurationOnlyFromStore(instanceId, tenantContext);
                                 } else {
                                     if (cache.getComponentStoreHolder().getUseTimestamp() <= storeHolder.getUseTimestamp()) {
                                         //update cache
-                                        logger.info("CacheChecker - Update timestamp of component {} in cache from store.", componentId);
+                                        logger.info("CacheChecker - Update timestamp of component {} in cache from store.", instanceId);
                                         cache.setComponentStoreHolder(storeHolder);
                                     } else {
                                         //update store
-                                        logger.info("CacheChecker - Update timestamp of component {} in store from cache.", componentId);
-                                        tenantContext.getComponentStore().storeConfiguration(cache.getComponentStoreHolder());
+                                        logger.info("CacheChecker - Update timestamp of component {} in store from cache.", instanceId);
+                                        tenantContext.getComponentStore().store(cache.getComponentStoreHolder());
                                     }
                                 }
                             }
                         }
                     }
 
-                    for (String componentId : allIdInCache) {
+                    for (String instanceId : allIdInCache) {
                         //These components are without configuration in store
-                        removeConfigurationOnlyFromCache(componentId);
-                        logger.info("CacheChecker - Configuration {} is not in store. It was removed from cache.", componentId);
+                        removeConfigurationOnlyFromCache(instanceId);
+                        logger.info("CacheChecker - Configuration {} is not in store. It was removed from cache.", instanceId);
                     }
 
                 }

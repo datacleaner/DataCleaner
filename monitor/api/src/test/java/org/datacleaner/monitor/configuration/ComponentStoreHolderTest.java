@@ -27,15 +27,15 @@ public class ComponentStoreHolderTest {
     private ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder();
     private long timeout = 1000L;
     private CreateInput createInput = new CreateInput();
-    private String componentId = "componentId";
+    private String instanceId = "instanceId";
     private String componentName = "componentName";
 
     @Test
     public void testConstructor() {
-        ComponentStoreHolder storeHolder = new ComponentStoreHolder(timeout, createInput, componentId, componentName);
+        ComponentStoreHolder storeHolder = new ComponentStoreHolder(timeout, createInput, instanceId, componentName);
         assertEquals(timeout, storeHolder.getTimeout());
         assertEquals(createInput, storeHolder.getCreateInput());
-        assertEquals(componentId, storeHolder.getComponentId());
+        assertEquals(instanceId, storeHolder.getInstanceId());
         assertEquals(componentName, storeHolder.getComponentName());
     }
 
@@ -54,10 +54,10 @@ public class ComponentStoreHolderTest {
     }
 
     @Test
-    public void testComponentId() throws Exception {
-        assertNull(componentStoreHolder.getComponentId());
-        componentStoreHolder.setComponentId(componentId);
-        assertEquals(componentId, componentStoreHolder.getComponentId());
+    public void testInstanceId() throws Exception {
+        assertNull(componentStoreHolder.getInstanceId());
+        componentStoreHolder.setInstanceId(instanceId);
+        assertEquals(instanceId, componentStoreHolder.getInstanceId());
     }
 
     @Test

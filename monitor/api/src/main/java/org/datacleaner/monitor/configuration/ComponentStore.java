@@ -22,17 +22,17 @@ package org.datacleaner.monitor.configuration;
 import java.util.List;
 
 /**
- * Class ComponentsStore
+ * Class ComponentStore.
  *
  * @since 11.8.15
  */
 public interface ComponentStore {
 
-    public ComponentStoreHolder getConfiguration(String componentId);
+    public ComponentStoreHolder get(String instanceId);
 
-    public void storeConfiguration(final ComponentStoreHolder configuration);
+    public void store(final ComponentStoreHolder configuration);
 
-    public boolean removeConfiguration(String componentId);
+    public boolean remove(String instanceId);
 
-    public List<ComponentStoreHolder> getAllConfiguration();
+    public List<ComponentStoreHolder> getList();
 }

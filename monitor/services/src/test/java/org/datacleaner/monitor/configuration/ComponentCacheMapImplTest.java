@@ -59,7 +59,7 @@ public class ComponentCacheMapImplTest {
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
+        store.store(EasyMock.anyObject(ComponentStoreHolder.class));
         final boolean[] ok = {false};
         EasyMock.expectLastCall().andAnswer(new IAnswer() {
             public Object answer() {
@@ -94,7 +94,7 @@ public class ComponentCacheMapImplTest {
 
     @Test
     public void testCacheRemoveConfig() throws Exception {
-        String componentID = "id";
+        String instanceId = "id";
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
@@ -103,9 +103,9 @@ public class ComponentCacheMapImplTest {
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
+        store.store(EasyMock.anyObject(ComponentStoreHolder.class));
 
-        store.removeConfiguration(EasyMock.anyString());
+        store.remove(EasyMock.anyString());
         final boolean[] ok = {false};
         EasyMock.expectLastCall().andAnswer(new IAnswer() {
             public Object answer() {
@@ -119,9 +119,9 @@ public class ComponentCacheMapImplTest {
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 
-        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, componentID, componentName);
+        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, instanceId, componentName);
         cache.put(tenantName, mockTenantContext, componentStoreHolder);
-        cache.remove(componentID, mockTenantContext);
+        cache.remove(instanceId, mockTenantContext);
         Assert.assertTrue(ok[0]);
     }
 

@@ -66,15 +66,15 @@ public class ComponentStoreImpl implements ComponentStore {
     /**
      * Read file from repository and transform it to object
      *
-     * @param componentId
+     * @param instanceId
      * @return
      */
-    public ComponentStoreHolder getConfiguration(String componentId) {
-        logger.info("Read component with id: {}", componentId);
+    public ComponentStoreHolder get(String instanceId) {
+        logger.info("Read component with id: {}", instanceId);
         readLock.lock();
         final ComponentStoreHolder[] conf = new ComponentStoreHolder[1];
         try {
-            RepositoryFile configFile = componentsFolder.getFile(componentId);
+            RepositoryFile configFile = componentsFolder.getFile(instanceId);
             if (configFile == null) {
                 return null;
             }
@@ -96,16 +96,16 @@ public class ComponentStoreImpl implements ComponentStore {
      *
      * @param configuration
      */
-    public void storeConfiguration(final ComponentStoreHolder configuration) {
-        logger.info("Store component with id: {}", configuration.getComponentId());
+    public void store(final ComponentStoreHolder configuration) {
+        logger.info("Store component with id: {}", configuration.getInstanceId());
         writeLock.lock();
-        RepositoryFile configFile = componentsFolder.getFile(configuration.getComponentId());
+        RepositoryFile configFile = componentsFolder.getFile(configuration.getInstanceId());
         if (configFile != null) {
             // I must delete old file.
             configFile.delete();
         }
         try {
-            componentsFolder.createFile(configuration.getComponentId(), new Action<OutputStream>() {
+            componentsFolder.createFile(configuration.getInstanceId(), new Action<OutputStream>() {
                 @Override
                 public void run(OutputStream fileOutput) throws Exception {
                     String jsonConf = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(
@@ -122,19 +122,19 @@ public class ComponentStoreImpl implements ComponentStore {
     /**
      * Delete file from repository
      *
-     * @param componentId
+     * @param instanceId
      * @return
      */
-    public boolean removeConfiguration(String componentId) {
+    public boolean remove(String instanceId) {
         writeLock.lock();
         try {
-            RepositoryFile configFile = componentsFolder.getFile(componentId);
+            RepositoryFile configFile = componentsFolder.getFile(instanceId);
             if (configFile == null) {
-                logger.info("Component with id: {} is not in store.", componentId);
+                logger.info("Component with id: {} is not in store.", instanceId);
                 return false;
             }
             configFile.delete();
-            logger.info("Component {} was removed.", componentId);
+            logger.info("Component {} was removed.", instanceId);
         } finally {
             writeLock.unlock();
         }
@@ -148,7 +148,7 @@ public class ComponentStoreImpl implements ComponentStore {
      * @return
      */
     @Override
-    public List<ComponentStoreHolder> getAllConfiguration() {
+    public List<ComponentStoreHolder> getList() {
         readLock.lock();
         final List<ComponentStoreHolder> holderList = new ArrayList<>();
         try {

@@ -8,19 +8,6 @@
 	</parent>
 	<artifactId>DataCleaner-engine-core</artifactId>
 
-	<repositories>
-		<repository>
-			<id>elasticsearch-releases</id>
-			<url>http://maven.elasticsearch.org/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
@@ -85,12 +72,6 @@
 		<dependency>
 			<groupId>com.googlecode.gentyref</groupId>
 			<artifactId>gentyref</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch-shield</artifactId>
-			<version>1.2.0</version>
 		</dependency>
 
 		<!-- Used for classpath scanning. Required if the ClasspathScanDescriptorProvider 

@@ -96,9 +96,9 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
         // FIXME: Hack-ish way to make it fit...
         final double columns = WidgetFactory.TEXT_FIELD_COLUMNS * 0.6;
         _keystorePathField.getTextField().setColumns((int) columns);
-        _keystorePathField.disable();
+        _keystorePathField.setEnabled(false);
         _keystorePasswordField = WidgetFactory.createPasswordField();
-        WidgetUtils.disableComponent(_keystorePasswordField);
+        _keystorePasswordField.setEnabled(false);
 
         _clientTypeComboBox.addItemListener(new ItemListener() {
 
@@ -108,27 +108,27 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 if (eventType == ItemEvent.SELECTED) {
                     final ElasticSearchDatastore.ClientType newSelectedItem = (ClientType) e.getItem();
                     if (newSelectedItem.equals(ElasticSearchDatastore.ClientType.NODE)) {
-                        WidgetUtils.disableComponent(_hostnameTextField);
+                        _hostnameTextField.setEnabled(false);
                         _hostnameTextField.setText("");
-                        WidgetUtils.disableComponent(_portTextField);
+                        _portTextField.setEnabled(false);
                         _portTextField.setText("");
-                        WidgetUtils.disableComponent(_usernameTextField);
+                        _usernameTextField.setEnabled(false);
                         _usernameTextField.setText("");
-                        WidgetUtils.disableComponent(_passwordField);
+                        _passwordField.setEnabled(false);
                         _passwordField.setText("");
                         _sslCheckBox.setEnabled(false);
                         _sslCheckBox.setSelected(DEFAULT_SSL);
-                        _keystorePathField.disable();
-                        WidgetUtils.disableComponent(_keystorePasswordField);
+                        _keystorePathField.setEnabled(false);
+                        _keystorePasswordField.setEnabled(false);
                     } else {
-                        WidgetUtils.enableComponent(_hostnameTextField);
-                        WidgetUtils.enableComponent(_portTextField);
-                        WidgetUtils.enableComponent(_usernameTextField);
-                        WidgetUtils.enableComponent(_passwordField);
+                        _hostnameTextField.setEnabled(true);
+                        _portTextField.setEnabled(true);
+                        _usernameTextField.setEnabled(true);
+                        _passwordField.setEnabled(true);
                         _sslCheckBox.setEnabled(true);
                         if (_sslCheckBox.isSelected()) {
-                            _keystorePathField.enable();
-                            WidgetUtils.enableComponent(_keystorePasswordField);
+                            _keystorePathField.setEnabled(true);
+                            _keystorePasswordField.setEnabled(true);
                         }
 
                         if (originalDatastore != null) {
@@ -177,14 +177,14 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
                 int stateChange = e.getStateChange();
 
                 if (stateChange == ItemEvent.SELECTED) {
-                    _keystorePathField.enable();
-                    WidgetUtils.enableComponent(_keystorePasswordField);
+                    _keystorePathField.setEnabled(true);
+                    _keystorePasswordField.setEnabled(true);
                     validateAndUpdate();
                 }
 
                 if (stateChange == ItemEvent.DESELECTED) {
-                    _keystorePathField.disable();
-                    WidgetUtils.disableComponent(_keystorePasswordField);
+                    _keystorePathField.setEnabled(false);
+                    _keystorePasswordField.setEnabled(false);
                     validateAndUpdate();
                 }
             }

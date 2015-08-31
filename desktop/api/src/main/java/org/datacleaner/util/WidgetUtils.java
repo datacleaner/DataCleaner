@@ -656,20 +656,4 @@ public final class WidgetUtils {
         }
     }
     
-    public static void disableComponent(JComponent component) {
-        component.setEnabled(false);
-        component.setBackground(BG_COLOR_BRIGHT.darker());
-        component.setBorder(BORDER_BUTTON_DARK);
-        
-        if (component instanceof JTextComponent) {
-            JTextComponent textComponent = (JTextComponent) component;
-            textComponent.setText("");
-        }
-    }
-    
-    public static void enableComponent(JComponent component) {
-        component.setEnabled(true);
-        component.setBackground(BG_COLOR_BRIGHTEST);
-        component.setBorder(BORDER_INPUT);
-    }
 }

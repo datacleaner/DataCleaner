@@ -82,8 +82,8 @@ public class ComponentList {
             propInfo.setRequired(propertyDescriptor.isRequired());
             propInfo.setIsInputColumn(propertyDescriptor.isInputColumn());
             propInfo.setType(getPropertyType(descriptor, propertyDescriptor));
-            if(propertyDescriptor.getType().isEnum()) {
-                propInfo.setEnumValues(toStringArray(propertyDescriptor.getType().getEnumConstants()));
+            if(propertyDescriptor.getBaseType().isEnum()) {
+                propInfo.setEnumValues(toStringArray(propertyDescriptor.getBaseType().getEnumConstants()));
             }
             result.put(propInfo.getName(), propInfo);
         }

@@ -331,10 +331,10 @@ class JobGraphNodeBuilder {
                             public JobGraphLink createLink(Object from, Object to, ComponentRequirement requirement,
                                     FilterOutcome filterOutcome) {
                                 if (sourceTables.contains(from)) {
-                                    // replace "from" with "vertex"
+                                    // replace "from" with "vertex" and add the outputDataStream
                                     return new JobGraphLink(vertex, to, requirement, filterOutcome, outputDataStream);
                                 }
-                                return new JobGraphLink(from, to, requirement, filterOutcome, outputDataStream);
+                                return new JobGraphLink(from, to, requirement, filterOutcome, null);
                             }
 
                             @Override

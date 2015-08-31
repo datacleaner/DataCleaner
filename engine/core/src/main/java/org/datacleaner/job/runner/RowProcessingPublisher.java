@@ -220,8 +220,16 @@ public final class RowProcessingPublisher {
 
                     final List<RowProcessingConsumer> sortedConsumers = sortConsumers(_consumers);
 
-                    final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore,
-                            sortedConsumers, baseQuery);
+                    final RowProcessingQueryOptimizer optimizer;
+                    if (_parentPublisher == null) {
+                        // try to optimize
+                        optimizer = new RowProcessingQueryOptimizerImpl(datastore, sortedConsumers, baseQuery);
+                    } else {
+                        // This is a child publisher so we cannot optimize
+                        // anything
+                        optimizer = new NoopRowProcessingQueryOptimizer(baseQuery, sortedConsumers);
+                    }
+
                     return optimizer;
                 } catch (RuntimeException e) {
                     logger.error("Failed to build query optimizer! {}", e.getMessage(), e);

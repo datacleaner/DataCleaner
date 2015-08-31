@@ -39,7 +39,6 @@ import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.Filter;
 import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.api.Validate;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -131,8 +130,8 @@ public final class AnalysisJobBuilder implements Closeable {
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
             List<TransformerComponentBuilder<?>> transformerJobBuilders,
-            List<FilterComponentBuilder<?, ?>> filterJobBuilders, List<AnalyzerComponentBuilder<?>> analyzerJobBuilders,
-            AnalysisJobBuilder parentBuilder) {
+            List<FilterComponentBuilder<?, ?>> filterJobBuilders,
+            List<AnalyzerComponentBuilder<?>> analyzerJobBuilders, AnalysisJobBuilder parentBuilder) {
         _configuration = configuration;
         _datastore = datastore;
         _analysisJobMetadata = metadata;
@@ -145,7 +144,6 @@ public final class AnalysisJobBuilder implements Closeable {
         _analyzerComponentBuilders = analyzerJobBuilders;
         _parentBuilder = parentBuilder;
     }
-
 
     public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job) {
         this(configuration, job, null);
@@ -1115,10 +1113,9 @@ public final class AnalysisJobBuilder implements Closeable {
 
     public AnalysisJobBuilder withoutListeners() {
         final MutableAnalysisJobMetadata metadataClone = new MutableAnalysisJobMetadata(getAnalysisJobMetadata());
-        return new AnalysisJobBuilder(_configuration, _datastore, _datastoreConnection,
-                metadataClone, _sourceColumns, _defaultRequirement, _transformedColumnIdGenerator,
-                _transformerComponentBuilders, _filterComponentBuilders, _analyzerComponentBuilders,
-                _parentBuilder);
+        return new AnalysisJobBuilder(_configuration, _datastore, _datastoreConnection, metadataClone, _sourceColumns,
+                _defaultRequirement, _transformedColumnIdGenerator, _transformerComponentBuilders,
+                _filterComponentBuilders, _analyzerComponentBuilders, _parentBuilder);
     }
 
     /**
@@ -1220,10 +1217,19 @@ public final class AnalysisJobBuilder implements Closeable {
         return result;
     }
 
-    public AnalysisJobBuilder getRootJobBuilder(){
+    public boolean isRootJobBuilder() {
+        return getParentJobBuilder() == null;
+    }
+
+    public AnalysisJobBuilder getParentJobBuilder() {
+        return _parentBuilder;
+    }
+
+    public AnalysisJobBuilder getRootJobBuilder() {
+        @SuppressWarnings("resource")
         AnalysisJobBuilder builder = this;
         AnalysisJobBuilder tempBuilder = builder._parentBuilder;
-        while(tempBuilder != null){
+        while (tempBuilder != null) {
             builder = tempBuilder;
             tempBuilder = builder._parentBuilder;
         }

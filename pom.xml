@@ -36,13 +36,6 @@
 		<version>9</version>
 	</parent>
 
-	<repositories>
-		<repository>
-			<id>eobjects-repo</id>
-			<url>http://repo.eobjects.org</url>
-		</repository>
-	</repositories>
-
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>4.1-SNAPSHOT</version>

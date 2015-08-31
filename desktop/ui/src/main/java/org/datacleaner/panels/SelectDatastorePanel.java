@@ -35,8 +35,7 @@ public class SelectDatastorePanel extends DCPanel {
 
     private final ExistingDatastorePanel _existingDatastoresPanel;
 
-    public SelectDatastorePanel(DCModule dcModule, DatabaseDriverCatalog databaseDriverCatalog,
-            DatastoreCatalog datastoreCatalog, UserPreferences userPreferences,
+    public SelectDatastorePanel(DCModule dcModule, DatastoreCatalog datastoreCatalog, DatabaseDriverCatalog databaseDriverCatalog, UserPreferences userPreferences,
             DatastoreSelectedListener datastoreSelectListener, boolean showExistingDatastoresAsLongList) {
         super();
         setLayout(new VerticalLayout());
@@ -50,8 +49,8 @@ public class SelectDatastorePanel extends DCPanel {
             add(newDatastoreLabel);
         }
 
-        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener,
-                userPreferences, !showExistingDatastoresAsLongList));
+        add(new AddDatastorePanel(datastoreCatalog, databaseDriverCatalog, dcModule, datastoreSelectListener, userPreferences,
+                !showExistingDatastoresAsLongList));
 
         if (showExistingDatastoresAsLongList) {
             final JComponent existingDatastoreLabel = DCSplashPanel.createSubtitleLabel("Use existing datastore");

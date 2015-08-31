@@ -19,15 +19,14 @@
  */
 package org.datacleaner.repository;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.metamodel.util.Action;
 import org.apache.metamodel.util.Func;
+import org.apache.metamodel.util.InMemoryResource;
 
 public class RepositoryFileResourceTest extends TestCase {
 
@@ -35,7 +34,8 @@ public class RepositoryFileResourceTest extends TestCase {
         final RepositoryFile file = new RepositoryFile() {
 
             private static final long serialVersionUID = 1L;
-            private byte[] contents = new byte[] { 1, 2, 3 };
+
+            private final InMemoryResource _resource = new InMemoryResource("foo.dat", new byte[] { 1, 2, 3 }, -1);
 
             @Override
             public RepositoryFolder getParent() {
@@ -69,30 +69,22 @@ public class RepositoryFileResourceTest extends TestCase {
 
             @Override
             public void writeFile(Action<OutputStream> writeCallback, boolean append) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                final OutputStream out = writeFile(append);
                 try {
-                    if (append && contents != null) {
-                        out.write(contents);
-                    }
                     writeCallback.run(out);
                 } catch (Exception e) {
                     throw new UnsupportedOperationException();
                 }
-                contents = out.toByteArray();
             }
 
             @Override
             public void readFile(Action<InputStream> readCallback) {
-                try {
-                    readCallback.run(new ByteArrayInputStream(contents));
-                } catch (Exception e) {
-                    throw new UnsupportedOperationException();
-                }
+                _resource.read(readCallback);
             }
 
             @Override
             public <E> E readFile(Func<InputStream, E> readCallback) {
-                return readCallback.eval(new ByteArrayInputStream(contents));
+                return _resource.read(readCallback);
             }
 
             @Override
@@ -107,12 +99,20 @@ public class RepositoryFileResourceTest extends TestCase {
 
             @Override
             public long getSize() {
-                return contents.length;
+                return _resource.getSize();
             }
 
             @Override
             public int compareTo(RepositoryNode o) {
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public OutputStream writeFile(boolean append) {
+                if (append) {
+                    return _resource.append();
+                }
+                return _resource.write();
             }
         };
 

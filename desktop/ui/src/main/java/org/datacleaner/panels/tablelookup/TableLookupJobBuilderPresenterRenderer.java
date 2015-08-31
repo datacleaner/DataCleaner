@@ -63,7 +63,7 @@ public class TableLookupJobBuilderPresenterRenderer implements
         final PropertyWidgetFactory propertyWidgetFactory = dcModule.createChildInjectorForComponent(tjb).getInstance(
                 PropertyWidgetFactory.class);
 
-        return new TableLookupJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
+        return new TableLookupJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration, dcModule);
     }
 
 }

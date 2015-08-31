@@ -52,4 +52,8 @@ public class LazyOutputDataStreamJob implements OutputDataStreamJob {
     public AnalysisJob getJob(boolean validate) {
         return _jobBuilder.toAnalysisJob(validate);
     }
+
+    public AnalysisJobBuilder getJobBuilder() {
+        return _jobBuilder;
+    }
 }

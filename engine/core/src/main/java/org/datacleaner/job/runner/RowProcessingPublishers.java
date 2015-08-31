@@ -35,7 +35,6 @@ import org.datacleaner.api.Filter;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 import org.datacleaner.api.Transformer;
-import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
@@ -53,7 +52,6 @@ import org.datacleaner.util.SourceColumnFinder;
  * {@link RowProcessingPublisher}s.
  */
 public final class RowProcessingPublishers {
-
     private final AnalysisJob _analysisJob;
     private final AnalysisListener _analysisListener;
     private final TaskRunner _taskRunner;
@@ -261,26 +259,11 @@ public final class RowProcessingPublishers {
         return _sourceColumnFinder;
     }
 
-    @Deprecated
-    protected AnalysisJob getAnalysisJob() {
-        return _analysisJob;
-    }
-
     protected AnalysisListener getAnalysisListener() {
         return _analysisListener;
     }
 
     protected LifeCycleHelper getLifeCycleHelper() {
         return _lifeCycleHelper;
-    }
-
-    /**
-     * 
-     * @return
-     * @deprecated use {@link RowProcessingPublisher#getDatastore()} instead
-     */
-    @Deprecated
-    public Datastore getDatastore() {
-        return _analysisJob.getDatastore();
     }
 }

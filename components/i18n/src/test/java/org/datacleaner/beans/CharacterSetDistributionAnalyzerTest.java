@@ -20,22 +20,42 @@
 package org.datacleaner.beans;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.metamodel.util.EqualsBuilder;
+import org.apache.metamodel.util.FileResource;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputDataStream;
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
+import org.datacleaner.configuration.DataCleanerEnvironment;
+import org.datacleaner.configuration.DataCleanerEnvironmentImpl;
+import org.datacleaner.connection.CsvDatastore;
+import org.datacleaner.connection.Datastore;
+import org.datacleaner.data.MetaModelInputColumn;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.OutputDataStreamJob;
+import org.datacleaner.job.builder.AnalysisJobBuilder;
+import org.datacleaner.job.builder.AnalyzerComponentBuilder;
+import org.datacleaner.job.concurrent.MultiThreadedTaskRunner;
+import org.datacleaner.job.runner.AnalysisResultFuture;
+import org.datacleaner.job.runner.AnalysisRunnerImpl;
 import org.datacleaner.result.AnnotatedRowsResult;
 import org.datacleaner.result.CharacterSetDistributionResult;
 import org.datacleaner.result.Crosstab;
 import org.datacleaner.result.CrosstabNavigator;
+import org.datacleaner.result.ListResult;
 import org.datacleaner.result.renderer.CrosstabTextRenderer;
 import org.datacleaner.storage.InMemoryRowAnnotationFactory;
-import org.apache.metamodel.util.EqualsBuilder;
+import org.datacleaner.test.MockAnalyzer;
 
 import com.ibm.icu.text.UnicodeSet;
 

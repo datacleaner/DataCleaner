@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.datacleaner.util.ImmutableEntry;
 import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.FileResource;
+import org.apache.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +163,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
 
     protected abstract void writeRow(W writer, R row, int count) throws IOException;
 
-    protected abstract W createWriter(File file);
+    protected abstract W createWriter(Resource resource);
 
     protected void writeNull(W writer, int nullCount) throws IOException {
         writeRow(writer, null, nullCount);
@@ -178,10 +180,19 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
      * @return the written count of rows
      */
     public int write(final File file) {
+        return write(new FileResource(file));
+    }
+
+    /**
+     * 
+     * @param resource
+     * @return the written count of rows
+     */
+    public int write(Resource resource) {
         W writer = null;
         ObjectInputStream[] tempFileObjectInputStreams = null;
         try {
-            writer = createWriter(file);
+            writer = createWriter(resource);
             writeHeader(writer);
 
             int rowCount = 0;
@@ -195,7 +206,7 @@ public abstract class SortMergeWriter<R extends Serializable, W extends Closeabl
             }
 
             if (_tempFiles.isEmpty()) {
-                logger.info("No temp files created yet, flushing buffer directly to target file: {}", file);
+                logger.info("No temp files created yet, flushing buffer directly to target: {}", resource);
                 Set<Entry<R, Integer>> entries = _buffer.entrySet();
                 for (Entry<R, Integer> entry : entries) {
                     writeRow(writer, entry.getKey(), entry.getValue());

@@ -29,6 +29,8 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.windows.ResultWindow;
 
+import com.google.inject.Inject;
+
 /**
  * Action listener invoked when the user chooses to run/execute an analysis job
  */
@@ -38,6 +40,7 @@ public class RunAnalysisActionListener implements ActionListener {
     private final AnalysisJobBuilder _analysisJobBuilder;
     private long _lastClickTime = 0;
 
+    @Inject
     public RunAnalysisActionListener(DCModule dcModule, AnalysisJobBuilder analysisJobBuilder) {
         _dcModule = dcModule;
         _analysisJobBuilder = analysisJobBuilder;

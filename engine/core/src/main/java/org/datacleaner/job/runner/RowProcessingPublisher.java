@@ -292,7 +292,6 @@ public final class RowProcessingPublisher {
      */
     public void processRows(RowProcessingMetrics rowProcessingMetrics) {
         final AnalysisListener analysisListener = _publishers.getAnalysisListener();
-        analysisListener.rowProcessingBegin(_analysisJob, rowProcessingMetrics);
 
         final boolean success;
         if (_parentPublisher == null) {
@@ -494,7 +493,7 @@ public final class RowProcessingPublisher {
 
         // add tasks for collecting results
         final TaskListener getResultTaskListener = new JoinTaskListener(numConsumers, getResultCompletionListener);
-        final List<TaskRunnable> getResultTasks = new ArrayList<TaskRunnable>();
+        final List<TaskRunnable> getResultTasks = new ArrayList<>();
         for (RowProcessingConsumer consumer : configurableConsumers) {
             final Task collectResultTask = createCollectResultTask(consumer, resultQueue);
             if (collectResultTask == null) {
@@ -510,11 +509,18 @@ public final class RowProcessingPublisher {
         final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
         final RunRowProcessingPublisherTask runTask = new RunRowProcessingPublisherTask(this, rowProcessingMetrics);
 
-        final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
-                runCompletionListener);
+        if (_parentPublisher == null) {
+            final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
+                    runCompletionListener);
 
-        // kick off the initialization
-        initializeConsumers(initFinishedListener);
+            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
+
+
+            // kick off the initialization
+            initializeConsumers(consumerInitFinishedListener);
+        } else {
+            _taskRunner.run(runTask, runCompletionListener);
+        }
     }
 
     /**
@@ -565,11 +571,11 @@ public final class RowProcessingPublisher {
 
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
         final LifeCycleHelper lifeCycleHelper = getConsumerSpecificLifeCycleHelper(consumer);
-        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer, this);
+        final InitializeTask task = new InitializeTask(lifeCycleHelper, consumer);
         return new TaskRunnable(task, listener);
     }
 
-    private LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
+    public LifeCycleHelper getConsumerSpecificLifeCycleHelper(RowProcessingConsumer consumer) {
         final LifeCycleHelper outerLifeCycleHelper = _publishers.getLifeCycleHelper();
         final boolean includeNonDistributedTasks = outerLifeCycleHelper.isIncludeNonDistributedTasks();
         final InjectionManager outerInjectionManager = outerLifeCycleHelper.getInjectionManager();

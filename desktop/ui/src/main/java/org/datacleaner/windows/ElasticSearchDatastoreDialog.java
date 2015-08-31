@@ -158,6 +158,15 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             }
         });
 
+
+        final DCDocumentListener verifyAndUpdateDocumentListener = new DCDocumentListener() {
+            
+            @Override
+            protected void onChange(DocumentEvent event) {
+                validateAndUpdate();
+            }
+        };
+        
         _sslCheckBox = new JCheckBox("SSL", DEFAULT_SSL);
         _sslCheckBox.setOpaque(false);
         _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -181,61 +190,20 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             }
         });
 
-        _datastoreNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _hostnameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _portTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _clusterNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _indexNameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _usernameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
-        _passwordField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
-            }
-        });
+        _datastoreNameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _hostnameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _portTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _clusterNameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _indexNameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _usernameTextField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _passwordField.getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
+        _keystorePathField.getTextField().getDocument().addDocumentListener(verifyAndUpdateDocumentListener);
         _keystorePathField.addFileSelectionListener(new FileSelectionListener() {
             
             @Override
             public void onSelected(FilenameTextField filenameTextField, File file) {
                 validateAndUpdate();
                 
-            }
-        });
-        _keystorePathField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-            
-            @Override
-            protected void onChange(DocumentEvent event) {
-                validateAndUpdate();
             }
         });
 

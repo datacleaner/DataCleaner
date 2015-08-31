@@ -30,7 +30,7 @@ import static org.easymock.EasyMock.*;
 public class ComponentStoreImplTest {
     private ComponentStoreImpl componentsStoreImpl = null;
     private String tenantId = "demo";
-    private String componentId = "componentId";
+    private String instanceId = "instanceId";
 
     @Before
     public void setUp() {
@@ -55,7 +55,7 @@ public class ComponentStoreImplTest {
 
     private RepositoryFolder getComponentsFolderMock() {
         RepositoryFolder repositoryFolder = createNiceMock(RepositoryFolder.class);
-        expect(repositoryFolder.getFile(componentId)).andReturn(getRepositoryFileMock()).anyTimes();
+        expect(repositoryFolder.getFile(instanceId)).andReturn(getRepositoryFileMock()).anyTimes();
         replay(repositoryFolder);
 
         return repositoryFolder;
@@ -70,24 +70,24 @@ public class ComponentStoreImplTest {
 
     @Test
     public void testGetConfiguration() throws Exception {
-        componentsStoreImpl.getConfiguration(componentId);
+        componentsStoreImpl.get(instanceId);
     }
 
     @Test
     public void testStoreConfiguration() throws Exception {
-        componentsStoreImpl.storeConfiguration(getComponentsStoreHolderMock());
+        componentsStoreImpl.store(getComponentsStoreHolderMock());
     }
 
-    private ComponentsStoreHolder getComponentsStoreHolderMock() {
-        ComponentsStoreHolder componentsStoreHolder = createNiceMock(ComponentsStoreHolder.class);
-        expect(componentsStoreHolder.getComponentId()).andReturn(componentId).anyTimes();
-        replay(componentsStoreHolder);
+    private ComponentStoreHolder getComponentsStoreHolderMock() {
+        ComponentStoreHolder componentStoreHolder = createNiceMock(ComponentStoreHolder.class);
+        expect(componentStoreHolder.getInstanceId()).andReturn(instanceId).anyTimes();
+        replay(componentStoreHolder);
 
-        return componentsStoreHolder;
+        return componentStoreHolder;
     }
 
     @Test
     public void testRemoveConfiguration() throws Exception {
-        componentsStoreImpl.removeConfiguration(componentId);
+        componentsStoreImpl.remove(instanceId);
     }
 }

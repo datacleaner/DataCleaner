@@ -89,7 +89,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * Constructs a {@link TenantContextFactoryImpl}.
      * 
      * @param repository
-     * @param parentInjectionManagerFactory
+     * @param environment
+     * @param jobEngineManager
      */
     @Autowired
     public TenantContextFactoryImpl(Repository repository, DataCleanerEnvironment environment,
@@ -140,12 +141,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     @Override
-    public Set<String> getAllTenantsName() {
-        Set<String> tenants = new HashSet<>();
-        for (RepositoryFolder repositoryFolder : _repository.getFolders()) {
-            tenants.add(repositoryFolder.getName());
-        }
-        return tenants;
+    public Iterator<RepositoryFolder> getRepositoryFolderIterator() {
+        return _repository.getFolders().iterator();
     }
 
     private String getStandardizedTenantName(final String tenantId) {

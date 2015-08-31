@@ -23,11 +23,9 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
  * Class ComponentsFactory
- *
- * @author k.houzvicka
  * @since 18.8.15
  */
-public class ComponentsFactory {
+public class ComponentHandlerFactory {
 
     /**
      * Creates new Handler from configuration

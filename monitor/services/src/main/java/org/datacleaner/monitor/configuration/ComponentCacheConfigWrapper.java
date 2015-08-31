@@ -23,25 +23,23 @@ import org.datacleaner.monitor.server.components.ComponentHandler;
 
 /**
  * Class ComponentsCacheConfigWrapper Simple wrapper for store to cache with expiration time.
- * 
- * @author k.houzvicka
  * @since 28.7.15
  */
-public class ComponentsCacheConfigWrapper {
+public class ComponentCacheConfigWrapper {
     private String tenantName;
 
-    private ComponentsStoreHolder componentsStoreHolder;
+    private ComponentStoreHolder componentStoreHolder;
 
     private ComponentHandler handler;
 
-    public ComponentsCacheConfigWrapper() {
+    public ComponentCacheConfigWrapper() {
     }
 
-    public ComponentsCacheConfigWrapper(String tenantName, ComponentsStoreHolder componentsStoreHolder, ComponentHandler handler) {
+    public ComponentCacheConfigWrapper(String tenantName, ComponentStoreHolder componentStoreHolder, ComponentHandler handler) {
         this.tenantName = tenantName;
-        this.componentsStoreHolder = componentsStoreHolder;
+        this.componentStoreHolder = componentStoreHolder;
         this.handler = handler;
-        componentsStoreHolder.updateTimeStamp();
+        componentStoreHolder.updateTimeStamp();
     }
 
     public String getTenantName() {
@@ -52,12 +50,12 @@ public class ComponentsCacheConfigWrapper {
         this.tenantName = tenantName;
     }
 
-    public ComponentsStoreHolder getComponentsStoreHolder() {
-        return componentsStoreHolder;
+    public ComponentStoreHolder getComponentStoreHolder() {
+        return componentStoreHolder;
     }
 
-    public void setComponentsStoreHolder(ComponentsStoreHolder componentsStoreHolder) {
-        this.componentsStoreHolder = componentsStoreHolder;
+    public void setComponentStoreHolder(ComponentStoreHolder componentStoreHolder) {
+        this.componentStoreHolder = componentStoreHolder;
     }
 
     public ComponentHandler getHandler() {
@@ -69,7 +67,7 @@ public class ComponentsCacheConfigWrapper {
     }
 
     public void updateTimeStamp(){
-        componentsStoreHolder.updateTimeStamp();
+        componentStoreHolder.updateTimeStamp();
     }
 
     /**
@@ -78,6 +76,6 @@ public class ComponentsCacheConfigWrapper {
      * @return
      */
     public boolean isValid() {
-        return componentsStoreHolder.isValid();
+        return componentStoreHolder.isValid();
     }
 }

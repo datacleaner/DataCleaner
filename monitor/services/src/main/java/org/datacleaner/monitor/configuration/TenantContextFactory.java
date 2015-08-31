@@ -20,8 +20,9 @@
 package org.datacleaner.monitor.configuration;
 
 import org.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.datacleaner.repository.RepositoryFolder;
 
-import java.util.Set;
+import java.util.Iterator;
 
 /**
  * Factory object for {@link TenantContext} objects
@@ -32,5 +33,5 @@ public interface TenantContextFactory {
     
     public TenantContext getContext(String tenantId);
 
-    public Set<String> getAllTenantsName();
+    public Iterator<RepositoryFolder> getRepositoryFolderIterator();
 }

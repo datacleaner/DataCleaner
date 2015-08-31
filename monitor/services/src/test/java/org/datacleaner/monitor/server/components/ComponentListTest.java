@@ -94,6 +94,8 @@ public class ComponentListTest {
         expect(configuredPropertyDescriptorMock.isInputColumn()).andReturn(true).anyTimes();
         expect(configuredPropertyDescriptorMock.getDescription()).andReturn("property description").anyTimes();
         expect(configuredPropertyDescriptorMock.isRequired()).andReturn(true).anyTimes();
+        Class baseType = String.class;
+        expect(configuredPropertyDescriptorMock.getBaseType()).andReturn(baseType).anyTimes();
         IExpectationSetters getTypeExpectation = expect(configuredPropertyDescriptorMock.getType());
         getTypeExpectation.andReturn(String.class).anyTimes();
 

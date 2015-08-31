@@ -190,7 +190,7 @@ public class TenantContextImpl extends AbstractTenantContext implements TenantCo
     }
 
     @Override
-    public ComponentStore getComponentsStore() {
+    public ComponentStore getComponentStore() {
         return _componentStore;
     }
 

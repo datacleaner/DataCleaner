@@ -17,8 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.datacleaner.monitor.configuration;
+package org.datacleaner.monitor.server.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
@@ -26,100 +27,68 @@ import org.datacleaner.configuration.DataCleanerEnvironment;
 import org.datacleaner.configuration.InjectionManagerFactory;
 import org.datacleaner.descriptors.DescriptorProvider;
 import org.datacleaner.descriptors.TransformerDescriptor;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.junit.Assert;
+import org.datacleaner.monitor.configuration.*;
+import org.datacleaner.monitor.server.components.ComponentList;
+import org.datacleaner.monitor.server.components.ComponentNotFoundException;
+import org.datacleaner.monitor.server.components.ProcessInput;
+import org.datacleaner.monitor.server.components.ProcessStatelessInput;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.*;
 
-/**
- * Class ComponentsCacheTest
- *
- * @since 28.7.15
- */
-public class ComponentsCacheTest {
+public class ComponentControllerV1Test {
+    private String tenant = "demo";
+    private String id = "component-id";
+    private String componentName = "Concatenator";
+    private String timeout = "42";
+    private ComponentControllerV1 componentControllerV1 = new ComponentControllerV1();
 
-    private String componentName = "name";
-
-    @Test
-    public void testCacheStoreNewConfiguration() throws Exception {
-        String tenantName = "tenant";
-        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
-        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
-        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
-
-        ComponentStore store = EasyMock.createMock(ComponentStore.class);
-        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
-        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
-        final boolean[] ok = {false};
-        EasyMock.expectLastCall().andAnswer(new IAnswer() {
-            public Object answer() {
-                ok[0] = true;
-                 return null;
-            }
-        });
-        EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
-        CreateInput createInput = new CreateInput();
-        createInput.configuration = new ComponentConfiguration();
-        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, "id", componentName);
-        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder);
-        Assert.assertTrue(ok[0]);
-        Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentsStoreHolder());
+    @Before
+    public void setUp() {
+        componentControllerV1._tenantContextFactory = getTenantContextFactoryMock();
+        componentControllerV1.init();
     }
 
-    @Test
-    public void testCacheRemoveConfig() throws Exception {
-        String tenantName = "tenant";
-        String componentID = "id";
-        TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
-        TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
-        EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getAllTenantsName()).andReturn(new HashSet(Arrays.asList(tenantName))).anyTimes();
+    private TenantContextFactory getTenantContextFactoryMock() {
+        TenantContextFactory tenantContextFactory = createNiceMock(TenantContextFactory.class);
+        expect(tenantContextFactory.getContext(tenant)).andReturn(getTenantContextMock()).anyTimes();
+        replay(tenantContextFactory);
 
-        ComponentStore store = EasyMock.createMock(ComponentStore.class);
-        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
-        EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
-        store.storeConfiguration(EasyMock.anyObject(ComponentsStoreHolder.class));
-
-        store.removeConfiguration(EasyMock.anyString());
-        final boolean[] ok = {false};
-        EasyMock.expectLastCall().andAnswer(new IAnswer() {
-            public Object answer() {
-                ok[0] = true;
-                return true;
-            }
-        });
-
-        EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentsCache cache = new ComponentsCache(mockTenantContextFactory);
-        CreateInput createInput = new CreateInput();
-        createInput.configuration = new ComponentConfiguration();
-
-        ComponentsStoreHolder componentStoreHolder = new ComponentsStoreHolder(100000, createInput, componentID, componentName);
-        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder );
-        cache.removeConfiguration(componentID, mockTenantContext);
-        Assert.assertTrue(ok[0]);
+        return tenantContextFactory;
     }
-
 
     private TenantContext getTenantContextMock() {
         TenantContext tenantContext = createNiceMock(TenantContext.class);
+        expect(tenantContext.getComponentStore()).andReturn(getComponentsStoreMock()).anyTimes();
         expect(tenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         replay(tenantContext);
 
         return tenantContext;
     }
 
+    private ComponentStore getComponentsStoreMock() {
+        ComponentStore componentStore = createNiceMock(ComponentStore.class);
+        expect(componentStore.get(id)).andReturn(getComponentsStoreHolder()).anyTimes();
+        replay(componentStore);
+
+        return componentStore;
+    }
+
+    private ComponentStoreHolder getComponentsStoreHolder() {
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = getComponentConfigurationMock();
+        long timeoutMs = 1000L;
+        ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(timeoutMs, createInput, id, componentName);
+
+        return componentStoreHolder;
+    }
 
     private ComponentConfiguration getComponentConfigurationMock() {
         ComponentConfiguration componentConfiguration = createNiceMock(ComponentConfiguration.class);
@@ -189,5 +158,57 @@ public class ComponentsCacheTest {
         return annotation;
     }
 
+    private JsonNode getJsonNodeMock() {
+        JsonNode jsonNode = createNiceMock(JsonNode.class);
+        Set set = new HashSet();
+        expect(jsonNode.iterator()).andReturn(set.iterator()).anyTimes();
+        replay(jsonNode);
 
+        return jsonNode;
+    }
+
+    @Test
+    public void testClose() throws Exception {
+        componentControllerV1.close();
+    }
+
+    @Test
+    public void testGetAllComponents() throws Exception {
+        ComponentList componentList = componentControllerV1.getAllComponents(tenant);
+        assertTrue(componentList.getComponents().size() > 0);
+    }
+
+    @Test
+    public void testProcessStateless() throws Exception {
+        ProcessStatelessInput processStatelessInput = new ProcessStatelessInput();
+        processStatelessInput.configuration = new ComponentConfiguration();
+        processStatelessInput.data = getJsonNodeMock();
+        componentControllerV1.processStateless(tenant, componentName, processStatelessInput);
+    }
+
+    @Test
+    public void testCreateComponent() throws Exception {
+        CreateInput createInput = new CreateInput();
+        createInput.configuration = new ComponentConfiguration();
+        componentControllerV1.createComponent(tenant, componentName, timeout, createInput);
+    }
+
+    @Test
+    public void testProcessComponent() throws Exception {
+        ProcessInput processInput = new ProcessInput();
+        processInput.data = getJsonNodeMock();
+
+        componentControllerV1.processComponent(tenant, id, processInput);
+    }
+
+    @Test
+    public void testGetFinalResult() throws Exception {
+        componentControllerV1.getFinalResult(tenant, id);
+
+    }
+
+    @Test(expected = ComponentNotFoundException.class)
+    public void testDeleteComponent() throws Exception {
+        componentControllerV1.deleteComponent(tenant, id);
+    }
 }

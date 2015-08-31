@@ -30,21 +30,21 @@ import java.io.Serializable;
  * 
  * @since 11.8.15
  */
-public class ComponentsStoreHolder implements Serializable {
+public class ComponentStoreHolder implements Serializable {
 
     private long timeout;
     private long useTimestamp;
     private CreateInput createInput;
-    private String componentId;
+    private String instanceId;
     private String componentName;
 
-    public ComponentsStoreHolder() {
+    public ComponentStoreHolder() {
     }
 
-    public ComponentsStoreHolder(long timeout, CreateInput createInput, String componentId, String componentName) {
+    public ComponentStoreHolder(long timeout, CreateInput createInput, String instanceId, String componentName) {
         this.timeout = timeout;
         this.createInput = createInput;
-        this.componentId = componentId;
+        this.instanceId = instanceId;
         this.componentName = componentName;
         this.useTimestamp = System.currentTimeMillis();
     }
@@ -73,12 +73,12 @@ public class ComponentsStoreHolder implements Serializable {
         this.createInput = createInput;
     }
 
-    public String getComponentId() {
-        return componentId;
+    public String getInstanceId() {
+        return instanceId;
     }
 
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
     }
 
     public String getComponentName() {

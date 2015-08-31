@@ -22,10 +22,10 @@ package org.datacleaner.monitor.server.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.datacleaner.api.WSPrivateProperty;
 import org.datacleaner.descriptors.AbstractPropertyDescriptor;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
+import org.datacleaner.desktop.api.HiddenProperty;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -71,10 +71,9 @@ public class ComponentList {
     private Map<String, PropertyInfo> createPropertiesInfo(ComponentDescriptor descriptor) {
         Map<String, PropertyInfo> result = new HashMap<>();
         for (ConfiguredPropertyDescriptor propertyDescriptor : (Set<ConfiguredPropertyDescriptor>) descriptor.getConfiguredProperties()) {
-            if (propertyDescriptor.getAnnotation(WSPrivateProperty.class) != null) {
+            if (propertyDescriptor.getAnnotation(HiddenProperty.class) != null) {
                 continue;
             }
-
 
             PropertyInfo propInfo = new PropertyInfo();
             propInfo.setName(propertyDescriptor.getName());

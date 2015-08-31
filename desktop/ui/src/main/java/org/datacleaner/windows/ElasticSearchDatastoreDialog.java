@@ -167,7 +167,7 @@ public class ElasticSearchDatastoreDialog extends AbstractDatastoreDialog<Elasti
             }
         };
         
-        _sslCheckBox = new JCheckBox("SSL", DEFAULT_SSL);
+        _sslCheckBox = new JCheckBox("Enable SSL", DEFAULT_SSL);
         _sslCheckBox.setOpaque(false);
         _sslCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _sslCheckBox.addItemListener(new ItemListener() {

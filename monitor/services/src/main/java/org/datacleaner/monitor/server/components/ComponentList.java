@@ -30,6 +30,7 @@ import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -101,7 +102,12 @@ public class ComponentList {
         // TODO: move the "getField" to ComponentDescriptor interface to avoid retyping
         if(propertyDescriptor instanceof AbstractPropertyDescriptor) {
             Field f = ((AbstractPropertyDescriptor)propertyDescriptor).getField();
-            return f.getGenericType().toString();
+            Type t = f.getGenericType();
+            if(t instanceof Class) {
+                return ((Class) t).getCanonicalName();
+            } else {
+                return f.getGenericType().toString();
+            }
         } else {
             return propertyDescriptor.getType().getCanonicalName();
         }

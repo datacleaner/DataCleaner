@@ -80,10 +80,10 @@ public class ComponentsControllerV1 implements ComponentsController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
-                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
-                continue;
-            }
+//            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+//                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
+//                continue;
+//            }
 
             componentList.add(tenant, descriptor);
         }

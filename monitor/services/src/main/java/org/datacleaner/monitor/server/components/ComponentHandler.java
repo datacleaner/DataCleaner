@@ -82,10 +82,11 @@ public class ComponentHandler {
             throw ComponentNotFoundException.createTypeNotFound(componentName);
         }
 
-        if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
-            throw new ComponentConfigurationException(
-                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
-        }
+        // TODO: temporarilly removed check
+//        if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
+//            throw new ComponentConfigurationException(
+//                    "Component " + componentName + " can not be provided by the WS becuase it is not stateless. ");
+//        }
 
         component = (Component) descriptor.newInstance();
 
@@ -238,10 +239,10 @@ public class ComponentHandler {
             if(value.isArray() || value.isObject()) {
                 return mapper.readValue(value.traverse(), type);
             } else {
-                return StringConverter.simpleInstance().deserialize(value.asText(), type);
+                return new StringConverter(dcConfiguration).deserialize(value.asText(), type, propDesc.getCustomConverter());
             }
         } catch(Exception e) {
-            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value.toString());
+            throw new RuntimeException("Cannot convert property '" + propDesc.getName() + " value ' of type '" + type + "': " + value.toString(), e);
         }
     }
 
@@ -253,7 +254,7 @@ public class ComponentHandler {
                 return StringConverter.simpleInstance().deserialize(value.asText(), type);
             }
         } catch(Exception e) {
-            throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString());
+            throw new RuntimeException("Cannot convert table value of type '" + type + "': " + value.toString(), e);
         }
     }
 

@@ -66,7 +66,7 @@ public class ComponentControllerV1Test {
 
     private TenantContext getTenantContextMock() {
         TenantContext tenantContext = createNiceMock(TenantContext.class);
-        expect(tenantContext.getComponentsStore()).andReturn(getComponentsStoreMock()).anyTimes();
+        expect(tenantContext.getComponentStore()).andReturn(getComponentsStoreMock()).anyTimes();
         expect(tenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         replay(tenantContext);
 

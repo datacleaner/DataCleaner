@@ -45,7 +45,7 @@ import static org.easymock.EasyMock.*;
  *
  * @since 28.7.15
  */
-public class ComponentCacheTest {
+public class ComponentCacheMapImplTest {
     private String tenantName = "tenant";
     private String componentName = "name";
 
@@ -57,7 +57,7 @@ public class ComponentCacheTest {
         EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
-        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
+        EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
         final boolean[] ok = {false};
@@ -68,13 +68,13 @@ public class ComponentCacheTest {
             }
         });
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCache(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory);
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, "id", componentName);
-        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder);
+        cache.put(tenantName, mockTenantContext, componentStoreHolder);
         Assert.assertTrue(ok[0]);
-        Assert.assertEquals(componentStoreHolder, cache.getConfigHolder("id", tenantName, mockTenantContext).getComponentStoreHolder());
+        Assert.assertEquals(componentStoreHolder, cache.get("id", tenantName, mockTenantContext).getComponentStoreHolder());
     }
 
     private Iterator<RepositoryFolder> getRepositoryFolderIterator() {
@@ -101,7 +101,7 @@ public class ComponentCacheTest {
         EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
-        EasyMock.expect(mockTenantContext.getComponentsStore()).andReturn(store).anyTimes();
+        EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
         EasyMock.expect(mockTenantContext.getConfiguration()).andReturn(getDCConfigurationMock()).anyTimes();
         store.storeConfiguration(EasyMock.anyObject(ComponentStoreHolder.class));
 
@@ -115,13 +115,13 @@ public class ComponentCacheTest {
         });
 
         EasyMock.replay(mockTenantContextFactory, mockTenantContext, store);
-        ComponentCache cache = new ComponentCache(mockTenantContextFactory);
+        ComponentCache cache = new ComponentCacheMapImpl(mockTenantContextFactory);
         CreateInput createInput = new CreateInput();
         createInput.configuration = new ComponentConfiguration();
 
         ComponentStoreHolder componentStoreHolder = new ComponentStoreHolder(100000, createInput, componentID, componentName);
-        cache.putComponent(tenantName, mockTenantContext, componentStoreHolder );
-        cache.removeConfiguration(componentID, mockTenantContext);
+        cache.put(tenantName, mockTenantContext, componentStoreHolder);
+        cache.remove(componentID, mockTenantContext);
         Assert.assertTrue(ok[0]);
     }
 
@@ -202,6 +202,4 @@ public class ComponentCacheTest {
 
         return annotation;
     }
-
-
 }

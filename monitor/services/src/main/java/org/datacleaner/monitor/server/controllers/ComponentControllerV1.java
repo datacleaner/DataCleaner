@@ -58,7 +58,7 @@ public class ComponentControllerV1 implements ComponentController {
 
     @PostConstruct
     public void init() {
-        _componentCache = new ComponentCache(_tenantContextFactory);
+        _componentCache = new ComponentCacheMapImpl(_tenantContextFactory);
     }
 
     @PreDestroy
@@ -123,7 +123,7 @@ public class ComponentControllerV1 implements ComponentController {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         String id = UUID.randomUUID().toString();
         long longTimeout = Long.parseLong(timeout);
-        _componentCache.putComponent(
+        _componentCache.put(
                 tenant,
                 tenantContext,
                 new ComponentStoreHolder(longTimeout, createInput, id, decodedName)
@@ -140,7 +140,7 @@ public class ComponentControllerV1 implements ComponentController {
             @RequestBody final ProcessInput processInput)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        ComponentCacheConfigWrapper config = _componentCache.getConfigHolder(id, tenant, tenantContext);
+        ComponentCacheConfigWrapper config = _componentCache.get(id, tenant, tenantContext);
         if(config == null){
             LOGGER.warn("Component with id {} does not exist.", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);
@@ -171,7 +171,7 @@ public class ComponentControllerV1 implements ComponentController {
             @PathVariable(PARAMETER_NAME_ID) final String id)
             throws ComponentNotFoundException {
         TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        boolean isHere = _componentCache.removeConfiguration(id, tenantContext);
+        boolean isHere = _componentCache.remove(id, tenantContext);
         if (!isHere) {
             LOGGER.warn("Instance of component {} not found in the cache and in the store", id);
             throw ComponentNotFoundException.createInstanceNotFound(id);

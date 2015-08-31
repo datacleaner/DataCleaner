@@ -36,7 +36,6 @@ import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
-import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
@@ -48,14 +47,10 @@ public class DatahubDataContext extends AbstractDataContext implements
             .getLogger(DatahubDataContext.class);
 
     private DatahubConnection _connection;
-
     private Map<String, DatahubSchema> _schemas;
 
-    public DatahubDataContext(String host, Integer port, String username,
-            String password, String tenantId, boolean https,
-            boolean acceptUnverifiedSslPeers, String securityMode) {
-        _connection = new DatahubConnection(host, port, username, password,
-                tenantId, https, acceptUnverifiedSslPeers, securityMode);
+    public DatahubDataContext(DatahubConnection connection) {
+        _connection = connection;
         _schemas = getDatahubSchemas();
     }
 
@@ -86,8 +81,7 @@ public class DatahubDataContext extends AbstractDataContext implements
 
     private Map<String, DatahubSchema> getDatahubSchemas() {
         Map<String, DatahubSchema> schemas = new HashMap<String, DatahubSchema>();
-        List<String> datastoreNames = getDataStoreNames();
-        for (String datastoreName : datastoreNames) {
+        for (String datastoreName : getDataStoreNames()) {
             String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
                     + datastoreName + ".schemas";
             logger.debug("request {}", uri);
@@ -114,21 +108,7 @@ public class DatahubDataContext extends AbstractDataContext implements
     
     @Override
     public DataSet executeQuery(final Query query) {
-        Table table = query.getFromClause().getItem(0).getTable();
-        String dataStoreName = ((DatahubSchema) table.getSchema())
-                .getDatastoreName();
-        String queryString = getQueryString(table, query);
-
-        String uri = encodeUrl(_connection.getRepositoryUrl() + "/datastores" + "/"
-                + dataStoreName + ".query?");
-
-        return new DatahubDataSet(uri, query, queryString, _connection);
-    }
-
-    private String getQueryString(Table table, Query query) {
-        String queryString = query.toSql();
-        queryString = queryString.replace(table.getName() + ".", "");        
-        return queryString;
+        return new DatahubDataSet(query, _connection);
     }
 
     private List<String> getDataStoreNames() {

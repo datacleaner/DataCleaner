@@ -19,6 +19,7 @@
  */
 package org.datacleaner.connection;
 
+import org.datacleaner.metamodel.datahub.DatahubConnection;
 import org.datacleaner.metamodel.datahub.DatahubDataContext;
 
 public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
@@ -53,8 +54,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
 
     @Override
     public PerformanceCharacteristics getPerformanceCharacteristics() {
-        // TODO Auto-generated method stub
-        return null;
+        return new PerformanceCharacteristicsImpl(true, false);
     }
 
     public String getHost() {
@@ -98,8 +98,8 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
 
     @Override
     protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
-        final DatahubDataContext dataContext = new DatahubDataContext(_host,
-                _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
+        final DatahubConnection connection = new DatahubConnection(_host, _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
+        final DatahubDataContext dataContext = new DatahubDataContext(connection);
         return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
                 dataContext, this);
     }

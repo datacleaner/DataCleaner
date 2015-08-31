@@ -19,6 +19,8 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,6 +36,8 @@ import org.apache.metamodel.data.AbstractDataSet;
 import org.apache.metamodel.data.DefaultRow;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.metamodel.datahub.utils.JsonQueryDatasetResponseParser;
 import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
@@ -47,10 +51,10 @@ import org.slf4j.LoggerFactory;
  */
 public class DatahubDataSet extends AbstractDataSet {
 
-    private static final int PAGE_SIZE = 10000;
-
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DatahubDataSet.class);
+
+    private static final int PAGE_SIZE = 10000;
 
     private final DatahubConnection _connection;
     private final Query _query;
@@ -61,20 +65,20 @@ public class DatahubDataSet extends AbstractDataSet {
     private Integer _nextPageMaxRows;
     private Iterator<Object[]> _resultSetIterator;
     private Row _row;
-    
+
     /**
      * Constructor
-     * @param uri
+     * 
      * @param query
-     * @param queryString
      * @param connection
      */
-    public DatahubDataSet(String uri, Query query, String queryString, DatahubConnection connection) {
-        super(query.getSelectClause().getItems());
-        _uri = uri;
-        _queryString = queryString;
+    public DatahubDataSet(Query query, DatahubConnection connection) {
+        super(getSelectItems(query));
+        Table table = query.getFromClause().getItem(0).getTable();
+        _queryString = getQueryString(query, table);
         _query = query;
         _connection = connection;
+        _uri = encodeUrl(createUri(connection, table));
         _paging = query.getMaxRows() == null;
         _nextPageFirstRow = 1;
         _nextPageMaxRows = PAGE_SIZE;
@@ -94,7 +98,6 @@ public class DatahubDataSet extends AbstractDataSet {
      */
     @Override
     public boolean next() {
-        Object[] values = null;
         if (!_resultSetIterator.hasNext()) {
             if (_paging) {
                 _resultSetIterator = getNextPage();
@@ -107,40 +110,71 @@ public class DatahubDataSet extends AbstractDataSet {
                 return false;
             }
         }
-        values = _resultSetIterator.next();
-        _row = new DefaultRow(getHeader(), values);
+        _row = new DefaultRow(getHeader(), _resultSetIterator.next());
         return true;
     }
 
     private Iterator<Object[]> getNextPage() {
-      final Integer firstRow = (_query.getFirstRow() == null ? _nextPageFirstRow : _query.getFirstRow());
-      final Integer maxRows = (_query.getMaxRows() == null ? _nextPageMaxRows : _query.getMaxRows());
-      
-      _nextPageFirstRow = _nextPageFirstRow + _nextPageMaxRows;
+        final Integer firstRow = (_query.getFirstRow() == null
+                ? _nextPageFirstRow : _query.getFirstRow());
+        final Integer maxRows = (_query.getMaxRows() == null ? _nextPageMaxRows
+                : _query.getMaxRows());
 
-      List<NameValuePair> params = new ArrayList<>();
-      params.add(new BasicNameValuePair("q", _queryString));
-      params.add(new BasicNameValuePair("f", firstRow.toString()));
-      params.add(new BasicNameValuePair("m", maxRows.toString()));
-      String paramString = URLEncodedUtils.format(params, "utf-8");
+        _nextPageFirstRow = _nextPageFirstRow + _nextPageMaxRows;
 
-      String uri = _uri + paramString;
-      
-      HttpGet request = new HttpGet(uri);
-      request.addHeader("Accept", "application/json");
-      HttpResponse response = executeRequest(request);
-      HttpEntity entity = response.getEntity();
-      JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
-      try {
-          List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
-          return resultSet.iterator();
-      } catch (Exception e) {
-          throw new IllegalStateException(e);
-      }
+        String uri = _uri + createParams(firstRow, maxRows);
+
+        HttpGet request = new HttpGet(uri);
+        request.addHeader("Accept", "application/json");
+
+        HttpResponse response = executeRequest(request);
+
+        return getResultSet(response.getEntity());
     }
-    
-    private HttpResponse executeRequest(HttpGet request) {
 
+    private Iterator<Object[]> getResultSet(HttpEntity entity) {
+        JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
+        try {
+            List<Object[]> resultSet = parser
+                    .parseQueryResult(entity.getContent());
+            return resultSet.iterator();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private String createParams(final Integer firstRow, final Integer maxRows) {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("q", _queryString));
+        params.add(new BasicNameValuePair("f", firstRow.toString()));
+        params.add(new BasicNameValuePair("m", maxRows.toString()));
+        return URLEncodedUtils.format(params, "utf-8");
+    }
+
+    private static String encodeUrl(String url) {
+        try {
+            return URLEncoder.encode(url, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static List<SelectItem> getSelectItems(Query query) {
+        return query.getSelectClause().getItems();
+    }
+
+    private String createUri(DatahubConnection connection, Table table) {
+        return connection.getRepositoryUrl() + "/datastores/"
+                + ((DatahubSchema) table.getSchema()).getDatastoreName()
+                + ".query?";
+    }
+
+    private String getQueryString(Query query, Table table) {
+        String queryString = query.toSql();
+        return queryString.replace(table.getName() + ".", "");
+    }
+
+    private HttpResponse executeRequest(HttpGet request) {
         MonitorHttpClient httpClient = _connection.getHttpClient();
         HttpResponse response;
         try {
@@ -159,8 +193,8 @@ public class DatahubDataSet extends AbstractDataSet {
                     "Could not connect to Datahub: not found");
         }
         if (statusCode != 200) {
-            throw new IllegalStateException("Unexpected response status code: "
-                    + statusCode);
+            throw new IllegalStateException(
+                    "Unexpected response status code: " + statusCode);
         }
         return response;
     }

@@ -19,13 +19,21 @@
  */
 package org.datacleaner.beans;
 
-import com.ibm.icu.text.Transliterator;
-import org.datacleaner.api.*;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
 import org.datacleaner.components.categories.StringManipulationCategory;
 
-import javax.inject.Named;
+import com.ibm.icu.text.Transliterator;
 
 @Named("Transliterate")
 @Description("Converts non-latin characters to latin (or even ASCII) characters.")

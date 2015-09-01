@@ -19,11 +19,18 @@
  */
 package org.datacleaner.beans.numbers;
 
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.NumbersCategory;
+import java.util.UUID;
 
 import javax.inject.Named;
-import java.util.UUID;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.NumbersCategory;
 
 @Named("Generate UUID")
 @Description("Generates a universally unique ID")

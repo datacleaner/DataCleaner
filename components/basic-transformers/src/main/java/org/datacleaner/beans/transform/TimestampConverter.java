@@ -19,13 +19,20 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.apache.metamodel.util.HasName;
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DateAndTimeCategory;
-import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import java.util.Date;
 
 import javax.inject.Named;
-import java.util.Date;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.DateAndTimeCategory;
+import org.datacleaner.components.convert.ConvertToNumberTransformer;
+import org.apache.metamodel.util.HasName;
 
 @Named("Timestamp converter")
 @Description("Convert a timestamp (string or number) to a date field. Epoch is assumed to be 1970-01-01.")

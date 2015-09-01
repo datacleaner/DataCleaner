@@ -19,7 +19,26 @@
  */
 package org.datacleaner.components.convert;
 
-import org.datacleaner.api.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.api.Validate;
 import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.convert.NowDate;
 import org.datacleaner.util.convert.TodayDate;
@@ -27,12 +46,6 @@ import org.datacleaner.util.convert.YesterdayDate;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Attempts to convert anything to a Date value

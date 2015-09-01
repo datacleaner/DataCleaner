@@ -19,13 +19,18 @@
  */
 package org.datacleaner.monitor.server.components;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @since 14. 07. 2015
- */
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "There is no such component.")
+import javax.inject.Named;
+
+import org.datacleaner.api.Analyzer;
+import org.datacleaner.api.ColumnProperty;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.result.ListResult;
+
 public class ComponentNotFoundException extends RuntimeException {
     private ComponentNotFoundException(String msg) {
         super(msg);

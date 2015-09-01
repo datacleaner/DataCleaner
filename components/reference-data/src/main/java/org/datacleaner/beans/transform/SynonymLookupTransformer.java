@@ -19,14 +19,24 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.api.*;
-import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
-import org.datacleaner.api.ExternalDocumentation.DocumentationType;
-import org.datacleaner.components.categories.ImproveSuperCategory;
-import org.datacleaner.reference.SynonymCatalog;
+import java.util.StringTokenizer;
 
 import javax.inject.Named;
-import java.util.StringTokenizer;
+
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.ExternalDocumentation;
+import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
+import org.datacleaner.api.ExternalDocumentation.DocumentationType;
+import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.reference.SynonymCatalog;
 
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with

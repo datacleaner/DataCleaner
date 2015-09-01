@@ -19,14 +19,21 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.apache.metamodel.util.DateUtils;
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DateAndTimeCategory;
-
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.DateAndTimeCategory;
+import org.apache.metamodel.util.DateUtils;
 
 @Named("Date difference / period length")
 @Description("Calculates the length of a period made of two dates")

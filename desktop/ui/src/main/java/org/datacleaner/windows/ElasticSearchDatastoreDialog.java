@@ -21,11 +21,9 @@ package org.datacleaner.windows;
 
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.inject.Inject;
-import javax.swing.JComponent;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatastoreConnection;

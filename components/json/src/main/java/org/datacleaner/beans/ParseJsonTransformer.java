@@ -24,7 +24,14 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.*;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.DataStructuresCategory;
 import org.datacleaner.util.StringUtils;
 

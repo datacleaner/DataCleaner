@@ -19,12 +19,21 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DataStructuresCategory;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.List;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.OutputRowCollector;
+import org.datacleaner.api.Provided;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.DataStructuresCategory;
 
 /**
  * Transformer for extracting elements from lists.

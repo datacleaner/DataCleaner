@@ -19,12 +19,18 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.api.*;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.reference.Dictionary;
-
-import javax.inject.Named;
 
 @Named("Dictionary matcher")
 @Description("Matches string values against a set of dictionaries, producing a corresponding set of output columns specifying whether or not the values exist in those dictionaries")

@@ -19,13 +19,21 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.StringManipulationCategory;
-
 import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.StringManipulationCategory;
 
 /**
  * Concatenates several values into one String value.
+ *
+ *
  */
 @Named("Concatenator")
 @Description("Concatenate several column values into one.")

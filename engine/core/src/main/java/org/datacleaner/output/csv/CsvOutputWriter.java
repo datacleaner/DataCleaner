@@ -19,10 +19,10 @@
  */
 package org.datacleaner.output.csv;
 
-import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.AbstractMetaModelOutputWriter;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.output.AbstractMetaModelOutputWriter;
 
 final class CsvOutputWriter extends AbstractMetaModelOutputWriter {
 

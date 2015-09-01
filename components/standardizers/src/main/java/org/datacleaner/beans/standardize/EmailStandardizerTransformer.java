@@ -19,14 +19,20 @@
  */
 package org.datacleaner.beans.standardize;
 
-import org.datacleaner.api.*;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Tokenizes/standardizes the components of an email: Username and Domain

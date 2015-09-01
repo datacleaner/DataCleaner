@@ -19,7 +19,13 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Map;
+
 import junit.framework.TestCase;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.metamodel.util.Action;
 import org.datacleaner.components.convert.ConvertToDateTransformer;
@@ -39,11 +45,6 @@ import org.datacleaner.repository.RepositoryNode;
 import org.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Map;
 
 public class ResultModificationControllerTest extends TestCase {
 

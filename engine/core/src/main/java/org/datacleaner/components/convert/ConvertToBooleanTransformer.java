@@ -22,7 +22,14 @@ package org.datacleaner.components.convert;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.datacleaner.api.*;
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ConversionCategory;
 
 /**

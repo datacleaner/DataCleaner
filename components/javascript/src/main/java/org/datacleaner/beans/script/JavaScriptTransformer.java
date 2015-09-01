@@ -19,13 +19,26 @@
  */
 package org.datacleaner.beans.script;
 
-import org.datacleaner.api.*;
+import javax.inject.Named;
+
+import org.datacleaner.api.Alias;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.StringProperty;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ScriptingCategory;
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.Script;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Named;
 
 /**
  * A transformer that uses userwritten JavaScript to generate a value

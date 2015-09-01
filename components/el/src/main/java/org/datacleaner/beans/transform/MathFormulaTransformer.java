@@ -19,18 +19,28 @@
  */
 package org.datacleaner.beans.transform;
 
-import de.odysseus.el.ExpressionFactoryImpl;
-import de.odysseus.el.util.SimpleContext;
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.NumbersCategory;
-import org.datacleaner.util.StringUtils;
-
-import javax.el.ValueExpression;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.el.ValueExpression;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.StringProperty;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.NumbersCategory;
+import org.datacleaner.util.StringUtils;
+
+import de.odysseus.el.ExpressionFactoryImpl;
+import de.odysseus.el.util.SimpleContext;
 
 @Named("Math formula")
 @Description("Provide a mathematical formula to perform arbitrary calculations.\n"

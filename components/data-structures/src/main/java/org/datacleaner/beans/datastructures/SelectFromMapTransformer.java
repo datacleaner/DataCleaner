@@ -19,14 +19,24 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import org.apache.metamodel.util.CollectionUtils;
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DataStructuresCategory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Arrays;
 import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.apache.metamodel.util.CollectionUtils;
+
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.MappedProperty;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.DataStructuresCategory;
 
 /**
  * Transformer for selecting values from maps.

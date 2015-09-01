@@ -19,6 +19,8 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import java.util.List;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreCatalog;
@@ -27,8 +29,6 @@ import org.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.datacleaner.monitor.shared.model.JobIdentifier;
 import org.datacleaner.repository.RepositoryFile;
 import org.datacleaner.repository.RepositoryFolder;
-
-import java.util.List;
 
 /**
  * Defines a context for a <i>single</i> tenant in which access to shared

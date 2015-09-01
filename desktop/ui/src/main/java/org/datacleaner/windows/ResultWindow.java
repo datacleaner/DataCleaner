@@ -99,6 +99,8 @@ import org.datacleaner.widgets.PopupButton.MenuPosition;
 import org.datacleaner.widgets.tabs.Tab;
 import org.datacleaner.widgets.tabs.VerticalTabbedPane;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Window in which the result (and running progress information) of job

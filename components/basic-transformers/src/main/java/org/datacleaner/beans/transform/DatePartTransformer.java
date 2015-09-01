@@ -19,14 +19,22 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DateAndTimeCategory;
-
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.DateAndTimeCategory;
 
 @Named("Extract date part")
 @Description("Extract the parts of a date (year, month, day etc.)")

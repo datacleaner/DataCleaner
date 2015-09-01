@@ -19,12 +19,18 @@
  */
 package org.datacleaner.beans.transform;
 
-import org.datacleaner.api.*;
+import javax.inject.Named;
+
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.reference.StringPattern;
-
-import javax.inject.Named;
 
 @Named("String pattern matcher")
 @Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")

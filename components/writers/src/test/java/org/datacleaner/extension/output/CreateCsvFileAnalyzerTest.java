@@ -19,12 +19,9 @@
  */
 package org.datacleaner.extension.output;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
@@ -36,6 +33,12 @@ import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
 import org.junit.After;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class CreateCsvFileAnalyzerTest {
 

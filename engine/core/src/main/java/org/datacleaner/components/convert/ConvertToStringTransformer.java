@@ -19,15 +19,27 @@
  */
 package org.datacleaner.components.convert;
 
-import org.apache.metamodel.util.FileHelper;
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.ConversionCategory;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.sql.Clob;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.*;
-import java.sql.Clob;
-import java.util.Arrays;
+
+import org.apache.metamodel.util.FileHelper;
+import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Configured;
+import org.datacleaner.api.Description;
+import org.datacleaner.api.InputColumn;
+import org.datacleaner.api.InputRow;
+import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.StringProperty;
+import org.datacleaner.api.Transformer;
+import org.datacleaner.components.categories.ConversionCategory;
 
 /**
  * Attempts to convert anything to a String value.

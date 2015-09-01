@@ -25,9 +25,6 @@ import org.datacleaner.metamodel.datahub.DataHubDataContext;
 public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
         implements UpdateableDatastore, UsernameDatastore {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final String _host;
     private final Integer _port;

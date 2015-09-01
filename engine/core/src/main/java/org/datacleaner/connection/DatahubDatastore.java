@@ -31,8 +31,8 @@ public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final String _username;
     private final String _password;
     private final String _tenantName;
-    private boolean _https;
-    private boolean _acceptUnverifiedSslPeers;
+    private final boolean _https;
+    private final boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
     public DatahubDatastore(String name, String host, Integer port,

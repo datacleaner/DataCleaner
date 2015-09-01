@@ -211,7 +211,7 @@ public class DatahubDatastoreDialog
                     // TODO: This dialog is shown behind the modal dialog
                     WidgetUtils.showErrorMessage(
                             "Connection failed",
-                            "Connecting to Datahub failed. Did you remember to fill in all the necessary fields?",
+                            "Connecting to DataHub failed. Did you remember to fill in all the necessary fields?",
                             e);
                 }
             }
@@ -246,13 +246,13 @@ public class DatahubDatastoreDialog
     protected boolean validateForm() {
         final String host = _hostTextField.getText();
         if (StringUtils.isNullOrEmpty(host)) {
-            setStatusError("Please enter Datahub host name");
+            setStatusError("Please enter DataHub host name");
             return false;
         }
 
         final String port = _portTextField.getText();
         if (StringUtils.isNullOrEmpty(port)) {
-            setStatusError("Please enter Datahub port number");
+            setStatusError("Please enter DataHub port number");
             return false;
         } else {
             try {
@@ -310,12 +310,12 @@ public class DatahubDatastoreDialog
 
     @Override
     public String getWindowTitle() {
-        return "HIquality Datahub datastore";
+        return "DataHub datastore";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "HIquality Datahub";
+        return "DataHub";
     }
 
     @Override
@@ -326,14 +326,14 @@ public class DatahubDatastoreDialog
     @Override
     protected List<Entry<String, JComponent>> getFormElements() {
         List<Entry<String, JComponent>> result = super.getFormElements();
-        result.add(new ImmutableEntry<String, JComponent>("Datahub hostname", _hostTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Datahub port",  _portTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub hostname", _hostTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub port",  _portTextField));
         result.add(new ImmutableEntry<String, JComponent>("", _httpsCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("", _acceptUnverifiedSslPeersCheckBox));
         result.add(new ImmutableEntry<String, JComponent>("Security mode",_securityModeSelector));
-        result.add(new ImmutableEntry<String, JComponent>("Datahub username", _usernameTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Datahub password", _passwordTextField));
-        result.add(new ImmutableEntry<String, JComponent>("Datahub tenant name", _tenantNameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub username", _usernameTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub password", _passwordTextField));
+        result.add(new ImmutableEntry<String, JComponent>("DataHub tenant name", _tenantNameTextField));
         result.add(new ImmutableEntry<String, JComponent>(null, _urlLabel));
         result.add(new ImmutableEntry<String, JComponent>(null, _testButton));
         return result;

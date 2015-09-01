@@ -7,7 +7,6 @@ import org.junit.Test
 import org.junit.Assert
 import org.scalatest.junit.AssertionsForJUnit
 import org.datacleaner.result.ResultProducer
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
 import org.datacleaner.api.InputRow
 import org.datacleaner.data.MockInputRow
 import org.datacleaner.storage.RowAnnotationImpl
@@ -18,6 +17,7 @@ import org.datacleaner.result.NumberResult
 import org.datacleaner.configuration.DataCleanerConfigurationImpl
 import org.datacleaner.api.InputColumn
 import org.datacleaner.data.MockInputColumn
+import org.datacleaner.storage.RowAnnotations
 
 class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {
   
@@ -43,7 +43,7 @@ class CrosstabHtmlRendererCallbackTest extends AssertionsForJUnit {
   def testCellValue() = {
     val rendererFactory = new RendererFactory(new DataCleanerConfigurationImpl());
     val callback = new HtmlCrosstabRendererCallback(rendererFactory,renderingContext);
-    val rowFactory = new InMemoryRowAnnotationFactory;
+    val rowFactory = RowAnnotations.getInMemoryFactory();
     val rowAnnotation = new RowAnnotationImpl;
     val row = new MockInputRow;
     row.put(new MockInputColumn("mock"), "mocktest");

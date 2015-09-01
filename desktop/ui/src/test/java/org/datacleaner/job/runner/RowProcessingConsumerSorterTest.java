@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
+import org.apache.metamodel.schema.Table;
 import org.datacleaner.beans.StringAnalyzer;
 import org.datacleaner.beans.coalesce.CoalesceMultipleFieldsTransformer;
 import org.datacleaner.beans.coalesce.CoalesceUnit;
@@ -232,8 +233,9 @@ public class RowProcessingConsumerSorterTest extends TestCase {
     private List<RowProcessingConsumer> getConsumers(AnalysisJob analysisJob) {
         List<RowProcessingConsumer> consumers = new ArrayList<RowProcessingConsumer>();
         RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, null, null, null, null);
-        RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(analysisJob.getSourceColumns().get(0)
-                .getPhysicalColumn().getTable());
+        Table table = analysisJob.getSourceColumns().get(0)
+                .getPhysicalColumn().getTable();
+        RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStream(table));
 
         for (AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
             RowProcessingConsumer consumer = new AnalyzerConsumer(analyzerJob.getDescriptor().newInstance(),

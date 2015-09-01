@@ -116,7 +116,7 @@ public class RowProcessingQueryOptimizerTest extends TestCase {
         final RowProcessingPublishers publishers = new RowProcessingPublishers(analysisJob, analysisListener, taskRunner,
                 lifeCycleHelper, sourceColumnFinder);
         final Table table = ajb.getSourceColumns().get(0).getPhysicalColumn().getTable();
-        return publishers.getRowProcessingPublisher(table);
+        return publishers.getRowProcessingPublisher(publishers.getStream(table));
     }
 
     public void testSimpleOptimization() throws Exception {

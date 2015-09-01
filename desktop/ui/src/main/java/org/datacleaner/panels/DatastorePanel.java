@@ -71,7 +71,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
-import org.datacleaner.windows.DatahubDatastoreDialog;
+import org.datacleaner.windows.DataHubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -378,7 +378,7 @@ public class DatastorePanel extends DCPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = getInjectorBuilder().with(DatahubDatastore.class, datastore).createInjector();
-                    DatahubDatastoreDialog dialog = injector.getInstance(DatahubDatastoreDialog.class);
+                    DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
                     dialog.open();
                 }
             });

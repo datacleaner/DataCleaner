@@ -88,8 +88,8 @@ public class DatastoreDescriptors {
             "Connect to a SugarCRM system", SugarCrmDatastore.class, SugarCrmDatastoreDialog.class,
             IconUtils.SUGAR_CRM_IMAGEPATH);
 
-    private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("Datahub",
-            "Connect to a HIquality Datahub", DatahubDatastore.class, DatahubDatastoreDialog.class,
+    private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DataHub",
+            "Connect to DataHub", DatahubDatastore.class, DatahubDatastoreDialog.class,
             IconUtils.DATAHUB_IMAGEPATH);
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(

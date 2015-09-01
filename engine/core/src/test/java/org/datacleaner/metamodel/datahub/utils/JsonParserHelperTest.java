@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.metamodel.datahub.DatahubSchema;
+import org.datacleaner.metamodel.datahub.DataHubSchema;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -52,7 +52,7 @@ public class JsonParserHelperTest extends TestCase {
                 + "],\"name\":\"PUBLIC\"}]}";
         InputStream is = new ByteArrayInputStream(jsonString.getBytes());
         JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
-        DatahubSchema schema = parser.parseJsonSchema(is);
+        DataHubSchema schema = parser.parseJsonSchema(is);
         assertNotNull(schema);
         assertEquals("PUBLIC", schema.getName());
         assertEquals(2, schema.getTableCount());

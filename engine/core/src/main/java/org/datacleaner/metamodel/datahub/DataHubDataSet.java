@@ -49,14 +49,14 @@ import org.slf4j.LoggerFactory;
  * @author hetty
  *
  */
-public class DatahubDataSet extends AbstractDataSet {
+public class DataHubDataSet extends AbstractDataSet {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(DatahubDataSet.class);
+            .getLogger(DataHubDataSet.class);
 
     private static final int PAGE_SIZE = 10000;
 
-    private final DatahubConnection _connection;
+    private final DataHubConnection _connection;
     private final Query _query;
     private String _queryString;
     private String _uri;
@@ -72,7 +72,7 @@ public class DatahubDataSet extends AbstractDataSet {
      * @param query
      * @param connection
      */
-    public DatahubDataSet(Query query, DatahubConnection connection) {
+    public DataHubDataSet(Query query, DataHubConnection connection) {
         super(getSelectItems(query));
         Table table = query.getFromClause().getItem(0).getTable();
         _queryString = getQueryString(query, table);
@@ -163,9 +163,9 @@ public class DatahubDataSet extends AbstractDataSet {
         return query.getSelectClause().getItems();
     }
 
-    private String createUri(DatahubConnection connection, Table table) {
+    private String createUri(DataHubConnection connection, Table table) {
         return connection.getRepositoryUrl() + "/datastores/"
-                + ((DatahubSchema) table.getSchema()).getDatastoreName()
+                + ((DataHubSchema) table.getSchema()).getDatastoreName()
                 + ".query?";
     }
 

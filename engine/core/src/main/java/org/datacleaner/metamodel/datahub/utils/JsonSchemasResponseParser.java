@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.datacleaner.metamodel.datahub.DatahubSchema;
-import org.datacleaner.metamodel.datahub.DatahubTable;
+import org.datacleaner.metamodel.datahub.DataHubSchema;
+import org.datacleaner.metamodel.datahub.DataHubTable;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -73,15 +73,15 @@ public class JsonSchemasResponseParser {
 
     private DatastoreObject _currentObject;
     private String _currentFieldname;
-    private DatahubSchema _currentSchema;
-    private DatahubTable _currentTable;
-    private DatahubColumnBuilder _currentColumnBuilder;
-    private DatahubSchema _resultSchema;
+    private DataHubSchema _currentSchema;
+    private DataHubTable _currentTable;
+    private DataHubColumnBuilder _currentColumnBuilder;
+    private DataHubSchema _resultSchema;
 
     private String _currentDataStoreName;
     private List<String> _dataStoreNames = new ArrayList<String>();
 
-    public DatahubSchema parseJsonSchema(InputStream is)
+    public DataHubSchema parseJsonSchema(InputStream is)
             throws JsonParseException, IOException {
         _currentObject = DatastoreObject.DATASTORE;
         _currentFieldname = "";
@@ -146,12 +146,12 @@ public class JsonSchemasResponseParser {
     private void createNewObject() {
         switch (_currentObject) {
         case SCHEMA:
-            _currentSchema = new DatahubSchema();
+            _currentSchema = new DataHubSchema();
         case TABLE:
-            _currentTable = new DatahubTable();
+            _currentTable = new DataHubTable();
             break;
         case COLUMN:
-            _currentColumnBuilder = new DatahubColumnBuilder();
+            _currentColumnBuilder = new DataHubColumnBuilder();
             break;
         default:
         }

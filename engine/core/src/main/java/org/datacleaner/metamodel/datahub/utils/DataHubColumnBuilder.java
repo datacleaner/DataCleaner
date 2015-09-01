@@ -23,10 +23,10 @@ import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.ImmutableColumn;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.metamodel.datahub.DatahubTable;
+import org.datacleaner.metamodel.datahub.DataHubTable;
 
 
-public class DatahubColumnBuilder {
+public class DataHubColumnBuilder {
     String _name;
     ColumnType _type;
     Integer _number;
@@ -39,7 +39,7 @@ public class DatahubColumnBuilder {
     boolean _primaryKey;
     Table _table;
     
-    public DatahubColumnBuilder withName(String name) {
+    public DataHubColumnBuilder withName(String name) {
         _name = name;
         return this;
     }
@@ -50,36 +50,36 @@ public class DatahubColumnBuilder {
                 _remarks, _indexed, _quote, _primaryKey);
     }
 
-    public DatahubColumnBuilder withIndexed(boolean indexed) {
+    public DataHubColumnBuilder withIndexed(boolean indexed) {
         _indexed = indexed;
         return this;
     }
 
-    public DatahubColumnBuilder withQuote(String quote) {
+    public DataHubColumnBuilder withQuote(String quote) {
         _quote = quote;
         return this;
         
     }
 
-    public DatahubColumnBuilder withPrimaryKey(boolean primaryKey) {
+    public DataHubColumnBuilder withPrimaryKey(boolean primaryKey) {
         _primaryKey = primaryKey;
         return this;
         
     }
 
-    public DatahubColumnBuilder withRemarks(String remarks) {
+    public DataHubColumnBuilder withRemarks(String remarks) {
         _remarks = remarks;
         return this;
         
     }
 
-    public DatahubColumnBuilder withNullable(boolean nullable) {
+    public DataHubColumnBuilder withNullable(boolean nullable) {
         _nullable = nullable;
         return this;
         
     }
 
-    public DatahubColumnBuilder withType(String type) {
+    public DataHubColumnBuilder withType(String type) {
         _type = toColumnType(type);
         return this;        
     }
@@ -104,24 +104,24 @@ public class DatahubColumnBuilder {
         return null;
     }
 
-    public DatahubColumnBuilder withNativeType(String nativeType) {
+    public DataHubColumnBuilder withNativeType(String nativeType) {
         _nativeType = nativeType;
         return this;
         
     }
 
-    public DatahubColumnBuilder withSize(Integer size) {
+    public DataHubColumnBuilder withSize(Integer size) {
         _size = size;
         return this;
         
     }
 
-    public DatahubColumnBuilder withTable(DatahubTable table) {
+    public DataHubColumnBuilder withTable(DataHubTable table) {
         _table = table;
         return this;
     }
 
-    public DatahubColumnBuilder withNumber(Integer number) {
+    public DataHubColumnBuilder withNumber(Integer number) {
         _number = number;
         return this;
         

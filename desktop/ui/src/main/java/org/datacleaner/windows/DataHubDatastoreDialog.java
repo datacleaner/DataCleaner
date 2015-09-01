@@ -45,7 +45,7 @@ import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.metamodel.datahub.DatahubConnection;
+import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -89,7 +89,7 @@ public class DataHubDatastoreDialog
     private final DCLabel _urlLabel;
 //    private final JXTextField _contextPathTextField;
 
-    public DatahubConnection createConnection() {
+    public DataHubConnection createConnection() {
         int port = 8080;
         try {
             port = Integer.parseInt(_portTextField.getText());
@@ -108,7 +108,7 @@ public class DataHubDatastoreDialog
             password = null;
         }
 
-        return new DatahubConnection(_hostTextField.getText(), port, username,
+        return new DataHubConnection(_hostTextField.getText(), port, username,
                 password, _tenantNameTextField.getText(),
                 /* _contextPathTextField.getText(), */_httpsCheckBox
                         .isSelected(),
@@ -117,7 +117,7 @@ public class DataHubDatastoreDialog
     }
 
     private void updateUrlLabel() {
-        final DatahubConnection connection = createConnection();
+        final DataHubConnection connection = createConnection();
         _urlLabel.setText("Repository url: " + connection.getRepositoryUrl());
     }
 
@@ -179,7 +179,7 @@ public class DataHubDatastoreDialog
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                final DatahubConnection connection = createConnection();
+                final DataHubConnection connection = createConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
                 try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {

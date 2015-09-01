@@ -65,11 +65,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
-public class DatahubDatastoreDialog
+public class DataHubDatastoreDialog
         extends AbstractDatastoreDialog<DatahubDatastore> {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(DatahubDatastoreDialog.class);
+            .getLogger(DataHubDatastoreDialog.class);
 
     public static final String CAS_MODE = "cas";
     public static final String DEFAULT_MODE = "default";
@@ -122,7 +122,7 @@ public class DatahubDatastoreDialog
     }
 
     @Inject
-    public DatahubDatastoreDialog(WindowContext windowContext,
+    public DataHubDatastoreDialog(WindowContext windowContext,
             MutableDatastoreCatalog datastoreCatalog,
             @Nullable DatahubDatastore originalDatastore,
             UserPreferences userPreferences) {
@@ -198,7 +198,7 @@ public class DatahubDatastoreDialog
                         }
                         LOGGER.info("Ping request responded: {}", map);
                         JOptionPane.showMessageDialog(
-                                DatahubDatastoreDialog.this,
+                                DataHubDatastoreDialog.this,
                                 "Connection successful!");
                     } else {
                         final String reasonPhrase = statusLine
@@ -343,7 +343,7 @@ public class DatahubDatastoreDialog
         LookAndFeelManager.get().init();
         UserPreferences userPreferences = new UserPreferencesImpl(null);
         WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        DatahubDatastoreDialog dialog = new DatahubDatastoreDialog(windowContext, null, null, userPreferences);
+        DataHubDatastoreDialog dialog = new DataHubDatastoreDialog(windowContext, null, null, userPreferences);
 
         dialog.open();
     }

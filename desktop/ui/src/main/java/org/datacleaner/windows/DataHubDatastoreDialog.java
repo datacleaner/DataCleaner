@@ -45,7 +45,7 @@ import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.guice.Nullable;
-import org.datacleaner.metamodel.datahub.DatahubConnection;
+import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -65,11 +65,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
-public class DatahubDatastoreDialog
+public class DataHubDatastoreDialog
         extends AbstractDatastoreDialog<DatahubDatastore> {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(DatahubDatastoreDialog.class);
+            .getLogger(DataHubDatastoreDialog.class);
 
     public static final String CAS_MODE = "cas";
     public static final String DEFAULT_MODE = "default";
@@ -89,7 +89,7 @@ public class DatahubDatastoreDialog
     private final DCLabel _urlLabel;
 //    private final JXTextField _contextPathTextField;
 
-    public DatahubConnection createConnection() {
+    public DataHubConnection createConnection() {
         int port = 8080;
         try {
             port = Integer.parseInt(_portTextField.getText());
@@ -108,7 +108,7 @@ public class DatahubDatastoreDialog
             password = null;
         }
 
-        return new DatahubConnection(_hostTextField.getText(), port, username,
+        return new DataHubConnection(_hostTextField.getText(), port, username,
                 password, _tenantNameTextField.getText(),
                 /* _contextPathTextField.getText(), */_httpsCheckBox
                         .isSelected(),
@@ -117,12 +117,12 @@ public class DatahubDatastoreDialog
     }
 
     private void updateUrlLabel() {
-        final DatahubConnection connection = createConnection();
+        final DataHubConnection connection = createConnection();
         _urlLabel.setText("Repository url: " + connection.getRepositoryUrl());
     }
 
     @Inject
-    public DatahubDatastoreDialog(WindowContext windowContext,
+    public DataHubDatastoreDialog(WindowContext windowContext,
             MutableDatastoreCatalog datastoreCatalog,
             @Nullable DatahubDatastore originalDatastore,
             UserPreferences userPreferences) {
@@ -179,7 +179,7 @@ public class DatahubDatastoreDialog
         _testButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                final DatahubConnection connection = createConnection();
+                final DataHubConnection connection = createConnection();
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 final HttpGet request = new HttpGet(pingUrl);
                 try (final MonitorHttpClient monitorHttpClient = connection.getHttpClient()) {
@@ -198,7 +198,7 @@ public class DatahubDatastoreDialog
                         }
                         LOGGER.info("Ping request responded: {}", map);
                         JOptionPane.showMessageDialog(
-                                DatahubDatastoreDialog.this,
+                                DataHubDatastoreDialog.this,
                                 "Connection successful!");
                     } else {
                         final String reasonPhrase = statusLine
@@ -343,7 +343,7 @@ public class DatahubDatastoreDialog
         LookAndFeelManager.get().init();
         UserPreferences userPreferences = new UserPreferencesImpl(null);
         WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        DatahubDatastoreDialog dialog = new DatahubDatastoreDialog(windowContext, null, null, userPreferences);
+        DataHubDatastoreDialog dialog = new DataHubDatastoreDialog(windowContext, null, null, userPreferences);
 
         dialog.open();
     }

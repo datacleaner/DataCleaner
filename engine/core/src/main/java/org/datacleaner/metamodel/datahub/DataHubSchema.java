@@ -28,7 +28,7 @@ import org.apache.metamodel.schema.AbstractSchema;
  */
 import org.apache.metamodel.schema.Table;
 
-public class DatahubSchema extends AbstractSchema {
+public class DataHubSchema extends AbstractSchema {
 
     /**
      * 
@@ -38,7 +38,7 @@ public class DatahubSchema extends AbstractSchema {
     private String _datastoreName;
     private List<Table> _tables;
 
-    public DatahubSchema() {
+    public DataHubSchema() {
         _name = "";
         _tables = new ArrayList<Table>();
         
@@ -71,7 +71,7 @@ public class DatahubSchema extends AbstractSchema {
         _datastoreName = name;        
     }
     
-    public void addTable(DatahubTable table) {
+    public void addTable(DataHubTable table) {
         _tables.add(table);        
     }
 

@@ -40,11 +40,11 @@ public class JsonQueryResultParserHelperTest {
         InputStream is = new ByteArrayInputStream(result.getBytes());
         JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         Column[] columns = new Column[3];
-        columns[0] = new DatahubColumnBuilder().withName("CUSTOMERNUMBER")
+        columns[0] = new DataHubColumnBuilder().withName("CUSTOMERNUMBER")
                 .withNumber(1).build();
-        columns[1] = new DatahubColumnBuilder().withName("CUSTOMERNAME")
+        columns[1] = new DataHubColumnBuilder().withName("CUSTOMERNAME")
                 .withNumber(2).build();
-        columns[2] = new DatahubColumnBuilder().withName("LINKAGE")
+        columns[2] = new DataHubColumnBuilder().withName("LINKAGE")
                 .withNumber(3).build();
         List<Object[]> queryResult = parser.parseQueryResult(is);
         Iterator<Object[]> iterator = queryResult.iterator();

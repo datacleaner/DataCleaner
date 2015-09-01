@@ -35,7 +35,7 @@ import org.apache.metamodel.schema.TableType;
  * @author hetty
  *
  */
-public class DatahubTable extends AbstractTable {
+public class DataHubTable extends AbstractTable {
 
     /**
      * 
@@ -43,9 +43,9 @@ public class DatahubTable extends AbstractTable {
     private static final long serialVersionUID = 1L;
     private String _name;
     private List<Column> _columns;
-    private DatahubSchema _schema;
+    private DataHubSchema _schema;
 
-    public DatahubTable() {
+    public DataHubTable() {
         _name = "";
         _columns = new ArrayList<Column>();
     }
@@ -95,7 +95,7 @@ public class DatahubTable extends AbstractTable {
     }
 
 
-    public void setSchema(DatahubSchema schema) {
+    public void setSchema(DataHubSchema schema) {
         _schema = schema;
         
     }

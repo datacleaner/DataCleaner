@@ -41,15 +41,15 @@ import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatahubDataContext extends AbstractDataContext implements
+public class DataHubDataContext extends AbstractDataContext implements
         UpdateableDataContext {
     private static final Logger logger = LoggerFactory
-            .getLogger(DatahubDataContext.class);
+            .getLogger(DataHubDataContext.class);
 
-    private DatahubConnection _connection;
-    private Map<String, DatahubSchema> _schemas;
+    private DataHubConnection _connection;
+    private Map<String, DataHubSchema> _schemas;
 
-    public DatahubDataContext(DatahubConnection connection) {
+    public DataHubDataContext(DataHubConnection connection) {
         _connection = connection;
         _schemas = getDatahubSchemas();
     }
@@ -79,8 +79,8 @@ public class DatahubDataContext extends AbstractDataContext implements
         return AMP.matcher(value).replaceAll("&");
     }
 
-    private Map<String, DatahubSchema> getDatahubSchemas() {
-        Map<String, DatahubSchema> schemas = new HashMap<String, DatahubSchema>();
+    private Map<String, DataHubSchema> getDatahubSchemas() {
+        Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
         for (String datastoreName : getDataStoreNames()) {
             String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
                     + datastoreName + ".schemas";
@@ -90,7 +90,7 @@ public class DatahubDataContext extends AbstractDataContext implements
             HttpEntity entity = response.getEntity();
             JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
-                DatahubSchema schema = parser.parseJsonSchema(entity
+                DataHubSchema schema = parser.parseJsonSchema(entity
                         .getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
@@ -108,7 +108,7 @@ public class DatahubDataContext extends AbstractDataContext implements
     
     @Override
     public DataSet executeQuery(final Query query) {
-        return new DatahubDataSet(query, _connection);
+        return new DataHubDataSet(query, _connection);
     }
 
     private List<String> getDataStoreNames() {

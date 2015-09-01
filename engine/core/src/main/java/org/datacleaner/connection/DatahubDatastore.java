@@ -19,23 +19,20 @@
  */
 package org.datacleaner.connection;
 
-import org.datacleaner.metamodel.datahub.DatahubConnection;
-import org.datacleaner.metamodel.datahub.DatahubDataContext;
+import org.datacleaner.metamodel.datahub.DataHubConnection;
+import org.datacleaner.metamodel.datahub.DataHubDataContext;
 
-public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
+public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
         implements UpdateableDatastore, UsernameDatastore {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private final String _host;
     private final Integer _port;
     private final String _username;
     private final String _password;
     private final String _tenantName;
-    private boolean _https;
-    private boolean _acceptUnverifiedSslPeers;
+    private final boolean _https;
+    private final boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
     public DatahubDatastore(String name, String host, Integer port,
@@ -97,10 +94,10 @@ public class DatahubDatastore extends UsageAwareDatastore<DatahubDataContext>
     }
 
     @Override
-    protected UsageAwareDatastoreConnection<DatahubDataContext> createDatastoreConnection() {
-        final DatahubConnection connection = new DatahubConnection(_host, _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
-        final DatahubDataContext dataContext = new DatahubDataContext(connection);
-        return new UpdateableDatastoreConnectionImpl<DatahubDataContext>(
+    protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
+        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
+        final DataHubDataContext dataContext = new DataHubDataContext(connection);
+        return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(
                 dataContext, this);
     }
 

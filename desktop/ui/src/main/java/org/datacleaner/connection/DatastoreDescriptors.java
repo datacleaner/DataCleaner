@@ -32,7 +32,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
-import org.datacleaner.windows.DatahubDatastoreDialog;
+import org.datacleaner.windows.DataHubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -89,7 +89,7 @@ public class DatastoreDescriptors {
             IconUtils.SUGAR_CRM_IMAGEPATH);
 
     private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DataHub",
-            "Connect to DataHub", DatahubDatastore.class, DatahubDatastoreDialog.class,
+            "Connect to DataHub", DatahubDatastore.class, DataHubDatastoreDialog.class,
             IconUtils.DATAHUB_IMAGEPATH);
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(

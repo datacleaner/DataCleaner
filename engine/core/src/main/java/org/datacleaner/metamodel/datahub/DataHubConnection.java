@@ -33,7 +33,7 @@ import org.datacleaner.util.http.MonitorHttpClient;
  * Describes the connection information needed to connect to the DataHub.
  */
 
-public class DatahubConnection {
+public class DataHubConnection {
 
     private final String _hostname;
     private final int _port;
@@ -48,7 +48,7 @@ public class DatahubConnection {
     private boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
-    public DatahubConnection(String hostname, Integer port, String username,
+    public DataHubConnection(String hostname, Integer port, String username,
             String password, String tenantId, boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
 
         _hostname = hostname;

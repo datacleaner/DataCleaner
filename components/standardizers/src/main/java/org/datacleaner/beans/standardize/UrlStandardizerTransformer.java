@@ -19,21 +19,19 @@
  */
 package org.datacleaner.beans.standardize;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
 
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
+
 @Named("URL standardizer")
 @Description("Retrieve the individual parts of an URL, including protocol, domain, port, path and querystring.")
 @Categorized({ MatchingAndStandardizationCategory.class })
-@WSStatelessComponent
 public class UrlStandardizerTransformer implements Transformer {
 
 	public static final String[] PATTERNS = { "PROTOCOL://DOMAIN:PORTPATH\\?QUERYSTRING",

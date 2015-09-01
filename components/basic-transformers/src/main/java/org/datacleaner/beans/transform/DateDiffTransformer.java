@@ -31,7 +31,6 @@ import java.util.List;
 @Named("Date difference / period length")
 @Description("Calculates the length of a period made of two dates")
 @Categorized(DateAndTimeCategory.class)
-@WSStatelessComponent
 public class DateDiffTransformer implements Transformer {
 
 	@Configured(order = 1)

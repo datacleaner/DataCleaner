@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 @Named("Compose & write JSON document")
 @Description("Creates a string representation of a data structure as a JSON (JavaScript Object Notation) document")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class ComposeJsonTransformer implements Transformer {
 
     @Inject

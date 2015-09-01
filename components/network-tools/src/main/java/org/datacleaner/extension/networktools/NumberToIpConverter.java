@@ -26,7 +26,6 @@ import javax.inject.Named;
 @Named("Convert number to IP")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts a number representation of an IPv4 address to it's regular string representation.")
-@WSStatelessComponent
 public class NumberToIpConverter implements Transformer {
 
 	@Configured("IP number column")

@@ -19,16 +19,15 @@
  */
 package org.datacleaner.components.convert;
 
-import java.io.*;
-import java.sql.Clob;
-import java.util.Arrays;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.ConversionCategory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.*;
+import java.sql.Clob;
+import java.util.Arrays;
 
 /**
  * Attempts to convert anything to a String value.
@@ -36,7 +35,6 @@ import org.datacleaner.components.categories.ConversionCategory;
 @Named("Convert to string")
 @Description("Converts anything to a string (or null).")
 @Categorized(ConversionCategory.class)
-@WSStatelessComponent
 public class ConvertToStringTransformer implements Transformer {
 
     @Inject

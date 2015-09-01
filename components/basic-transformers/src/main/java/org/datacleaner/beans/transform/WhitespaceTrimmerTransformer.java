@@ -28,7 +28,6 @@ import javax.inject.Named;
 @Named("Whitespace trimmer")
 @Description("Trims your String values either on left, right or both sides.")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class WhitespaceTrimmerTransformer implements Transformer {
 
 	@Configured

@@ -19,7 +19,6 @@
  */
 package org.datacleaner.monitor.server.controllers;
 
-import org.datacleaner.api.WSStatelessComponent;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.descriptors.TransformerDescriptor;
@@ -35,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -80,11 +77,6 @@ public class ComponentControllerV1 implements ComponentController {
         ComponentList componentList = new ComponentList();
 
         for (TransformerDescriptor descriptor : transformerDescriptors) {
-            if (descriptor.getAnnotation(WSStatelessComponent.class) == null) {
-                LOGGER.info("Skipping component '{}' because it is not stateless. ", descriptor.getDisplayName());
-                continue;
-            }
-
             componentList.add(tenant, descriptor);
         }
 

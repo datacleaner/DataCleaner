@@ -30,7 +30,6 @@ import javax.inject.Named;
 @Named("XML encoder")
 @Description("Encodes/escapes plain text into XML content")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class XmlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat {

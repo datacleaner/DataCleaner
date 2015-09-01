@@ -19,18 +19,17 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.DataStructuresCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Transformer for building maps based on values in a row.
@@ -40,7 +39,6 @@ import org.slf4j.LoggerFactory;
 @Description("Build a map with a variable amount of keys and values. "
         + "Adds the capability to store complex structures with named entries within it.")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class BuildMapTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);

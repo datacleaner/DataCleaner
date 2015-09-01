@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 @Named("Read & parse JSON document")
 @Description("Parses a JSON document (as a string) and materializes the data structure it represents")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class ParseJsonTransformer implements Transformer {
 
     @Inject

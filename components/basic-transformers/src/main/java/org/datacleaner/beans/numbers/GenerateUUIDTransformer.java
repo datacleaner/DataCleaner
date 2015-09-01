@@ -28,7 +28,6 @@ import java.util.UUID;
 @Named("Generate UUID")
 @Description("Generates a universally unique ID")
 @Categorized(NumbersCategory.class)
-@WSStatelessComponent
 public class GenerateUUIDTransformer implements Transformer {
 
     @Configured

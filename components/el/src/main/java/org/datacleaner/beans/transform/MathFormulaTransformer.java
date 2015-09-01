@@ -36,7 +36,6 @@ import java.util.Map;
 @Description("Provide a mathematical formula to perform arbitrary calculations.\n"
         + "Formulas support basic operators like plus (+), minus (-), divide (/), multiply (*) and modulus (%).")
 @Categorized({ NumbersCategory.class })
-@WSStatelessComponent
 public class MathFormulaTransformer implements Transformer {
 
     @Configured

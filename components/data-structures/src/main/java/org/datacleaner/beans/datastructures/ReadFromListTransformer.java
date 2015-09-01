@@ -19,13 +19,12 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import java.util.List;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.DataStructuresCategory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DataStructuresCategory;
+import java.util.List;
 
 /**
  * Transformer for extracting elements from lists.
@@ -33,7 +32,6 @@ import org.datacleaner.components.categories.DataStructuresCategory;
 @Named("Read elements from list")
 @Description("Reads all elements of a list, creating a record for each value")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class ReadFromListTransformer implements Transformer {
 
 	@Inject

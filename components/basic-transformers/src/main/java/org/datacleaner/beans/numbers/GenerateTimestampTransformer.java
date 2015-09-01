@@ -28,7 +28,6 @@ import javax.inject.Named;
 @Named("Generate timestamp")
 @Description("Generates a timestamp representing the millisecond or nanosecond of processing the record")
 @Categorized(DateAndTimeCategory.class)
-@WSStatelessComponent
 public class GenerateTimestampTransformer implements Transformer {
 
     public static enum Unit implements HasName {

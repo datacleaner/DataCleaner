@@ -31,7 +31,6 @@ import java.net.UnknownHostException;
 @Named("Resolve hostname")
 @Categorized(NetworkToolsCategory.class)
 @Description("Resolves the IP of a hostname")
-@WSStatelessComponent
 public class ResolveHostnameTransformer implements Transformer {
 
 	private static final Logger logger = LoggerFactory

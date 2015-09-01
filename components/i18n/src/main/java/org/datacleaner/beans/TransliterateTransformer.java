@@ -31,7 +31,6 @@ import javax.inject.Named;
 @Description("Converts non-latin characters to latin (or even ASCII) characters.")
 @ExternalDocumentation({ @DocumentationLink(title = "Internationalization in DataCleaner", url = "https://www.youtube.com/watch?v=ApA-nhtLbhI", type = DocumentationType.VIDEO, version = "3.0") })
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class TransliterateTransformer implements Transformer {
 
     @Configured

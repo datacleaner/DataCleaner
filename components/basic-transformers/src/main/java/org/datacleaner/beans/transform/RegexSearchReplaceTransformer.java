@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 @Named("Regex search/replace")
 @Description("Search and replace text in String values using regular expressions.")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class RegexSearchReplaceTransformer implements Transformer {
 
     @Configured(value = "Value", order = 1)

@@ -29,7 +29,6 @@ import javax.inject.Named;
 @Named("HTML encoder")
 @Description("Encodes/escapes plain text into HTML content")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class HtmlEncoderTransformer implements Transformer {
 
     @Configured

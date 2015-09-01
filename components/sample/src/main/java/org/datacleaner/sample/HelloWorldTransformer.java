@@ -57,7 +57,6 @@ import java.util.Random;
 @Categorized(StringManipulationCategory.class)
 @Description("Put your description of your transformer here")
 @Concurrent(true)
-@WSStatelessComponent
 public class HelloWorldTransformer implements Transformer {
 
 	// REQUIRED: One or more InputColumn based

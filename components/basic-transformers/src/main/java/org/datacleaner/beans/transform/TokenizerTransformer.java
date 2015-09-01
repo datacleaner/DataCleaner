@@ -19,14 +19,13 @@
  */
 package org.datacleaner.beans.transform;
 
-import java.util.StringTokenizer;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.StringManipulationCategory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.StringTokenizer;
 
 /**
  * Tokenizes values into a configurable amount of tokens.
@@ -34,7 +33,6 @@ import org.datacleaner.components.categories.StringManipulationCategory;
 @Named("Tokenizer")
 @Description("Tokenizes a String value (splits into substrings).")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class TokenizerTransformer implements Transformer {
 
     public static enum TokenTarget implements HasName {

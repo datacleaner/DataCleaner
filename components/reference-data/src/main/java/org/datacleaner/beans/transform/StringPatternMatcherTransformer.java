@@ -19,17 +19,16 @@
  */
 package org.datacleaner.beans.transform;
 
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
 import org.datacleaner.reference.StringPattern;
 
+import javax.inject.Named;
+
 @Named("String pattern matcher")
 @Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")
 @Categorized({ MatchingAndStandardizationCategory.class })
-@WSStatelessComponent
 public class StringPatternMatcherTransformer implements Transformer {
 
 	@Configured

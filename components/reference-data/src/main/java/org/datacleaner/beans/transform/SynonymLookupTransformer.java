@@ -39,7 +39,6 @@ import java.util.StringTokenizer;
         @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0"),
         @DocumentationLink(title = "Understanding and using Synonyms", url = "https://www.youtube.com/watch?v=_YiPaA8bFt4", type = DocumentationType.VIDEO, version = "2.0") })
 @Categorized(superCategory = ImproveSuperCategory.class)
-@WSStatelessComponent
 public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
 
     @Configured

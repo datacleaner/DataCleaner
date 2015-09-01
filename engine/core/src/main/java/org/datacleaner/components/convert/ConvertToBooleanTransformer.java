@@ -31,7 +31,6 @@ import org.datacleaner.components.categories.ConversionCategory;
 @Named("Convert to boolean")
 @Description("Converts anything to a boolean (or null).")
 @Categorized(ConversionCategory.class)
-@WSStatelessComponent
 public class ConvertToBooleanTransformer implements Transformer {
 
     public static final String[] DEFAULT_TRUE_TOKENS = new String[] { "true", "yes", "1", "x" };

@@ -31,7 +31,6 @@ import java.util.Arrays;
 @Named("Date mask matcher")
 @Description("Matches String values against a set of date masks, producing a corresponding set of output columns, specifying whether or not the strings could be interpreted as dates given those date masks")
 @Categorized({ MatchingAndStandardizationCategory.class, DateAndTimeCategory.class })
-@WSStatelessComponent
 public class DateMaskMatcherTransformer implements Transformer {
 
 	public static final String[] DEFAULT_DATE_MASKS = new String[] { "yyyy-MM-dd", "yyyy/MM/dd", "dd.MM.yyyy", "dd/MM/yyyy",

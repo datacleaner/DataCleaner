@@ -27,7 +27,6 @@ import javax.inject.Named;
 @Named("Plain search/replace")
 @Description("Search and replace text in String values.")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class PlainSearchReplaceTransformer implements Transformer{
 
     @Configured(value = "Value", order = 1)

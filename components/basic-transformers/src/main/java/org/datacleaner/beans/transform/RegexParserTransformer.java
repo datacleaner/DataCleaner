@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 @Description("Parses strings using a regular expression and transforms it into substrings based on regex groups")
 @ExternalDocumentation({ @DocumentationLink(title = "Regex parsing with DataCleaner", url = "https://www.youtube.com/watch?v=VA6dw5Nv2AM", type = DocumentationType.VIDEO, version = "3.0") })
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class RegexParserTransformer implements Transformer {
 
     @Configured

@@ -34,7 +34,6 @@ import javax.inject.Named;
 @Description("Removes any part of a string that is matched against a dictionary. Use it to standardize or prepare values, for instance by removing adjectives that make comparison of similar terms difficult.")
 @ExternalDocumentation({ @DocumentationLink(title = "Segmenting customers on messy data", url = "https://www.youtube.com/watch?v=iy-j5s-uHz4", type = DocumentationType.VIDEO, version = "4.0") })
 @Categorized({ MatchingAndStandardizationCategory.class })
-@WSStatelessComponent
 public class RemoveDictionaryMatchesTransformer implements Transformer {
 
     public static final String PROPERTY_DICTIONARY = "Dictionary";

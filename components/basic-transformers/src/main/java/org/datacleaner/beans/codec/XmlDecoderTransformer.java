@@ -29,7 +29,6 @@ import javax.inject.Named;
 @Named("XML decoder")
 @Description("Decodes XML content into plain text")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class XmlDecoderTransformer implements Transformer {
 
     @Configured

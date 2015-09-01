@@ -30,7 +30,6 @@ import javax.inject.Named;
 @Named("Concatenator")
 @Description("Concatenate several column values into one.")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class ConcatenatorTransformer implements Transformer {
 
 	@Configured

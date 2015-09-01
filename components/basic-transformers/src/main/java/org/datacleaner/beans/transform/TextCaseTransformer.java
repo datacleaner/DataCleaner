@@ -29,7 +29,6 @@ import java.util.StringTokenizer;
 @Named("Text case transformer")
 @Description("Modifies the text case/capitalization of Strings.")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class TextCaseTransformer implements Transformer {
 
     /**

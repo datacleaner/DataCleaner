@@ -29,7 +29,6 @@ import javax.inject.Named;
 @Named("Convert IP to number")
 @Categorized(NetworkToolsCategory.class)
 @Description("Converts an IPv4 string to a number value, which makes it appropriate for eg. persisting in a number column.")
-@WSStatelessComponent
 public class IpToNumberConverter implements Transformer {
 	private static final Logger logger = LoggerFactory.getLogger(IpToNumberConverter.class);
 

@@ -30,7 +30,6 @@ import javax.inject.Named;
 @Named("Round number")
 @Description("Transformation for rounding a number, typically to the nearest integer, nearest ten, hundred or thousand.")
 @Categorized(NumbersCategory.class)
-@WSStatelessComponent
 public class RoundNumberTransformer implements Transformer {
 
     @Configured

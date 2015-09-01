@@ -19,17 +19,16 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.DataStructuresCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Transformer for building lists based on values in a row.
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 @Named("Build list")
 @Description("Build a list containing a variable amount of elements. Adds the capability to save multiple values in a single field.")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class BuildListTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(BuildMapTransformer.class);

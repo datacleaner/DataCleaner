@@ -32,7 +32,6 @@ import java.math.BigInteger;
 @Named("Increment number")
 @Description("Increment an id, a version or any other number.")
 @Categorized(NumbersCategory.class)
-@WSStatelessComponent
 public class IncrementNumberTransformer implements Transformer {
 
     @Configured

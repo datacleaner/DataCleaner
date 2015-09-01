@@ -19,13 +19,12 @@
  */
 package org.datacleaner.beans.datastructures;
 
-import java.util.List;
+import org.datacleaner.api.*;
+import org.datacleaner.components.categories.DataStructuresCategory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.datacleaner.api.*;
-import org.datacleaner.components.categories.DataStructuresCategory;
+import java.util.List;
 
 /**
  * Transformer for selecting values from maps.
@@ -33,7 +32,6 @@ import org.datacleaner.components.categories.DataStructuresCategory;
 @Named("Select values from list")
 @Description("Given a specified list of indices, this transformer will select the values from a list and place them as columns within the record")
 @Categorized(DataStructuresCategory.class)
-@WSStatelessComponent
 public class SelectFromListTransformer implements Transformer {
 
 	@Inject

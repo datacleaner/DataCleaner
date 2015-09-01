@@ -31,7 +31,6 @@ import java.util.List;
 @Named("Extract date part")
 @Description("Extract the parts of a date (year, month, day etc.)")
 @Categorized(DateAndTimeCategory.class)
-@WSStatelessComponent
 public class DatePartTransformer implements Transformer {
 
 	public static enum WeekDay {

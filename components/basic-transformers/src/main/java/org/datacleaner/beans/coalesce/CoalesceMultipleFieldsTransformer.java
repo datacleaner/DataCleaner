@@ -35,7 +35,6 @@ import java.util.List;
         + "Use it to fuse data streams coming from different filter requirements. You can define new fields whose values represent whatever is available from one of the input streams.\n\n"
         + "Or use it to identify the most accurate or most recent observation, if multiple entries have been recorded in separate columns.")
 @Categorized(CompositionCategory.class)
-@WSStatelessComponent
 public class CoalesceMultipleFieldsTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(CoalesceMultipleFieldsTransformer.class);

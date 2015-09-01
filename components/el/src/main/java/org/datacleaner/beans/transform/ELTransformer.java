@@ -29,7 +29,6 @@ import javax.inject.Named;
 @Named("Expression language (EL) transformer")
 @Description("Generates a column based on an EL expression")
 @Categorized({ ScriptingCategory.class })
-@WSStatelessComponent
 public class ELTransformer implements Transformer {
 
 	@Configured

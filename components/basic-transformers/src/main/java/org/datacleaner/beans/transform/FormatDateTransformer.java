@@ -29,7 +29,6 @@ import java.util.Date;
 @Named("Format date")
 @Description("Allows you to format a date as a string by applying your own date format.")
 @Categorized(DateAndTimeCategory.class)
-@WSStatelessComponent
 public class FormatDateTransformer implements Transformer {
 
     @Configured("Date")

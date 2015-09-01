@@ -19,13 +19,6 @@
  */
 package org.datacleaner.components.convert;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Date;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.ConversionCategory;
 import org.datacleaner.util.Percentage;
@@ -33,13 +26,18 @@ import org.datacleaner.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Date;
+
 /**
  * Attempts to convert anything to a Number (Double) value
  */
 @Named("Convert to number")
 @Description("Converts anything to a number (or null if not possible).")
 @Categorized(ConversionCategory.class)
-@WSStatelessComponent
 public class ConvertToNumberTransformer implements Transformer {
 
     private static final Logger logger = LoggerFactory.getLogger(ConvertToNumberTransformer.class);

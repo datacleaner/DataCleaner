@@ -31,7 +31,6 @@ import javax.inject.Named;
 @Named("URL encoder")
 @Description("Encodes/escapes a URL or part of a URL")
 @Categorized(StringManipulationCategory.class)
-@WSStatelessComponent
 public class UrlEncoderTransformer implements Transformer {
 
     public static enum TargetFormat implements HasName {

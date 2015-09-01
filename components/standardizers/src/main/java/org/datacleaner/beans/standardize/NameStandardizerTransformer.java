@@ -19,17 +19,16 @@
  */
 package org.datacleaner.beans.standardize;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.datacleaner.api.*;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.util.HasGroupLiteral;
 import org.datacleaner.util.NamedPattern;
 import org.datacleaner.util.NamedPatternMatch;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tokenizes/standardizes four components of a full name: Firstname, Lastname,
@@ -38,7 +37,6 @@ import org.datacleaner.util.NamedPatternMatch;
 @Named("Name standardizer")
 @Description("Identify the various parts of a full name column and turn it into separate, standardized tokens.")
 @Categorized({ MatchingAndStandardizationCategory.class })
-@WSStatelessComponent
 public class NameStandardizerTransformer implements Transformer {
 
 	public static final String[] DEFAULT_PATTERNS = { "FIRSTNAME LASTNAME", "TITULATION. FIRSTNAME LASTNAME",

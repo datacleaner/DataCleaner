@@ -44,7 +44,6 @@ public class DataHubConnection {
     private final String _contextPath = "/ui";
     private final String _datahubContext = "/datastores/Golden%20record";
     private final String _scheme;
-    // HttpClientContext _context;
     private boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
@@ -60,13 +59,6 @@ public class DataHubConnection {
         _scheme = _https ? "https" : "http";
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
         _securityMode = securityMode;
-
-        // CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        // credsProvider.setCredentials(
-        // new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT),
-        // new UsernamePasswordCredentials(getUsername(), getPassword()));
-        // _context = HttpClientContext.create();
-        // _context.setCredentialsProvider(credsProvider);
     }
 
     public MonitorHttpClient getHttpClient() {
@@ -79,21 +71,13 @@ public class DataHubConnection {
         }
         final CloseableHttpClient httpClient = clientBuilder.build();
 
-        // if (!isAuthenticationEnabled()) {
-        // return new SimpleWebServiceHttpClient(httpClient);
-        // }
-
-        // final String password =
-        // SecurityUtils.decodePassword(getEncodedPassword());
-        // final String username = getUsername();
-
         if ("CAS".equalsIgnoreCase(_securityMode)) {
             return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username,
                     _password, getBaseUrl());
-        }
-
-        return new HttpBasicMonitorHttpClient(httpClient, getHostname(),
+        } else {
+            return new HttpBasicMonitorHttpClient(httpClient, getHostname(),
                 getPort(), _username, _password);
+        }
     }
 
     public String getHostname() {
@@ -168,9 +152,5 @@ public class DataHubConnection {
     public String getDatahubContextPath() {
         return _datahubContext;
     }
-
-    // public HttpContext getContext() {
-    // return _context;
-    // }
 
 }

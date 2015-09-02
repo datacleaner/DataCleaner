@@ -78,7 +78,7 @@ public class DataHubDataSet extends AbstractDataSet {
         _queryString = getQueryString(query, table);
         _query = query;
         _connection = connection;
-        _uri = encodeUrl(createUri(connection, table));
+        _uri = createEncodedUri(connection, table);
         _paging = query.getMaxRows() == null;
         _nextPageFirstRow = 1;
         _nextPageMaxRows = PAGE_SIZE;
@@ -163,9 +163,9 @@ public class DataHubDataSet extends AbstractDataSet {
         return query.getSelectClause().getItems();
     }
 
-    private String createUri(DataHubConnection connection, Table table) {
+    private String createEncodedUri(DataHubConnection connection, Table table) {
         return connection.getRepositoryUrl() + "/datastores/"
-                + ((DataHubSchema) table.getSchema()).getDatastoreName()
+                + encodeUrl(((DataHubSchema) table.getSchema()).getDatastoreName())
                 + ".query?";
     }
 

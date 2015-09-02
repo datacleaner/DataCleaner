@@ -213,6 +213,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(JSON_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(SALESFORCE_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(DATAHUB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);

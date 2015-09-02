@@ -110,7 +110,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
                         @SuppressWarnings("deprecation")
                         final Object[] values = srv.getValues();
                         final Set<String> valueSet = createValueSet(values, caseSensitive);
-
+                        
                         final Field valuesField = SimpleDictionary.class.getDeclaredField("_valueSet");
                         valuesField.setAccessible(true);
                         valuesField.set(serializable, valueSet);

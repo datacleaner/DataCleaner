@@ -19,6 +19,8 @@
  */
 package org.datacleaner.reference;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +33,7 @@ import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.job.NoSuchColumnException;
 import org.datacleaner.job.NoSuchDatastoreException;
+import org.datacleaner.util.ReadObjectBuilder;
 import org.elasticsearch.common.base.Objects;
 
 /**
@@ -59,6 +62,10 @@ public final class DatastoreDictionary extends AbstractReferenceData implements 
         _datastoreName = datastoreName;
         _qualifiedColumnName = qualifiedColumnName;
         _loadIntoMemory = loadIntoMemory;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, DatastoreDictionary.class).readObject(stream);
     }
 
     @Override

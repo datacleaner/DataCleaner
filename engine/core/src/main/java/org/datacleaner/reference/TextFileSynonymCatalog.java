@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,7 @@ import org.apache.metamodel.util.FileHelper;
 import org.apache.metamodel.util.Func;
 import org.apache.metamodel.util.Resource;
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.convert.ResourceConverter;
 
 import au.com.bytecode.opencsv.CSVParser;
@@ -109,6 +111,10 @@ public final class TextFileSynonymCatalog extends AbstractReferenceData implemen
         });
 
         return new SimpleSynonymCatalog(getName(), synonyms, _caseSensitive).openConnection(configuration);
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, TextFileSynonymCatalog.class).readObject(stream);
     }
 
     @Override

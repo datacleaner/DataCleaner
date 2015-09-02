@@ -19,10 +19,13 @@
  */
 package org.datacleaner.reference;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.util.ReadObjectBuilder;
 import org.elasticsearch.common.base.Objects;
 
 /**
@@ -62,6 +65,10 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
 
     public String getExpression() {
         return _expression;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, RegexStringPattern.class).readObject(stream);
     }
 
     @Override

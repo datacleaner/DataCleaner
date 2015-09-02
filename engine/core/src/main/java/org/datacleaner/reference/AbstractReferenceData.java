@@ -24,12 +24,15 @@ import java.io.ObjectInputStream;
 import java.util.Objects;
 
 import org.datacleaner.util.ReadObjectBuilder;
+import org.datacleaner.util.ReadObjectBuilder.Moved;
 
 public abstract class AbstractReferenceData implements ReferenceData {
 
     private static final long serialVersionUID = 1L;
 
+    @Moved
     private final String _name;
+    
     private String _description;
 
     public AbstractReferenceData(String name) {

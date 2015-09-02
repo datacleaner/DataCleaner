@@ -46,6 +46,7 @@ import org.datacleaner.bootstrap.WindowContext;
 import org.datacleaner.connection.DatahubDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.metamodel.datahub.DataHubConnection;
+import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
 import org.datacleaner.user.MutableDatastoreCatalog;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.user.UserPreferencesImpl;
@@ -70,9 +71,6 @@ public class DataHubDatastoreDialog
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DataHubDatastoreDialog.class);
-
-    public static final String CAS_MODE = "cas";
-    public static final String DEFAULT_MODE = "default";
     
     private static final long serialVersionUID = 1L;
 
@@ -134,7 +132,7 @@ public class DataHubDatastoreDialog
         _passwordTextField = WidgetFactory.createPasswordField();
         _tenantNameTextField = WidgetFactory.createTextField("Tenant id");
 //        _contextPathTextField = WidgetFactory.createTextField("Context path");
-        _securityModeSelector = new JComboBox<>(new String[] { DEFAULT_MODE, CAS_MODE });
+        _securityModeSelector = new JComboBox<>(new String[] { DataHubSecurityMode.DEFAULT.toString(), DataHubSecurityMode.CAS.toString() });
         _securityModeSelector.setEditable(false);
         
         _urlLabel = DCLabel.bright("");
@@ -223,7 +221,7 @@ public class DataHubDatastoreDialog
             _portTextField.setText(originalDatastore.getPort() + "");
             _httpsCheckBox.setSelected(originalDatastore.https());
             _acceptUnverifiedSslPeersCheckBox.setSelected(originalDatastore.acceptUnverifiedSslPeers());
-            if(originalDatastore.getSecurityMode().equalsIgnoreCase(CAS_MODE)) {
+            if(originalDatastore.getSecurityMode().equalsIgnoreCase(DataHubSecurityMode.CAS.toString())) {
                 _securityModeSelector.setSelectedIndex(1);
             } else {
                 _securityModeSelector.setSelectedIndex(0);

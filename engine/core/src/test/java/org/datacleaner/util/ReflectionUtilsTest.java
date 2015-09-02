@@ -19,6 +19,8 @@
  */
 package org.datacleaner.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import junit.framework.TestCase;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputColumn;
@@ -28,11 +30,6 @@ import org.datacleaner.result.TableModelResult;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassA;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassB;
 import org.datacleaner.util.ReflectionUtilTestHelpClass.ClassC;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReflectionUtilsTest extends TestCase {
 
@@ -140,33 +137,23 @@ public class ReflectionUtilsTest extends TestCase {
     }
 
     public void testGetFields() throws Exception {
-        Field[] fields = getNonSyntheticFields(ClassA.class);
-        assertEquals(1, fields.length);
+        int nonSyntheticFieldsCountInA = 1;
+        Field[] fields = ReflectionUtils.getNonSyntheticFields(ClassA.class);
+        assertEquals(nonSyntheticFieldsCountInA, fields.length);
 
         assertEquals(ClassA.class, fields[0].getDeclaringClass());
         assertEquals("a", fields[0].getName());
 
-        fields = getNonSyntheticFields(ClassB.class);
+        fields = ReflectionUtils.getAllFields(ClassA.class);
+        assertTrue(fields.length >= nonSyntheticFieldsCountInA);
+
+        fields = ReflectionUtils.getNonSyntheticFields(ClassB.class);
         assertEquals(2, fields.length);
 
         assertEquals(ClassB.class, fields[0].getDeclaringClass());
         assertEquals("b", fields[0].getName());
         assertEquals(ClassA.class, fields[1].getDeclaringClass());
         assertEquals("a", fields[1].getName());
-    }
-
-    private Field[] getNonSyntheticFields(Class clazz) {
-        List<Field> nonSyntheticFields = new ArrayList<>();
-
-        for (Field field : ReflectionUtils.getFields(clazz)) {
-            if (field.isSynthetic()) {
-                continue;
-            }
-
-            nonSyntheticFields.add(field);
-        }
-
-        return nonSyntheticFields.toArray(new Field[nonSyntheticFields.size()]);
     }
 
     public void testIsArrayAnObject() throws Exception {

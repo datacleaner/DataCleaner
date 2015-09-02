@@ -52,7 +52,7 @@ public abstract class AbstractDescriptor<B> implements Serializable {
 	}
 
 	protected void visitClass() {
-		Field[] fields = ReflectionUtils.getFields(_componentClass);
+		Field[] fields = ReflectionUtils.getAllFields(_componentClass);
 		for (Field field : fields) {
 			visitField(field);
 		}

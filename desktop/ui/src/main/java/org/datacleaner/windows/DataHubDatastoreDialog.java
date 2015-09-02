@@ -43,7 +43,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.metamodel.util.FileHelper;
 import org.datacleaner.bootstrap.DCWindowContext;
 import org.datacleaner.bootstrap.WindowContext;
-import org.datacleaner.connection.DatahubDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.metamodel.datahub.DataHubSecurityMode;
@@ -67,7 +67,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 public class DataHubDatastoreDialog
-        extends AbstractDatastoreDialog<DatahubDatastore> {
+        extends AbstractDatastoreDialog<DataHubDatastore> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DataHubDatastoreDialog.class);
@@ -122,7 +122,7 @@ public class DataHubDatastoreDialog
     @Inject
     public DataHubDatastoreDialog(WindowContext windowContext,
             MutableDatastoreCatalog datastoreCatalog,
-            @Nullable DatahubDatastore originalDatastore,
+            @Nullable DataHubDatastore originalDatastore,
             UserPreferences userPreferences) {
         super(originalDatastore, datastoreCatalog, windowContext, userPreferences);
 
@@ -288,7 +288,7 @@ public class DataHubDatastoreDialog
     }
 
     @Override
-    protected DatahubDatastore createDatastore() {
+    protected DataHubDatastore createDatastore() {
         final String host = _hostTextField.getText();
         final Integer port = Integer.parseInt(_portTextField.getText());
         final String name = _datastoreNameTextField.getText();
@@ -301,7 +301,7 @@ public class DataHubDatastoreDialog
                 .isSelected();
         final String securityMode = _securityModeSelector.getSelectedItem().toString();
 
-        return new DatahubDatastore(name, host, port, username, password,
+        return new DataHubDatastore(name, host, port, username, password,
                 tenantName, https, acceptUnverifiedSslPeersCheckBox,
                 securityMode);
     }

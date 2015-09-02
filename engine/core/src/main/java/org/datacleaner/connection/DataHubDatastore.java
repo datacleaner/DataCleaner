@@ -22,7 +22,7 @@ package org.datacleaner.connection;
 import org.datacleaner.metamodel.datahub.DataHubConnection;
 import org.datacleaner.metamodel.datahub.DataHubDataContext;
 
-public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
+public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         implements UpdateableDatastore, UsernameDatastore {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +35,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
-    public DatahubDatastore(String name, String host, Integer port,
+    public DataHubDatastore(String name, String host, Integer port,
             String username, String password, String tenantName,
             boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
         super(name);

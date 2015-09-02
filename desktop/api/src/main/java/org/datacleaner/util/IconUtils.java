@@ -37,7 +37,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DatahubDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
@@ -471,7 +471,7 @@ public final class IconUtils {
             imagePath = SUGAR_CRM_IMAGEPATH;
         } else if (datastore instanceof CompositeDatastore) {
             imagePath = COMPOSITE_IMAGEPATH;
-        } else if (datastore instanceof DatahubDatastore) {
+        } else if (datastore instanceof DataHubDatastore) {
             imagePath = DATAHUB_IMAGEPATH;
         }
         return imagePath;

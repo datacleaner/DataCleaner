@@ -40,7 +40,7 @@ import org.datacleaner.connection.CassandraDatastore;
 import org.datacleaner.connection.CompositeDatastore;
 import org.datacleaner.connection.CouchDbDatastore;
 import org.datacleaner.connection.CsvDatastore;
-import org.datacleaner.connection.DatahubDatastore;
+import org.datacleaner.connection.DataHubDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.connection.DatastoreConnection;
 import org.datacleaner.connection.DbaseDatastore;
@@ -373,11 +373,11 @@ public class DatastorePanel extends DCPanel {
                     dialog.open();
                 }
             });
-        } else if (datastore instanceof DatahubDatastore) {
+        } else if (datastore instanceof DataHubDatastore) {
             editButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Injector injector = getInjectorBuilder().with(DatahubDatastore.class, datastore).createInjector();
+                    Injector injector = getInjectorBuilder().with(DataHubDatastore.class, datastore).createInjector();
                     DataHubDatastoreDialog dialog = injector.getInstance(DataHubDatastoreDialog.class);
                     dialog.open();
                 }

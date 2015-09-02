@@ -89,7 +89,7 @@ public class DatastoreDescriptors {
             IconUtils.SUGAR_CRM_IMAGEPATH);
 
     private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DataHub",
-            "Connect to DataHub", DatahubDatastore.class, DataHubDatastoreDialog.class,
+            "Connect to DataHub", DataHubDatastore.class, DataHubDatastoreDialog.class,
             IconUtils.DATAHUB_IMAGEPATH);
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(

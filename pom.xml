@@ -47,7 +47,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>engine</module>
-		<module>spark</module>
 	</modules>
 	<profiles>
 		<profile>

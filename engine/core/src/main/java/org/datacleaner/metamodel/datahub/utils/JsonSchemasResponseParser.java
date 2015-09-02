@@ -22,6 +22,7 @@ package org.datacleaner.metamodel.datahub.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,13 +39,8 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class JsonSchemasResponseParser {
 
-    private static final Set<String> datastoreTypes = new HashSet<String>() {
-        {
-            add("GoldenRecordDatastore");
-            add("SourceRecordSourceFormatDatastore");
-            add("SourceRecordGoldenFormatDatastore");
-        }
-    };
+    private static final Set<String> datastoreTypes = new HashSet<>(Arrays.asList(new String[] {
+            "GoldenRecordDatastore", "SourceRecordSourceFormatDatastore", "SourceRecordGoldenFormatDatastore" }));
 
     private static enum DatastoreObject {
         DATASTORE {

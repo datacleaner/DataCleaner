@@ -106,7 +106,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
         return "DataHubDatastore[host= " + _host + ", port=" + _port
                 + ", username=" + _username + ", tenant=" + _tenantName
                 + ", https=" + (_https ? "true" : "false")
-                + ", acceptUnverifiedSslPeers=" + (_acceptUnverifiedSslPeers ? "true" : "false")
+                + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
                 + ", securityMode=" + _securityMode
                 + "]";
     }

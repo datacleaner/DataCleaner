@@ -61,22 +61,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Controller
 public class DatastoreQueryController {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(DatastoreQueryController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreQueryController.class);
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-    
+
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.POST, produces = {
             "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
-    public void queryDatastorePost(HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
-            @RequestBody String query) throws IOException {
+    public void queryDatastorePost(HttpServletResponse response, @PathVariable("tenant") final String tenant,
+            @PathVariable("datastore") String datastoreName, @RequestBody String query) throws IOException {
         response.setContentType("application/xhtml+xml");
         queryDatastoreHtml(tenant, datastoreName, query, response);
     }
@@ -84,38 +81,34 @@ public class DatastoreQueryController {
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, produces = {
             "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
-    public void queryDatastoreGet(HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
-            @RequestParam("q") String query) throws IOException {
+    public void queryDatastoreGet(HttpServletResponse response, @PathVariable("tenant") final String tenant,
+            @PathVariable("datastore") String datastoreName, @RequestParam("q") String query) throws IOException {
         response.setContentType("application/xhtml+xml");
         queryDatastoreHtml(tenant, datastoreName, query, response);
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, headers = "Accept=application/json", produces = {
+            "application/json" })
     @ResponseBody
-    public Map<String, Object> jsonQueryDatastoreGet(
-            HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
+    public Map<String, Object> jsonQueryDatastoreGet(HttpServletResponse response,
+            @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName,
             @RequestParam("q") String query) throws IOException {
         response.setContentType("application/json");
         return getJsonResult(tenant, datastoreName, query, response);
     }
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "f", "m" }, method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", params = { "q", "f",
+            "m" }, method = RequestMethod.GET, headers = "Accept=application/json", produces = { "application/json" })
     @ResponseBody
-    public Map<String, Object> jsonPaginatedGet(
-            @PathVariable("tenant") final String tenant,
-            @PathVariable("datastore") String datastoreName,
-            @RequestParam("q") String query,
-            @RequestParam("f") int firstRow,
-            @RequestParam("m") int maxRows, UriComponentsBuilder uriBuilder, HttpServletResponse response) throws IOException {
+    public Map<String, Object> jsonPaginatedGet(@PathVariable("tenant") final String tenant,
+            @PathVariable("datastore") String datastoreName, @RequestParam("q") String query,
+            @RequestParam("f") int firstRow, @RequestParam("m") int maxRows, UriComponentsBuilder uriBuilder,
+            HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
         // should test for a sensible page size
-        
+
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
         final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
@@ -132,8 +125,8 @@ public class DatastoreQueryController {
             return null;
         }
 
-        logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
-                datastoreName, username, query });
+        logger.info("Serving query result of datastore {} to user: {}. Query: {}",
+                new Object[] { datastoreName, username, query });
 
         try (final DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
@@ -146,7 +139,8 @@ public class DatastoreQueryController {
         }
     }
 
-    private Map<String, Object> getJsonResult(String tenant, String datastoreName, String query, HttpServletResponse response) throws IOException {
+    private Map<String, Object> getJsonResult(String tenant, String datastoreName, String query,
+            HttpServletResponse response) throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
         final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
@@ -163,8 +157,8 @@ public class DatastoreQueryController {
             return null;
         }
 
-        logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
-                datastoreName, username, query });
+        logger.info("Serving query result of datastore {} to user: {}. Query: {}",
+                new Object[] { datastoreName, username, query });
 
         try (final DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
@@ -173,7 +167,7 @@ public class DatastoreQueryController {
             }
         }
     }
-    
+
     private Map<String, Object> getJsonResult(DataSet dataSet) throws IOException {
         final Map<String, Object> map = new HashMap<>();
         map.put("table", createTableMap(dataSet));
@@ -232,8 +226,8 @@ public class DatastoreQueryController {
             return;
         }
 
-        logger.info("Serving query result of datastore {} to user: {}. Query: {}", new Object[] {
-                datastoreName, username, query });
+        logger.info("Serving query result of datastore {} to user: {}. Query: {}",
+                new Object[] { datastoreName, username, query });
 
         try (final DatastoreConnection con = ds.openConnection()) {
             final DataContext dataContext = con.getDataContext();
@@ -288,8 +282,7 @@ public class DatastoreQueryController {
 
     private String getUsername() {
         try {
-            final Authentication authentication = SecurityContextHolder
-                    .getContext().getAuthentication();
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return authentication.getName();
         } catch (Exception e) {
             logger.warn("Error occurred retreiving username", e);

@@ -35,8 +35,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
     private final boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
-    public DataHubDatastore(String name, String host, Integer port,
-            String username, String password, String tenantName,
+    public DataHubDatastore(String name, String host, Integer port, String username, String password, String tenantName,
             boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
         super(name);
         _host = host;
@@ -95,20 +94,17 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
 
     @Override
     protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
-        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
+        final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName,
+                _https, _acceptUnverifiedSslPeers, _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
-        return new DatastoreConnectionImpl<DataHubDataContext>(
-                dataContext, this);
+        return new DatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
     }
 
     @Override
     public String toString() {
-        return "DataHubDatastore[host= " + _host + ", port=" + _port
-                + ", username=" + _username + ", tenant=" + _tenantName
-                + ", https=" + _https
-                + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
-                + ", securityMode=" + _securityMode
-                + "]";
+        return "DataHubDatastore[host= " + _host + ", port=" + _port + ", username=" + _username + ", tenant="
+                + _tenantName + ", https=" + _https + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
+                + ", securityMode=" + _securityMode + "]";
     }
 
 }

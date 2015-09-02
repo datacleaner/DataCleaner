@@ -53,8 +53,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class DatastoreSchemaController {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(DatastoreSchemaController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreSchemaController.class);
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -62,19 +61,15 @@ public class DatastoreSchemaController {
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.schemas", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public Map<String, Object> getSchemas(HttpServletResponse response,
-            @PathVariable("tenant") final String tenant,
+    public Map<String, Object> getSchemas(HttpServletResponse response, @PathVariable("tenant") final String tenant,
             @PathVariable("datastore") String datastoreName) throws IOException {
-        
+
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
-        final DataCleanerConfiguration configuration = _tenantContextFactory
-                .getContext(tenant).getConfiguration();
-        final Datastore datastore = configuration.getDatastoreCatalog()
-                .getDatastore(datastoreName);
+        final DataCleanerConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        final Datastore datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (datastore == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "No such datastore: " + datastoreName);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);
             return Collections.emptyMap();
         }
 
@@ -82,16 +77,15 @@ public class DatastoreSchemaController {
 
         final DataContext dataContext = getDataContext(datastore);
 
-        logger.info("Serving schemas in datastore {} to user: {}.",
-                new Object[] { datastoreName, username });
-        
+        logger.info("Serving schemas in datastore {} to user: {}.", new Object[] { datastoreName, username });
+
         final Map<String, Object> schemas = new HashMap<>();
         schemas.put("schemas", createSchemaList(dataContext));
         return schemas;
     }
 
-    private List<Map<String,Object>> createSchemaList(DataContext dataContext) {
-        List<Map<String,Object>> schemas = new ArrayList<>();
+    private List<Map<String, Object>> createSchemaList(DataContext dataContext) {
+        List<Map<String, Object>> schemas = new ArrayList<>();
         for (Schema schema : dataContext.getSchemas()) {
             schemas.add(createSchemaMap(schema));
         }
@@ -105,8 +99,8 @@ public class DatastoreSchemaController {
         return map;
     }
 
-    private List<Map<String,Object>> createTableList(Schema schema) {
-        List<Map<String,Object>> tables = new ArrayList<>();
+    private List<Map<String, Object>> createTableList(Schema schema) {
+        List<Map<String, Object>> tables = new ArrayList<>();
         for (Table table : schema.getTables()) {
             tables.add(createTableMap(table));
         }
@@ -120,8 +114,8 @@ public class DatastoreSchemaController {
         return map;
     }
 
-    private List<Map<String,Object>> createColumnList(Table table) {
-        List<Map<String,Object>> columns = new ArrayList<>();
+    private List<Map<String, Object>> createColumnList(Table table) {
+        List<Map<String, Object>> columns = new ArrayList<>();
         for (Column column : table.getColumns()) {
             columns.add(createColumnMap(column));
         }
@@ -147,7 +141,7 @@ public class DatastoreSchemaController {
         ColumnType type = column.getType();
         return type == null ? null : type.getName();
     }
-    
+
     private DataContext getDataContext(Datastore datastore) {
         try (final DatastoreConnection connection = datastore.openConnection()) {
             return connection.getDataContext();
@@ -156,8 +150,7 @@ public class DatastoreSchemaController {
 
     private String getUsername() {
         try {
-            final Authentication authentication = SecurityContextHolder
-                    .getContext().getAuthentication();
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             return authentication.getName();
         } catch (Exception e) {
             logger.warn("Error occurred retreiving username", e);

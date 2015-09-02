@@ -51,8 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataHubDataSet extends AbstractDataSet {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DataHubDataSet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataHubDataSet.class);
 
     private static final int PAGE_SIZE = 10000;
 
@@ -115,10 +114,8 @@ public class DataHubDataSet extends AbstractDataSet {
     }
 
     private Iterator<Object[]> getNextPage() {
-        final Integer firstRow = (_query.getFirstRow() == null
-                ? _nextPageFirstRow : _query.getFirstRow());
-        final Integer maxRows = (_query.getMaxRows() == null ? _nextPageMaxRows
-                : _query.getMaxRows());
+        final Integer firstRow = (_query.getFirstRow() == null ? _nextPageFirstRow : _query.getFirstRow());
+        final Integer maxRows = (_query.getMaxRows() == null ? _nextPageMaxRows : _query.getMaxRows());
 
         _nextPageFirstRow = _nextPageFirstRow + _nextPageMaxRows;
 
@@ -135,8 +132,7 @@ public class DataHubDataSet extends AbstractDataSet {
     private Iterator<Object[]> getResultSet(HttpEntity entity) {
         JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
         try {
-            List<Object[]> resultSet = parser
-                    .parseQueryResult(entity.getContent());
+            List<Object[]> resultSet = parser.parseQueryResult(entity.getContent());
             return resultSet.iterator();
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -165,8 +161,7 @@ public class DataHubDataSet extends AbstractDataSet {
 
     private String createEncodedUri(DataHubConnection connection, Table table) {
         return connection.getRepositoryUrl() + "/datastores/"
-                + encodeUrl(((DataHubSchema) table.getSchema()).getDatastoreName())
-                + ".query?";
+                + encodeUrl(((DataHubSchema) table.getSchema()).getDatastoreName()) + ".query?";
     }
 
     private String getQueryString(Query query, Table table) {
@@ -185,16 +180,13 @@ public class DataHubDataSet extends AbstractDataSet {
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 403) {
-            throw new AccessControlException(
-                    "You are not authorized to access the service");
+            throw new AccessControlException("You are not authorized to access the service");
         }
         if (statusCode == 404) {
-            throw new AccessControlException(
-                    "Could not connect to Datahub: not found");
+            throw new AccessControlException("Could not connect to Datahub: not found");
         }
         if (statusCode != 200) {
-            throw new IllegalStateException(
-                    "Unexpected response status code: " + statusCode);
+            throw new IllegalStateException("Unexpected response status code: " + statusCode);
         }
         return response;
     }

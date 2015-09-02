@@ -67,8 +67,7 @@ public class JsonQueryDatasetResponseParser {
                     _arrayCount--;
                 } else if (_parsingRow) {
                     _parsingRow = false;
-                    queryResult.add(_currentRow
-                            .toArray(new Object[_currentRow.size()]));
+                    queryResult.add(_currentRow.toArray(new Object[_currentRow.size()]));
                 } else if (_parsingRows) {
                     _parsingRows = false;
                 }

@@ -20,8 +20,8 @@
 package org.datacleaner.metamodel.datahub;
 
 /**
- * Enumerates the supported DataHub security models that are supported
- * by the DataHub Connector.
+ * Enumerates the supported DataHub security models that are supported by the
+ * DataHub Connector.
  *
  */
 public enum DataHubSecurityMode {

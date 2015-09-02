@@ -39,10 +39,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.UrlEscapers;
 
-public class DataHubDataContext extends AbstractDataContext implements
-        DataContext {
-    private static final Logger logger = LoggerFactory
-            .getLogger(DataHubDataContext.class);
+public class DataHubDataContext extends AbstractDataContext implements DataContext {
+    private static final Logger logger = LoggerFactory.getLogger(DataHubDataContext.class);
 
     private DataHubConnection _connection;
     private Map<String, DataHubSchema> _schemas;
@@ -63,8 +61,7 @@ public class DataHubDataContext extends AbstractDataContext implements
             final HttpEntity entity = response.getEntity();
             final JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
-                final DataHubSchema schema = parser.parseJsonSchema(entity
-                        .getContent());
+                final DataHubSchema schema = parser.parseJsonSchema(entity.getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
             } catch (Exception e) {
@@ -109,16 +106,13 @@ public class DataHubDataContext extends AbstractDataContext implements
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode == 403) {
-            throw new AccessControlException(
-                    "You are not authorized to access the service");
+            throw new AccessControlException("You are not authorized to access the service");
         }
         if (statusCode == 404) {
-            throw new AccessControlException(
-                    "Could not connect to Datahub: not found");
+            throw new AccessControlException("Could not connect to Datahub: not found");
         }
         if (statusCode != 200) {
-            throw new IllegalStateException("Unexpected response status code: "
-                    + statusCode);
+            throw new IllegalStateException("Unexpected response status code: " + statusCode);
         }
         return response;
     }

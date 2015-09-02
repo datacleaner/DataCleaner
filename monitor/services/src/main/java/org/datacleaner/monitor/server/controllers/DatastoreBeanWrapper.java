@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author anand
  */
 public class DatastoreBeanWrapper {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DatastoreBeanWrapper.class);
 
     private final Datastore _datastore;
@@ -124,7 +124,7 @@ public class DatastoreBeanWrapper {
             }
             return null;
         } catch (Exception e) {
-            logger.debug("Failed to invoke method 'getHostname'",e);
+            logger.debug("Failed to invoke method 'getHostname'", e);
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class DatastoreBeanWrapper {
                 return resource.isExists();
             }
         }
-        
+
         String filename = getFilename();
         if (filename == null) {
             return false;
@@ -153,7 +153,7 @@ public class DatastoreBeanWrapper {
         try {
             return _datastore.getClass().getDeclaredMethod("getHostname") != null;
         } catch (Exception e) {
-            logger.debug("Failed to get method 'getHostname'",e);
+            logger.debug("Failed to get method 'getHostname'", e);
             return false;
         }
     }

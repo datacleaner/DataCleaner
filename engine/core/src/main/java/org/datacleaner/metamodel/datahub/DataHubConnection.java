@@ -49,8 +49,8 @@ public class DataHubConnection {
     private boolean _acceptUnverifiedSslPeers;
     private final String _securityMode;
 
-    public DataHubConnection(String hostname, Integer port, String username,
-            String password, String tenantId, boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
+    public DataHubConnection(String hostname, Integer port, String username, String password, String tenantId,
+            boolean https, boolean acceptUnverifiedSslPeers, String securityMode) {
 
         _hostname = hostname;
         _port = port;
@@ -65,20 +65,16 @@ public class DataHubConnection {
 
     public MonitorHttpClient getHttpClient() {
 
-        final HttpClientBuilder clientBuilder = HttpClients.custom()
-                .useSystemProperties();
+        final HttpClientBuilder clientBuilder = HttpClients.custom().useSystemProperties();
         if (_acceptUnverifiedSslPeers) {
-            clientBuilder.setSSLSocketFactory(
-                    SecurityUtils.createUnsafeSSLConnectionSocketFactory());
+            clientBuilder.setSSLSocketFactory(SecurityUtils.createUnsafeSSLConnectionSocketFactory());
         }
         final CloseableHttpClient httpClient = clientBuilder.build();
 
         if ("CAS".equalsIgnoreCase(_securityMode)) {
-            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username,
-                    _password, getBaseUrl());
+            return new CASMonitorHttpClient(httpClient, getCasServerUrl(), _username, _password, getBaseUrl());
         } else {
-            return new HttpBasicMonitorHttpClient(httpClient, getHostname(),
-                getPort(), _username, _password);
+            return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), _username, _password);
         }
     }
 

@@ -42,7 +42,7 @@ public class DataHubSchema extends AbstractSchema {
     public DataHubSchema() {
         _name = "";
         _tables = new ArrayList<Table>();
-        
+
     }
 
     @Override
@@ -65,15 +65,15 @@ public class DataHubSchema extends AbstractSchema {
     }
 
     public void setName(String name) {
-        _name = name;        
+        _name = name;
     }
-    
+
     public void setDatastoreName(String name) {
-        _datastoreName = name;        
+        _datastoreName = name;
     }
-    
+
     public void addTable(MutableTable table) {
-        _tables.add(table);        
+        _tables.add(table);
     }
 
     public void addTables(Table[] tables) {

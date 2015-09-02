@@ -37,15 +37,14 @@ public class DataHubColumnBuilder {
     String _quote;
     boolean _primaryKey;
     Table _table;
-    
+
     public DataHubColumnBuilder withName(String name) {
         _name = name;
         return this;
     }
-    
+
     public Column build() {
-        final MutableColumn column = new MutableColumn(_name,
-                _type, _table, _number, _size, _nativeType, _nullable,
+        final MutableColumn column = new MutableColumn(_name, _type, _table, _number, _size, _nativeType, _nullable,
                 _remarks, _indexed, _quote);
         column.setPrimaryKey(_primaryKey);
         return column;
@@ -59,30 +58,30 @@ public class DataHubColumnBuilder {
     public DataHubColumnBuilder withQuote(String quote) {
         _quote = quote;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withPrimaryKey(boolean primaryKey) {
         _primaryKey = primaryKey;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withRemarks(String remarks) {
         _remarks = remarks;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withNullable(boolean nullable) {
         _nullable = nullable;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withType(String type) {
         _type = toColumnType(type);
-        return this;        
+        return this;
     }
 
     private ColumnType toColumnType(String columnType) {
@@ -101,20 +100,20 @@ public class DataHubColumnBuilder {
         } else if (columnType.equals("BOOLEAN")) {
             return ColumnType.BOOLEAN;
         }
-        //TODO throw exception?
+        // TODO throw exception?
         return null;
     }
 
     public DataHubColumnBuilder withNativeType(String nativeType) {
         _nativeType = nativeType;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withSize(Integer size) {
         _size = size;
         return this;
-        
+
     }
 
     public DataHubColumnBuilder withTable(MutableTable table) {
@@ -125,7 +124,7 @@ public class DataHubColumnBuilder {
     public DataHubColumnBuilder withNumber(Integer number) {
         _number = number;
         return this;
-        
+
     }
 
 }

@@ -81,8 +81,7 @@ public class JsonSchemasResponseParser {
     private String _currentDataStoreName;
     private List<String> _dataStoreNames = new ArrayList<String>();
 
-    public DataHubSchema parseJsonSchema(InputStream is)
-            throws JsonParseException, IOException {
+    public DataHubSchema parseJsonSchema(InputStream is) throws JsonParseException, IOException {
         _currentObject = DatastoreObject.DATASTORE;
         _currentFieldname = "";
         JsonFactory factory = new JsonFactory();
@@ -231,12 +230,10 @@ public class JsonSchemasResponseParser {
         }
     }
 
-
     private void handleDataStoreValue(String value) {
         if (_currentFieldname.equals("name")) {
             _currentDataStoreName = value;
-        } else if (_currentFieldname.equals("type")
-                && datastoreTypes.contains(value)) {
+        } else if (_currentFieldname.equals("type") && datastoreTypes.contains(value)) {
             _dataStoreNames.add(_currentDataStoreName);
         }
     }

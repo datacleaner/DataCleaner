@@ -22,16 +22,16 @@ package org.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.bootstrap.WindowContext;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.guice.Nullable;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.reference.TextFileSynonymCatalog;
@@ -45,30 +45,30 @@ import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
 import org.datacleaner.widgets.CharSetEncodingComboBox;
+import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
-import org.datacleaner.widgets.FileSelectionListener;
-import org.datacleaner.widgets.FilenameTextField;
+import org.datacleaner.widgets.ResourceSelector;
+import org.datacleaner.widgets.ResourceTypePresenter;
 import org.jdesktop.swingx.JXTextField;
 
 public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private final UserPreferences _userPreferences;
     private final TextFileSynonymCatalog _originalsynonymCatalog;
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _nameTextField;
-    private final JCheckBox _caseSensitiveCheckBox;
-    private final FilenameTextField _filenameTextField;
+    private final DCCheckBox<Boolean> _caseSensitiveCheckBox;
+    private final ResourceSelector _resourceSelector;
     private final CharSetEncodingComboBox _encodingComboBox;
     private volatile boolean _nameAutomaticallySet = true;
 
     @Inject
     protected TextFileSynonymCatalogDialog(@Nullable TextFileSynonymCatalog synonymCatalog,
-            MutableReferenceDataCatalog catalog, WindowContext windowContext, UserPreferences userPreferences) {
+            MutableReferenceDataCatalog catalog, WindowContext windowContext, DataCleanerConfiguration configuration,
+            UserPreferences userPreferences) {
         super(windowContext, ImageManager.get().getImage(IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH));
-        _userPreferences = userPreferences;
         _originalsynonymCatalog = synonymCatalog;
         _catalog = catalog;
 
@@ -80,28 +80,35 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
             }
         });
 
-        _filenameTextField = new FilenameTextField(_userPreferences.getOpenDatastoreDirectory(), true);
-        _filenameTextField.addFileSelectionListener(new FileSelectionListener() {
+        _resourceSelector = new ResourceSelector(configuration, userPreferences, true);
+        _resourceSelector.addListener(new ResourceTypePresenter.Listener() {
             @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
+            public void onResourceSelected(ResourceTypePresenter<?> presenter, Resource resource) {
                 if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
-                    _nameTextField.setText(file.getName());
+                    _nameTextField.setText(resource.getName());
                     _nameAutomaticallySet = true;
                 }
-                File dir = file.getParentFile();
-                _userPreferences.setOpenDatastoreDirectory(dir);
+            }
+
+            @Override
+            public void onPathEntered(ResourceTypePresenter<?> presenter, String path) {
+                if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
+                    _nameTextField.setText(path);
+                    _nameAutomaticallySet = true;
+                }
             }
         });
 
-        _caseSensitiveCheckBox = new JCheckBox();
+        _caseSensitiveCheckBox = new DCCheckBox<>("Case-sensitive?", false);
+        _caseSensitiveCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _caseSensitiveCheckBox.setOpaque(false);
-        _caseSensitiveCheckBox.setSelected(false);
+        _caseSensitiveCheckBox.setToolTipText("Only match on dictionary terms when text-case is the same.");
 
         _encodingComboBox = new CharSetEncodingComboBox();
 
         if (synonymCatalog != null) {
             _nameTextField.setText(synonymCatalog.getName());
-            _filenameTextField.setFilename(synonymCatalog.getFilename());
+            _resourceSelector.setResourcePath(synonymCatalog.getFilename());
             _encodingComboBox.setSelectedItem(synonymCatalog.getEncoding());
             _caseSensitiveCheckBox.setSelected(synonymCatalog.isCaseSensitive());
         }
@@ -114,7 +121,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 465;
+        return 600;
     }
 
     @Override
@@ -126,16 +133,15 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_filenameTextField, formPanel, 1, row);
-
-        row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Case sensitive matches:"), formPanel, 0, row);
-        WidgetUtils.addToGridBag(_caseSensitiveCheckBox, formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("Path:"), formPanel, 0, row);
+        WidgetUtils.addToGridBag(_resourceSelector, formPanel, 1, row);
 
         row++;
         WidgetUtils.addToGridBag(DCLabel.bright("Character encoding:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(_encodingComboBox, formPanel, 1, row);
+
+        row++;
+        WidgetUtils.addToGridBag(_caseSensitiveCheckBox, formPanel, 1, row);
 
         row++;
         final JButton saveButton = WidgetFactory.createPrimaryButton("Save synonym catalog",
@@ -143,29 +149,30 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = _nameTextField.getText();
+                final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
                             "Please fill out the name of the synonym catalog");
                     return;
                 }
 
-                String filename = _filenameTextField.getFilename();
-                if (StringUtils.isNullOrEmpty(filename)) {
+                final String path = _resourceSelector.getResourcePath();
+                if (StringUtils.isNullOrEmpty(path)) {
                     JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
-                            "Please fill out the filename or select a file using the 'Browse' button");
+                            "Please fill out the path or select a file using the 'Browse' button");
                     return;
                 }
 
-                String encoding = (String) _encodingComboBox.getSelectedItem();
-                if (StringUtils.isNullOrEmpty(filename)) {
+                final String encoding = (String) _encodingComboBox.getSelectedItem();
+                if (StringUtils.isNullOrEmpty(encoding)) {
                     JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
                             "Please select a character encoding");
                     return;
                 }
 
-                TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, filename, _caseSensitiveCheckBox
-                        .isSelected(), encoding);
+                final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
+
+                final TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, path, caseSensitive, encoding);
 
                 if (_originalsynonymCatalog != null) {
                     _catalog.removeSynonymCatalog(_originalsynonymCatalog);

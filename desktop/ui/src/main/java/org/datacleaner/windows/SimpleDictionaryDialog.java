@@ -40,6 +40,7 @@ import org.datacleaner.util.StringUtils;
 import org.datacleaner.util.WidgetFactory;
 import org.datacleaner.util.WidgetUtils;
 import org.datacleaner.widgets.Alignment;
+import org.datacleaner.widgets.DCCheckBox;
 import org.datacleaner.widgets.DCLabel;
 import org.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextArea;
@@ -53,6 +54,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
     private final MutableReferenceDataCatalog _catalog;
     private final JXTextField _nameTextField;
     private final JXTextArea _valuesTextArea;
+    private final DCCheckBox<Boolean> _caseSensitiveCheckBox;
 
     @Inject
     protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
@@ -64,6 +66,11 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         _nameTextField = WidgetFactory.createTextField("Dictionary name");
         _valuesTextArea = WidgetFactory.createTextArea("Values");
         _valuesTextArea.setRows(14);
+
+        _caseSensitiveCheckBox = new DCCheckBox<>("Case-sensitive?", false);
+        _caseSensitiveCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        _caseSensitiveCheckBox.setOpaque(false);
+        _caseSensitiveCheckBox.setToolTipText("Only match on dictionary terms when text-case is the same.");
 
         if (dictionary != null) {
             _nameTextField.setText(dictionary.getName());
@@ -79,6 +86,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
                 sb.append(value);
             }
             _valuesTextArea.setText(sb.toString());
+            _caseSensitiveCheckBox.setSelected(dictionary.isCaseSensitive());
         }
     }
 
@@ -89,7 +97,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 400;
+        return 600;
     }
 
     @Override
@@ -104,25 +112,30 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
         WidgetUtils.addToGridBag(DCLabel.bright("Values:"), formPanel, 0, row);
         WidgetUtils.addToGridBag(WidgetUtils.scrolleable(_valuesTextArea), formPanel, 1, row);
 
+        row++;
+        WidgetUtils.addToGridBag(_caseSensitiveCheckBox, formPanel, 1, row);
+
         final JButton createDictionaryButton = WidgetFactory.createPrimaryButton("Save dictionary",
                 IconUtils.ACTION_SAVE_BRIGHT);
         createDictionaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = _nameTextField.getText();
+                final String name = _nameTextField.getText();
                 if (StringUtils.isNullOrEmpty(name)) {
                     JOptionPane.showMessageDialog(SimpleDictionaryDialog.this,
                             "Please fill out the name of the dictionary");
                     return;
                 }
 
-                String values = _valuesTextArea.getText();
+                final String values = _valuesTextArea.getText();
                 if (StringUtils.isNullOrEmpty(values)) {
                     JOptionPane.showMessageDialog(SimpleDictionaryDialog.this, "Please fill out the values");
                     return;
                 }
 
-                SimpleDictionary dict = new SimpleDictionary(name, values.split("\n"));
+                final boolean caseSensitive = _caseSensitiveCheckBox.isSelected();
+
+                SimpleDictionary dict = new SimpleDictionary(name, caseSensitive, values.split("\n"));
 
                 if (_originalDictionary != null) {
                     _catalog.removeDictionary(_originalDictionary);

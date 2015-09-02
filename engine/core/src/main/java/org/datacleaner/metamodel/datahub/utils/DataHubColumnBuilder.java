@@ -21,10 +21,9 @@ package org.datacleaner.metamodel.datahub.utils;
 
 import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ImmutableColumn;
+import org.apache.metamodel.schema.MutableColumn;
+import org.apache.metamodel.schema.MutableTable;
 import org.apache.metamodel.schema.Table;
-import org.datacleaner.metamodel.datahub.DataHubTable;
-
 
 public class DataHubColumnBuilder {
     String _name;
@@ -45,9 +44,11 @@ public class DataHubColumnBuilder {
     }
     
     public Column build() {
-        return new ImmutableColumn(_name,
+        final MutableColumn column = new MutableColumn(_name,
                 _type, _table, _number, _size, _nativeType, _nullable,
-                _remarks, _indexed, _quote, _primaryKey);
+                _remarks, _indexed, _quote);
+        column.setPrimaryKey(_primaryKey);
+        return column;
     }
 
     public DataHubColumnBuilder withIndexed(boolean indexed) {
@@ -116,7 +117,7 @@ public class DataHubColumnBuilder {
         
     }
 
-    public DataHubColumnBuilder withTable(DataHubTable table) {
+    public DataHubColumnBuilder withTable(MutableTable table) {
         _table = table;
         return this;
     }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.metamodel.schema.AbstractSchema;
+import org.apache.metamodel.schema.MutableTable;
 /**
  *  implementation of Datahub schema, final must be implemented in metamodel
  */
@@ -71,7 +72,7 @@ public class DataHubSchema extends AbstractSchema {
         _datastoreName = name;        
     }
     
-    public void addTable(DataHubTable table) {
+    public void addTable(MutableTable table) {
         _tables.add(table);        
     }
 

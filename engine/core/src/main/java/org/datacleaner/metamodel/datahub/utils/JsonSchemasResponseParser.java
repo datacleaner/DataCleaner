@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.metamodel.datahub.DataHubSchema;
-import org.datacleaner.metamodel.datahub.DataHubTable;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -74,7 +74,7 @@ public class JsonSchemasResponseParser {
     private DatastoreObject _currentObject;
     private String _currentFieldname;
     private DataHubSchema _currentSchema;
-    private DataHubTable _currentTable;
+    private MutableTable _currentTable;
     private DataHubColumnBuilder _currentColumnBuilder;
     private DataHubSchema _resultSchema;
 
@@ -137,7 +137,7 @@ public class JsonSchemasResponseParser {
             break;
         case COLUMN:
             _currentColumnBuilder.withTable(_currentTable);
-            _currentTable.add(_currentColumnBuilder.build());
+            _currentTable.addColumn(_currentColumnBuilder.build());
             break;
         default:
         }
@@ -148,7 +148,7 @@ public class JsonSchemasResponseParser {
         case SCHEMA:
             _currentSchema = new DataHubSchema();
         case TABLE:
-            _currentTable = new DataHubTable();
+            _currentTable = new MutableTable();
             break;
         case COLUMN:
             _currentColumnBuilder = new DataHubColumnBuilder();

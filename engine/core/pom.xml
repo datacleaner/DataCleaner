@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -21,19 +22,19 @@
 			<groupId>org.apache.metamodel</groupId>
 			<artifactId>MetaModel-hbase</artifactId>
 			<exclusions>
-<!-- 				<exclusion>
+				<exclusion>
 					<groupId>com.codehaus.jackson</groupId>
 					<artifactId>jackson-core-asl</artifactId>
 				</exclusion>
-                <exclusion>
-                    <groupId>com.codehaus.jackson</groupId>
-                    <artifactId>jackson-mapper-asl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commmons.logging</artifactId>
-                </exclusion>
- -->			</exclusions>
+				<exclusion>
+					<groupId>com.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commmons.logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.metamodel-extras</groupId>
@@ -67,7 +68,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-vfs2</artifactId>
 		</dependency>
-		
+
 		<!-- HTTP client needed for VFS support of HTTP. Hopefully it will be replaced 
 			by HTTP components (4.x) at some point. -->
 		<dependency>

@@ -29,6 +29,8 @@ import org.datacleaner.util.http.CASMonitorHttpClient;
 import org.datacleaner.util.http.HttpBasicMonitorHttpClient;
 import org.datacleaner.util.http.MonitorHttpClient;
 
+import com.google.common.net.UrlEscapers;
+
 /**
  * Describes the connection information needed to connect to the DataHub.
  */
@@ -110,7 +112,7 @@ public class DataHubConnection {
 
     public String getRepositoryUrl() {
         return getBaseUrl() + "/repository"
-                + (StringUtils.isEmpty(_tenantId) ? "" : "/" + _tenantId);
+                + (StringUtils.isEmpty(_tenantId) ? "" : "/" + UrlEscapers.urlPathSegmentEscaper().escape(_tenantId));
     }
 
     public String getBaseUrl() {

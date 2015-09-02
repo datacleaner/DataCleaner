@@ -97,7 +97,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
     protected UsageAwareDatastoreConnection<DataHubDataContext> createDatastoreConnection() {
         final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName, _https, _acceptUnverifiedSslPeers, _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
-        return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(
+        return new DatastoreConnectionImpl<DataHubDataContext>(
                 dataContext, this);
     }
 
@@ -105,7 +105,7 @@ public class DatahubDatastore extends UsageAwareDatastore<DataHubDataContext>
     public String toString() {
         return "DataHubDatastore[host= " + _host + ", port=" + _port
                 + ", username=" + _username + ", tenant=" + _tenantName
-                + ", https=" + (_https ? "true" : "false")
+                + ", https=" + _https
                 + ", acceptUnverifiedSslPeers=" + _acceptUnverifiedSslPeers
                 + ", securityMode=" + _securityMode
                 + "]";

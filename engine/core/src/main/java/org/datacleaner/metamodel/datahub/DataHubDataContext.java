@@ -19,13 +19,10 @@
  */
 package org.datacleaner.metamodel.datahub;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.AccessControlException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,6 +37,8 @@ import org.datacleaner.util.http.MonitorHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.net.UrlEscapers;
+
 public class DataHubDataContext extends AbstractDataContext implements
         DataContext {
     private static final Logger logger = LoggerFactory
@@ -53,43 +52,18 @@ public class DataHubDataContext extends AbstractDataContext implements
         _schemas = getDatahubSchemas();
     }
 
-    private static final Pattern COLON = Pattern
-            .compile("%3A", Pattern.LITERAL);
-    private static final Pattern SLASH = Pattern
-            .compile("%2F", Pattern.LITERAL);
-    private static final Pattern QUEST_MARK = Pattern.compile("%3F",
-            Pattern.LITERAL);
-    private static final Pattern EQUAL = Pattern
-            .compile("%3D", Pattern.LITERAL);
-    private static final Pattern AMP = Pattern.compile("%26", Pattern.LITERAL);
-
-    public static String encodeUrl(String url) {
-        // if (checkForExternal(url)) {
-        String value;
-        try {
-            value = URLEncoder.encode(url, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
-        value = COLON.matcher(value).replaceAll(":");
-        value = SLASH.matcher(value).replaceAll("/");
-        value = QUEST_MARK.matcher(value).replaceAll("?");
-        value = EQUAL.matcher(value).replaceAll("=");
-        return AMP.matcher(value).replaceAll("&");
-    }
-
     private Map<String, DataHubSchema> getDatahubSchemas() {
         Map<String, DataHubSchema> schemas = new HashMap<String, DataHubSchema>();
-        for (String datastoreName : getDataStoreNames()) {
-            String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
-                    + datastoreName + ".schemas";
+        for (final String datastoreName : getDataStoreNames()) {
+            final String uri = _connection.getRepositoryUrl() + "/datastores" + "/"
+                    + UrlEscapers.urlPathSegmentEscaper().escape(datastoreName) + ".schemas";
             logger.debug("request {}", uri);
-            HttpGet request = new HttpGet(encodeUrl(uri));
-            HttpResponse response = executeRequest(request);
-            HttpEntity entity = response.getEntity();
-            JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
+            final HttpGet request = new HttpGet(uri);
+            final HttpResponse response = executeRequest(request);
+            final HttpEntity entity = response.getEntity();
+            final JsonSchemasResponseParser parser = new JsonSchemasResponseParser();
             try {
-                DataHubSchema schema = parser.parseJsonSchema(entity
+                final DataHubSchema schema = parser.parseJsonSchema(entity
                         .getContent());
                 schema.setDatastoreName(datastoreName);
                 schemas.put(schema.getName(), schema);
@@ -108,7 +82,7 @@ public class DataHubDataContext extends AbstractDataContext implements
     private List<String> getDataStoreNames() {
         String uri = _connection.getRepositoryUrl() + "/datastores";
         logger.debug("request {}", uri);
-        HttpGet request = new HttpGet(encodeUrl(uri));
+        HttpGet request = new HttpGet(uri);
         HttpResponse response = executeRequest(request);
         HttpEntity entity = response.getEntity();
         JsonSchemasResponseParser parser = new JsonSchemasResponseParser();

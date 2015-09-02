@@ -29,17 +29,13 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.TableType;
 
 /**
- * Dummy implementation of Datahub table, final version must be implemented in
+ * Dummy implementation of DataHub table, final version must be implemented in
  * metamodel
  * 
- * @author hetty
  *
  */
 public class DataHubTable extends AbstractTable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String _name;
     private List<Column> _columns;

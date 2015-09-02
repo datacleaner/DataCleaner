@@ -28,6 +28,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
+import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.junit.Test;
@@ -74,5 +75,42 @@ public class SparkAnalysisRunnerTest extends TestCase {
 
         final int upperCaseChars = stringAnalyzerResult.getEntirelyUpperCaseCount(stringAnalyzerResult.getColumns()[0]);
         assertEquals(7, upperCaseChars);
+    }
+    
+    @Test
+    public void testOutputDataStreamsScenario() throws Exception {
+        final AnalysisResultFuture result;
+
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest");
+        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        try {
+
+            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+                    "src/test/resources/conf_local.xml", "src/test/resources/melon-job.analysis.xml");
+            final AnalysisJob job = sparkJobContext.getAnalysisJob();
+            assertNotNull(job);
+
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
+
+            result = sparkAnalysisRunner.run(job);
+        } finally {
+            sparkContext.close();
+        }
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(2, results.size());
+
+        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
+        assertEquals("", completeValueMatcherAnalyzerResult.getCount("Tomasz"));
+        assertNull(completeValueMatcherAnalyzerResult.getCount("Kasper"));
+        
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
+        assertNull(incompleteValueMatcherAnalyzerResult.getCount("Tomasz"));
+        assertEquals("", incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
+        
     }
 }

@@ -66,9 +66,6 @@ public class DatastoreQueryController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
     @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.POST, produces = {
             "text/xml", "application/xml", "application/xhtml+xml", "text/html" })

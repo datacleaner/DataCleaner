@@ -31,8 +31,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.metamodel.AbstractDataContext;
-import org.apache.metamodel.UpdateScript;
-import org.apache.metamodel.UpdateableDataContext;
+import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
@@ -42,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DataHubDataContext extends AbstractDataContext implements
-        UpdateableDataContext {
+        DataContext {
     private static final Logger logger = LoggerFactory
             .getLogger(DataHubDataContext.class);
 
@@ -101,11 +100,6 @@ public class DataHubDataContext extends AbstractDataContext implements
         return schemas;
     }
 
-    @Override
-    public void executeUpdate(UpdateScript arg0) {
-        // TODO Auto-generated method stub
-    }
-    
     @Override
     public DataSet executeQuery(final Query query) {
         return new DataHubDataSet(query, _connection);

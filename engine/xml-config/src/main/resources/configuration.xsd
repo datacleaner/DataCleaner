@@ -165,7 +165,7 @@
                 <element name="datahub-datastore" type="ab:datahubDatastoreType">
                     <annotation>
                         <documentation>
-                            Defines a datastore based on a HIquality Datahub.
+                            Defines a datastore based on DataHub.
                         </documentation>
                     </annotation>
                 </element>

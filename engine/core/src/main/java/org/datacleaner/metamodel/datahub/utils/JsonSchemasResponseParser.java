@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.metamodel.schema.ColumnTypeImpl;
+import org.apache.metamodel.schema.MutableColumn;
 import org.apache.metamodel.schema.MutableTable;
 import org.datacleaner.metamodel.datahub.DataHubSchema;
 
@@ -75,7 +77,7 @@ public class JsonSchemasResponseParser {
     private String _currentFieldname;
     private DataHubSchema _currentSchema;
     private MutableTable _currentTable;
-    private DataHubColumnBuilder _currentColumnBuilder;
+    private MutableColumn _currentColumn;
     private DataHubSchema _resultSchema;
 
     private String _currentDataStoreName;
@@ -135,8 +137,8 @@ public class JsonSchemasResponseParser {
             _currentSchema.addTable(_currentTable);
             break;
         case COLUMN:
-            _currentColumnBuilder.withTable(_currentTable);
-            _currentTable.addColumn(_currentColumnBuilder.build());
+            _currentColumn.setTable(_currentTable);
+            _currentTable.addColumn(_currentColumn);
             break;
         default:
         }
@@ -150,7 +152,7 @@ public class JsonSchemasResponseParser {
             _currentTable = new MutableTable();
             break;
         case COLUMN:
-            _currentColumnBuilder = new DataHubColumnBuilder();
+            _currentColumn = new MutableColumn();
             break;
         default:
         }
@@ -182,11 +184,11 @@ public class JsonSchemasResponseParser {
 
     private void handleBooleanColumnField(String fieldName, boolean fieldValue) {
         if (fieldName.equals("primaryKey")) {
-            _currentColumnBuilder.withPrimaryKey(fieldValue);
+            _currentColumn.setPrimaryKey(fieldValue);
         } else if (fieldName.equals("indexed")) {
-            _currentColumnBuilder.withIndexed(fieldValue);
+            _currentColumn.setIndexed(fieldValue);
         } else if (fieldName.equals("nullable")) {
-            _currentColumnBuilder.withNullable(fieldValue);
+            _currentColumn.setNullable(fieldValue);
         } else {
             // skip unknown column fields
         }
@@ -195,23 +197,23 @@ public class JsonSchemasResponseParser {
 
     private void handleIntegerValue(String fieldName, int fieldValue) {
         if (fieldName.equals("number")) {
-            _currentColumnBuilder.withNumber(fieldValue);
+            _currentColumn.setColumnNumber(fieldValue);
         }
     }
 
     private void handleColumnField(String fieldName, String fieldValue) {
         if (fieldName.equals("name")) {
-            _currentColumnBuilder.withName(fieldValue);
+            _currentColumn.setName(fieldValue);
         } else if (fieldName.equals("quote")) {
-            _currentColumnBuilder.withQuote(fieldValue);
+            _currentColumn.setQuote(fieldValue);
         } else if (fieldName.equals("remarks")) {
-            _currentColumnBuilder.withRemarks(fieldValue);
+            _currentColumn.setRemarks(fieldValue);
         } else if (fieldName.equals("type")) {
-            _currentColumnBuilder.withType(fieldValue);
+            _currentColumn.setType(ColumnTypeImpl.valueOf(fieldValue));
         } else if (fieldName.equals("nativeType")) {
-            _currentColumnBuilder.withNativeType(fieldValue);
+            _currentColumn.setNativeType(fieldValue);
         } else if (fieldName.equals("size")) {
-            _currentColumnBuilder.withSize(new Integer(fieldValue));
+            _currentColumn.setColumnSize(new Integer(fieldValue));
         } else {
             // skip unknown column fields
         }

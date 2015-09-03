@@ -89,7 +89,7 @@ public final class SimpleDictionary extends AbstractReferenceData implements Dic
     }
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        Adaptor adaptor = new Adaptor() {
+        final Adaptor adaptor = new Adaptor() {
             @Override
             public void deserialize(GetField getField, Serializable serializable) throws Exception {
                 final boolean caseSensitive = getField.get("_caseSensitive", true);

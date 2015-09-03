@@ -77,7 +77,7 @@ public abstract class AbstractReferenceData implements ReferenceData {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AbstractReferenceData)) {
+        if (!getClass().equals(obj.getClass())) {
             return false;
         }
         final AbstractReferenceData other = (AbstractReferenceData) obj;

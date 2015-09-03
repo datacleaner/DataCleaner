@@ -88,7 +88,7 @@ public final class RegexStringPattern extends AbstractReferenceData implements S
                 if (string == null) {
                     return false;
                 }
-                Matcher matcher = _pattern.matcher(string);
+                final Matcher matcher = _pattern.matcher(string);
 
                 if (matcher.find()) {
                     if (_matchEntireString) {

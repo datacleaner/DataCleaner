@@ -110,13 +110,10 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
         assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         
-        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
-        assertEquals("", completeValueMatcherAnalyzerResult.getCount("Tomasz"));
-        assertNull(completeValueMatcherAnalyzerResult.getCount("Kasper"));
+        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
+        assertEquals("[[<null>->7], [Kasper->0]]", completeValueMatcherAnalyzerResult.getValueCounts().toString());
         
-        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(2);
-        assertNull(incompleteValueMatcherAnalyzerResult.getCount("Tomasz"));
-        assertEquals("", incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
-        
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
+        assertEquals("[[<null>->7], [<unexpected>->6], [Tomasz->1]]", incompleteValueMatcherAnalyzerResult.getValueCounts().toString());
     }
 }

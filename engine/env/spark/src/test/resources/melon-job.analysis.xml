@@ -13,6 +13,10 @@
     <analysis>
         <analyzer>
             <descriptor ref="Completeness analyzer"/>
+            <metadata-properties>
+                <property name="CoordinatesX">200</property>
+                <property name="CoordinatesY">40</property>
+            </metadata-properties>
             <properties>
                 <property name="Conditions" value="[NOT_BLANK_OR_NULL,NOT_BLANK_OR_NULL]"/>
                 <property name="Evaluation mode" value="ANY_FIELD"/>
@@ -29,10 +33,10 @@
                     </source>
                     <transformation/>
                     <analysis>
-                        <analyzer>
+                        <analyzer name="IncompleteValueMatcher">
                             <descriptor ref="Value matcher"/>
                             <properties>
-<property name="Expected values" value="[Tomasz,]"/>
+<property name="Expected values" value="[Tomasz]"/>
 <property name="Case sensitive matching" value="true"/>
 <property name="White space sensitive matching" value="true"/>
                             </properties>
@@ -51,10 +55,10 @@
                     </source>
                     <transformation/>
                     <analysis>
-                        <analyzer>
+                        <analyzer name="CompleteValueMatcher">
                             <descriptor ref="Value matcher"/>
                             <properties>
-<property name="Expected values" value="[Kasper,]"/>
+<property name="Expected values" value="[Kasper]"/>
 <property name="Case sensitive matching" value="true"/>
 <property name="White space sensitive matching" value="true"/>
                             </properties>

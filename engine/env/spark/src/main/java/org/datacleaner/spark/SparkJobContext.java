@@ -37,6 +37,7 @@ import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.JaxbJobReader;
+import org.datacleaner.job.OutputDataStreamJob;
 import org.datacleaner.util.LabelUtils;
 
 /**
@@ -53,7 +54,7 @@ public class SparkJobContext implements Serializable {
 
     private final String _configurationPath;
     private final String _analysisJobPath;
-    
+
     private final Map<String, Accumulator<Integer>> _accumulators;
 
     // cached/transient state
@@ -124,12 +125,25 @@ public class SparkJobContext implements Serializable {
     public String getComponentKey(ComponentJob componentJob) {
         return LabelUtils.getLabel(componentJob);
     }
-    
+
     public ComponentJob getComponentByKey(String key) {
         final List<AnalyzerJob> analyzerJobs = getAnalysisJob().getAnalyzerJobs();
+        return getComponentJobByKey(key, analyzerJobs);
+    }
+
+    private ComponentJob getComponentJobByKey(String key, List<AnalyzerJob> analyzerJobs) {
         for (AnalyzerJob analyzerJob : analyzerJobs) {
             if (key.equals(LabelUtils.getLabel(analyzerJob))) {
                 return analyzerJob;
+            }
+
+            OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
+            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
+                ComponentJob recursiveComponentJob = getComponentJobByKey(key, outputDataStreamJob.getJob()
+                        .getAnalyzerJobs());
+                if (recursiveComponentJob != null) {
+                    return recursiveComponentJob;
+                }
             }
         }
         return null;

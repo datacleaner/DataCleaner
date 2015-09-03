@@ -172,7 +172,7 @@ public class ConsumeRowHandler {
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
                 analysisListener, taskRunner, lifeCycleHelper, sourceColumnFinder);
 
-        final RowProcessingPublisher publisher;
+        final Collection<RowProcessingPublisher> publishers;
         if (rowConsumeConfiguration.table != null) {
             @SuppressWarnings("deprecation")
             final RowProcessingPublisher tablePublisher = rowProcessingPublishers
@@ -181,51 +181,50 @@ public class ConsumeRowHandler {
                 throw new IllegalArgumentException("Job does not consume records from table: "
                         + rowConsumeConfiguration.table);
             }
-            publisher = tablePublisher;
+            publishers = new ArrayList<>();
+            publishers.add(tablePublisher);
         } else {
-            final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
-                    .getRowProcessingPublishers();
-            if (publisherCollection.size() > 1) {
-                throw new IllegalArgumentException(
-                        "Job consumes multiple tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
-            }
-            publisher = publisherCollection.iterator().next();
+            publishers = rowProcessingPublishers.getRowProcessingPublishers();
         }
 
         final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();
 
-        publisher.initializeConsumers(new TaskListener() {
-            @Override
-            public void onError(Task task, Throwable throwable) {
-                logger.error("Exception thrown while initializing consumers.", throwable);
-                errorReference.compareAndSet(null, throwable);
+        List<RowProcessingConsumer> totalConsumers = new ArrayList<>();
+        for (RowProcessingPublisher publisher : publishers) {
+            publisher.initializeConsumers(new TaskListener() {
+                @Override
+                public void onError(Task task, Throwable throwable) {
+                    logger.error("Exception thrown while initializing consumers.", throwable);
+                    errorReference.compareAndSet(null, throwable);
+                }
+
+                @Override
+                public void onComplete(Task task) {
+                    logger.info("Consumers initialized successfully.");
+                }
+
+                @Override
+                public void onBegin(Task task) {
+                    logger.info("Beginning the process of initializing consumers.");
+                }
+            });
+
+            final Throwable throwable = errorReference.get();
+            if (throwable != null) {
+                if (throwable instanceof RuntimeException) {
+
+                }
             }
 
-            @Override
-            public void onComplete(Task task) {
-                logger.info("Consumers initialized successfully.");
+            List<RowProcessingConsumer> consumers = publisher.getConsumers();
+            if (!rowConsumeConfiguration.includeAnalyzers) {
+                consumers = removeAnalyzers(consumers);
             }
-
-            @Override
-            public void onBegin(Task task) {
-                logger.info("Beginning the process of initializing consumers.");
-            }
-        });
-
-        final Throwable throwable = errorReference.get();
-        if (throwable != null) {
-            if (throwable instanceof RuntimeException) {
-
-            }
+            totalConsumers.addAll(consumers);
         }
 
-        List<RowProcessingConsumer> consumers = publisher.getConsumers();
-        if (!rowConsumeConfiguration.includeAnalyzers) {
-            consumers = removeAnalyzers(consumers);
-        }
-
-        consumers = RowProcessingPublisher.sortConsumers(consumers);
-        return consumers;
+        totalConsumers = RowProcessingPublisher.sortConsumers(totalConsumers);
+        return totalConsumers;
     }
 
     private List<RowProcessingConsumer> removeAnalyzers(List<RowProcessingConsumer> consumers) {

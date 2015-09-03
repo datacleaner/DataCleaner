@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.metamodel.schema.Column;
+import org.apache.metamodel.schema.MutableColumn;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -39,13 +40,16 @@ public class JsonQueryResultParserHelperTest {
         String result = "{\"table\":{\"header\":[\"CUSTOMERNUMBER\",\"CUSTOMERNAME\",\"LINKAGE\"],\"rows\":[[\"bla1\",null,\"[{source_name=SRCA1, source_id=316013}, {source_name=SRCA1, source_id=394129}]\"],[\"bla2\",\"blieb2\",\"[{source_name=SRCA2, source_id=316013}, {source_name=SRCA2, source_id=394129}]\"]]}}";
         InputStream is = new ByteArrayInputStream(result.getBytes());
         JsonQueryDatasetResponseParser parser = new JsonQueryDatasetResponseParser();
-        Column[] columns = new Column[3];
-        columns[0] = new DataHubColumnBuilder().withName("CUSTOMERNUMBER")
-                .withNumber(1).build();
-        columns[1] = new DataHubColumnBuilder().withName("CUSTOMERNAME")
-                .withNumber(2).build();
-        columns[2] = new DataHubColumnBuilder().withName("LINKAGE")
-                .withNumber(3).build();
+        MutableColumn[] columns = new MutableColumn[3];
+        columns[0] = new MutableColumn();
+        columns[0].setName("CUSTOMERNUMBER");
+        columns[0].setColumnNumber(1);
+        columns[1] = new MutableColumn();
+        columns[1].setName("CUSTOMERNAME");
+        columns[1].setColumnNumber(2);
+        columns[2] = new MutableColumn();
+        columns[2].setName("LINKAGE");
+        columns[2].setColumnNumber(3);
         List<Object[]> queryResult = parser.parseQueryResult(is);
         Iterator<Object[]> iterator = queryResult.iterator();
 

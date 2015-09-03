@@ -33,7 +33,7 @@
                     </source>
                     <transformation/>
                     <analysis>
-                        <analyzer name="IncompleteValueMatcher">
+                        <analyzer>
                             <descriptor ref="Value matcher"/>
                             <properties>
 <property name="Expected values" value="[Tomasz]"/>
@@ -55,7 +55,7 @@
                     </source>
                     <transformation/>
                     <analysis>
-                        <analyzer name="CompleteValueMatcher">
+                        <analyzer>
                             <descriptor ref="Value matcher"/>
                             <properties>
 <property name="Expected values" value="[Kasper]"/>

@@ -21,6 +21,7 @@ package org.datacleaner.spark;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,10 @@ import org.datacleaner.configuration.JaxbConfigurationReader;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
 import org.datacleaner.job.ComponentJob;
+import org.datacleaner.job.FilterJob;
 import org.datacleaner.job.JaxbJobReader;
 import org.datacleaner.job.OutputDataStreamJob;
-import org.datacleaner.util.LabelUtils;
+import org.datacleaner.job.TransformerJob;
 
 /**
  * A container for for values that need to be passed between Spark workers. All
@@ -60,6 +62,7 @@ public class SparkJobContext implements Serializable {
     // cached/transient state
     private transient DataCleanerConfiguration _dataCleanerConfiguration;
     private transient AnalysisJob _analysisJob;
+    private transient List<ComponentJob> _componentList;
 
     public SparkJobContext(JavaSparkContext sparkContext, final String dataCleanerConfigurationPath,
             final String analysisJobXmlPath) {
@@ -123,29 +126,73 @@ public class SparkJobContext implements Serializable {
     }
 
     public String getComponentKey(ComponentJob componentJob) {
-        return LabelUtils.getLabel(componentJob);
-    }
-
-    public ComponentJob getComponentByKey(String key) {
-        final List<AnalyzerJob> analyzerJobs = getAnalysisJob().getAnalyzerJobs();
-        return getComponentJobByKey(key, analyzerJobs);
-    }
-
-    private ComponentJob getComponentJobByKey(String key, List<AnalyzerJob> analyzerJobs) {
-        for (AnalyzerJob analyzerJob : analyzerJobs) {
-            if (key.equals(LabelUtils.getLabel(analyzerJob))) {
-                return analyzerJob;
-            }
-
-            OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
-            for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
-                ComponentJob recursiveComponentJob = getComponentJobByKey(key, outputDataStreamJob.getJob()
-                        .getAnalyzerJobs());
-                if (recursiveComponentJob != null) {
-                    return recursiveComponentJob;
-                }
+        List<ComponentJob> componentJobList = getComponentList();
+        for (int i = 0; i < componentJobList.size(); i++) {
+            if (componentJob.equals(componentJobList.get(i))) {
+                return String.valueOf(i);
             }
         }
         return null;
     }
+    
+    public ComponentJob getComponentByKey(String key) {
+        List<ComponentJob> componentJobList = getComponentList();
+        for (int i = 0; i < componentJobList.size(); i++) {
+            final ComponentJob componentJob = componentJobList.get(i);
+            if (key.equals(getComponentKey(componentJob))) {
+                return componentJob;
+            }
+        }
+        return null;
+    }
+    
+    public List<ComponentJob> getComponentList() {
+        if (_componentList == null) {
+            _componentList = buildComponentList(getAnalysisJob());
+        }
+        return _componentList;
+    }
+    
+    private List<ComponentJob> buildComponentList(AnalysisJob analysisJob) {
+        List<ComponentJob> componentJobList = new ArrayList<>();
+        List<TransformerJob> transformerJobs = analysisJob.getTransformerJobs();
+        List<FilterJob> filterJobs = analysisJob.getFilterJobs();
+        List<AnalyzerJob> analyzerJobs = analysisJob.getAnalyzerJobs();
+
+        for (TransformerJob transformerJob : transformerJobs) {
+            componentJobList.add(transformerJob);
+        }
+
+        for (FilterJob filterJob : filterJobs) {
+            componentJobList.add(filterJob);
+        }
+
+        for (AnalyzerJob analyzerJob : analyzerJobs) {
+            componentJobList.add(analyzerJob);
+        }
+        
+        for (TransformerJob transformerJob : analysisJob.getTransformerJobs()) {
+            for (OutputDataStreamJob outputDataStreamJob : transformerJob.getOutputDataStreamJobs()) {
+                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
+                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
+            }
+        }
+        
+        for (FilterJob filterJob : analysisJob.getFilterJobs()) {
+            for (OutputDataStreamJob outputDataStreamJob : filterJob.getOutputDataStreamJobs()) {
+                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
+                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
+            }
+        }
+        
+        for (AnalyzerJob analyzerJob : analysisJob.getAnalyzerJobs()) {
+            for (OutputDataStreamJob outputDataStreamJob : analyzerJob.getOutputDataStreamJobs()) {
+                AnalysisJob outputDataStreamAnalysisJob = outputDataStreamJob.getJob();
+                componentJobList.addAll(buildComponentList(outputDataStreamAnalysisJob));
+            }
+        }
+        
+        return componentJobList;
+    }
+
 }

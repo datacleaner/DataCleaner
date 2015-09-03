@@ -36,6 +36,7 @@ import org.datacleaner.connection.CsvDatastore;
 import org.datacleaner.connection.Datastore;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.AnalyzerJob;
+import org.datacleaner.job.ComponentJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
 import org.datacleaner.job.runner.AnalysisRunner;
 import org.datacleaner.spark.functions.AnalyzerResultReduceFunction;
@@ -115,9 +116,12 @@ public class SparkAnalysisRunner implements AnalysisRunner {
     }
 
     private boolean isDistributable(AnalysisJob job) {
-        for (AnalyzerJob analyzerJob : job.getAnalyzerJobs()) {
-            if (!analyzerJob.getDescriptor().isDistributable()) {
-                return false;
+        for (ComponentJob componentJob : _sparkJobContext.getComponentList()) {
+            if (componentJob instanceof AnalyzerJob) {
+                AnalyzerJob analyzerJob = (AnalyzerJob) componentJob;
+                if (!analyzerJob.getDescriptor().isDistributable()) {
+                    return false;
+                }
             }
         }
         return true;

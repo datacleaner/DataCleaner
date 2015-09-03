@@ -124,7 +124,7 @@ public class RowProcessingMetricsImplTest extends TestCase {
 
         final RowProcessingPublishers publishers = new RowProcessingPublishers(job, analysisListener, taskRunner,
                 lifeCycleHelper, sourceColumnFinder);
-        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getTables()[0]);
+        final RowProcessingPublisher publisher = publishers.getRowProcessingPublisher(publishers.getStreams()[0]);
         publisher.initializeConsumers(new TaskListener() {
             @Override
             public void onError(Task arg0, Throwable t) {

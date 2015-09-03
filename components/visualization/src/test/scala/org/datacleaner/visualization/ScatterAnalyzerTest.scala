@@ -6,16 +6,16 @@ import org.junit.Assert
 import org.junit.Test
 import org.datacleaner.data.MockInputColumn
 import org.datacleaner.data.MockInputRow
-import org.datacleaner.storage.InMemoryRowAnnotationFactory
 import scala.collection.SortedMap
 import scala.collection.immutable.TreeMap
+import org.datacleaner.storage.RowAnnotations
 
 class ScatterAnalyzerTest extends AssertionsForJUnit {
 
   @Test
   def testMapDefaultValue = {
     val analyzer = new ScatterAnalyzer()
-    analyzer.rowAnnotationFactory = new InMemoryRowAnnotationFactory()
+    analyzer.rowAnnotationFactory = RowAnnotations.getInMemoryFactory()
     analyzer.variable1 = new MockInputColumn("foo");
     analyzer.variable2 = new MockInputColumn("bar");
 

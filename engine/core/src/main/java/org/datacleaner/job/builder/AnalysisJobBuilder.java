@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * Main entry to the Job Builder API. Use this class to build jobs either
  * programmatically, while parsing a marshalled job-representation (such as an
  * XML job definition) or for making an end-user able to build a job in a UI.
- * 
+ *
  * The AnalysisJobBuilder supports a wide variety of listeners to make it
  * possible to be informed of changes to the state and dependencies between the
  * components/beans that defines the job.
@@ -88,6 +88,7 @@ public final class AnalysisJobBuilder implements Closeable {
     private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilder.class);
 
     private final DataCleanerConfiguration _configuration;
+    private final AnalysisJobBuilder _parentBuilder;
     private final IdGenerator _transformedColumnIdGenerator;
 
     // the configurable components
@@ -109,7 +110,12 @@ public final class AnalysisJobBuilder implements Closeable {
     private ComponentRequirement _defaultRequirement;
 
     public AnalysisJobBuilder(DataCleanerConfiguration configuration) {
+        this(configuration, (AnalysisJobBuilder) null);
+    }
+
+    public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJobBuilder parentBuilder) {
         _configuration = configuration;
+        _parentBuilder = parentBuilder;
         _transformedColumnIdGenerator = new PrefixedIdGenerator("");
         _sourceColumns = new ArrayList<>();
         _filterComponentBuilders = new ArrayList<>();
@@ -124,7 +130,8 @@ public final class AnalysisJobBuilder implements Closeable {
             DatastoreConnection datastoreConnection, MutableAnalysisJobMetadata metadata,
             List<MetaModelInputColumn> sourceColumns, ComponentRequirement defaultRequirement, IdGenerator idGenerator,
             List<TransformerComponentBuilder<?>> transformerJobBuilders,
-            List<FilterComponentBuilder<?, ?>> filterJobBuilders, List<AnalyzerComponentBuilder<?>> analyzerJobBuilders) {
+            List<FilterComponentBuilder<?, ?>> filterJobBuilders,
+            List<AnalyzerComponentBuilder<?>> analyzerJobBuilders, AnalysisJobBuilder parentBuilder) {
         _configuration = configuration;
         _datastore = datastore;
         _analysisJobMetadata = metadata;
@@ -135,10 +142,15 @@ public final class AnalysisJobBuilder implements Closeable {
         _filterComponentBuilders = filterJobBuilders;
         _transformerComponentBuilders = transformerJobBuilders;
         _analyzerComponentBuilders = analyzerJobBuilders;
+        _parentBuilder = parentBuilder;
     }
 
     public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job) {
-        this(configuration);
+        this(configuration, job, null);
+    }
+
+    public AnalysisJobBuilder(DataCleanerConfiguration configuration, AnalysisJob job, AnalysisJobBuilder parentBuilder) {
+        this(configuration, parentBuilder);
         importJob(job);
     }
 
@@ -268,7 +280,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Removes the specified table (or rather - all columns of that table) from
      * this job's source.
-     * 
+     *
      * @param table
      */
     public AnalysisJobBuilder removeSourceTable(Table table) {
@@ -287,7 +299,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Imports the datastore, components and configuration of a
      * {@link AnalysisJob} into this builder.
-     * 
+     *
      * @param job
      */
     public void importJob(AnalysisJob job) {
@@ -428,7 +440,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     /**
      * Adds a {@link ComponentBuilder} and removes it from its previous scope.
-     * 
+     *
      * @param builder
      *            The builder to add
      * @return The same builder
@@ -450,9 +462,9 @@ public final class AnalysisJobBuilder implements Closeable {
      * input (columns and requirements) will not be mapped since these depend on
      * the context of the {@link FilterJob} and may not be matched in the
      * {@link AnalysisJobBuilder}.
-     * 
+     *
      * @param componentJob
-     * 
+     *
      * @return the builder object for the specific component
      */
     protected Object addComponent(ComponentJob componentJob) {
@@ -641,7 +653,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Finds the available input columns (source or transformed) that match the
      * given data type specification.
-     * 
+     *
      * @param dataType
      *            the data type to look for
      * @return a list of matching input columns
@@ -655,7 +667,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Used to verify whether or not the builder's configuration is valid and
      * all properties are satisfied.
-     * 
+     *
      * @param throwException
      *            whether or not an exception should be thrown in case of
      *            invalid configuration. Typically an exception message will
@@ -720,7 +732,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Used to verify whether or not the builder's configuration is valid and
      * all properties are satisfied.
-     * 
+     *
      * @return true if the analysis job builder is correctly configured
      */
     public boolean isConfigured() {
@@ -729,7 +741,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     /**
      * Creates an analysis job of this {@link AnalysisJobBuilder}.
-     * 
+     *
      * @param validate
      *            whether or not to validate job configuration while building
      * @return
@@ -826,7 +838,7 @@ public final class AnalysisJobBuilder implements Closeable {
 
     /**
      * Creates an analysis job of this {@link AnalysisJobBuilder}.
-     * 
+     *
      * @return
      * @throws IllegalStateException
      *             if the job is invalidly configured. See
@@ -929,7 +941,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Sets a default requirement for all newly added and existing row
      * processing component, unless they have another requirement.
-     * 
+     *
      * @param filterJobBuilder
      * @param category
      */
@@ -940,7 +952,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Sets a default requirement for all newly added and existing row
      * processing component, unless they have another requirement.
-     * 
+     *
      * @param defaultRequirement
      */
     public void setDefaultRequirement(final FilterOutcome defaultRequirement) {
@@ -1000,7 +1012,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets a default requirement, which will be applied to all newly added row
      * processing components.
-     * 
+     *
      * @return a default requirement, which will be applied to all newly added
      *         row processing components.
      */
@@ -1085,7 +1097,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets a mutable {@link Map} for setting properties that will eventually be
      * available via {@link AnalysisJobMetadata#getProperties()}.
-     * 
+     *
      * @return
      */
     public Map<String, String> getMetadataProperties() {
@@ -1101,16 +1113,15 @@ public final class AnalysisJobBuilder implements Closeable {
 
     public AnalysisJobBuilder withoutListeners() {
         final MutableAnalysisJobMetadata metadataClone = new MutableAnalysisJobMetadata(getAnalysisJobMetadata());
-        final AnalysisJobBuilder clone = new AnalysisJobBuilder(_configuration, _datastore, _datastoreConnection,
-                metadataClone, _sourceColumns, _defaultRequirement, _transformedColumnIdGenerator,
-                _transformerComponentBuilders, _filterComponentBuilders, _analyzerComponentBuilders);
-        return clone;
+        return new AnalysisJobBuilder(_configuration, _datastore, _datastoreConnection, metadataClone, _sourceColumns,
+                _defaultRequirement, _transformedColumnIdGenerator, _transformerComponentBuilders,
+                _filterComponentBuilders, _analyzerComponentBuilders, _parentBuilder);
     }
 
     /**
      * Gets the total number of active components (transformation or analysis)
      * in this job.
-     * 
+     *
      * @return
      */
     public int getComponentCount() {
@@ -1121,7 +1132,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets all component builders contained within this
      * {@link AnalysisJobBuilder}
-     * 
+     *
      * @return
      */
     public Collection<ComponentBuilder> getComponentBuilders() {
@@ -1135,7 +1146,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets all component builders that are expected to generate an
      * {@link AnalyzerResult}.
-     * 
+     *
      * @return
      */
     public Collection<ComponentBuilder> getResultProducingComponentBuilders() {
@@ -1153,7 +1164,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets all available {@link InputColumn}s to map to a particular
      * {@link ComponentBuilder}
-     * 
+     *
      * @param componentBuilder
      * @return
      */
@@ -1164,7 +1175,7 @@ public final class AnalysisJobBuilder implements Closeable {
     /**
      * Gets all available {@link InputColumn}s of a particular type to map to a
      * particular {@link ComponentBuilder}
-     * 
+     *
      * @param componentBuilder
      * @param dataType
      * @return
@@ -1204,5 +1215,25 @@ public final class AnalysisJobBuilder implements Closeable {
         });
 
         return result;
+    }
+
+    public boolean isRootJobBuilder() {
+        return getParentJobBuilder() == null;
+    }
+
+    public AnalysisJobBuilder getParentJobBuilder() {
+        return _parentBuilder;
+    }
+
+    public AnalysisJobBuilder getRootJobBuilder() {
+        @SuppressWarnings("resource")
+        AnalysisJobBuilder builder = this;
+        AnalysisJobBuilder tempBuilder = builder._parentBuilder;
+        while (tempBuilder != null) {
+            builder = tempBuilder;
+            tempBuilder = builder._parentBuilder;
+        }
+
+        return builder;
     }
 }

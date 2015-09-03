@@ -60,7 +60,6 @@ import org.datacleaner.job.TransformerJob;
 import org.datacleaner.job.concurrent.ForkTaskListener;
 import org.datacleaner.job.concurrent.JoinTaskListener;
 import org.datacleaner.job.concurrent.RunNextTaskTaskListener;
-import org.datacleaner.job.concurrent.SingleThreadedTaskRunner;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.concurrent.TaskRunnable;
 import org.datacleaner.job.concurrent.TaskRunner;
@@ -82,27 +81,25 @@ public final class RowProcessingPublisher {
 
     private final RowProcessingPublisher _parentPublisher;
     private final RowProcessingPublishers _publishers;
+    private final RowProcessingStream _stream;
     private final TaskRunner _taskRunner;
-    private final Table _table;
-    private final AnalysisJob _analysisJob;
     private final Set<Column> _physicalColumns = new LinkedHashSet<Column>();
     private final List<RowProcessingConsumer> _consumers = new ArrayList<RowProcessingConsumer>();
     private final LazyRef<RowProcessingQueryOptimizer> _queryOptimizerRef;
     private final AtomicBoolean _successful = new AtomicBoolean(true);
     private final Map<RowProcessingConsumer, ReferenceDataActivationManager> _referenceDataActivationManagers;
+    private final SourceColumnFinder _sourceColumnFinder;
 
     /**
      * Constructor to use for creating a {@link RowProcessingPublisher} which
      * feeds data from a source datastore.
      * 
      * @param publishers
-     * @param analysisJob
-     * @param table
+     * @param stream
      * @param taskRunner
      */
-    public RowProcessingPublisher(RowProcessingPublishers publishers, AnalysisJob analysisJob, Table table,
-            TaskRunner taskRunner) {
-        this(publishers, null, analysisJob, table, taskRunner);
+    public RowProcessingPublisher(RowProcessingPublishers publishers, RowProcessingStream stream, TaskRunner taskRunner) {
+        this(publishers, null, stream, taskRunner);
     }
 
     /**
@@ -113,29 +110,26 @@ public final class RowProcessingPublisher {
      * {@link RowProcessingPublisher} itself.
      * 
      * @param parentPublisher
-     * @param analysisJob
-     * @param table
+     * @param stream
      */
-    public RowProcessingPublisher(RowProcessingPublisher parentPublisher, AnalysisJob analysisJob, Table table) {
-        this(parentPublisher._publishers, parentPublisher, analysisJob, table, new SingleThreadedTaskRunner());
+    public RowProcessingPublisher(RowProcessingPublisher parentPublisher, RowProcessingStream stream) {
+        this(parentPublisher._publishers, parentPublisher, stream, parentPublisher._taskRunner);
     }
 
     private RowProcessingPublisher(RowProcessingPublishers publishers, RowProcessingPublisher parentPublisher,
-            AnalysisJob analysisJob, Table table, TaskRunner taskRunner) {
+            RowProcessingStream stream, TaskRunner taskRunner) {
         if (publishers == null) {
             throw new IllegalArgumentException("RowProcessingPublishers cannot be null");
         }
-        if (analysisJob == null) {
-            throw new IllegalArgumentException("AnalysisJob cannot be null");
+        if (stream == null) {
+            throw new IllegalArgumentException("RowProcessingStream cannot be null");
         }
-        if (table == null) {
-            throw new IllegalArgumentException("Table cannot be null");
-        }
-        _analysisJob = analysisJob;
         _parentPublisher = parentPublisher;
         _publishers = publishers;
-        _table = table;
+        _stream = stream;
         _taskRunner = taskRunner;
+        _sourceColumnFinder = new SourceColumnFinder();
+        _sourceColumnFinder.addSources(stream.getAnalysisJob());
 
         _queryOptimizerRef = createQueryOptimizerRef();
         _referenceDataActivationManagers = new IdentityHashMap<>();
@@ -143,11 +137,11 @@ public final class RowProcessingPublisher {
         final boolean aggressiveOptimizeSelectClause = SystemProperties.getBoolean(
                 SystemProperties.QUERY_SELECTCLAUSE_OPTIMIZE, false);
         if (!aggressiveOptimizeSelectClause) {
-            final Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
+            final Collection<InputColumn<?>> sourceColumns = stream.getAnalysisJob().getSourceColumns();
             final List<Column> columns = new ArrayList<Column>();
             for (InputColumn<?> sourceColumn : sourceColumns) {
                 final Column column = sourceColumn.getPhysicalColumn();
-                if (column != null && table.equals(column.getTable())) {
+                if (column != null && _stream.getTable().equals(column.getTable())) {
                     columns.add(column);
                 }
             }
@@ -168,8 +162,12 @@ public final class RowProcessingPublisher {
         return metrics;
     }
 
+    public RowProcessingStream getStream() {
+        return _stream;
+    }
+
     public Table getTable() {
-        return _table;
+        return _stream.getTable();
     }
 
     /**
@@ -183,13 +181,13 @@ public final class RowProcessingPublisher {
      * values will be retrieved.
      */
     public void addPrimaryKeysIfSourced() {
-        final Column[] primaryKeyColumns = _table.getPrimaryKeys();
+        final Column[] primaryKeyColumns = getTable().getPrimaryKeys();
         if (primaryKeyColumns == null || primaryKeyColumns.length == 0) {
-            logger.info("No primary keys defined for table {}, not pre-selecting primary keys", _table.getName());
+            logger.info("No primary keys defined for table {}, not pre-selecting primary keys", getTable().getName());
             return;
         }
 
-        final Collection<InputColumn<?>> sourceInputColumns = _analysisJob.getSourceColumns();
+        final Collection<InputColumn<?>> sourceInputColumns = getAnalysisJob().getSourceColumns();
         final List<Column> sourceColumns = CollectionUtils.map(sourceInputColumns, new Func<InputColumn<?>, Column>() {
             @Override
             public Column eval(InputColumn<?> inputColumn) {
@@ -211,19 +209,27 @@ public final class RowProcessingPublisher {
         return new LazyRef<RowProcessingQueryOptimizer>() {
             @Override
             protected RowProcessingQueryOptimizer fetch() {
-                final Datastore datastore = _analysisJob.getDatastore();
+                final Datastore datastore = getAnalysisJob().getDatastore();
                 try (final DatastoreConnection con = datastore.openConnection()) {
                     final DataContext dataContext = con.getDataContext();
 
                     final Column[] columnArray = _physicalColumns.toArray(new Column[_physicalColumns.size()]);
-                    final Query baseQuery = dataContext.query().from(_table).select(columnArray).toQuery();
+                    final Query baseQuery = dataContext.query().from(getTable()).select(columnArray).toQuery();
 
                     logger.debug("Base query for row processing: {}", baseQuery);
 
                     final List<RowProcessingConsumer> sortedConsumers = sortConsumers(_consumers);
 
-                    final RowProcessingQueryOptimizer optimizer = new RowProcessingQueryOptimizer(datastore,
-                            sortedConsumers, baseQuery);
+                    final RowProcessingQueryOptimizer optimizer;
+                    if (_parentPublisher == null) {
+                        // try to optimize
+                        optimizer = new RowProcessingQueryOptimizerImpl(datastore, sortedConsumers, baseQuery);
+                    } else {
+                        // This is a child publisher so we cannot optimize
+                        // anything
+                        optimizer = new NoopRowProcessingQueryOptimizer(baseQuery, sortedConsumers);
+                    }
+
                     return optimizer;
                 } catch (RuntimeException e) {
                     logger.error("Failed to build query optimizer! {}", e.getMessage(), e);
@@ -260,9 +266,9 @@ public final class RowProcessingPublisher {
 
     public void addPhysicalColumns(Column... columns) {
         for (Column column : columns) {
-            if (!_table.equals(column.getTable())) {
+            if (!getTable().equals(column.getTable())) {
                 throw new IllegalArgumentException("Column does not pertain to the correct table. Expected table: "
-                        + _table + ", actual table: " + column.getTable());
+                        + getTable() + ", actual table: " + column.getTable());
             }
             _physicalColumns.add(column);
         }
@@ -305,7 +311,7 @@ public final class RowProcessingPublisher {
             return;
         }
 
-        analysisListener.rowProcessingSuccess(_analysisJob, rowProcessingMetrics);
+        analysisListener.rowProcessingSuccess(getAnalysisJob(), rowProcessingMetrics);
     }
 
     private boolean awaitProcessing(AnalysisListener listener) {
@@ -317,7 +323,7 @@ public final class RowProcessingPublisher {
                     activeOutputDataStream.await();
                 } catch (InterruptedException e) {
                     logger.error("Unexpected error awaiting output data stream", e);
-                    listener.errorUnknown(_analysisJob, e);
+                    listener.errorUnknown(getAnalysisJob(), e);
                     return false;
                 }
             }
@@ -338,10 +344,10 @@ public final class RowProcessingPublisher {
 
         final ConsumeRowHandler consumeRowHandler = createConsumeRowHandler();
 
-        final RowConsumerTaskListener taskListener = new RowConsumerTaskListener(_analysisJob, analysisListener,
+        final RowConsumerTaskListener taskListener = new RowConsumerTaskListener(getAnalysisJob(), analysisListener,
                 _taskRunner);
 
-        final Datastore datastore = _analysisJob.getDatastore();
+        final Datastore datastore = getAnalysisJob().getDatastore();
 
         try (final DatastoreConnection con = datastore.openConnection()) {
             final DataContext dataContext = con.getDataContext();
@@ -405,7 +411,7 @@ public final class RowProcessingPublisher {
             final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics();
             final ComponentMetrics metrics = rowProcessingMetrics.getAnalysisJobMetrics().getComponentMetrics(
                     componentJob);
-            analysisListener.componentBegin(_analysisJob, componentJob, metrics);
+            analysisListener.componentBegin(getAnalysisJob(), componentJob, metrics);
 
             if (consumer instanceof TransformerConsumer) {
                 ((TransformerConsumer) consumer).setRowIdGenerator(idGenerator);
@@ -513,8 +519,8 @@ public final class RowProcessingPublisher {
             final TaskListener initFinishedListener = new RunNextTaskTaskListener(_taskRunner, runTask,
                     runCompletionListener);
 
-            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner, new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
-
+            final TaskListener consumerInitFinishedListener = new RunNextTaskTaskListener(_taskRunner,
+                    new FireRowProcessingBeginTask(this, rowProcessingMetrics), initFinishedListener);
 
             // kick off the initialization
             initializeConsumers(consumerInitFinishedListener);
@@ -558,7 +564,7 @@ public final class RowProcessingPublisher {
         if (component instanceof HasAnalyzerResult) {
             final HasAnalyzerResult<?> hasAnalyzerResult = (HasAnalyzerResult<?>) component;
             final AnalysisListener analysisListener = _publishers.getAnalysisListener();
-            return new CollectResultsTask(hasAnalyzerResult, _analysisJob, consumer.getComponentJob(), resultQueue,
+            return new CollectResultsTask(hasAnalyzerResult, getAnalysisJob(), consumer.getComponentJob(), resultQueue,
                     analysisListener);
         }
         return null;
@@ -566,7 +572,9 @@ public final class RowProcessingPublisher {
 
     private TaskRunnable createCloseTask(RowProcessingConsumer consumer, TaskListener closeTaskListener) {
         final LifeCycleHelper lifeCycleHelper = getConsumerSpecificLifeCycleHelper(consumer);
-        return new TaskRunnable(null, new CloseTaskListener(lifeCycleHelper, consumer, _successful, closeTaskListener));
+        final CloseTaskListener taskListener = new CloseTaskListener(lifeCycleHelper, consumer, _successful,
+                closeTaskListener, _publishers.getAnalysisListener(), getAnalysisJob());
+        return new TaskRunnable(null, taskListener);
     }
 
     private TaskRunnable createInitTask(RowProcessingConsumer consumer, TaskListener listener) {
@@ -582,7 +590,7 @@ public final class RowProcessingPublisher {
         final ReferenceDataActivationManager referenceDataActivationManager = getConsumerSpecificReferenceDataActivationManager(
                 consumer, outerLifeCycleHelper);
         final ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(outerInjectionManager,
-                _analysisJob, consumer.getComponentJob(), _publishers.getAnalysisListener());
+                getAnalysisJob(), consumer.getComponentJob(), _publishers.getAnalysisListener());
 
         final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
                 includeNonDistributedTasks);
@@ -601,7 +609,8 @@ public final class RowProcessingPublisher {
 
     @Override
     public String toString() {
-        return "RowProcessingPublisher[table=" + _table.getQualifiedLabel() + ", consumers=" + _consumers.size() + "]";
+        return "RowProcessingPublisher[table=" + getTable().getQualifiedLabel() + ", consumers=" + _consumers.size()
+                + "]";
     }
 
     public AnalyzerJob[] getAnalyzerJobs() {
@@ -616,11 +625,16 @@ public final class RowProcessingPublisher {
     }
 
     public AnalysisJob getAnalysisJob() {
-        return _analysisJob;
+        return _stream.getAnalysisJob();
     }
 
     public Datastore getDatastore() {
-        return _analysisJob.getDatastore();
+        return getAnalysisJob().getDatastore();
+    }
+
+    public boolean containsComponentJob(ComponentJob componentJob) {
+        final Collection<ComponentJob> components = RowProcessingPublishers.getAllComponents(getAnalysisJob());
+        return components.contains(componentJob);
     }
 
     public AnalysisListener getAnalysisListener() {
@@ -628,9 +642,9 @@ public final class RowProcessingPublisher {
     }
 
     public SourceColumnFinder getSourceColumnFinder() {
-        return _publishers.getSourceColumnFinder();
+        return _sourceColumnFinder;
     }
-    
+
     public ComponentJob[] getResultProducers() {
         final List<ComponentJob> resultProducers = new ArrayList<ComponentJob>();
         for (RowProcessingConsumer consumer : _consumers) {

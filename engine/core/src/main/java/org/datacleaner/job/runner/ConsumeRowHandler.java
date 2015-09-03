@@ -174,11 +174,14 @@ public class ConsumeRowHandler {
 
         final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
-            publisher = rowProcessingPublishers.getRowProcessingPublisher(rowConsumeConfiguration.table);
-            if (publisher == null) {
+            @SuppressWarnings("deprecation")
+            final RowProcessingPublisher tablePublisher = rowProcessingPublishers
+                    .getRowProcessingPublisher(rowConsumeConfiguration.table);
+            if (tablePublisher == null) {
                 throw new IllegalArgumentException("Job does not consume records from table: "
                         + rowConsumeConfiguration.table);
             }
+            publisher = tablePublisher;
         } else {
             final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
                     .getRowProcessingPublishers();

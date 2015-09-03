@@ -88,9 +88,15 @@ public class TransformerComponentBuilderPanel extends AbstractComponentBuilderPa
         _writeDataButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_componentBuilder));
 
         _previewButton = WidgetFactory.createDefaultButton("Preview data", IconUtils.ACTION_PREVIEW);
-        int previewRows = getPreviewRows();
-        _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-                _componentBuilder, previewRows));
+        if (_componentBuilder.getAnalysisJobBuilder().isRootJobBuilder()) {
+            final int previewRows = getPreviewRows();
+            _previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
+                    _componentBuilder, previewRows));
+        } else {
+            // we cannot provide a preview-function for transformers in non-root
+            // AnalysisJobBuilders
+            _previewButton.setVisible(false);
+        }
     }
 
     @Override

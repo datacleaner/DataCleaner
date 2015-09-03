@@ -133,7 +133,14 @@ public class SparkAnalysisRunner implements AnalysisRunner {
 
             final JavaRDD<String> rawInput = _sparkContext.textFile(datastorePath);
             final JavaRDD<Object[]> parsedInput = rawInput.map(new CsvParserFunction(csvConfiguration));
-            final JavaRDD<InputRow> inputRowsRDD = parsedInput.map(new ValuesToInputRowFunction(_sparkJobContext));
+
+            JavaPairRDD<Object[], Long> zipWithIndex = parsedInput.zipWithIndex();
+            
+            if (csvConfiguration.getColumnNameLineNumber() != CsvConfiguration.NO_COLUMN_NAME_LINE) {
+                zipWithIndex = zipWithIndex.filter(new SkipHeaderLineFunction(csvConfiguration.getColumnNameLineNumber()));
+            }
+            
+            final JavaRDD<InputRow> inputRowsRDD = zipWithIndex.map(new ValuesToInputRowFunction(_sparkJobContext));
 
             return inputRowsRDD;
         }

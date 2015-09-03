@@ -19,15 +19,20 @@
  */
 package org.datacleaner.connection;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 import java.util.List;
 
 import org.apache.metamodel.elasticsearch.ElasticSearchDataContext;
 import org.apache.metamodel.util.SimpleTableDef;
+import org.datacleaner.util.StringUtils;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
 
 /**
  * Datastore providing access to an ElasticSearch index.
@@ -35,28 +40,62 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDataContext> implements
         UpdateableDatastore {
 
+    public enum ClientType {
+        NODE("Join cluster as a node"), TRANSPORT("Connect via Transport protocol");
+
+        private String _humanReadableName;
+
+        private ClientType(String humanReadableName) {
+            _humanReadableName = humanReadableName;
+        }
+
+        @Override
+        public String toString() {
+            return _humanReadableName;
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 
     public static final int DEFAULT_PORT = 9300;
 
     private final SimpleTableDef[] _tableDefs;
+    private final ClientType _clientType;
     private final String _indexName;
     private final String _hostname;
-    private final int _port;
+    private final Integer _port;
     private final String _clusterName;
+    private final String _username;
+    private final String _password;
+    private final boolean _ssl;
+    private final String _keystorePath;
+    private final String _keystorePassword;
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName) {
-        this(name, hostname, port, clusterName, indexName, null);
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, null, null, false, null, null);
     }
 
-    public ElasticSearchDatastore(String name, String hostname, int port, String clusterName, String indexName,
-            SimpleTableDef[] tableDefs) {
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName, String username, String password, boolean ssl, String keystorePath, String keystorePassword) {
+        this(name, clientType, hostname, port, clusterName, indexName, null, username, password, ssl, keystorePath, keystorePassword);
+    }
+
+    public ElasticSearchDatastore(String name, ClientType clientType, String hostname, Integer port,
+            String clusterName, String indexName, SimpleTableDef[] tableDefs, String username, String password,
+            boolean ssl, String keystorePath, String keystorePassword) {
         super(name);
         _hostname = hostname;
         _port = port;
         _clusterName = clusterName;
         _indexName = indexName;
         _tableDefs = tableDefs;
+        _username = username;
+        _password = password;
+        _ssl = ssl;
+        _clientType = clientType;
+        _keystorePath = keystorePath;
+        _keystorePassword = keystorePassword;
     }
 
     @Override
@@ -66,13 +105,34 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     @Override
     protected UsageAwareDatastoreConnection<ElasticSearchDataContext> createDatastoreConnection() {
-        final Builder settingsBuilder = ImmutableSettings.builder();
-        settingsBuilder.put("name", "AnalyzerBeans");
-        settingsBuilder.put("cluster.name", _clusterName);
 
-        final Settings settings = settingsBuilder.build();
-        final TransportClient client = new TransportClient(settings);
-        client.addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
+        Client client;
+        if (ClientType.TRANSPORT.equals(_clientType)) {
+            final Builder settingsBuilder = ImmutableSettings.builder();
+            settingsBuilder.put("name", "DataCleaner");
+            settingsBuilder.put("cluster.name", _clusterName);
+            if (!StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_password)) {
+                settingsBuilder.put("shield.user", _username + ":" + _password);
+                if (_ssl) {
+                    settingsBuilder.put("shield.ssl.keystore.path", _keystorePath);
+                    settingsBuilder.put("shield.ssl.keystore.password", _keystorePassword);
+                    settingsBuilder.put("shield.transport.ssl", "true");
+                }
+            }
+            final Settings settings = settingsBuilder.build();
+
+            client = new TransportClient(settings);
+            ((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(_hostname, _port));
+        } else {
+            final Builder settingsBuilder = ImmutableSettings.builder();
+            settingsBuilder.put("name", "DataCleaner");
+            settingsBuilder.put("shield.enabled", false);
+            final Settings settings = settingsBuilder.build();
+
+            // .client(true) means no shards are stored on this node
+            final Node node = nodeBuilder().clusterName(_clusterName).client(true).settings(settings).node();
+            client = node.client();
+        }
 
         final ElasticSearchDataContext dataContext;
         if (_tableDefs == null || _tableDefs.length == 0) {
@@ -93,11 +153,15 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
         return _tableDefs;
     }
 
+    public ClientType getClientType() {
+        return _clientType;
+    }
+
     public String getHostname() {
         return _hostname;
     }
 
-    public int getPort() {
+    public Integer getPort() {
         return _port;
     }
 
@@ -107,6 +171,26 @@ public class ElasticSearchDatastore extends UsageAwareDatastore<ElasticSearchDat
 
     public String getIndexName() {
         return _indexName;
+    }
+
+    public String getUsername() {
+        return _username;
+    }
+
+    public String getPassword() {
+        return _password;
+    }
+
+    public boolean getSsl() {
+        return _ssl;
+    }
+    
+    public String getKeystorePath() {
+        return _keystorePath;
+    }
+    
+    public String getKeystorePassword() {
+        return _keystorePassword;
     }
 
     @Override

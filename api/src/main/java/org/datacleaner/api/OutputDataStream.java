@@ -42,8 +42,8 @@ public interface OutputDataStream extends HasName, Serializable {
     public String getName();
 
     /**
-     * Gets the logical {@link Table} objects that represent the format of the
-     * data that will be made available by the {@link HasOutputDataStreams}
+     * Gets the logical (or physical) {@link Table} objects that represent the
+     * format of the data that will be made available by the {@link DataStream}
      * 
      * @return
      */

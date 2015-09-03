@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
+import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
@@ -102,13 +103,18 @@ public class SparkAnalysisRunnerTest extends TestCase {
         }
 
         final List<AnalyzerResult> results = result.getResults();
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
 
-        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
+        final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(CompletenessAnalyzerResult.class).get(0);
+        assertEquals(7, completenessAnalyzerResult.getValidRowCount());
+        assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
+        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
+        
+        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
         assertEquals("", completeValueMatcherAnalyzerResult.getCount("Tomasz"));
         assertNull(completeValueMatcherAnalyzerResult.getCount("Kasper"));
         
-        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(2);
         assertNull(incompleteValueMatcherAnalyzerResult.getCount("Tomasz"));
         assertEquals("", incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
         

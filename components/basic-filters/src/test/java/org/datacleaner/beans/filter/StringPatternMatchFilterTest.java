@@ -19,28 +19,39 @@
  */
 package org.datacleaner.beans.filter;
 
+import junit.framework.TestCase;
+
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
-
-import junit.framework.TestCase;
 
 public class StringPatternMatchFilterTest extends TestCase {
 
     private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
+    private final FilterDescriptor<StringPatternFilter, ValidationCategory> descriptor = Descriptors
+            .ofFilter(StringPatternFilter.class);
+
     public void testFilterSinglePattern() throws Exception {
-        StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
-        MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new DataCleanerConfigurationImpl(), null, true);
+
+        final StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
+        final MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
         StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern },
                 MatchFilterCriteria.ANY, configuration);
-        filter.init();
+
+        lifeCycleHelper.initialize(descriptor, filter);
+
         assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
         assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
-        filter.close();
+
+        lifeCycleHelper.close(descriptor, filter, true);
 
         // it shouldn't matter if ANY or ALL criteria is being used
         filter = new StringPatternFilter(column, new StringPattern[] { stringPattern }, MatchFilterCriteria.ALL,

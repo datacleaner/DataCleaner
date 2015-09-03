@@ -30,6 +30,7 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.HasLabelAdvice;
 import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
@@ -106,6 +107,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
         synonymCatalogConnection = synonymCatalog.openConnection(configuration);
     }
 
+    @Close
     public void close() {
         if (synonymCatalogConnection != null) {
             synonymCatalogConnection.close();

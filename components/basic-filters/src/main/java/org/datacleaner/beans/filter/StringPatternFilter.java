@@ -23,9 +23,11 @@ import javax.inject.Named;
 
 import org.datacleaner.api.Alias;
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
 import org.datacleaner.api.Filter;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.Provided;
@@ -67,6 +69,7 @@ public class StringPatternFilter implements Filter<ValidationCategory> {
     public StringPatternFilter() {
     }
 
+    @Initialize
     public void init() {
         stringPatternConnections = new StringPatternConnection[stringPatterns.length];
         for (int i = 0; i < stringPatterns.length; i++) {
@@ -74,6 +77,7 @@ public class StringPatternFilter implements Filter<ValidationCategory> {
         }
     }
 
+    @Close
     public void close() {
         if (stringPatternConnections != null) {
             for (StringPatternConnection connection : stringPatternConnections) {

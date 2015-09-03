@@ -74,8 +74,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 
         if (dictionary != null) {
             _nameTextField.setText(dictionary.getName());
-            Collection<String> values = dictionary.getValueSet();
-            StringBuilder sb = new StringBuilder();
+            final Collection<String> values = dictionary.getValueSet();
+            final StringBuilder sb = new StringBuilder();
             boolean first = true;
             for (String value : values) {
                 if (first) {

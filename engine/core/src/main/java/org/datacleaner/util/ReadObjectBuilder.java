@@ -72,7 +72,7 @@ public final class ReadObjectBuilder<E extends Serializable> {
      * field deserialization logic.
      */
     public static interface Adaptor {
-        public void deserialize(GetField getField, Serializable serializable) throws IOException;
+        public void deserialize(GetField getField, Serializable serializable) throws Exception;
     }
 
     public static <E extends Serializable> ReadObjectBuilder<E> create(E serializable, Class<? super E> clazz) {
@@ -107,9 +107,15 @@ public final class ReadObjectBuilder<E extends Serializable> {
             if (adaptor != null) {
                 adaptor.deserialize(getField, _serializable);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("Could not deserialize object!", e);
-            throw e;
+            if (e instanceof IOException) {
+                throw (IOException)e;
+            }
+            if (e instanceof ClassNotFoundException) {
+                throw (ClassNotFoundException)e;
+            }
+            throw new RuntimeException(e);
         }
     }
 

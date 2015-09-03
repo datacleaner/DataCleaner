@@ -27,57 +27,71 @@ import org.datacleaner.api.Configured;
 import org.datacleaner.reference.SimpleSynonym;
 import org.datacleaner.reference.Synonym;
 import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.SynonymCatalogConnection;
 import org.datacleaner.util.StringUtils;
 import org.junit.Ignore;
 
 @Ignore
 public class SampleCustomSynonymCatalog implements SynonymCatalog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Configured
-	String name;
+    @Configured
+    String name;
 
-	@Configured
-	String[][] values;
+    @Configured
+    String[][] values;
 
-	@Configured
-	String description;
+    @Configured
+    String description;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public Collection<Synonym> getSynonyms() {
-		List<Synonym> result = new ArrayList<Synonym>();
-		for (String[] strings : values) {
-			result.add(new SimpleSynonym(strings[0], strings));
-		}
-		return result;
-	}
+    @Override
+    public SynonymCatalogConnection openConnection(DataCleanerConfiguration arg0) {
+        return new SynonymCatalogConnection() {
 
-	@Override
-	public String getMasterTerm(String term) {
-		if (StringUtils.isNullOrEmpty(term)) {
-			return null;
-		}
-		for (Synonym synonym : getSynonyms()) {
-			if (synonym.getSynonyms().containsValue(term)) {
-				return synonym.getMasterTerm();
-			}
-		}
-		return null;
-	}
+            @Override
+            public Collection<Synonym> getSynonyms() {
+                List<Synonym> result = new ArrayList<Synonym>();
+                for (String[] strings : values) {
+                    result.add(new SimpleSynonym(strings[0], strings));
+                }
+                return result;
+            }
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+            @Override
+            public String getMasterTerm(String term) {
+                if (StringUtils.isNullOrEmpty(term)) {
+                    return null;
+                }
+                for (Synonym synonym : getSynonyms()) {
+                    if (synonym.getMasterTerm().equals(term)) {
+                        return term;
+                    }
+                    if (synonym.getSynonyms().contains(term)) {
+                        return synonym.getMasterTerm();
+                    }
+                }
+                return null;
+            }
 
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
+            @Override
+            public void close() {
+            }
+        };
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

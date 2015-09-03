@@ -22,6 +22,7 @@ package org.datacleaner.reference;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
+import java.util.Objects;
 
 import org.datacleaner.beans.stringpattern.DefaultTokenizer;
 import org.datacleaner.beans.stringpattern.Token;
@@ -29,6 +30,7 @@ import org.datacleaner.beans.stringpattern.TokenPattern;
 import org.datacleaner.beans.stringpattern.TokenPatternImpl;
 import org.datacleaner.beans.stringpattern.Tokenizer;
 import org.datacleaner.beans.stringpattern.TokenizerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.LabelUtils;
 import org.datacleaner.util.ReadObjectBuilder;
 
@@ -43,77 +45,95 @@ import org.datacleaner.util.ReadObjectBuilder;
  */
 public final class SimpleStringPattern extends AbstractReferenceData implements StringPattern {
 
-	private static final long serialVersionUID = 1L;
-	private final String _expression;
-	private transient TokenPattern _tokenPattern;
-	private transient DefaultTokenizer _tokenizer;
-	private transient TokenizerConfiguration _configuration;
-	
-	public SimpleStringPattern(String name, String expression) {
-	    this(name, expression, new TokenizerConfiguration());
-	}
+    private static final long serialVersionUID = 1L;
 
-	public SimpleStringPattern(String name, String expression, TokenizerConfiguration configuration) {
-		super(name);
-		_expression = expression;
-		_configuration = configuration;
-	}
+    private final String _expression;
+    private transient TokenPattern _tokenPattern;
+    private transient DefaultTokenizer _tokenizer;
+    private transient TokenizerConfiguration _configuration;
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, SimpleStringPattern.class).readObject(stream);
-	}
+    public SimpleStringPattern(String name, String expression) {
+        this(name, expression, new TokenizerConfiguration());
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_expression);
-	}
+    public SimpleStringPattern(String name, String expression, TokenizerConfiguration configuration) {
+        super(name);
+        _expression = expression;
+        _configuration = configuration;
+    }
 
-	private Tokenizer getTokenizer() {
-		if (_tokenizer == null) {
-			_tokenizer = new DefaultTokenizer(getConfiguration());
-		}
-		return _tokenizer;
-	}
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, SimpleStringPattern.class).readObject(stream);
+    }
 
-	private TokenizerConfiguration getConfiguration() {
-		if (_configuration == null) {
-			// TODO: Ideally we should provide all the configuration options in
-			// the constructor
-			_configuration = new TokenizerConfiguration();
-		}
-		return _configuration;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final SimpleStringPattern other = (SimpleStringPattern) obj;
+            return Objects.equals(_expression, other._expression);
+        }
+        return false;
+    }
 
-	private TokenPattern getTokenPattern() {
-		if (_tokenPattern == null) {
-		    final String expression;
-		    if (LabelUtils.NULL_LABEL.equals(_expression)) {
-		        expression = null;
-		    } else if (LabelUtils.BLANK_LABEL.equals(_expression)) {
+    public boolean matches(String string) {
+        List<Token> tokens = getTokenizer().tokenize(string);
+        return getTokenPattern().match(tokens);
+    }
+
+    @Override
+    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+        return new StringPatternConnection() {
+
+            @Override
+            public boolean matches(String string) {
+                return SimpleStringPattern.this.matches(string);
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+    }
+
+    private Tokenizer getTokenizer() {
+        if (_tokenizer == null) {
+            _tokenizer = new DefaultTokenizer(getConfiguration());
+        }
+        return _tokenizer;
+    }
+
+    private TokenizerConfiguration getConfiguration() {
+        if (_configuration == null) {
+            // TODO: Ideally we should provide all the configuration options in
+            // the constructor
+            _configuration = new TokenizerConfiguration();
+        }
+        return _configuration;
+    }
+
+    private TokenPattern getTokenPattern() {
+        if (_tokenPattern == null) {
+            final String expression;
+            if (LabelUtils.NULL_LABEL.equals(_expression)) {
+                expression = null;
+            } else if (LabelUtils.BLANK_LABEL.equals(_expression)) {
                 expression = "";
-		    } else {
+            } else {
                 expression = _expression;
-		    }
-		    
+            }
+
             List<Token> tokens = getTokenizer().tokenize(expression);
-			_tokenPattern = new TokenPatternImpl(expression, tokens, getConfiguration());
-		}
-		return _tokenPattern;
-	}
+            _tokenPattern = new TokenPatternImpl(expression, tokens, getConfiguration());
+        }
+        return _tokenPattern;
+    }
 
-	public String getExpression() {
-		return _expression;
-	}
+    public String getExpression() {
+        return _expression;
+    }
 
-	@Override
-	public boolean matches(String string) {
-		List<Token> tokens = getTokenizer().tokenize(string);
-		return getTokenPattern().match(tokens);
-	}
-
-	@Override
-	public String toString() {
-		return "SimpleStringPattern[name=" + getName() + ", expression=" + _expression + "]";
-	}
+    @Override
+    public String toString() {
+        return "SimpleStringPattern[name=" + getName() + ", expression=" + _expression + "]";
+    }
 }

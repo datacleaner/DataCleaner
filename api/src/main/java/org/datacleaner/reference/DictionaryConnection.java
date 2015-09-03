@@ -19,19 +19,15 @@
  */
 package org.datacleaner.reference;
 
-import java.util.Collection;
+import java.io.Closeable;
+import java.util.Iterator;
 
-/**
- * Represents a collection of values where lookup using containsValue(...) is
- * the preferred way of access. Typically the implementation will use some
- * caching mechanism for the contained values because getting all values would
- * mean loading a lot of objects into memory.
- * 
- * @param <E>
- */
-public interface ReferenceValues<E> {
+public interface DictionaryConnection extends Closeable {
 
-	public Collection<E> getValues();
+    public boolean containsValue(String value);
 
-	public boolean containsValue(E value);
+    public Iterator<String> getAllValues();
+
+    @Override
+    public void close();
 }

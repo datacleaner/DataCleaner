@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.metamodel.util.Resource;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.panels.DCPanel;
 import org.datacleaner.user.UserPreferences;
 import org.datacleaner.util.convert.ResourceConverter;
@@ -51,6 +52,10 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
     private final Map<String, ResourceTypePresenter<?>> _resourceTypePresenters;
     private boolean _openMode;
     private ResourceTypePresenter<?> _currentPresenter;
+
+    public ResourceSelector(DataCleanerConfiguration configuration, UserPreferences userPreferences, boolean openMode) {
+        this(new ResourceConverter(configuration), userPreferences, openMode);
+    }
 
     public ResourceSelector(ResourceConverter resourceConverter, UserPreferences userPreferences, boolean openMode) {
         _resourceConverter = resourceConverter;
@@ -189,5 +194,20 @@ public class ResourceSelector extends DCPanel implements ResourceTypePresenter<R
         for (ResourceTypePresenter<?> presenter : presenters) {
             presenter.setSelectedFileFilter(fileFilter);
         }
+    }
+
+    public void setResourcePath(String path) {
+        final Resource resource = _resourceConverter.fromString(Resource.class, path);
+        if (resource != null) {
+            setResource(resource);
+        }
+    }
+
+    public String getResourcePath() {
+        final Resource resource = getResource();
+        if (resource == null) {
+            return null;
+        }
+        return _resourceConverter.toString(resource);
     }
 }

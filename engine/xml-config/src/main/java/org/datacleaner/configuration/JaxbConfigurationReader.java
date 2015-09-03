@@ -1363,7 +1363,7 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, true);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, true);
         lifeCycleHelper.assignProvidedProperties(descriptor, result);
 
         if (initialize) {

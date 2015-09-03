@@ -22,6 +22,7 @@ package org.datacleaner.beans.transform;
 import junit.framework.TestCase;
 
 import org.datacleaner.api.InputColumn;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.reference.Dictionary;
 import org.datacleaner.reference.SimpleDictionary;
@@ -37,7 +38,14 @@ public class RemoveDictionaryMatchesTransformerTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        transformer = new RemoveDictionaryMatchesTransformer(col, dictionary);
+        transformer = new RemoveDictionaryMatchesTransformer(col, dictionary, new DataCleanerConfigurationImpl());
+        transformer.init();
+    }
+    
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        transformer.close();
     }
 
     @Test

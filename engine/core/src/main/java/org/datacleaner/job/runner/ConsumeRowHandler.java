@@ -154,9 +154,7 @@ public class ConsumeRowHandler {
                 .getInjectionManagerFactory();
         final InjectionManager injectionManager = injectionManagerFactory.getInjectionManager(configuration,
                 analysisJob);
-        final ReferenceDataActivationManager referenceDataActivationManager = new ReferenceDataActivationManager();
-
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, referenceDataActivationManager,
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager,
                 rowConsumeConfiguration.includeNonDistributedTasks);
         SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
         sourceColumnFinder.addSources(analysisJob);

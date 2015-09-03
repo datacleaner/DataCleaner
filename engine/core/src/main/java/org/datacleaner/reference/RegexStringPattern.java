@@ -21,11 +21,12 @@ package org.datacleaner.reference;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
+import org.elasticsearch.common.base.Objects;
 
 /**
  * Represents a string pattern which is based on a regular expression (regex).
@@ -37,73 +38,78 @@ import org.datacleaner.util.ReadObjectBuilder;
  */
 public final class RegexStringPattern extends AbstractReferenceData implements StringPattern {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final String _expression;
-	private final boolean _matchEntireString;
-	private transient Pattern _pattern;
+    private final String _expression;
+    private final boolean _matchEntireString;
 
-	public RegexStringPattern(String name, String expression, boolean matchEntireString) {
-		super(name);
-		_expression = expression;
-		_matchEntireString = matchEntireString;
-	}
+    public RegexStringPattern(String name, String expression, boolean matchEntireString) {
+        super(name);
+        _expression = expression;
+        _matchEntireString = matchEntireString;
+    }
 
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-		ReadObjectBuilder.create(this, RegexStringPattern.class).readObject(stream);
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            final RegexStringPattern other = (RegexStringPattern) obj;
+            return Objects.equal(_expression, other._expression)
+                    && Objects.equal(_matchEntireString, other._matchEntireString);
+        }
+        return false;
+    }
 
-	@Override
-	protected void decorateIdentity(List<Object> identifiers) {
-		super.decorateIdentity(identifiers);
-		identifiers.add(_expression);
-		identifiers.add(_matchEntireString);
-	}
+    public boolean isMatchEntireString() {
+        return _matchEntireString;
+    }
 
-	@Override
-	public boolean matches(String string) {
-		if (string == null) {
-			return false;
-		}
-		Matcher matcher = getPattern().matcher(string);
+    public String getExpression() {
+        return _expression;
+    }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        ReadObjectBuilder.create(this, RegexStringPattern.class).readObject(stream);
+    }
 
-		if (matcher.find()) {
-			if (_matchEntireString) {
-				int s = matcher.start();
-				if (s == 0) {
-					int e = matcher.end();
-					if (e == string.length()) {
-						return true;
-					}
-				}
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public String toString() {
+        return "RegexStringPattern[name=" + getName() + ", expression=" + _expression + ", matchEntireString="
+                + _matchEntireString + "]";
+    }
 
-	public Pattern getPattern() {
-		synchronized (this) {
-			if (_pattern == null) {
-				_pattern = Pattern.compile(_expression);
-			}
-		}
-		return _pattern;
-	}
+    @Override
+    public StringPatternConnection openConnection(DataCleanerConfiguration configuration) {
+        return new StringPatternConnection() {
 
-	public boolean isMatchEntireString() {
-		return _matchEntireString;
-	}
+            private final Pattern _pattern = Pattern.compile(_expression);
 
-	public String getExpression() {
-		return _expression;
-	}
+            @Override
+            public boolean matches(String string) {
+                if (string == null) {
+                    return false;
+                }
+                final Matcher matcher = _pattern.matcher(string);
 
-	@Override
-	public String toString() {
-		return "RegexStringPattern[name=" + getName() + ", expression=" + _expression + ", matchEntireString="
-				+ _matchEntireString + "]";
-	}
+                if (matcher.find()) {
+                    if (_matchEntireString) {
+                        int s = matcher.start();
+                        if (s == 0) {
+                            int e = matcher.end();
+                            if (e == string.length()) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+    }
 
 }

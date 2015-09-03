@@ -19,46 +19,67 @@
  */
 package org.datacleaner.beans.filter;
 
+import junit.framework.TestCase;
+
+import org.datacleaner.configuration.DataCleanerConfiguration;
+import org.datacleaner.configuration.DataCleanerConfigurationImpl;
 import org.datacleaner.data.MockInputColumn;
 import org.datacleaner.data.MockInputRow;
+import org.datacleaner.descriptors.Descriptors;
+import org.datacleaner.descriptors.FilterDescriptor;
+import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.datacleaner.reference.RegexStringPattern;
 import org.datacleaner.reference.StringPattern;
 
-import junit.framework.TestCase;
-
 public class StringPatternMatchFilterTest extends TestCase {
 
-	public void testFilterSinglePattern() throws Exception {
-		StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
-		MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
-		StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern },
-				MatchFilterCriteria.ANY);
+    private final DataCleanerConfiguration configuration = new DataCleanerConfigurationImpl();
 
-		assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
-		assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
+    private final FilterDescriptor<StringPatternFilter, ValidationCategory> descriptor = Descriptors
+            .ofFilter(StringPatternFilter.class);
 
-		// it shouldn't matter if ANY or ALL criteria is being used
-		filter = new StringPatternFilter(column, new StringPattern[] { stringPattern }, MatchFilterCriteria.ALL);
+    public void testFilterSinglePattern() throws Exception {
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new DataCleanerConfigurationImpl(), null, true);
 
-		assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
-		assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
-	}
+        final StringPattern stringPattern = new RegexStringPattern("very simple email pattern", ".+@.+", true);
+        final MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
+        StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern },
+                MatchFilterCriteria.ANY, configuration);
 
-	public void testFilterMultiplePatterns() throws Exception {
-		StringPattern stringPattern1 = new RegexStringPattern("very simple email pattern", ".+@.+", true);
-		StringPattern stringPattern2 = new RegexStringPattern("something with 'kas'", ".*kas.*", true);
-		MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
-		StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1,
-				stringPattern2 }, MatchFilterCriteria.ANY);
+        lifeCycleHelper.initialize(descriptor, filter);
 
-		assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
-		assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
-		assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
+        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
 
-		filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1, stringPattern2 },
-				MatchFilterCriteria.ALL);
-		assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
-		assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
-		assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
-	}
+        lifeCycleHelper.close(descriptor, filter, true);
+
+        // it shouldn't matter if ANY or ALL criteria is being used
+        filter = new StringPatternFilter(column, new StringPattern[] { stringPattern }, MatchFilterCriteria.ALL,
+                configuration);
+        filter.init();
+        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
+        filter.close();
+    }
+
+    public void testFilterMultiplePatterns() throws Exception {
+        StringPattern stringPattern1 = new RegexStringPattern("very simple email pattern", ".+@.+", true);
+        StringPattern stringPattern2 = new RegexStringPattern("something with 'kas'", ".*kas.*", true);
+        MockInputColumn<String> column = new MockInputColumn<String>("my col", String.class);
+        StringPatternFilter filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1,
+                stringPattern2 }, MatchFilterCriteria.ANY, configuration);
+        filter.init();
+        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
+        assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
+        filter.close();
+
+        filter = new StringPatternFilter(column, new StringPattern[] { stringPattern1, stringPattern2 },
+                MatchFilterCriteria.ALL, configuration);
+        filter.init();
+        assertEquals(ValidationCategory.VALID, filter.categorize(new MockInputRow().put(column, "kasper@eobjects.org")));
+        assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "kasper@")));
+        assertEquals(ValidationCategory.INVALID, filter.categorize(new MockInputRow().put(column, "ankit@")));
+        filter.close();
+    }
 }

@@ -19,29 +19,25 @@
  */
 package org.datacleaner.reference;
 
-import java.io.Serializable;
+import java.io.Closeable;
+import java.util.Collection;
 
-final class TextFileSynonym implements Synonym, Serializable {
+public interface SynonymCatalogConnection extends Closeable {
 
-	private static final long serialVersionUID = 1L;
+    /**
+     * @return all synonyms contained within this catalog
+     */
+    public Collection<Synonym> getSynonyms();
 
-	private final String[] _synonyms;
-	private final boolean _caseSensitive;
-
-	public TextFileSynonym(String line, boolean caseSensitive) {
-		String[] split = line.split("\\,");
-		_synonyms = split;
-		_caseSensitive = caseSensitive;
-	}
-
-	@Override
-	public String getMasterTerm() {
-		return _synonyms[0];
-	}
-
-	@Override
-	public ReferenceValues<String> getSynonyms() {
-		return new SimpleStringReferenceValues(_synonyms, _caseSensitive);
-	}
-
+    /**
+     * Searches the catalog for a replacement (master) term for a given term
+     * 
+     * @param term
+     *            the term which is suspected to be a synonym of a master term
+     * @return the master term found, or null if none is found
+     */
+    public String getMasterTerm(String term);
+    
+    @Override
+    public void close();
 }

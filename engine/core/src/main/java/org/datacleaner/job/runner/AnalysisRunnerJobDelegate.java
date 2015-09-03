@@ -111,7 +111,7 @@ final class AnalysisRunnerJobDelegate {
                     .getInjectionManager(_configuration, _job);
 
             final LifeCycleHelper rowProcessingLifeCycleHelper = new LifeCycleHelper(injectionManager,
-                    new ReferenceDataActivationManager(), _includeNonDistributedTasks);
+                    _includeNonDistributedTasks);
 
             final RowProcessingPublishers publishers = new RowProcessingPublishers(_job, _analysisListener,
                     _taskRunner, rowProcessingLifeCycleHelper, _sourceColumnFinder);
@@ -121,8 +121,8 @@ final class AnalysisRunnerJobDelegate {
             // A task listener that will register either succesfull executions
             // or unexpected errors (which will be delegated to the
             // errorListener)
-            final JobCompletionTaskListener jobCompletionTaskListener = new JobCompletionTaskListener(analysisJobMetrics,
-                    _analysisListener, 1);
+            final JobCompletionTaskListener jobCompletionTaskListener = new JobCompletionTaskListener(
+                    analysisJobMetrics, _analysisListener, 1);
 
             _analysisListener.jobBegin(_job, analysisJobMetrics);
 
@@ -159,7 +159,7 @@ final class AnalysisRunnerJobDelegate {
 
         final Collection<RowProcessingPublisher> rowProcessingPublishers = publishers.getRowProcessingPublishers();
         logger.debug("RowProcessingPublishers: {}", rowProcessingPublishers);
-        
+
         for (RowProcessingPublisher rowProcessingPublisher : rowProcessingPublishers) {
             logger.debug("Scheduling row processing publisher: {}", rowProcessingPublisher);
             rowProcessingPublisher.runRowProcessing(_resultQueue, rowProcessorPublishersDoneCompletionListener);

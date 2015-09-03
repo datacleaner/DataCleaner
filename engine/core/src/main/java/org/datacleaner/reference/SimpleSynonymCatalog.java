@@ -29,21 +29,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.util.ReadObjectBuilder;
 import org.datacleaner.util.ReadObjectBuilder.Adaptor;
-import org.datacleaner.util.StringUtils;
+import org.elasticsearch.common.base.Objects;
 
+/**
+ * The simplest implementation of {@link SynonymCatalog}. Based on an in-memory
+ * {@link Map} of values.
+ */
 public final class SimpleSynonymCatalog extends AbstractReferenceData implements SynonymCatalog {
 
     private static final long serialVersionUID = 1L;
 
     private final Map<String, String> _synonymMap;
+    private final boolean _caseSensitive;
 
     public SimpleSynonymCatalog(String name) {
+        this(name, new HashMap<String, String>());
+    }
+
+    public SimpleSynonymCatalog(String name, Map<String, String> synonyms) {
+        this(name, synonyms, true);
+    }
+
+    public SimpleSynonymCatalog(String name, Map<String, String> synonyms, boolean caseSensitive) {
         super(name);
-        _synonymMap = new HashMap<String, String>();
+        if (caseSensitive) {
+            _synonymMap = synonyms;
+        } else {
+            _synonymMap = new HashMap<String, String>();
+            final Set<Entry<String, String>> entries = synonyms.entrySet();
+            for (Entry<String, String> entry : entries) {
+                final String key = entry.getKey().toLowerCase();
+                _synonymMap.put(key, entry.getValue());
+            }
+        }
+        _caseSensitive = caseSensitive;
     }
 
     public SimpleSynonymCatalog(String name, Synonym... synonyms) {
@@ -60,71 +85,84 @@ public final class SimpleSynonymCatalog extends AbstractReferenceData implements
         }
     }
 
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        Adaptor adaptor = new Adaptor() {
+            @Override
+            public void deserialize(GetField getField, Serializable serializable) throws Exception {
+                final boolean caseSensitive = getField.get("_caseSensitive", true);
+                Field field = SimpleSynonymCatalog.class.getDeclaredField("_caseSensitive");
+                field.setAccessible(true);
+                field.set(serializable, caseSensitive);
+            }
+        };
+        ReadObjectBuilder.create(this, SimpleSynonymCatalog.class).readObject(stream, adaptor);
+    }
+
     private void addSynonym(Synonym synonym) {
         final String masterTerm = synonym.getMasterTerm();
-        _synonymMap.put(masterTerm, masterTerm);
-        final Collection<String> values = synonym.getSynonyms().getValues();
+        {
+            final String key = _caseSensitive ? masterTerm : masterTerm.toLowerCase();
+            _synonymMap.put(key, masterTerm);
+        }
+        final Collection<String> values = synonym.getSynonyms();
         for (String value : values) {
-            _synonymMap.put(value, masterTerm);
+            final String key = _caseSensitive ? value : value.toLowerCase();
+            _synonymMap.put(key, masterTerm);
         }
     }
 
     @Override
-    protected void decorateIdentity(List<Object> identifiers) {
-        super.decorateIdentity(identifiers);
-        identifiers.add(_synonymMap);
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            SimpleSynonymCatalog other = (SimpleSynonymCatalog) obj;
+            return Objects.equal(_synonymMap, other._synonymMap) && Objects.equal(_caseSensitive, other._caseSensitive);
+        }
+        return false;
     }
 
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        ReadObjectBuilder.create(this, SimpleSynonymCatalog.class).readObject(stream, new Adaptor() {
+    @Override
+    public SynonymCatalogConnection openConnection(DataCleanerConfiguration configuration) {
+        return new SynonymCatalogConnection() {
+
             @Override
-            public void deserialize(GetField getField, Serializable serializable) throws IOException {
-                // Get the old List<Synonym> field '_synonyms'.
-                Object synonyms = getField.get("_synonyms", null);
-                if (synonyms instanceof List) {
-                    try {
-                        Field field = SimpleSynonymCatalog.class.getDeclaredField("_synonymMap");
-                        field.setAccessible(true);
-                        field.set(SimpleSynonymCatalog.this, new HashMap<String, String>());
-                    } catch (Exception e) {
-                        throw new IllegalStateException(e);
+            public Collection<Synonym> getSynonyms() {
+                final Map<String, Synonym> synonyms = new TreeMap<String, Synonym>();
+                for (Entry<String, String> synonymEntry : _synonymMap.entrySet()) {
+                    final String masterTerm = synonymEntry.getValue();
+                    final String synonymValue = synonymEntry.getKey();
+
+                    MutableSynonym synonym = (MutableSynonym) synonyms.get(masterTerm);
+                    if (synonym == null) {
+                        synonym = new MutableSynonym(masterTerm);
+                        synonyms.put(masterTerm, synonym);
                     }
 
-                    @SuppressWarnings("unchecked")
-                    List<Synonym> synonymsList = (List<Synonym>) synonyms;
-                    for (Synonym synonym : synonymsList) {
-                        addSynonym(synonym);
-                    }
+                    synonym.addSynonym(synonymValue);
                 }
-            }
-        });
-    }
-
-    @Override
-    public String getMasterTerm(String term) {
-        if (StringUtils.isNullOrEmpty(term)) {
-            return null;
-        }
-        String masterTerm = _synonymMap.get(term);
-        return masterTerm;
-    }
-
-    @Override
-    public Collection<? extends Synonym> getSynonyms() {
-        Map<String, MutableSynonym> synonyms = new TreeMap<String, MutableSynonym>();
-        for (Entry<String, String> synonymEntry : _synonymMap.entrySet()) {
-            String masterTerm = synonymEntry.getValue();
-            String synonymValue = synonymEntry.getKey();
-
-            MutableSynonym synonym = synonyms.get(masterTerm);
-            if (synonym == null) {
-                synonym = new MutableSynonym(masterTerm);
-                synonyms.put(masterTerm, synonym);
+                return synonyms.values();
             }
 
-            synonym.addSynonym(synonymValue);
-        }
-        return synonyms.values();
+            @Override
+            public String getMasterTerm(String term) {
+                if (term == null) {
+                    return null;
+                }
+                final String key = _caseSensitive ? term : term.toLowerCase();
+                final String masterTerm = _synonymMap.get(key);
+                return masterTerm;
+            }
+
+            @Override
+            public void close() {
+            }
+        };
     }
 
+    public boolean isCaseSensitive() {
+        return _caseSensitive;
+    }
+
+    public Map<String, String> getSynonymMap() {
+        return _synonymMap;
+    }
 }

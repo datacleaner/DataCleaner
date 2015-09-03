@@ -30,13 +30,18 @@ import org.datacleaner.api.Description;
 import org.datacleaner.api.ExternalDocumentation;
 import org.datacleaner.api.ExternalDocumentation.DocumentationLink;
 import org.datacleaner.api.ExternalDocumentation.DocumentationType;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.HasLabelAdvice;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.ImproveSuperCategory;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.SynonymCatalog;
+import org.datacleaner.reference.SynonymCatalogConnection;
 
 /**
  * A simple transformer that uses a synonym catalog to replace a synonym with
@@ -67,15 +72,21 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     @Description("Tokenize and look up every token of the input, rather than looking up the complete input string?")
     boolean lookUpEveryToken = false;
 
+    @Provided
+    DataCleanerConfiguration configuration;
+
+    private SynonymCatalogConnection synonymCatalogConnection;
+
     public SynonymLookupTransformer() {
     }
 
     public SynonymLookupTransformer(InputColumn<String> column, SynonymCatalog synonymCatalog,
-            boolean retainOriginalValue) {
+            boolean retainOriginalValue, DataCleanerConfiguration configuration) {
         this();
         this.column = column;
         this.synonymCatalog = synonymCatalog;
         this.retainOriginalValue = retainOriginalValue;
+        this.configuration = configuration;
     }
 
     @Override
@@ -89,6 +100,19 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
             return null;
         }
         return "Lookup: " + synonymCatalog.getName();
+    }
+
+    @Initialize
+    public void init() {
+        synonymCatalogConnection = synonymCatalog.openConnection(configuration);
+    }
+
+    @Close
+    public void close() {
+        if (synonymCatalogConnection != null) {
+            synonymCatalogConnection.close();
+            synonymCatalogConnection = null;
+        }
     }
 
     @Override
@@ -128,7 +152,7 @@ public class SynonymLookupTransformer implements Transformer, HasLabelAdvice {
     }
 
     private String lookup(String originalValue) {
-        final String replacedValue = synonymCatalog.getMasterTerm(originalValue);
+        final String replacedValue = synonymCatalogConnection.getMasterTerm(originalValue);
         if (retainOriginalValue && replacedValue == null) {
             return originalValue;
         }

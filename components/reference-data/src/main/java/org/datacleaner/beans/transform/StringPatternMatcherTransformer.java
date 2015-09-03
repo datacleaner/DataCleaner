@@ -22,84 +22,113 @@ package org.datacleaner.beans.transform;
 import javax.inject.Named;
 
 import org.datacleaner.api.Categorized;
+import org.datacleaner.api.Close;
 import org.datacleaner.api.Configured;
 import org.datacleaner.api.Description;
+import org.datacleaner.api.Initialize;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.api.OutputColumns;
+import org.datacleaner.api.Provided;
 import org.datacleaner.api.Transformer;
 import org.datacleaner.components.categories.MatchingAndStandardizationCategory;
 import org.datacleaner.components.convert.ConvertToStringTransformer;
+import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.reference.StringPattern;
+import org.datacleaner.reference.StringPatternConnection;
 
 @Named("String pattern matcher")
 @Description("Matches string values against a set of string patterns, producing a corresponding set of output columns specifying whether or not the values matched those string patterns")
 @Categorized({ MatchingAndStandardizationCategory.class })
 public class StringPatternMatcherTransformer implements Transformer {
 
-	@Configured
-	StringPattern[] _stringPatterns;
+    @Configured
+    StringPattern[] _stringPatterns;
 
-	@Configured
-	InputColumn<?> _column;
+    @Configured
+    InputColumn<?> _column;
 
-	@Configured
-	MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
+    @Configured
+    MatchOutputType _outputType = MatchOutputType.TRUE_FALSE;
 
-	public StringPatternMatcherTransformer(InputColumn<?> column, StringPattern[] stringPatterns) {
-		this();
-		_column = column;
-		_stringPatterns = stringPatterns;
-	}
+    @Provided
+    DataCleanerConfiguration _configuration;
 
-	public StringPatternMatcherTransformer() {
-	}
+    private StringPatternConnection[] stringPatternConnections;
 
-	@Override
-	public OutputColumns getOutputColumns() {
-		String columnName = _column.getName();
-		String[] names = new String[_stringPatterns.length];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = columnName + " '" + _stringPatterns[i].getName() + "'";
-		}
-		Class<?>[] types = new Class[_stringPatterns.length];
-		for (int i = 0; i < types.length; i++) {
-			types[i] = _outputType.getOutputClass();
-		}
-		return new OutputColumns(names, types);
-	}
+    public StringPatternMatcherTransformer(InputColumn<?> column, StringPattern[] stringPatterns, DataCleanerConfiguration configuration) {
+        this();
+        _column = column;
+        _stringPatterns = stringPatterns;
+        _configuration = configuration;
+    }
 
-	@Override
-	public Object[] transform(InputRow inputRow) {
-		Object value = inputRow.getValue(_column);
-		Object[] result = doMatching(value);
-		return result;
-	}
+    public StringPatternMatcherTransformer() {
+    }
 
-	public Object[] doMatching(Object value) {
-		Object[] result = new Object[_stringPatterns.length];
-		String stringValue = ConvertToStringTransformer.transformValue(value);
+    @Initialize
+    public void init() {
+        stringPatternConnections = new StringPatternConnection[_stringPatterns.length];
+        for (int i = 0; i < _stringPatterns.length; i++) {
+            stringPatternConnections[i] = _stringPatterns[i].openConnection(_configuration);
+        }
+    }
 
-		for (int i = 0; i < result.length; i++) {
-			boolean matches = _stringPatterns[i].matches(stringValue);
-			if (_outputType == MatchOutputType.TRUE_FALSE) {
-				result[i] = matches;
-			} else if (_outputType == MatchOutputType.INPUT_OR_NULL) {
-				if (matches) {
-					result[i] = stringValue;
-				} else {
-					result[i] = null;
-				}
-			}
-		}
-		return result;
-	}
+    @Close
+    public void close() {
+        if (stringPatternConnections != null) {
+            for (StringPatternConnection stringPatternConnection : stringPatternConnections) {
+                stringPatternConnection.close();
+            }
+            stringPatternConnections = null;
+        }
+    }
 
-	public void setStringPatterns(StringPattern[] stringPatterns) {
-		_stringPatterns = stringPatterns;
-	}
+    @Override
+    public OutputColumns getOutputColumns() {
+        String columnName = _column.getName();
+        String[] names = new String[_stringPatterns.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = columnName + " '" + _stringPatterns[i].getName() + "'";
+        }
+        Class<?>[] types = new Class[_stringPatterns.length];
+        for (int i = 0; i < types.length; i++) {
+            types[i] = _outputType.getOutputClass();
+        }
+        return new OutputColumns(names, types);
+    }
 
-	public void setColumn(InputColumn<?> column) {
-		_column = column;
-	}
+    @Override
+    public Object[] transform(InputRow inputRow) {
+        Object value = inputRow.getValue(_column);
+        Object[] result = doMatching(value);
+        return result;
+    }
+
+    public Object[] doMatching(Object value) {
+        Object[] result = new Object[stringPatternConnections.length];
+        String stringValue = ConvertToStringTransformer.transformValue(value);
+
+        for (int i = 0; i < result.length; i++) {
+            boolean matches = stringPatternConnections[i].matches(stringValue);
+            if (_outputType == MatchOutputType.TRUE_FALSE) {
+                result[i] = matches;
+            } else if (_outputType == MatchOutputType.INPUT_OR_NULL) {
+                if (matches) {
+                    result[i] = stringValue;
+                } else {
+                    result[i] = null;
+                }
+            }
+        }
+        return result;
+    }
+
+    public void setStringPatterns(StringPattern[] stringPatterns) {
+        _stringPatterns = stringPatterns;
+    }
+
+    public void setColumn(InputColumn<?> column) {
+        _column = column;
+    }
 }

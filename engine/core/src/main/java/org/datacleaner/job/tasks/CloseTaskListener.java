@@ -72,8 +72,6 @@ public class CloseTaskListener implements TaskListener {
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
             activeOutputDataStream.close();
         }
-
-        _lifeCycleHelper.closeReferenceData();
     }
 
     @Override

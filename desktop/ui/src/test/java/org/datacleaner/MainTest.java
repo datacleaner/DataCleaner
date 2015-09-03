@@ -21,9 +21,9 @@ package org.datacleaner;
 
 import java.util.Map;
 
-import org.h2.util.StringUtils;
-
 import junit.framework.TestCase;
+
+import org.h2.util.StringUtils;
 
 public class MainTest extends TestCase {
 
@@ -75,9 +75,9 @@ public class MainTest extends TestCase {
                 + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
                 + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
                 + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=" + https
-                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username
-                + " -Ddatacleaner.monitor.security.mode=" + securityMode
-                + " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
+                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username;
+                //+ " -Ddatacleaner.monitor.security.mode=" + securityMode
+                //+ " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
         final String[] args = fullArguments.split(" ");
         Main.main(args);
     }

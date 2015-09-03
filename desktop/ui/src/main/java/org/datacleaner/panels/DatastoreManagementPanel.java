@@ -264,7 +264,7 @@ public class DatastoreManagementPanel extends DCSplashPanel implements Datastore
         // set of databases that are displayed directly on panel
         final Set<String> databaseNames = new HashSet<String>();
 
-        final int panel1ItemsCount = 10;
+        final int panel1ItemsCount = 11;
         final int panel2ItemsCount = 8;
 
         final DatastoreDescriptors datastoreDescriptors = new DatastoreDescriptors(_databaseDriverCatalog);

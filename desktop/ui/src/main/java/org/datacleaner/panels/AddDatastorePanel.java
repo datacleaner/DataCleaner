@@ -143,7 +143,7 @@ public class AddDatastorePanel extends DCPanel {
         }
         return cloudButton;
     }
-
+    
     private PopupButton createDatabaseButton() {
         final PopupButton databaseButton = WidgetFactory.createDefaultPopupButton("Database",
                 IconUtils.GENERIC_DATASTORE_IMAGEPATH);

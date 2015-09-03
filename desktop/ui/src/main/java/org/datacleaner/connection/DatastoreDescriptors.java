@@ -32,6 +32,7 @@ import org.datacleaner.windows.CassandraDatastoreDialog;
 import org.datacleaner.windows.CompositeDatastoreDialog;
 import org.datacleaner.windows.CouchDbDatastoreDialog;
 import org.datacleaner.windows.CsvDatastoreDialog;
+import org.datacleaner.windows.DataHubDatastoreDialog;
 import org.datacleaner.windows.DbaseDatastoreDialog;
 import org.datacleaner.windows.ElasticSearchDatastoreDialog;
 import org.datacleaner.windows.ExcelDatastoreDialog;
@@ -86,6 +87,10 @@ public class DatastoreDescriptors {
     private static final DatastoreDescriptor SUGARCRM_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("SugarCRM",
             "Connect to a SugarCRM system", SugarCrmDatastore.class, SugarCrmDatastoreDialog.class,
             IconUtils.SUGAR_CRM_IMAGEPATH);
+
+    private static final DatastoreDescriptor DATAHUB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl("DataHub",
+            "Connect to DataHub", DataHubDatastore.class, DataHubDatastoreDialog.class,
+            IconUtils.DATAHUB_IMAGEPATH);
 
     private static final DatastoreDescriptor MONGODB_DATASTORE_DESCRIPTOR = new DatastoreDescriptorImpl(
             "MongoDB database", "Connect to a MongoDB database", MongoDbDatastore.class, MongoDbDatastoreDialog.class,
@@ -173,7 +178,7 @@ public class DatastoreDescriptors {
 
         availableCloudBasedDatabaseDescriptors.add(SALESFORCE_DATASTORE_DESCRIPTOR);
         availableCloudBasedDatabaseDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
-
+        availableCloudBasedDatabaseDescriptors.add(DATAHUB_DATASTORE_DESCRIPTOR);
         return availableCloudBasedDatabaseDescriptors;
     }
     
@@ -208,6 +213,7 @@ public class DatastoreDescriptors {
         datastoreDescriptors.add(JSON_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(SALESFORCE_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(SUGARCRM_DATASTORE_DESCRIPTOR);
+        datastoreDescriptors.add(DATAHUB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(MONGODB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(COUCHDB_DATASTORE_DESCRIPTOR);
         datastoreDescriptors.add(ELASTICSEARCH_DATASTORE_DESCRIPTOR);

@@ -25,11 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.metamodel.data.DefaultRow;
-import org.apache.metamodel.data.SimpleDataSetHeader;
 import org.apache.metamodel.query.Query;
-import org.apache.metamodel.schema.ColumnType;
-import org.apache.metamodel.schema.ColumnTypeImpl;
 import org.apache.metamodel.util.HasName;
 import org.datacleaner.api.Analyzer;
 import org.datacleaner.api.Configured;
@@ -50,7 +46,7 @@ import org.datacleaner.util.StringUtils;
 
 @Named("Completeness analyzer")
 @Description("Asserts the completeness of your data by ensuring that all required fields are filled.")
-public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult>, HasOutputDataStreams{
+public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult>, HasOutputDataStreams {
     public static final String OUTPUT_STREAM_COMPLETE = "Complete rows";
     public static final String OUTPUT_STREAM_INCOMPLETE = "Incomplete rows";
 
@@ -115,6 +111,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     private final AtomicInteger _rowCount;
     private OutputRowCollector _completeRowCollector;
     private OutputRowCollector _incompleteRowCollector;
+
     public CompletenessAnalyzer() {
         _rowCount = new AtomicInteger();
     }
@@ -138,7 +135,7 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
             }
             if (_evaluationMode == EvaluationMode.ANY_FIELD && !valid) {
                 _annotationFactory.annotate(row, distinctCount, _invalidRecords);
-                if(_incompleteRowCollector != null) {
+                if (_incompleteRowCollector != null) {
                     _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
                 }
                 return;
@@ -150,13 +147,13 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
         }
         if (_evaluationMode == EvaluationMode.ALL_FIELDS && allInvalid) {
             _annotationFactory.annotate(row, distinctCount, _invalidRecords);
-            if(_incompleteRowCollector != null) {
+            if (_incompleteRowCollector != null) {
                 _incompleteRowCollector.putValues(row.getValues(_valueColumns).toArray());
             }
             return;
         }
 
-        if(_completeRowCollector != null) {
+        if (_completeRowCollector != null) {
             _completeRowCollector.putValues(row.getValues(_valueColumns).toArray());
         }
     }
@@ -191,26 +188,22 @@ public class CompletenessAnalyzer implements Analyzer<CompletenessAnalyzerResult
     @Override
     public OutputDataStream[] getOutputDataStreams() {
         final OutputDataStreamBuilder completeStreamBuilder = OutputDataStreams.pushDataStream(OUTPUT_STREAM_COMPLETE);
-        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams.pushDataStream(OUTPUT_STREAM_INCOMPLETE);
+        final OutputDataStreamBuilder incompleteStreamBuilder = OutputDataStreams
+                .pushDataStream(OUTPUT_STREAM_INCOMPLETE);
 
-        for(InputColumn<?> column : _valueColumns) {
-            if(column.isPhysicalColumn()) {
-                completeStreamBuilder.withColumn(column.getName(), column.getPhysicalColumn().getType());
-                incompleteStreamBuilder.withColumn(column.getName(), column.getPhysicalColumn().getType());
-            } else {
-                ColumnType columnType = ColumnTypeImpl.convertColumnType(column.getDataType());
-                completeStreamBuilder.withColumn(column.getName(), columnType);
-                incompleteStreamBuilder.withColumn(column.getName(), columnType);
-            }
+        for (InputColumn<?> column : _valueColumns) {
+            completeStreamBuilder.withColumnLike(column);
+            incompleteStreamBuilder.withColumnLike(column);
         }
 
-        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(), incompleteStreamBuilder.toOutputDataStream() };
+        return new OutputDataStream[] { completeStreamBuilder.toOutputDataStream(),
+                incompleteStreamBuilder.toOutputDataStream() };
     }
 
     @Override
     public void initializeOutputDataStream(final OutputDataStream outputDataStream, final Query query,
             final OutputRowCollector outputRowCollector) {
-        if(outputDataStream.getName().equals(OUTPUT_STREAM_COMPLETE)){
+        if (outputDataStream.getName().equals(OUTPUT_STREAM_COMPLETE)) {
             _completeRowCollector = outputRowCollector;
         } else {
             _incompleteRowCollector = outputRowCollector;

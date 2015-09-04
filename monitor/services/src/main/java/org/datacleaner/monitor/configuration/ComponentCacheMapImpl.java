@@ -197,7 +197,7 @@ public class ComponentCacheMapImpl implements ComponentCache {
 
         private void check() {
             allIdInCache = new HashSet<>(data.keySet());
-            Iterator<TenantContext> tenantContextIterator = _tenantContextFactory.getActiveTenantContextIterator();
+            Iterator<TenantContext> tenantContextIterator = _tenantContextFactory.getActiveTenantContexts();
 
             while (tenantContextIterator.hasNext()) {
                 tenantContext = tenantContextIterator.next();

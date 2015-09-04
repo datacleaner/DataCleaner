@@ -19,6 +19,9 @@
  */
 package org.datacleaner.monitor.configuration;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.datacleaner.beans.transform.ConcatenatorTransformer;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.configuration.DataCleanerEnvironment;
@@ -31,12 +34,9 @@ import org.easymock.IAnswer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 /**
  * Class ComponentsCacheTest
@@ -52,7 +52,6 @@ public class ComponentCacheMapImplTest {
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();
@@ -75,13 +74,6 @@ public class ComponentCacheMapImplTest {
         Assert.assertEquals(componentStoreHolder, cache.get("id", tenantName, mockTenantContext).getComponentStoreHolder());
     }
 
-    private Iterator<RepositoryFolder> getRepositoryFolderIterator() {
-        Set<RepositoryFolder> tenantNames = new HashSet<>();
-        tenantNames.add(getRepositoryFolderMock());
-
-        return tenantNames.iterator();
-    }
-
     private RepositoryFolder getRepositoryFolderMock() {
         RepositoryFolder repositoryFolder = EasyMock.createNiceMock(RepositoryFolder.class);
         EasyMock.expect(repositoryFolder.getName()).andReturn(tenantName).anyTimes();
@@ -96,7 +88,6 @@ public class ComponentCacheMapImplTest {
         TenantContextFactory mockTenantContextFactory = EasyMock.createMock(TenantContextFactory.class);
         TenantContext mockTenantContext = EasyMock.createMock(TenantContext.class);
         EasyMock.expect(mockTenantContextFactory.getContext(tenantName)).andReturn(mockTenantContext).anyTimes();
-        EasyMock.expect(mockTenantContextFactory.getRepositoryFolderIterator()).andReturn(getRepositoryFolderIterator()).anyTimes();
 
         ComponentStore store = EasyMock.createMock(ComponentStore.class);
         EasyMock.expect(mockTenantContext.getComponentStore()).andReturn(store).anyTimes();

@@ -138,11 +138,6 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     @Override
-    public Iterator<RepositoryFolder> getRepositoryFolderIterator() {
-        return _repository.getFolders().iterator();
-    }
-
-    @Override
     public Iterator<TenantContext> getActiveTenantContextIterator() {
         return _contexts.asMap().values().iterator();
     }

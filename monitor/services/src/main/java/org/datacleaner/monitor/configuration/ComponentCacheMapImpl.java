@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ComponentCacheMapImpl implements ComponentCache {
     private static final Logger logger = LoggerFactory.getLogger(ComponentCacheMapImpl.class);
-    private static final long CHECK_INTERVAL = 1000; // 5 * 60 * 1000; // mytodo
+    private static final long CHECK_INTERVAL = 5 * 60 * 1000;
     private static final long CLOSE_TIMEOUT = 60 * 1000;
 
     private TenantContextFactory _tenantContextFactory;

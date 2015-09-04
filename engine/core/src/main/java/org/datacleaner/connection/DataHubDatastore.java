@@ -97,7 +97,7 @@ public class DataHubDatastore extends UsageAwareDatastore<DataHubDataContext>
         final DataHubConnection connection = new DataHubConnection(_host, _port, _username, _password, _tenantName,
                 _https, _acceptUnverifiedSslPeers, _securityMode);
         final DataHubDataContext dataContext = new DataHubDataContext(connection);
-        return new DatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
+        return new UpdateableDatastoreConnectionImpl<DataHubDataContext>(dataContext, this);
     }
 
     @Override

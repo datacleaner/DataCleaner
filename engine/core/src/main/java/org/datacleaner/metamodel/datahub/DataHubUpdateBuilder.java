@@ -20,108 +20,22 @@
 package org.datacleaner.metamodel.datahub;
 
 import org.apache.metamodel.MetaModelException;
-import org.apache.metamodel.data.Row;
-import org.apache.metamodel.data.Style;
-import org.apache.metamodel.query.FilterItem;
-import org.apache.metamodel.query.builder.FilterBuilder;
-import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
-import org.apache.metamodel.update.RowUpdationBuilder;
+import org.apache.metamodel.update.AbstractRowUpdationBuilder;
 
-public class DataHubUpdateBuilder implements RowUpdationBuilder {
+public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
+
+    private final DataHubUpdateCallback _callback;
 
     public DataHubUpdateBuilder(DataHubUpdateCallback dataHubUpdateCallback, Table table) {
-        // TODO 
-    }
-
-    @Override
-    public RowUpdationBuilder value(int columnIndex, Object value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder value(int columnIndex, Object value, Style style) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder value(Column column, Object value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder value(Column column, Object value, Style style) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder value(String columnName, Object value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder value(String columnName, Object value, Style style) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Row toRow() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean isSet(Column column) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public FilterBuilder<RowUpdationBuilder> where(Column column) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public FilterBuilder<RowUpdationBuilder> where(String columnName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder where(FilterItem... filterItems) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public RowUpdationBuilder where(Iterable<FilterItem> filterItems) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Table getTable() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String toSql() {
-        // TODO Auto-generated method stub
-        return null;
+        super(table);
+        _callback = dataHubUpdateCallback;
     }
 
     @Override
     public void execute() throws MetaModelException {
-        // TODO Auto-generated method stub
-
+        System.out.println("Executing update!");
     }
+
 
 }

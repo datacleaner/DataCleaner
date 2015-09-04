@@ -138,8 +138,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     @Override
-    public Iterator<TenantContext> getActiveTenantContexts() {
-        return _contexts.asMap().values().iterator();
+    public Iterable<TenantContext> getActiveTenantContexts() {
+        return _contexts.asMap().values();
     }
 
     private String getStandardizedTenantName(final String tenantId) {

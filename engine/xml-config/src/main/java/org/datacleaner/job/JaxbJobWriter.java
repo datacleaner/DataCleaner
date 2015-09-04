@@ -68,6 +68,8 @@ import org.datacleaner.job.jaxb.OutputType;
 import org.datacleaner.job.jaxb.SourceType;
 import org.datacleaner.job.jaxb.TransformationType;
 import org.datacleaner.job.jaxb.TransformerType;
+import org.datacleaner.job.jaxb.VariableType;
+import org.datacleaner.job.jaxb.VariablesType;
 import org.datacleaner.util.JaxbValidationEventHandler;
 import org.datacleaner.util.convert.StringConverter;
 import org.slf4j.Logger;
@@ -107,6 +109,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
     @Override
     public void write(final AnalysisJob analysisJob, final OutputStream outputStream) {
         logger.debug("write({},{}}", analysisJob, outputStream);
+
         final Job job = new Job();
         configureJobType(analysisJob, job, true);
 
@@ -130,8 +133,22 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             }
         }
 
+        final VariablesType variablesType = new VariablesType();
+        final Map<String, String> variables = analysisJob.getMetadata().getVariables();
+        if ((variables != null) && (variables.size() > 0)) {
+            for (Map.Entry<String, String> variableEntry : variables.entrySet()) {
+                final VariableType variableType = new VariableType();
+                variableType.setId(variableEntry.getKey());
+                variableType.setValue(variableEntry.getValue());
+                variablesType.getVariable().add(variableType);
+            }
+        }
+
         final SourceType sourceType = new SourceType();
         sourceType.setColumns(new ColumnsType());
+        if ((variables != null) && (variables.size() > 0)) {
+            sourceType.setVariables(variablesType);
+        }
         jobType.setSource(sourceType);
 
         final Datastore datastore = analysisJob.getDatastore();
@@ -529,7 +546,7 @@ public class JaxbJobWriter implements JobWriter<OutputStream> {
             analyzerType.setName(analyzerJob.getName());
             setDescriptor(analyzerType, analyzerJob.getDescriptor());
             final OutputDataStreamJob[] outputDataStreamJobs = analyzerJob.getOutputDataStreamJobs();
-            
+
             for (OutputDataStreamJob outputDataStreamJob : outputDataStreamJobs) {
                 final OutputDataStreamType outputDataStreamType = new OutputDataStreamType();
                 outputDataStreamType.setName(outputDataStreamJob.getOutputDataStream().getName());

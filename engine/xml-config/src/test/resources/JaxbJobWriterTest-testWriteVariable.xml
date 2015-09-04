@@ -11,8 +11,8 @@
             <column id="col_datestring" path="datestring" type="STRING"/>
         </columns>
         <variables>
-			<variable id="var_datemask" value="[yyyy-MM-dd]" />
-		</variables>
+            <variable id="var_datemask" value="[yyyy-MM-dd]"/>
+        </variables>
     </source>
     <transformation>
         <transformer>

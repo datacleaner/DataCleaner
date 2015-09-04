@@ -68,6 +68,7 @@ import org.datacleaner.descriptors.TransformerDescriptor;
 import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.FilterComponentBuilder;
+import org.datacleaner.job.builder.MutableAnalysisJobMetadata;
 import org.datacleaner.job.builder.TransformerComponentBuilder;
 import org.datacleaner.job.jaxb.AnalysisType;
 import org.datacleaner.job.jaxb.AnalyzerType;
@@ -443,6 +444,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                         convertToDate(metadata.getUpdatedDate()), datastore.getName(), getSourceColumnPaths(job),
                         getSourceColumnTypes(job), variables, getMetadataProperties(metadata));
                 analysisJobBuilder.setAnalysisJobMetadata(immutableAnalysisJobMetadata);
+            } else {
+                if (variables.size() > 0) {
+                    final MutableAnalysisJobMetadata mutableAnalysisJobMetadata = new MutableAnalysisJobMetadata();
+                    mutableAnalysisJobMetadata.getVariables().putAll(variables);
+                    analysisJobBuilder.setAnalysisJobMetadata(mutableAnalysisJobMetadata);    
+                }
             }
 
             // map column id's to input columns

@@ -19,8 +19,10 @@
  */
 package org.datacleaner.job.output;
 
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.schema.Table;
+import org.datacleaner.api.InputColumn;
 import org.datacleaner.api.OutputDataStream;
 
 /**
@@ -33,4 +35,8 @@ public interface OutputDataStreamBuilder {
     public OutputDataStreamBuilder likeTable(Table table);
 
     public OutputDataStreamBuilder withColumn(String name, ColumnType columnType);
+
+    public OutputDataStreamBuilder withColumnLike(InputColumn<?> column);
+
+    public OutputDataStreamBuilder withColumnLike(Column column);
 }

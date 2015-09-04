@@ -19,7 +19,12 @@
  */
 package org.datacleaner.metamodel.datahub;
 
+import java.util.List;
+
 import org.apache.metamodel.MetaModelException;
+import org.apache.metamodel.query.FilterClause;
+import org.apache.metamodel.query.FilterItem;
+import org.apache.metamodel.schema.Column;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.AbstractRowUpdationBuilder;
 
@@ -34,8 +39,45 @@ public class DataHubUpdateBuilder extends AbstractRowUpdationBuilder {
 
     @Override
     public void execute() throws MetaModelException {
-        System.out.println("Executing update!");
+        String query = createSqlStatement();
+        System.out.println("Executing query: " + query);
+        _callback.executeUpdate(query);
     }
 
+    private String createSqlStatement() {
+        final Object[] values = getValues();
+        final Table table = getTable();
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("UPDATE ");
+        sb.append(table.getQualifiedLabel());
+        sb.append(" SET ");
+
+        Column[] columns = getColumns();
+        boolean[] explicitNulls = getExplicitNulls();
+        boolean firstValue = true;
+        for (int i = 0; i < columns.length; i++) {
+            final Object value = values[i];
+            if (value != null || explicitNulls[i]) {
+                if (firstValue) {
+                    firstValue = false;
+                } else {
+                    sb.append(',');
+                }
+                String columnName = columns[i].getName();
+                sb.append(columnName);
+
+                sb.append('=');
+                sb.append('?');
+
+            }
+        }
+
+        List<FilterItem> whereItems = getWhereItems();
+        String whereClause = new FilterClause(null, " WHERE ").addItems(whereItems).toSql();
+        sb.append(whereClause);
+        String sql = sb.toString();
+        return sql;
+    }
 
 }

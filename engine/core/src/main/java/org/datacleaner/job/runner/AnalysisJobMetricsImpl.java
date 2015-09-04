@@ -40,8 +40,8 @@ final class AnalysisJobMetricsImpl implements AnalysisJobMetrics {
 
     @Override
     public ComponentMetrics getComponentMetrics(ComponentJob componentJob) {
-        Table table = getRowProcessingTable(componentJob);
-        RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics(table);
+        final Table table = getRowProcessingTable(componentJob);
+        final RowProcessingMetrics rowProcessingMetrics = getRowProcessingMetrics(table);
         return new ComponentMetricsImpl(rowProcessingMetrics, componentJob);
     }
 

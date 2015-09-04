@@ -19,30 +19,52 @@
  */
 package org.datacleaner.output.csv;
 
-import org.apache.metamodel.UpdateableDataContext;
-import org.apache.metamodel.schema.Table;
+import java.io.OutputStream;
+
+import org.apache.metamodel.csv.CsvConfiguration;
+import org.apache.metamodel.csv.CsvWriter;
+import org.apache.metamodel.util.FileHelper;
+import org.apache.metamodel.util.LazyRef;
+import org.apache.metamodel.util.Resource;
 import org.datacleaner.api.InputColumn;
-import org.datacleaner.output.AbstractMetaModelOutputWriter;
+import org.datacleaner.output.OutputRow;
+import org.datacleaner.output.OutputWriter;
 
-final class CsvOutputWriter extends AbstractMetaModelOutputWriter {
+final class CsvOutputWriter implements OutputWriter {
 
-	private final String _filename;
-	private final Table _table;
+    private final LazyRef<OutputStream> _outputStreamRef;
+    private final InputColumn<?>[] _columns;
+    private final CsvConfiguration _csvConfiguration;
 
-	public CsvOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
-		super(dataContext, columns, 100);
-		_filename = filename;
-		_table = table;
-	}
+    public CsvOutputWriter(final Resource resource, final CsvConfiguration csvConfiguration,
+            final String[] columnNames, final InputColumn<?>[] columns) {
+        _csvConfiguration = csvConfiguration;
+        _columns = columns;
+        _outputStreamRef = new LazyRef<OutputStream>() {
+            @Override
+            protected OutputStream fetch() throws Throwable {
+                final OutputStream outputStream = resource.write();
+                if (csvConfiguration.getColumnNameLineNumber() != CsvConfiguration.NO_COLUMN_NAME_LINE) {
+                    final CsvWriter csvWriter = new CsvWriter(_csvConfiguration);
+                    final String headerLine = csvWriter.buildLine(columnNames);
+                    final byte[] bytes = headerLine.getBytes(csvConfiguration.getEncoding());
+                    outputStream.write(bytes);
+                }
+                return outputStream;
+            }
+        };
+    }
 
-	@Override
-	public void afterClose() {
-		CsvOutputWriterFactory.release(_filename);
-	}
+    @Override
+    public OutputRow createRow() {
+        return new CsvOutputRow(_outputStreamRef, _csvConfiguration, _columns);
+    }
 
-	@Override
-	protected Table getTable() {
-		return _table;
-	}
+    @Override
+    public void close() {
+        if (_outputStreamRef.isFetched()) {
+            FileHelper.safeClose(_outputStreamRef.get());
+        }
+    }
 
 }

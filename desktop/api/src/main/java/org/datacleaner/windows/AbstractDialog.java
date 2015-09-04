@@ -115,13 +115,16 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
         setResizable(isWindowResizable());
 
         JComponent content = getWindowContent();
+        getContentPane().removeAll();
         getContentPane().add(content);
 
         getContentPane().setPreferredSize(content.getPreferredSize());
 
         pack();
 
-        WidgetUtils.centerOnScreen(this);
+        if(!initialized) {
+            WidgetUtils.centerOnScreen(this);
+        }
 
         if (_windowContext != null) {
             _windowContext.onShow(this);
@@ -130,12 +133,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
     @Override
     public final void setVisible(boolean b) {
-        if (b == false) {
+        if (!b) {
             throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
         }
         if (!initialized) {
-            initialized = true;
             initialize();
+            initialized = true;
         }
         super.setVisible(true);
     }

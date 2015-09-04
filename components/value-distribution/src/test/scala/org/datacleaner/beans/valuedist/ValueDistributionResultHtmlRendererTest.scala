@@ -53,7 +53,7 @@ class ValueDistributionResultHtmlRendererTest extends AssertionsForJUnit {
     descriptorProvider.addRendererBeanDescriptor(Descriptors.ofRenderer(classOf[AnnotatedRowsHtmlRenderer]))
     val descriptor = conf.getEnvironment().getDescriptorProvider().getAnalyzerDescriptorForClass(classOf[ValueDistributionAnalyzer]);
     val map = new java.util.HashMap[ComponentJob, AnalyzerResult]()
-    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null);
+    val componentJob = new ImmutableAnalyzerJob("my value dist", descriptor, new ImmutableComponentConfiguration(null), null, null, null);
     map.put(componentJob, analyzerResult);
     val result = new SimpleAnalysisResult(map)
     

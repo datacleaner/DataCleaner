@@ -107,12 +107,11 @@ import org.slf4j.LoggerFactory;
  * execution is shown.
  */
 public final class ResultWindow extends AbstractWindow implements WindowListener {
+    private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
 
-    private static final long serialVersionUID = 1L;
-
-    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<Func<ResultWindow, JComponent>>(
+    public static final List<Func<ResultWindow, JComponent>> PLUGGABLE_BANNER_COMPONENTS = new ArrayList<>(
             0);
-
+    private static final long serialVersionUID = 1L;
     private static final ImageManager imageManager = ImageManager.get();
 
     private final VerticalTabbedPane _tabbedPane;
@@ -131,7 +130,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
     private AnalysisResult _result;
 
     /**
-     * 
+     *
      * @param configuration
      * @param job
      *            either this or result must be available
@@ -139,7 +138,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
      *            either this or job must be available
      * @param jobFilename
      * @param windowContext
-     * @param rendererInitializerProvider
+     * @param userPreferences
+     * @param rendererFactory
      */
     @Inject
     protected ResultWindow(DataCleanerConfiguration configuration, @Nullable AnalysisJob job,
@@ -228,7 +228,7 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                     }
                     menuItem.setBorder(buttonBorder);
                     _saveResultsPopupButton.getMenu().add(menuItem);
-                } else if (component instanceof JMenuItem) {
+                } else if (component instanceof JMenuItem) { // TODO: Not possible. JMenuItem is a subclass of AbstractButton. Reorder or remove?
                     JMenuItem menuItem = (JMenuItem) component;
                     menuItem.setBorder(buttonBorder);
                     _saveResultsPopupButton.getMenu().add(menuItem);
@@ -273,15 +273,6 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         }
 
         updateButtonVisibility(running);
-    }
-
-    /**
-     * Sets the result, when it is ready for eg. saving
-     * 
-     * @param result
-     */
-    public void setResult(AnalysisResult result) {
-        _result = result;
     }
 
     public void startAnalysis() {
@@ -433,6 +424,15 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
         return _result;
     }
 
+    /**
+     * Sets the result, when it is ready for eg. saving
+     *
+     * @param result
+     */
+    public void setResult(AnalysisResult result) {
+        _result = result;
+    }
+
     public RendererFactory getRendererFactory() {
         return _rendererFactory;
     }
@@ -506,8 +506,10 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
 
             @Override
             public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+                logger.info("rowProcessingBegin: {}", job.getDatastore().getName());
                 final int expectedRows = metrics.getExpectedRows();
                 final Table table = metrics.getTable();
+
                 WidgetUtils.invokeSwingAction(new Runnable() {
                     @Override
                     public void run() {
@@ -526,20 +528,23 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
                                 return 0;
                             }
                         });
-                        
+
                         for (ComponentJob componentJob : componentJobs) {
                             // instantiate result panels
                             getOrCreateResultPanel(componentJob, false);
                         }
                         _tabbedPane.updateUI();
 
-                        if (expectedRows == -1) {
-                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName());
-                        } else {
-                            _progressInformationPanel.addUserLog("Starting processing of " + table.getName()
+                        final String startingProcessingString = "Starting processing of " + table.getName();
+
+                        if (expectedRows != -1) {
+                            _progressInformationPanel.addUserLog(startingProcessingString
                                     + " (approx. " + expectedRows + " rows)");
-                            _progressInformationPanel.setExpectedRows(table, expectedRows);
+                        } else {
+                            _progressInformationPanel.addUserLog(startingProcessingString);
                         }
+
+                        _progressInformationPanel.addProgressBar(table, expectedRows);
                     }
                 });
             }
@@ -547,11 +552,14 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             @Override
             public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final InputRow row,
                     final int currentRow) {
+                logger.info("rowProcessingProgress: {}", job.getDatastore().getName());
+
                 _progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
             }
 
             @Override
             public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
+                logger.info("rowProcessingSuccess: {}", job.getDatastore().getName());
                 _progressInformationPanel.updateProgressFinished(metrics.getTable());
                 _progressInformationPanel.addUserLog("Processing of " + metrics.getTable().getName()
                         + " finished. Generating results...");
@@ -563,7 +571,8 @@ public final class ResultWindow extends AbstractWindow implements WindowListener
             }
 
             @Override
-            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob, final AnalyzerResult result) {
+            public void componentSuccess(AnalysisJob job, final ComponentJob componentJob,
+                    final AnalyzerResult result) {
                 final StringBuilder sb = new StringBuilder();
                 sb.append("Component ");
                 sb.append(LabelUtils.getLabel(componentJob));

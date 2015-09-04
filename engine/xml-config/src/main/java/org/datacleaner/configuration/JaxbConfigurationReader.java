@@ -113,6 +113,7 @@ import org.datacleaner.connection.DatastoreCatalog;
 import org.datacleaner.connection.DatastoreCatalogImpl;
 import org.datacleaner.connection.DbaseDatastore;
 import org.datacleaner.connection.ElasticSearchDatastore;
+import org.datacleaner.connection.ElasticSearchDatastore.ClientType;
 import org.datacleaner.connection.ExcelDatastore;
 import org.datacleaner.connection.FixedWidthDatastore;
 import org.datacleaner.connection.HBaseDatastore;
@@ -757,6 +758,11 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
     private Datastore createDatastore(String name, ElasticSearchDatastoreType datastoreType) {
         final String clusterName = getStringVariable("clusterName", datastoreType.getClusterName());
         final String hostname = getStringVariable("hostname", datastoreType.getHostname());
+        final String username = getStringVariable("username", datastoreType.getUsername());
+        final String password = getPasswordVariable("password", datastoreType.getPassword());
+        final boolean ssl = getBooleanVariable("ssl", datastoreType.isSsl(), false);
+        final String keystorePath = getStringVariable("keystorePath", datastoreType.getKeystorePath());
+        final String keystorePassword = getPasswordVariable("keystorePassword", datastoreType.getKeystorePassword());
 
         Integer port = getIntegerVariable("port", datastoreType.getPort());
         if (port == null) {
@@ -799,7 +805,8 @@ public final class JaxbConfigurationReader implements ConfigurationReader<InputS
             }
         }
 
-        return new ElasticSearchDatastore(name, hostname, port, clusterName, indexName, tableDefs);
+        return new ElasticSearchDatastore(name, ClientType.TRANSPORT, hostname, port, clusterName, indexName,
+                tableDefs, username, password, ssl, keystorePath, keystorePassword);
     }
 
     private Datastore createDatastore(String name, JsonDatastoreType datastoreType) {

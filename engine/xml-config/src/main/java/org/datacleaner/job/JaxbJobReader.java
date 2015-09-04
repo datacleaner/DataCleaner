@@ -99,8 +99,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Lists;
 
 public class JaxbJobReader implements JobReader<InputStream> {
 
@@ -492,12 +493,12 @@ public class JaxbJobReader implements JobReader<InputStream> {
                 final JobType job = outputDataStreamType.getJob();
 
                 final List<ColumnType> sourceColumnTypes = job.getSource().getColumns().getColumn();
-                
+
                 final List<MetaModelInputColumn> sourceColumns = outputDataStreamJobBuilder.getSourceColumns();
 
                 // map column id's to input columns
                 final Map<String, InputColumn<?>> inputColumns = new HashMap<>();
-                
+
                 for (ColumnType sourceColumnPath : sourceColumnTypes) {
                     for (InputColumn<?> inputColumn : sourceColumns) {
                         if (inputColumn.getName().equals(sourceColumnPath.getPath())) {
@@ -829,7 +830,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
         }
 
         // check for compound component requirements
-        final List<String> tokens = Splitter.on(" OR ").omitEmptyStrings().trimResults().splitToList(ref);
+        final List<String> tokens = Lists.newArrayList(Splitter.on(" OR ").omitEmptyStrings().trimResults().split(ref));
         if (tokens.size() > 1) {
             final List<FilterOutcome> list = new ArrayList<>(tokens.size());
             for (final String token : tokens) {
@@ -850,8 +851,7 @@ public class JaxbJobReader implements JobReader<InputStream> {
             ComponentBuilder componentBuilder) {
         // build a map of inputs first so that we can set the
         // input in one go
-        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = MultimapBuilder.hashKeys()
-                .arrayListValues().build();
+        final ListMultimap<ConfiguredPropertyDescriptor, InputColumn<?>> inputMap = ArrayListMultimap.create(); 
 
         for (InputType inputType : input) {
             String name = inputType.getName();

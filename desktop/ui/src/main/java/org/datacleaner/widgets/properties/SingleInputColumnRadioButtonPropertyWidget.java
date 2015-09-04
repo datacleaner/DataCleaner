@@ -34,7 +34,6 @@ import org.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.datacleaner.api.InputColumn;
 import org.datacleaner.data.MutableInputColumn;
 import org.datacleaner.descriptors.ConfiguredPropertyDescriptor;
-import org.datacleaner.job.builder.AnalysisJobBuilder;
 import org.datacleaner.job.builder.ComponentBuilder;
 import org.datacleaner.job.builder.SourceColumnChangeListener;
 import org.datacleaner.job.builder.TransformerChangeListener;
@@ -59,7 +58,6 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         SourceColumnChangeListener, TransformerChangeListener, MutableInputColumn.Listener {
 
     private final JXRadioGroup<JRadioButton> _radioGroup = new JXRadioGroup<JRadioButton>();
-    private final AnalysisJobBuilder _analysisJobBuilder;
     private final Class<?> _dataType;
     private final ConfiguredPropertyDescriptor _propertyDescriptor;
     private final DCPanel _buttonPanel;
@@ -68,15 +66,14 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     private final JXTextField _searchDatastoreTextField;
 
     @Inject
-    public SingleInputColumnRadioButtonPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-            ComponentBuilder componentBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+    public SingleInputColumnRadioButtonPropertyWidget(ComponentBuilder componentBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
         super(componentBuilder, propertyDescriptor);
         _radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
         _radioGroup.setOpaque(false);
 
-        _analysisJobBuilder = analysisJobBuilder;
-        _analysisJobBuilder.getSourceColumnListeners().add(this);
-        _analysisJobBuilder.getTransformerChangeListeners().add(this);
+        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
+        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
         _propertyDescriptor = propertyDescriptor;
         _dataType = propertyDescriptor.getTypeArgument(0);
 
@@ -106,8 +103,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
         _buttonPanel.setLayout(new VerticalLayout(2));
 
         if (_dataType == String.class || _dataType == Object.class) {
-            final JButton expressionColumnButton = WidgetFactory
-                    .createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
+            final JButton expressionColumnButton = WidgetFactory.createSmallButton(IconUtils.MODEL_COLUMN_EXPRESSION);
             expressionColumnButton.setToolTipText("Create expression/value based column");
             expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener.forSingleColumn(this));
             expressionColumnButton.setFocusable(false);
@@ -130,7 +126,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     }
 
     private void updateComponents(InputColumn<?> value) {
-        _inputColumns = _analysisJobBuilder.getAvailableInputColumns(getComponentBuilder(), _dataType);
+        _inputColumns = getAnalysisJobBuilder().getAvailableInputColumns(getComponentBuilder(), _dataType);
 
         if (value != null) {
             if (!_inputColumns.contains(value)) {
@@ -225,7 +221,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     private void handleRemovedColumn(InputColumn<?> column) {
         if (isColumnApplicable(column)) {
             final ComponentBuilder componentBuilder = getComponentBuilder();
-            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder.getConfiguredProperty(_propertyDescriptor);
+            final InputColumn<?> currentValue = (InputColumn<?>) componentBuilder
+                    .getConfiguredProperty(_propertyDescriptor);
             if (currentValue != null) {
                 if (currentValue.equals(column)) {
                     componentBuilder.setConfiguredProperty(_propertyDescriptor, null);
@@ -262,8 +259,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
     @Override
     public void onPanelRemove() {
         super.onPanelRemove();
-        _analysisJobBuilder.getSourceColumnListeners().remove(this);
-        _analysisJobBuilder.getTransformerChangeListeners().remove(this);
+        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
+        getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
 
         for (InputColumn<?> column : _inputColumns) {
             if (column instanceof MutableInputColumn) {

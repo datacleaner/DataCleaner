@@ -65,7 +65,7 @@ public class ActiveOutputDataStream implements Closeable {
 
         final List<SelectItem> selectItems = query.getSelectClause().getItems();
         final ConsumeRowHandler consumeRowHandler = _publisher.createConsumeRowHandler();
-        _outputRowCollector = new OutputDataStreamRowCollector(selectItems, consumeRowHandler);
+        _outputRowCollector = new OutputDataStreamRowCollector(_publisher, selectItems, consumeRowHandler);
         final OutputDataStream outputDataStream = _outputDataStreamJob.getOutputDataStream();
         _component.initializeOutputDataStream(outputDataStream, query, _outputRowCollector);
     }

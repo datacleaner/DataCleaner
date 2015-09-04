@@ -21,11 +21,11 @@ package org.datacleaner.job.tasks;
 
 import java.util.Collection;
 
-import org.datacleaner.configuration.ContextAwareInjectionManager;
 import org.datacleaner.descriptors.ComponentDescriptor;
 import org.datacleaner.job.ComponentConfiguration;
 import org.datacleaner.job.runner.ActiveOutputDataStream;
 import org.datacleaner.job.runner.RowProcessingConsumer;
+import org.datacleaner.job.runner.RowProcessingPublisher;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public final class InitializeTask implements Task {
         executeInternal(_consumer, _lifeCycleHelper);
     }
 
-    private void executeInternal(final RowProcessingConsumer consumer, LifeCycleHelper lifeCycleHelper) {
+    private static void executeInternal(final RowProcessingConsumer consumer, LifeCycleHelper lifeCycleHelper) {
         final ComponentConfiguration configuration = consumer.getComponentJob().getConfiguration();
         final ComponentDescriptor<?> descriptor = consumer.getComponentJob().getDescriptor();
         final Object component = consumer.getComponent();
@@ -63,11 +63,10 @@ public final class InitializeTask implements Task {
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
             activeOutputDataStream.initialize();
-            for (RowProcessingConsumer outputDataStreamConsumer : activeOutputDataStream.getPublisher().getConsumers()) {
-                ContextAwareInjectionManager injectionManager = new ContextAwareInjectionManager(
-                        lifeCycleHelper.getInjectionManager(), activeOutputDataStream.getOutputDataStreamJob().getJob(),
-                        outputDataStreamConsumer.getComponentJob(), null);
-                LifeCycleHelper outputDataStreamLifeCycleHelper = new LifeCycleHelper(injectionManager, lifeCycleHelper.isIncludeNonDistributedTasks());
+            final RowProcessingPublisher publisher = activeOutputDataStream.getPublisher();
+            for (RowProcessingConsumer outputDataStreamConsumer : publisher.getConsumers()) {
+                final LifeCycleHelper outputDataStreamLifeCycleHelper = publisher
+                        .getConsumerSpecificLifeCycleHelper(consumer);
                 executeInternal(outputDataStreamConsumer, outputDataStreamLifeCycleHelper);
             }
         }

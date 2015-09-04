@@ -22,8 +22,10 @@ package org.datacleaner.job.tasks;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.datacleaner.descriptors.ComponentDescriptor;
+import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.concurrent.TaskListener;
 import org.datacleaner.job.runner.ActiveOutputDataStream;
+import org.datacleaner.job.runner.AnalysisListener;
 import org.datacleaner.job.runner.RowProcessingConsumer;
 import org.datacleaner.lifecycle.LifeCycleHelper;
 import org.slf4j.Logger;
@@ -40,17 +42,20 @@ public class CloseTaskListener implements TaskListener {
 
     private static final Logger logger = LoggerFactory.getLogger(CloseTaskListener.class);
 
+    private final AtomicBoolean _errorsReported = new AtomicBoolean(false);
     private final LifeCycleHelper _lifeCycleHelper;
-    private final AtomicBoolean _success;
     private final RowProcessingConsumer _consumer;
     private final TaskListener _nextTaskListener;
+    private final AnalysisListener _analysisListener;
+    private final AnalysisJob _analysisJob;
 
     public CloseTaskListener(LifeCycleHelper lifeCycleHelper, RowProcessingConsumer consumer, AtomicBoolean success,
-            TaskListener nextTaskListener) {
+            TaskListener nextTaskListener, AnalysisListener analysisListener, AnalysisJob analysisJob) {
         _lifeCycleHelper = lifeCycleHelper;
         _consumer = consumer;
-        _success = success;
         _nextTaskListener = nextTaskListener;
+        _analysisListener = analysisListener;
+        _analysisJob = analysisJob;
     }
 
     public void cleanup() {
@@ -60,7 +65,7 @@ public class CloseTaskListener implements TaskListener {
         final ComponentDescriptor<?> descriptor = _consumer.getComponentJob().getDescriptor();
 
         // close can occur AFTER completion
-        _lifeCycleHelper.close(descriptor, component, _success.get());
+        _lifeCycleHelper.close(descriptor, component, !_errorsReported.get());
 
         final Collection<ActiveOutputDataStream> activeOutputDataStreams = _consumer.getActiveOutputDataStreams();
         for (ActiveOutputDataStream activeOutputDataStream : activeOutputDataStreams) {
@@ -87,7 +92,10 @@ public class CloseTaskListener implements TaskListener {
 
     @Override
     public void onError(Task task, Throwable throwable) {
-        _success.set(false);
+        final boolean alreadyRegisteredError = _errorsReported.getAndSet(true);
+        if (!alreadyRegisteredError) {
+            _analysisListener.errorUnknown(_analysisJob, throwable);
+        }
         cleanup();
         if (_nextTaskListener != null) {
             _nextTaskListener.onError(task, throwable);

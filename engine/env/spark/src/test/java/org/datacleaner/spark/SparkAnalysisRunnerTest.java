@@ -29,6 +29,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.beans.CompletenessAnalyzerResult;
 import org.datacleaner.beans.StringAnalyzerResult;
+import org.datacleaner.beans.valuedist.ValueDistributionAnalyzerResult;
 import org.datacleaner.beans.valuematch.ValueMatchAnalyzerResult;
 import org.datacleaner.job.AnalysisJob;
 import org.datacleaner.job.runner.AnalysisResultFuture;
@@ -44,7 +45,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
     public void testVanillaScenario() throws Exception {
         final AnalysisResultFuture result;
 
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest");
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - testVanillaScenario");
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -82,7 +83,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
     public void testOutputDataStreamsScenario() throws Exception {
         final AnalysisResultFuture result;
 
-        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest");
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - testOutputDataStreamsScenario");
         final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         try {
 
@@ -109,11 +110,55 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(7, completenessAnalyzerResult.getValidRowCount());
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
         assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
+
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
+        assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(0), incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
         
-        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
-        assertEquals("[[<null>->7], [Kasper->0]]", completeValueMatcherAnalyzerResult.getValueCounts().toString());
+        final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
+        assertEquals(7, completeValueMatcherAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(1), completeValueMatcherAnalyzerResult.getCount("Tomasz"));
+        assertEquals(Integer.valueOf(6), completeValueMatcherAnalyzerResult.getCount("<unexpected>"));
+    }
+    
+    @Test
+    public void testOutputDataStreamsNonDistributableScenario() throws Exception {
+        final AnalysisResultFuture result;
+
+        final SparkConf sparkConf = new SparkConf().setMaster("local").setAppName("DCTest - testOutputDataStreamsNonDistributableScenario");
+        final JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        try {
+
+            final SparkJobContext sparkJobContext = new SparkJobContext(sparkContext,
+                    "src/test/resources/conf_local.xml", "src/test/resources/non-dist-melon-job.analysis.xml");
+            final AnalysisJob job = sparkJobContext.getAnalysisJob();
+            assertNotNull(job);
+
+            final SparkAnalysisRunner sparkAnalysisRunner = new SparkAnalysisRunner(sparkContext, sparkJobContext);
+
+            result = sparkAnalysisRunner.run(job);
+        } finally {
+            sparkContext.close();
+        }
+
+        if (result.isErrornous()) {
+            throw (Exception) result.getErrors().get(0);
+        }
+
+        final List<AnalyzerResult> results = result.getResults();
+        assertEquals(3, results.size());
+
+        final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(CompletenessAnalyzerResult.class).get(0);
+        assertEquals(7, completenessAnalyzerResult.getValidRowCount());
+        assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
+        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         
-        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
-        assertEquals("[[<null>->7], [<unexpected>->6], [Tomasz->1]]", incompleteValueMatcherAnalyzerResult.getValueCounts().toString());
+        final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
+        assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(0), incompleteValueMatcherAnalyzerResult.getCount("Kasper"));
+        
+        final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(ValueDistributionAnalyzerResult.class).get(0);
+        assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
+        assertEquals(Integer.valueOf(6), completeValueDistributionAnalyzerResult.getUniqueCount());
     }
 }

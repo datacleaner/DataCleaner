@@ -29,13 +29,21 @@ import org.apache.metamodel.schema.Schema;
 import org.apache.metamodel.schema.Table;
 import org.apache.metamodel.update.RowUpdationBuilder;
 
-public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback{
+public class DataHubUpdateCallback extends AbstractUpdateCallback implements UpdateCallback {
 
     private final DataHubDataContext _dataContext;
+    private DataHubConnection _connection;
 
     public DataHubUpdateCallback(DataHubDataContext dataContext) {
         super(dataContext);
         _dataContext = dataContext;
+    }
+
+    protected final DataHubConnection getConnection() {
+        if (_connection == null) {
+            _connection = _dataContext.getConnection();
+        }
+        return _connection;
     }
 
     @Override
@@ -80,6 +88,7 @@ public class DataHubUpdateCallback extends AbstractUpdateCallback implements Upd
     @Override
     public RowUpdationBuilder update(Table table) throws IllegalArgumentException, IllegalStateException,
             UnsupportedOperationException {
-        return new DataHubUpdateBuilder(this, table, _dataContext.getQueryRewriter());
+        return new DataHubUpdateBuilder(this, table);
     }
+
 }

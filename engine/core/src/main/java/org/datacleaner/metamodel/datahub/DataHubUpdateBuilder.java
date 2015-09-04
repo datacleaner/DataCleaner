@@ -22,7 +22,6 @@ package org.datacleaner.metamodel.datahub;
 import org.apache.metamodel.MetaModelException;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.data.Style;
-import org.apache.metamodel.jdbc.dialects.IQueryRewriter;
 import org.apache.metamodel.query.FilterItem;
 import org.apache.metamodel.query.builder.FilterBuilder;
 import org.apache.metamodel.schema.Column;
@@ -31,7 +30,7 @@ import org.apache.metamodel.update.RowUpdationBuilder;
 
 public class DataHubUpdateBuilder implements RowUpdationBuilder {
 
-    public DataHubUpdateBuilder(DataHubUpdateCallback dataHubUpdateCallback, Table table, IQueryRewriter queryRewriter) {
+    public DataHubUpdateBuilder(DataHubUpdateCallback dataHubUpdateCallback, Table table) {
         // TODO 
     }
 

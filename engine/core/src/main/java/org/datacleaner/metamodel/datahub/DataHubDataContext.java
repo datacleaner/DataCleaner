@@ -31,7 +31,6 @@ import org.apache.metamodel.AbstractDataContext;
 import org.apache.metamodel.UpdateScript;
 import org.apache.metamodel.UpdateableDataContext;
 import org.apache.metamodel.data.DataSet;
-import org.apache.metamodel.jdbc.dialects.IQueryRewriter;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.schema.Schema;
 import org.datacleaner.metamodel.datahub.utils.JsonSchemasResponseParser;
@@ -75,7 +74,12 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
 
     @Override
     public void executeUpdate(UpdateScript script) {
-        // TODO Auto-generated method stub
+        final DataHubUpdateCallback callback = new DataHubUpdateCallback(this);
+        try {
+            script.run(callback);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     @Override
@@ -139,9 +143,8 @@ public class DataHubDataContext extends AbstractDataContext implements Updateabl
         return _schemas.get(name);
     }
 
-    public IQueryRewriter getQueryRewriter() {
-        // TODO Auto-generated method stub
-        return null;
+    public DataHubConnection getConnection() {
+        return _connection;
     }
 
 }

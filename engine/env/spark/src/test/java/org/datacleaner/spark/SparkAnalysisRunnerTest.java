@@ -107,9 +107,9 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(3, results.size());
 
         final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(CompletenessAnalyzerResult.class).get(0);
+        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         assertEquals(7, completenessAnalyzerResult.getValidRowCount());
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
-        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
 
         final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
         assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());
@@ -149,9 +149,9 @@ public class SparkAnalysisRunnerTest extends TestCase {
         assertEquals(3, results.size());
 
         final CompletenessAnalyzerResult completenessAnalyzerResult = result.getResults(CompletenessAnalyzerResult.class).get(0);
+        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         assertEquals(7, completenessAnalyzerResult.getValidRowCount());
         assertEquals(0, completenessAnalyzerResult.getInvalidRowCount());
-        assertEquals(7, completenessAnalyzerResult.getTotalRowCount());
         
         final ValueMatchAnalyzerResult incompleteValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(0);
         assertEquals(0, incompleteValueMatcherAnalyzerResult.getTotalCount());

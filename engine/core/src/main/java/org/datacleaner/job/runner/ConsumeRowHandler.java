@@ -183,9 +183,7 @@ public class ConsumeRowHandler {
             }
             publisher = tablePublisher;
         } else {
-            Collection<RowProcessingPublisher> publishers;
-
-            publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
             publisher = publishers.iterator().next();
             for (RowProcessingPublisher aPublisher : publishers) {
                 if (aPublisher != publisher) {

@@ -181,13 +181,16 @@ public class ConsumeRowHandler {
             }
             publisher = tablePublisher;
         } else {
-            final Collection<RowProcessingPublisher> publisherCollection = rowProcessingPublishers
-                    .getRowProcessingPublishers();
-            if (publisherCollection.size() > 1) {
-                throw new IllegalArgumentException(
-                        "Job consumes multiple tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+            Collection<RowProcessingPublisher> publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            publisher = publishers.iterator().next();
+            for (RowProcessingPublisher aPublisher : publishers) {
+                if (aPublisher != publisher) {
+                    if (aPublisher.getStream().isSourceTable()) {
+                        throw new IllegalArgumentException(
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                    }
+                }
             }
-            publisher = publisherCollection.iterator().next();
         }
 
         final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();

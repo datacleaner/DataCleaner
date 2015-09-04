@@ -20,6 +20,7 @@
 package org.datacleaner.spark.functions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -31,6 +32,7 @@ import org.datacleaner.api.HasAnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.configuration.DataCleanerConfiguration;
 import org.datacleaner.job.AnalysisJob;
+import org.datacleaner.job.runner.ActiveOutputDataStream;
 import org.datacleaner.job.runner.ConsumeRowHandler;
 import org.datacleaner.job.runner.RowProcessingConsumer;
 import org.datacleaner.lifecycle.LifeCycleHelper;
@@ -71,18 +73,7 @@ public final class RowProcessingFunction implements
         }
 
         // collect results
-        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = new ArrayList<>();
-        for (RowProcessingConsumer consumer : consumeRowHandler.getConsumers()) {
-            if (consumer.isResultProducer()) {
-                final HasAnalyzerResult<?> resultProducer = (HasAnalyzerResult<?>) consumer.getComponent();
-                final AnalyzerResult analyzerResult = resultProducer.getResult();
-                final String key = _sparkJobContext.getComponentKey(consumer.getComponentJob());
-                final NamedAnalyzerResult namedAnalyzerResult = new NamedAnalyzerResult(key, analyzerResult);
-                final Tuple2<String, NamedAnalyzerResult> tuple = new Tuple2<>(key,
-                        namedAnalyzerResult);
-                analyzerResults.add(tuple);
-            }
-        }
+        final List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = getAnalyzerResults(consumeRowHandler.getConsumers());
 
         // await any future results
         for (ListIterator<Tuple2<String, NamedAnalyzerResult>> it = analyzerResults.listIterator(); it
@@ -103,6 +94,29 @@ public final class RowProcessingFunction implements
             lifeCycleHelper.close(consumer.getComponentJob().getDescriptor(), consumer.getComponent(), true);
         }
 
+        return analyzerResults;
+    }
+
+    private List<Tuple2<String, NamedAnalyzerResult>> getAnalyzerResults(Collection<RowProcessingConsumer> rowProcessingConsumers) {
+        List<Tuple2<String, NamedAnalyzerResult>> analyzerResults = new ArrayList<>();
+        
+        for (RowProcessingConsumer consumer : rowProcessingConsumers) {
+            if (consumer.isResultProducer()) {
+                final HasAnalyzerResult<?> resultProducer = (HasAnalyzerResult<?>) consumer.getComponent();
+                final AnalyzerResult analyzerResult = resultProducer.getResult();
+                final String key = _sparkJobContext.getComponentKey(consumer.getComponentJob());
+                final NamedAnalyzerResult namedAnalyzerResult = new NamedAnalyzerResult(key, analyzerResult);
+                final Tuple2<String, NamedAnalyzerResult> tuple = new Tuple2<>(key,
+                        namedAnalyzerResult);
+                analyzerResults.add(tuple);
+            }
+            
+            for (ActiveOutputDataStream activeOutputDataStream : consumer.getActiveOutputDataStreams()) {
+                List<RowProcessingConsumer> outputDataStreamConsumers = activeOutputDataStream.getPublisher().getConsumers();
+                List<Tuple2<String, NamedAnalyzerResult>> outputDataStreamsAnalyzerResults = getAnalyzerResults(outputDataStreamConsumers);
+                analyzerResults.addAll(outputDataStreamsAnalyzerResults);
+            }
+        }
         return analyzerResults;
     }
 }

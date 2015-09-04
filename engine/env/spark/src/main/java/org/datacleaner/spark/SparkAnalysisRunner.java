@@ -29,7 +29,6 @@ import org.apache.spark.Accumulator;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.storage.StorageLevel;
 import org.datacleaner.api.AnalyzerResult;
 import org.datacleaner.api.InputRow;
 import org.datacleaner.connection.CsvDatastore;
@@ -92,9 +91,6 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFunction());
         
-        // TODO: Not needed
-        finalAnalyzerResultsRDD = finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
-
         // log analyzer results
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();
 

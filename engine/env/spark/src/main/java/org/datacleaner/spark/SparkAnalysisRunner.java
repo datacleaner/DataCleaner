@@ -92,7 +92,8 @@ public class SparkAnalysisRunner implements AnalysisRunner {
         JavaPairRDD<String, AnalyzerResult> finalAnalyzerResultsRDD = namedAnalyzerResultsRDD
                 .mapValues(new ExtractAnalyzerResultFunction());
         
-        finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
+        // TODO: Not needed
+        finalAnalyzerResultsRDD = finalAnalyzerResultsRDD.persist(StorageLevel.MEMORY_AND_DISK());
 
         // log analyzer results
         final List<Tuple2<String, AnalyzerResult>> results = finalAnalyzerResultsRDD.collect();

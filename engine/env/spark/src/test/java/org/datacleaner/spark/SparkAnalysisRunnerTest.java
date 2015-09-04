@@ -118,7 +118,7 @@ public class SparkAnalysisRunnerTest extends TestCase {
         final ValueMatchAnalyzerResult completeValueMatcherAnalyzerResult = result.getResults(ValueMatchAnalyzerResult.class).get(1);
         assertEquals(7, completeValueMatcherAnalyzerResult.getTotalCount());
         assertEquals(Integer.valueOf(1), completeValueMatcherAnalyzerResult.getCount("Tomasz"));
-        assertEquals(Integer.valueOf(6), completeValueMatcherAnalyzerResult.getCount("<unexpected>"));
+        assertEquals(Integer.valueOf(6), completeValueMatcherAnalyzerResult.getUnexpectedValueCount());
     }
     
     @Test
@@ -159,6 +159,6 @@ public class SparkAnalysisRunnerTest extends TestCase {
         
         final ValueDistributionAnalyzerResult completeValueDistributionAnalyzerResult = result.getResults(ValueDistributionAnalyzerResult.class).get(0);
         assertEquals(7, completeValueDistributionAnalyzerResult.getTotalCount());
-        assertEquals(Integer.valueOf(6), completeValueDistributionAnalyzerResult.getUniqueCount());
+        assertEquals(Integer.valueOf(7), completeValueDistributionAnalyzerResult.getUniqueCount());
     }
 }

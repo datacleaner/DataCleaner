@@ -172,7 +172,7 @@ public class ConsumeRowHandler {
         final RowProcessingPublishers rowProcessingPublishers = new RowProcessingPublishers(analysisJob,
                 analysisListener, taskRunner, lifeCycleHelper, sourceColumnFinder);
 
-        final Collection<RowProcessingPublisher> publishers;
+        final RowProcessingPublisher publisher;
         if (rowConsumeConfiguration.table != null) {
             @SuppressWarnings("deprecation")
             final RowProcessingPublisher tablePublisher = rowProcessingPublishers
@@ -181,50 +181,56 @@ public class ConsumeRowHandler {
                 throw new IllegalArgumentException("Job does not consume records from table: "
                         + rowConsumeConfiguration.table);
             }
-            publishers = new ArrayList<>();
-            publishers.add(tablePublisher);
+            publisher = tablePublisher;
         } else {
+            Collection<RowProcessingPublisher> publishers;
+
             publishers = rowProcessingPublishers.getRowProcessingPublishers();
+            publisher = publishers.iterator().next();
+            for (RowProcessingPublisher aPublisher : publishers) {
+                if (aPublisher != publisher) {
+                    if (aPublisher.getStream().isSourceTable()) {
+                        throw new IllegalArgumentException(
+                                "Job consumes multiple source tables, but ConsumeRowHandler can only handle a single table's components. Please specify a Table constructor argument.");
+                    }
+                }
+            }
         }
 
         final AtomicReference<Throwable> errorReference = new AtomicReference<Throwable>();
 
-        List<RowProcessingConsumer> totalConsumers = new ArrayList<>();
-        for (RowProcessingPublisher publisher : publishers) {
-            publisher.initializeConsumers(new TaskListener() {
-                @Override
-                public void onError(Task task, Throwable throwable) {
-                    logger.error("Exception thrown while initializing consumers.", throwable);
-                    errorReference.compareAndSet(null, throwable);
-                }
-
-                @Override
-                public void onComplete(Task task) {
-                    logger.info("Consumers initialized successfully.");
-                }
-
-                @Override
-                public void onBegin(Task task) {
-                    logger.info("Beginning the process of initializing consumers.");
-                }
-            });
-
-            final Throwable throwable = errorReference.get();
-            if (throwable != null) {
-                if (throwable instanceof RuntimeException) {
-
-                }
+        publisher.initializeConsumers(new TaskListener() {
+            @Override
+            public void onError(Task task, Throwable throwable) {
+                logger.error("Exception thrown while initializing consumers.", throwable);
+                errorReference.compareAndSet(null, throwable);
             }
 
-            List<RowProcessingConsumer> consumers = publisher.getConsumers();
-            if (!rowConsumeConfiguration.includeAnalyzers) {
-                consumers = removeAnalyzers(consumers);
+            @Override
+            public void onComplete(Task task) {
+                logger.info("Consumers initialized successfully.");
             }
-            totalConsumers.addAll(consumers);
+
+            @Override
+            public void onBegin(Task task) {
+                logger.info("Beginning the process of initializing consumers.");
+            }
+        });
+
+        final Throwable throwable = errorReference.get();
+        if (throwable != null) {
+            if (throwable instanceof RuntimeException) {
+
+            }
         }
 
-        totalConsumers = RowProcessingPublisher.sortConsumers(totalConsumers);
-        return totalConsumers;
+        List<RowProcessingConsumer> consumers = publisher.getConsumers();
+        if (!rowConsumeConfiguration.includeAnalyzers) {
+            consumers = removeAnalyzers(consumers);
+        }
+
+        consumers = RowProcessingPublisher.sortConsumers(consumers);
+        return consumers;
     }
 
     private List<RowProcessingConsumer> removeAnalyzers(List<RowProcessingConsumer> consumers) {
